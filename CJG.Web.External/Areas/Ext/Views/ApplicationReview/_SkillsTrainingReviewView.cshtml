@@ -1,0 +1,13 @@
+﻿<div class="form--readonly">
+    <br />
+    <div ng-repeat="program in process.TrainingPrograms">
+        <div class="heading-group">
+            <h4 class="light">> {{program.CourseTitle}}</h4>
+            <a class="btn btn--secondary" href="/Ext/application/{{model.Id}}/skills/training/view/{{process.ServiceCategoryId}}/{{program.Id}}">Edit component</a>
+        </div>
+
+        @Html.Partial("_SkillTrainingProgramProviderView")
+    </div>
+</div>
+
+

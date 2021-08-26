@@ -1,0 +1,41 @@
+﻿@model CJG.Web.External.Areas.Int.Models.DebugUserViewModel
+@{
+    ViewBag.Title = "Debug";
+}
+
+<table>
+    
+
+    @if (@Model == null)
+    {
+        <tr><td colspan="2">No User data found.</td></tr>
+    }
+    else
+    {
+        <tr>
+            <td colspan="2">
+                <h2>SiteMinder</h2>
+                <p>The following values are provided by SiteMinder, or the SiteMinder Simulator on developer workstations.</p>
+            </td>
+        </tr>
+        <tr>
+            <th>Field</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td>@CJG.Application.Services.Constants.SiteMinder_UserGuid_ServerVariableName</td>
+            <td>@Model.SiteMinderInfo.CurrentUserGuid</td>
+        </tr>
+        <tr>
+            <td>@CJG.Application.Services.Constants.SiteMinder_UserType_ServerVariableName</td>
+            <td>@Model.SiteMinderInfo.CurrentUserType</td>
+        </tr>
+        <tr><td colspan="2">
+            <h3>User</h3></td></tr>
+        <tr><th>Field</th><th>Value</th></tr>
+        <tr><td>FirstName</td><td>@Model.InternalUser.FirstName</td></tr>
+        <tr><td>LastName</td><td>@Model.InternalUser.LastName</td></tr>
+        <tr><td>EmailAddress</td><td>@Model.InternalUser.Email</td></tr>
+        <tr><td>PhoneNumber</td><td>@Model.InternalUser.PhoneNumber</td></tr>
+    }
+</table>

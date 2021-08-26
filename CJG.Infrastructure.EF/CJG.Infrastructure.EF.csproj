@@ -1,0 +1,1324 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SSDTUnitTestPath Condition="'$(SSDTUnitTestPath)' == ''">$(VsInstallRoot)\Common7\IDE\Extensions\Microsoft\SQLDB</SSDTUnitTestPath>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup>
+    <SSDTPath Condition="'$(SSDTPath)' == ''">$(VsInstallRoot)\Common7\IDE\Extensions\Microsoft\SQLDB\DAC\130</SSDTPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E70B0BC2-2EE1-4E82-8093-8A0088C9BF33}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CJG.Infrastructure.EF</RootNamespace>
+    <AssemblyName>CJG.Infrastructure.EF</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;Release</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Support|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Support\</OutputPath>
+    <DefineConstants>TRACE;Support</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TEST|AnyCPU'">
+    <OutputPath>bin\TEST\</OutputPath>
+    <DefineConstants>TRACE;TEST</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'QA|AnyCPU'">
+    <OutputPath>bin\QA\</OutputPath>
+    <DefineConstants>TRACE;QA</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Training|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Training\</OutputPath>
+    <DefineConstants>TRACE;Training</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="CJGContext.cs" />
+    <Compile Include="DataContext.cs" />
+    <Compile Include="DbContextExtensions.cs" />
+    <Compile Include="Helpers\DbMigrationExtensions.cs" />
+    <Compile Include="Helpers\ExtendedDbMigration.cs" />
+    <Compile Include="Helpers\LoggerExtensions.cs" />
+    <Compile Include="Migrations\201703132248122_Initial.cs" />
+    <Compile Include="Migrations\201703132248122_Initial.Designer.cs">
+      <DependentUpon>201703132248122_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703172055154_v01.01.00.cs" />
+    <Compile Include="Migrations\201703172055154_v01.01.00.Designer.cs">
+      <DependentUpon>201703172055154_v01.01.00.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703201536110_v01.02.00.cs" />
+    <Compile Include="Migrations\201703201536110_v01.02.00.Designer.cs">
+      <DependentUpon>201703201536110_v01.02.00.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703231919465_v01.02.01.cs" />
+    <Compile Include="Migrations\201703231919465_v01.02.01.Designer.cs">
+      <DependentUpon>201703231919465_v01.02.01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201704102251099_v01.02.02.cs" />
+    <Compile Include="Migrations\201704102251099_v01.02.02.Designer.cs">
+      <DependentUpon>201704102251099_v01.02.02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201704272131507_v01.02.03.cs" />
+    <Compile Include="Migrations\201704272131507_v01.02.03.Designer.cs">
+      <DependentUpon>201704272131507_v01.02.03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705292045227_v01.02.04.cs" />
+    <Compile Include="Migrations\201705292045227_v01.02.04.Designer.cs">
+      <DependentUpon>201705292045227_v01.02.04.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706011614361_v01.03.00.cs" />
+    <Compile Include="Migrations\201706011614361_v01.03.00.Designer.cs">
+      <DependentUpon>201706011614361_v01.03.00.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706261619395_v01.04.00.cs" />
+    <Compile Include="Migrations\201706261619395_v01.04.00.Designer.cs">
+      <DependentUpon>201706261619395_v01.04.00.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201708101738509_v01.05.00.cs" />
+    <Compile Include="Migrations\201708101738509_v01.05.00.Designer.cs">
+      <DependentUpon>201708101738509_v01.05.00.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201708171904187_v01.05.01.cs" />
+    <Compile Include="Migrations\201708171904187_v01.05.01.Designer.cs">
+      <DependentUpon>201708171904187_v01.05.01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710040614163_v01.05.02.cs" />
+    <Compile Include="Migrations\201710040614163_v01.05.02.Designer.cs">
+      <DependentUpon>201710040614163_v01.05.02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201710122249057_v01.05.03.cs" />
+    <Compile Include="Migrations\201710122249057_v01.05.03.Designer.cs">
+      <DependentUpon>201710122249057_v01.05.03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802072049082_v01.06.00.cs" />
+    <Compile Include="Migrations\201802072049082_v01.06.00.Designer.cs">
+      <DependentUpon>201802072049082_v01.06.00.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803142038089_v01.07.00.cs" />
+    <Compile Include="Migrations\201803142038089_v01.07.00.Designer.cs">
+      <DependentUpon>201803142038089_v01.07.00.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804051636194_v01.07.01.cs" />
+    <Compile Include="Migrations\201804051636194_v01.07.01.Designer.cs">
+      <DependentUpon>201804051636194_v01.07.01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804181928101_v01.07.02.cs" />
+    <Compile Include="Migrations\201804181928101_v01.07.02.Designer.cs">
+      <DependentUpon>201804181928101_v01.07.02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201805141644106_v01.08.00.cs" />
+    <Compile Include="Migrations\201805141644106_v01.08.00.Designer.cs">
+      <DependentUpon>201805141644106_v01.08.00.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201806201506542_v01.08.01.cs" />
+    <Compile Include="Migrations\201806201506542_v01.08.01.Designer.cs">
+      <DependentUpon>201806201506542_v01.08.01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201808032126260_v01.08.02.cs" />
+    <Compile Include="Migrations\201808032126260_v01.08.02.Designer.cs">
+      <DependentUpon>201808032126260_v01.08.02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201809171529472_v01.09.00.cs" />
+    <Compile Include="Migrations\201809171529472_v01.09.00.Designer.cs">
+      <DependentUpon>201809171529472_v01.09.00.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201809262137438_v01.09.01.cs" />
+    <Compile Include="Migrations\201809262137438_v01.09.01.Designer.cs">
+      <DependentUpon>201809262137438_v01.09.01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811061639156_v01.10.00.cs" />
+    <Compile Include="Migrations\201811061639156_v01.10.00.Designer.cs">
+      <DependentUpon>201811061639156_v01.10.00.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201812051924359_v01.10.01.cs" />
+    <Compile Include="Migrations\201812051924359_v01.10.01.Designer.cs">
+      <DependentUpon>201812051924359_v01.10.01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201901032203466_v01.11.00.cs" />
+    <Compile Include="Migrations\201901032203466_v01.11.00.Designer.cs">
+      <DependentUpon>201901032203466_v01.11.00.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902012225480_v01.11.03.cs" />
+    <Compile Include="Migrations\201902012225480_v01.11.03.Designer.cs">
+      <DependentUpon>201902012225480_v01.11.03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903141716115_v01.12.00.cs" />
+    <Compile Include="Migrations\201903141716115_v01.12.00.Designer.cs">
+      <DependentUpon>201903141716115_v01.12.00.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904042237335_v01.12.01.cs" />
+    <Compile Include="Migrations\201904042237335_v01.12.01.Designer.cs">
+      <DependentUpon>201904042237335_v01.12.01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904302338204_v01.13.00.cs" />
+    <Compile Include="Migrations\201904302338204_v01.13.00.Designer.cs">
+      <DependentUpon>201904302338204_v01.13.00.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201909170218154_v01.14.00.cs" />
+    <Compile Include="Migrations\201909170218154_v01.14.00.Designer.cs">
+      <DependentUpon>201909170218154_v01.14.00.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201910021328214_v01.14.01.cs" />
+    <Compile Include="Migrations\201910021328214_v01.14.01.Designer.cs">
+      <DependentUpon>201910021328214_v01.14.01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001062349052_v01.14.01.02.cs" />
+    <Compile Include="Migrations\202001062349052_v01.14.01.02.Designer.cs">
+      <DependentUpon>202001062349052_v01.14.01.02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\01 InsertApplicantOrganizationTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\07 InsertGrantStreams.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\08 UpdateOrganizationTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\01 InsertCommunities.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\01 UpdateDocumentTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\11 InsertNotificationType.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\12 InsertGrantProgramNotifications.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\10 InsertNotificationTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\09 RemoveInternalUsers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\13 InsertDocumentTemplateCoverLetter.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\13 InsertDocumentTemplateScheduleB.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\14 UpdateGrantProgram.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PreDeploy\Seed\01 DeleteBusinessContactRoles.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\01 InsertProgramTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\01 InsertServiceTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\02 InsertServiceCategories.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\04 InsertEligibleExpenseTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\04 InsertUserPreferences.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\03 InsertServiceLines.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\05 InsertEligibleExpenseBreakdowns.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\04 InsertServiceLineBreakdowns.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\01 InsertVulnerableGroups.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\01 InsertParticipantEmploymentStatuses.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\01 InsertUnderRepresentedPopulations.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\01 InsertAccountCodes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\07 UpdateGrantStreams.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PreDeploy\Seed\01 PaymentRequestBatches.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\01 DeleteUsers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PrePostDeploy\Seed\02 Claims.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PrePostDeploy\Seed\01 EligibleCosts.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PrePostDeploy\Seed\01 EmployerCompletionReportAnswers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PrePostDeploy\Seed\01 GrantApplications.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PrePostDeploy\Seed\01 ParticipantCompletionReportAnswers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PrePostDeploy\Seed\01 ParticipantCosts.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PrePostDeploy\Seed\01 ParticipantForms.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PrePostDeploy\Seed\01 PaymentRequests.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PrePostDeploy\Seed\01 TrainingPrograms.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PrePostDeploy\Seed\01 TrainingProviders.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PreDeploy\Seed\01 EligibleCosts.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PreDeploy\Seed\01 Claims.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PreDeploy\Seed\01 TrainingPrograms.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PreDeploy\Seed\01 ParticipantCosts.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PreDeploy\Seed\01 ParticipantForms.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PreDeploy\Seed\01 PaymentRequests.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PreDeploy\Seed\01 ParticipantCompletionReportAnswers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PreDeploy\Seed\01 EmployerCompletionReportAnswers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PreDeploy\Seed\01 GrantApplications.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PreDeploy\Seed\01 TrainingProviders.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\01 UpdateGrantStream.sql" />
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\01 UpdatePaymentRequestBatches.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\01 UpdatePaymentRequestBatchesNumber.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\04 InsertUserProgramPreferences.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PrePostDeploy\Seed\01 InsertClaimTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\02 InsertProgramConfiguration.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\03 UpdateClaims.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\03 UpdateGrantPrograms.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PrePostDeploy\Seed\01 InsertExpenseTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\06 InsertGrantProgram.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PrePostDeploy\Seed\02 EligibleExpenseTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\06 InsertProgramConfigurationEligibleExpenseTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.00\PostDeploy\Seed\01 InsertRiskClassifications.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.01\PostDeploy\Seed\01 AddCommunities1000.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.01\PostDeploy\Seed\01 UpdateESSMinProviders.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.01\PostDeploy\Seed\02 AddCommunities2000.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.01\PostDeploy\Seed\03 AddCommunities2119.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.01\PostDeploy\Seed\04 DeleteExternalUserGenevieve.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.01\PostDeploy\Seed\04 UpdateCommunitiesRowSequence.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.09.01\PostDeploy\Seed\05 UpdateESSMinProviders.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.10.01\PostDeploy\Seed\01 UpdateDocumentTemplateScheduleA.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.10.01\PostDeploy\Seed\01 UpdateDocumentTemplateScheduleB.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.10.00\PostDeploy\Seed\03 UpdateDocumentTemplateCoverLetter.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.10.00\PostDeploy\Seed\04 UpdateProvince.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.10.00\PostDeploy\Seed\01 UpdateDocumentTemplateScheduleB.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.10.00\PostDeploy\Seed\01 TrainingProgramDeliveryPartnerServices.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.10.00\PostDeploy\Seed\02 UpdateParticipantFormsIsExcludedFromClaim.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.10.00\PostDeploy\TestSeed\05 InsertUsers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.10.00\PreDeploy\Seed\01 TrainingProgramDeliveryPartnerServices.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.10.00\PostDeploy\Seed\01 InsertDocumentTemplateAUpdateGrantProgram.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.10.01\PostDeploy\TestSeed\01 InsertInternalUsers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.11.00\PostDeploy\Seed\01 NotificationTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.11.00\PostDeploy\Seed\01 GrantProgramNotfications.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.11.00\PostDeploy\Seed\01 ParticipantForms.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.11.00\PostDeploy\Seed\01 UpdateClaimsForIsFinalFlag.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.11.03\PostDeploy\Seed\01 TrainingProviders.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.11.03\PostDeploy\Seed\01 NotificationTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PostDeploy\Seed\01 DocumentTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PostDeploy\Seed\01 NotificationTypesMilestoneUpdate.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PostDeploy\Seed\01 FederalOfficialLanguages.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PostDeploy\Seed\01 ClaimParticipants.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PostDeploy\Seed\01 InternalUsers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PostDeploy\Seed\01 GrantApplications.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PostDeploy\Seed\01 NotificationTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PostDeploy\Seed\01 Users.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PostDeploy\Seed\01 MartialStatus.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PostDeploy\Seed\01 CompletionReportQuestions.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PostDeploy\Seed\01 UpdateEligibleExpenseBreakdowns.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PreDeploy\Seed\01 ClaimParticipants.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PreDeploy\Seed\01 NotificationTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PrePostDeploy\Seed\01 NotificationQueueDataMigration.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PostDeploy\Seed\02 AlterNotificationTypesAddNotNull.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PrePostDeploy\Seed\01 NotificationTriggerPrepopulateData.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PostDeploy\Seed\01 UpdateServiceLines.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PreDeploy\Seed\01 UpdateCompletionReportQuestions.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PreDeploy\Seed\01 UpdateDocumentTemplate.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PrePostDeploy\Seed\01 UpdateGrantApplications.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PrePostDeploy\Seed\01 UpdateCompletionReportGroups.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.12.00\PostDeploy\Seed\01 DocumentTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.12.00\PostDeploy\Seed\01 GrantPrograms.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.12.00\PostDeploy\Seed\01 UpdateTrainingProviderTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.12.00\PostDeploy\Seed\01 UpdateCompletionReportQuestions.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.12.00\PostDeploy\Seed\01 InsertSettings.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.12.00\PreDeploy\Seed\01 FixCollation.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.12.00\PrePostDeploy\Seed\03 NotificationScheduleQueue.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.12.00\PrePostDeploy\Seed\02 NotificationTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.12.00\PostDeploy\Seed\01 NotificationTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.12.00\PreDeploy\Seed\01 FixNotifications.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.12.00\PrePostDeploy\Seed\01 FixNotifications.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.11.03\PostDeploy\Seed\01 TrainingProviders.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.11.03\PostDeploy\Seed\01 NotificationTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.12.00\PostDeploy\Seed\02 InsertCompletionReportQuestions.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.12.00\PostDeploy\Seed\01 UpdateCompletionReportGroups.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.12.00\PrePostDeploy\Seed\01 UpdateDeliveryPartner.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.12.00\PrePostDeploy\Seed\01 UpdateDeliveryPartnerService.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.12.01\PostDeploy\Seed\01 GrantApplications.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.13.00\PostDeploy\Seed\01 ApplicationRoleClaims.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.13.00\PostDeploy\Seed\01 DocumentTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.13.00\PostDeploy\Seed\01 ServiceLines.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.13.00\PostDeploy\Seed\01 NotificationTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.00\PostDeploy\Seed\01 NotificationTypePrepopulateData.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.14.01\PostDeploy\Seed\01 Users.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Debug.config">
+      <SubType>Designer</SubType>
+      <DependentUpon>App.config</DependentUpon>
+    </None>
+    <None Include="App.QA.config">
+      <SubType>Designer</SubType>
+      <DependentUpon>App.config</DependentUpon>
+    </None>
+    <None Include="App.QA.config.template" />
+    <None Include="App.Release.config">
+      <SubType>Designer</SubType>
+      <DependentUpon>App.config</DependentUpon>
+    </None>
+    <None Include="App.Support.config">
+      <SubType>Designer</SubType>
+      <DependentUpon>App.config</DependentUpon>
+    </None>
+    <None Include="App.TEST.config">
+      <SubType>Designer</SubType>
+      <DependentUpon>App.config</DependentUpon>
+    </None>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App.Training.config">
+      <SubType>Designer</SubType>
+      <DependentUpon>App.config</DependentUpon>
+    </None>
+    <None Include="CJG.Infrastructure.EF.build.targets">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Migrations\ReadMe.md" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.2\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.2\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.6.5\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.Web.4.8.3\lib\net35\NLog.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CJG.Core.Entities\CJG.Core.Entities.csproj">
+      <Project>{3eda57e9-e3f8-44b2-a360-3d54deb6dc44}</Project>
+      <Name>CJG.Core.Entities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201703132248122_Initial.resx">
+      <DependentUpon>201703132248122_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703172055154_v01.01.00.resx">
+      <DependentUpon>201703172055154_v01.01.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703201536110_v01.02.00.resx">
+      <DependentUpon>201703201536110_v01.02.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703231919465_v01.02.01.resx">
+      <DependentUpon>201703231919465_v01.02.01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704102251099_v01.02.02.resx">
+      <DependentUpon>201704102251099_v01.02.02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704272131507_v01.02.03.resx">
+      <DependentUpon>201704272131507_v01.02.03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705292045227_v01.02.04.resx">
+      <DependentUpon>201705292045227_v01.02.04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706011614361_v01.03.00.resx">
+      <DependentUpon>201706011614361_v01.03.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706261619395_v01.04.00.resx">
+      <DependentUpon>201706261619395_v01.04.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201708101738509_v01.05.00.resx">
+      <DependentUpon>201708101738509_v01.05.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201708171904187_v01.05.01.resx">
+      <DependentUpon>201708171904187_v01.05.01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710040614163_v01.05.02.resx">
+      <DependentUpon>201710040614163_v01.05.02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710122249057_v01.05.03.resx">
+      <DependentUpon>201710122249057_v01.05.03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802072049082_v01.06.00.resx">
+      <DependentUpon>201802072049082_v01.06.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803142038089_v01.07.00.resx">
+      <DependentUpon>201803142038089_v01.07.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804051636194_v01.07.01.resx">
+      <DependentUpon>201804051636194_v01.07.01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804181928101_v01.07.02.resx">
+      <DependentUpon>201804181928101_v01.07.02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805141644106_v01.08.00.resx">
+      <DependentUpon>201805141644106_v01.08.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806201506542_v01.08.01.resx">
+      <DependentUpon>201806201506542_v01.08.01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201808032126260_v01.08.02.resx">
+      <DependentUpon>201808032126260_v01.08.02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201809171529472_v01.09.00.resx">
+      <DependentUpon>201809171529472_v01.09.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201809262137438_v01.09.01.resx">
+      <DependentUpon>201809262137438_v01.09.01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811061639156_v01.10.00.resx">
+      <DependentUpon>201811061639156_v01.10.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812051924359_v01.10.01.resx">
+      <DependentUpon>201812051924359_v01.10.01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901032203466_v01.11.00.resx">
+      <DependentUpon>201901032203466_v01.11.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902012225480_v01.11.03.resx">
+      <DependentUpon>201902012225480_v01.11.03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903141716115_v01.12.00.resx">
+      <DependentUpon>201903141716115_v01.12.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904042237335_v01.12.01.resx">
+      <DependentUpon>201904042237335_v01.12.01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904302338204_v01.13.00.resx">
+      <DependentUpon>201904302338204_v01.13.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201909170218154_v01.14.00.resx">
+      <DependentUpon>201909170218154_v01.14.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201910021328214_v01.14.01.resx">
+      <DependentUpon>201910021328214_v01.14.01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001062349052_v01.14.01.02.resx">
+      <DependentUpon>202001062349052_v01.14.01.02.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\00 FiscalYears.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\00 TrainingPeriods.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 AboriginalBands.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 ApplicantDeclarations.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 ApplicationClaims.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 ApplicationRoles.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 ApplicationTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 CanadianStatus.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 Countries.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 DeliveryMethods.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 DeliveryPartners.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 DeliveryPartnerServices.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 DocumentTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 EducationLevels.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 EIBenefits.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 EligibleExpenseTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 EmploymentStatus.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 EmploymentTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 ExpectedQualifications.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 InDemandOccupations.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 LegalStructures.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 NAICS.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 NOC.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 NoteTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 NotificationTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 NotificationTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 OrganizationTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 ParticipantConsents.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 PrioritySectors.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 RateFormats.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 Settings.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 SkillLevels.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 SkillsFocus.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 TrainingLevels.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 TrainingProviderTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 TrainingResults.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\01 UnderRepresentedGroups.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\02 ApplicationRoleClaims.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\02 Regions.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\03 InternalUsers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\04 ApplicationUsers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\Seed\05 ApplicationUserRoles.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\TestSeed\03 Streams.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\TestSeed\04 StreamObjectives.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\TestSeed\05 StreamCriterias.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\TestSeed\06 GrantStreams.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\TestSeed\07 GrantOpenings.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\TestSeed\08 GrantOpeningFinancials.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\TestSeed\09 GrantOpeningIntakes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\TestSeed\10 Addresses.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\TestSeed\11 Organizations.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\TestSeed\12 Users.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\TestSeed\13 ApplicationAddresses.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\TestSeed\15 InternalUsers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\TestSeed\16 TrainingProviderInventory.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\TestSeed\25 ApplicationUsers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PostDeploy\TestSeed\26 ApplicationUserRoles.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PreDeploy\CJG Init.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\Initial\PreDeploy\LMP_CJG Init.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.01.00\PostDeploy\Seed\01 NoteTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.01.00\PostDeploy\TestSeed\11 Organizations.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.01.00\PostDeploy\TestSeed\12 Users.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.00\PostDeploy\Seed\01 DocumentTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.01\PostDeploy\Seed\01 InternalUsers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.01\PostDeploy\Seed\01 NoteTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.02\PostDeploy\Seed\00 ClaimStates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.02\PostDeploy\Seed\00 GrantApplicationExternalStates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.02\PostDeploy\Seed\00 GrantApplicationInternalStates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.02\PostDeploy\Seed\01 InternalUsers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.02\PostDeploy\Seed\02 TrainingProviders.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.02\PostDeploy\TestSeed\01 InternalUsers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.02\PostDeploy\TestSeed\01 Organizations.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.02\PostDeploy\TestSeed\01 Users.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.02\PreDeploy\Seed\00 TrainingPrograms.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.03\PostDeploy\Seed\01 DeliveryPartners.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.03\PostDeploy\Seed\01 EligibleCosts.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.03\PostDeploy\Seed\01 NotificationTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.03\PostDeploy\Seed\01 NotificationTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.03\PostDeploy\Seed\01 ParticipantConsents.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.03\PostDeploy\Seed\01 TrainingProviderInventory.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.03\PostDeploy\Seed\02 GrantOpeningFinancials.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.03\PostDeploy\Seed\02 GrantOpeningIntakes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.03\PostDeploy\TestSeed\01 InternalUsers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.03\PostDeploy\TestSeed\01 Users.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.03\PostDeploy\TestSeed\02 BusinessContactRoles.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.03\PostDeploy\TestSeed\02 TrainingPrograms.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.04\PostDeploy\Seed\01 NoteTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.04\PostDeploy\Seed\01 RateFormats.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.04\PostDeploy\Seed\01 Streams.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.04\PostDeploy\Seed\01 TrainingProviderTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.04\PostDeploy\Seed\02 GrantApplications.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.04\PostDeploy\Seed\03 EligibleCosts.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.02.04\PostDeploy\TestSeed\01 GrantApplications.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.03.00\PostDeploy\Seed\01 NotificationTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.03.00\PostDeploy\Seed\01 ParticipantConsents.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.03.00\PostDeploy\Seed\01 Streams.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.03.00\PostDeploy\Seed\02 GrantApplications.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.03.00\PostDeploy\Seed\03 EligibleCosts.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.03.00\PostDeploy\TestSeed\01 InternalUsers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.04.00\PostDeploy\Seed\01 RateFormats.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.00\PostDeploy\Seed\01 EligibleExpenseTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.00\PostDeploy\Seed\01 GrantApplicationClaimStates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.00\PostDeploy\Seed\01 GrantApplicationExternalStates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.00\PostDeploy\Seed\01 GrantApplicationInternalStates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.00\PostDeploy\Seed\01 NotificationTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.00\PostDeploy\Seed\01 NotificationTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.00\PostDeploy\Seed\02 GrantOpeningIntakes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.00\PreDeploy\Seed\01 Claims.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.01\PostDeploy\Seed\01 ApplicationRoles.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.01\PostDeploy\Seed\01 EligibleExpenseTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.01\PostDeploy\Seed\01 NotificationTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.01\PostDeploy\Seed\01 Settings.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.01\PostDeploy\Seed\02 ApplicationRoleClaims.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.01\PostDeploy\Seed\02 EligibleCosts.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.02\PostDeploy\Seed\01 ClaimEligibleCosts.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.02\PostDeploy\Seed\01 GrantOpenings.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.02\PostDeploy\Seed\01 NotificationTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.02\PostDeploy\Seed\01 TrainingPeriods.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.02\PostDeploy\Seed\02 NotificationTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.02\PostDeploy\TestSeed\01 ApplicationUserRoles.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.03\PostDeploy\Seed\01 ApplicationRoleClaims.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.03\PostDeploy\Seed\01 ClaimEligibleCosts.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.03\PostDeploy\Seed\01 NotificationTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.05.03\PostDeploy\Seed\01 ParticipantConsents.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.06.00\PostDeploy\Seed\01 FinancialBugs.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.06.00\PostDeploy\Seed\01 GrantOpenings.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.06.00\PostDeploy\Seed\02 ApplicationRoleClaims.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.06.00\PostDeploy\Seed\02 GrantOpeningIntakes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.06.00\PostDeploy\Seed\02 UpdateNotes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.06.00\PostDeploy\Seed\03 GrantOpeningFinancials.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.06.00\PostDeploy\Seed\03 TrainingPeriods.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.06.00\PostDeploy\Seed\04 GrantApplicationInternalStates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.06.00\PostDeploy\Seed\05 GrantApplicationExternalStates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.07.00\PostDeploy\Seed\01 ClaimTruncationFix.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.07.00\PostDeploy\Seed\01 CompletionReportGroups.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.07.00\PostDeploy\Seed\01 CompletionReportOptions.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.07.00\PostDeploy\Seed\01 CompletionReportQuestions.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.07.00\PostDeploy\Seed\01 CompletionReports.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.07.00\PostDeploy\Seed\01 InDemandOccupations.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.07.00\PostDeploy\Seed\01 RateFormats.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.07.00\PostDeploy\Seed\01 SkillFocus.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.07.00\PostDeploy\Seed\02 CompletionReportQuestions.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.07.00\PostDeploy\Seed\03 FiscalYears.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.07.00\PostDeploy\Seed\03 GrantOpeningFinancials.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.07.00\PostDeploy\Seed\04 TrainingPeriods.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.07.01\PostDeploy\Seed\01 GrantStreams.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.07.02\PostDeploy\Seed\01 ClaimEligibleCosts.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.00\PostDeploy\Seed\01 ParticipantsWithoutCosts.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.00\PostDeploy\Seed\01 RestoreStreamAndRelatedInformation.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.00\PostDeploy\Seed\01 UpdateNotificationTemplate.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.00\PostDeploy\Seed\02 AccountCodes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.00\PostDeploy\Seed\02 UpdateDocumentTemplate.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.00\PostDeploy\Seed\03 GrantPrograms.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.00\PostDeploy\Seed\04 GrantStreams.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.00\PostDeploy\Seed\05 NotificationTypes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.00\PreDeploy\Seed\01 GrantStreams.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.00\PreDeploy\Seed\02 BackupStreamAndRelatedInformation.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.00\PreDeploy\Seed\03 PopulateProgramDocumentTemplate.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.00\PreDeploy\Seed\04 PopulateNotificationTemplates.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.02\PostDeploy\Seed\01 UpdateNotificationType.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.01\PostDeploy\Seed\01 UpdateNotificationTemplate.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.01\PostDeploy\Seed\02 InsertDocumentTemplate.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.01\PostDeploy\Seed\02 UpdateDocumentTemplate.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.01\PostDeploy\Seed\03 UpdateCompletionReportQuestions.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.01\PostDeploy\Seed\04 RestoreProgramInformation.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.01\PostDeploy\Seed\05 UpdateNOC.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.01\PostDeploy\Seed\06 UpdateClaimEligibleCost.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.01\PreDeploy\Seed\01 BackupProgramInformation.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\V01.08.02\PostDeploy\Seed\02 UpdateClaimToImcomplete.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\V01.08.02\PostDeploy\Seed\01 DeletePaymentRequest.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.08.02\PreDeploy\Seed\01 UpdateNOC.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Scripts\ClearObjects.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Migrations\v01.09.01\PreDeploy\Seed\" />
+    <Folder Include="Migrations\v01.10.01\PreDeploy\Seed\" />
+    <Folder Include="Migrations\v01.11.00\PreDeploy\Seed\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="CJG.Infrastructure.EF.build.targets" />
+  <PropertyGroup>
+    <SsdtUnitTestVersion>3.1</SsdtUnitTestVersion>
+  </PropertyGroup>
+  <Import Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.Sql.UnitTesting.targets" Condition="$(VisualStudioVersion) != '15.0' And '$(SQLDBExtensionsRefPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.Sql.UnitTesting.targets" Condition="$(VisualStudioVersion) != '15.0' And '$(SQLDBExtensionsRefPath)' == ''" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

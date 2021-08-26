@@ -1,0 +1,114 @@
+﻿<h2 class="display-inline-block">Claim Assessment Summary</h2>
+
+<div ng-if="alert.message" class="alert alert--default" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+<div class="claim-assessment-summary form form--readonly">
+    <div class="block--row-group">
+        <div class="form__group">
+            <div class="form__label">Claim Number:</div>
+            <div class="form__control">{{claim.ClaimNumber}}</div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Assigned Assessor:</div>
+            <div class="form__control">
+                <div>{{claim.Assessor ? (claim.Assessor.FirstName + " " + claim.Assessor.LastName) : "Unassigned"}}</div>
+                <div class="control-wrapper selectmenu">
+                    <select ng-model="claim.AssessorId"
+                            ng-options="item.Id as item.FirstName + ' ' + item.LastName for item in assessors | filterExclusion:{Id: [claim.Assessor.Id]}"></select>
+                </div>
+                <button class="btn btn--primary" ng-disabled="!claim.CanReassign" ng-click="reassign()">Reassign</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="block--row-group">
+        <div class="form__group">
+            <div class="form__label">File Status:</div>
+            <div class="form__control">{{claim.ApplicationInternalStatus}}</div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Claim Submitted:</div>
+            <div class="form__control">{{toPST(claim.DateSubmitted)}}</div>
+        </div>
+    </div>
+
+    <div class="block--row-group">
+        <div class="form__group">
+            <div class="form__label">Reimbursement:</div>
+            <div class="form__control">
+                <span class="total-assessed-value-wrapper">
+                    Assessed: <span class="total-assessed-value">{{claim.TotalAssessedReimbursement | currency : '$':2}}</span>
+                </span><br />
+                Claimed: {{claim.TotalClaimReimbursement | currency : '$':2}}
+            </div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Claim Status:</div>
+            <div class="form__control">{{claim.ClaimStatus}}</div>
+        </div>
+    </div>
+
+    <div class="block--row-group">
+        <div class="form__group">
+            <div class="form__label">Grant Opening:</div>
+            <div class="form__control">
+                {{claim.GrantStream}} <br>
+                {{toPST(claim.StartDate)}} to  {{toPST(claim.EndDate)}}
+            </div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Applicant:</div>
+            <div class="form__control">
+                {{claim.ApplicantName}}<br/>
+                {{claim.OrganizationLegalName}}
+            </div>
+        </div>
+    </div>
+
+    <div class="block--row-group" ng-if="claim.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+        <div class="form__group">
+            <div class="form__label">Training Provider:</div>
+            <div class="form__control">{{claim.TrainingProvider}}</div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Delivery Partner:</div>
+            <div class="form__control">{{claim.DeliveryPartner}}</div>
+        </div>
+    </div>
+</div>
+
+<div class="block--textarea-group clearfix margin-bottom">
+    <div class="form__group last-item">
+        <div class="form__label">Eligibility Assessment Notes to File:</div>
+        <div class="form__control">
+            <textarea ng-model="claim.EligibilityAssessmentNotes" ng-disabled="claim.CanEdit == false" maxlength="2000"></textarea>
+            <span class="pull-right">{{2000 - claim.EligibilityAssessmentNotes.length}} chars left</span>
+        </div>
+    </div>
+</div>
+
+<div class="block--textarea-group clearfix margin-bottom">
+    <div class="form__group last-item">
+        <div class="form__label">Reimbursement Assessment Notes to File:</div>
+        <div class="form__control">
+            <textarea ng-model="claim.ReimbursementAssessmentNotes" ng-disabled="!claim.CanEdit" maxlength="2000"></textarea>
+            <span class="pull-right">{{2000 - claim.ReimbursementAssessmentNotes.length}} chars left</span>
+        </div>
+    </div>
+</div>
+
+<div class="block--textarea-group clearfix margin-bottom block--textarea-group__applicant-explanation">
+    <div class="form__group last-item">
+        <div class="form__label">
+            Assessment Explanation to Applicant:
+            <abbr title="Required">*</abbr>
+        </div>
+        <div class="form__control">
+            <p class="label--required-reason">An explanation to applicant is required for claim approval, denial, and return to applicant actions</p>
+            <textarea ng-model="claim.ClaimAssessmentNotes" ng-disabled="!claim.CanEdit" maxlength="2000"></textarea>
+            <span class="pull-right ">{{2000 - claim.ClaimAssessmentNotes.length}} chars left</span>
+            <div class="clearfix"></div>
+            <a class="btn btn--primary btn--save-claim-notes pull-right margin-top" ng-click="saveNotes()" ng-if="claim.CanEdit">Save Notes</a>
+        </div>
+    </div>
+</div>

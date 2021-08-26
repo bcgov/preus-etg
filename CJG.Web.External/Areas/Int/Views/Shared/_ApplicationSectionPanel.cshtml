@@ -1,0 +1,53 @@
+﻿@model CJG.Web.External.Areas.Int.Models.ApplicationSectionModel
+
+<li @Html.Raw(Model.PanelAttributes)>
+    <span class="panel-section-item">
+        <span class="panel-section-title"
+              ng-click="toggleComponent('@(Model.SectionName)', '@(Model.LoadUrl)', '@(Model.SaveUrl)', '@(Model.LoadMethod)', '@(Model.SaveMethod)', '@(Model.ShowCallback)', '@(Model.PresaveAction)', '@(Model.OverrideSaveAction)', '@(Model.CancelCallback)')">
+            @Html.Raw(Model.Title)
+        </span>
+        <span class="panel-section-buttons">
+            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            @if (Model.AdditionalButtons != null)
+            {
+                @Html.Raw(Model.AdditionalButtons)
+            }
+            @if (Model.OverrideButtons == null)
+            {
+                <span @Html.Raw(Model.ButtonAttributes)>
+                    <button class="btn btn--empty"
+                            ng-if="!sections.Editing@(Model.SectionName)"
+                            ng-click="editSection('@(Model.SectionName)', '@(Model.LoadUrl)', '@(Model.SaveUrl)', '@(Model.LoadMethod)', '@(Model.SaveMethod)', '@(Model.EditCallback)', '@(Model.PresaveAction)', '@(Model.OverrideSaveAction)', '@(Model.CancelCallback)')">
+                        Edit
+                    </button>
+                    <button class="btn btn--empty"
+                            ng-if="sections.Editing@(Model.SectionName)"
+                            ng-click="cancelSection()">
+                        Cancel
+                    </button>
+                    @if (Model.AllowSaveButton)
+                    {
+                        <button class="btn btn--empty"
+                                ng-if="sections.Editing@(Model.SectionName)"
+                                ng-click="saveSection('@(Model.SaveCallback)', '@(Model.PresaveAction)')">
+                            Save
+                        </button>
+                    }
+                </span>
+            }
+            else
+            {
+                @Html.Raw(Model.OverrideButtons)
+            }
+            <span class="small"
+                  ng-class="sections.Showing@(Model.SectionName) ? 'up-arrow': 'down-arrow'"
+                  ng-click="toggleComponent('@(Model.SectionName)', '@(Model.LoadUrl)', '@(Model.SaveUrl)', '@(Model.LoadMethod)', '@(Model.SaveMethod)', '@(Model.ShowCallback)', '@(Model.PresaveAction)', '@(Model.OverrideSaveAction)', '@(Model.CancelCallback)')"></span>
+        </span>
+    </span>
+    @if (Model.PartialView != null)
+    {
+        <div class="panel-section-content" ng-show="sections.Showing@(Model.SectionName)">
+            @Html.Partial(Model.PartialView, Model.PartialViewModel)
+        </div>
+    }
+</li>

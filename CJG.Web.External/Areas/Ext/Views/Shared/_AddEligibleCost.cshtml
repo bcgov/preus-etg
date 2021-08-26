@@ -1,0 +1,77 @@
+﻿@model CJG.Web.External.Areas.Int.Models.EligibleCostsListViewModel
+@{
+    var blnExternal = ViewContext.RouteData.DataTokens["area"].ToString().ToLower().Contains("ext");
+}
+
+<div id="ExpensePopup" class="js-expenses--add-edit block--expense-addition">
+    <button class="btn btn--secondary btn--add-expense is-hidden"
+            @{ if (Model.Participants <= 0 || Model.Participants == null) { @: disabled="disabled"
+            } }>
+        Add new expense type
+    </button>
+
+    <div class="form well is-hidden">
+        <h2>Add or Edit New Expense</h2>
+
+        <div class="alert alert--warning js-participant-mismatch-modal is-hidden">
+            <p>
+                <b>The number of participants for this expense appears to exceed the total number of participants you have specified.</b>
+            </p>
+            <p>[Need messaging for rule where warning may appear additionally if The maximum number of line items of the same type is limited to the value in "Participants".]</p>
+            <p>
+                In most cases the number of participants for each expense type should be less than or equal to the total number of participants.
+                Check the participant numbers and make sure they are correct before submitting this application.
+            </p>
+        </div>
+        <form id="AddEligibleCostForm">
+            @Html.HiddenFor(m => Model.TrainingProgramId)
+            <div class="table--horizontal-wrapper-wide">
+                <table class="table table--expenses">
+                    <thead>
+                        <tr>
+                            <th>Expense type</th>
+                            <th class="num-col">Number of Participants</th>
+                            <th class="num-col">Cost per Participant</th>
+                            <th class="num-col">Total Training Cost</th>
+                            <th class="num-col">Employer Contribution</th>
+                            <th class="num-col">Requested Government Contribution</th>
+                            @if (blnExternal)
+                            {
+                                <th style="width: 76px;"></th>
+                                <th style="width: 86px;"></th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div data-orig-val="0" class="selectmenu">
+                                    @Html.DropDownList("EligibleExpenseTypeId",
+                                                                         new SelectList(Model.EligibleExpenseTypes, "Id", "Caption"),
+                                                                         DropDownListHelper.SelectValueText, new { @class = "js-expense-type" })
+                                </div>
+
+                            </td>
+                            <td data-orig-val="0" class="num-col">@Html.TextBox("Participants", null, new { @class = "input--small js-participants", @Value = "0", maxlength = "4", placeholder = "0" })</td> @*WHAT SHOULD maxlength be set to ?*@
+                            <td data-orig-val="0" class="num-col"><span class="js-cost-per-user">0.00</span></td>
+                            <td data-orig-val="0" class="num-col">@Html.TextBox("TotalTrainingCost", null, new { @class = "input--small js-total-cost", maxlength = "14", placeholder = "0.00" })</td> @*WHAT SHOULD maxlength be set to ?*@
+                            <td data-orig-val="0" class="num-col"><span class="js-employer-contribution" data-percentage-paid="@Model.ReimbursementRate">0.00</span></td>
+                            <td data-orig-val="0" class="num-col"><span class="js-grant-request">0.00</span></td>
+                            @if (blnExternal)
+                            {
+                                <td style="width: 76px;"></td>
+                                <td style="width: 86px;"></td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+        <div class="button-group add-border">
+            <button class="btn btn--secondary js-btn-cancel">Cancel</button>
+            <button id="addExpenseButton" class="btn btn--primary btn--forward js-btn-add" disabled="disabled">Add expense</button>
+        </div>
+    </div>
+</div>
+
+@Html.HiddenFor(m => m.MaxReimbursementAmt)

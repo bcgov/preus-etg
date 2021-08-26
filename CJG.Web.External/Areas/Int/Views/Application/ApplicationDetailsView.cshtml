@@ -1,0 +1,134 @@
+﻿@using CJG.Core.Entities
+<div ng-controller="ApplicationDetails" grant-application-id="@ViewBag.GrantApplicationId" class="application">
+	<div class="application-header">
+		<div class="clearfix">
+			<p class="grant-summary__filenbr" style="text-overflow: inherit;">
+				{{grantFile.WorkflowViewModel.ApplicationWorkflowViewModel.FileNumber}} {{grantFile.WorkflowViewModel.ApplicationWorkflowViewModel.FileName}} (start date {{toPST(grantFile.DeliveryStartDate)}})
+			</p>
+			<h1>{{grantFile.WorkflowViewModel.ApplicationWorkflowViewModel.OrganizationLegalName}}</h1>
+		</div>
+
+		<div class="display-inline-block">
+			<span ng-repeat="button in grantFile.WorkflowViewModel.WorkflowButtons">
+				<span ng-switch="button.Value">
+					<button ng-switch-when="RecommendForDenial" class="btn btn--secondary modal--deny-application" ng-class="button.IsDisabled?'disabled':''"
+							value={{button.Value}} ng-click="handleWorkflow(button.Url, button.Value)">
+						{{button.Caption}}
+					</button>
+					<button ng-switch-when="WithdrawOffer" class="btn btn--secondary modal--withdraw-offer concurrency-check" ng-class="button.IsDisabled?'disabled':''"
+							value={{button.Value}} ng-click="handleWorkflow(button.Url, button.Value)">
+						{{button.Caption}}
+					</button>
+					<button ng-switch-when="CancelAgreementMinistry" class="btn btn--secondary modal--cancel-agreement concurrency-check" ng-class="button.IsDisabled?'disabled':''"
+							value={{button.Value}} ng-click="handleWorkflow(button.Url, button.Value)">
+						{{button.Caption}}
+					</button>
+					<button ng-switch-when="RecommendChangeForDenial" class="btn btn--secondary modal--recommend-to-deny-change-request" ng-class="button.IsDisabled?'disabled':''"
+							value={{button.Value}} ng-click="handleWorkflow(button.Url, button.Value)">
+						{{button.Caption}}
+					</button>
+					<button ng-switch-when="BeginAssessment" class="btn btn--secondary btn--{{button.Value}}" ng-class="(button.IsDisabled||!grantFile.WorkflowViewModel.ApplicationWorkflowViewModel.AssessorId)?'disabled':''"
+							value={{button.Value}} ng-click="handleWorkflow(button.Url)">
+						{{button.Caption}}
+					</button>
+					<button ng-switch-when="ReturnToAssessment" class="btn btn--secondary modal--return-to-assessment" ng-class="button.IsDisabled?'disabled':''"
+							value={{button.Value}} ng-click="handleWorkflow(button.Url, button.Value)">
+						{{button.Caption}}
+					</button>
+					<button ng-switch-default class="btn btn--secondary btn--{{button.Value}}" ng-class="button.IsDisabled?'disabled':''"
+							value={{button.Value}} ng-click="handleWorkflow(button.Url)">
+						{{button.Caption}}
+					</button>
+				</span>
+			</span>
+		</div>
+		<div ng-if="grantFile.ShowAssessors && assessors" class="display-inline-block">
+			<div class="selectmenu">
+				<select class="k-valid" ng-model="grantFile.WorkflowViewModel.ApplicationWorkflowViewModel.AssessorId" ng-options="item.Id as (item.LastName + ', ' + item.FirstName) for item in assessors">
+					<option value=""></option>
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<div class="application-body">
+		<div ng-if="grantFile.RequiresTrainingProviderValidation" class="notice notice--icon">
+			<p>The training provider must be validated before the grant file is recommended for approval or for denial.</p>
+		</div>
+		<div ng-if="alert.message" class="row row--alert">
+			<div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+		</div>
+
+		<div class="pull-right">
+			<span><button class="btn btn--empty" ng-click="toggleAllSections()">{{ allSectionsOpened() ? 'Collapse All' : 'Expand All' }}</button></span>
+		</div>
+
+		<div class="panel-section-list panel-summary-section-list">
+			@Html.Partial("~/Areas/Int/Views/ApplicationSummary/_ApplicationSummary.cshtml")
+		</div>
+		<h3 class="pull-left">Grant File</h3>
+		<ul class="panel-section-list">
+			<li>@Html.Partial("~/Areas/Int/Views/ApplicantContact/_ApplicantContact.cshtml")</li>
+			<li>@Html.Partial("~/Areas/Int/Views/Applicant/_Applicant.cshtml")</li>
+
+			<li>@Html.Partial("~/Areas/Int/Views/ApplicationAttachment/_ApplicationAttachments.cshtml")</li>
+			<li>@Html.Partial("~/Areas/Int/Views/ProgramDescription/_ProgramDescription.cshtml")</li>
+
+			<li ng-repeat-start="component in grantFile.Components" ng-switch on="component.Category">
+				@*component start*@
+				@Html.Partial("~/Areas/Int/Views/SkillsTraining/_SkillsTraining.cshtml")
+				@Html.Partial("~/Areas/Int/Views/ESS/_Services.cshtml")
+			</li>
+
+			@*ETG Training Provider*@
+			<li ng-if="grantFile.ProgramType === @((int)ProgramTypes.EmployerGrant)" ng-repeat="provider in component.Providers">
+				@*training provider*@
+				@Html.Partial("~/Areas/Int/Views/TrainingProvider/_TrainingProvider.cshtml")
+			</li>
+
+			@*ETG Training Program*@
+			<li ng-if="grantFile.ProgramType === @((int)ProgramTypes.EmployerGrant)" ng-repeat="program in component.Programs">
+				@Html.Partial("~/Areas/Int/Views/TrainingProgram/_TrainingProgram.cshtml")
+			</li>
+
+			@*WDA Skills Training*@
+			<li ng-if="grantFile.ProgramType === @((int)ProgramTypes.WDAService)" ng-repeat-start="program in component.Programs">
+				@*skills training program start*@
+				@Html.Partial("~/Areas/Int/Views/SkillsTraining/_SkillsTrainingProgram.cshtml")
+			</li>
+			<li ng-show="parent.showing['SkillsTrainingProgram-' + program.Id]" ng-repeat="provider in program.Providers">
+				@*training provider*@
+				@Html.Partial("~/Areas/Int/Views/SkillsTraining/_SkillsTrainingProvider.cshtml")
+			</li>
+			<li ng-repeat-end></li>@*skills training program end*@
+
+			@*WDA Service Provider*@
+			<li ng-if="grantFile.ProgramType === @((int)ProgramTypes.WDAService)" ng-repeat="provider in component.Providers">
+				@Html.Partial("~/Areas/Int/Views/ESS/_Provider.cshtml")
+			</li>
+
+			<li ng-repeat-end></li>@*component end*@
+
+			<li>@Html.Partial("~/Areas/Int/Views/TrainingCost/_TrainingCost.cshtml")</li>
+			<li>@Html.Partial("~/Areas/Int/Views/Participant/_Participants.cshtml")</li>
+			<li>@Html.Partial("~/Areas/Int/Views/Claim/_Claims.cshtml")</li>
+			<li>@Html.Partial("~/Areas/Int/Views/CompletionReport/_CompletionReport.cshtml")</li>
+			<li>@Html.Partial("~/Areas/Int/Views/Application/_ApplicationNotifications.cshtml")</li>
+		</ul>
+	</div>
+
+
+	<div class="application-sidebar">
+		@Html.Partial("~/Areas/Int/Views/Note/_Notes.cshtml")
+	</div>
+</div>
+
+<style>
+	input:disabled {
+		pointer-events: none;
+		background: inherit;
+		border: none;
+		color: #000;
+		-webkit-text-fill-color: #000;
+	}
+</style>

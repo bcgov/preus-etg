@@ -1,0 +1,287 @@
+﻿@using CJG.Web.External.Areas.Ext.Controllers
+@{
+    ViewBag.Title = "Organization Profile";
+}
+
+<div class="row">
+    @Html.ActionLink("Home", nameof(HomeController.Index), typeof(HomeController), null, new { @class = "link--back" })
+</div>
+
+<div class="row">
+    <div ng-controller="OrganizationProfile" class="main">
+        <div class="form-section">
+            <div>
+                <h2 class="header__title">
+                    <span ng-if="model.IsOrganizationProfileAdministrator">{{(model.CreateOrganizationProfile ? "Enter" : "Edit")}}</span>
+                    Organization Profile
+                </h2>
+            </div>
+        </div>
+        <div class="details-block">
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+            <div>
+                <div class="notice notice--icon" ng-if="model.CreateOrganizationProfile">
+                    <p>
+                        <b>Only one person from your organization may create and maintain your organization profile.</b>
+                    </p>
+                    <p>
+                        If you are not authorized to do this for your organization then please skip this
+                        step and request the authorized person to login and do this.
+                    </p>
+                    <p>
+                        Members of your organization will not be able to submit grant applications until
+                        your organization profile has been created.
+                    </p>
+                </div>
+                <div class="notice notice--icon" ng-if="!model.CreateOrganizationProfile && model.IsOrganizationProfileAdministrator">
+                    <p>
+                        You are the only person who can maintain the organization
+                        profile for your organization. The profile is included in all grant
+                        applications from your organization.
+                    </p>
+                    <p>
+                        You may edit the organization profile below.
+                        Make sure you click Save organization profile at
+                        the bottom of this form to save your changes.
+                    </p>
+                    <p>
+                        If you need to change the person who can maintain
+                        your organization profile then please use the link
+                        shown in the footer below to contact us.
+                    </p>
+                </div>
+                <div class="notice notice--icon" ng-if="!model.IsOrganizationProfileAdministrator">
+                    <p>
+                        The organization profile below will be included in grant applications submitted by you.
+                    </p>
+                    <p>
+                        Your organization is responsible for ensuring that your profile is accurate. Only one
+                        member of your organization may create and maintain it. Your organization profile is
+                        maintained by {{model.AdminUserName}} (<a href="mailto:{{model.AdminUserEmailAddress}}" data-email="maintainer">{{model.AdminUserEmailAddress}}</a>)
+                    </p>
+                </div>
+
+                <p>
+                    Your business legal and operating names are provided by BCeID and are shown
+                    below. Please check that this information is correct.
+                </p>
+                <p>
+                    If the information is not correct, please visit
+                    <a href="https://www.bceid.ca" target="_blank">www.BCeID.ca</a>
+                    to update it.
+                </p>
+                <div class="form--2-col well well--dark">
+                    <dl class="info-list">
+                        <dt>Organization legal name</dt>
+                        <dd>{{model.LegalName}}</dd>
+                        <dt>Organization operating name</dt>
+                        <dd>{{model.DoingBusinessAs}}</dd>
+                    </dl>
+                </div>
+
+                <h3 class="subheader--body">Organization Profile</h3>
+                <p class="text--small text--uppercase" ng-if="model.IsOrganizationProfileAdministrator">* Information must be provided</p>
+
+                @*<div class="form__group">
+                    <label class="form__label">Doing Business As</label>
+                    <div class="form__control">
+                        <input type="text" class="input--medium" ng-model="model.DoingBusinessAs" maxlength="50" ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                    </div>
+                </div>*@
+
+                <div class="form__group form__group--radio-inline">
+                    <label class="form__label">Organization type <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <div class="form-item" ng-repeat="type in organizationTypes" ng-if="model.IsOrganizationProfileAdministrator">
+                            <input id="option-{{type.Key}}" type="radio" class="k-valid"
+                                   name="OrganizationTypeId"
+                                   ng-value="type.Key"
+                                   ng-model="model.OrganizationTypeId" />
+                            <label for="option-{{type.Key}}">{{type.Value}}</label>
+                        </div>
+                        <text ng-if="!model.IsOrganizationProfileAdministrator">
+                            {{getOrganizationType()}}
+                        </text>
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <div class="form__label">Legal structure <abbr title="Required">*</abbr></div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <div class="wrapper--dropdown selectmenu input--medium" ng-validation="errors.LegalStructureId">
+                                <select ng-model="model.LegalStructureId" ng-options="item.Key as item.Value for item in legalStructures" class="input--medium" ng-editing="model.IsOrganizationProfileAdministrator">
+                                    <option value="">{{'&lt; Select Value &gt;'}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Year established <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <input type="text" class="input--small" ng-model="model.YearEstablished" maxlength="4" ng-number ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Number of employees worldwide (including BC) <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <input type="text" class="input--small" ng-model="model.NumberOfEmployeesWorldwide" ng-number ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Number of employees in BC <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <input type="text" class="input--small" ng-model="model.NumberOfEmployeesInBC" ng-number ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Money spent each year on average for training <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <input type="text" class="input--medium" ng-model="model.AnnualTrainingBudget" ng-currency ng-decimal='0' ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Number of employees trained on average each year <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <input type="text" class="input--small" ng-model="model.AnnualEmployeesTrained" ng-number ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">North American Industry Classification System (<b>NAICS</b>) code for your primary sector <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <div class="control-wrapper input--full"
+                             ng-class="{'selectmenu selectmenu-multiline' : model.IsOrganizationProfileAdministrator}"
+                             ng-validation="errors.Naics1Id">
+                            <select class="form-control input--full"
+                                    ng-editing="model.IsOrganizationProfileAdministrator"
+                                    ng-model="model.Naics1Id"
+                                    ng-options="item.Key as item.Value for item in naics1"
+                                    ng-change="changeNAICS(2)">
+                                <option value="">&lt; Select Value &gt;</option>
+                            </select>
+                        </div>
+                        <div class="control-wrapper margin-top-10 input--full"
+                             ng-class="{'selectmenu selectmenu-multiline' : model.IsOrganizationProfileAdministrator}"
+                             ng-validation="errors.Naics2Id"
+                             ng-if="model.Naics1Id">
+                            <select class="form-control input--full"
+                                    ng-editing="model.IsOrganizationProfileAdministrator"
+                                    ng-model="model.Naics2Id"
+                                    ng-options="item.Key as item.Value for item in naics2"
+                                    ng-change="changeNAICS(3)">
+                                <option value="">&lt; Select Value &gt;</option>
+                            </select>
+                        </div>
+                        <div class="control-wrapper margin-top-10 input--full"
+                             ng-class="{'selectmenu selectmenu-multiline' : model.IsOrganizationProfileAdministrator}"
+                             ng-validation="errors.Naics3Id"
+                             ng-if="model.Naics2Id">
+                            <select class="form-control input--full"
+                                    ng-editing="model.IsOrganizationProfileAdministrator"
+                                    ng-model="model.Naics3Id"
+                                    ng-options="item.Key as item.Value for item in naics3"
+                                    ng-change="changeNAICS(4)">
+                                <option value="">&lt; Select Value &gt;</option>
+                            </select>
+                        </div>
+                        <div class="control-wrapper margin-top-10 input--full"
+                             ng-class="{'selectmenu selectmenu-multiline' : model.IsOrganizationProfileAdministrator}"
+                             ng-validation="errors.Naics4Id"
+                             ng-if="model.Naics3Id">
+                            <select class="form-control input--full"
+                                    ng-editing="model.IsOrganizationProfileAdministrator"
+                                    ng-model="model.Naics4Id"
+                                    ng-options="item.Key as item.Value for item in naics4"
+                                    ng-change="changeNAICS(5)">
+                                <option value="">&lt; Select Value &gt;</option>
+                            </select>
+                        </div>
+                        <div class="control-wrapper margin-top-10 input--full"
+                             ng-class="{'selectmenu selectmenu-multiline' : model.IsOrganizationProfileAdministrator}"
+                             ng-validation="errors.Naics5Id"
+                             ng-if="model.Naics4Id">
+                            <select class="form-control input--full"
+                                    ng-editing="model.IsOrganizationProfileAdministrator"
+                                    ng-model="model.Naics5Id"
+                                    ng-options="item.Key as item.Value for item in naics5">
+                                <option value="">&lt; Select Value &gt;</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="subheader--body">Head Office Mailing Address</h3>
+
+                <div class="form__group">
+                    <label class="form__label">Address line 1 <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <input type="text" class="input--medium" ng-model="model.HeadOfficeAddress.AddressLine1" ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Address line 2</label>
+                    <div class="form__control">
+                        <input type="text" class="input--medium" ng-model="model.HeadOfficeAddress.AddressLine2" ng-editing="model.IsOrganizationProfileAdministrator" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">City <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <input type="text" class="input--medium" ng-model="model.HeadOfficeAddress.City" ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <div class="form__label">Province <abbr title="Required">*</abbr></div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <div class="wrapper--dropdown selectmenu input--medium">
+                                <select class="input--medium"
+                                        ng-model="model.HeadOfficeAddress.RegionId"
+                                        ng-options="item.Key as item.Value for item in provinces"
+                                        ng-editing="model.IsOrganizationProfileAdministrator"
+                                        ng-validation></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Postal Code <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <input type="text" class="input--small" ng-model="model.HeadOfficeAddress.PostalCode" maxlength="6" ng-postal ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                    </div>
+                </div>
+
+                <div>
+                    <a class="btn btn--primary"
+                       ng-if="!model.IsOrganizationProfileAdministrator"
+                       ng-href="{{model.BackURL}}">
+                        Back
+                    </a>
+                    <a class="btn btn--secondary"
+                       ng-if="model.IsOrganizationProfileAdministrator"
+                       ng-href="{{model.BackURL}}">
+                        {{(model.CreateOrganizationProfile ? "Skip this step" : "Cancel")}}
+                    </a>
+                    <button class="btn btn--primary pull-right"
+                            ng-if="model.IsOrganizationProfileAdministrator"
+                            ng-click="save()">
+                        {{(model.CreateOrganizationProfile ? "Create" : "Save")}} Organization Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

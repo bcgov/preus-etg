@@ -1,0 +1,72 @@
+﻿@using CJG.Web.External.Areas.Ext.Controllers
+@using CJG.Core.Entities
+@model CJG.Web.External.Areas.Ext.Models.ApplicationStartViewModel
+
+<div ng-controller="GrantSelectionView" ng-init="init()" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-grant-program-id="@ViewBag.GrantProgramId">
+    <div class="row" ng-if="isNewApplication">
+        @Html.ActionLink("Return", "Index", "Home", null, new { @class = "link--back" })
+    </div>
+    <div class="row" ng-if="!isNewApplication">
+        @Html.ActionLink("Return",
+            nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController.ApplicationOverviewView),
+            nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController).Replace("Controller", ""),
+            new { grantApplicationId = @ViewBag.GrantApplicationId }, new { @class = "link--back" })
+    </div>
+    <div class="row" ng-if="showApplicationForm">
+        <div class="main" role="main">
+            <div ng-show="isNewApplication">
+                <h1 class="header--large">Start <span class="text--lowercase">a</span> new application</h1>
+                <div class="notice notice--icon">
+                    <p><strong>Before you start:</strong> As a creator of a grant application, you must have the authority in your organization to enter into a grant agreement with the Ministry.</p>
+                    <p>You will be required to make such a declaration when submitting an application.</p>
+                    <p ng-if="model.ProgramType === @((int)ProgramTypes.EmployerGrant)">
+                        Note: If you intend to participate in training under this grant application but you are not an owner or co-owner of the business then you may not submit the application.
+                        Have the owner or co-owner of the business submit the application.
+                    </p>
+                </div>
+            </div>
+            <div ng-show="!isNewApplication">
+                <h1 class="header--large">Edit Grant Selection</h1>
+            </div>
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            <div>
+                @Html.Partial("_GrantApplicationStreams")
+            </div>
+
+            <div ng-show="isNewApplication" class="button-group">
+                @Html.Button("Cancel",
+                            new
+                                 {
+                                     @class = "btn btn--secondary",
+                                @onclick = "window.location='" +
+                                    @Url.Action(nameof(HomeController.Index),
+                                                nameof(HomeController).Replace("Controller", ""),
+                                                null) + "'"
+                                 })
+                <button type="button" class="btn btn--primary btn--forward" ng-click="save()">Continue</button>
+            </div>
+            <div ng-show="!isNewApplication" class="button-group">
+                @Html.Button("Cancel",
+                            new
+                                 {
+                                     @class = "btn btn--secondary",
+                                @onclick = "window.location='" +
+                                @Url.Action(nameof(ApplicationController.ApplicationOverviewView),
+                                            nameof(ApplicationController).Replace("Controller", ""),
+                                            new { grantApplicationId = @ViewBag.GrantApplicationId }) + "'"
+                                 })
+                <button type="button" class="btn btn--primary btn--forward" ng-click="save()">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row row--alert" ng-if="showApplicationForm === false">
+        <div class="alert alert--default alert--warning" role="alert">
+            There are no grant opportunities at this time.
+        </div>
+    </div>
+</div>

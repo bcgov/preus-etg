@@ -1,0 +1,82 @@
+﻿<div ng-controller="ReconciliationReports">
+    <div ng-if="alert.message" class="row row--alert">
+        <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+    </div>
+
+    <h2>Payment Reconciliation</h2>
+    <p>
+        Select the CAS report file, then run the reconciliation process.
+    </p>
+
+    <div class="form__section">
+        <div class="form__group">
+            <div class="form__label">CAS Report File:</div>
+            <div class="form__control">
+                <div class="control-wrapper">
+                    <input type="file" name="AsyncDocumentsFiles" id="payment-reconciliation-report-file" accept=".xls,.xlsx" autocomplete="off" ng-file-selected="upload.file" class="display-none" />
+                    <input type="text" ng-model="upload.file.name" disabled class="input-half-width" />
+                    <button class="btn btn--secondary" ng-click="selectFile()">Select</button>
+                    <button class="btn btn--primary" style="margin-left: 0" ng-click="reconcile($event)" ng-disabled="!upload.file">Reconcile</button>
+                </div>
+                <div class="control-wrapper float-left" ng-show="{{false}}">
+                    <input type="checkbox" id="update-existing-report" class="check-box" checked ng-model="upload.updateExisting" />
+                    <label for="update-existing-report">Update existing report</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="header__title header--small">Past Reports</h2>
+
+    <div class="form__section">
+        <div class="form__group">
+            <div class="form-table">
+                <div class="form-table-heading">
+                    <div class="form-table-cell">
+                        <label class="action {{sortDirection('PeriodFrom')}}" ng-click="sort('PeriodFrom')">From</label>
+                    </div>
+                    <div class="form-table-cell">
+                        <label class="action {{sortDirection('PeriodTo')}}" ng-click="sort('PeriodTo')">To</label>
+                    </div>
+                    <div class="form-table-cell">
+                        <label class="action {{sortDirection('DateRun')}}" ng-click="sort('DateRun')">Date Run</label>
+                    </div>
+                    <div class="form-table-cell">
+                        <label class="action {{sortDirection('Requestor')}}" ng-click="sort('Requestor')">Requestor</label>
+                    </div>
+                    <div class="form-table-cell width-35px">
+                        <label class="action {{sortDirection('IsReconciled')}}" ng-click="sort('IsReconciled')">Reconciled</label>
+                    </div>
+                    <div class="form-table-cell">&nbsp;</div>
+                </div>
+                <div class="form-table-row" ng-repeat="report in model.Items" ng-click="clickReport($event, report)" ng-dblclick="viewReport(report)">
+                    <div class="form-table-cell vertical-align-top">{{toPST(report.PeriodFrom, 'MMM DD')}}</div>
+                    <div class="form-table-cell vertical-align-top">{{toPST(report.PeriodTo, 'MMM DD')}}</div>
+                    <div class="form-table-cell vertical-align-top">{{toPST(report.DateRun, 'YYYY-MM-DD hh:mm:ss a')}}</div>
+                    <div class="form-table-cell vertical-align-top">{{report.Requestor}}</div>
+                    <div class="form-table-cell width-35px text-center vertical-align-top" ng-class="{'red' : !report.IsReconciled}">{{report.IsReconciled ? 'Yes' : 'No'}}</div>
+                    <div class="form-table-cell pull-right">
+                        <button class="btn btn--secondary" ng-click="viewReport(report)">View</button>
+                        <button class="btn btn--secondary" ng-click="deleteReport(report, $event)" ng-if="report.IsDirector">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <span ng-show="model.Total">
+                Showing {{pager.items.first}} to {{pager.items.last}} of {{pager.items.total}} entries
+            </span>
+            <div class="button-group">
+                <div class="float-right">
+                    <button class="btn btn--secondary internal-previous" ng-disabled="!pager.enablePrevious" tabindex="0" ng-click="!pager.enablePrevious || applyFilter(pager.page - 1)">Previous</button>
+                    <button class="btn btn--secondary btn--page" tabindex="0" ng-show="pager.showFirstPage" ng-click="applyFilter(pager.showFirstPage)">{{pager.showFirstPage}}</button>
+                    <span class="ellipsis" ng-show="pager.showFirstPage">…</span>
+                    <button ng-repeat="page in pager.pages" class="btn btn--secondary btn--page" ng-class="{ 'btn--current' : pager.page === page }" tabindex="0" ng-click="applyFilter(page)" ng-disabled="pager.page === page">{{page}}</button>
+                    <span class="ellipsis" ng-show="pager.showLastPage">…</span>
+                    <button class="btn btn--secondary btn--page" tabindex="0" ng-show="pager.showLastPage" ng-click="applyFilter(pager.showLastPage)">{{pager.showLastPage}}</button>
+                    <button class="btn btn--secondary internal-next" ng-disabled="!pager.enableNext" tabindex="0" ng-click="!pager.enableNext || applyFilter(pager.page + 1)">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

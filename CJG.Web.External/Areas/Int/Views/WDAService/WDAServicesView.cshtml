@@ -1,0 +1,22 @@
+﻿<div ng-controller="WDAServicesManagementView">
+    <div class="form-section">
+        <div>
+            <h2 class="header__title">Service Descriptions</h2>
+        </div>
+
+        <div style="clear:both"></div>
+        <div class="float-left">
+            <p>Click on a service category to view or edit its service lines.&nbsp;&nbsp;Click on a service line to view or edit its types.&nbsp;&nbsp;Double check the appearance of formatted text by clicking [Test Formatted Text] before you exit.</p>
+            <p>Any active service category, service line or service line breakdown that is currently assocated to an active application will not update the associated eligible expense types.</p>
+            <p class="notice notice--icon ng-scope">Please be aware that some of the configuration options available are not implemented throughout the application (i.e. 'Allow Multiple = true', 'Auto Include = false', 'Skills Training - Completion Report = true').</p>
+        </div>
+    </div>
+    <br />
+    <div class="details-block">
+        <div class="form-section">
+            <div class="panel-section-list panel-summary-section-list">
+                @Html.Partial("_WDAServiceCategoryView")
+            </div>
+        </div>
+    </div>
+</div>

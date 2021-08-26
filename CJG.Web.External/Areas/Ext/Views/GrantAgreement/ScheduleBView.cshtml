@@ -1,0 +1,41 @@
+﻿@using CJG.Web.External.Areas.Ext.Controllers
+@model CJG.Web.External.Areas.Ext.Models.SidebarViewModel
+@{
+    ViewBag.Title = "Schedule B - Definitions and General Terms";
+}
+<div ng-controller="AgreementAcceptDocumentView" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-agreement-document="ScheduleB">
+    <div class="row">
+        @Html.ActionLink("Return", nameof(GrantAgreementController.AgreementReviewView), nameof(GrantAgreementController).Replace("Controller", ""), new { grantApplicationId = Model.GrantApplication.Id }, new { @class = "link--back" })
+    </div>
+
+    <div class="row">
+        <div class="main">
+            <div>
+                <strong>Step 3 of 3</strong>
+            </div>
+            <div>
+                <h1>@ViewBag.Title</h1>
+            </div>
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            <p ng-bind-html="model.Body"></p>
+
+            <div class="agreement-block">
+                <p class="agreement-block__title">Please confirm</p>
+                <div ng-validation="errors.Confirmation">
+                    <input type="checkbox" id="confirmation" ng-model="model.Confirmation" />
+                    <label class="checkbox" for="confirmation">I have read and understand Schedule B - Definitions and General Terms.<abbr title='Required'>*</abbr></label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <a class="btn btn--secondary" href="@Url.Action(nameof(GrantAgreementController.AgreementReviewView), nameof(GrantAgreementController).Replace("Controller", ""), new { grantApplicationId = ViewBag.GrantApplicationId })">Cancel</a>
+                <button class="pull-right btn btn--primary btn--forward" ng-disabled="!model.Confirmation" ng-click="accept()">Done</button>
+            </div>
+        </div>
+        @Html.Partial("_GrantApplicationSidebar", Model)
+    </div>
+</div>

@@ -1,0 +1,11 @@
+﻿@model CJG.Web.External.Areas.Int.Models.BCeIDViewModel
+@{
+    ViewBag.Title = "Update all BCeID accounts";
+}
+<div ng-controller="SyncBCeIDAccountsController">
+    <h1>@ViewBag.Title</h1>
+    <div ng-if="alert.message" class="row row--alert">
+        <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+    </div>
+    <a class="btn btn--primary" ng-click="sync()">Update all BCeID accounts</a>
+</div>

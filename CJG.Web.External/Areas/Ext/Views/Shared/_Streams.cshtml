@@ -1,0 +1,150 @@
+﻿@using CJG.Web.External.Helpers
+@using CJG.Core.Entities
+@model CJG.Web.External.Areas.Ext.Models.StreamViewModel
+@{
+    string strSaveStartDate = "";
+    string newId = "";
+    // If Training Program start date has been set
+    var trainingStartDate = Model.TrainingProgramStartDate.HasValue ? Model.TrainingProgramStartDate.Value.ToUnixTimeSeconds() : null;
+}
+
+@Html.HiddenFor(model => model.RowVersion)
+@Html.HiddenFor(model => model.ReimbursementRate)
+<div>
+    <h2>@Model.GrantProgramName</h2>
+
+    <input class="js-training-program-start-date" type="hidden" value="@trainingStartDate">
+
+    <p>To create an application, you must select a grant from the ones available below. Make your selection based on your training start date and the stream that match your training plan.</p>
+    <p>Click "Show description" to read the stream description.</p>
+    <p>The earliest date you may submit your application is shown for each grant selection.</p>
+
+    <div class="js-training-date-warning alert alert--warning is-hidden" role="alert">
+        <p>The training period for your grant selection does not include your current training start date. If you keep this selection, you will need to edit your training program and select new training dates.</p>
+    </div>
+
+    <div class="js-reimbursement-rate-warning alert alert--warning is-hidden" role="alert">
+        <p>The reimbursement rate for the grant opening you selected will vary the government contribution in your training cost estimates.  If you keep this selection, you will need to edit your training cost estimates to review and confirm the changes.</p>
+    </div>
+
+    <div class="list-radio-toggle--container">
+        <ul class="list-radio-toggle">
+            @foreach (var item in Model.GrantOpenings)
+            {
+                newId = "grant-stream-" + item.Id.ToString();
+                // used as data attributes on form controls, do not edit
+                int? startDate = item.TrainingPeriod.StartDate.ToUnixTimeSeconds();
+                int? endDate = item.TrainingPeriod.EndDate.ToUnixTimeSeconds();
+
+                var reimbursementRate = item.GrantStream.ReimbursementRate;
+
+                if (item.TrainingPeriod.StartDate.ToLocalMorning().ToString() != strSaveStartDate)
+                {
+                    strSaveStartDate = item.TrainingPeriod.StartDate.ToLocalMorning().ToString();
+                    <li>
+                        <h4 class="list-radio-toggle--title">
+                            For training starting between
+                            @item.TrainingPeriod.StartDate.ToLocalMorning().ToString("MMMMM d, yyyy")
+                            and
+                            @item.TrainingPeriod.EndDate.ToLocalMidnight().ToString("MMMMM d, yyyy")
+                        </h4>
+                    </li>
+                }
+
+                <li class="list-radio-toggle--item">
+                    <div class="form-item">
+                        <div class="half-width">
+                            @Html.RadioButtonFor(model => model.GrantOpeningId, item.Id, new { id = newId, data_start_date = @startDate, data_end_date = @endDate, data_reimbursement_rate = @reimbursementRate })
+                            <label class="list-radio-toggle--label-toggle" for="@newId">@item.GrantStream.Name</label>
+                        </div>
+                        <div class="half-width is-hidden-on-mobile">
+                            <label class="list-radio-toggle--label">Earliest submission:</label>
+                        </div>
+                    </div>
+
+                    <div class="read-more">
+                        <div class="half-width is-hidden-on-mobile">
+                            <button class="list-radio-toggle--btn">Show description</button>
+                        </div>
+                        <div class="half-width is-hidden-on-mobile">
+                            @item.OpeningDate.ToLocalMorning().ToString("MMMMM d, yyyy")
+                        </div>
+                        <div class="half-width is-hidden-beyond-mobile">
+                            <button class="list-radio-toggle--btn">Show description</button>
+                        </div>
+                        @{ item.GrantStream.Objective = System.Web.HttpUtility.UrlDecode(item.GrantStream.Objective); }
+                        <div class=" clear-both list-stream-radio-toggle--content">
+                            @Html.Raw(item.GrantStream.Objective)
+                        </div>
+
+                        <div class="half-width is-hidden-beyond-mobile">
+                            <label class="list-radio-toggle--label">Earliest submission:</label>
+                        </div>
+                        <div class="half-width is-hidden-beyond-mobile">
+                            @item.OpeningDate.ToLocalMorning().ToString("MMMMM d, yyyy")
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+        @Html.ValidationMessageFor(model => model.GrantOpeningId)
+    </div>
+</div>
+
+<h2>Additional questions</h2>
+
+<p class="text--small text--uppercase">* Information must be provided</p>
+
+<div class="form__group">
+    <label class="form__label" for="@Html.IdFor(model => model.PrioritySectorId)">Priority sector <abbr title="Required">*</abbr></label>
+
+    <div class="form__control">
+        <div class="selectmenu">
+            @Html.DropDownListFor(x => x.PrioritySectorId, Model.PrioritySectors.Select(x => new SelectListItem { Text = x.Value, Value = x.Key }),
+                               DropDownListHelper.SelectValueText, new { @class = "input--medium" })
+        </div>
+
+        @Html.ValidationMessageFor(model => model.PrioritySectorId)
+    </div>
+</div>
+
+<div class="form__group form__group--radio-inline">
+    <div class="form__label">
+        Has your organization applied for a @Model.GrantProgramName
+        in the <span class="nobr">past? <abbr title="Required">*</abbr></span>
+    </div>
+
+    <div>
+        <div class="form-item">
+            @Html.RadioButtonFor(model => model.AppliedForGrantBefore, true, new { id = "AppliedForGrantBeforeYes" })
+            <label for="AppliedForGrantBeforeYes">Yes</label>
+        </div>
+
+        <div class="form-item">
+            @Html.RadioButtonFor(model => model.AppliedForGrantBefore, false, new { id = "AppliedForGrantBeforeNo" })
+            <label for="AppliedForGrantBeforeNo">No</label>
+        </div>
+
+        @Html.ValidationMessageFor(model => model.AppliedForGrantBefore)
+    </div>
+</div>
+
+<div class="form__group form__group--radio-inline">
+    <div class="form__label">
+        Would your organization provide this training if the @Model.GrantProgramName was not <span class="nobr">available? <abbr title="Required">*</abbr></span>
+    </div>
+
+    <div>
+        <div class="form-item">
+            @Html.RadioButtonFor(model => model.WouldTrainWithoutGrant, true, new { id = "WouldTrainWithoutGrantYes" })
+            <label for="WouldTrainWithoutGrantYes">Yes</label>
+        </div>
+
+        <div class="form-item">
+            @Html.RadioButtonFor(model => model.WouldTrainWithoutGrant, false, new { id = "WouldTrainWithoutGrantNo" })
+            <label for="WouldTrainWithoutGrantNo">No</label>
+        </div>
+
+        @Html.ValidationMessageFor(model => model.WouldTrainWithoutGrant)
+    </div>
+</div>

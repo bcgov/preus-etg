@@ -1,0 +1,98 @@
+﻿@using CJG.Core.Entities
+@model CJG.Web.External.Areas.Ext.Models.OrganizationViewModel
+
+<div class="form--readonly">
+
+    <div class="form__group">
+        <div class="form__label">Organization legal name:</div>
+        <div class="form__control">
+            @(Model.LegalName)
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Organization type:</div>
+        <div class="form__control">
+            @if (Model.OrganizationType != null)
+            {
+                var employerTypeDescription = Model.OrganizationType.Id.ResolveEmployerTypeCode<OrganizationTypeCodes>();
+                <text>
+                @employerTypeDescription
+                </text>
+            }
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Legal structure:</div>
+        <div class="form__control">
+            @if (Model.LegalStructure != null)
+            { @(Model.LegalStructure.Caption) }
+            @if (Model.OtherLegalStructure != null)
+            {
+                <text>
+                    <br />
+                    @(Model.OtherLegalStructure)
+                </text>
+            }
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Year established:</div>
+        <div class="form__control">
+            @(Model.YearEstablished)
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Number of employees worldwide (including BC):</div>
+        <div class="form__control">
+            @(Model.NumberOfEmployeesWorldwide)
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Number of employees in BC:</div>
+        <div class="form__control">
+            @(Model.NumberOfEmployeesInBC)
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Money spent each year on average for training:</div>
+        <div class="form__control">
+            @(Model.AnnualTrainingBudget?.ToDollarCurrencyString())
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Number of employees trained on average each year:</div>
+        <div class="form__control">
+            @(Model.AnnualEmployeesTrained)
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">North American Industry Classification System (<b>NAICS</b>) code for your primary sector:</div>
+        <div class="form__control">
+            @if (Model.Naics != null)
+            { @(Model.Naics.ToString());
+            }
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Head Office Mailing Address:</div>
+        <div class="form__control">
+            @if (Model.HeadOfficeAddress == null)
+            {
+                <text>n/a</text>
+            }
+            else
+            {
+                @Html.Raw(Model.HeadOfficeAddress.ToString())
+            }
+        </div>
+    </div>
+</div>

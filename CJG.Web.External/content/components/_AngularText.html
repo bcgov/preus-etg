@@ -1,0 +1,21 @@
+﻿<span class="form__group--edit-wrapper">
+	<label class="label-wrapper" ng-if="$ctrl.label || $ctrl.ngLabel">
+		{{$ctrl.label || $ctrl.ngLabel}}
+	</label>
+	<span class="control-wrapper">
+		<input type="text"
+			   name="{{$ctrl.name}}"
+			   ng-show="$ctrl.editing()"
+			   ng-model="$ctrl.ngModel"
+			   ng-change="$ctrl.ngChange()"
+			   ng-class="{'has-error': $ctrl.getError()}"
+			   ng-required="$ctrl.ngRequired"
+			   ng-minlength="$ctrl.ngMinlength"
+			   ng-maxlength="$ctrl.ngMaxlength"
+			   ng-pattern="$ctrl.ngPattern"
+			   ng-trim="$ctrl.ngTrim"
+			   ng-disabled="$ctrl.ngDisabled" />
+		<text ng-if="!$ctrl.editing()">{{ $ctrl.ngModel }}</text>
+		<span ng-if="$ctrl.getError()" class="field-validation-error">{{$ctrl.getError()}}</span>
+	</span>
+</span>

@@ -1,0 +1,157 @@
+﻿@model CJG.Web.External.Areas.Int.Models.GrantStreamDetailsViewModel
+@using CJG.Application.Services
+@using CJG.Infrastructure.Identity
+@{
+    var editMode = (Model.GrantStream.Id != 0);
+    var gm1 = User.HasPrivilege(Privilege.GM1);
+}
+
+@if (TempData["Message"] != null)
+{
+    ViewBag.Message = TempData["Message"].ToString();
+    TempData["Message"] = "";
+}
+
+<div class="well modal--manage-grant-stream">
+
+    @if (editMode)
+    {
+        <h2>View / Edit Grant Stream</h2>
+    }
+    else
+    {
+        <h2>Create New Grant Stream</h2>
+    }
+
+
+    @if (!String.IsNullOrEmpty(ViewBag.Message))
+    {
+        <div class="alert alert--success">
+            <p>
+                @ViewBag.Message
+            </p>
+        </div>
+    }
+
+
+    <div class="form__group">
+        <div class="form__label">
+            <label class="form__label" for="StreamName">Stream Name <abbr title="Required">*</abbr></label>
+        </div>
+
+        <div class="form__control">
+            @if (editMode)
+            {
+                @Model.GrantStream.Name
+            }
+            else
+            {
+                @Html.TextBox("StreamName", @Model.GrantStream.Name, new { @class = "input", maxlength = "500" })
+                @Html.ValidationMessageFor(model => model.GrantStream.Name)
+            }
+        </div>
+    </div>
+
+    @if (editMode)
+    {
+        <p>
+            @Html.CheckBoxFor(model => model.GrantStream.IsActive)
+            <label class="checkbox" for="@Html.IdFor(model => model.GrantStream.IsActive)">Active</label>
+        </p>
+    }
+
+    <p>
+        <b>Training date first used:</b> 
+        @if (Model.GrantStream.DateFirstUsed.HasValue)
+        {
+            @Model.GrantStream.DateFirstUsed.Value.ToString("yyyy-MM-dd")
+        }
+        else
+        {
+            <text>New</text>
+        }
+    </p>
+
+    <table class="table--padded table--reimbursement-setting">
+        <thead>
+            <tr>
+                <th>Participant fiscal year reimbursement limit</th>
+                <th>Stream reimbursement rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Html.TextBox("MaxReim", Model.GrantStream.MaxReimbursementAmt, new { @class = "input--small", maxlength = "10" })</td>
+                <td>
+                    <div class="selectmenu">
+                        @Html.DropDownListFor(x=>x.GrantStream.ReimbursementRate, Model.ReimbursementRateList)
+                    </div>
+                </td>
+                @*<td>@Html.TextBox("ReiRate", Model.GrantStream.ReimbursementRate, new { @class = "input--small", maxlength = "17" })</td>*@
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="form__group">
+        <div class="form__label form__label--align-top">
+            <label class="form__label" for="@Html.IdFor(model => model.GrantStream.Objective)">Objectives <abbr title="Required">*</abbr></label>
+        </div>
+        <div class="form__control">
+            @{ Model.GrantStream.Objective = System.Web.HttpUtility.UrlDecode(Model.GrantStream.Objective); }
+            @Html.TextAreaFor(model => Model.GrantStream.Objective, new { @class = "input--full textarea--short" })
+        </div>
+    </div>
+
+    <p>Default Budget Allocation gross up rates for calculating an Intake Target:</p>
+
+    <table class="table--padded">
+        <thead>
+            <tr>
+                <th>Denied</th>
+                <th>Withdrawn</th>
+                <th>Reductions</th>
+                <th>Slippage</th>
+                <th>Cancellations</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Html.TextBox("DefDeni", Model.GrantStream.DefaultDeniedRate, new { @class = "", maxlength = "5" })</td>
+                <td>@Html.TextBox("DefWith", Model.GrantStream.DefaultWithdrawnRate, new { @class = "", maxlength = "5" })</td>
+                <td>@Html.TextBox("DefRedu", Model.GrantStream.DefaultReductionRate, new { @class = "", maxlength = "5" })</td>
+                <td>@Html.TextBox("DefSlip", Model.GrantStream.DefaultSlippageRate, new { @class = "", maxlength = "5" })</td>
+                <td>@Html.TextBox("DefCanc", Model.GrantStream.DefaultCancellationRate, new { @class = "", maxlength = "5" })</td>
+
+                @*@if (Model.IsActive | Model.DateFirstUsed.HasValue)
+                {
+                    <td>@Html.TextBox("DefDeni", Model.DefaultDeniedRate, new { @class = "", maxlength = "5", disabled = "disabled" })</td>
+                    <td>@Html.TextBox("DefWith", Model.DefaultWithdrawnRate, new { @class = "", maxlength = "5", disabled = "disabled" })</td>
+                    <td>@Html.TextBox("DefRedu", Model.DefaultReductionRate, new { @class = "", maxlength = "5", disabled = "disabled" })</td>
+                    <td>@Html.TextBox("DefSlip", Model.DefaultSlippageRate, new { @class = "", maxlength = "5", disabled = "disabled" })</td>
+                    <td>@Html.TextBox("DefCanc", Model.DefaultCancellationRate, new { @class = "", maxlength = "5", disabled = "disabled" })</td>
+                }
+                else
+                {
+                }*@
+            </tr>
+        </tbody>
+    </table>
+
+
+    <div class="clearfix margin-bottom">
+        @if (editMode && gm1)
+        {
+            var deleteAttributes = Model.GrantStream.IsActive || Model.GrantStream.DateFirstUsed.HasValue ?
+                new { @class = "btn btn--primary btn--danger js-btn-delete-grant-stream", disabled = "disabled" } :
+                (object)new { @class = "btn btn--primary btn--danger js-btn-delete-grant-stream", data_id = Model.GrantStream.Id };
+
+            @Html.Button("Delete", deleteAttributes)
+            @Html.Button("Save", new { @class = "pull-right btn btn--primary js-btn-save-grant-stream", data_id = Model.GrantStream.Id})
+        }
+        else if (gm1)
+        {
+            @Html.Button("Create", new { @class = "pull-right btn btn--primary js-btn-insert-grant-stream", disabled = true })
+        }
+    </div>
+
+</div>

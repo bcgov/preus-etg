@@ -1,0 +1,6 @@
+# top-most EditorConfig file
+root = true
+# Tab indentation
+[*.cs]
+indent_style = tab
+trim_trailing_whitespace = true

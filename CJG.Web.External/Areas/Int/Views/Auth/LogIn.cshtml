@@ -1,0 +1,22 @@
+﻿@model CJG.Web.External.Areas.Int.Models.LoginViewModel
+
+@{
+    ViewBag.Title = "Log In";
+}
+
+@using (Html.BeginForm("LogIn", "Auth"))
+{
+	<div class="row siteminder-internal-login">
+	    <h1>SiteMinder Simulator</h1>
+	    <p>This login page is used for the internal website. Only IDIR users can be selected.</p>
+	    <div>
+			<div class="selectmenu">
+	        	@Html.DropDownListFor(x => x.SelectedUser, Model.UserList.Select(x => new SelectListItem { Text = x.Value, Value = x.Key }), new { onchange = "this.form.submit();" })
+			</div>
+	        <input class="btn btn--primary" type="submit" value="Log In" />
+	    </div>
+    </div>
+    <div class="row">
+        @Html.ActionLink("External login", "Login", new { Area = "Ext", Controller = "Auth" })
+    </div>
+}

@@ -1,0 +1,66 @@
+﻿<div ng-controller="NotificationType" class="form-section">
+	<span class="panel-section-item">
+		<span class="panel-section-title" ng-click="toggle($event)">Notification Type Details</span>
+		<span class="panel-section-buttons">
+			<span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+			<section-edit-buttons ng-model="section.editing"></section-edit-buttons>
+			<span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+		</span>
+	</span>
+
+	<div class="panel-section-content" ng-if="section.show">
+
+		<div class="notice notice--icon">
+			<p>Making a notification type inactive here will make it inactive for all grant programs.</p>
+		</div>
+
+		<div class="form form-section-container">
+			<div class="form__group">
+				<div class="form__label">Name</div>
+				<div class="form__control">
+					<div class="control-wrapper input--full">
+						<input ng-model="model.Caption" class="input--full" ng-validation ng-editing />
+					</div>
+				</div>
+			</div>
+
+			<div class="form__group">
+				<div class="form__label">Active</div>
+				<div class="form__control">
+					<div class="control-wrapper input--full">
+						<input type="checkbox" ng-model="model.IsActive" id="is-active" ng-editing />
+						<label for="is-active">When disabled this notification will no longer be sent to applicants.</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="form__group">
+				<div class="form__label">Description</div>
+				<div class="form__control">
+					<div class="control-wrapper input--full">
+						<textarea ng-model="model.Description" class="input--full textarea--short" 
+								  size="4" ng-validation ng-editing></textarea>
+					</div>
+				</div>
+			</div>
+
+			<div class="form__group">
+				<div class="form__label">Milestone Date Name</div>
+				<div class="form__control">
+					<div class="control-wrapper input--medium">
+						{{model.MilestoneDateName}}
+					</div>
+				</div>
+			</div>
+
+			<div class="form__group">
+				<div class="form__label">Milestone Date Offset</div>
+				<div class="form__control">
+					<div class="control-wrapper input--x-small">
+						<input ng-model="model.MilestoneDateOffset" class="input--x-small" ng-number maxlength="3" ng-validation ng-editing />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

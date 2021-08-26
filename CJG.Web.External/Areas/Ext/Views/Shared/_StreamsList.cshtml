@@ -1,0 +1,58 @@
+﻿@using CJG.Core.Entities
+@model CJG.Web.External.Areas.Ext.Models.StreamListViewModel
+
+<div class="form--readonly">
+
+    <div class="form__group">
+        <div class="form__label">Stream:</div>
+        <div class="form__control">@Model.GrantOpening.GrantStream.FullName</div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">For training starting between:</div>
+        <div class="form__control">
+            @(Model.GrantOpening.TrainingPeriod.StartDate.ToLocalMorning().ToString("yyyy-MM-dd"))
+            and
+            @(Model.GrantOpening.TrainingPeriod.EndDate.ToLocalMidnight().ToString("yyyy-MM-dd"))
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Priority sector:</div>
+        <div class="form__control">
+            @if (Model.PrioritySectors != null && Model.ProritySectorID.HasValue)
+            {
+                @Model.PrioritySectors.FirstOrDefault().Caption
+            }
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Has your organization applied for a  @Model.GrantProgramName in the past?:</div>
+        <div class="form__control">
+            @if (Model.AppliedForGrantBefore)
+            {
+                <span>Yes</span>
+            }
+            else
+            {
+                <span>No</span>
+            }
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Would your organization provide this training if the @Model.GrantProgramName was not available?:</div>
+        <div class="form__control">
+            @if (Model.WouldTrainWithoutGrant)
+            {
+                <span>Yes</span>
+            }
+            else
+            {
+                <span>No</span>
+            }
+        </div>
+    </div>
+
+</div>

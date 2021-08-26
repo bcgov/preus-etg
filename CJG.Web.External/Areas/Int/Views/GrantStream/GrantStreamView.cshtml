@@ -1,0 +1,77 @@
+﻿@{
+    ViewBag.Title = "Grant Stream Management";
+}
+<div ng-controller="GrantStreamManagement">
+    <div class="row row--alert" ng-if="alert.message">
+        <div class="alert alert--default" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message">
+        </div>
+    </div>
+    <div class="form-section">
+        <div>
+            <h2 class="header__title">View / Edit Grant Stream</h2>
+        </div>
+
+        <div class="form__group float-left" style="width: 40%;">
+            <div class="label-wrapper">
+                <label class="form__label">Select Grant Program:</label>
+            </div>
+            <div class="control-wrapper">
+                <div class="selectmenu input--full">
+                    <select ng-model="section.selectedProgram" 
+                            ng-options="item as item.Caption for item in grantPrograms" 
+                            class="input--full" ng-validation="errors.selectedProgram" 
+                            ng-change="loadStreams()" ng-disabled="parent.editing">
+                        <option value="">{{'&lt; Select Program &gt;'}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group float-right">
+            <button class="btn btn--primary btn--forward" ng-disabled="parent.editing || !section.selectedProgram" ng-click="createStream()">Add New</button>
+            <button class="btn btn--secondary btn--forward" ng-if="model.CanDelete" ng-click="deleteStream()">Delete</button>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-section-container" ng-show="section.selectedProgram">
+            <div class="form__group">
+                <div class="label-wrapper">
+                    <label class="form__label">Select Grant Stream:</label>
+                </div>
+                <div class="control-wrapper" id="streams-list">
+                    <div class="dataTables_wrapper">
+                        <table style="width: 60%;">
+                            <thead>
+                                <tr class="bottom-line">
+                                    <th style="text-align: left;">Grant Stream Name</th>
+                                    <th>Training Date First Used</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bottom-line" ng-repeat="stream in grantStreams" ng-class="{ 'row-highlight' : stream.Id == model.Id }" ng-click="loadStream(stream)">
+                                    <td>{{stream.Caption}}</td>
+                                    <td style="text-align: center;">
+                                        <span ng-if="!stream.CanDelete">{{stream.DateFirstUsed}}</span>
+                                        <span ng-if="stream.CanDelete">Unused</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="details-block">
+        <ul class="panel-section-list">
+            <li>@Html.Partial("~/Areas/Int/Views/GrantStream/_StreamDefinition.cshtml")</li>
+            <li>@Html.Partial("~/Areas/Int/Views/GrantStream/_StreamEligibility.cshtml")</li>
+            <li>@Html.Partial("~/Areas/Int/Views/GrantStream/_ApplicationAttachments.cshtml")</li>
+            <li>@Html.Partial("~/Areas/Int/Views/GrantStream/_PaymentRequests.cshtml")</li>
+            <li>@Html.Partial("~/Areas/Int/Views/GrantStream/_Reporting.cshtml")</li>
+            <li>@Html.Partial("~/Areas/Int/Views/GrantStream/_ProgramConfiguration.cshtml")</li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,47 @@
+﻿<div ng-controller="ChangeProgramDatesView">
+    <div class="dialog-header">
+        <h3>{{ngDialogData.title}}</h3>
+    </div>
+    <div class="dialog-content">
+        <div class="modal-content">
+            <div>
+                <div ng-if="alert.message" class="row row--alert">
+                    <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+                </div>
+
+                <div class="date-update-form-wrapper">
+                    <p>Your skills training dates must fall within your delivery start and end dates.</p>
+                    <div class="form__group form__group--date">
+                        <div class="form__label">
+                            <label>New Start Date <abbr title="Required">*</abbr></label>
+                        </div>
+                        <div class="form__control">
+                            <div class="control-wrapper" ng-validation="errors.StartDate">
+                                <datedropdown ng-model="ngDialogData.model.StartDate" ng-text="ngDialogData.model.StartDate" ng-min-date="ngDialogData.DeliveryStartDate" ng-max-date="ngDialogData.DeliveryEndDate" ng-editing="true"></datedropdown>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form__group form__group--date">
+                        <div class="form__label">
+                            <label>New End Date <abbr title="Required">*</abbr></label>
+                        </div>
+                        <div class="form__control">
+                            <div class="control-wrapper" ng-validation="errors.EndDate">
+                                <datedropdown ng-model="ngDialogData.model.EndDate" ng-text="ngDialogData.model.EndDate" ng-min-date="gDialogData.DeliveryStartDate" ng-max-date="ngDialogData.DeliveryEndDate" ng-editing="true"></datedropdown>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn--secondary" ng-click="closeThisDialog()">Cancel</button>
+                        <button class="btn btn--primary btn--forward confirm-link pull-right" ng-click="save()">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

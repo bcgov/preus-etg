@@ -1,0 +1,53 @@
+﻿@model CJG.Web.External.Areas.Ext.Models.TrainingProviderViewModel
+
+
+<h3 class="subheader--body">Training Provider Contact</h3>
+<p>Enter the contact information for your training provider.</p>
+
+<div class="form__group">
+    <label class="form__label" for="@Html.IdFor(model => model.ContactFirstName)">Contact first name <abbr title="Required">*</abbr></label>
+
+    <div class="form__control">
+        @Html.TextBoxFor(model => model.ContactFirstName, new { @class = "input--medium"})
+        @Html.ValidationMessageFor(model => model.ContactFirstName)
+    </div>
+</div>
+
+<div class="form__group">
+    <label class="form__label" for="@Html.IdFor(model => model.ContactLastName)">Contact last name <abbr title="Required">*</abbr></label>
+
+    <div class="form__control">
+        @Html.TextBoxFor(model => model.ContactLastName, new { @class = "input--medium"})
+        @Html.ValidationMessageFor(model => model.ContactLastName)
+    </div>
+</div>
+
+<div class="form__group">
+    <label class="form__label" for="@Html.IdFor(model => model.ContactEmail)">Contact email <abbr title="Required">*</abbr></label>
+
+    <div class="form__control">
+        @Html.TextBoxFor(model => model.ContactEmail, new { @class = "input--medium"})
+        @Html.ValidationMessageFor(model => model.ContactEmail)
+    </div>
+</div>
+
+<div class="form__group">
+    <label class="form__label" for="@Html.IdFor(model => model.ContactPhoneAreaCode)">Contact phone number <abbr title="Required">*</abbr></label>
+    <div class="form__control multi-field-validation">
+        <span class="form__group--tel validation-group">
+        @{ Html.EnableClientValidation(false); }
+            @Html.TextBoxFor(model => model.ContactPhoneAreaCode, new { @class = "input--small phone-areacode", maxlength = "3"}) <span class="spacer">-</span> 
+            @Html.TextBoxFor(model => model.ContactPhoneExchange, new { @class = "input--small phone-first-three", maxlength = "3"}) <span class="spacer">-</span> 
+            @Html.TextBoxFor(model => model.ContactPhoneNumber, new { @class = "input--small phone-last-four", maxlength = "4"}) 
+        @{ Html.EnableClientValidation(true); }
+        </span>
+        <span class="form__group--tel-ext">
+            <label for="@Html.IdFor(model => model.ContactPhoneExtension)">Ext</label> @Html.TextBoxFor(model => model.ContactPhoneExtension, new { @class = "input--small phone-extension"})
+        </span>
+        @Html.HiddenFor(model => model.ContactPhone)
+        @Html.ValidationMessageFor(model => model.ContactPhoneAreaCode)
+        @Html.ValidationMessageFor(model => model.ContactPhoneExchange)
+        @Html.ValidationMessageFor(model => model.ContactPhoneNumber)
+        @Html.ValidationMessageFor(model => model.ContactPhone)
+    </div>
+</div>

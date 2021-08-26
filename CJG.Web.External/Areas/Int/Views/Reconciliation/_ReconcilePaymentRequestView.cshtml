@@ -1,0 +1,182 @@
+﻿@using CJG.Core.Entities
+
+<div ng-controller="PaymentReconciliation" reconciliation-payment-id="@ViewBag.ReconciliationPaymentId">
+    <div class="dialog-header">
+        <h3>{{ngDialogData.title}}</h3>
+    </div>
+    <div class="dialog-content">
+        <div class="modal-content">
+            <div class="form__section">
+                <div class="float-left">
+                    <p>Select the payment request that is associated with {{ngDialogData.model.Payments ? 'each' : 'this'}} CAS line item.</p>
+                    <div class="notice notice--icon">
+                        <p>
+                            CAS payments can be manually reconciled only if their amount is equal to the Payment Request in STG. 
+                            Multiple CAS payments can be linked to a single Payment Request in STG, and if the sum of these CAS payments equals the Payment Request in STG, they will reconcile.
+                        </p>
+                    </div>
+                </div>
+                <div class="form__group float-right">
+                    <div class="form__label" ng-class="{ 'red' : filter.activePayment.State !== @((int)ReconciliationStates.Reconciled)}">{{filter.activePayment.StateCaption}}</div>
+                </div>
+            </div>
+
+            <div class="clear-both" ng-if="alert.message">&nbsp;</div>
+
+            <div class="form__section" ng-if="alert.message">
+                <div class="row row--alert">
+                    <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="form__section reconciliation-report-view">
+                <div class="form form--2-col">
+                    <div class="col-50p">
+                        <div class="form__group">
+                            <div class="form__label">Batch Name:</div>
+                            <div class="form__control">{{filter.activePayment.BatchName}}</div>
+                        </div>
+                        <div class="form__group">
+                            <div class="form__label">Document Number:</div>
+                            <div class="form__control">{{filter.activePayment.DocumentNumber}}</div>
+                        </div>
+                        <div class="form__group">
+                            <div class="form__label">Payment Type:</div>
+                            <div class="form__control">{{filter.activePayment.PaymentTypeCaption}}</div>
+                        </div>
+                    </div>
+                    <div class="col-50p">
+                        <div class="form__group">
+                            <div class="form__label">Supplier Name:</div>
+                            <div class="form__control">{{filter.activePayment.SupplierName}}</div>
+                        </div>
+                        <div class="form__group">
+                            <div class="form__label">Creation Date:</div>
+                            <div class="form__control">{{filter.activePayment.DateCreated | date : 'MMMM dd yyyy'}}</div>
+                        </div>
+                        <div class="form__group">
+                            <div class="form__label">Amount:</div>
+                            <div class="form__control">
+                                <span ng-if="filter.activePayment.FromCAS">{{filter.activePayment.Amount | currency}}</span>
+                                <span ng-if="!filter.activePayment.FromCAS">{{filter.activePayment.PaymentAmount | currency}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clear-both">&nbsp;</div>
+
+            <div class="form__section">
+                <div class="form__group">
+                    <div class="form__control">
+                        <div class="float-left">
+                            <div class="control-wrapper">
+                                <input type="text" ng-model="filter.search" class="input--medium" />
+                                <button class="btn btn--primary" ng-click="search()">Search</button>
+                            </div>
+                        </div>
+                        <div class="float-right" ng-if="ngDialogData.model.Payments">
+                            <div class="form__label">CAS Line Item:&nbsp;</div>
+                            <div class="form__control pull-right">
+                                <div class="control-wrapper selectmenu select--medium-large">
+                                    <select ng-model="ngDialogData.selectedPayment" ng-options="item as ((item.Amount | currency ) + ' ' + item.DocumentNumber + ' ' + (item.DateCreated ? toPST(item.DateCreated) : '')) for item in ngDialogData.model.Payments" class="select--medium-large">
+                                        <option value="">Summary</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="form__section">
+                <div class="alert" ng-show="!ngDialogData.selectedPayment">
+                    <label>Select a CAS line item to reconcile</label>
+                </div>
+
+                <div class="form__group" ng-show="ngDialogData.selectedPayment">
+                    <div class="form__group" style="max-height: 200px; overflow-y: auto;">
+                        <table class="form-table">
+                            <thead>
+                                <tr class="form-table-heading display--table-row">
+                                    <th class="form-table-cell width-15px"></th>
+                                    <th class="form-table-cell width-135px">
+                                        <label class="action {{sortDirection('DocumentNumber')}}" ng-click="sort('DocumentNumber')">Document Number</label>
+                                    </th>
+                                    <th class="form-table-cell text-center">
+                                        <label class="action {{sortDirection('PaymentType')}}" ng-click="sort('PaymentType')">Payment Type</label>
+                                    </th>
+                                    <th class="form-table-cell">
+                                        <label class="action {{sortDirection('GrantApplication.OrganizationLegalName')}}" ng-click="sort('GrantApplication.OrganizationLegalName')">Supplier Name</label>
+                                    </th>
+                                    <th class="form-table-cell text-right">
+                                        <label class="action {{sortDirection('PaymentAmount')}}" ng-click="sort('PaymentAmount')">Amount</label>
+                                    </th>
+                                    <th class="form-table-cell text-center">
+                                        <label class="action {{sortDirection('DateAdded')}}" ng-click="sort('DateAdded')">Creation Date</label>
+                                    </th>
+                                    <th class="form-table-cell text-center">
+                                        <label class="action {{sortDirection('IsReconciled')}}" ng-click="sort('IsReconciled')">Reconciled</label>
+                                    </th>
+                                    <th class="form-table-cell">&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody class="category-table-body">
+                                <tr class="form-table-row" ng-repeat="payment in model.Items">
+                                    <td class="form-table-cell width-15px">&nbsp;</td>
+                                    <td class="form-table-cell width-135px">
+                                        <a target="_blank" href="/Int/Claim/Assessment/View/{{payment.ClaimId}}/{{payment.ClaimVersion}}">{{payment.DocumentNumber}}</a>
+                                    </td>
+                                    <td class="form-table-cell text-center">{{payment.PaymentTypeCaption}}</td>
+                                    <td class="form-table-cell">{{payment.SupplierName}}</td>
+                                    <td class="form-table-cell text-right">{{payment.PaymentAmount | currency}}</td>
+                                    <td class="form-table-cell text-center">{{toPST(payment.DateAdded)}}</td>
+                                    <td class="form-table-cell text-center">{{payment.IsReconciled ? 'Yes' : 'No'}}</td>
+                                    <td class="form-table-cell">
+                                        <div class="control-wrapper">
+                                            <input type="radio" id="payment-request-{{$index}}" name="payment-request-reconcile" ng-model="selectedPaymentRequestIndex" value="i{{$index}}" ng-click="changePaymentRequest($event)" />
+                                            <label for="payment-request-{{$index}}">&nbsp;</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <span>
+                            <label ng-show="model.Total">Showing {{pager.items.first}} to {{pager.items.last}} of {{pager.items.total}} entries</label>
+                            <label ng-show="!model.Total">There are no payment requests</label>
+                        </span>
+                        <div class="button-group">
+                            <div class="button-group">
+                                <div class="float-right">
+                                    <button class="btn btn--secondary internal-previous" ng-disabled="!pager.enablePrevious" tabindex="0" ng-click="!pager.enablePrevious || applyFilter(pager.page - 1)">Previous</button>
+                                    <span>
+                                        <button class="btn btn--secondary btn--page" tabindex="0" ng-show="pager.showFirstPage" ng-click="applyFilter(pager.showFirstPage)">{{pager.showFirstPage}}</button>
+                                        <span class="ellipsis" ng-show="pager.showFirstPage">…</span>
+                                        <button ng-repeat="page in pager.pages" class="btn btn--secondary btn--page" ng-class="{ 'btn--current' : pager.page === page }" tabindex="0" ng-click="applyFilter(page)" ng-disabled="pager.page === page">{{page}}</button>
+                                        <span class="ellipsis" ng-show="pager.showLastPage">…</span>
+                                        <button class="btn btn--secondary btn--page" tabindex="0" ng-show="pager.showLastPage" ng-click="applyFilter(pager.showLastPage)">{{pager.showLastPage}}</button>
+                                    </span>
+                                    <button class="btn btn--secondary internal-next" ng-disabled="!pager.enableNext" tabindex="0" ng-click="!pager.enableNext || applyFilter(pager.page + 1)">Next</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="button-group">
+                    <button class="btn btn--secondary" data-disableonsubmit="false" ng-click="closeThisDialog()">Cancel</button>
+                    <button class="btn btn--primary pull-right" ng-click="reconcile()" ng-disabled="!allowReconcile">{{action}}&nbsp;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

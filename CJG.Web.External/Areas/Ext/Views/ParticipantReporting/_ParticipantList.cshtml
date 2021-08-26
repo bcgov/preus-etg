@@ -1,0 +1,42 @@
+﻿<div class="pull-right wrapper--include-checkbox" ng-if="model.AllowIncludeAll">
+    <input type="checkbox" id="include_all_participant" ng-model="section.includeAll" ng-change="includeAll()">
+    <label class="checkbox checkbox__all" for="include_all_participant">Include All</label>
+</div>
+
+<div class="table--participants-wrapper" style="overflow-x: auto; width:100%;">
+    <table class="table table--open-border table--participants">
+        <thead>
+            <tr>
+                <th>Last</th>
+                <th>First</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Work Location</th>
+                <th>Reported on</th>
+                <th ng-if="model.ParticipantsEditable">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-class="{'row--not-in-prev-claim' : (!model.ParticipantsEditable && !model.IsIncludedInClaim)}" ng-repeat="participant in model.Participants">
+                <td>{{participant.LastName}}</td>
+                <td>{{participant.FirstName}}</td>
+                <td><a href="mailto:{{participant.EmailAddress}}">{{participant.EmailAddress}}</a></td>
+                <td style="min-width: 170px !important;">{{participant.PhoneNumber1}} 
+                    <span ng-if="participant.PhoneExtension1">ext. {{participant.PhoneExtension1}}</span></td>
+                <td>{{participant.PrimaryCity}}</td>
+                <td ng-class="{ 'table--datacell-late': (participant.DateAdded > model.ParticipantReportingDueDate) }" style="min-width: 170px !important;">
+                    {{toPST(participant.DateAdded, 'YYYY-MM-DD HH:mm')}} <strong ng-if="participant.IsLate">Late</strong>
+                </td>
+                <td class="wrapper--include-checkbox" ng-if="model.ParticipantsEditable">
+                    <div ng-if="participant.ClaimReported">
+                        <input type="checkbox" id="include-participant-{{participant.Id}}" class="include-participant" ng-model="participant.IsIncludedInClaim" ng-change="toggleParticipant(participant)"/>
+                        <label class="checkbox" for="include-participant-{{participant.Id}}">Include</label>
+                    </div>
+                    <div ng-if="!participant.ClaimReported">
+                        <a ng-click="removeParticipant(participant)" class="btn--remove confirm-link" href="#">Remove</a>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

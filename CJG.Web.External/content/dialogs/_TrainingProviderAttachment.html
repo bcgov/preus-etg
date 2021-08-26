@@ -1,0 +1,29 @@
+﻿<div>
+	<div class="dialog-header">
+		<h3>{{ngDialogData.title}}</h3>
+	</div>
+	<div class="dialog-content">
+		<div data-modal-title="Attachment" class="modal-content">
+			<div class="form well">
+				<div class="form__group">
+					<div class="form__label">File Name: </div>
+					<div class="form__control">
+						<div class="float-left">
+							<span>{{ngDialogData.attachment.FileName || 'No file selected'}}</span>
+						</div>
+						<div class="control-wrapper float-right">
+							<button class="btn btn--small btn--secondary" ng-click="chooseFile()">{{ ngDialogData.attachment.FileName ? 'Change' : 'Choose' }} File</button>
+							<input type="file" id="training-provider-upload" name="AsyncDocumentsFiles" accept=".pdf,.jpg,.jpeg,.png,.gif" autocomplete="off" style="display:none;" ng-file-changed="fileChanged($files)" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<div class="form well">
+					<button class="btn btn--secondary" data-disableonsubmit="false" ng-click="closeThisDialog()">Cancel</button>
+					<button class="btn btn--primary pull-right save-attachment" ng-click="save()" ng-disabled="!ngDialogData.attachment.FileName">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

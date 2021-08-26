@@ -1,0 +1,46 @@
+﻿@using CJG.Web.External.Areas.Int.Controllers
+@model CJG.Web.External.Areas.Int.Models.DebugLogViewModel
+
+@{
+    ViewBag.Title = "Debug Dashboard";
+}
+
+<style>
+    td.left {
+        text-align: left;
+    }
+</style>
+
+<h1>@ViewBag.Title</h1>
+
+<h2>Application Information</h2>
+<p>
+    If you need to test date related processes you can change the application current date and time.  Please be aware this effects all users.
+    Take a look at the log file to debug issues and exceptions.
+</p>
+<ul>
+    <li>@Html.ActionLink("Application Version", "Version")</li>
+    <li>@Html.ActionLink("Application Date/Time", "AppDateTimeView")</li>
+    <li>@Html.ActionLink("Debug Log", "Log")</li>
+</ul>
+
+<h2>User Information</h2>
+<p>
+    Get information about users from the BCeID services.
+</p>
+<ul>
+    <li>@Html.ActionLink("Current User", "CurrentUser")</li>
+    <li>@Html.ActionLink("Request BCeID", "BCeID")</li>
+    <li>@Html.ActionLink("Request IDIR", "IDIR")</li>
+    <li>@Html.ActionLink("Update all BCeID accounts", "SyncBCeIDAccounts")</li>
+</ul>
+
+<h2>Scheduled Services Testing</h2>
+<p>
+    These pages provide a way to test the schedule services that are run in the background separate from the website.
+</p>
+<ul>
+    <li>@Html.ActionLink("Notifications", nameof(DebugController.NotificationsServiceView), nameof(DebugController).Replace("Controller", ""))</li>
+    <li>@Html.ActionLink("GrantOpeningService", nameof(DebugController.GrantOpeningService), nameof(DebugController).Replace("Controller", ""))</li>
+    <li>@Html.ActionLink("ReportingService", nameof(DebugController.ReportingService), nameof(DebugController).Replace("Controller",""))</li>
+</ul>

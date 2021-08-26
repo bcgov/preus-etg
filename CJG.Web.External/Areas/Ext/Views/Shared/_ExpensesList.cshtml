@@ -1,0 +1,123 @@
+﻿@model IEnumerable<CJG.Core.Entities.EligibleCost>
+
+@{
+    var blnExternal = ViewContext.RouteData.DataTokens["area"].ToString().ToLower().Contains("ext");
+    bool disableEdit = false;
+    //Add disableEdit parameter to disable editing buttons calling from ApplicationReview view
+    if (ViewData["disableEdit"] != null && bool.TryParse(ViewData["disableEdit"].ToString(), out disableEdit))
+    {
+        blnExternal = blnExternal && (!disableEdit);
+    }
+
+    string classHorizontalTableWrapper;
+
+    if (blnExternal)
+    {
+        classHorizontalTableWrapper =
+          "table--horizontal-wrapper-wide";
+    }
+    else
+    {
+        classHorizontalTableWrapper = "table--horizontal-wrapper";
+    }
+
+    if (ViewData["RowVersion"] != null)
+    {
+        <script type="text/javascript">
+        <!--
+
+            var rowVersion = @Html.Raw(Json.Encode(ViewData["RowVersion"].ToString()));
+
+            $('#TrainingProgramRowVersion').val(rowVersion);
+
+        // -->
+        </script>
+    }
+}
+
+<div class="@classHorizontalTableWrapper">
+    @* This block should only be visible on view only screen *@
+    @if (!blnExternal) {
+        <div class="form__group block--max-participant-view">
+            <span class="form__label">Maximum Number of Participants in the Training Program</span>
+            <span class="space-left">
+                @ViewData["pgmEstParticipants"]
+            </span>
+        </div>
+    }
+    <table id="tblExpenses" class="clearfix table table--expenses js-table-expense-list">
+        <thead>
+            <tr>
+                <th class="table-col__expense-type">Expense Type</th>
+                <th class="num-col table-col__num-part">Number of Participants</th>
+                <th class="num-col table-col__cost-per-part">Cost per Participant</th>
+                <th class="num-col table-col__total-train-cost">Total Training Cost</th>
+                <th class="num-col table-col__emp-contribution">Employer Contribution</th>
+                <th class="num-col table-col__gov-contribution">Requested Government Contribution</th>
+
+                @if (blnExternal)
+                {
+                    <th class="col-small table-col__edit">
+                        <span class="visually-hidden">Edit Expense</span>
+                    </th>
+                    <th class="col-small table-col__delete">
+                        <span class="visually-hidden">Delete Expense</span>
+                    </th>
+                }
+            </tr>
+        </thead>
+
+        <tbody>
+            @{ decimal totalCost = 0; }
+            @{ decimal totalEmployer = 0; }
+            @{ decimal totalRequest = 0; }
+            @{ var OrderedList = Model.OrderBy(x => x.Id); }
+            @foreach (var expenseItem in OrderedList)
+            {
+                if (!expenseItem.AddedByAssessor)
+                {
+
+                    totalCost += expenseItem.EstimatedCost;
+                    totalEmployer += expenseItem.EstimatedEmployerContribution;
+                    totalRequest += expenseItem.EstimatedReimbursement;
+
+                    <tr data-expense-id="@expenseItem.EligibleExpenseType.Id"
+                        data-expense-item-id ="@expenseItem.Id"
+                        data-total="@expenseItem.EstimatedCost.ToString()"
+                        data-participants="@expenseItem.EstimatedParticipants.ToString()">
+                        <td>@(expenseItem.EligibleExpenseType.Caption)</td>
+                        <td class="num-col">@(expenseItem.EstimatedParticipants.ToString())</td>
+                        <td class="num-col">@(expenseItem.EstimatedParticipantCost.ToDollarCurrencyString())</td>
+                        <td class="num-col">@(expenseItem.EstimatedCost.ToDollarCurrencyString())</td>
+                        <td class="num-col">@(expenseItem.EstimatedEmployerContribution.ToDollarCurrencyString())</td>
+                        <td class="num-col">@(expenseItem.EstimatedReimbursement.ToDollarCurrencyString())</td>
+
+                        @if (blnExternal)
+                        {
+                            <td class="col-small">@Html.ActionLink("Edit", "EditEligibleCost", null, new { @class = "edit-expense btn--secondary" })</td>
+                            <td class="col-small">@Html.ActionLink("Delete", "DeleteEligibleCost", null, new { @class = "delete-expense js-confirm btn--secondary" })</td>
+                        }
+                    </tr>
+                }
+            }
+            <tr>
+                <td><b>Totals</b></td>
+                <td></td>
+                <td></td>
+                <td class="num-col">
+                    <b>@(totalCost.ToDollarCurrencyString())</b>
+                </td>
+                <td class="num-col">
+                    <b>@(totalEmployer.ToDollarCurrencyString())</b>
+                </td>
+                <td  class="num-col num-col__total-gov-contribution">
+                    <b>@(totalRequest.ToDollarCurrencyString())</b>
+                </td>
+                @if (blnExternal) {
+                    <td style="width: 76px;" class="col-small"></td>
+                    <td style="width: 86px;" class="col-small"></td>
+                }
+            </tr>
+        </tbody>
+    </table>
+</div>

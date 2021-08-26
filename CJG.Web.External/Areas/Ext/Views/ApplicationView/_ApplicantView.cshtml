@@ -1,0 +1,82 @@
+﻿<div class="form--readonly">
+    <div class="form__group">
+        <div class="form__label">Organization legal name:</div>
+        <div class="form__control">
+            {{model.Applicant.LegalName}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Doing Business As:</div>
+        <div class="form__control">
+            {{model.Applicant.DoingBusinessAs}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Organization type:</div>
+        <div class="form__control">
+            <text ng-if="model.Applicant.EmployerTypeDescription != null">
+                {{model.Applicant.EmployerTypeDescription}}
+            </text>
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Legal structure:</div>
+        <div class="form__control">
+            <div ng-if="model.Applicant.LegalStructure != null">
+                {{model.Applicant.LegalStructure}}
+            </div>
+            <text ng-if="model.Applicant.OtherLegalStructure != null">
+                <br />
+                {{model.Applicant.OtherLegalStructure}}
+            </text>
+        </div>
+    </div>
+    <div class="form__group" ng-show="false">
+        <div class="form__label">Business License Number:</div>
+        <div class="form__control">
+            {{model.Applicant.BusinessLicenseNumber}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Year established:</div>
+        <div class="form__control">
+            {{model.Applicant.YearEstablished}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Number of employees worldwide (including BC):</div>
+        <div class="form__control">
+            {{model.Applicant.NumberOfEmployeesWorldwide}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Number of employees in BC:</div>
+        <div class="form__control">
+            {{model.Applicant.NumberOfEmployeesInBC}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Money spent each year on average for training:</div>
+        <div class="form__control">
+            {{model.Applicant.AnnualTrainingBudget | currency : '$' : 2}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Number of employees trained on average each year:</div>
+        <div class="form__control">
+            {{model.Applicant.AnnualEmployeesTrained}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">North American Industry Classification System (<b>NAICS</b>) code for your primary sector:</div>
+        <div class="form__control">
+            {{model.Applicant.Naics}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Head Office Mailing Address:</div>
+        <div class="form__control">
+            <text ng-bind-html="model.Applicant.HeadOfficeAddress"></text>
+        </div>
+    </div>
+</div>

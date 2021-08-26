@@ -1,0 +1,50 @@
+.button-group.table--horizontal-nav {
+  margin: $gutter 0;
+}
+
+.table--intake-management-dashboard {
+  $grey-background: #f8f8f8;
+
+  max-width: 979px;
+  width: 100%;
+  margin: 0;
+
+  tr {
+    position: relative;
+
+    td, th {
+      border-left: none;
+      border-right: none;
+      text-align: left;
+      padding: 10px;
+      background-clip: padding-box;
+    }
+
+    .text-align-right {
+      text-align: right;
+    }
+  }
+
+  thead {
+    tr {
+      td:nth-child(even) {
+        background-color: $grey-background;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      td:nth-child(4n-1),
+      td:nth-child(4n-2) {
+        background-color: $grey-background;
+      }
+    }
+  }
+
+  .row--reservation {
+    th, td {
+      padding-top: $gutter * 1.5;
+    }
+  }
+}

@@ -1,0 +1,15 @@
+.agreement-block {
+  @extend .well;
+  @extend .well--dark;
+  margin: gap(2) 0;
+  input[type=checkbox] + label,
+  input[type=checkbox] + input[type=hidden] + label {
+    padding-left: 35px;
+  }
+}
+
+.agreement-block__title {
+  font-size: $font-size-medium;
+  font-weight: bold;
+  line-height: 1.2;
+}

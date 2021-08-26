@@ -1,0 +1,44 @@
+﻿@model CJG.Web.External.Areas.Int.Models.CancelAgreementViewModel
+
+@{
+    ViewBag.Title = "Cancelled By Ministry";
+}
+
+<p class="subheader--step">Step 1 of 1</p>
+<h2>Cancel agreement</h2>
+
+<div class="notice notice--icon">
+    <p>If you do not intend to deliver training and submit a reimbursement claim then you may cancel your agreement 
+        by completing this form and clicking Cancel Agreement.  If you cancel your agreement, your file 
+        will be closed and no reimbursement will be paid.</p>
+    <p/>
+    <p>If you do not want to cancel your agreement then click Exit below.</p>
+</div>
+        
+@using (Html.BeginForm("CancelledByMinistry", "Application", FormMethod.Post, new { @class = "js-application-cancel" }))
+{
+    @Html.HiddenFor(model=>model.GrantApplicationId)
+    
+    <div class="agreement-block">
+        @Html.EditorFor(model => model.CancellationReason, new { @class = "check-box" })
+        <label for="@Html.IdFor(model => model.CancellationReason)">
+            I understand that cancelling my agreement is final and no reimbursement will be paid.
+        </label>
+        @Html.ValidationMessageFor(model => model.CancellationReason)
+    </div>
+
+    <div class="form__control">
+        <label class="form__label" for="@Html.IdFor(model => model.CancellationReason)">
+            Please provide reason<abbr title="Required">*</abbr>
+        </label>
+        <div class="form__control">
+            @Html.TextAreaFor(model => model.CancellationReason, new {maxlength = 800})
+            @Html.ValidationMessageFor(model => model.CancellationReason)
+        </div>
+    </div>
+
+    <div class="button-group">
+        @Html.ActionLink("Exit", "ApplicationDetails", new { id = Model.GrantApplicationId }, new { @class = "btn btn--secondary btn-back" })
+        @Html.Button("Cancel agreement", new { @class = "btn btn--primary", disabled = "disabled", value= "CancelAgreement", name = "btnSubmit" })
+    </div>
+}

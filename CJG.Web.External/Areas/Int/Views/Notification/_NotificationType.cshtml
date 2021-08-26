@@ -1,0 +1,269 @@
+﻿<div ng-controller="NotificationType" style="max-height: 90%">
+    <div ng-if="ngDialogData.NotificationType" class="edit-model-modal">
+        <h3>{{ngDialogData.NotificationType.Id ? 'Edit' : 'Add'}} Notification Type</h3>
+        <hr />
+        <div ng-if="alert.message" class="row row--alert">
+            <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+        </div>
+        <div>
+
+            <div class="form form--2-col">
+                <div class="col-50p">
+                    @* Caption *@
+                    <label class="form__label">Name<abbr title='Required'>*</abbr></label>
+                    <div class="form__control">
+                        <input class="width-90" type="text" ng-model="ngDialogData.NotificationType.Caption" ng-validation="errors.Caption" />
+                    </div>
+                </div>
+                <div class="col-50p">
+                    <div class="float-left">
+                        @* Trigger *@
+                        <label class="form__label">Trigger<abbr title='Required'>*</abbr></label>
+                        <div class="form__control">
+                            <div class="selectmenu" style="width: 100%" ng-validation="errors.NotificationTriggerId">
+                                <select ng-model="ngDialogData.NotificationType.NotificationTriggerId"
+                                        ng-options="item.Id as item.Caption for item in Triggers"
+                                        class="input--full">
+                                    <option value="">< Select Trigger ></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="float-right">
+                        @* Active *@
+                        <input type="checkbox" ng-model="ngDialogData.NotificationType.IsActive" id="is-active" />
+                        <label class="form__label margin-left-10" for="is-active">Active</label>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="clear-both">
+                    <label class="form__label">Description</label>
+                    @* Description *@
+                    <div class="form__control">
+                        <textarea class="input--full copy-box--small" rows="3" cols="100"
+                                  ng-model="ngDialogData.NotificationType.Description" ng-validation="errors.Description" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab">
+            <button class="tab-links" ng-click="openTab('rules-block', $event)" ng-class="{ 'tab-links-error' : errors.MilestoneDateOffset || errors.MilestoneDateExpires }" id="rules-tab">Rules</button>
+            <button class="tab-links" ng-click="openTab('template-block', $event)" ng-class="{ 'tab-links-error' : errors.NotificationTemplate.EmailSubject || errors.NotificationTemplate.EmailBody }">Template</button>
+            <span class="pull-right">
+                <button class="btn btn--secondary" style="margin-top: 0;" ng-click="preview()">Preview</button>
+                <button class="btn btn--secondary" style="margin-top: 0;" ng-click="test()">Test</button>
+            </span>
+        </div>
+        <div class="panel-section-content tab-body">
+            @* Rules block *@
+            <div id="rules-block" class="form form--2-col dataTables_scroll tab-content" style="overflow-x: hidden;">
+                @* Left col *@
+                <div class="width-30 display-inline-block">
+                    <h3 class="width-90 tooltip tab-body-header">
+                        Milestone Rules
+                        <span class="tooltiptext">Milestone date rules ensure a notification is only sent once the milestone date offset is met and the milestone date expiry has not passed.</span>
+                    </h3>
+                    <div>
+                        <div class="form__label">
+                            Milestone Date Name
+                        </div>
+                        <div class="form__control">
+                            <div class="selectmenu width-90" style="width: 90%" ng-validation="errors.MilestoneDateName">
+                                <select ng-init="ngDialogData.NotificationType.MilestoneDateName = MilestoneDates.Data[0].Key"
+                                        ng-model="ngDialogData.NotificationType.MilestoneDateName"
+                                        ng-options="item.Key as item.Value for item in MilestoneDates.Data"
+                                        class="input--full" title="The date when this notification should be sent."></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form__label">Milestone Offset<abbr title='Required'>*</abbr></div>
+                        <div class="form__control">
+                            <input class="align-right width-55" type="text" ng-model="ngDialogData.NotificationType.MilestoneDateOffset" ng-init="ngDialogData.NotificationType.MilestoneDateOffset = 0" ng-validation="errors.MilestoneDateOffset" title="The number of days after the milestone date (or before if negative)." />
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form__label">Milestone Expires<abbr title='Required'>*</abbr></div>
+                        <div class="form__control">
+                            <input class="align-right width-55" type="text" ng-model="ngDialogData.NotificationType.MilestoneDateExpires" ng-init="ngDialogData.NotificationType.MilestoneDateExpires = 0" ng-validation="errors.MilestoneDateExpires" title="The number of days after the milestone date when this notification is no longer relevant.  Zero means it does not expire." />
+                        </div>
+                    </div>
+                </div>
+                @* Middle col *@
+                <div class="width-30 display-inline-block">
+                    <h3 class="width-90 tooltip tab-body-header">
+                        Application State Rules
+                        <span class="tooltiptext">Application state rules ensure a notification is only sent if it matches the specified states.</span>
+                    </h3>
+                    <div>
+                        <div class="form__label">
+                            Previous State
+                        </div>
+                        <div class="form__control">
+                            <div class="selectmenu width-90" style="width: 90%" ng-validation="errors.PreviousApplicationState">
+                                <select ng-model="ngDialogData.NotificationType.PreviousApplicationState"
+                                        ng-options="item.Id as item.Caption for item in ApplicationStates.InternalStates"
+                                        class="input--full" title="the state the grant application was in previously.">
+                                    <option value="">Not Applicable</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="form__label">
+                            Current State
+                        </div>
+                        <div class="form__control">
+                            <div class="selectmenu width-90" style="width: 90%" ng-validation="errors.CurrentApplicationState">
+                                <select ng-model="ngDialogData.NotificationType.CurrentApplicationState"
+                                        ng-options="item.Id as item.Caption for item in ApplicationStates.InternalStates"
+                                        class="input--full" title="The state the grant application is currently in.">
+                                    <option value="">Not Applicable</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="form__label">
+                            Approval<abbr title='Required'>*</abbr>
+                        </div>
+                        <div class="form__control">
+                            <div class="selectmenu width-90" style="width: 90%" ng-validation="errors.ApprovalRule">
+                                <select ng-init="ngDialogData.NotificationType.ApprovalRule = ApprovalRules[0].Key"
+                                        ng-model="ngDialogData.NotificationType.ApprovalRule"
+                                        ng-options="item.Key as item.Value for item in ApprovalRules"
+                                        class="input--full" title="Whether the approval of the grant application is relevant to this notification."></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @* Right col *@
+                <div class="width-35 display-inline-block">
+                    <h3 class="width-90 tooltip tab-body-header">
+                        Reporting Rules
+                        <span class="tooltiptext">Participant Claim and Completion reporting rules ensure the notification is only sent if the application matches the configured options.</span>
+                    </h3>
+                    <div>
+                        <div class="form__label">
+                            Participant Reporting<abbr title='Required'>*</abbr>
+                        </div>
+                        <div class="form__control">
+                            <div class="selectmenu width-90" style="width: 90%" ng-validation="errors.ParticipantReportRule">
+                                <select ng-init="ngDialogData.NotificationType.ParticipantReportRule = ParticipantReportRules[0].Key"
+                                        ng-model="ngDialogData.NotificationType.ParticipantReportRule"
+                                        ng-options="item.Key as item.Value for item in ParticipantReportRules"
+                                        class="input--full" title="Whether the number of participants reported is relevant to this notification."></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form__label">
+                            Claim Reporting<abbr title='Required'>*</abbr>
+                        </div>
+                        <div class="form__control">
+                            <div class="selectmenu width-90" style="width: 90%" ng-validation="errors.ClaimReportRule">
+                                <select ng-init="ngDialogData.NotificationType.ClaimReportRule = ClaimReportRules[0].Key"
+                                        ng-model="ngDialogData.NotificationType.ClaimReportRule"
+                                        ng-options="item.Key as item.Value for item in ClaimReportRules"
+                                        class="input--full" title="Whether the claim reporting state is relevant to this notification."></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form__label">
+                            Completion Reporting<abbr title='Required'>*</abbr>
+                        </div>
+                        <div class="form__control">
+                            <div class="selectmenu width-90" style="width: 90%" ng-validation="errors.CompletionReportRule">
+                                <select ng-init="ngDialogData.NotificationType.CompletionReportRule = CompletionReportRules[0].Key"
+                                        ng-model="ngDialogData.NotificationType.CompletionReportRule"
+                                        ng-options="item.Key as item.Value for item in CompletionReportRules"
+                                        class="input--full" title="Whether the completion reporting state is relevant to this notification."></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="width-60 display-inline-block">
+                    <h3 class="width-90 tooltip tab-body-header">
+                        Resend Rules
+                        <span class="tooltiptext">
+                            Resend rule provides a way to control whether the same notification type will be resent if the other configured conditions are met.
+                        </span>
+                    </h3>
+                    <div class="width-70"
+                         ng-style="ngDialogData.NotificationType.ResendRule == @((int)CJG.Core.Entities.NotificationResendRules.Always) && {'position': 'relative', 'top': '-10px'}">
+                        <div class="form__label">
+                            Resend<abbr title='Required'>*</abbr>
+                        </div>
+                        <div class="form__control">
+                            <div class="selectmenu width-90" style="width: 90%" ng-validation="errors.ResendRule">
+                                <select ng-init="ngDialogData.NotificationType.ResendRule = ResendRules[0].Key"
+                                        ng-model="ngDialogData.NotificationType.ResendRule"
+                                        ng-options="item.Key as item.Value for item in ResendRules"
+                                        class="input--full" title="Whether this notification should be resent more than once if the other conditions allow for it."></select>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="width-40" ng-show="ngDialogData.NotificationType.ResendRule == @((int)CJG.Core.Entities.NotificationResendRules.Always)">
+                        <div class="form__label">Resend Delay Days<abbr title='Required'>*</abbr></div>
+                        <div class="form__control" style="width: 68%;">
+                            <input class="input align-right" type="text" ng-model="ngDialogData.NotificationType.ResendDelayDays" ng-init="ngDialogData.NotificationType.ResendDelayDays = 0" ng-validation="errors.ResendDelayDays" title="The number of days to delay before sending another notification" />
+                        </div>
+                    </div>
+                </div>
+                <div class="width-35 display-inline-block">
+                    <h3 class="width-90 tooltip tab-body-header">
+                        Recipient Rule
+                        <span class="tooltiptext">
+                            Who the notification will be sent to.
+                        </span>
+                    </h3>
+                    <div>
+                        <div class="form__label">
+                            Recipient<abbr title='Required'>*</abbr>
+                        </div>
+                        <div class="form__control">
+                            <div class="selectmenu width-90" style="width: 90%" ng-validation="errors.RecipientRule">
+                                <select ng-init="ngDialogData.NotificationType.RecipientRule = RecipientRules[0].Key"
+                                        ng-model="ngDialogData.NotificationType.RecipientRule"
+                                        ng-options="item.Key as item.Value for item in RecipientRules"
+                                        class="input--full" title="Who the notification should be sent to."></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @* Template block *@
+            <div id="template-block" class="dataTables_scroll tab-content">
+                <div>
+                    @* Subject *@
+                    <div class="form__group">
+                        <div class="form__label">Subject<abbr title='Required'>*</abbr></div>
+                        <div class="form__control">
+                            <input id="Subject" class="input--full" maxlength="500"
+                                   ng-model="ngDialogData.NotificationType.NotificationTemplate.EmailSubject"
+                                   ng-validation="errors.NotificationTemplate.EmailSubject" />
+                        </div>
+                    </div>
+                    <div>
+                        @* Body *@
+                        <div class="form__label">Body<abbr title='Required'>*</abbr></div>
+                        <div ng-class="{'has-error': errors.NotificationTemplate.EmailBody}">
+                            <textarea ng-model="ngDialogData.NotificationType.NotificationTemplate.EmailBody"
+                                      ui-tinymce="tinymceOptions" />
+                        </div>
+                        <validation ng-model="errors.NotificationTemplate.EmailBody"></validation>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div>
+            <button class="btn btn--secondary pull-left" ng-click="closeThisDialog()">Cancel</button>
+            <button class="btn btn--primary btn--danger pull-left" ng-click="deleteNotification()" ng-disabled="!ngDialogData.NotificationType.CanDelete">Delete</button>
+            <button class="btn btn--primary pull-right" ng-click="save()">Save</button>
+        </div>
+    </div>
+</div>

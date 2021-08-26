@@ -1,0 +1,99 @@
+﻿@using CJG.Web.External.Helpers;
+@using CJG.Core.Entities;
+
+@model TrainingProgram
+
+@{
+    var isExternal = ViewContext.RouteData.IsExternal();
+
+    if (ViewData["IsExternal"] != null)
+    {
+        isExternal = Convert.ToBoolean(ViewData["IsExternal"]);
+    }
+
+    var showAgreedCosts = Model.GrantApplication.ApplicationStateInternal.ShowAgreedCosts();
+}
+
+<h3>Eligible Training Costs</h3>
+
+<table id="tblExpenses" class="table table--expenses js-table-expense-list">
+    <thead>
+        <tr>
+            <th>Expense type</th>
+            <th class="num-col">Number of Participants</th>
+            <th class="num-col">Cost per Participant</th>
+            <th class="num-col">Total Training Cost</th>
+            <th class="num-col">Employer Contribution</th>
+            <th class="num-col">Requested Government Contribution</th>
+
+            @if (!isExternal)
+            {
+                <th class="col-small"><span class="sr-only">Edit Expense</span></th>
+                <th class="col-small"><span class="sr-only">Delete Expense</span></th>
+            }
+        </tr>
+    </thead>
+
+    <tbody>
+        @{
+            var OrderedList = Model.EligibleCosts.Where(ec => ec.AgreedMaxCost > 0).OrderBy(x => x.TrainingProgram.Id);
+        }
+
+        @foreach (var expenseItem in OrderedList)
+        {
+            if (showAgreedCosts)
+            {
+                <tr data-expense-id="@expenseItem.EligibleExpenseType.Id"
+                    data-expense-item-id="@expenseItem.Id"
+                    data-total="@expenseItem.AgreedMaxCost.ToString()"
+                    data-participants="@expenseItem.AgreedMaxParticipants.ToString()">
+                    <td>@(expenseItem.EligibleExpenseType.Caption)</td>
+                    <td class="num-col">@(expenseItem.AgreedMaxParticipants.ToString())</td>
+                    <td class="num-col">@(expenseItem.AgreedMaxParticipantCost.ToDollarCurrencyString())</td>
+                    <td class="num-col">@(expenseItem.AgreedMaxCost.ToDollarCurrencyString())</td>
+                    <td class="num-col">@(expenseItem.AgreedEmployerContribution.ToDollarCurrencyString())</td>
+                    <td class="num-col">@(expenseItem.AgreedMaxReimbursement.ToDollarCurrencyString())</td>
+                </tr>
+            }
+            else
+            {
+                <tr data-expense-id="@expenseItem.EligibleExpenseType.Id"
+                    data-expense-item-id="@expenseItem.Id"
+                    data-total="@expenseItem.EstimatedCost.ToString()"
+                    data-participants="@expenseItem.EstimatedParticipants.ToString()">
+                    <td>@(expenseItem.EligibleExpenseType.Caption)</td>
+                    <td class="num-col">@(expenseItem.EstimatedParticipants.ToString())</td>
+                    <td class="num-col">@(expenseItem.EstimatedParticipantCost.ToDollarCurrencyString())</td>
+                    <td class="num-col">@(expenseItem.EstimatedCost.ToDollarCurrencyString())</td>
+                    <td class="num-col">@(expenseItem.EstimatedEmployerContribution.ToDollarCurrencyString())</td>
+                    <td class="num-col">@(expenseItem.EstimatedReimbursement.ToDollarCurrencyString())</td>
+
+                    @if (!isExternal)
+                    {
+                        <td class="col-small">@Html.ActionLink("Edit", "EditEligibleCost", null, new { @class = "edit-expense" })</td>
+                        <td class="col-small">@Html.ActionLink("Delete", "DeleteEligibleCost", null, new { @class = "delete-expense js-confirm" })</td>
+                    }
+                </tr>
+            }
+        }
+        <tr>
+            <td><b>Totals</b></td>
+            <td></td>
+            <td></td>
+            <td class="num-col">
+                <b>@(Model.TotalAgreedMaxCost.ToDollarCurrencyString())</b>
+            </td>
+            <td class="num-col">
+                <b>@(Model.CalculateAgreedEmployerContribution().ToDollarCurrencyString())</b>
+            </td>
+            <td class="num-col">
+                <b>@(Model.CalculateAgreedMaxReimbursement().ToDollarCurrencyString())</b>
+            </td>
+            @if (!isExternal && !showAgreedCosts)
+            {
+                <td class="col-small"></td>
+                <td class="col-small"></td>
+            }
+        </tr>
+    </tbody>
+</table>

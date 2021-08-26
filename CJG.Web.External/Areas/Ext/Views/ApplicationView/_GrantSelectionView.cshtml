@@ -1,0 +1,28 @@
+﻿<div class="form--readonly">
+    <div class="form__group">
+        <div class="form__label">Stream:</div>
+        <div class="form__control">{{model.FullName}}</div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">For training starting in period:</div>
+        <div class="form__control">
+            {{toPST(model.GrantOpeningTrainingPeriodStartDate)}}
+            to
+            {{toPST(model.GrantOpeningTrainingPeriodEndDate)}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Delivery start date:</div>
+        <div class="form__control">
+            {{toPST(model.StartDate)}}
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Delivery end date:</div>
+        <div class="form__control">
+            {{toPST(model.EndDate)}}
+        </div>
+    </div>
+</div>

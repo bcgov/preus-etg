@@ -1,0 +1,155 @@
+﻿@using CJG.Web.External.Areas.Int.Controllers
+@model CJG.Web.External.Areas.Ext.Models.TrainingProviderListViewModel
+
+@{
+    var elementNamePrefix = string.Empty;
+    var isRequested = false;
+
+    if (ViewData["ElementNamePrefix"] != null)
+    {
+        elementNamePrefix = ViewData["ElementNamePrefix"].ToString();
+        isRequested = elementNamePrefix.Contains("requested");
+    }
+
+    var isExternal = ViewContext.RouteData.IsExternal();
+
+    if (ViewData["IsExternal"] != null)
+    {
+        isExternal = Convert.ToBoolean(ViewData["IsExternal"]);
+    }
+}
+
+<div id="providerTypePanel"
+     style="@((Model.TrainingProvider.TrainingProviderType != null &&
+                  Model.ProviderTypeIdsWithAttachment.Contains(Model.TrainingProvider.TrainingProviderType.Id.ToString())) || !isExternal
+                      ? "display: block"
+                      : "display: none")">
+
+    <div class="form__group">
+        <div class="form__label">Course outline:</div>
+        <div class="form__control">
+            @if (Model.TrainingProvider.CourseOutlineDocumentId.HasValue)
+            {
+                if (ViewContext.RouteData.IsExternal())
+                {
+                    @Html.ActionLink(string.Format("{0}{1}", Model.TrainingProvider.CourseOutlineDocument.FileName, Model.TrainingProvider.CourseOutlineDocument.FileExtension), nameof(ApplicationController.DownloadAttachment), typeof(ApplicationController), new { grantApplicationId = Model.ApplicationId, attachmentId = Model.TrainingProvider.CourseOutlineDocument.Id }, null)
+                }
+                else
+                {
+                    @Html.ActionLink("Course Outline", nameof(ApplicationController.DownloadAttachment), typeof(ApplicationController), new { grantApplicationId = Model.ApplicationId, attachmentId = Model.TrainingProvider.CourseOutlineDocument.Id }, null)
+
+                    if (Model.PartialUpdate.Allow)
+                    {
+                        @(Html.Kendo().Upload()
+                            .Multiple(false)
+                            .Name(elementNamePrefix + "courseOutline")
+                            .HtmlAttributes(new { accept = ".pdf,image/*" })
+                            .Async(a => a
+                                .Save(nameof(ApplicationController.ReplaceTrainingProviderAttachment), nameof(ApplicationController).Replace("Controller", ""), new RouteValueDictionary { { "id", Model.TrainingProviderId }, { "attachmentId", Model.TrainingProvider.CourseOutlineDocumentId.Value }, { "partialViewWrapper", "providerTypeDocuments" }, { "notesListContainer", "notes-list" }, { "IsRequested", isRequested } })
+                                .AutoUpload(true)
+                            )
+                            .Events(events => events
+                                .Select("onSelect")
+                                .Success("onDocumentUpload"))
+                            .Messages(m => m.Select("Replace"))
+                        )
+                    }
+                }
+            }
+            else if (Model.PartialUpdate.Allow)
+            {
+                <span>None</span>
+
+                @(Html.Kendo().Upload()
+                    .Multiple(false)
+                    .Name(elementNamePrefix + "courseOutline")
+                    .HtmlAttributes(new { accept = ".pdf,image/*" })
+                    .Async(a => a
+                        .Save(nameof(ApplicationController.UploadTrainingProviderAttachment), nameof(ApplicationController).Replace("Controller", ""), new RouteValueDictionary { { "id", Model.TrainingProviderId }, { "partialViewWrapper", "providerTypeDocuments" }, { "notesListContainer", "notes-list" }, { "IsRequested", isRequested } })
+                        .AutoUpload(true)
+                    )
+                    .Events(events => events
+                        .Select("onSelect")
+                        .Success("onDocumentUpload"))
+                    .Messages(m => m.Select("Upload"))
+                )
+            }
+            else
+            {
+                <span>None</span>
+            }
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Proof of qualifications:</div>
+        <div class="form__control">
+            @if (Model.TrainingProvider.ProofOfQualificationsDocumentId.HasValue)
+            {
+                if (ViewContext.RouteData.IsExternal())
+                {
+                    @Html.ActionLink(string.Format("{0}{1}", Model.TrainingProvider.ProofOfQualificationsDocument.FileName, Model.TrainingProvider.ProofOfQualificationsDocument.FileExtension), nameof(ApplicationController.DownloadAttachment), typeof(ApplicationController), new { grantApplicationId = Model.ApplicationId, attachmentId = Model.TrainingProvider.ProofOfQualificationsDocument.Id }, null)
+                }
+                else
+                {
+                    @Html.ActionLink("Proof of Qualifications", nameof(ApplicationController.DownloadAttachment), typeof(ApplicationController), new { grantApplicationId = Model.ApplicationId, attachmentId = Model.TrainingProvider.ProofOfQualificationsDocument.Id }, null)
+
+                    if (Model.PartialUpdate.Allow)
+                    {
+                        @(Html.Kendo().Upload()
+                            .Multiple(false)
+                            .Name(elementNamePrefix + "instructorProof")
+                            .HtmlAttributes(new { accept = ".pdf,image/*" })
+                            .Async(a => a
+                                .Save(nameof(ApplicationController.ReplaceTrainingProviderAttachment), nameof(ApplicationController).Replace("Controller", ""), new RouteValueDictionary { { "id", Model.TrainingProviderId }, { "attachmentId", Model.TrainingProvider.ProofOfQualificationsDocumentId.Value }, { "partialViewWrapper", "providerTypeDocuments" }, { "notesListContainer", "notes-list" }, { "IsRequested", isRequested } })
+                                .AutoUpload(true)
+                            )
+                            .Events(events => events
+                                .Select("onSelect")
+                                .Success("onDocumentUpload"))
+                            .Messages(m => m.Select("Replace"))
+                        )
+                    }
+                }
+            }
+            else if (Model.PartialUpdate.Allow)
+            {
+                <span>None</span>
+
+                @(Html.Kendo().Upload()
+                    .Multiple(false)
+                    .Name(elementNamePrefix + "instructorProof")
+                    .HtmlAttributes(new { accept = ".pdf,image/*" })
+                    .Async(a => a
+                        .Save(nameof(ApplicationController.UploadTrainingProviderAttachment), nameof(ApplicationController).Replace("Controller", ""), new RouteValueDictionary { { "id", Model.TrainingProviderId }, { "partialViewWrapper", "providerTypeDocuments" }, { "notesListContainer", "notes-list" }, { "IsRequested", isRequested } })
+                        .AutoUpload(true)
+                    )
+                    .Events(events => events
+                        .Select("onSelect")
+                        .Success("onDocumentUpload"))
+                    .Messages(m => m.Select("Upload"))
+                )
+            }
+            else
+            {
+                <span>None</span>
+            }
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        var elementNamePrefix = "";
+
+        @if (ViewData["ElementNamePrefix"] != null) {
+            <text>
+            elementNamePrefix = @Html.Raw(Json.Encode(ViewData["ElementNamePrefix"].ToString()));
+            </text>
+        }
+
+        $('#' + elementNamePrefix + 'courseOutline').attr('name', 'courseOutline');
+        $('#' + elementNamePrefix + 'instructorProof').attr('name', 'instructorProof');
+    });
+</script>

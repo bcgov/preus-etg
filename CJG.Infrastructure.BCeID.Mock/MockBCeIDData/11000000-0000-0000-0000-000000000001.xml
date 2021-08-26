@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<User>
+  <Guid>11000000-0000-0000-0000-000000000001</Guid>
+  <AccountType>Business</AccountType>
+  <FirstName>Ken</FirstName>
+  <LastName>Lyon</LastName>
+  <EmailAddress>ken.lyon@fcvinteractive.com</EmailAddress>
+  <TelephoneNumber>1 604-662-8407</TelephoneNumber>
+  <BusinessGuid>10000000-0000-0000-0000-000000000001</BusinessGuid>
+  <Business>
+    <Guid>10000000-0000-0000-0000-000000000001</Guid>
+    <LegalName>FCV Interactive (Victoria)</LegalName>
+    <DoingBusinessAs>FCV Victoria</DoingBusinessAs>
+    <AddressId>7</AddressId>
+    <Address>
+      <Id>7</Id>
+      <AddressLine1>730 View St.</AddressLine1>
+      <AddressLine2>Suite 320</AddressLine2>
+      <City>Victoria</City>
+      <PostalCode>V8W 3Y7</PostalCode>
+      <Province>British Columbia</Province>
+      <Country>CA</Country>
+      <UnstructuredAddress></UnstructuredAddress>
+      <Businesses></Businesses>
+    </Address>
+    <Users></Users>
+  </Business>
+</User>

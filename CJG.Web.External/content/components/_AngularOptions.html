@@ -1,0 +1,26 @@
+﻿<div class="form__group--edit-wrapper">
+	<label class="label-wrapper" ng-if="$ctrl.label || $ctrl.ngLabel">
+		{{$ctrl.label || $ctrl.ngLabel}}
+	</label>
+	<div class="control-wrapper">
+		<ul style="list-style:none" ng-show="$ctrl.editing()">
+			<li ng-repeat="item in $ctrl.ngItems track by item[$ctrl.key]">
+				<input type="radio"
+					   class="form-control"
+					   id="{{$ctrl.name}}-{{$index}}"
+					   name="{{$ctrl.name}}"
+					   ng-model="$ctrl.ngModel"
+					   ng-value="item[$ctrl.key]"
+					   ng-class="{'has-error': $ctrl.getError()}"
+					   ng-click="$ctrl.onClick($event, item)"
+					   ng-disabled="$ctrl.ngDisabled" />
+				<label for="{{$ctrl.name}}-{{$index}}">{{item[$ctrl.value]}}</label>
+			</li>
+		</ul>
+		<ul ng-if="!$ctrl.editing()" style="list-style:circle">
+			<li ng-repeat="item in $ctrl.ngItems track by item[$ctrl.key]" ng-if="$ctrl.ngModel === item[$ctrl.key]"><label>{{item[$ctrl.value]}}</label></li>
+		</ul>
+		<span ng-if="$ctrl.getError()" class="field-validation-error">{{$ctrl.getError()}}</span>
+		<ng-transclude></ng-transclude>
+	</div>
+</div>

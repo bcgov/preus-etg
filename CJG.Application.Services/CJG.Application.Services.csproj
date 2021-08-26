@@ -1,0 +1,241 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{48DCF26F-44B1-4731-B807-95F3F9721682}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CJG.Application.Services</RootNamespace>
+    <AssemblyName>CJG.Application.Services</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;Release</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Support|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Support\</OutputPath>
+    <DefineConstants>TRACE;Support</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TEST|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\TEST\</OutputPath>
+    <DefineConstants>TRACE;TEST</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'QA|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\QA\</OutputPath>
+    <DefineConstants>TRACE;QA</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Training|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Training\</OutputPath>
+    <DefineConstants>TRACE;Training</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.9.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.9.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.2\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.2\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.6.5\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="RazorEngine, Version=3.10.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <HintPath>..\packages\RazorEngine.3.10.0\lib\net45\RazorEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="Stateless, Version=4.0.0.0, Culture=neutral, PublicKeyToken=93038f0927583c9a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Stateless.4.2.1\lib\net45\Stateless.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Packaging, Version=4.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Packaging.4.5.0\lib\net46\System.IO.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.7\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AuthorizationService.cs" />
+    <Compile Include="ClaimEligibleCostService.cs" />
+    <Compile Include="DeliveryPartnerService.cs" />
+    <Compile Include="Helpers\DbFunctions.cs" />
+    <Compile Include="Helpers\TestService.cs" />
+    <Compile Include="IPrincipalExtensions.cs" />
+    <Compile Include="Notifications\NotificationViewModel.cs" />
+    <Compile Include="PaymentReconciliationService.cs" />
+    <Compile Include="ProgramNotificationService.cs" />
+    <Compile Include="NotificationTypeService.cs" />
+    <Compile Include="ProgramConfigurationService.cs" />
+    <Compile Include="TemplateException.cs" />
+    <Compile Include="UnderRepresentedPopulationService.cs" />
+    <Compile Include="VulnerableGroupService.cs" />
+    <Compile Include="CommunityService.cs" />
+    <Compile Include="EligibleExpenseBreakdownService.cs" />
+    <Compile Include="EligibleCostBreakdownService.cs" />
+    <Compile Include="EligibleExpenseTypeService.cs" />
+    <Compile Include="CompletionReportService.cs" />
+    <Compile Include="ClaimTypeService.cs" />
+    <Compile Include="ServiceLineService.cs" />
+    <Compile Include="ServiceCategoryService.cs" />
+    <Compile Include="ProgramDescriptionService.cs" />
+    <Compile Include="RiskClassificationService.cs" />
+    <Compile Include="ReportRateService.cs" />
+    <Compile Include="FiscalYearService.cs" />
+    <Compile Include="GrantProgramService.cs" />
+    <Compile Include="GrantOpeningManageScheduledService.cs" />
+    <Compile Include="AccountCodeService.cs" />
+    <Compile Include="InternalUserFilterService.cs" />
+    <Compile Include="ConcurrencyException.cs" />
+    <Compile Include="NoContentException.cs" />
+    <Compile Include="PaymentRequestService.cs" />
+    <Compile Include="ServiceLineBreakdownService.cs" />
+    <Compile Include="SettingService.cs" />
+    <Compile Include="ReCaptchaService.cs" />
+    <Compile Include="EmailSenderService.cs" />
+    <Compile Include="ClaimIdService.cs" />
+    <Compile Include="ApplicationWorkflowStateMachine.cs" />
+    <Compile Include="AttachmentService.cs" />
+    <Compile Include="ApplicationAddressService.cs" />
+    <Compile Include="ExceptionExtensions.cs" />
+    <Compile Include="HttpPostedFileExtensions.cs" />
+    <Compile Include="NaIndustryClassificationSystemService.cs" />
+    <Compile Include="NationalOccupationalClassificationService.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="AuthenticationService.cs" />
+    <Compile Include="GrantAgreementService.cs" />
+    <Compile Include="GrantApplicationService.cs" />
+    <Compile Include="ClaimService.cs" />
+    <Compile Include="NotificationException.cs" />
+    <Compile Include="EmailException.cs" />
+    <Compile Include="NotAuthorizedException.cs" />
+    <Compile Include="ParticipantService.cs" />
+    <Compile Include="NoteService.cs" />
+    <Compile Include="Service.cs" />
+    <Compile Include="StateMachineExtensions.cs" />
+    <Compile Include="GrantStreamService.cs" />
+    <Compile Include="GrantOpeningService.cs" />
+    <Compile Include="NotificationService.cs" />
+    <Compile Include="OrganizationService.cs" />
+    <Compile Include="SiteMinderService.cs" />
+    <Compile Include="StaticDataService.cs" />
+    <Compile Include="LogService.cs" />
+    <Compile Include="TempDataService.cs" />
+    <Compile Include="ExpenseTypeService.cs" />
+    <Compile Include="TrainingProgramService.cs" />
+    <Compile Include="TrainingProviderInventoryService.cs" />
+    <Compile Include="TrainingProviderService.cs" />
+    <Compile Include="EligibleCostService.cs" />
+    <Compile Include="UserService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities.cs" />
+    <Compile Include="Web\InternalHttpContext.cs" />
+    <Compile Include="Web\InternalHttpSessionState.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CJG.Application.Business\CJG.Application.Business.csproj">
+      <Project>{FC084FAE-D520-4804-AE61-7501CAEE495A}</Project>
+      <Name>CJG.Application.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Core.Entities\CJG.Core.Entities.csproj">
+      <Project>{3EDA57E9-E3F8-44B2-A360-3D54DEB6DC44}</Project>
+      <Name>CJG.Core.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Core.Interfaces\CJG.Core.Interfaces.csproj">
+      <Project>{3BCF9A94-7976-4BB8-9C23-4CF6526C74F3}</Project>
+      <Name>CJG.Core.Interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

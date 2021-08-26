@@ -1,0 +1,19 @@
+# Ignored Directories
+.vs
+.nuget
+bin
+css
+js
+logs
+node_modules
+obj
+packages
+TestResults
+
+# Ignored Files
+*.coverage
+*.dbmdl
+*.dll
+*.jfm
+*.user
+UpgradeLog*.htm

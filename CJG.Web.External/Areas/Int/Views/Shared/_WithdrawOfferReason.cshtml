@@ -1,0 +1,37 @@
+﻿<div id="modalWithdrawApplication" class="container--withdraw-offer" style="display:none;">
+    <div class="content--withdraw-offer side-padding">
+
+        <div ng-if="!model.WorkflowViewModel.ApplicationWorkflowViewModel.ReasonToWithdraw" class="alert alert--warning">
+            <p>Widthdraw reason is required</p>
+        </div>
+
+        <div class="main">
+            <div class="well">
+                <p>
+                    <strong>Are you sure you want to withdraw the offer?</strong>
+                </p>
+                <p>
+                    If you withdraw an offer the file will be closed. Enter a reason for withdrawing the offer in the box below and then click Withdraw Offer to
+                    confirm your decision or click Continue with Offer to return to the grant file. The reason will added to the grant file and will be used to
+                    inform the application contact as shown below.
+                </p>
+                <p>
+                    <i>"The offer has been withdrawn for the following reason:"</i>
+                </p>
+                <div class="form__group">
+                    <label class="form__label form__label--align-top" for="ReasonToWithdraw">Please provide a reason</label>
+                    <div class="form__control">
+                        <textarea id="ReasonToWithdraw" class="input--full" ng-model="model.WorkflowViewModel.ApplicationWorkflowViewModel.ReasonToWithdraw" maxlength="800"></textarea>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <input type="button" name="btnCancel" class="btn btn--secondary" value="No, Continue with Offer" />
+                    <button class="btn btn--primary btn--forward confirm-link pull-right" type="submit" name="btnSubmit" value="Yes, Withdraw Offer" ng-disabled="!model.WorkflowViewModel.ApplicationWorkflowViewModel.ReasonToWithdraw">
+                        Yes, Withdraw Offer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

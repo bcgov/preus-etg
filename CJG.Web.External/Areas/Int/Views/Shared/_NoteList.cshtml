@@ -1,0 +1,36 @@
+﻿@*@model CJG.Web.External.Areas.Int.Models.NotesViewModel*@
+@model IEnumerable<CJG.Core.Entities.Note>
+
+@foreach (var note in Model)
+{
+    <div class="notes-list__item">
+
+        @if (note.Attachment != null)
+        {
+            @Html.Hidden("attachmentId", note.Attachment.Id)
+            @Html.Hidden("attachmentFileName", string.Format("{0}{1}", note.Attachment.FileName, note.Attachment.FileExtension))
+        }
+
+        <div class="notes-list__hidden-data" hidden="hidden"
+             data-id="@note.Id"
+             data-type-id="@note.NoteTypeId"
+             data-description="@note.NoteType.Description"
+             data-creator-id="@if (note.Creator != null) { @note.CreatorId; }"></div>
+
+        <div class="notes-list__caption"><abbr title="@note.NoteType.Description">@note.NoteType.Caption</abbr></div>
+        <div class="notes-list__date">@note.DateAdded.ToLocalTime().ToString("yyyy-MM-dd h:mm:ss tt")</div>
+        <div class="notes-list__owner">
+            @{if (note.Creator != null)
+                { @(note.Creator.FirstName + " " + note.Creator.LastName) }
+            else
+            { <text>Applicant</text> } }
+        </div>
+        <div class="notes-list__content">@note.Content</div>
+        <div class="notes-list__attachment">
+            @if (note.Attachment != null)
+            {
+                <a class="link" href="/Int/Application/Attachment/Download/@note.GrantApplication.Id/@note.Attachment.Id" title="Download @string.Format("{0}{1}", note.Attachment.FileName, note.Attachment.FileExtension)">Download attachment</a>
+            }
+        </div>
+    </div>
+}

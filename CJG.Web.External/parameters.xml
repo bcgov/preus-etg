@@ -1,0 +1,122 @@
+﻿<parameters>
+  <parameter name="BCeIDWebServiceLogoffURL"
+             description="Please provide the URL for reaching the BCeID log off script."
+             defaultValue=""
+             tags="">
+    <parameterEntry kind="XmlFile"
+                    scope="Web.config"
+                    match="/configuration/appSettings/add[@key='BCeIDWebServiceLogoffURL']/@value" />
+  </parameter>
+  <parameter name="BCeIDWebServiceLogoffReturnURL"
+             description="Please provide the URL to redirect a user to after logging off.."
+             defaultValue=""
+             tags="">
+    <parameterEntry kind="XmlFile"
+                    scope="Web.config"
+                    match="/configuration/appSettings/add[@key='BCeIDWebServiceLogoffReturnURL']/@value" />
+  </parameter>
+  <parameter name="BCeIDWebService_OnlineServiceId"
+             description="Please provide the BCeID Online Service ID."
+             defaultValue=""
+             tags="">
+    <parameterEntry kind="XmlFile"
+                    scope="Web.config"
+                    match="/configuration/appSettings/add[@key='BCeIDWebService_OnlineServiceId']/@value" />
+  </parameter>
+  <parameter name="BCeIDWebService_UserName"
+             description="Please provide the BCeID Web Service Username."
+             defaultValue=""
+             tags="">
+    <parameterEntry kind="XmlFile"
+                    scope="Web.config"
+                    match="/configuration/appSettings/add[@key='BCeIDWebService_UserName']/@value" />
+  </parameter>
+  <parameter name="BCeIDWebService_Password"
+             description="Please provide the BCeID Web Service password."
+             defaultValue=""
+             tags="">
+    <parameterEntry kind="XmlFile"
+                    scope="Web.config"
+                    match="/configuration/appSettings/add[@key='BCeIDWebService_Password']/@value" />
+  </parameter>
+  <parameter name="BCeIDServiceSoap"
+             description="Please provide the BCeID Web Service Endpoint URL."
+             defaultValue=""
+             tags="">
+    <parameterEntry kind="XmlFile"
+                    scope="Web.config"
+                    match="/configuration/appSettings/add[@key='BCeIDServiceSoap']/@value" />
+  </parameter>
+  <parameter name="BCeIDWebService_Timeout"
+             description="Please provide the BCeID web service timeout seconds."
+             defaultValue="5"
+             tags="">
+    <parameterEntry kind="XmlFile"
+                    scope="Web.config"
+                    match="/configuration/appSettings/add[@key='BCeIDWebService_Timeout']/@value" />
+  </parameter>
+  <parameter name="BCeIDWebServiceLogoffURL"
+             description="Please provide the BCeID web service logoff URL."
+             defaultValue="5"
+             tags="">
+    <parameterEntry kind="XmlFile"
+                    scope="Web.config"
+                    match="/configuration/appSettings/add[@key='BCeIDWebServiceLogoffURL']/@value" />
+  </parameter>
+  <parameter name="BCeIDWebServiceLogoffReturnURL"
+             description="Please provide the BCeID web service logoff return URL"
+             defaultValue="5"
+             tags="">
+    <parameterEntry kind="XmlFile"
+                    scope="Web.config"
+                    match="/configuration/appSettings/add[@key='BCeIDWebServiceLogoffReturnURL']/@value" />
+  </parameter>
+  <parameter name="SMTPServer"
+             description="Please provide the SMTP domain."
+             defaultValue="5"
+             tags="">
+    <parameterEntry kind="XmlFile"
+                    scope="Web.config"
+                    match="/configuration/appSettings/add[@key='SMTPServer']/@value" />
+  </parameter>
+  <parameter name="EnableEmails"
+             description="Please provide whetner email will be enabled."
+             defaultValue="5"
+             tags="">
+    <parameterEntry kind="XmlFile"
+                    scope="Web.config"
+                    match="/configuration/appSettings/add[@key='EnableEmails']/@value" />
+  </parameter>
+  <parameter name="EmailFromAddress"
+             description="Please provide the email from address."
+             defaultValue="5"
+             tags="">
+    <parameterEntry kind="XmlFile"
+                    scope="Web.config"
+                    match="/configuration/appSettings/add[@key='EmailFromAddress']/@value" />
+  </parameter>
+  <parameter name="EmailFromDisplayName"
+             description="Please provide the email from name."
+             defaultValue="5"
+             tags="">
+    <parameterEntry kind="XmlFile"
+                    scope="Web.config"
+                    match="/configuration/appSettings/add[@key='EmailFromDisplayName']/@value" />
+  </parameter>
+  <parameter name="MaxUploadSizeInBytes"
+             description="Please provide the maximum upload size in bytes."
+             defaultValue="5"
+             tags="">
+    <parameterEntry kind="XmlFile"
+                    scope="Web.config"
+                    match="/configuration/appSettings/add[@key='MaxUploadSizeInBytes']/@value" />
+  </parameter>
+  <parameter name="ReCaptchaSecret"
+             description="Please provide the ReCaptcha secret key."
+             defaultValue="5"
+             tags="">
+    <parameterEntry kind="XmlFile"
+                    scope="Web.config"
+                    match="/configuration/appSettings/add[@key='ReCaptchaSecret']/@value" />
+  </parameter>
+</parameters>

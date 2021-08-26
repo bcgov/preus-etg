@@ -1,0 +1,5 @@
+﻿<span>
+	<button class="btn" ng-class="$ctrl.ngClass || 'btn--empty'" ng-click="$ctrl.edit($event)" ng-show="!$ctrl.ngModel">Edit</button>
+	<button class="btn" ng-class="$ctrl.ngClass ? 'btn--secondary' : 'btn--empty'" ng-click="$ctrl.cancel($event)" ng-show="$ctrl.ngModel">Cancel</button>
+	<button class="btn" ng-class="$ctrl.ngClass || 'btn--empty'" ng-click="$ctrl.save($event)" ng-show="$ctrl.ngModel" ng-disabled="!$ctrl.ngCanSave">Save</button>
+</span>

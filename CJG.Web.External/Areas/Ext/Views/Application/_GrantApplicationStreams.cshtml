@@ -1,0 +1,102 @@
+﻿<div>
+    <h2>{{model.GrantProgramName}} Selection</h2>
+
+    <input class="js-training-program-start-date" type="hidden" ng-model="model.TrainingStartDate">
+
+    <p>To create an application, you must select a grant from the ones available below. Make your selection based on your delivery start date and the stream that matches your training plan.</p>
+    <p>Click "Show description" to read the stream description.</p>
+    <p>The earliest date you may submit your application is shown for each grant selection.</p>
+
+    <div class="js-training-date-warning alert alert--warning is-hidden" role="alert">
+        <p>The training period for your grant selection does not include your current training start date. If you keep this selection, you will need to edit your training program and select new training dates.</p>
+    </div>
+
+    <div class="js-reimbursement-rate-warning alert alert--warning is-hidden" role="alert">
+        <p>The reimbursement rate for the grant opening you selected will vary the government contribution in your training cost estimates.  If you keep this selection, you will need to edit your training cost estimates to review and confirm the changes.</p>
+    </div>
+
+    <div class="list-radio-toggle--container" ng-validation="errors.GrantOpeningId">
+        <ul class="list-radio-toggle" ng-repeat="period in model.TrainingPeriods">
+            <li>
+                <h4 class="list-radio-toggle--title">{{period.Title}}</h4>
+            </li>
+            <li class="list-radio-toggle--item" ng-repeat="item in period.GrantOpenings">
+                <div class="form-item">
+                    <div class="half-width">
+                        <input type="radio" id="grant-stream-{{item.Id}}" name="model.GrantOpeningId" ng-value="{{item.Id}}" ng-model="model.GrantOpeningId" data-start-date="{{item.StartDate}}" data-end-date="{{item.EndDate}}" data-reimbursement-rate="{{item.ReimbursementRate}}" ng-click="getRequirements(item.Id)">
+                        <label for="grant-stream-{{item.Id}}">{{item.GrantStream.Name}}</label>
+                    </div>
+                    <div class="half-width is-hidden-on-mobile">
+                        <label class="list-radio-toggle--label">Earliest submission:</label>
+                    </div>
+                </div>
+
+                <div class="read-more">
+                    <div class="half-width is-hidden-on-mobile">
+                        <button class="list-radio-toggle--btn" ng-click="item.showDescription = true" ng-show="!item.showDescription">Show description</button>
+                        <button class="list-radio-toggle--btn open" ng-click="item.showDescription = false" ng-show="item.showDescription">Hide description</button>
+                    </div>
+                    <div class="half-width is-hidden-on-mobile">{{item.OpeningDate}}</div>
+                    <div class="half-width is-hidden-beyond-mobile">
+                        <button class="list-radio-toggle--btn" ng-click="item.showDescription = true" ng-show="!item.showDescription">Show description</button>
+                        <button class="list-radio-toggle--btn open" ng-click="item.showDescription = false" ng-show="item.showDescription">Hide description</button>
+                    </div>
+                    <div class="list-radio-toggle--content clear-both" ng-show="item.showDescription">
+                        <span ng-bind-html="item.GrantStream.ObjectiveHTML"></span>
+                    </div>
+
+                    <div class="half-width is-hidden-beyond-mobile">
+                        <label class="list-radio-toggle--label">Earliest submission:</label>
+                    </div>
+                    <div class="half-width is-hidden-beyond-mobile">{{item.OpeningDate}}</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div ng-show="model.GrantOpeningId && currentTrainingPeriod">
+        <h2>Delivery Dates</h2>
+        <div class="form__group form__group--date">
+            <label class="form__label">Delivery Start Date:<abbr title="Required">*</abbr></label>
+            <p>{{getDescription()}}</p>
+            <div class="form__control--flexible">
+                <div class="control-wrapper" ng-validation="errors.StartDate">
+                    <datedropdown ng-model="model.DeliveryStartDate" ng-year="model.DeliveryStartYear" ng-month="model.DeliveryStartMonth" ng-day="model.DeliveryStartDay" ng-min-date="currentTrainingPeriod.StartDate" ng-max-date="currentTrainingPeriod.EndDate" ng-default-month="'Month'" ng-default-day="'Day'" ng-default-year="'Year'" ng-editing="true"></datedropdown>
+                </div>
+            </div>
+        </div>
+        <div class="form__group form__group--date">
+            <label class="form__label">Delivery End Date:<abbr title="Required">*</abbr></label>
+            <div class="form__control--flexible">
+                <div class="control-wrapper" ng-validation="errors.EndDate">
+                    <datedropdown ng-model="model.DeliveryEndDate" ng-year="model.DeliveryEndYear" ng-month="model.DeliveryEndMonth" ng-day="model.DeliveryEndDay" ng-min-date="currentTrainingPeriod.StartDate" ng-default-month="'Month'" ng-default-day="'Day'" ng-default-year="'Year'" ng-editing="true"></datedropdown>
+                </div>
+            </div>
+        </div>
+
+        <div class="form__group form__group--radio-inline" ng-if="model.GrantStream.EligibilityEnabled">
+            <div class="form__label">
+                {{model.GrantStream.Name}} Stream Eligibility Requirements:
+            </div>
+
+            <div>
+
+                <div class="form-item" ng-bind-html="model.GrantStream.EligibilityRequirements"></div>
+                <br />
+                <br />
+                <label class="form__label" ng-validation="errors.EligibilityQuestion">{{model.GrantStream.EligibilityQuestion}}<abbr title="Required">*</abbr></label>
+                <div class="form__control" ng-validation="errors.EligibilityConfirmed">
+                    <div class="form-item">
+                        <input type="radio" id="eligibilityConfirmed-yes" ng-value="true" ng-model="model.EligibilityConfirmed" name="model.EligibilityConfirmed">
+                        <label for="eligibilityConfirmed-yes">Yes</label>
+                    </div>
+                    <div class="form-item">
+                        <input type="radio" id="eligibilityConfirmed-no" ng-value="false" ng-model="model.EligibilityConfirmed" name="model.EligibilityConfirmed">
+                        <label for="eligibilityConfirmed-no">No</label>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

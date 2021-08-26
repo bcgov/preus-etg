@@ -1,0 +1,160 @@
+﻿@using CJG.Web.External.Areas.Int.Controllers
+
+<div ng-controller="ApplicationSummary" show-hide="false">
+    <div class="panel-section-item">
+        <div class="panel-section-title" style="pointer-events: none;">
+            <h2 class="display-inline-block">Summary</h2>
+        </div>
+        <div class="panel-section-buttons">
+            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            <span ng-if="grantFile.HasAgreement">
+                @Html.ActionLink("View Agreement", nameof(GrantAgreementController.AgreementView), typeof(GrantAgreementController), new { grantApplicationId = ViewBag.GrantApplicationId })
+            </span>
+            <section-edit-buttons ng-model="section.editing" ng-if="grantFile.EditSummary"></section-edit-buttons>
+        </div>
+    </div>
+    <div class="panel-section-content" ng-show="section.show">
+        <div class="form form--2-col">
+            <div class="col-50p">
+                <div class="form__group">
+                    <div class="form__label">File number:</div>
+                    <div class="form__control">{{model.FileNumber}}</div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Status:</div>
+                    <div class="form__control">
+                        <internal-state-label ng-model="model.ApplicationStateInternalViewModel.Id" ng-label="model.ApplicationStateInternalViewModel.Description"></internal-state-label>
+                        on {{toPST(model.DateUpdated)}}
+                        <div ng-if="model.ShowAssessorName">
+                            <text><br />Assigned by</text> {{model.AssignedBy}}
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Grant opening:</div>
+                    <div class="form__control">
+                        {{model.GrantStreamFullName}} <br>
+                        ({{toPST(model.TrainingPeriodStartDate)}} to {{toPST(model.TrainingPeriodEndDate)}})
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Delivery dates:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper" ng-class="{ 'float-left' : !section.editing }">
+                            <datedropdown ng-model="model.DeliveryStartDate" ng-text="model.DeliveryStartDate" ng-min-date="model.TrainingPeriodStartDate" ng-max-date="model.TrainingPeriodEndDate"></datedropdown>
+                        </div>
+                        <div ng-class="{ 'float-left' : !section.editing }">
+                            &nbsp;to&nbsp;
+                        </div>
+                        <div class="control-wrapper" ng-class="{ 'float-left' : !section.editing }">
+                            <datedropdown ng-model="model.DeliveryEndDate" ng-text="model.DeliveryEndDate" ng-min-date="model.TrainingPeriodStartDate" ng-max-date="section.maxTrainingPeriodDate"></datedropdown>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group last-item">
+                    <div class="form__label">Training cost:</div>
+                    <div class="form__control">
+                        {{model.EligibleTotalCost|currency}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-50p">
+                <div class="form__group">
+                    <div class="form__label">Assessor:</div>
+                    <div class="form__control">
+                        <div>{{model.Assessor ? (model.Assessor.FirstName + " " + model.Assessor.LastName) : "Unassigned"}}</div>
+                        <div class="control-wrapper selectmenu input--medium" ng-if="model.AllowReAssign">
+                            <select ng-model="model.AssessorId" ng-options="item.Id as item.FirstName + item.LastName for item in assessors | filterExclusion:{Id: [model.Assessor.Id]}" class="input--medium" ng-validation></select>
+                        </div>
+                        <button ng-if="model.AllowReAssign" ng-click="reassign()" class="btn btn--primary">Reassign</button>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Submitted:</div>
+                    <div class="form__control">
+                        {{toPST(model.DateSubmitted)}}
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Applicant:</div>
+                    <div class="form__control">
+                        {{model.OrganizationLegalName}}
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Doing Business As<br />(Reported by Organization):</div>
+                    <div class="form__control">
+                        {{model.DoingBusinessAs}}
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Doing Business As<br />(Reported by Program):</div>
+                    <div class="form__control">
+                        <div class="control-wrapper input--medium">
+                            <input type="text" ng-model="model.DoingBusinessAsMinistry" class="input--medium" maxlength="50" ng-validation ng-editing />
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Registry Number:</div>
+                    <div class="form__control">
+                        {{model.StatementOfRegistrationNumber}}
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Program FY Total: </div>
+                    <div class="form__control">
+                        {{model.TotalGrantApplications}} agreements; total cost {{model.TotalGrantApplicationCost | currency}};
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Risk classification:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper selectmenu">
+                            <select ng-model="model.RiskClassificationId" ng-options="item.Id as item.Caption for item in riskClassifications" class="input--small" ng-validation ng-editing></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group" ng-if="model.AllowEditDeliveryPartner">
+                    <div class="form__label">Delivery partner:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper selectmenu input--full">
+                            <select ng-model="model.DeliveryPartnerId" ng-options="item.Key as item.Value for item in deliveryPartners" class="input--full" ng-validation ng-editing>
+                                <option value="">{{'None'}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group form__group--checkbox-list last-item" ng-if="model.AllowEditDeliveryPartner && model.DeliveryPartnerId">
+                    <div class="form__label">Assisted with:</div>
+                    <div class="form__control">
+                        <div class="form__group--edit-wrapper">
+                            <div class="control-wrapper input--full">
+                                <ul style="list-style:none" ng-validation="errors.DeliveryPartnerServices">
+                                    <li class="form-control" ng-repeat="item in deliveryPartnerServices track by item.Key">
+                                        <input type="checkbox" id="delivery-partner-service-{{$index}}" ng-model="item.isChecked" ng-item="item" ng-value="item.Key" ng-selected="model.SelectedDeliveryPartnerServiceIds" ng-editing />
+                                        <label for="delivery-partner-service-{{$index}}">{{item.Value}}</label>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clear-both"></div>
+
+            <div ng-if="model.TerminalReason" class="block--row-group">
+                <div class="form__group last-item">
+                    <div class="form__label">Reason:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper input--full">
+                            <textarea ng-model="model.TerminalReason" class="input--full" ng-disabled="!model.AllowDirectorUpdate" ng-validation ng-editing></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

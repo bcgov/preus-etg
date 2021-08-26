@@ -1,0 +1,43 @@
+﻿@model CJG.Web.External.Areas.Int.Models.ApplicationSectionModel
+
+<div @Html.Raw(Model.PanelAttributes)>
+    <span class="panel-section-item">
+        <span class="panel-section-title">
+            <h2 class="display-inline-block">@Model.Title</h2>
+        </span>
+        <span class="panel-section-buttons">
+            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            @if (Model.AdditionalButtons != null)
+            {
+                @Html.Raw(Model.AdditionalButtons)
+            }
+            @if (Model.OverrideButtons == null)
+            {
+                <span @Html.Raw(Model.ButtonAttributes)>
+                    <button class="btn btn--empty"
+                            ng-if="!sections.Editing@(Model.SectionName)"
+                            ng-click="editSection('@(Model.SectionName)', '@(Model.LoadUrl)', '@(Model.SaveUrl)', '@(Model.LoadMethod)', '@(Model.SaveMethod)', '@(Model.EditCallback)', '@(Model.PresaveAction)', '@(Model.OverrideSaveAction)')">
+                        Edit
+                    </button>
+                    <button class="btn btn--empty"
+                            ng-if="sections.Editing@(Model.SectionName)"
+                            ng-click="cancelSection(@(Model.CancelCallback ?? "null"))">
+                        Cancel
+                    </button>
+                    <button class="btn btn--empty"
+                            ng-if="sections.Editing@(Model.SectionName)"
+                            ng-click="saveSection('@(Model.SaveCallback)', '@(Model.PresaveAction)')">
+                        Save
+                    </button>
+                </span>
+            }
+            else
+            {
+                @Html.Raw(Model.OverrideButtons)
+            }            
+        </span>
+    </span>
+    <div class="panel-section-content">
+        @Html.Partial(Model.PartialView)
+    </div>
+</div>
