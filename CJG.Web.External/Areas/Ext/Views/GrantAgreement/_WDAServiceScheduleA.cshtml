@@ -1,0 +1,288 @@
+﻿<div class="form--readonly" ng-controller="ChangeRequestView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+    <div class="form__group two-col">
+        <label class="form__label" for="FileNumber">Agreement Number:</label>
+        <div class="form__control">
+            {{model.ScheduleA.AgreementNumber}}
+        </div>
+    </div>
+    <div class="form__group two-col">
+        <label class="form__label" for="Organization_LegalName">Applicant Name:</label>
+        <div class="form__control">
+            {{model.ScheduleA.ApplicantName}}
+        </div>
+    </div>
+    <p><h3>Agreement Term</h3></p>
+    <div class="form__group two-col">
+        <label class="form__label" for="GrantAgreement_StartDate">Term Start Date:</label>
+        <div class="form__control">
+            {{toPST(model.ScheduleA.DeliveryDate.TermStartDate)}}
+        </div>
+    </div>
+    <div class="form__group two-col">
+        <label class="form__label" for="GrantAgreement_EndDate">Term End Date:</label>
+        <div class="form__control">
+            {{toPST(model.ScheduleA.DeliveryDate.TermEndDate)}}
+        </div>
+    </div>
+    <div class="form__group two-col">
+        <label class="form__label" for="GrantAgreement_FiscalYear">Agreement Fiscal Year:</label>
+        <div class="form__control">
+            {{model.ScheduleA.FiscalYearDisplay}}
+        </div>
+    </div>
+    <div class="form__group two-col">
+        <label class="form__label" for="GrantAgreement_ClaimDeadline">Claim submission deadline:</label>
+        <div class="form__control">
+            <b>{{toPST(model.ScheduleA.ClaimDeadline)}}</b>
+        </div>
+    </div>
+    <div class="clearfix margin-top margin-bottom">
+        <div class="pull-left">
+            <h3 class="pull-left">Delivery Plan</h3>
+        </div>
+        <div class="pull-right" ng-if="model.AllowSubmitChangeRequest">
+            <a class="btn btn--secondary" ng-click="cancelChangeRequest()" data-disableonsubmit="false">Cancel Change Request</a>
+            <a class="btn btn--primary" ng-click="submitChangeRequest()" data-disableonsubmit="false">Submit Change Request</a>
+        </div>
+    </div>
+
+    <div class="notice notice--icon">
+        <p>Click on provider links to enter one or more provider changes. Enter all the provider changes you are requesting then click Submit Change Requst to submit them all in one request to the Ministry for assessment. You will not be able to submit another request until assessment is complete.</p>
+    </div>
+
+    <div class="form__group two-col">
+        <label class="form__label" for="DefaultTrainingProgram_StartDate">Delivery Start Date:</label>
+        @*<div class="form__control" ng-if="model.AllowDeliveryDateChange">
+                <a class="link" ng-click="showChangeDeliveryDates(true)">
+                    <datedropdown ng-model="model.ScheduleA.DeliveryDate.StartDate"
+                                  ng-text="model.ScheduleA.DeliveryDate.StartDate">
+                    </datedropdown>
+                </a>
+            </div>*@
+        @*<div class="form__control" ng-if="!model.AllowDeliveryDateChange">*@
+        <div class="form__control">
+            {{toPST(model.ScheduleA.DeliveryDate.StartDate)}}
+        </div>
+    </div>
+    <div class="form__group two-col">
+        <label class="form__label" for="DefaultTrainingProgram_EndDate">Delivery End Date:</label>
+        @*<div class="form__control" ng-if="model.AllowDeliveryDateChange">
+                <a class="link" ng-click="showChangeDeliveryDates(true)">
+                    <datedropdown ng-model="model.ScheduleA.DeliveryDate.EndDate"
+                                  ng-text="model.ScheduleA.DeliveryDate.EndDate">
+                    </datedropdown>
+                </a>
+            </div>*@
+        @*<div class="form__control" ng-if="!model.AllowDeliveryDateChange">*@
+        <div class="form__control">
+            {{toPST(model.ScheduleA.DeliveryDate.EndDate)}}
+        </div>
+    </div>
+    <table class="table table--expenses js-table-expense-list">
+        <thead>
+            <tr>
+                <td class="column--left"><strong>Skills Training Course Title</strong></td>
+                <td class="column--left"><strong>Training Provider</strong></td>
+                <td class="column--center"><strong>Start Date</strong></td>
+                <td class="column--center"><strong>End Date</strong></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="skill in model.ScheduleA.SkillTrainings">
+                <td class="column--left {{ $last ? ($first ? 'no-bottom-border' : 'no-top-border') : 'no-border'}}">
+                    <div class="form__control column--right" ng-if="skill.RequestTrainingProviderId > 0">
+                        <label class="form__label">
+                            <span class="label label--{{skill.RequestTrainingProviderId > 0 && model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.ChangeRequestSubmitted) ? 'danger' : 'incomplete'}}">{{skill.RequestTrainingProviderId > 0 && model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.ChangeRequestSubmitted) ? 'Change Requested to:' : 'Request Change to:'}}</span>
+                        </label>
+                    </div>
+                    <div class="form__control {{skill.RequestTrainingProviderId > 0 ? 'margin-top-xs' : ''}}">{{skill.CourseTitle}}</div>
+                </td>
+                <td class="column--left {{ $last ? ($first ? 'no-bottom-border' : 'no-top-border') : 'no-border'}}">
+                    <div class="form__control" ng-if="model.AllowProviderChangeRequest">
+                        <a class="link" ng-click="showChangeTrainingProvider(skill.TrainingProviderId)">{{skill.RequestTrainingProviderName}}</a>
+                    </div>
+                    <div class="form__control" ng-if="!model.AllowProviderChangeRequest">{{skill.RequestTrainingProviderName}}</div>
+                    <div class="form__control" ng-if="model.AllowProviderChangeRequest && skill.RequestTrainingProviderId == 0">
+                        <a class="link" ng-click="showChangeTrainingProvider(skill.TrainingProviderId)">{{skill.TrainingProviderName}}</a>
+                    </div>
+                    <div class="form__control {{skill.RequestTrainingProviderId > 0 ? 'margin-top-xs' : ''}}" ng-if="!model.AllowProviderChangeRequest || skill.RequestTrainingProviderId > 0">{{skill.TrainingProviderName}}</div>
+                </td>
+                <td class="column--center {{ $last ? ($first ? 'no-bottom-border' : 'no-top-border') : 'no-border'}}">
+                    <div class="form__control column--right" ng-if="skill.RequestTrainingProviderId > 0">
+                        <label class="form__label">&nbsp;</label>
+                    </div>
+                    <div class="form__control {{skill.RequestTrainingProviderId > 0 ? 'margin-top-xs' : ''}}">{{toPST(skill.ProgramTrainingDate.StartDate)}}</div>
+                </td>
+                <td class="column--center {{ $last ? ($first ? 'no-bottom-border' : 'no-top-border') : 'no-border'}}">
+                    <div class="form__control column--right" ng-if="skill.RequestTrainingProviderId > 0">
+                        <label class="form__label">&nbsp;</label>
+                    </div>
+                    <div class="form__control {{skill.RequestTrainingProviderId > 0 ? 'margin-top-xs' : ''}}">{{toPST(skill.ProgramTrainingDate.EndDate)}}</div>
+                </td>
+            </tr>
+            <tr ng-if="model.ScheduleA.ESSComponents != null && model.ScheduleA.ESSComponents.length > 0">
+                <td class="column--left"><strong>Service Component</strong></td>
+                <td class="column--left"><strong>Service Provider</strong></td>
+                <td class="column--left" colspan="2"><strong>In-Scope Services</strong></td>
+            </tr>
+            <tr ng-repeat-start="ess in model.ScheduleA.ESSComponents"></tr>
+            <tr ng-if="ess.TotalCountOfProviders > 0" ng-repeat="serviceProvider in ess.ServiceProviders">
+                <td class="column--left {{ $last ? 'no-top-border' : 'no-border'}}">
+                    <div class="form__control column--right" ng-if="serviceProvider.RequestTrainingProviderId > 0">
+                        <label class="form__label">
+                            <span class="label label--{{serviceProvider.RequestTrainingProviderId > 0 && model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.ChangeRequestSubmitted) ? 'danger' : 'incomplete'}}">{{serviceProvider.RequestTrainingProviderId > 0 && model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.ChangeRequestSubmitted) ? 'Change Requested to:' : 'Request Change to:'}}</span>
+                        </label>
+                    </div>
+                    <div ng-if="$index == 0" class="form__control {{serviceProvider.RequestTrainingProviderId > 0 ? 'margin-top-xs' : ''}}">{{ess.ServiceComponentName}}</div>
+                </td>
+                <td class="column--left {{$last ? 'no-top-border' : 'no-border'}}">
+                    <div class="form__control" ng-if="model.AllowProviderChangeRequest">
+                        <a class="link" ng-click="showChangeServiceProvider(serviceProvider.TrainingProviderId)">{{serviceProvider.RequestTrainingProviderName}}</a>
+                    </div>
+                    <div class="form__control" ng-if="!model.AllowProviderChangeRequest">{{serviceProvider.RequestTrainingProviderName}}</div>
+                    <div class="form__control" ng-if="model.AllowProviderChangeRequest && serviceProvider.RequestTrainingProviderId == 0">
+                        <a class="link" ng-click="showChangeServiceProvider(serviceProvider.TrainingProviderId)">{{serviceProvider.TrainingProviderName}}</a>
+                    </div>
+                    <div class="form__control {{serviceProvider.RequestTrainingProviderId > 0 ? 'margin-top-xs' : ''}}" ng-if="!model.AllowProviderChangeRequest || serviceProvider.RequestTrainingProviderId > 0">{{serviceProvider.TrainingProviderName}}</div>
+                </td>
+                <td ng-if="$index == 0" colspan="2" class="column--left no-top-border" rowspan="{{ess.TotalCountOfProviders}}">
+                    <ul class="list--nostyle" ng-if="ess.ServiceScopes != null && ess.ServiceScopes.length > 0">
+                        <li ng-repeat="scope in ess.ServiceScopes">
+                            {{scope.Name}}
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr ng-if="ess.TotalCountOfProviders == 0">
+                <td class="column--left no-top-border">
+                    <div class="form__control">
+                        {{ess.ServiceComponentName}}
+                    </div>
+                </td>
+                <td class="column--left no-top-border"></td>
+                <td colspan="2" class="column--left no-top-border">
+                    <ul class="list--nostyle" ng-if="ess.ServiceScopes != null && ess.ServiceScopes.length > 0">
+                        <li ng-repeat="scope in ess.ServiceScopes">
+                            {{scope.Name}}
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr ng-repeat-end></tr>
+        </tbody>
+    </table>
+    <div class="form__group two-col">
+        <label class="form__label" for="GrantAgreement_ParticipantReportingDueDate">
+            Participant Reporting Due Date:
+        </label>
+        <div class="form__control">
+            {{toPST(model.ScheduleA.DeliveryDate.ParticipantReportingDueDate)}}
+        </div>
+    </div>
+    <div class="form__group two-col">
+        <label class="form__label" for="GrantAgreement_ReimbursementClaimDueDate">
+            Number of Participants in Program:
+        </label>
+        <div class="form__control">
+            {{model.ScheduleA.NumberOfParticipant}}
+        </div>
+    </div>
+    <h3>Eligible Costs</h3>
+    <table id="tblExpenses" class="table table--expenses js-table-expense-list">
+        <thead>
+            <tr>
+                <th>Expense Type</th>
+                <th class="num-col">Number of Participants</th>
+                <th class="num-col">Average <br />Cost per <br />Participant</th>
+                <th class="num-col">Total Cost</th>
+                <th class="num-col" ng-if="model.ScheduleA.ShowContributionColumn">Applicant Contribution</th>
+                <th class="num-col">Requested Government Contribution</th>
+            </tr>
+        </thead>
+        <tbody ng-repeat="eligibleCost in model.ScheduleA.EligibleCosts">
+            <tr>
+                <td>{{eligibleCost.EligibleExpenseType.Caption}}</td>
+                <td class="num-col" ng-if="model.ScheduleA.ShowAgreedCosts && eligibleCost.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)">{{eligibleCost.AgreedMaxParticipants}}</td>
+                <td class="num-col" ng-if="!model.ScheduleA.ShowAgreedCosts && eligibleCost.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)">{{eligibleCost.EstimatedParticipants}}</td>
+                <td class="num-col" ng-if="eligibleCost.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.Administration)"></td>
+                <td class="num-col" ng-if="model.ScheduleA.ShowAgreedCosts && eligibleCost.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)">{{eligibleCost.AgreedMaxParticipantCost | currency : '$' : 2}}</td>
+                <td class="num-col" ng-if="!model.ScheduleA.ShowAgreedCosts && eligibleCost.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)">{{eligibleCost.EstimatedParticipantCost | currency : '$' : 2}}</td>
+                <td class="num-col" ng-if="eligibleCost.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.Administration)"></td>
+                <td class="num-col" ng-if="model.ScheduleA.ShowAgreedCosts">{{eligibleCost.AgreedCost | currency : '$' : 2}}</td>
+                <td class="num-col" ng-if="!model.ScheduleA.ShowAgreedCosts">{{eligibleCost.EstimatedCost | currency : '$' : 2}}</td>
+                <td class="num-col" ng-if="model.ScheduleA.ShowContributionColumn && model.ScheduleA.ShowAgreedCosts">{{eligibleCost.AgreedEmployerContribution | currency : '$' : 2}}</td>
+                <td class="num-col" ng-if="model.ScheduleA.ShowContributionColumn && !model.ScheduleA.ShowAgreedCosts">{{eligibleCost.EstimatedEmployerContribution | currency : '$' : 2}}</td>
+                <td class="num-col" ng-if="model.ScheduleA.ShowAgreedCosts">{{eligibleCost.AgreedMaxReimbursement | currency : '$' : 2}}</td>
+                <td class="num-col" ng-if="!model.ScheduleA.ShowAgreedCosts">{{eligibleCost.EstimatedReimbursement | currency : '$' : 2}}</td>
+            </tr>
+            <tr ng-if="eligibleCost.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.SkillsTraining) && subrow.AssessedCost > 0" ng-repeat="subrow in eligibleCost.Breakdowns" style="border-bottom-color:grey !important;">
+                <td>
+                    <span> > {{ subrow.TrainingProgramTitle }}</span>
+                </td>
+                <td class="num-col"></td>
+                <td class="num-col"></td>
+                <td class="num-col">
+                    <span ng-if="model.ScheduleA.ShowAgreedCosts">
+                        {{subrow.AssessedCost | currency : '$' : 2}}
+                    </span>
+                    <span ng-if="!model.ScheduleA.ShowAgreedCosts">
+                        {{subrow.EstimatedCost | currency : '$' : 2}}
+                    </span>
+                </td>
+                <td class="num-col"></td>
+                <td class="num-col"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td><b>Totals</b></td>
+                <td></td>
+                <td></td>
+                <td class="num-col">
+                    <b>{{ model.ScheduleA.TotalAgreedCost | currency : '$' : 2 }}</b>
+                </td>
+                <td class="num-col" ng-if="model.ScheduleA.ShowContributionColumn">
+                    <b>{{ model.ScheduleA.TotalAgreedEmployerContribution | currency : '$' : 2 }}</b>
+                </td>
+                <td class="num-col">
+                    <b>{{ model.ScheduleA.TotalAgreedMaxReimbursement | currency : '$' : 2 }}</b>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <br />
+    <div style="text-align:center">
+        <p>
+            Maximum amount allocated per Participant for Employment Assistance Services and Participant Financial Supports, combined, is $5,000.00.
+        </p>
+    </div>
+</div>
+<style>
+    .column--center {
+        text-align: center !important;
+        vertical-align: top !important;
+    }
+
+    .column--left {
+        text-align: left !important;
+        vertical-align: top !important;
+    }
+
+    .column--right {
+        text-align: right !important;
+        vertical-align: top !important;
+    }
+
+    .margin-top-xs {
+        margin-top: 5px;
+    }
+
+    .no-top-border {
+        border-top: none !important;
+        border-bottom-color: gainsboro !important;
+    }
+
+    .no-bottom-border {
+        border-bottom: none !important;
+    }
+</style>

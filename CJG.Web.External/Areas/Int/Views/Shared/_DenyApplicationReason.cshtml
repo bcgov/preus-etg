@@ -1,0 +1,32 @@
+﻿<div id="modalDenyApplication" class="container--deny-application" style="display:none;">
+    <div class="content--deny-application side-padding">
+        <div class="main">
+            <p>
+                Enter a reason for your recommendation in the box below and then click 'Recommend for Denial' to confirm your decision or click 'Cancel' to return to the
+                grant file. The reason will be added to the grant file and will be used to inform the application contact on approval or denial using the following
+                introduction:
+            </p>
+
+            <p>
+                <i>"Your application has been denied for the following reason:"</i>
+            </p>
+
+            <div class="form__group">
+                <label class="form__label form__label--align-top" for="ReasonToDeny">
+                    Please provide a reason<abbr title='Required'>*</abbr>
+                </label>
+                <div class="form__control">
+                    <textarea id="ReasonToDeny" class="input--full" 
+                              ng-model="model.WorkflowViewModel.ApplicationWorkflowViewModel.ReasonToDeny" maxlength="800"></textarea>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <input type="button" name="btnCancel" class="btn btn--secondary" value="Cancel" />
+                <button class="btn btn--primary pull-right" type="submit" name="btnSubmit" value="Recommend for Denial" ng-disabled="!model.WorkflowViewModel.ApplicationWorkflowViewModel.ReasonToDeny">
+                    Recommend for Denial
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

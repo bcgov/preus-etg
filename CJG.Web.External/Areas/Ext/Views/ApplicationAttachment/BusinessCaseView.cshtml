@@ -1,0 +1,48 @@
+﻿@using CJG.Web.External.Areas.Ext.Controllers
+@{
+    ViewBag.Title = "Business Case";
+}
+
+<div class="row" ng-controller="ApplicationBusinessCaseView" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-redirect-url="@Url.ActionUrl(nameof(ApplicationController.ApplicationOverviewView), typeof(ApplicationController), new { grantApplicationId = (int)ViewBag.GrantApplicationId })">
+    @Html.ActionLink("Return", nameof(ApplicationController.ApplicationOverviewView), typeof(ApplicationController), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
+    <div class="row">
+        <div class="main">
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+            <h1 style="text-transform: inherit;" ng-if="model.BusinessCaseHeader">
+                Edit {{model.BusinessCaseHeader}}
+            </h1>
+            <div class="notice notice--icon" ng-if="model.BusinessCaseUserGuidance">
+                <div ng-bind-html="model.BusinessCaseUserGuidance" class="narrow-space-list"></div>
+            </div>
+            <p>Download and complete the <a href={{model.BusinessCaseTemplateURL}}><b>Business Case template</b></a> then use the "Add attachment" button below to attach your completed business case. The maximum file size is 5MB.</p>
+            <p>Accepted file types: PDF, JPG, JPEG, PNG, GIF.</p>
+
+            <div ng-validation="errors.BusinessCaseDocument">
+                <table style="width:100%;">
+                    <tr>
+                        <td style="width:60%;vertical-align:top;word-wrap: break-word;word-break: break-all;">
+                            <a ng-if="model.BusinessCaseDocument.Id != 0" target="_blank" href="/Ext/Application/Attachment/Download/{{model.GrantApplicationId}}/{{model.BusinessCaseDocument.Id}}">{{model.BusinessCaseDocument.FileName}}</a>
+                            <span ng-if="model.BusinessCaseDocument.Id == 0">{{model.BusinessCaseDocument.FileName}}</span>
+                            <br />{{model.BusinessCaseDocument.Description}}
+                        </td>
+                        <td style="vertical-align:top" ng-if="model.BusinessCaseDocument.FileName">
+                            <button class="btn btn--primary pull-right" ng-click="changeAttachment(model.BusinessCaseDocument)">Change</button>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="form__control" ng-if="!model.BusinessCaseDocument.FileName">
+                    <span>None</span>
+                    <button class="btn btn--primary pull-right" ng-click="addAttachment(model.BusinessCaseDocument)">Add attachment</button>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn--secondary" ng-click="cancel()">Cancel</button>
+                <button class="btn btn--primary btn--forward" ng-click="save()">Done</button>
+            </div>
+        </div>
+    </div>
+</div>

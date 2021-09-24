@@ -1,0 +1,44 @@
+﻿@model CJG.Web.External.Areas.Ext.Models.Claims.BaseClaimViewModel
+@using CJG.Core.Entities
+@{
+    ViewBag.Title = "Reimbursement Claim";
+}
+
+<div class="row">
+    @Html.ActionLink("Return", nameof(CJG.Web.External.Areas.Ext.Controllers.ReportingController.GrantFileView),
+                               nameof(CJG.Web.External.Areas.Ext.Controllers.ReportingController).Replace("Controller", ""),
+                               new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
+</div>
+<div id="claim-report-container" ng-controller="ClaimReportingView" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-claim-id="@ViewBag.ClaimId" ng-claim-version="@ViewBag.ClaimVersion">
+    <div class="row">
+        <div>
+
+            <program-title-label ng-model="model.ProgramTitleLabel"></program-title-label>
+
+            <h2>Reimbursement Claim</h2>
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+
+            <div ng-if="model.Claim.ProgramType == @((int)ProgramTypes.WDAService)">
+                @Html.Partial("_ClaimDetails")
+            </div>
+
+            <div ng-if="model.Claim.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                @Html.Partial("_ClaimDetailsETG")
+            </div>
+
+            @Html.Partial("_ClaimAttachments")
+
+
+            @if (!ViewBag.ReviewAndSubmit)
+            {
+                <div class="margin-bottom pull-right" ng-if="model.Claim.IsEditable && model.Claim.EligibleCosts.length > 0">
+                    <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-click="save()" ng-disabled="!IsValid">Save Claim</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

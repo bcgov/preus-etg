@@ -1,0 +1,270 @@
+﻿@using CJG.Core.Entities
+@using CJG.Web.External.Areas.Ext.Controllers
+@{
+    ViewBag.Title = "Edit Training Costs";
+}
+<div class="row">
+    @Html.ActionLink("Return", nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController.ApplicationOverviewView),
+                    nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController).Replace("Controller", ""),
+                    new { grantApplicationId = (int)ViewBag.GrantApplicationId },
+                    new { @class = "link--back" })
+</div>
+
+<div class="row" ng-controller="TrainingCostsView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+    <div class="main main--full">
+        <div ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+            <h1>Edit Training Costs</h1>
+            @*<p>Enter the total number of participants in the training program in part 1 below.</p>
+                <p>To enter your training cost estimates in part 2, click "Add a new expense type", select the eligible expense type and then enter the total training cost and number of participants for that expense.</p>
+                <p>When the cost for an expense type varies for one or more participants, enter multiple expense lines of the same type and vary the total training cost and number of participants for each one.</p>
+                <p>* INFORMATION MUST BE PROVIDED</p>*@
+            <div class="notice notice--icon">
+                <p>Grants will be calculated based on the stream reimbursement amounts outlined in the Eligibility Criteria.</p>
+            </div>
+        </div>
+
+        <div ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
+            <h1>Edit Training Costs</h1>
+            <p>The total number of participants in the program is shown below. You may verify and edit your cost estimates below.</p>
+            <p ng-if="model.UserGuidanceCostEstimates" ng-bind-html="model.UserGuidanceCostEstimates"></p>
+            <p ng-if="!model.UserGuidanceCostEstimates">The administration fees offset costs associated with project management, outreach and recruitment of participants, claims and reporting.</p>
+            <p> When you have verified and completed your training costs then click Done.</p>
+        </div>
+
+        <div ng-if="alert.message" class="row row--alert">
+            <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+        </div>
+
+        <div ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+            <h2>Enter Number of Participants in the Training Program*</h2>
+        </div>
+        <div ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
+            <h2>Number of Participants In the Program<abbr title='Required'>*</abbr></h2>
+        </div>
+        <div class="alert alert--warning js-participant-mismatch is-hidden">
+            <p><b>Participant numbers for one or more of your expense types exceed the total number of participants you have specified.</b></p>
+            <p>In most cases the number of participants for each expense type should be less than or equal to the total number of participants.</p>
+            <p>Check the participant numbers and make sure they are correct before submitting this application.</p>
+        </div>
+
+        <div class="form__group">
+            <div class="form__control">
+                <input type="text" class="input--small input-right-align" ng-model="model.EstimatedParticipants" ng-number maxlength="4" ng-change="syncNumberOfParticipants()" ng-disabled="EnableEdit" ng-validation>
+            </div>
+        </div>
+        <br />
+        <div ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+            <h2 class="title--cost-estimate">Training Costs</h2>
+        </div>
+        <div ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
+            <h2 class="title--cost-estimate">Training Costs</h2>
+        </div>
+        <div id="ExpensesList">
+            <div ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
+                @Html.Partial("_EligibleCosts")
+            </div>
+            <div ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                @Html.Partial("_ETGEligibleCosts")
+            </div>
+        </div>
+        <br />
+
+        <div id="ExpensePopup" class="js-expenses--add-edit">
+            <button class="btn btn--secondary" ng-show="!EnableEdit" ng-if="model.AllExpenseTypeAllowMultiple" ng-disabled="model.EstimatedParticipants == null || model.EstimatedParticipants <= 0" ng-click="createEligibleCost()">Add new expense type</button>
+            <b style="margin-left:20px" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">Your maximum amount per participant is {{model.MaxReimbursementAmt | currency}}</b>
+            <div class="form well" ng-if="EnableEdit">
+                <h2 class="no-text-transform" ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
+                    <span ng-if="!EligibleCost.EligibleExpenseType.AutoInclude && EligibleCost.EligibleExpenseType.AllowMultiple">Add or </span>Edit Expense
+                </h2>
+                <h2 class="no-text-transform" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                    Add or Edit Expense
+                </h2>
+                <div class="row--alert" ng-if="EligibleCostSummaryMessage">
+                    <div class="alert alert--default alert--error" role="alert"
+                         ng-bind-html="EligibleCostSummaryMessage">
+                    </div>
+                </div>
+                <div class="table--horizontal-wrapper-wide">
+                    <table class="table table--expenses">
+                        <thead>
+                            <tr>
+                                <th class="table-col__expense-type" ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">Expense type</th>
+                                <th class="num-col table-col__num-part" ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
+                                    Number of participants
+                                </th>
+                                <th class="num-col table-col__cost-per-part" ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
+                                    Average <br />Cost per<br />participant
+                                </th>
+                                <th class="num-col table-col__total-train-cost" ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
+                                    Total<br />cost
+                                </th>
+                                <th class="num-col table-col__emp-contribution" ng-if="model.ShouldDisplayEmployerContribution && model.ProgramType == @((int)ProgramTypes.WDAService)">
+                                    Employer contribution
+                                </th>
+                                <th class="num-col table-col__gov-contribution" ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
+                                    Requested Government Contribution
+                                </th>
+                                <th class="etg-table-col__expense-type" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">Expense type</th>
+                                <th class="num-col etg-table-col__gov-contribution" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                                    Enter the number of participants to which this expense will apply
+                                </th>
+                                <th class="num-col etg-table-col__empty" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                                </th>
+                                <th class="num-col etg-table-col__num-part" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                                    Enter the total expense that will be divided and assigned to these participants
+                                </th>
+                                <th class="num-col etg-table-col__empty" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                                </th>
+                                <th class="num-col etg-table-col__cost-per-part" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                                    Cost per Participant<br />(calculated)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="width-20">
+                                    <div class="selectmenu width-100" ng-if="EligibleExpenseTypes.length > 0">
+                                        <select class="{{EligibleCostExpenseTypeIdError ? 'has-error' : ''}} font-size-small"
+                                                ng-model="EligibleCost.EligibleExpenseType"
+                                                ng-options="item.Caption for item in EligibleExpenseTypes track by item.Id"
+                                                ng-change="changeEligibleCostExpenseType()">
+                                            <option value="">< Select value ></option>
+                                        </select>
+                                    </div>
+                                    <div ng-if="EligibleExpenseTypes.length == 0">
+                                        <span>{{EligibleCost.EligibleExpenseType.Caption}}</span>
+                                    </div>
+                                </td>
+                                <td class="num-col" ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
+                                    <div ng-if="EligibleCost.EligibleExpenseType && EligibleCost.EligibleExpenseType.ExpenseTypeId == @ExpenseTypes.ParticipantAssigned.ToInt()">
+                                        <input class="input--small input-right-align" ng-model="EligibleCost.EstimatedParticipants" ng-class="{'has-error':EligibleCost.EstimatedParticipantsErrorMessage}" ng-number maxlength="4" ng-change="recalculate()">
+                                    </div>
+                                    <span ng-if="EligibleCost.EligibleExpenseType && EligibleCost.EligibleExpenseType.ExpenseTypeId !=  @ExpenseTypes.ParticipantAssigned.ToInt()">
+                                        {{model.EstimatedParticipants}}
+                                    </span>
+                                    <span ng-if="!EligibleCost.EligibleExpenseType">
+                                        0
+                                    </span>
+                                </td>
+                                <td class="num-col" ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
+                                    <span>
+                                        {{EligibleCost.EstimatedParticipantCost | currency}}
+                                    </span>
+                                </td>
+                                <td class="num-col" ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
+                                    <span ng-if="!EligibleCost.EligibleExpenseType">
+                                        0
+                                    </span>
+                                    <span ng-if="EligibleCost.EligibleExpenseType">
+                                        <input class="input--small currency-width input-right-align" ng-model="EligibleCost.EstimatedCost" ng-class="{'has-error':EligibleCost.EstimatedCostErrorMessage}" ng-currency="13" ng-change="recalculate()">
+                                    </span>
+                                </td>
+                                <td class="num-col"
+                                    ng-if="(model.ShouldDisplayEmployerContribution && model.ProgramType == @((int)ProgramTypes.WDAService))">
+                                    <span class="js-employer-contribution">{{EligibleCost.EstimatedEmployerContribution | currency}}</span>
+                                </td>
+                                <td class="num-col" ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
+                                    <span class="js-grant-request">{{EligibleCost.EstimatedReimbursement | currency}}</span>
+                                </td>
+                                <td class="num-col" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                                    <div ng-if="EligibleCost.EligibleExpenseType && EligibleCost.EligibleExpenseType.ExpenseTypeId == @ExpenseTypes.ParticipantAssigned.ToInt()">
+                                        <input class="input--small input-right-align" ng-model="EligibleCost.EstimatedParticipants" ng-class="{'has-error':EligibleCostEstimatedParticipantsError}" ng-number maxlength="4" ng-change="recalculate()">
+                                    </div>
+                                    <span ng-if="EligibleCost.EligibleExpenseType && EligibleCost.EligibleExpenseType.ExpenseTypeId !=  @ExpenseTypes.ParticipantAssigned.ToInt()">
+                                        {{model.EstimatedParticipants}}
+                                    </span>
+                                    <span ng-if="!EligibleCost.EligibleExpenseType">
+                                        0
+                                    </span>
+                                </td>
+                                <td class="num-col" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)"></td>
+                                <td class="num-col" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                                    <span ng-if="!EligibleCost.EligibleExpenseType">
+                                        0
+                                    </span>
+                                    <span ng-if="EligibleCost.EligibleExpenseType">
+                                        <input class="currency-width input-right-align" ng-model="EligibleCost.EstimatedCost" ng-class="{'has-error':EligibleCostEstimatedCostError}" ng-currency="13" ng-change="recalculate()">
+                                    </span>
+                                </td>
+                                <td class="num-col" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)"></td>
+
+                                <td class="num-col" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                                    <span>
+                                        {{EligibleCost.EstimatedParticipantCost | currency}}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="button-group">
+                    <button class="btn btn--secondary" ng-click="cancelEligibleCost()">Cancel</button>
+                    <button class="btn btn--primary btn--forward" ng-disabled="!(EligibleCost.EstimatedParticipants >= 0 && EligibleCost.EstimatedCost >= 0 && EligibleCost.EligibleExpenseType != null)" ng-click="updateEligibleCost()">Save Expense</button>
+                </div>
+            </div>
+
+            <div class="form well" ng-if="EnableEditBreakdown">
+                <h2 class="no-text-transform"><span ng-if="!EligibleCost.EligibleExpenseType.AutoInclude && EligibleCost.EligibleExpenseType.AllowMultiple">Add or </span> Edit Expense Breakdown</h2>
+                <div class="row--alert" ng-if="EligibleCostSummaryMessage">
+                    <div class="alert alert--default alert--error" role="alert">
+                        {{EligibleCostSummaryMessage}}
+                    </div>
+                </div>
+                <div class="table--horizontal-wrapper-wide">
+                    <table class="table table--expenses">
+                        <thead>
+                            <tr>
+                                <th class="table-col__expense-type">Expense Breakdown Type</th>
+                                <th class="num-col table-col__num-part">Number of Participants</th>
+                                <th class="num-col table-col__cost-per-part">Cost per<br />Participant</th>
+                                <th class="num-col table-col__total-train-cost">Total Training<br />Cost</th>
+                                <th class="num-col table-col__emp-contribution" ng-if="model.ShouldDisplayEmployerContribution">Employer Contribution</th>
+                                <th class="num-col table-col__gov-contribution">Requested Government Contribution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div>
+                                        <span>{{EligibleCostBreakdown.TrainingProgramTitle}}</span>
+                                    </div>
+                                </td>
+                                <td class="num-col"></td>
+                                <td class="num-col">
+                                    <span>
+                                        {{EligibleCostBreakdown.EstimatedParticipantCost | currency}}
+                                    </span>
+                                </td>
+                                <td class="num-col">
+                                    @Html.TextBox("EligibleCostBreakdown.EstimatedCost", "EligibleCostBreakdown.EstimatedCost", "input-right-align {{EligibleCostBreakdownEstimatedCostError ? 'has-error' : ''}}", "id='EligibleBreakdownCost' ng-currency='13'", onChange: "recalculate()")
+                                </td>
+                                <td class="num-col" ng-if="model.ShouldDisplayEmployerContribution">
+                                    <span class="js-employer-contribution">{{EligibleCostBreakdown.EstimatedEmployerContribution | currency}}</span>
+                                </td>
+                                <td class="num-col">
+                                    <span class="js-grant-request">{{EligibleCostBreakdown.EstimatedReimbursement | currency}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="button-group">
+                    <button class="btn btn--secondary" ng-click="cancelEligibleCostBreakdown()">Cancel</button>
+                    <button class="btn btn--primary btn--forward" ng-disabled="EligibleCostBreakdown.EstimatedCost < 0" ng-click="updateEligibleCostBreakdown()">Save Expense</button>
+                </div>
+            </div>
+        </div>
+        <div class="button-group" ng-if="!EnableEdit && !EnableEditBreakdown">
+            @Html.Button("Cancel",
+                           new
+                                {
+                                    @class = "btn btn--secondary",
+                               @onclick = "window.location='" +
+                                   @Url.Action(nameof(ApplicationController.ApplicationOverviewView),
+                                       nameof(ApplicationController).Replace("Controller", ""),
+                                       new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'"
+                                })
+            <button id="btnDone" name="btnDone" class="btn btn--primary btn--forward" ng-click="save()">Done</button>
+        </div>
+    </div>
+</div>

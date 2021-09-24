@@ -1,0 +1,71 @@
+﻿@model CJG.Web.External.Areas.Int.Models.BCeIDViewModel
+
+@{
+    ViewBag.Title = "BCeID Service";
+}
+
+<div id="now">
+
+    <h1>@ViewBag.Title</h1>
+
+    @using (Html.BeginForm("BCeID", "Debug", FormMethod.Post))
+    {
+        <div>
+            <div>                
+                Enter the User Id or the BCeID (not both).
+            </div>
+            <div style="float:left">
+                Find: 
+                @Html.LabelFor(model => model.UserId):
+                @Html.TextBoxFor(model => model.UserId)
+            </div>
+            <div>
+                @Html.LabelFor(model => model.BCeID):
+                @Html.TextBoxFor(model => model.BCeID)
+            </div>
+        </div>
+        <div>
+            <div>
+                @Html.LabelFor(model => model.Requester):
+                @Html.TextBoxFor(model => model.Requester)
+            </div>
+            <div>
+                @Html.LabelFor(model => model.RequesterAccountType):
+                @Html.EnumDropDownListFor(model => model.RequesterAccountType)
+            </div>
+        </div>
+        <input type="submit" value="Submit" />
+        <div>
+            <h2>User</h2>
+            <div>
+                @Html.LabelFor(model => model.User.FirstName):
+                @Html.DisplayTextFor(model => model.User.FirstName)
+            </div>
+            <div>
+                @Html.LabelFor(model => model.User.LastName):
+                @Html.DisplayTextFor(model => model.User.LastName)
+            </div>
+            <div>
+                @Html.LabelFor(model => model.User.EmailAddress):
+                @Html.DisplayTextFor(model => model.User.EmailAddress)
+            </div>
+            <div>
+                @Html.LabelFor(model => model.User.PhoneNumber):
+                @Html.DisplayTextFor(model => model.User.PhoneNumber) @Html.DisplayTextFor(model => model.User.PhoneExtension)
+            </div>
+            <h2>Organization</h2>
+            <div>
+                @Html.LabelFor(model => model.User.Organization.BCeIDGuid):
+                @Html.DisplayTextFor(model => model.User.Organization.BCeIDGuid)
+            </div>
+            <div>
+                @Html.LabelFor(model => model.User.Organization.LegalName):
+                @Html.DisplayTextFor(model => model.User.Organization.LegalName)
+            </div>
+            <div>
+                @Html.LabelFor(model => model.User.Organization.DoingBusinessAs):
+                @Html.DisplayTextFor(model => model.User.Organization.DoingBusinessAs)
+            </div>
+        </div>
+    }
+</div>

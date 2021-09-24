@@ -1,0 +1,16 @@
+﻿<div class="form--readonly">
+    <div class="form__group">
+        <h4>Services to be delivered</h4>
+    </div>
+    <div class="form__group" ng-repeat="line in process.AssociatedEligibleCost.ServiceLines">
+        <div class="form__label">{{line.Caption}}:</div>
+        <div class="form__control" ng-bind-html="line.Description">
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Total cost:</div>
+        <div class="form__control">
+            {{process.AssociatedEligibleCost.EstimatedCost | currency : '$' : 2}}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,152 @@
+﻿@using CJG.Application.Business.Models
+@model AmountOwingBatchPDFModel
+
+<!DOCTYPE html>
+<html lang="en" moznomarginboxes mozdisallowselectionprint>
+<head>
+    <title>@Model.Name</title>
+
+    <link href="~/css/styles.css" rel="stylesheet" />
+    <style type="text/css" media="print">
+        @@page {
+            size: A4 portrait;
+            margin: 0mm;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper--amount-owing-pdf">
+        @for (int i = 0; i < Model.PaymentRequests.Count; i++)
+        {
+            var item = Model.PaymentRequests[i] as AmountOwingPDFModel;
+
+            <div class="amount-owing-pdf-template">
+                <!--Header-->
+                <div class="amount-owing-pdf-header-wrapper">
+                    <div class="amount-owing-pdf-header">
+                        <p>
+                            Ministry of Advanced Education,<br />
+                            Skills and Training<br />
+                            Labour Market & Information Division<br />
+                            PO Box 9189 Stn Prov Govt<br />
+                            Victoria BC V8W 9E6
+                        </p>
+                        <p>
+                            @Model.DateRequested
+                        </p>
+                    </div>
+                </div>
+                <!--End Header-->
+                <!--Content-->
+                <div class="amount-owing-pdf-content">
+                    <p>
+                        Subject: Overpayment on Grant Agreement Number @item.ContractNumber
+                    </p>
+                    <p>
+                        Dear @item.RecipientName,
+                    </p>
+                    <p>
+                        According to our records, there has been an overpayment in the amount of @item.InvoiceAmount made to you for @item.ProgramName Agreement @item.ContractNumber.
+                    </p>
+                    <p>
+                        Please login at <a href="skillstraininggrants.gov.bc.ca">skillstraininggrants.gov.bc.ca</a> to review the assessments that have led to an overpayment and then print and return this letter with your payment by cheque payable to the Minister of Finance to the following address:
+                    </p>
+                    <p>
+                        Labour Market & Information Division<br />
+                        Finance Unit<br />
+                        PO Box 9189 Stn Prov Govt<br />
+                        Victoria BC V8W 9E6
+                    </p>
+                    <p>
+                        If you have questions please email <a href="mailto:CJGreimbursment@gov.bc.ca">CJGreimbursment@gov.bc.ca</a>.
+                    </p>
+                    <p>
+                        @item.ProgramName Team
+                    </p>
+                </div>
+                <!--End Content-->
+                <!--Footer-->
+                <div class="amount-owing-pdf-footer">
+                    @if (item.Duplicate)
+                    {
+                        <p>Duplicate Request</p>
+                    }
+                    <table class="table--amount-owing-pdf">
+                        <tbody>
+                            <tr>
+                                <td class="pdf-label" colspan="2">For Ministry Internal Use</td>
+                            </tr>
+                            <tr>
+                                <td class="pdf-label">Grant Agreement Number:</td>
+                                <td class="pdf-text">@item.ContractNumber</td>
+                            </tr>
+                            <tr>
+                                <td class="pdf-label">Document Number:</td>
+                                <td class="pdf-text">@item.DocumentNumber</td>
+                            </tr>
+                            <tr>
+                                <td class="pdf-label">Payment Amount:</td>
+                                <td class="pdf-text">@item.InvoiceAmount</td>
+                            </tr>
+                            <tr>
+                                <td class="pdf-label">Client Number:</td>
+                                <td class="pdf-text">@item.ClientNumb</td>
+                            </tr>
+                            <tr>
+                                <td class="pdf-label">RESP:</td>
+                                <td class="pdf-text">@item.RESP</td>
+                            </tr>
+                            <tr>
+                                <td class="pdf-label">Service Line:</td>
+                                <td class="pdf-text">@item.ServiceLine</td>
+                            </tr>
+                            <tr>
+                                <td class="pdf-label">STOB:</td>
+                                <td class="pdf-text">@item.STOB</td>
+                            </tr>
+                            <tr>
+                                <td class="pdf-label">Project Code:</td>
+                                <td class="pdf-text">@item.ProjectCode</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!--End Footer-->
+            </div>
+        }
+    </div>
+
+    <script>
+        window.onload = function () {
+            @if (Model.PaymentRequests.Count > 0)
+            {
+                <text>window.print();</text>
+            }
+            else {
+                <text>alert('All requests in the batch have been reconciled; no duplicate requests can be generated.'); afterPrint();</text>
+            }
+        }
+
+        if (window.matchMedia) {
+            window.matchMedia('print').addListener(function (media) {
+                if (media.matches) {
+                    beforePrint();
+                } else {
+                    afterPrint();
+                }
+            });
+        }
+
+        window.onbeforeprint = beforePrint;
+        window.onafterprint = afterPrint;
+
+        function beforePrint() {
+        }
+
+        function afterPrint() {
+            setTimeout(window.close, 100);
+        }
+    </script>
+</body>
+</html>

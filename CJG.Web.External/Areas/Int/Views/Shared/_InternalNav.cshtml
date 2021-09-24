@@ -1,0 +1,98 @@
+@using CJG.Application.Services
+@using CJG.Infrastructure.Identity
+@using CJG.Web.External.Areas.Int.Controllers
+@{
+	var ia1 = User.HasPrivilege(Privilege.IA1);
+	var ia4 = User.HasPrivilege(Privilege.IA4);
+	var um1 = User.HasPrivilege(Privilege.UM1);
+	var pm1 = User.HasPrivilege(Privilege.PM1);
+	var gm1 = User.HasPrivilege(Privilege.GM1);
+	var dir = User.HasPrivilege(Privilege.AM4);
+	var ass = User.HasPrivilege(Privilege.AM2, Privilege.AM3, Privilege.AM5);
+	var sym = User.HasPrivilege(Privilege.SM);
+}
+
+<ul class="primary-nav">
+    @if (HttpContext.Current.User.Identity.IsAuthenticated)
+    {
+        <li>
+            @Html.ActionLink("Home", nameof(HomeController.Index), typeof(HomeController), new { Area = "Int" })
+        </li>
+        if (ia1)
+        {
+            <li>@Html.ActionLink("Intake", nameof(IntakeQueueController.IntakeQueueView), typeof(IntakeQueueController), new { Area = "Int" })</li>
+            <li>@Html.ActionLink("Grant Files", nameof(WorkQueueController.WorkQueueView), typeof(WorkQueueController), new { Area = "Int" })</li>
+            <li>@Html.ActionLink("Organizations", nameof(OrganizationController.OrganizationsView), typeof(OrganizationController), new { Area = "Int" })</li>
+            <li>@Html.ActionLink("Training Providers", nameof(TrainingProviderInventoryController.TrainingProvidersView), typeof(TrainingProviderInventoryController), new { Area = "Int" })</li>
+        }
+        if (dir)
+        {
+            <li>@Html.ActionLink("Expense Approval", nameof(DirectorDashboardController.ApplicationBatchApprovalView), typeof(DirectorDashboardController), new { Area = "Int" })</li>
+        }
+        if (dir || pm1)
+        {
+            <li>
+                <a class="link">Payment Requests</a>
+                <ul class="primary-subnav">
+                    <li>@Html.ActionLink("Issue Payments", nameof(PaymentController.RequestManagementView), typeof(PaymentController), new { Area = "Int" })</li>
+                    <li>@Html.ActionLink("Reconcile CAS", nameof(ReconciliationController.ReconciliationReportsView), typeof(ReconciliationController), new { Area = "Int" })</li>
+                </ul>
+            </li>
+        }
+        if (ia4 || um1 || dir || sym)
+        {
+            <li>
+                <a class="link">Manage</a>
+                <ul class="primary-subnav">
+                    @if (dir || sym)
+                    {
+                        <li>@Html.ActionLink("Intake Periods", nameof(IntakePeriodsController.IntakePeriodsView), typeof(IntakePeriodsController), new { Area = "Int" })</li>
+                    }
+                    @if (ia4)
+                    {
+                        <li>@Html.ActionLink("Budget Overview", nameof(IntakeController.IntakeManagementDashboard), typeof(IntakeController), new { Area = "Int" })</li>
+                    }
+                    @if (ia4)
+                    {
+                        <li>@Html.ActionLink("Claims", nameof(ClaimIntakeController.ClaimManagementDashboardView), typeof(ClaimIntakeController), new { Area = "Int" })</li>
+                    }
+                    @if (ia4)
+                    {
+                        <li>@Html.ActionLink("Grant Openings", nameof(GrantOpeningController.GrantOpeningView), typeof(GrantOpeningController), new { Area = "Int" })</li>
+                    }
+                    @if (gm1)
+                    {
+                        <li>@Html.ActionLink("Grant Streams", nameof(GrantStreamController.GrantStreamView), typeof(GrantStreamController), new { Area = "Int" })</li>
+                        <li>@Html.ActionLink("Grant Programs", nameof(GrantProgramController.GrantProgramView), typeof(GrantProgramController), new { Area = "Int" })</li>
+                        <li>@Html.ActionLink("Service Descriptions", nameof(WDAServiceController.WDAServicesView), typeof(WDAServiceController), new { Area = "Int" })</li>
+                        if (sym || dir)
+                        {
+                            <li>@Html.ActionLink("Notification Types", nameof(NotificationController.NotificationTypesView), typeof(NotificationController), new { Area = "Int" })</li>
+                            <li>@Html.ActionLink("Program Notifications", nameof(ProgramNotificationController.ProgramNotificationsView), typeof(ProgramNotificationController), new { Area = "Int" })</li>
+                        }
+                    }
+                    @if (pm1)
+                    {
+                        <li>@Html.ActionLink("Communities", nameof(CommunityController.CommunityManagementView), typeof(CommunityController), new { Area = "Int" })</li>
+                    }
+                    @if (ass)
+                    {
+                        <li>@Html.ActionLink("Org’n Profile Owners", nameof(OrganizationProfileController.OrganizationView), typeof(OrganizationProfileController), new { Area = "Int" })</li>
+                    }
+                    @if (um1)
+                    {
+                        <li>@Html.ActionLink("Users", nameof(UserController.UserManagementView), typeof(UserController), new { Area = "Int" })</li>
+                    }
+                </ul>
+            </li>
+        }
+        if (Html.IsDebugBuild() && sym)
+        {
+            <li>@Html.ActionLink("Debug", nameof(DebugController.Index), typeof(DebugController))</li>
+        }
+    }
+    else
+    {
+        <li><br /></li>
+    }
+</ul>

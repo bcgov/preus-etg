@@ -1,0 +1,43 @@
+﻿@using CJG.Core.Entities
+@model GrantApplication
+
+@{
+    switch (Model.ApplicationStateExternal)
+    {
+        case ApplicationStateExternal.ApplicationWithdrawn:
+        case ApplicationStateExternal.NotAccepted:
+            <text>
+                <span class="label label--incomplete">Incomplete</span>
+            </text>
+            break;
+        case ApplicationStateExternal.Incomplete:
+            if (Model.GrantOpening.State == GrantOpeningStates.Closed)
+            {
+                <text>
+                    <span class="label label--incomplete">Incomplete</span>
+                </text>
+            }
+            else
+            {
+                if (!Model.EligibilityConfirmed())
+                {
+                    <text>
+                        <span class="label label--incomplete">Incomplete</span>
+                    </text>
+                }
+                else
+                {
+                    <text>
+                        <span class="label label--complete">Complete</span>
+                    </text>
+                }
+
+            }
+            break;
+        default:
+            <text>
+                <span class="label label--complete">Complete</span>
+            </text>
+            break;
+    }
+}

@@ -1,0 +1,110 @@
+﻿<div class="form--readonly">
+    <div class="form__group">
+        <div class="form__label">Training provider name:</div>
+        <div class="form__control">
+            {{model.TrainingProvider.Name}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Type of training provider:</div>
+        <div class="form__control form__long-select">
+            <div ng-if="model.TrainingProvider.TrainingProviderType != null">
+                {{model.TrainingProvider.TrainingProviderType.Caption}}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form--readonly">
+    <div id="providerTypePanel">
+        <div ng-show="model.TrainingProvider && model.TrainingProvider.CourseOutlineDocument">
+            <div class="form__group">
+                <div class="form__label">Course outline:</div>
+                <div class="form__control">
+                    <div ng-if="model.TrainingProvider.CourseOutlineDocument != null">
+                        <a href="/Ext/Application/Attachment/Download/{{model.Id}}/{{model.TrainingProvider.CourseOutlineDocument.Id}}">{{model.TrainingProvider.CourseOutlineDocument.FileName}}</a>
+
+                    </div>
+                    <div ng-if="model.TrainingProvider.CourseOutlineDocument == null">
+                        <span>None</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-show="model.TrainingProvider && model.TrainingProvider.ProofOfQualificationsDocument">
+            <div class="form__group">
+                <div class="form__label">Proof of qualifications:</div>
+                <div class="form__control">
+                    <div ng-if="model.TrainingProvider.ProofOfQualificationsDocument != null">
+                        <a href="/Ext/Application/Attachment/Download/{{model.Id}}/{{model.TrainingProvider.ProofOfQualificationsDocument.Id}}">{{model.TrainingProvider.ProofOfQualificationsDocument.FileName}}</a>
+                    </div>
+                    <div ng-if="model.TrainingProvider.ProofOfQualificationsDocument == null">
+                        <span>None</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form--readonly">
+    <div class="form__group">
+        <div class="form__label">Training address:</div>
+        <div class="form__control">
+            {{model.TrainingProvider.AddressLine1}}<br />
+            <div ng-if="model.TrainingProvider.AddressLine2 != null">
+                {{model.TrainingProvider.AddressLine2 }} <br />
+            </div>
+            {{model.TrainingProvider.City}}<br />
+            <div ng-if="model.TrainingProvider.Region != null">
+                {{model.TrainingProvider.Region }} <br />
+            </div>
+            {{model.TrainingProvider.PostalCode}}<br />
+            {{model.TrainingProvider.Country}}
+        </div>
+    </div>
+</div>
+<div class="form--readonly">
+    <div class="form__group">
+        <div class="form__label">Training Provider address:</div>
+        <div class="form__control">
+            {{model.TrainingProvider.AddressLine1TrainingProvider}}<br />
+            <div ng-if="model.TrainingProvider.AddressLine2TrainingProvider != null">
+                {{model.TrainingProvider.AddressLine2TrainingProvider }} <br />
+            </div>
+            {{model.TrainingProvider.CityTrainingProvider}}<br />
+            <div ng-if="model.TrainingProvider.RegionTrainingProvider != null">
+                {{model.TrainingProvider.RegionTrainingProvider }} <br />
+            </div>
+            {{model.TrainingProvider.PostalCodeTrainingProvider}}<br />
+            {{model.TrainingProvider.CountryTrainingProvider}}
+        </div>
+    </div>
+</div>
+    <div class="form--readonly">
+        <div class="form__group">
+            <div class="form__label">Contact first name:</div>
+            <div class="form__control">
+                {{model.TrainingProvider.ContactFirstName}}
+            </div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Contact last name:</div>
+            <div class="form__control">
+                {{model.TrainingProvider.ContactLastName}}
+            </div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Contact email:</div>
+            <div class="form__control">
+                {{model.TrainingProvider.ContactEmail}}
+            </div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Contact phone number:</div>
+            <div class="form__control">
+                {{model.TrainingProvider.ContactPhoneNumber}}
+                <span ng-show="model.TrainingProvider.ContactPhoneExtension">
+                    Ext. {{model.TrainingProvider.ContactPhoneExtension}}
+                </span>
+            </div>
+        </div>
+    </div>

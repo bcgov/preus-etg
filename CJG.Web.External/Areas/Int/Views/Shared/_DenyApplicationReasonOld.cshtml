@@ -1,0 +1,47 @@
+﻿@model CJG.Web.External.Areas.Int.Models.DenyApplicationReasonViewModel
+
+@{ 
+    Layout = null;
+}
+
+@using (Html.BeginForm("DenyApplicationReason", "Application"))
+{
+    @Html.HiddenFor(x=>x.RowVersionString)
+
+    <div class="content--deny-application side-padding">
+
+        @if (!String.IsNullOrEmpty(ViewBag.Message))
+        {
+            <div class="alert alert--success">
+                <p>
+                    @ViewBag.Message
+                </p>
+            </div>
+        }
+
+        <div class="main">
+            <p>
+                Enter a reason for your recommendation in the box below and then click 'Recommend for Denial' to confirm your decision or click 'Cancel' to return to the
+                grant file. The reason will be added to the grant file and will be used to inform the application contact on approval or denial using the following
+                introduction:
+            </p>
+            <p>
+                <i>"Your application has been denied for the following reason:"</i>
+            </p>
+            <div class="form__group">
+                <label class="form__label form__label--align-top" for="@Html.IdFor(model => model.DenyReason)">Please provide a reason</label>
+                <div class="form__control">
+                    @Html.TextAreaFor(model => Model.DenyReason, new { @class = "input--full", maxlength = 800 })
+                </div>
+            </div>
+
+            <div class="button-group">
+                <input type="button" name="btnCancel" class="btn btn--secondary" value="Cancel"/>
+                <button class="btn btn--primary pull-right" type="submit" name="btnSubmit" value="Recommend for Denial">
+                    Recommend for Denial
+                </button>
+            </div>
+        </div>
+        @Html.HiddenFor(m => Model.GrantApplicationId)
+    </div>
+}

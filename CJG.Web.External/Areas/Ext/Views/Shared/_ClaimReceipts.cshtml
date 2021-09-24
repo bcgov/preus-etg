@@ -1,0 +1,50 @@
+﻿@model IList<CJG.Core.Entities.Attachment>
+
+@{
+    var intValues = ViewData.ResolveViewData<int>(new string[] { "claimId", "claimVersion" });
+    var claimId = intValues[0];
+    var claimVersion = intValues[1];
+
+    var boolValues = ViewData.ResolveViewData<bool>(new string[] { "disableEdit" });
+    var disableEdit = boolValues[0];
+
+    var stringValues = ViewData.ResolveViewData<string>(new string[] { "rowVersion" });
+    var rowVersion = stringValues[0];
+}
+
+@if (Model.Any())
+{
+    <div>
+        <strong>Attachments</strong>
+    </div>
+
+    for (int i = 0; i < Model.Count(); i++)
+    {
+        <div class="block--claim-attachment">
+            <div class="attachment-item attachment-item__number">
+                @if(i+1 >= 10) {
+                    @(i+1)
+                } 
+                else {
+                    <text>0</text>@(i+1)
+                }
+            </div>
+            @*<a class="link" href="@Url.Action(" DownloadClaimAttachment", "Claim" , new { attachmentId=Model[i].Id, claimId=claimId, claimVersion=claimVersion })" title="@(i + 1)">@((i + 1).ToString("00"))</a>*@
+            <div class="attachment-item attachment-item__content">
+                <a class="link" href="@Url.Action("DownloadClaimAttachment", "Claim", new { attachmentId = Model[i].Id, claimId = @claimId, claimVersion = @claimVersion })" title="Download Expense Attachment">@Model[i].FileName</a> 
+                <p>
+                    @Model[i].Description
+                </p>
+            </div>
+
+            @if(!disableEdit) { 
+            <div class="btn-group attachment-item attachment-item__control attachment-item__control-overwrite">
+                @*<button class="btn btn--secondary btn--change-attachment" id="changeAttachment_@Model[i].Id" value="Change" data-file-change-id="@Model[i].Id" onclick="alert('Open a modal form passing in ' + @Model[i].Id + ' and description!'); return false;">Change</button> *@
+                <button data-disableonsubmit="false" class="btn btn--secondary btn--change-attachment" id="changeAttachment_@Model[i].Id" value="Change" data-file-change-id="@Model[i].Id">Change</button>
+                <a data-disableonsubmit="false" class="btn--remove-claim-attachment btn btn--secondary" href="@Url.Action("DeleteAttachment", "Claim", new { claimId = @claimId, claimVersion = @claimVersion, attachmentId = @Model[i].Id, disableEdit = @disableEdit, rowVersionString = @rowVersion })" data-append-id="expense-attachment-partial">Remove</a>
+
+            </div>
+            }
+        </div>
+    }
+}

@@ -1,0 +1,9 @@
+﻿@model CJG.Core.Entities.Address
+
+<h2>Address</h2>
+
+@Html.DisplayFor(x => x.AddressLine1, new { htmlAttributes = new { placeholder = "Address line 1" } })<br />
+@Html.DisplayFor(x => x.AddressLine2, new { htmlAttributes = new { placeholder = "Address line 2" } })<br />
+@Html.DisplayFor(x => x.City, new { htmlAttributes = new { placeholder = "City" } })<br />
+@Html.DisplayFor(x => x.PostalCode, new { htmlAttributes = new { placeholder = "Postal code" } })<br />
+@Html.DisplayFor(x => x.Region.Name, new { htmlAttributes = new { placeholder = "Province" } })<br />

@@ -1,0 +1,92 @@
+﻿@{
+    ViewBag.Title = "Application Review";
+}
+<div ng-controller="ApplicationReviewView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+    <div class="row">
+        <div class="main">
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            <h1>Submit Application</h1>
+            <p class="subheader--step">Step 1 of {{model.Steps}}</p>
+            <h2>Review Application</h2>
+
+            <div class="notice notice--icon">
+                <p>
+                    <span ng-if="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+                        <!-- for ETG-->
+                        Please make sure you review your application carefully before you continue. You may use the edit buttons in each section to correct your application. Once the application has been submitted, you will not be able to make changes to it unless you withdraw and resubmit.
+                    </span>
+                    <span ng-if="model.ProgramType  == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
+                        <!-- for CWRG-->
+                        Please make sure you review your application carefully before you continue. You may use the edit buttons in each section to correct your application. Once the application has been submitted, you will not be able to make changes to it unless you withdraw and resubmit. This would place your application at the end of the queue, as applications will be assessed in the order in which they are received.
+                    </span>
+                </p>
+            </div>
+
+            <div class="heading-group">
+                <h4 class="light">Applicant Contact</h4>
+            </div>
+            @Html.Partial("_ApplicantContactView")
+            <div class="heading-group">
+                <h4 class="light">Applicant</h4>
+            </div>
+            @Html.Partial("_ApplicantView")
+        <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+            <div class="heading-group">
+                <h4 class="light">Grant Selection</h4>
+                <a class="btn btn--secondary" href="/ext/Application/Grant/Selection/View/{{model.Id}}/0">Edit funding category</a>
+            </div>
+            @Html.Partial("_GrantSelectionView")
+
+            <div class="heading-group">
+                <h4 class="light">Training Provider</h4>
+                <a class="btn btn--secondary" href="/ext/training/provider/view/{{model.Id}}/{{model.TrainingProvider.Id}}">Edit training provider</a>
+            </div>
+            @Html.Partial("_TrainingProviderView")
+
+            <div class="heading-group">
+                <h4 class="light">Training Program</h4>
+                <a class="btn btn--secondary" href="/ext/training/program/view/{{model.Id}}/{{model.TrainingProgram.Id}}">Edit training program</a>
+            </div>
+            @Html.Partial("_TrainingProgramView")
+
+            <div class="heading-group">
+                <h4 class="light">Cost Estimate</h4>
+                <a class="btn btn--secondary" href="/Ext/Application/training/cost/view/{{model.Id}}">Edit cost estimate</a>
+            </div>
+            @Html.Partial("_TrainingCostView")
+
+            <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant) && model.EnableBusinessCase">
+                <div class="heading-group">
+                    <h4 class="light">{{model.BusinessCaseHeader}}</h4>
+                    <a class="btn btn--secondary" href="/Ext/Application/Business/Case/View/{{model.Id}}">Edit {{model.BusinessCaseHeader | lowercase}}</a>
+                </div>
+                @Html.Partial("_BusinessCaseView")
+            </div>
+
+            <div ng-show="model.EnableAttachments">
+                <div class="heading-group">
+                    <h4 class="light">{{model.AttachmentsHeader}}</h4>
+                    <a class="btn btn--secondary" href="/Ext/Application/Attachments/View/{{model.Id}}">Edit attachments</a>
+                </div>
+                @Html.Partial("_AttachmentsView")
+            </div>
+
+            <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+                <div class="heading-group">
+                    <h4 class="light">Participants</h4>
+                    <a class="btn btn--secondary" href="/Ext/Reporting/Participant/View/{{model.Id}}">Edit participants</a>
+                </div>
+                @Html.Partial("_ParticipantList")                
+            </div>
+        </div>
+            <div class="button-group">
+                @Html.ActionLink("Cancel", nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController.ApplicationOverviewView), nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController).Replace("Controller", ""), new { grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary" })
+                <a class="btn btn--primary btn--forward" value="Continue" href="{{model.NextStepUrl}}">Continue</a>
+            </div>
+        </div>
+    </div>
+</div>

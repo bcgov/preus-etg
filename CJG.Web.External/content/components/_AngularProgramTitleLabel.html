@@ -1,0 +1,35 @@
+﻿<div class="grant-summary">
+    <h4>
+        <span ng-if="$ctrl.ngModel.FileNumber != null" class="grant-summary__filenbr">{{$ctrl.ngModel.FileNumber}}</span>
+        {{$ctrl.ngModel.FileName}}
+    <span ng-if="$ctrl.ngModel.StartDate != null" class="grant-summary__date">
+        <span ng-if="$ctrl.ngModel.GrantProgramName == 'Community Workforce Response Grant'">
+            (training start date {{$ctrl.toPST($ctrl.ngModel.StartDate)}})
+        </span>
+        <span ng-if="$ctrl.ngModel.GrantProgramName != 'Community Workforce Response Grant'">
+            (start date {{$ctrl.toPST($ctrl.ngModel.StartDate)}})
+        </span>
+    </span>
+    </h4>
+    <b ng-if="$ctrl.ngModel.GrantStreamName != null && $ctrl.ngModel.GrantProgramName != null">{{$ctrl.ngModel.GrantProgramName}}  &#x2013; {{$ctrl.ngModel.GrantStreamName}}</b>
+
+    <div class="grant-summary__date">
+       <div ng-if="$ctrl.ngModel.DateSubmitted == null">
+            <!--<div ng-if="$ctrl.ngModel.GrantOpeningOpeningDate != null && ($ctrl.ngModel.ApplicationStateExternal == $ctrl.utils.ApplicationStateExternal.Incomplete || Model.ApplicationStateExternal == $ctrl.utils.ApplicationStateExternal.Complete)">
+                <text>Earliest submission date: </text>
+                <span>{{$ctrl.toPST($ctrl.ngModel.GrantOpeningOpeningDate)}}</span>
+            </div>-->
+            <div ng-if="$ctrl.ngModel.ApplicationStateExternal == $ctrl.utils.ApplicationStateExternal.AcceptGrantAgreement && Model.GrantAgreementStartDate != null">
+                <span class="label label--acceptby">
+                    Accept by {{$ctrl.toPST($ctrl.ngModel.GrantAgreementStartDate)}}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div ng-show="$ctrl.ngModel.Reason && $ctrl.ngModel.ShowReason">
+        <br />
+        <h4>{{$ctrl.ngModel.ReasonHeading}}</h4>
+        <p ng-show="$ctrl.ngModel.Reason" class="alert alert--warning"><em>{{$ctrl.ngModel.Reason}}</em></p>
+    </div>
+</div>

@@ -1,0 +1,129 @@
+﻿@inherits CJG.Web.External.Views.Shared.SiteMinderViewPage
+@using CJG.Web.External.Areas.Ext.Controllers
+
+@{
+    ViewBag.UserName = GetUserName();
+    ViewBag.OrganizationName = GetOrganizationName();
+
+    bool hasUserName = !string.IsNullOrEmpty(ViewBag.UserName);
+    bool hasOrgName = !string.IsNullOrEmpty(ViewBag.OrganizationName);
+    bool isLoggedIn = HttpContext.Current.User.Identity.IsAuthenticated;
+    bool isExternal = ViewContext.RouteData.IsExternal();
+    bool isMenuEmpty = !ShowLoginLink() && !hasOrgName && !hasUserName;
+}
+
+@if (isExternal)
+{
+    <div class="header">
+        @if (ShowEnvironmentInfo())
+        {
+            <div class="pull-left environment-info">
+                Environment: <b>@GetCurrentEnvironment()</b> | 
+                Release: <b>@GetVersion()</b><br />
+                System Date: <b>@GetAppDateTime()</b> | 
+                Build Date: <b>@GetAssemblyBuildDate()</b>
+            </div>
+        }
+        <div class="container">
+            <div class="side-padding">
+                <div class="row menu--item__wrapper">
+                    <a class="header-logo__link" href="/">@Html.Partial("~/Views/Shared/HeaderLogo.cshtml")</a>
+                    <div class="desktop-menu is-hidden-on-tablet-down">
+                        <div class="menu--item__names">
+                            @if (hasOrgName)
+                            {
+                                @:<span class="menu--item">@ViewBag.OrganizationName</span>
+                            }
+                            @if (hasUserName)
+                            {
+                                <span class="menu--item-divider-line hide-on-wrap">|</span>
+                                @:<span class="menu--item">@ViewBag.UserName</span>
+                            }
+                            @if (isLoggedIn)
+                            {
+                                @Html.ActionLink("Log Out", nameof(CJG.Web.External.Areas.Ext.Controllers.AuthController.LogOut), nameof(CJG.Web.External.Areas.Ext.Controllers.AuthController).Replace("Controller", ""), new { Area = SiteMinderService.CurrentUserType == CJG.Core.Entities.BCeIDAccountTypeCodes.Internal ? "Int" : "Ext" }, new { @class = "menu--item pull-right is-hidden-on-mobile" })
+                                <span class="menu--item-divider-line pull-right">|</span>
+                            }
+                        </div>
+                        @if (ShowLoginLink())
+                        {
+                            @:<a href="/Ext/Home" class="menu--item menu--item__login no-divider-line pull-right">Login</a>
+                        }
+
+                        @if (hasUserName)
+                        {
+
+                            @Html.ActionLink("Organization Profile", nameof(OrganizationProfileController.OrganizationProfileView), typeof(OrganizationProfileController), new { Area = "Ext" }, new { @class = "menu--item pull-right" })
+                            <span class="menu--item-divider-line pull-right">|</span><a href="/Ext/User/Profile/Update/View" class="menu--item pull-right">User Profile</a>
+                        }
+                        @if (isLoggedIn && hasUserName)
+                        {
+                            @:<span class="menu--item-divider-line pull-right">|</span><a href="/Ext/Home" class="menu--item pull-right">Home</a>
+                        }
+                    </div>
+
+                    @if (!isMenuEmpty)
+                    {
+
+                        <div class="mobile-menu is-hidden-on-tablet-up" menu-status="closed">
+                            <button type="button" class="mobile-menu--trigger pull-right"><img class="mobile-menu--icon mobile-menu-closed" src="/images/icons/menu.svg" alt="Skills Training Grants"><img class="mobile-menu--icon mobile-menu-opened is-hidden" src="/images/icons/menu-close.svg" alt="Skills Training Grants"></button>
+                            <ul class="mobile-menu--list">
+                                @if (hasOrgName)
+                                {
+                                    <li class="mobile-menu--list-item no-link-present half-width">@ViewBag.OrganizationName</li>
+                                }
+                                @if (hasUserName)
+                                {
+                                    <li class="mobile-menu--list-item no-link-present half-width">@ViewBag.UserName</li>
+                                }
+                                @if (hasOrgName)
+                                {
+                                    <li class="mobile-menu--list-item half-width"><a href="/Ext/OrganizationProfile/EditOrganizationProfile" class="mobile-menu--link">Organization Profile</a></li>
+                                }
+                                @if (hasUserName)
+                                {
+                                    <li class="mobile-menu--list-item half-width"><a href="/Ext/UserProfile/UpdateUserProfileView" class="mobile-menu--link">User Profile</a></li>
+                                }
+                                @if (isLoggedIn && hasUserName)
+                                {
+                                    <li class="mobile-menu--list-item half-width"><a href="/Ext/Home" class="mobile-menu--link">Home</a></li>
+                                }
+                                @if (!isLoggedIn)
+                                {
+                                    <li class="mobile-menu--list-item"><a href="/Ext/Home" class="mobile-menu--link">Login</a></li>
+                                }
+                                @if (isLoggedIn)
+                                {
+                                    <li class="mobile-menu--list-item half-width">
+                                        @Html.ActionLink("Log Out", nameof(CJG.Web.External.Areas.Ext.Controllers.AuthController.LogOut), nameof(CJG.Web.External.Areas.Ext.Controllers.AuthController).Replace("Controller", ""), new { Area = SiteMinderService.CurrentUserType == CJG.Core.Entities.BCeIDAccountTypeCodes.Internal ? "Int" : "Ext" }, new { @class = "mobile-menu--link" })
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <header class="header header--internal">
+
+        @Html.Partial("~/Areas/Int/Views/Shared/_InternalNav.cshtml")
+        <ul class="primary-utilities">
+            @if (hasUserName)
+            {
+                <li>@ViewBag.UserName</li>
+            }
+            @if (isLoggedIn)
+            {
+                <li>
+                    <b>
+                        @Html.ActionLink("Log Out", nameof(CJG.Web.External.Areas.Ext.Controllers.AuthController.LogOut), nameof(CJG.Web.External.Areas.Ext.Controllers.AuthController).Replace("Controller", ""))
+                    </b>
+                </li>
+            }
+        </ul>
+    </header>
+}

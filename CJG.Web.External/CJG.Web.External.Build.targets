@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- This project file contains build-related configuration that is common to both websites.
+Anything that is unique to one of the websites should be included in its own .Build.targets file.
+-->
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="TransformConfigs" AfterTargets="AfterBuild">
+    <!--Generate transformed NLog.Config in the intermediate directory-->
+    <TransformXml Source="NLog.config" Transform="NLog.config" Destination="$(OutputPath)NLog.config" />
+    <ItemGroup>
+      <AppConfigWithTargetPath Include="$(OutputPath)NLog.config">
+        <TargetPath>NLog.config</TargetPath>
+      </AppConfigWithTargetPath>
+      <FilesForPackagingFromProject Include="$(OutputPath)NLog.config">
+        <DestinationRelativePath>NLog.config</DestinationRelativePath>
+      </FilesForPackagingFromProject>
+    </ItemGroup>
+  </Target>
+
+  <PropertyGroup>
+    <PreBuildDependsOn>
+      CJG_CopyRuntimeDependencies;
+      CJG_AddUIBuildFiles;
+    </PreBuildDependsOn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DeployOnBuild)' == 'True'">
+    <PreBuildDependsOn>
+      $(PreBuildDependsOn);
+      <!--CJG_UIBuild;-->
+      <!--CJG_AddUIBuildFiles;-->
+    </PreBuildDependsOn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <BuildDependsOn>
+      $(PreBuildDependsOn);
+      $(BuildDependsOn);
+    </BuildDependsOn>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <CopyAllFilesToSingleFolderForPackageDependsOn>
+      TransformConfigs;
+      $(CopyAllFilesToSingleFolderForPackageDependsOn);
+    </CopyAllFilesToSingleFolderForPackageDependsOn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <!--UiBuildCmd>gulp.cmd</UiBuildCmd-->
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <!--UiBuildCmd>gulp.cmd release</UiBuildCmd-->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <CJG_RuntimeDependencies Include="..\CJG.Infrastructure.EF\bin\$(Configuration)\*.dll" />
+    <CJG_RuntimeDependencies Include="..\CJG.Application.SiteMinderSimulatorModule\bin\$(Configuration)\CJG.Application.SiteMinderSimulatorModule.dll" Condition="'$(Configuration)' == 'Debug'" />
+    <CJG_RuntimeDependencies Include="..\CJG.Application.SiteMinderSimulatorModule\bin\$(Configuration)\CJG.Application.SiteMinderSimulatorModule.dll" Condition="'$(Configuration)' == 'QA'" />
+    <CJG_RuntimeDependencies Include="..\CJG.Application.SiteMinderSimulatorModule\bin\$(Configuration)\CJG.Application.SiteMinderSimulatorModule.dll" Condition="'$(Configuration)' == 'Support'" />
+    <CJG_RuntimeDependencies Include="..\CJG.Application.SiteMinderSimulatorModule\bin\$(Configuration)\CJG.Application.SiteMinderSimulatorModule.dll" Condition="'$(Configuration)' == 'Training'" />
+    <CJG_RuntimeDependencies Include="..\CJG.Infrastructure.BCeID.Mock\bin\$(Configuration)\*.dll" Condition="'$(Configuration)' == 'Debug'" />
+    <CJG_RuntimeDependencies Include="..\CJG.Infrastructure.BCeID.Mock\bin\$(Configuration)\**\*.xml" Condition="'$(Configuration)' == 'Debug'"/>
+    <CJG_RuntimeDependencies Include="..\CJG.Infrastructure.BCeID.WebService\bin\$(Configuration)\*.dll" />
+    <CJG_RuntimeDependencies Include="..\CJG.Infrastructure.BCeID.WebService\bin\$(Configuration)\*.pdb" Condition="'$(Configuration)' == 'Debug'" />
+    
+    <!-- Configuration files after they transform -->
+    <CJG_BuildDependencies Include="..\CJG.Web.External\bin\NLog.config" />
+  </ItemGroup>
+
+  <!-- ********************************************************************************************
+  Target: CJG_CopyRuntimeDependencies
+  Description: Copies runtime dependencies to output directory.
+  -->
+  <Target Name="CJG_CopyRuntimeDependencies">
+    <Message Text="Copying runtime dependencies..." />
+    <Copy SourceFiles="@(CJG_RuntimeDependencies)" DestinationFolder="$(OutDir)%(RecursiveDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="false" />
+  </Target>
+
+  <Target Name="CJG_AdditionalFilesForPackage" AfterTargets="CopyAllFilesToSingleFolderForMsdeploy">
+    <Copy SourceFiles="@(CJG_RuntimeDependencies)" DestinationFolder="$(_PackageTempDir)\bin\%(RecursiveDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(CJG_BuildDependencies)" DestinationFolder="$(_PackageTempDir)\bin\%(RecursiveDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" />
+  </Target>
+
+  <!-- ********************************************************************************************
+  Target: CJG_AddUIBuildFiles
+  Description: Add additional files not included in the project
+  -->
+  <Target Name="CJG_AddUIBuildFiles">
+    <Message Text="CJG_AddUIBuildFiles target executed"/>
+    <ItemGroup>
+      <Content Include="assets\**" />
+    </ItemGroup>
+  </Target>
+
+  <!-- ********************************************************************************************
+  Target: UIBuild
+  Description: Target that does the UI build for the front end technologies.
+  -->
+  <Target Name="CJG_UIBuild">
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)/UI" Command="$(UiBuildCmd)"></Exec>
+  </Target>
+
+  <Target Name="MvcBuildViews">
+    <!-- This target is only included to eliminate a build warning. -->
+  </Target>
+
+  <!-- Inject a custom target into Clean by extending CleanDependsOn -->
+  <PropertyGroup>
+    <CleanDependsOn> $(CleanDependsOn); CJG_AfterClean </CleanDependsOn>
+  </PropertyGroup>
+
+  <Target Name="CJG_AfterClean">
+    <Message Text="CJG_AfterClean target executed"/>
+    <!-- TODO: Delete the shared views and runtime dependencies. -->
+  </Target>
+
+</Project>

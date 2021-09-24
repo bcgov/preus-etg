@@ -1,0 +1,35 @@
+﻿<br />
+<div class="table--participants-wrapper" style="overflow-x: auto; width:100%;">
+    <table class="table table--open-border">
+        <thead>
+            <tr>
+                <th>Last</th>
+                <th>First</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th ng-if="model.ShowEligibility">Eligibility</th>
+                <th>Work Location</th>
+                <th>Reported on</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="participant in model.Participants">
+                <td>{{participant.LastName}}</td>
+                <td>{{participant.FirstName}}</td>
+                <td><a href="mailto:{{participant.EmailAddress}}">{{participant.EmailAddress}}</a></td>
+                <td style="min-width: 120px !important;">
+                    {{participant.PhoneNumber1}}
+                    <span ng-if="participant.PhoneExtension1">ext. {{participant.PhoneExtension1}}</span>
+                </td>                
+                <td ng-if="model.ShowEligibility">
+                    <span ng-if="participant.Approved">Eligible</span>
+                    <span ng-if="!participant.Approved">Ineligible</span>
+                </td>
+                <td>{{participant.PrimaryCity}}</td>
+                <td ng-class="{ 'table--datacell-late': (participant.DateAdded > model.ParticipantReportingDueDate) }" style="min-width: 170px !important;">
+                    {{toPST(participant.DateAdded, 'YYYY-MM-DD HH:mm')}} <strong ng-if="participant.IsLate">Late</strong>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

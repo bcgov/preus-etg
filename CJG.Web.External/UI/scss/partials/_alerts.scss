@@ -1,0 +1,35 @@
+.alert,
+.alert--contextual > div {
+  @include padded-box($alert-padding);
+  background-color: $alert-bg-color;
+  border: $alert-border-width solid $alert-border-color;
+  color: $alert-color;
+  margin-bottom: $alert-margin-bottom;
+  &, & p {
+    color: $alert-color;
+    font-size: $alert-font-size;
+    line-height: $alert-line-height;
+  }
+  p {
+    margin-bottom: $alert-text-margin-bottom;
+  }
+}
+
+.alert--success,
+.alert--contextual .alert--success {
+  background-color: $alert-success-bg-color;
+  border-color: $alert-success-border-color;
+}
+
+.alert--error,
+.alert--contextual .alert--error {
+  background-color: $alert-error-bg-color;
+  border-color: $alert-error-border-color;
+  color: $alert-color;
+}
+
+.alert--warning,
+.alert--contextual .alert--warning {
+  background-color: $alert-warning-bg-color;
+  border-color: $alert-warning-border-color;
+}

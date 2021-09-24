@@ -1,0 +1,6 @@
+﻿@model CJG.Core.Entities.TrainingProgram
+
+<div class="well">
+    @Html.Partial("_ExpensesList", Model.GrantApplication.TrainingCost.EligibleCosts,
+        new ViewDataDictionary(this.ViewData) { { "disableEdit", true }, { "pgmEstParticipants", Model.GrantApplication.TrainingCost.EstimatedParticipants } })
+</div>

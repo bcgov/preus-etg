@@ -1,0 +1,223 @@
+﻿<div ng-controller="Applicant">
+	<span class="panel-section-item">
+		<span class="panel-section-title" ng-click="toggle($event)">Applicant</span>
+		<span class="panel-section-buttons">
+			<span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+			<section-edit-buttons ng-model="section.editing" ng-if="grantFile.EditApplicant"></section-edit-buttons>
+			<span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+		</span>
+	</span>
+	<div class="panel-section-content" ng-if="section.show">
+		<div class="form form--2-col">
+            <div class="col-50p">
+                <div class="form__group">
+                    <div class="form__label">Organization Legal Name:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper input--medium">
+                            <input type="text" ng-model="model.OrganizationLegalName" class="input--medium" ng-validation ng-editing />
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Organization type:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <div class="wrapper--dropdown selectmenu input--medium">
+                                <select ng-model="model.OrganizationTypeId" ng-options="item.Key as item.Value for item in organizationTypes" class="input--medium" ng-validation ng-editing></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Legal structure:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <div class="wrapper--dropdown selectmenu input--medium">
+                                <select ng-model="model.LegalStructureId" ng-options="item.Key as item.Value for item in legalStructures" class="input--medium" ng-validation ng-editing></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Year established:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper input--small">
+                            <input type="text" ng-model="model.OrganizationYearEstablished" class="input--small" ng-number maxlength="4" ng-validation ng-editing />
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Number of employees worldwide (including BC):</div>
+                    <div class="form__control">
+                        <div class="control-wrapper input--small">
+                            <input type="text" ng-model="model.OrganizationNumberOfEmployeesWorldwide" class="input--small" ng-number maxlength="4" ng-validation ng-editing />
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Number of employees in BC:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper input--small">
+                            <input type="text" ng-model="model.OrganizationNumberOfEmployeesBC" class="input--small" ng-number maxlength="4" ng-validation ng-editing />
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Average spending on training annually:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper input--small">
+                            <input type="text" ng-model="model.OrganizationAnnualTrainingBudget" class="input--small" ng-currency ng-validation ng-editing />
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Average number of employees trained annually:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper input--small">
+                            <input type="text" ng-model="model.OrganizationAnnualEmployeesTrained" class="input--small" ng-number maxlength="4" ng-validation ng-editing />
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Business License Number:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper input--medium">
+                            <input type="text" ng-model="model.BusinessLicenseNumber" class="input--medium" maxlength="20" ng-validation ng-editing />
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">CRA Business Number:</div>
+                    <div class="form__control">
+                        <span>
+                            {{model.BusinessNumberVerified ? model.BusinessNumber : '(Not Verified)'}}
+                        </span>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Name Registry Statement of Registration Number:</div>
+                    <div class="form__control">
+                        <span>{{model.StatementOfRegistrationNumber}}</span>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Jurisdiction of Incorporation:</div>
+                    <div class="form__control">
+                        <span>{{model.JurisdictionOfIncorporation}}</span>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Incorporation Number:</div>
+                    <div class="form__control">
+                        <span>{{model.IncorporationNumber}}</span>
+                    </div>
+                </div>
+            </div>
+				
+			<div class="col-50p">
+				<div class="form__group">
+					<div class="form__label">Head Office Mailing Address:</div>
+					<div class="form__control">
+						<div class="control-wrapper input--medium">
+							<label ng-if="section.editing">Address line 1:</label>
+							<div class="control-wrapper input--medium">
+								<input type="text" ng-model="model.AddressLine1" class="input--medium" maxlength="250" ng-validation ng-editing />
+							</div>
+						</div>
+						<div class="control-wrapper input--medium" ng-if="section.editing || model.AddressLine2">
+							<label ng-if="section.editing">Address line 2:</label>
+							<div class="control-wrapper input--medium">
+								<input type="text" ng-model="model.AddressLine2" class="input--medium" maxlength="250" ng-validation ng-editing />
+							</div>
+						</div>
+						<div class="control-wrapper input--medium">
+							<label ng-if="section.editing">City:</label>
+							<div class="control-wrapper input--medium">
+								<input type="text" ng-model="model.City" class="input--medium" maxlength="250" ng-validation ng-editing />
+							</div>
+						</div>
+						<div class="control-wrapper input--medium" ng-if="model.CountryId === 'CA'">
+							<label ng-if="section.editing">Province:</label>
+							<div class="control-wrapper input--medium selectmenu">
+								<select ng-model="model.RegionId" ng-options="item.Key as item.Caption for item in provinces" class="input--medium" ng-validation ng-editing></select>
+							</div>
+						</div>
+						<div class="control-wrapper input--medium" ng-if="model.CountryId === 'CA'">
+							<label ng-if="section.editing">Postal Code:</label>
+							<div class="control-wrapper input--medium">
+								<input type="text" ng-model="model.PostalCode" class="input--medium" maxlength="250" ng-validation ng-editing />
+							</div>
+						</div>
+						<div class="control-wrapper input--medium" ng-if="model.CountryId !== 'CA'">
+							<label ng-if="section.editing">Region:</label>
+							<div class="control-wrapper input--medium">
+								<input type="text" ng-model="model.Region" class="input--medium" maxlength="250" ng-validation ng-editing />
+							</div>
+						</div>
+						<div class="control-wrapper input--medium" ng-if="model.CountryId !== 'CA'">
+							<label ng-if="section.editing">Zip Code:</label>
+							<div class="control-wrapper input--medium">
+								<input type="text" ng-model="model.PostalCode" class="input--medium" maxlength="250" ng-validation ng-editing />
+							</div>
+						</div>
+						<div class="control-wrapper input--medium">
+							<label ng-if="section.editing">Country:</label>
+							<div class="control-wrapper input--medium selectmenu">
+								<select ng-model="model.CountryId" ng-options="item.Key as item.Caption for item in countries" class="input--medium" ng-validation ng-editing></select>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="form__group form__group--radio-inline">
+					<div class="form__label">Has your organization applied for a {{model.GrantProgramName}} in the past?</div>
+					<div class="form__control">
+						<div class="control-wrapper" ng-validation="errors.HasAppliedForGrantBefore">
+							<input type="radio" ng-model="model.HasAppliedForGrantBefore" id="applied-for-grant-before-yes-{{section.name}}" name="applied-for-grant-before-{{section.name}}" ng-value="true" class="form__group--radio-inline" ng-editing />
+							<label for="applied-for-grant-before-yes-{{section.name}}">Yes</label>
+							<input type="radio" ng-model="model.HasAppliedForGrantBefore" id="applied-for-grant-before-no-{{section.name}}" name="applied-for-grant-before-{{section.name}}" ng-value="false" class="form__group--radio-inline" ng-editing />
+							<label for="applied-for-grant-before-no-{{section.name}}">No</label>
+						</div>
+					</div>
+				</div>
+				<div class="form__group form__group--radio-inline">
+					<div class="form__label">Would your organization provide this training if the {{model.GrantProgramName}} was not available?</div>
+					<div class="form__control">
+						<div class="control-wrapper" ng-validation="errors.WouldTrainEmployeesWithoutGrant">
+							<input type="radio" ng-model="model.WouldTrainEmployeesWithoutGrant" id="would-train-without-grant-yes-{{section.name}}" name="would-train-without-grant-{{section.name}}" ng-value="true" class="form__group--radio-inline" ng-editing />
+							<label for="would-train-without-grant-yes-{{section.name}}">Yes</label>
+							<input type="radio" ng-model="model.WouldTrainEmployeesWithoutGrant" id="would-train-without-grant-no-{{section.name}}" name="would-train-without-grant-{{section.name}}" ng-value="false" class="form__group--radio-inline" ng-editing />
+							<label for="would-train-without-grant-no-{{section.name}}">No</label>
+						</div>
+					</div>
+				</div>
+				<div class="form__group">
+					<label class="form__label">
+						North American Industry Classification System (<b>NAICS</b>) code for your primary sector:
+					</label>
+					<div class="form__control" ng-if="section.editing">
+						<div class="control-wrapper selectmenu input--medium">
+							<select ng-model="model.NAICSLevel1Id" ng-options="item.Key as item.Code + ' | ' + item.Value for item in applicantNAICS1" class="input--medium" ng-change="getNAICS(2)" ng-validation></select>
+						</div>
+						<div class="control-wrapper selectmenu input--medium" ng-if="model.NAICSLevel1Id">
+							<select ng-model="model.NAICSLevel2Id" ng-options="item.Key as item.Code + ' | ' + item.Value for item in applicantNAICS2" class="input--medium" ng-change="getNAICS(3)" ng-validation></select>
+						</div>
+						<div class="control-wrapper selectmenu input--medium" ng-if="model.NAICSLevel2Id">
+							<select ng-model="model.NAICSLevel3Id" ng-options="item.Key as item.Code + ' | ' + item.Value for item in applicantNAICS3" class="input--medium" ng-change="getNAICS(4)" ng-validation></select>
+						</div>
+						<div class="control-wrapper selectmenu input--medium" ng-if="model.NAICSLevel3Id">
+							<select ng-model="model.NAICSLevel4Id" ng-options="item.Key as item.Code + ' | ' + item.Value for item in applicantNAICS4" class="input--medium" ng-change="getNAICS(5)" ng-validation></select>
+						</div>
+						<div class="control-wrapper selectmenu input--medium" ng-if="model.NAICSLevel4Id">
+							<select ng-model="model.NAICSLevel5Id" ng-options="item.Key as item.Code + ' | ' + item.Value for item in applicantNAICS5" class="input--medium" ng-validation></select>
+						</div>
+					</div>
+					<div class="form__control" ng-if="!section.editing">
+						<div class="control-wrapper">
+							<text>{{ naics() }}</text>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

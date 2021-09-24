@@ -1,0 +1,22 @@
+﻿@model CJG.Core.Entities.Organization
+
+<h2>Business</h2>
+
+<table>
+    <tr>
+        <td>Legal Name</td>
+        <td>
+            @Html.DisplayFor(m => m.LegalName)
+            
+        </td>
+    </tr>
+    <tr>
+        <td>Doing Business As</td>
+        <td>
+            @Html.DisplayFor(m => m.DoingBusinessAs)
+            
+        </td>
+    </tr>
+</table>
+
+@Html.EditorFor(x => x.HeadOfficeAddress)

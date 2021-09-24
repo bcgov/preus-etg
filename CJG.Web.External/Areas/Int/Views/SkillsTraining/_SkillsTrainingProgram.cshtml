@@ -1,0 +1,141 @@
+﻿<div ng-controller="SkillsTrainingProgram">
+	<span class="panel-section-item">
+		<span class="panel-section-title" ng-click="toggle($event)">
+            <span class="width-30" style="display:inline-block;">
+                &emsp; &gt; <span class="notice--icon" ng-show="!section.show && (!program.Provider.IsValidated || (program.Provider.RequestedProvider && !program.Provider.RequestedProvider.IsValidated))" title="Training Provider requires validation."></span>{{ program.Caption | limitTo: 31 }}{{program.Caption.length > 31 ? '...' : ''}}
+            </span>
+			<span class="width-25">
+				<span ng-show="!section.show">Training Provider: {{ program.Provider.Caption | limitTo: 25 }}{{program.Provider.Caption.length > 25 ? '...' : ''}}</span>
+			</span>
+			<span class="width-14">
+				<input type="checkbox" id="skillsTraining-IsEligible-{{program.Id}}" name="skillsTraining-IsEligible-{{program.Id}}" ng-model="program.IsEligible" ng-click="changeEligiblity($event)" ng-disabled="!program.Provider.IsValidated || !program.CanChangeEligibility || section.editing || !section.show">
+				<label for="skillsTraining-IsEligible-{{program.Id}}" ng-click="$event.stopPropagation()">Eligible</label>
+			</span>
+		</span>
+        <span class="panel-section-buttons">
+            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            <a class="btn btn--secondary" ng-click="removeComponent(program.Id, program.RowVersion, program.Caption, section.editing)" ng-show="program.CanEdit && !section.editing">Remove</a>
+            <section-edit-buttons ng-model="section.editing" ng-if="program.CanEdit"></section-edit-buttons>
+            <span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+        </span>
+	</span>
+	<div class="panel-section-content" ng-if="section.show">
+		<div class="form form--2-col">
+			<div class="col-50p">
+				<div class="form__group">
+					<div class="form__label">Skills training course title:</div>
+					<div class="form__control">
+						<div class="control-wrapper">
+							<input ng-model="model.CourseTitle" maxlength="500" class="input--full" ng-validation ng-editing />
+						</div>
+					</div>
+				</div>
+				<div class="form__group">
+					<div class="form__label">Training start date:</div>
+					<div class="form__control">
+						<datedropdown ng-model="model.StartDate" ng-text="model.StartDate" ng-min-date="grantFile.TrainingPeriodStart" ng-max-date="grantFile.TrainingPeriodEnd"></datedropdown>
+					</div>
+				</div>
+				<div class="form__group">
+					<div class="form__label">Training end date:</div>
+					<div class="form__control">
+						<datedropdown ng-model="model.EndDate" ng-text="model.EndDate" ng-min-date="model.StartDate"></datedropdown>
+					</div>
+				</div>
+				<div class="form__group">
+					<div class="form__label">Primary Delivery method:</div>
+					<div class="form__control">
+						<ul style="list-style:none" ng-validation="errors.SelectedDeliveryMethodIds">
+							<li class="form-control" ng-repeat="item in section.deliveryMethods">
+								<input type="checkbox" id="delivery-methods-{{$index}}-{{section.name}}" ng-model="item.isChecked" ng-item="item" ng-value="item.Key" ng-selected="model.SelectedDeliveryMethodIds" ng-editing />
+								<label for="delivery-methods-{{$index}}-{{section.name}}">{{item.Value}}</label>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="form__group">
+					<div class="form__label">Total training hours:</div>
+					<div class="form__control">
+						<div class="control-wrapper">
+							<input ng-model="model.TotalTrainingHours" maxlength="5" class="input--x-small" ng-number ng-validation ng-editing />
+						</div>
+					</div>
+				</div>
+				<div class="form__group">
+					<div class="form__label">Total cost:</div>
+					<div class="form__control">
+						<div class="control-wrapper">
+							<span>{{model.AgreedCost | currency : '$' : 2}}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+            <div class="col-50p">
+                <div class="form__group">
+                    <div class="form__label">Skills Training Focus:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper selectmenu input--full" ">
+                            <select ng-model="model.ServiceLineId" ng-options="item.Id as item.Caption for item in section.serviceLines" ng-change="loadServiceLineBreakdowns()" class="input--full" ng-validation ng-editing></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group" ng-if="section.serviceLineBreakdowns && section.serviceLineBreakdowns.length">
+                    <div class="form__label">{{model.ServiceLineBreakdownCaption}}:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper selectmenu input--full" ">
+                            <select ng-model="model.ServiceLineBreakdownId" ng-options="item.Id as item.Caption for item in section.serviceLineBreakdowns" class="input--full" ng-validation ng-editing></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Skill level:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper selectmenu input--full" ">
+                            <select ng-model="model.SkillLevelId" ng-options="item.Key as item.Value for item in skillLevels" class="input--full" ng-validation ng-editing></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Expected certificates, qualifications, or credentials:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper selectmenu input--full" ">
+                            <select ng-model="model.ExpectedQualificationId" ng-options="item.Key as item.Value for item in expectedQualifications" class="input--full" ng-validation ng-editing></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group" ng-if="model.ExpectedQualificationId != 5 && model.ExpectedQualificationId != 1 && model.ExpectedQualificationId != null">
+                    <div class="form__label">Title of certificates, qualifications or credentials:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <input ng-model="model.TitleOfQualification" maxlength="250" class="input--full" ng-validation ng-editing />
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <label class="form__label">Classification of Instructional Programs (CIPS) Code:</label>
+                    <div class="form__control" ng-if="section.editing">
+                        <div class="control-wrapper selectmenu input--full">
+                            <select ng-model="model.CipsCode1Id" ng-options="item.Key as item.Value for item in CipsCode1" class="input--full" ng-change="changeCipsCode(2, model.CipsCode1Id)" ng-validation>
+                                <option value="">< Select Any ></option>
+                            </select>
+                        </div>
+                        <div class="control-wrapper selectmenu input--full" ng-if="model.CipsCode1Id">
+                            <select ng-model="model.CipsCode2Id" ng-options="item.Key as item.Value for item in programCipsCode2" class="input--full" ng-change="changeCipsCode(3, model.CipsCode2Id)" ng-validation>
+                                <option value="">< Select Any ></option>
+                            </select>
+                        </div>
+                        <div class="control-wrapper selectmenu input--full" ng-if="model.CipsCode2Id">
+                            <select ng-model="model.CipsCode3Id" ng-options="item.Key as item.Value for item in programCipsCode3" class="input--full" ng-change="changeCipsCode(4, model.CipsCode3Id)" ng-validation>
+                                <option value="">< Select Any ></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form__control" ng-if="!section.editing">
+                        <text>{{section.selectedCipsCode}}</text>
+                    </div>
+                </div>
+            </div>
+		</div>
+	</div>
+</div>

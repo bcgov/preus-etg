@@ -1,0 +1,64 @@
+﻿@using CJG.Core.Entities
+<div ng-controller="Participants" ng-if="grantFile.ShowParticipants">
+	<span class="panel-section-item">
+        <span class="panel-section-title" ng-click="toggle($event)">
+            <span ng-if="grantFile.CanManageParticipantEligibilty" class="width-35">
+                Participants - {{grantFile.TotalApprovedParticipants}} of {{grantFile.TotalParticipants}} eligible participants
+            </span>
+            <span ng-if="!grantFile.CanManageParticipantEligibilty" class="width-35">
+                Participants - {{grantFile.TotalParticipants}} of {{grantFile.MaxParticipants}} participants reported
+            </span>
+            <span class="width-30" ng-if="!grantFile.ShowParticipantReportingButton">
+                Reporting {{grantFile.CanReportParticipants ?  'Enabled': 'Disabled'}}
+            </span>
+        </span>
+        <span class="panel-section-buttons">
+            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            <a class="btn btn--empty text--link" ng-if="grantFile.ShowParticipantReportingButton && grantFile.ClaimType === @((int)ClaimTypes.MultipleClaimsWithoutAmendments)" ng-click="toggleParticipantReporting()">
+                {{grantFile.CanReportParticipants ? 'Disable' : 'Enable'}} Participant Reporting
+            </a>
+            <a class="btn btn--empty text--link" ng-if="grantFile.ShowApplicantReportingOfParticipantsButton" ng-click="toggleApplicantParticipantReporting()">
+                {{grantFile.CanApplicantReportParticipants ? 'Disable' : 'Enable'}} Applicant Reporting of Participants
+            </a>
+            <span class="panel-section-buttons">
+                <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+                <section-edit-buttons ng-model="section.editing" ng-if="grantFile.CanManageParticipantEligibilty"></section-edit-buttons>
+                <span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+            </span>                
+        </span>
+	</span>
+	<div class="panel-section-content" ng-if="section.show">
+        <table class="participant-form-table">
+            <tr class="participant-form-tr__header">
+                <td ng-click="changeSorting('LastName')"><img src="{{imgSrcLastName || '../../../../images/icons/icon--sort.svg'}}" /> Name</td>
+                <td>Email</td>
+                <td>Phone</td>
+                <td ng-if="grantFile.CanManageParticipantEligibilty" >Eligibility</td>
+                <td>YTD Funded</td>
+                <td>Reported By</td>
+                <td ng-click="changeSorting('ReportedOn')"><img src="{{imgSrcReportedOn || '../../../../images/icons/icon--sort.svg'}}" /> Reported On</td>
+            </tr>
+            <tr ng-repeat="participant in model.ParticipantInfo|orderBy:sort.column:sort.descending" ">
+                <td><a href="/Int/Application/Participant/Info/View/{{participant.ParticipantId}}" target="_blank">{{participant.LastName}}, {{participant.FirstName}}</a></td>
+                <td><a href="mailto:{{participant.EmailAddress}}">{{participant.EmailAddress}}</a></td>
+                <td>{{participant.PhoneNumber}}</td>
+                  
+                <td ng-if="grantFile.CanManageParticipantEligibilty && section.editing">
+                    <input type="radio" ng-model="participant.Approved" id="approved-yes-{{participant.ParticipantId}}" name="approved-{{participant.ParticipantId}}" ng-value="true" class="form__group--radio-inline" ng-editing />
+                    <label for="approved-yes-{{participant.ParticipantId}}">Yes</label>
+                    <input type="radio" ng-model="participant.Approved" id="approved-no-{{participant.ParticipantId}}" name="approved-{{participant.ParticipantId}}" ng-value="false" class="form__group--radio-inline" ng-editing />
+                    <label for="approved-no-{{participant.ParticipantId}}">No</label>
+                </td>
+                <td ng-if="grantFile.CanManageParticipantEligibilty && !section.editing && participant.Approved == null">not set</td>
+                <td ng-if="grantFile.CanManageParticipantEligibilty && !section.editing && participant.Approved == true">Eligible</td>
+                <td ng-if="grantFile.CanManageParticipantEligibilty && !section.editing && participant.Approved == false">Ineligible</td>
+
+
+                <td>{{participant.YTDFunded | currency : '$' : 2}}</td>
+                <td ng-if="participant.ReportedBy == 'Applicant'"><a href="/Int/Application/Participant/Consent/{{participant.ParticipantId}}">{{participant.ReportedBy}}</a></td>
+                <td ng-if="participant.ReportedBy == 'Participant'">{{participant.ReportedBy}}</td>
+                <td>{{participant.ReportedOn}}</td>
+            </tr>
+        </table>
+	</div>
+</div>

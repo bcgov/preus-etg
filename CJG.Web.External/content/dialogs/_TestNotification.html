@@ -1,0 +1,43 @@
+﻿<div>
+    <div class="dialog-header">
+        <h3>{{ngDialogData.title}}</h3>
+    </div>
+    <div class="dialog-content">
+        <div class="modal-content">
+            <label ng-bind-html="ngDialogData.question"></label>
+            <p>Select the grant program and applicantion state that is appropriate for the notification you are testing.</p>
+
+            <div class="form__group">
+                <div class="form__label">Grant Program</div>
+                <div class="form__control">
+                    <div class="selectmenu">
+                        <select ng-model="ngDialogData.grantProgramId"
+                                ng-options="item[ngDialogData.grantProgramKey || 'Key'] as item[ngDialogData.grantProgramValue || 'Value'] for item in ngDialogData.grantPrograms">
+                            <option value=""><-- Select One --></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form__group">
+                <div class="form__label">Application State</div>
+                <div class="form__control">
+                    <div class="selectmenu">
+                        <select ng-model="ngDialogData.applicationState" ng-options="item.Id as item.Caption for item in ngDialogData.applicationStates">
+                            <option value=""><-- Select One --></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="button-group">
+                    <button class="btn btn--secondary" data-disableonsubmit="false" ng-click="closeThisDialog()">Cancel</button>
+                    <button class="btn btn--primary pull-right"
+                            ng-disabled="!ngDialogData.grantProgramId || ngDialogData.applicationState == null"
+                            ng-click="confirm({grantProgramId: ngDialogData.grantProgramId, applicationState: ngDialogData.applicationState})">
+                        Ok
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,313 @@
+﻿@using CJG.Web.External.Areas.Ext.Controllers
+@using CJG.Core.Entities
+@{
+    ViewBag.Title = "Completion Report";
+}
+
+<div class="row" ng-controller="CompletionReportDetailsView" grant-application-id="@ViewBag.GrantApplicationId">
+    @Html.ActionLink("Return", nameof(ReportingController.GrantFileView), typeof(ReportingController), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
+
+    <program-title-label ng-model="model.ProgramTitleLabel"></program-title-label>
+
+    <div class="main grant-files">
+        <h2>Completion Report</h2>
+
+        <div class="completion-report--steps">
+            <div ng-repeat="group in model.CompletionReportGroups">
+                <div ng-switch="group.Id">
+                    <h3 class="step-heading ng-binding">
+                        {{group.Title}}
+                    </h3>
+
+                    <div ng-switch-when="@(Constants.CompletionStepWithMultipleQuestions)">
+                        <div class="block--completion-report">
+                            <div class="table-wrapper">
+                                <table class="form__group--data-grid">
+                                    <thead>
+                                        <tr>
+                                            <th ng-repeat="heading in group.Questions[0].TableHeadings">
+                                                {{heading}}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="participant in model.FilteredParticipants">
+                                            <td class="participant-name-panel">{{participant.ParticipantName}}</td>
+                                            <td ng-repeat="question in group.Questions">
+                                                <div class="form-item">
+                                                    <div class="form__control" ng-if="$index == 0 || getParticipantAnswer(question.Level1Answers, participant.Id).SelectedAnswer">
+                                                        <div class="control-wrapper">
+                                                            {{getParticipantAnswer(question.Level1Answers, participant.Id).SelectedAnswer}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-switch-when="@(Constants.CompletionReportCWRGPage2)">
+                        <div class="block--completion-report">
+                            <div class="table-wrapper">
+                                <div ng-if="model.FilteredParticipants.length == 0">
+                                    <p class="report-heading">No Participants Completed Training</p>
+                                </div>
+                                <table class="form__group--data-grid" ng-if="model.FilteredParticipants.length != 0">
+                                    <thead>
+                                        <tr>
+                                            <th ng-repeat="heading in group.Questions[0].TableHeadings">
+                                                {{heading}}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="participant in model.FilteredParticipants">
+                                            <td class="participant-name-panel">{{participant.FirstName}} {{participant.LastName}}</td>
+                                            <td>
+                                                <div ng-repeat="question in group.Questions">
+                                                    <div ng-show="getParticipantAnswer(question.Level1Answers, participant.Id).Display || true">
+                                                        <div ng-switch="question.QuestionType">
+                                                            <div ng-switch-when="@((int)CompletionReportQuestionTypes.MultipleChoice)"
+                                                                 ng-show="getParticipantAnswer(question.Level1Answers, participant.Id).SelectedAnswer">
+
+                                                                <div class="form__group" ng-if="getParticipantAnswer(question.Level1Answers, participant.Id).SelectedAnswer">
+                                                                    <label class="form__label">
+                                                                        <span ng-bind-html="parseQuestionText(question.Question)"></span>
+                                                                    </label>
+                                                                    <div class="form__control">
+                                                                        {{getParticipantAnswer(question.Level1Answers, participant.Id).SelectedAnswer}}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div ng-switch-when="@((int)CompletionReportQuestionTypes.CommunityList)"
+                                                                 ng-show="getParticipantAnswer(question.Level1Answers, participant.Id).SelectedAnswer">
+                                                                <div class="form__group" ng-if="getParticipantAnswer(question.Level1Answers, participant.Id).SelectedAnswer">
+                                                                    <label class="form__label">
+                                                                        <span ng-bind-html="parseQuestionText(question.Question)"></span>
+                                                                    </label>
+                                                                    <div class="form__control">
+                                                                        {{getParticipantAnswer(question.Level1Answers, participant.Id).SelectedAnswer}}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div ng-switch-when="@((int)CompletionReportQuestionTypes.NAICSList)"
+                                                                 ng-show="getParticipantAnswer(question.Level1Answers, participant.Id).SelectedAnswer">
+                                                                <div class="form__group" ng-if="getParticipantAnswer(question.Level1Answers, participant.Id).SelectedAnswer">
+                                                                    <label class="form__label">
+                                                                        <span ng-bind-html="parseQuestionText(question.Question)"></span>
+                                                                    </label>
+                                                                    <div class="form__control">
+                                                                        {{getParticipantAnswer(question.Level1Answers, participant.Id).SelectedAnswer}}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div ng-switch-when="@((int)CompletionReportQuestionTypes.NOCList)"
+                                                                 ng-show="getParticipantAnswer(question.Level1Answers, participant.Id).SelectedAnswer">
+                                                                <div class="form__group" ng-if="getParticipantAnswer(question.Level1Answers, participant.Id).SelectedAnswer">
+                                                                    <label class="form__label">
+                                                                        <span ng-bind-html="parseQuestionText(question.Question)"></span>
+                                                                    </label>
+                                                                    <div class="form__control">
+                                                                        {{getParticipantAnswer(question.Level1Answers, participant.Id).SelectedAnswer}}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-switch-when="@(Constants.CompletionReportCWRGPage3)">
+                        <div class="block--completion-report">
+                            <div class="table-wrapper">
+                                <div ng-if="model.FilteredParticipants.length == 0">
+                                    <p class="report-heading">No Participants Completed Training</p>
+                                </div>
+                                <table class="form__group--data-grid" ng-if="model.FilteredParticipants.length != 0">
+                                    <thead>
+                                        <tr>
+                                            <th ng-repeat="heading in group.Questions[0].TableHeadings">
+                                                {{heading}}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="participant in model.FilteredParticipants">
+                                            <td class="participant-name-panel">{{participant.ParticipantName}}</td>
+                                            <td ng-repeat="question in group.Questions">
+                                                <div class="form-item">
+                                                    <div class="form__control" ng-if="getParticipantAnswer(question.Level1Answers, participant.Id).SelectedAnswerList[0]">
+                                                        <ul style="line-height:1;" ng-repeat="checkboxanswer in getParticipantAnswer(question.Level1Answers, participant.Id).SelectedAnswerList">
+                                                            <li>{{checkboxanswer}}</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-switch-default>
+                        <div ng-repeat="question in group.Questions">
+                            <div ng-switch="question.QuestionType">
+                                <div ng-switch-when="@((int)CompletionReportQuestionTypes.Default)">
+                                    <div ng-if="question.Level1Answers[0].BoolAnswer">
+                                        <p class="report-heading">All Participants Completed Training</p>
+                                    </div>
+                                    <div ng-if="!question.Level1Answers[0].BoolAnswer">
+                                        <p class="report-heading">Participants who did not complete training</p>
+                                        <table class="table--completion-report">
+                                            <thead>
+                                                <tr>
+                                                    <th ng-repeat="heading in question.TableHeadings">{{heading}}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="answer in question.Level2Answers">
+                                                    <td>{{answer.ParticipantName}}</td>
+                                                    <td>
+                                                        <div>
+                                                            {{answer.SelectedAnswer}}<span ng-if="answer.StringAnswer">:</span>
+                                                        </div>
+                                                        <div ng-if="answer.StringAnswer">
+                                                            {{answer.StringAnswer}}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div ng-switch-when="@((int)CompletionReportQuestionTypes.MultipleChoice)">
+                                    <div class="form__group">
+                                        <label class="form__label">
+                                            <span ng-bind-html="parseQuestionText(question.Question)"></span>
+                                        </label>
+                                        <div class="form__control">
+                                            {{question.Level1Answers[0].SelectedAnswer}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-switch-when="@((int)CompletionReportQuestionTypes.Freeform)">
+                                    <div class="form__group">
+                                        <label class="form__label">
+                                            <span ng-bind-html="parseQuestionText(question.Question)"></span>
+                                        </label>
+                                        <div class="form__control">
+                                            {{question.Level1Answers[0].StringAnswer}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-switch-when="@((int)CompletionReportQuestionTypes.DynamicCheckbox)">
+                                    <div class="scroll-horizontal-wrapper">
+                                        <div class="table-wrapper scroll-horizontal-header"
+                                             ng-style="{ 'width' : serviceTable.headerWidth }">
+                                            <table class="form__group--data-grid">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="data-grid-bottom-data" rowspan="2">Participant<br />Name</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="answer in question.Level1Answers">
+                                                        <td>{{answer.ParticipantName}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="table-wrapper scroll-horizontal-content"
+                                             ng-style="{ 'width' : serviceTable.contentWidth }">
+                                            <table class="form__group--data-grid">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="data-grid-header"
+                                                            ng-repeat="serviceCategory in ESSs.ServiceCategories"
+                                                            colspan="{{serviceCategory.ServiceLines.length}}">
+                                                            {{serviceCategory.Caption}}
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="data-grid-sub-header" ng-repeat="serviceLine in serviceLines">
+                                                            {{serviceLine.Caption}}
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="answer in question.Level1Answers">
+                                                        <td class="data-grid-center-data" ng-repeat="serviceLine in serviceLines">
+                                                            <div class="form__control">
+                                                                <span>{{getParticipantEligibleCostBreakdown(answer, serviceLine.EligibleCostBreakdownId) ? "&#x2714;" : "&nbsp;"}}</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-switch-when="@((int)CompletionReportQuestionTypes.NOCAndNAICSList)">
+                                    <div ng-if="question.Level1Answers[0].BoolAnswer">
+                                        <p class="report-heading">Jobs were provided to all participants at the end of training</p>
+                                    </div>
+                                    <div ng-if="!question.Level1Answers[0].BoolAnswer">
+                                        <p class="report-heading">
+                                            <text ng-if="question.HasParticipantOutcomeReporting">Participants employer at the end of training</text>
+                                            <text ng-if="!question.HasParticipantOutcomeReporting">Participants that were not employed by you at the end of training</text>
+                                        </p>
+                                    </div>
+                                    <table class="table--completion-report">
+                                        <thead>
+                                            <tr>
+                                                <th ng-repeat="heading in question.TableHeadings">{{heading}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="answer in question.Level2Answers">
+                                                <td>{{answer.ParticipantName}}</td>
+                                                <td>
+                                                    <div ng-if="answer.BoolAnswer || !question.HasParticipantOutcomeReporting">
+                                                        <div ng-if="question.HasParticipantOutcomeReporting">
+                                                            <b>Not Employed Reason:</b>
+                                                        </div>
+                                                        <div>
+                                                            {{answer.SelectedAnswer}}<span ng-if="answer.StringAnswer">:</span>
+                                                        </div>
+                                                        <div ng-if="answer.StringAnswer">
+                                                            {{answer.StringAnswer}}
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="!answer.BoolAnswer && question.HasParticipantOutcomeReporting">
+                                                        <div>{{answer.NocAnswer}}</div>
+                                                        <div><b>Employer Name:</b></div>
+                                                        <div>{{answer.EmployerName}}</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div ng-if="!answer.BoolAnswer && question.HasParticipantOutcomeReporting">
+                                                        {{answer.NaicsAnswer}}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

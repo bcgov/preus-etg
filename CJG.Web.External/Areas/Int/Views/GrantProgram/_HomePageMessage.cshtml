@@ -1,0 +1,57 @@
+﻿@using CJG.Core.Entities
+<div ng-controller="GrantProgramHomePageMessage" class="form-section" ng-show="model.Id">
+	<span class="panel-section-item">
+		<span class="panel-section-title" ng-click="toggle($event)">Home Page Message</span>
+		<span class="panel-section-buttons">
+			<span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+			<section-edit-buttons ng-model="section.editing"></section-edit-buttons>
+			<span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+		</span>
+	</span>
+
+	<div class="panel-section-content" ng-if="section.show">
+		<div class="form form-section-container">
+
+			<div class="form__group">
+				<p>
+					You may enter a home page message for this grant program below. When you have double checked it and tested its appearance
+					click Enable Message to have it displayed on the applicant's home page. Click Disable Message when you want to remove the
+					message.
+				</p>
+			</div>
+
+			<div class="form__group">
+				<div class="form__label">
+					<div class="label-wrapper">
+						<label class="form__label active-link" ng-click="preview(model.Message)" id="test-message">Test Message</label><br />
+						<button class="btn btn--primary "
+								ng-class="!model.ShowMessage? 'btn--forward' : 'btn--back'"
+								ng-click="model.ShowMessage = !model.ShowMessage"
+								ng-disabled="!section.editing">
+							{{model.ShowMessage ? "Disable Message" : "Enable Message"}}
+						</button>
+					</div>
+				</div>
+				<div class="form__control">
+					<div class="control-wrapper">
+						<textarea ng-model="model.Message" ng-validation ng-editing></textarea>
+					</div>
+				</div>
+			</div>
+
+			<div class="form__group">
+				<div class="form__label">Example:</div>
+				<div class="form__control">
+					<div class="control-wrapper">
+						<p>
+							See &lt;a href="https://www.workbc.ca/Employer-Resources/Canada-BC-Job-Grant/Foundational-Tranining-Stream.aspx" target="_blank"&gt;Foundation Training
+							&lt;/a&gt; for more information.
+							<br />
+							Paragraph Marker: &lt;p&gt;&lt;/p&gt;
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

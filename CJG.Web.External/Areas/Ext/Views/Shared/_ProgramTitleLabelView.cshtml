@@ -1,0 +1,48 @@
+﻿@using CJG.Core.Entities
+@{
+    string model = string.IsNullOrEmpty(Model) ? "model" : Model;
+}
+<div class="grant-summary">
+    <h4>
+        <span class="grant-summary__filenbr">{{@(model).FileNumber}}</span>
+        {{@(model).FileName}}
+        <span ng-if="@(model).TrainingProgramStartDate != null" class="grant-summary__date">
+            (start date {{@(model).TrainingProgramStartDate}})
+        </span>
+    </h4>
+    <b>{{@(model).GrantProgramName}} &#x2013; {{@(model).GrantStreamName}}</b>
+
+    <p class="grant-summary__date">
+            <div ng-if="@(model).ApplicationStateExternal ==  @((int)CJG.Core.Entities.ApplicationStateExternal.Submitted)">
+                <text>Date submitted: </text>
+                <span>{{@(model).DateSubmitted}}</span>
+            </div>
+            @*<div ng-if="@(model).ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.Incomplete)  ||
+                 @(model).ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.Complete)">
+                <text>Earliest submission date: </text>
+                <span>{{@(model).GrantOpening.OpeningDate}}</span>
+            </div>*@
+            <span ng-if=" @(model).ApplicationStateExternal == 9" class="label label--acceptby">
+                Accept by {{@(model).GrantAgreementStartDate}}
+            </span>
+    </p>
+    <p ng-if="@(model).ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.ApplicationDenied) ||
+       @(model).ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.ChangeRequestDenied)
+       || @(model).ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.ClaimDenied) ">
+        <br />
+        Your {{@(model).DenyState} has been denied for the following reason:<br />
+        <span><em>{{@(model).DenyReason}}</em></span>
+    </p>
+    <p ng-if="@(model).ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.AgreementWithdrawn) ">
+    <br />
+    Your agreement has been withdrawn by the ministry for the following reason:<br />
+    <span><em>{{@(model).StateChangeReason}}</em></span>
+    </p>
+
+    <p ng-if="@(model).ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.CancelledByAgreementHolder) 
+       || @(model).ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.CancelledByMinistry)">
+    <br />
+    Your agreement has been cancelled {{@(model).CancelText}} for the following reason:<br />
+    <span><em>{{@(model).StateChangeReason}}</em></span>
+    </p>
+</div>

@@ -1,0 +1,65 @@
+﻿@model CJG.Web.External.Areas.Int.Models.InternalUserViewModel
+
+@Html.HiddenFor(m => m.Id)
+@Html.HiddenFor(m => m.ApplicationUserId)
+<div class="form__group">
+	<label class="form__label" for="@Html.IdFor(x => x.FirstName)">First Name <abbr title="Required">*</abbr></label>
+	<div class="form__control">
+		@Html.TextBoxFor(x => x.FirstName, new { @class = "input--medium" })
+	</div>
+</div>
+<div class="form__group">
+	<label class="form__label" for="@Html.IdFor(x => x.LastName)">Last Name <abbr title="Required">*</abbr></label>
+	<div class="form__control">
+		@Html.TextBoxFor(x => x.LastName, new { @class = "input--medium" })
+	</div>
+</div>
+<div class="form__group">
+	<label class="form__label" for="@Html.IdFor(x => x.IDIR)">IDIR <abbr title="Required">*</abbr></label>
+	<div class="form__control">
+		@Html.TextBoxFor(x => x.IDIR, new { @class = "input--medium" })
+		@Html.ValidationMessageFor(x => x.IDIR)
+	</div>
+</div>
+<div class="form__group">
+	<label class="form__label" for="@Html.IdFor(x => x.Salutation)">Salutation <abbr title="Required">*</abbr></label>
+	<div class="form__control">
+		<div class="selectmenu">
+			@Html.DropDownListFor(x => x.Salutation, new SelectList(Model.Salutations.OrderBy(x => x)),
+			DropDownListHelper.SelectValueText, new { @class = "form-control" })
+		</div>
+		@Html.ValidationMessageFor(x => x.Salutation)
+	</div>
+</div>
+<div class="form__group">
+	<label class="form__label" for="@Html.IdFor(x => x.Email)">Email <abbr title="Required">*</abbr></label>
+	<div class="form__control">
+		@Html.TextBoxFor(x => x.Email, new { @class = "input--medium" })
+		@Html.ValidationMessageFor(x => x.Email)
+
+	</div>
+</div>
+<div class="form__group">
+	<label class="form__label" for="@Html.IdFor(x => x.PhoneNumber)">Phone Number <abbr title="Required">*</abbr></label>
+	<div class="form__control">
+		@Html.TextBoxFor(x => x.PhoneNumber, new { @class = "input--medium" })
+		@Html.ValidationMessageFor(x => x.PhoneNumber)
+	</div>
+</div>
+<div class="form__group">
+	<label class="form__label" for="@Html.IdFor(x => x.UserRole)">User Role <abbr title="Required">*</abbr></label>
+	<div class="form__control">
+		<div class="selectmenu">
+			@Html.DropDownListFor(x => x.UserRole, new SelectList(Model.Roles.OrderBy(x => x.Name), "Name", "Name"),
+			DropDownListHelper.SelectValueText,
+			new {@class = "form-control"})
+		</div>
+		@Html.ValidationMessageFor(x => x.UserRole)
+	</div>
+</div>
+<div class="form__group">
+	<div class="form__control">
+		@Html.CheckBoxFor(x => x.Active, new { @class = "input--medium" })
+		<label class="form__label" for="@Html.IdFor(x => x.Active)">Active </label>
+	</div>
+</div>

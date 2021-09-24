@@ -1,0 +1,123 @@
+﻿@model CJG.Web.External.Areas.Ext.Models.Claims.BaseClaimViewModel
+@using CJG.Core.Entities
+@{
+    ViewBag.Title = "Review and Submit Reimbursement Claim";
+}
+
+<div class="row">
+    @Html.ActionLink("Return", nameof(CJG.Web.External.Areas.Ext.Controllers.ReportingController.GrantFileView), nameof(CJG.Web.External.Areas.Ext.Controllers.ReportingController).Replace("Controller", ""), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
+</div>
+<div id="claim-review-submit-container" ng-controller="ClaimReviewView" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-claim-id="@ViewBag.ClaimId" ng-claim-version="@ViewBag.ClaimVersion">
+    <div class="row">
+
+        <program-title-label ng-model="model.ProgramTitleLabel"></program-title-label>
+
+        <h2 class="no-text-transform">@ViewBag.Title</h2>
+
+        <div ng-if="alert.message" class="row row--alert">
+            <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+        </div>
+
+
+        <div class="notice notice--icon" ng-if="model.Claim.ProgramType == @((int)ProgramTypes.WDAService)">
+            <p>
+                Review your reimbursement claim carefully to ensure it is accurate before you submit it.
+                Make sure that you have attached copies of all receipts and other supporting documentation
+                and that actual participant expenses are entered and correctly assigned.
+            </p>
+
+            <p>
+                {{model.Claim.CountParticipants}} out of {{model.Claim.MaximumParticipants}} participants have submitted their participant information.
+                Participants that did not submit their participant information will not be included in your claim.
+                Participants must attend training for you to be eligible to receive reimbursement for their expenses.
+            </p>
+
+            <p>
+                Expand each eligible expense shown below and confirm that you have assigned costs to participants accurately.
+                When your claim is accurate and includes all information and documentation required,
+                you can submit it to the Ministry using the Submit Claim button below.
+            </p>
+        </div>
+
+        <div class="notice notice--icon" ng-if="model.Claim.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+            <p>
+                Please ensure all paid amounts have been entered correctly for each expense and ensure that receipts and supporting documentation have been attached. After you have reviewed your claim, press the "Submit Claim" button."
+            </p>
+        </div>
+
+        <div class="clearfix margin-bottom">
+            <h2 class="pull-left no-margin">{{ model.ClaimType == @((int)ClaimTypes.SingleAmendableClaim) ? 'Eligible Expense Summary' : 'Claim' }}</h2>
+            @Html.ActionLink("Edit", nameof(CJG.Web.External.Areas.Ext.Controllers.ClaimController.ClaimReportView), nameof(CJG.Web.External.Areas.Ext.Controllers.ClaimController).Replace("Controller", ""), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary pull-right" })
+        </div>
+
+        <div ng-if="model.Claim.ProgramType == @((int)ProgramTypes.WDAService)">
+            @Html.Partial("_ClaimDetails", "model.Claim")
+        </div>
+
+        <div ng-if="model.Claim.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+            @Html.Partial("_ClaimDetailsETG", "model.Claim")
+        </div>
+
+        <div ng-if="model.Claim.ProgramType == @((int)ProgramTypes.WDAService)">
+            <h2>Participant List</h2>
+            <div class="panel-bar__content">
+                <table class="table--claims table--claims__cost" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th style="width:25%"><b>Name</b></th>
+                            <th style="width:25%; text-align:center;"><b>Email</b></th>
+                            <th style="width:25%; text-align:center;"><b>Phone</b></th>
+                            <th style="width:25%; text-align:center;"><b>Work Location</b></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="participant in model.Claim.Participants">
+                            <td style="width:25%">{{participant.Name}}</td>
+                            <td style="width:25%; text-align:center;"><a href="mailto:{{participant.Email}}">{{participant.Email}}</a></td>
+                            <td style="width:25%; text-align:center;">{{participant.Phone}}</td>
+                            <td style="width:25%; text-align:center;">{{participant.WorkLocation}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <br />
+        </div>
+
+        <div>
+            <h2>{{model.Attachments.Title}}</h2>
+            <div ng-if="model.IsWDAService">
+                <p>Your assessor may request you to attach documentation to support your claim.</p>
+            </div>
+
+            <div>
+                <div class="form__group" ng-if="model.Attachments.Attachments">
+                    <table style="width:100%;">
+                        <tr ng-repeat="attachment in model.Attachments.Attachments">
+                            <td style="width:10%;vertical-align:top">{{$index + 1}}</td>
+                            <td style="width:60%;vertical-align:top;word-wrap: break-word;word-break: break-all;"><a href="/Ext/Claim/Attachment/Download/{{model.Claim.Id}}/{{model.Claim.Version}}/{{attachment.Id}}">{{attachment.FileName}}</a><br />{{attachment.Description}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <p ng-if="model.Attachments.Attachments == null || model.Attachments.Attachments.length == 0">There are no attachments.</p>
+            </div>
+        </div>
+
+        <div class="agreement-block">
+            <input type="checkbox" class="check-box" id="claim-confirmed" ng-model="model.ClaimConfirmed" @(ViewBag.PreventSubmit ? "ng-disabled=\"true\"" : "") />
+            <label class="checkbox" for="claim-confirmed">By placing a check mark in this box, I certify that the claim information I submit is true, accurate and compliant with the Grant Agreement.</label>
+        </div>
+
+        <div class="agreement-block" ng-if="model.ClaimType == @((int)ClaimTypes.MultipleClaimsWithoutAmendments)">
+            <input type="checkbox" class="check-box" id="final-confirmed" ng-model="model.Claim.IsFinalClaim" @(ViewBag.PreventSubmit ? "ng-disabled=\"true\"" : "") />
+            <label class="checkbox" for="final-confirmed">This is my complete and final reimbursement claim under my agreement.</label>
+        </div>
+
+        <div class="button-group">
+            @Html.ActionLink("Cancel", nameof(CJG.Web.External.Areas.Ext.Controllers.ReportingController.GrantFileView), nameof(CJG.Web.External.Areas.Ext.Controllers.ReportingController).Replace("Controller", ""), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary btn--back" })
+            <a class="pull-right btn btn--primary btn--forward" ng-click="SubmitClaim()" ng-disabled="!model.ClaimConfirmed">Submit Claim</a>
+        </div>
+    </div>
+    </div>
+
+
+

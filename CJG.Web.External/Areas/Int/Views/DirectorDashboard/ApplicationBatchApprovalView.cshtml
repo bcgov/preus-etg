@@ -1,0 +1,144 @@
+﻿@{
+	ViewBag.Title = "Application Batch Approval";
+}
+
+<div ng-controller="ApplicationBatchApproval" ng-fiscal-year-id="@ViewBag.FiscalYearId" >
+	<div class="application">
+
+		<div class="application-header">
+			<h2>Application Batch Approval</h2>
+
+			<div class="form__group">
+				<div class="form__group">
+					<div class="form__control margin-left-10">
+						<div class="selectmenu">
+							<select ng-model="filter.AssessorId" ng-options="item.Key as item.Value for item in assessors">
+								<option value="">All Assessors</option>
+							</select>
+						</div>
+					</div>
+					<div class="form__control margin-left-10">
+						<div class="selectmenu">
+							<select ng-model="filter.FiscalYearId" ng-options="item.Key as item.Value for item in fiscalYears" ng-change="loadTrainingPeriods()"></select>
+						</div>
+					</div>
+					<div class="form__control margin-left-10">
+						<div class="selectmenu input--medium">
+							<select ng-model="filter.GrantProgramId" ng-options="item.Key as item.Value for item in grantPrograms" class="input--medium" ng-change="loadGrantStreams()">
+								<option value="">-- Select Grant Programs --</option>
+							</select>
+						</div>
+					</div>
+					<div class="form__control margin-left-10">
+						<div class="selectmenu input--medium">
+							<select ng-model="filter.GrantStreamId" ng-options="item.Key as item.Value for item in grantStreams" class="input--medium" ng-change="loadTrainingPeriods()">
+								<option value="">-- Select Grant Streams --</option>
+							</select>
+						</div>
+					</div>
+                    <div class="form__control margin-left-10">
+                        <div class="selectmenu">
+                            <select ng-model="filter.TrainingPeriodCaption" ng-options="item.Key as item.Value for item in trainingPeriods">
+                                <option value="">-- Select Intake Periods --</option>
+                            </select>
+                        </div>
+                    </div>
+					<div class="form__control margin-left-10">
+						<button class="btn btn--primary" ng-click="applyFilter()" ng-disabled="!validFilter()">Apply Filter</button>
+					</div>
+					<div class="form__control margin-left-10">
+						<button class="btn btn--secondary" ng-click="clearFilter()">Clear</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="application-body">
+			<div ng-if="alert.message" class="row row--alert">
+				<div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+			</div>
+
+			<div>
+				All applications listed below are Recommend for Approval.
+				<button class="btn btn--primary" ng-click="issueOffers()" ng-disabled="!canIssueOffer()">Issue Offers</button>
+			</div>
+
+			<div class="form__control v-bottom">
+				<div class="float-left">Show&nbsp;</div>
+				<div class="selectmenu input--x-small float-left">
+					<select ng-model="filter.Quantity" ng-options="item as item for item in quantities" class="input--x-small" ng-change="applyFilter()"></select>
+				</div>
+				<div class="float-left">&nbsp;Entries</div>
+			</div>
+
+			<div class="form-table">
+				<div class="form-table-heading">
+					<div class="form-table-cell width-15px">
+						Select
+						<input type="checkbox" id="select-all" ng-model="filter.SelectAll" ng-change="toggleAll($event)" ng-true-value="true" />
+						<label for="select-all">All</label>
+					</div>
+					<div class="form-table-cell width-100px">
+						<label class="action {{sortDirection('FileNumber')}}" ng-click="sort('FileNumber')">File No.</label>
+					</div>
+					<div class="form-table-cell">
+						<label class="action {{sortDirection('OrganizationLegalName')}}" ng-click="sort('OrganizationLegalName')">Applicant</label>
+					</div>
+					<div class="form-table-cell text-right width-50px">
+						<label class="action {{sortDirection('TrainingCost.AgreedCommitment')}}" ng-click="sort('TrainingCost.AgreedCommitment')">Government Amount Approved</label>
+					</div>
+					<div class="form-table-cell">
+						<label class="action {{sortDirection('Assessor.LastName')}}" ng-click="sort('Assessor.LastName')">Assessor</label>
+					</div>
+					<div class="form-table-cell">
+						Notes
+					</div>
+				</div>
+				<div ng-repeat="application in model.Items" class="form-table-row">
+					<div class="form-table-cell width-15px">
+						<input type="checkbox" id="application-{{application.Id}}" ng-model="application.IsChecked" ng-click="toggleSelectAll(application)" ng-true-value="true" />
+						<label for="application-{{application.Id}}">&nbsp;</label>
+					</div>
+					<div class="form-table-cell width-100px">
+						<a href="/Int/Application/Details/View/{{application.Id}}">{{application.FileNumber}}</a>
+					</div>
+					<div class="form-table-cell">
+						{{application.Applicant}}
+					</div>
+					<div class="form-table-cell text-right width-50px">
+						{{application.AgreedCommitment | currency}}
+					</div>
+					<div class="form-table-cell">
+						{{application.Assessor}}
+					</div>
+					<div class="form-table-cell">
+						<button class="btn btn--secondary" ng-click="showNotes(application)">Show</button>
+					</div>
+				</div>
+			</div>
+			<div>
+				<span ng-show="model.Total">
+					Showing {{pager.items.first}} to {{pager.items.last}} of {{pager.items.total}} entries
+				</span>
+				<span ng-show="!pager.items.total">There are no applications Recommended for Approval with your current filter.</span>
+				<div class="button-group">
+					<div class="float-right">
+						<button class="btn btn--secondary internal-previous" ng-disabled="!pager.enablePrevious" tabindex="0" ng-click="!pager.enablePrevious || applyFilter(pager.page - 1)">Previous</button>
+						<span>
+							<button class="btn btn--secondary btn--page" tabindex="0" ng-show="pager.showFirstPage" ng-click="applyFilter(pager.showFirstPage)">{{pager.showFirstPage}}</button>
+							<span class="ellipsis" ng-show="pager.showFirstPage">…</span>
+							<button ng-repeat="page in pager.pages" class="btn btn--secondary btn--page" ng-class="{ 'btn--current' : pager.page === page }" tabindex="0" ng-click="applyFilter(page)" ng-disabled="pager.page === page">{{page}}</button>
+							<span class="ellipsis" ng-show="pager.showLastPage">…</span>
+							<button class="btn btn--secondary btn--page" tabindex="0" ng-show="pager.showLastPage" ng-click="applyFilter(pager.showLastPage)">{{pager.showLastPage}}</button>
+						</span>
+						<button class="btn btn--secondary internal-next" ng-disabled="!pager.enableNext" tabindex="0" ng-click="!pager.enableNext || applyFilter(pager.page + 1)">Next</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="application-sidebar">
+			@Html.Partial("~/Areas/Int/Views/Note/_Notes.cshtml")
+		</div>
+	</div>
+</div>

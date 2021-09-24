@@ -1,0 +1,35 @@
+﻿<div id="modalCancelAgreement" class="container--cancel-agreement" style="display:none;">
+    <div class="content--cancel-agreement side-padding">
+
+        <div ng-if="!model.WorkflowViewModel.ApplicationWorkflowViewModel.ReasonToCancel" class="alert alert--warning">
+            <p>Cancel reason is required</p>
+        </div>
+
+        <div class="main">
+            <p>
+                <strong>Are you sure you want to cancel this agreement?</strong>
+            </p>
+            <p>
+                If you cancel an agreement the file will be closed. Enter a reason for cancelling the agreement in the box below and then click Cancel Agreement to
+                confirm your decision or click Continue with Agreement to return to the grant file. The reason will added to the grant file and will be used to
+                inform the application contact as shown below.
+            </p>
+            <p>
+                <i>"Your agreement has been cancelled for the following reason:"</i>
+            </p>
+            <div class="form__group">
+                <label class="form__label form__label--align-top" for="ReasonToCancel">Please provide a reason</label>
+                <div class="form__control">
+                    <textarea id="ReasonToCancel" class="input--full" ng-model="model.WorkflowViewModel.ApplicationWorkflowViewModel.ReasonToCancel" maxlength="800"></textarea>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <input type="button" name="btnCancel" class="btn btn--secondary" value="No, Continue with Agreement" />
+                <button class="btn btn--primary btn--forward confirm-link pull-right" type="submit" name="btnSubmit" value="Yes, Cancel Agreement" ng-disabled="!model.WorkflowViewModel.ApplicationWorkflowViewModel.ReasonToCancel">
+                    Yes, Cancel Agreement
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

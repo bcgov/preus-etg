@@ -1,0 +1,220 @@
+﻿<div>
+	<h2>{{model.GrantProgramName}} Selection</h2>
+
+	<input class="js-training-program-start-date" type="hidden" ng-model="model.TrainingStartDate">
+
+    <div ng-if="model.ProgramType === @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
+        <p>To create an application, you must select a grant from the ones available below. Make your selection based on your delivery start date and the stream that matches your training plan.</p>
+        <p>Click "Show description" to read the stream description.</p>
+        <p>The earliest date you may submit your application is shown for each grant selection.</p>
+    </div>
+
+    <div ng-if="model.ProgramType === @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+        <p>To create an application, please select the appropriate training stream below.</p>
+        <p>Training must start during the selected intake period.</p>
+        <p>It is not possible to change streams after an application has been submitted. Failure to apply under the correct stream will result in your application being denied.</p>
+    </div>
+
+	<div class="js-training-date-warning alert alert--warning is-hidden" role="alert">
+		<p>The training period for your grant selection does not include your current training start date. If you keep this selection, you will need to edit your training program and select new training dates.</p>
+	</div>
+
+	<div class="js-reimbursement-rate-warning alert alert--warning is-hidden" role="alert">
+		<p>The reimbursement rate for the grant opening you selected will vary the government contribution in your training cost estimates.  If you keep this selection, you will need to edit your training cost estimates to review and confirm the changes.</p>
+	</div>
+
+	<div class="list-radio-toggle--container" ng-validation="errors.GrantOpeningId">
+		<ul class="list-radio-toggle" ng-repeat="period in model.TrainingPeriods">
+			<li>
+				<h4 class="list-radio-toggle--title">{{period.Title}}</h4>
+			</li>
+			<li class="list-radio-toggle--item" ng-repeat="item in period.GrantOpenings">
+				<div class="form-item">
+					<div class="half-width">
+						<input type="radio" id="grant-stream-{{item.Id}}" name="model.GrantOpeningId" ng-value="{{item.Id}}" ng-model="model.GrantOpeningId" data-start-date="{{item.StartDate}}" data-end-date="{{item.EndDate}}" data-reimbursement-rate="{{item.ReimbursementRate}}" ng-click="getRequirements(item.Id)">
+						<label for="grant-stream-{{item.Id}}">{{item.GrantStream.Name}}</label>
+					</div>
+					<div ng-if="model.ProgramType === @((int)CJG.Core.Entities.ProgramTypes.WDAService)" class="half-width is-hidden-on-mobile">
+						<label class="list-radio-toggle--label">Earliest submission:</label>
+					</div>
+				</div>
+
+				<div class="read-more">
+					<div class="half-width is-hidden-on-mobile">
+						<button class="list-radio-toggle--btn" ng-click="item.showDescription = true" ng-show="!item.showDescription">Show description</button>
+						<button class="list-radio-toggle--btn open" ng-click="item.showDescription = false" ng-show="item.showDescription">Hide description</button>
+					</div>
+					<div ng-if="model.ProgramType === @((int)CJG.Core.Entities.ProgramTypes.WDAService)" class="half-width is-hidden-on-mobile">{{item.OpeningDate}}</div>
+					<div class="half-width is-hidden-beyond-mobile">
+						<button class="list-radio-toggle--btn" ng-click="item.showDescription = true" ng-show="!item.showDescription">Show description</button>
+						<button class="list-radio-toggle--btn open" ng-click="item.showDescription = false" ng-show="item.showDescription">Hide description</button>
+					</div>
+					<div class="list-radio-toggle--content clear-both" ng-show="item.showDescription">
+						<span ng-bind-html="item.GrantStream.ObjectiveHTML"></span>
+					</div>
+
+					<div class="half-width is-hidden-beyond-mobile">
+						<label class="list-radio-toggle--label" ng-if="model.ProgramType === @((int)CJG.Core.Entities.ProgramTypes.WDAService)">Earliest submission:</label>
+					</div>
+					<div class="half-width is-hidden-beyond-mobile" ng-if="model.ProgramType === @((int)CJG.Core.Entities.ProgramTypes.WDAService)">{{item.OpeningDate}}</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+    <div ng-show="model.GrantOpeningId && currentTrainingPeriod">
+        <h2>Delivery Dates</h2>
+        <div class="form__group form__group--date">
+            <label class="form__label">Delivery Start Date:<abbr title="Required">*</abbr></label>
+            <span ng-if="model.GrantProgramId != 2"><p>{{getDescription()}}</p></span>
+            <span ng-if="model.GrantProgramId == 2"><p>Training cannot already have started at the time of application.</p></span>
+            <div class="form__control--flexible">
+                <div class="control-wrapper" ng-validation="errors.StartDate">
+                    <datedropdown ng-model="model.DeliveryStartDate" ng-year="model.DeliveryStartYear" ng-month="model.DeliveryStartMonth" ng-day="model.DeliveryStartDay" ng-min-date="currentTrainingPeriod.StartDate" ng-max-date="currentTrainingPeriod.EndDate" ng-default-month="'Month'" ng-default-day="'Day'" ng-default-year="'Year'" ng-editing="true"></datedropdown>
+                </div>
+            </div>
+        </div>
+        <div class="form__group form__group--date">
+            <label class="form__label">Delivery End Date:<abbr title="Required">*</abbr></label>
+            <div class="form__control--flexible">
+                <div class="control-wrapper" ng-validation="errors.EndDate">
+                    <datedropdown ng-model="model.DeliveryEndDate" ng-year="model.DeliveryEndYear" ng-month="model.DeliveryEndMonth" ng-day="model.DeliveryEndDay" ng-min-date="currentTrainingPeriod.StartDate" ng-max-date="currentTrainingPeriod.MaxEndDate" ng-default-month="'Month'" ng-default-day="'Day'" ng-default-year="'Year'" ng-editing="true"></datedropdown>
+                </div>
+            </div>
+        </div>
+
+        <div class="form__group form__group--radio-inline" ng-if="model.GrantStream.StreamEligibilityQuestions.length != 0">
+            <div ng-repeat="question in model.GrantStream.StreamEligibilityQuestions">
+                <div ng-if="$first" class="form__label" ng-validation="errors.EligibilityQuestion">
+                    {{model.GrantStream.Name}} Stream Eligibility Requirements:
+                </div>
+                <div style="padding-bottom:5px;" ng-if="question.EligibilityRequirements != null && question.EligibilityRequirements.length != 0">
+                    <div ng-if="!$first"></div>
+                    <div class="form-item" ng-if="question.EligibilityRequirements.length != 0" ng-bind-html="question.EligibilityRequirements"></div>
+                    <br />
+                </div>
+                <div ng-if="question.EligibilityRequirements == null || question.EligibilityRequirements.length == 0">
+                    <div ng-if="$first"></div>
+                </div>
+                <div style="padding-left:2em;">
+                    <label class="form__label" ng-validation="errors.EligibilityQuestion{{question.Id}}">{{question.EligibilityQuestion}}<abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <div class="form-item">
+                            <input type="radio" id="eligibilityConfirmed-yes-{{question.Id}}" ng-value="true" ng-model="question.EligibilityAnswer" name="model.EligibilityConfirmed-{{question.Id}}">
+                            <label for="eligibilityConfirmed-yes-{{question.Id}}">Yes</label>
+                        </div>
+                        <div class="form-item">
+                            <input type="radio" id="eligibilityConfirmed-no-{{question.Id}}" ng-value="false" ng-model="question.EligibilityAnswer" name="model.EligibilityConfirmed-{{question.Id}}">
+                            <label for="eligibilityConfirmed-no-{{question.Id}}">No</label>
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="!$last"><br /></div>
+            </div>
+        </div>
+
+        <div ng-if="model.ProgramType === @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
+            <div class="form__group form__group--radio-inline">
+                <label class="form__label" ng-validation="errors.AdditionalFundingQuestion">
+                    Have you received or requested any other government or third-party funding for this training? <abbr title="Required">*</abbr>
+                </label>
+                <div class="form__control" ng-validation="errors.HasRequestedAdditionalFunding">
+                    <div class="form-item">
+                        <input type="radio" id="additional-funding-yes" ng-value="true" ng-model="model.HasRequestedAdditionalFunding" name="model.HasRequestedAdditionalFunding">
+                        <label for="additional-funding-yes">Yes</label>
+                    </div>
+                    <div class="form-item">
+                        <input type="radio" id="additional-funding-no" ng-value="false" ng-model="model.HasRequestedAdditionalFunding" name="model.HasRequestedAdditionalFunding">
+                        <label for="additional-funding-no">No</label>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="model.HasRequestedAdditionalFunding === true">
+                <div class="form__group">
+                    <div class="label-wrapper"><label class="form__label">Please describe funding received or requested <abbr title="Required">*</abbr></label></div>
+                    <div class="control-wrapper form-control"><textarea class="input--full textarea--short" ng-model="model.DescriptionOfFundingRequested" ng-validation></textarea></div>
+                </div>
+            </div>
+
+            @*<input type="checkbox" class="check-box" id="is-alternate-contact" ng-model="model.IsAlternateContact" />*@
+            <div class="form__group form__group--radio-inline">
+                <label class="form__label" for="is-alternate-contact">
+                    Do you want to add a secondary contact person from your organization?
+                </label>
+                <div class="form__control" ng-validation="errors.IsAlternateContact">
+                    <div class="form-item">
+                        <input type="radio" id="is-alternate-contact-yes" ng-value="true" ng-model="model.IsAlternateContact" name="model.IsAlternateContact">
+                        <label for="is-alternate-contact-yes">Yes</label>
+                    </div>
+                    <div class="form-item">
+                        <input type="radio" id="is-alternate-contact-no" ng-value="false" ng-model="model.IsAlternateContact" name="model.IsAlternateContact">
+                        <label for="is-alternate-contact-no">No</label>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-show="model.IsAlternateContact">
+                <h2>
+                    Alternate Contact
+                </h2>
+                @*<div class="panel-section-content">*@
+                <div class="form form--flex-2-col">
+                    <div class="col-50p">
+                        <div class="form__group">
+                            <div class="form__label">First Name:<abbr title="Required">*</abbr></div>
+                            <div class="form__control">
+                                <input ng-model="model.AlternateFirstName" class="input--medium" maxlength="250" ng-validation />
+                            </div>
+                        </div>
+                        <div class="form__group">
+                            <div class="form__label">Last Name:<abbr title="Required">*</abbr></div>
+                            <div class="form__control">
+                                <input ng-model="model.AlternateLastName" class="input--medium" maxlength="250" ng-validation />
+                            </div>
+                        </div>
+                        <div class="form__group">
+                            <div class="form__label">Email:<abbr title="Required">*</abbr></div>
+                            <div class="form__control">
+                                <input ng-model="model.AlternateEmail" class="input--medium" maxlength="250" ng-validation />
+                            </div>
+                        </div>
+                        <div class="form__group">
+                            <div class="form__label">Position/Title:<abbr title="Required">*</abbr></div>
+                            <div class="form__control">
+                                <div class="control-wrapper">
+                                    <input ng-model="model.AlternateJobTitle" class="input--full" maxlength="250" ng-validation />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form__group">
+                            <div class="label-wrapper">
+                                <label class="form__label">Preferred phone:<abbr title="Required">*</abbr></label>
+                            </div>
+                            <div class="form__control">
+                                <div class="form__group--tel validation-group">
+                                    <input ng-model="model.AlternatePhoneAreaCode"
+                                           class="input-xx-small" maxlength="3" ng-number
+                                           ng-class="errors.AlternatePhone ? 'has-error': ''" />
+                                    <span ng-class="spacer">-</span>
+                                    <input ng-model="model.AlternatePhoneExchange"
+                                           class="input-xx-small" maxlength="3" ng-number
+                                           ng-class="errors.AlternatePhone ? 'has-error': ''" />
+                                    <span ng-class="spacer">-</span>
+                                    <input ng-model="model.AlternatePhoneNumber"
+                                           class="input-xx-small" maxlength="4" ng-number
+                                           ng-class="errors.AlternatePhone ? 'has-error': ''" />
+                                    <span ng-class="spacer" ng-if="section.editing || model.AlternatePhoneViewModel.PhoneExtension">Ext</span>
+                                    <input ng-model="model.AlternatePhoneExtension"
+                                           class="input-xx-small" maxlength="20" ng-number
+                                           ng-class="errors.AlternatePhone ? 'has-error': ''" />
+                                </div>
+                                <validation ng-model="errors.AlternatePhone">
+                                    Contact phone number must be 10-digit number
+                                </validation>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

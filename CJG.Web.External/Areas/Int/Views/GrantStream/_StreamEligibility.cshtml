@@ -1,0 +1,86 @@
+﻿<div ng-controller="GrantStreamEligibility" class="form-section" ng-show="model.Id">
+    <span class="panel-section-item">
+        <span class="panel-section-title" ng-click="toggle($event)">Stream Eligibility Questions</span>
+        <span class="panel-section-buttons">
+            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            <span style="margin:0 0 10px 0;" ng-show="section.editing">
+                <button class="btn btn--primary btn--forward" ng-click="createStreamQuestion()">Add New</button>
+            </span>
+            <section-edit-buttons ng-model="section.editing"></section-edit-buttons>
+            <span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+        </span>
+    </span>
+
+    <div class="panel-section-content" ng-if="section.show">
+        <div class="control-wrapper" style="text-align:right;">
+            <input type="checkbox" id="showDisabled" ng-model="model.EligibilityQuestionsShowDisabled" />
+            <label for="showDisabled" class="font-weight-bold">Show disabled questions</label>
+        </div>
+
+        <div class="form-section-container">
+            <p>
+                The grant stream eligibility requirements and a confirmation question will be displayed to external users when they select this stream.
+                You may enter the eligibility requirements and question text for this stream and control if the answer to the question blocks application submission.
+                If you do not configure application submission to be blocked for a non-eligible response then you can use the response in your application assessment.
+            </p>
+        </div>
+        
+        <div ng-show="model.StreamQuestions.length == 0" class="form-section-container font-weight-bold">There are no Stream Eligibility Questions to display.</div>
+        <div ng-repeat="question in model.StreamQuestions | filter: filterQuestions | orderBy: RowSequence">
+            <hr />
+            <div class="form-section-container">
+                <div ng-show="section.editing" class="form__group" style="text-align:right;">
+                    Move Question
+                    <span class="small up-arrow" ng-if="!$first" ng-click="moveStreamQuestion(question, 1)"></span>
+                    <span class="small down-arrow" ng-if="!$last" ng-click="moveStreamQuestion(question, 0)"></span>
+                </div>
+                <div class="form__group">
+                    <div class="label-wrapper">
+                        <label class="form__label">
+                            Eligibility
+                            <br />
+                            Requirements:
+                        </label>
+                        <a class="link" ng-click="preview()">Test Requirements</a>
+                    </div>
+                    <div class="control-wrapper">
+                        <textarea ng-model="question.EligibilityRequirements" rows="4"
+                                  ng-editing></textarea>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="label-wrapper">
+                        <label class="form__label">
+                            Question:
+                        </label>
+                    </div>
+                    <div class="control-wrapper form-control">
+                        <textarea ng-model="question.EligibilityQuestion" rows="4"
+                                  ng-validation="errors.StreamQuestions_{{$index}}_.EligibilityQuestion"
+                                  ng-editing></textarea>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="label-wrapper">
+                        <label class="form__label">Application submission is allowed:</label>
+                    </div>
+                    <div class="control-wrapper">
+                        <input type="radio" id="eligibility-required-{{question.Id}}" ng-model="question.EligibilityPositiveAnswerRequired" ng-value="true" ng-disabled="!section.editing" /> <label for="eligibility-required-{{question.Id}}">Only with a "Yes" answer</label><br />
+                        <input type="radio" id="eligibility-not-required-{{question.Id}}" ng-model="question.EligibilityPositiveAnswerRequired" ng-value="false" ng-disabled="!section.editing" /> <label for="eligibility-not-required-{{question.Id}}">With a "Yes" or "No" answer</label>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="label-wrapper">
+                        <label class="form__label">Eligibility question enabled:</label>
+                    </div>
+                    <div>
+                        <div class="control-wrapper" style="display:inline;">
+                            <input type="radio" id="eligibility-active-{{question.Id}}" ng-model="question.IsActive" ng-value="true" ng-disabled="!section.editing" /> <label for="eligibility-active-{{question.Id}}" style="padding-right:20px;">Yes</label>
+                            <input type="radio" id="eligibility-not-active-{{question.Id}}" ng-model="question.IsActive" ng-value="false" ng-disabled="!section.editing" /> <label for="eligibility-not-active-{{question.Id}}">No</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

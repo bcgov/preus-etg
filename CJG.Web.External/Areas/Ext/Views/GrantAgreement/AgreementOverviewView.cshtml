@@ -1,0 +1,73 @@
+﻿@model CJG.Web.External.Areas.Ext.Models.SidebarViewModel
+@using CJG.Core.Entities
+@using CJG.Web.External.Areas.Ext.Controllers
+@{
+    ViewBag.Title = "Grant Agreement Overview";
+}
+<div class="row grant-agreement-overview" ng-controller="AgreementOverviewView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+    <div>
+        @Html.ActionLink("Return", nameof(ReportingController.GrantFileView), typeof(ReportingController), new { @grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
+    </div>
+    <div class="main" id="agreement-overview-container">
+        <div ng-if="alert.message" class="row row--alert">
+            <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+        </div>
+
+        <program-title-label ng-model="model.GrantAgreementApplicationViewModel"></program-title-label>
+        <h2>View Grant Agreement</h2>
+        <p>You may view your grant agreement below by expanding each part.</p>
+
+        <p ng-if="model.AllowChangeRequest">
+            If you have a need to change your training dates within the terms of your agreement
+            or you need to request a change to your training provider you may do this in Schedule A – Grant Services below.
+        </p>
+        <ul class="panel-bar">
+            <li id="panel-approval-letter">
+                <span class="panel-bar__heading k-link" ng-click="toggleDocument($event)">Approval Letter</span>
+                <div class="ng-hide" ng-bind-html="model.CoverLetter.Body"></div>
+            </li>
+
+            <li id="panel-schedule-a">
+                <span class="panel-bar__heading k-link" ng-click="toggleDocument($event)">
+                    Schedule A - Grant Services
+                </span>
+                <div class="ng-hide">
+                    <div ng-show="model.ScheduleA.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                        @Html.Partial("_EmployerGrantScheduleA")
+                    </div>
+                    <div ng-show="model.ScheduleA.ProgramType == @((int)ProgramTypes.WDAService)">
+                        @Html.Partial("_WDAServiceScheduleA")
+                    </div>
+                </div>
+            </li>
+
+            <li id="panel-schedule-b">
+                <span class="panel-bar__heading k-link" ng-click="toggleDocument($event)">
+                    Schedule B - Definitions and General Terms
+                </span>
+                <div class="ng-hide" ng-bind-html="model.ScheduleB.Body">
+                </div>
+            </li>
+        </ul>
+
+        <div ng-if="model.AllowCancelAgreement">
+            <p>If you have cancelled your training and are certain that you will not be submitting a reimbursement claim then please cancel your agreement using the button below. <b>When you cancel your agreement, your file is closed and cannot be reopened.</b></p>
+            <p><a class="btn btn--secondary" ng-click="cancelAgreement()">Cancel Agreement</a></p>
+        </div>
+    </div>
+
+    @Html.Partial("_GrantApplicationSidebar", Model)
+</div>
+
+<style>
+    .form__control__date {
+        max-width: inherit !important;
+    }
+
+    #change-delivery-dates-modal,
+    #change-program-dates-modal,
+    #cancel-agreement-modal,
+    #change-training-provider-modal {
+        padding: 20px;
+    }
+</style>

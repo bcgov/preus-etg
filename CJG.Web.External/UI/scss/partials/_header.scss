@@ -1,0 +1,115 @@
+.header {
+  position: relative;
+  z-index: 1;
+  border-bottom: 2px solid color('Dark Tangerine');
+  font-size: $font-size-small;
+  box-sizing: border-box;
+  background-color: #003366;
+  color: color('white');
+
+  .environment-info {
+      padding: 4px 8px;
+      font-size: 0.875rem;
+  }
+}
+
+.header-logo {
+  display: inline-block;
+  object-fit: contain;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 243px;
+  height: 22.54px;
+  left: 20px;
+  @include media-breakpoint-up(md) {
+    width: 476px;
+    height: 44px;
+    left: auto;
+  }
+}
+
+.header a {
+  color: color('linkColorOnDarkBg');
+}
+
+.menu--item {
+  display: inline-block;
+}
+
+.menu--item__names {
+  text-align: right;
+}
+
+a.menu--item {
+  font-weight: 700;
+}
+
+.menu--item.no-divider-line {
+  &:after {
+    content: "\0000A0";
+  }
+}
+
+.menu--item:not(.no-divider-line) {
+  position: relative;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+a.menu--item:not(.no-divider-line):hover {
+  text-decoration: underline;
+}
+
+.header > .container {
+  position: relative;
+  min-height: 60px;
+  padding: 12px 0;
+  box-sizing: border-box;
+}
+
+.desktop-menu {
+  // position: absolute;
+  // top: 50%;
+  // transform: translateY(-50%);
+  // right: 20px;
+  br {
+    clear: both;
+  }
+}
+
+.menu--item__login {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 20px;
+}
+
+// These are to be presented to Ian
+.header {
+  .header-logo__link {
+    width: 55%;
+    display: block;
+    float: left;
+    line-height: 0;
+    margin: auto;
+  }
+  .desktop-menu {
+    width: 45%;
+    float: right;
+  }
+}
+
+.menu--item__wrapper {
+  display: flex;
+}
+
+// Uncomment this when proposed main menu layout is approved
+// .menu--item__names {
+//   margin-top: -5px;
+//   margin-bottom: 5px;
+//   text-align: right;
+//   .menu--item {
+//     margin-top: 5px;
+//   }
+// }

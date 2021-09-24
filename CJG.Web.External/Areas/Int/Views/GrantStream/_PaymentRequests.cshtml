@@ -1,0 +1,75 @@
+﻿<div ng-controller="GrantStreamPaymentRequests" class="form-section" ng-show="model.Id">
+    <span class="panel-section-item">
+        <span class="panel-section-title" ng-click="toggle($event)">Payment Requests</span>
+        <span class="panel-section-buttons">
+            <span>
+                <input type="checkbox" id="selfAccountCode" ng-model="model.SelfAccountCode" ng-change="changeAccountCode()" />
+                <label for="selfAccountCode">Different account codes for this grant stream</label>
+            </span>
+            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            <section-edit-buttons ng-model="section.editing" ng-show="model.SelfAccountCode"></section-edit-buttons>
+            <span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+        </span>
+    </span>
+
+    <div class="panel-section-content" ng-if="section.show">
+        <div class="form-section-container">
+            <p>
+                Set different account codes for this stream only if they need to be different from the grant program account codes.<br />
+                A grant stream may need different account codes when it has a special source of funding.
+            </p>
+        </div>
+
+        <div class="form form-section-container">
+            <div class="form__group">
+                <div class="form__label">Account Codes:</div>
+                <div class="form__control">
+                    <div class="control-wrapper">
+                        <table class="table--padded">
+                            <thead>
+                                <tr>
+                                    <th class="table--font-size-16">Client Numb</th>
+                                    <th class="table--font-size-16">RESP</th>
+                                    <th class="table--font-size-16">Service Line</th>
+                                    <th class="table--font-size-16">STOB Normal</th>
+                                    <th style="background: yellow;" class="table--font-size-16">STOB Accrual</th>
+                                    <th class="table--font-size-16">Project Code</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input type="text" ng-model="model.AccountCode.GLClientNumber" class="input--small" ng-validation="errors.GLClientNumber" ng-show-error="false" ng-editing/>
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="model.AccountCode.GLRESP" class="input--small" ng-validation="errors.GLRESP" ng-show-error="false" ng-editing/>
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="model.AccountCode.GLServiceLine" class="input--small" ng-validation="errors.GLServiceLine" ng-show-error="false" ng-editing/>
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="model.AccountCode.GLSTOBNormal" class="input--small" ng-validation="errors.GLSTOBNormal" ng-show-error="false" ng-editing/>
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="model.AccountCode.GLSTOBAccrual" class="input--small" ng-validation="errors.GLSTOBAccrual" ng-show-error="false" ng-editing/>
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="model.AccountCode.GLProjectCode" class="input--small" ng-validation="errors.GLProjectCode" ng-show-error="false" ng-editing/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                            <validation ng-model="errors.GLClientNumber"></validation>
+                            <validation ng-model="errors.GLRESP"></validation>
+                            <validation ng-model="errors.GLServiceLine"></validation>
+                            <validation ng-model="errors.GLSTOBNormal"></validation>
+                            <validation ng-model="errors.GLSTOBAccrual"></validation>
+                            <validation ng-model="errors.GLProjectCode"></validation>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

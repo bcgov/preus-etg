@@ -1,0 +1,35 @@
+﻿@model CJG.Web.External.Helpers.FormControl
+
+<div class="form__group">
+    <label class="form__label">@Model.Label</label>
+    <div>
+        <div class="form__control" ng-if="note.AttachmentId != 0">
+            <a class="link" href="/Int/Application/Note/Download/Attachment/{{note.GrantApplicationId}}/{{note.AttachmentId}}">{{note.AttachmentName}}</a> &nbsp;
+            <a class="remove-attachment"
+               ng-click="deleteAttachment(note.Id,note.AttachmentId,note.GrantApplicationId)"
+               ng-if="note.Id == 0 || note.AllowEdit">
+                <span class="k-icon k-i-close k-delete" title="Remove"></span>
+            </a>
+        </div>
+        <div class="form__control" ng-if="note.addFile.name!=null">
+            <a>{{note.addFile.name}}</a> &nbsp;
+            <a class="remove-attachment"
+               ng-click="clearAddFile()">
+                <span class="k-icon k-i-close k-delete" title="Remove"></span>
+            </a>
+        </div>
+        <div class="form__control">
+            <label ng-if="note.AttachmentId == 0 && (note.Id == 0 || note.AllowEdit)" class="k-button k-upload-button" for="file-upload-{{$index}}-@(Model.Value)">
+                <input style="display: none;"
+                       id="file-upload-{{$index}}-@(Model.Value)"
+                       type="file"
+                       name="file"
+                       accept=".pdf,image/*"
+                       data-index="{{$index}}"
+                       data-type="@(Model.Value)"
+                       onchange="angular.element('#notes-container').scope().addFile(this, this.files)" />
+                <span>Upload</span>
+            </label>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,159 @@
+@using CJG.Web.External.Areas.Int.Models
+@using CJG.Core.Entities
+@using CJG.Web.External.Areas.Int.Controllers
+@model IntakeManagementViewModel
+@{
+    ViewBag.Title = "Budget Overview";
+}
+<div>
+    <h2>@ViewBag.Title</h2>
+    @using (Html.BeginForm(nameof(IntakeController.IntakeManagementDashboard), nameof(IntakeController).Replace("Controller", "")))
+    {
+        @Html.HiddenFor(x => x.TrainingPeriodId)
+        <div class="form__group-set">
+            <div class="form__group" style="width: auto;">
+                <label class="form__label" for="@Html.IdFor(model => model.GrantProgramId)">Grant Program</label>
+
+                <div class="form__control">
+                    <div class="selectmenu">
+                        @Html.DropDownListFor(x => x.GrantProgramId, new SelectList(Model.GrantPrograms, "Key", "Value"), new { onchange = "this.form.submit();" })
+                    </div>
+                </div>
+            </div>
+            @if (Model.GrantStreams.Any()) { 
+                <div class="form__group" style="width: auto; margin-left: 20px;">
+                    <label class="form__label" for="@Html.IdFor(model => model.GrantStreamId)">Grant Stream</label>
+
+                    <div class="form__control">
+                        <div class="selectmenu">
+                            @Html.DropDownListFor(x => x.GrantStreamId, new SelectList(Model.GrantStreams, "Key", "Value"), new { onchange = "this.form.submit();" })
+                        </div>
+
+                        @Html.ActionLink("Refresh", "IntakeManagementDashboard", new
+                        {
+                            grantProgramId = Model.GrantProgramId,
+                            grantStreamId = Model.GrantStreamId,
+                            trainingPeriodId = Model.TrainingPeriodId
+                        }, new { @class = "btn btn--primary margin-left-gutter" })
+                    </div>
+                </div>
+            }
+        </div>
+        if (Model.GrantStreams.Any()) {
+            <div class="button-group table--horizontal-nav" style="clear: both;">
+            @Html.Button("Previous", new {
+                @class = "btn btn--secondary pull-left",
+                type = "submit",
+                name = "navigate",
+                value = IntakeManagementViewModel.NavigationCommand.Previous
+            })
+            @Html.Button("Next", new {
+                @class = "btn btn--secondary pull-right",
+                type = "submit",
+                name = "navigate",
+                value = IntakeManagementViewModel.NavigationCommand.Next
+            })
+            </div>
+        }
+    }
+
+    @if (Model.GrantStreams.Any()) {
+        <div class="table--horizontal-wrapper">
+            <table id="intake-management-dashboard" class="table--horizontal table--datatable-horizontal nowrap table--intake-management-dashboard" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th colspan="1">Fiscal Year</th>
+
+                        @foreach (var period in Model.TrainingPeriods) {
+                            <td colspan="2">@period.FiscalYearName</td>
+                        }
+
+                    </tr>
+                    <tr>
+                        <th colspan="1">Training Period</th>
+                        @foreach (var period in Model.TrainingPeriods) {
+                            <td colspan="2">@period.TrainingPeriodName</td>
+                        }
+                    </tr>
+                    <tr>
+                        <th colspan="1">Start and End</th>
+                        @foreach (var period in Model.TrainingPeriods) {
+                            <td colspan="2">@period.StartDate.ToString("yyyy-MM-dd") to @period.EndDate.ToString("yyyy-MM-dd")</td>
+                        }
+
+                    </tr>
+                    <tr class="row-status">
+                        <th colspan="1">Status</th>
+                        @foreach (var period in Model.TrainingPeriods) {
+                            <td colspan="2">@period.Status</td>
+                        }
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th colspan="1">Applications</th>
+                        @foreach (var trainingPeriod in Model.TrainingPeriods) {
+                            <th class="text-align-right" colspan="1">Number</th>
+                            <th colspan="1" class="text-align-right">Value</th>
+                        }
+                    </tr>
+
+                    @foreach (var state in Model.StateNames) {
+                        <tr>
+                            <th colspan="1" class="indent-cell">@state.Value</th>
+
+                            @foreach (var trainingPeriod in Model.TrainingPeriods) {
+                                <td class="text-align-right" colspan="1">
+                                    @if (state.Value != Constants.ExcludeFromIntakeSum) {@trainingPeriod.GrantOpeningIntakes[state.Key].Number}
+                                </td>
+                                <td class="text-align-right" colspan="1">@trainingPeriod.GrantOpeningIntakes[state.Key].Value.ToDollarCurrencyString(0)</td>
+                        }
+
+                        </tr>
+                        }
+
+                    <tr>
+                        <th colspan="1">Total Application Intake</th>
+                        @foreach (var trainingPeriod in Model.TrainingPeriods) {
+                            <td class="text-align-right" colspan="1">@trainingPeriod.TotalApplicationsIntake</td>
+                            <td class="text-align-right" colspan="1">@trainingPeriod.TotalApplicationsIntakeAmt.ToDollarCurrencyString(0)</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th colspan="1">Intake Target</th>
+                        @foreach (var trainingPeriod in Model.TrainingPeriods) {
+                            <td class="" colspan="1"></td>
+                            <td class="text-align-right" colspan="1">@trainingPeriod.IntakeTargetAmt.ToDollarCurrencyString(0)</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th colspan="1">Over / (Under) $</th>
+                        @foreach (var trainingPeriod in Model.TrainingPeriods) {
+                            <td class="" colspan="1"></td>
+                            <td class="text-align-right" colspan="1">@trainingPeriod.OverUnderAmt.ToDollarCurrencyString(0)</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th colspan="1">Over / (Under) %</th>
+                        @foreach (var trainingPeriod in Model.TrainingPeriods) {
+                            <td class="" colspan="1"></td>
+                            <td class="text-align-right" colspan="1">@(trainingPeriod.OverUnderPerc.HasValue ? trainingPeriod.OverUnderPerc.Value.ToString("0.0%;(0.0%)") : "-")</td>
+                        }
+                    </tr>
+
+                    <tr class="row--reservation">
+                        <th>Current Reservation </th>
+                        @foreach (var trainingPeriod in Model.TrainingPeriods) {
+                            <td class="" colspan="1"></td>
+                            <td class="text-align-right" colspan="1">@(trainingPeriod.CurrentReservations.HasValue ? trainingPeriod.CurrentReservations.Value.ToDollarCurrencyString(0) : "$0")</td>
+                        }
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

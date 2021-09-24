@@ -1,0 +1,57 @@
+﻿<div>
+    <div class="dialog-header">
+        <h3>{{ngDialogData.title}}</h3>
+    </div>
+    <div class="dialog-content">
+        <div class="modal-content">
+            <div id="select-training-provider" class="form well">
+                <h2 class="js-title is-hidden">
+                    {{ ngDialogData.model.TrainingProviderInventoryId ? 'Change training provider' : 'Validate training provider' }}
+                </h2>
+                <div ng-if="alert.message" class="row row--alert">
+                    <p class="alert" ng-class="'alert--' + alert.type"
+                         role="alert" ng-bind-html="alert.message"></p>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Training provider name</div>
+                    <div class="form__control js-training-provider-name">
+                        {{ngDialogData.model.Name}}
+                    </div>
+                </div>
+                <h4>Select inventoried training provider to link</h4>
+                <div>
+                    <pager ng-filter="getProviders" ng-page-size="[10, 25, 50, 100]">
+                        <div class="form-table">
+                            <div class="form-table-heading">
+                                <div class="form-table-cell"></div>
+                                <div class="form-table-cell">Training Provider</div>
+                                <div class="form-table-cell">Acronym</div>
+                                <div class="form-table-cell">Notes</div>
+                            </div>
+                            <div class="form-table-row" ng-repeat="provider in $parent.$ctrl.ngItems">
+                                <div class="form-table-cell">
+                                    <button class="btn btn--secondary btn--small"
+                                            ng-click="selectProvider(provider)">
+                                        Select
+                                    </button>
+                                </div>
+                                <div class="form-table-cell">
+                                    <a href="/Int/Training/Provider/History/View/{{provider.Id}}" target="_blank">{{provider.Name}}</a>
+                                </div>
+                                <div class="form-table-cell">
+                                    {{provider.Acronym}}
+                                </div>
+                                <div class="form-table-cell">
+                                    {{provider.Notes}}
+                                </div>
+                            </div>
+                        </div>
+                    </pager>
+                </div>
+            </div>
+            <div class="button-group form well">
+                <button class="btn btn--primary btn--small float-right" ng-click="addProvider()">Add training provider</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,59 @@
+﻿@using CJG.Web.External.Areas.Int.Controllers
+
+<div ng-if="paymentRequestHold">
+    <h2 class="header__title header--small">Files with a Hold on Payment Requests ({{paymentRequestHold.Count}} files)</h2>
+    <table id="payment-request-hold-datatable" class="table--request-management-payment-request-hold" width="100%">
+        <thead>
+            <tr style="border-bottom: 1px solid black; border-top: 1px solid black;">
+                <th class="text-align--left">
+                    Claim Number
+                </th>
+                <th class="text-align--left">
+                    Applicant
+                </th>
+                <th>
+                    Assessed
+                </th>
+                <th class="text-align--left">
+                    Claim State
+                </th>
+                <th class="text-align--left">
+                    Type
+                </th>
+                <th>
+                    Paid or <b style="color: red;">Owing</b>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-if="paymentRequestHold.FilesWithClaim.length" ng-repeat="item in paymentRequestHold.FilesWithClaim">
+                <td class="text-align--left">
+                    <a href="/Int/Claim/Assessment/View/{{item.FileId}}/{{item.ClaimVersion}}" class="link" target="_blank">{{item.FileNumber}}</a>
+                </td>
+                <td class="text-align--left">{{item.Applicant}}</td>
+                <td>{{item.Assessed | currency : '$' : 2}}</td>
+                <td class="text-align--left">{{item.ClaimState}}</td>
+                <td class="text-align--left">{{item.Type}}</td>
+                <td>
+                    <b ng-if="item.Amount < 0" style="color: red;">{{(-item.Amount) | currency : '$' : 2}}</b>
+                    <span ng-if="item.Amount >= 0">{{item.Amount | currency : '$' : 2}}</span>
+                </td>
+            </tr>
+
+            <tr ng-if="!paymentRequestHold.FilesWithClaim.length">
+                <td style="text-align: center;" colspan="6">No files with Approved Claims on hold for Payment Requests</td>
+            </tr>
+
+            <tr ng-if="paymentRequestHold.FilesWithoutClaim.length" style="border-bottom: 1px solid black; border-top: 1px solid black;">
+                <td class="text-align--left" style="font-weight: bold;">Files without a Claim</td>
+                <td colspan="5"></td>
+            </tr>
+
+            <tr ng-if="paymentRequestHold.FilesWithoutClaim.length" ng-repeat="item in paymentRequestHold.FilesWithoutClaim">
+                <td class="text-align--left"><a class="link" href="/Int/Application/Details/View/{{item.FileId}}">{{item.FileNumber}}</a></td>
+                <td class="text-align--left">{{item.Applicant}}</td>
+                <td colspan="4"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

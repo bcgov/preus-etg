@@ -1,0 +1,14 @@
+require('./check-list-model');
+require('./currency');
+require('./editing');
+require('./file-read');
+require('./file-selected');
+require('./files-selected');
+require('./file-changed');
+require('./not-editing');
+require('./number');
+require('./percent');
+require('./postal-code');
+require('./postal');
+require('./selected');
+require('./validation');

@@ -1,0 +1,34 @@
+﻿<div>
+    <div class="dialog-header">
+        <h3>{{ngDialogData.title}}</h3>
+    </div>
+    <div class="dialog-content">
+        <div class="modal-content">
+            <div ng-grant-application-id="@ViewBag.GrantApplicationId">
+                <div ng-if="alert.message" class="row row--alert">
+                    <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+                </div>
+                <div>
+                    <p>If you cancel your agreement, no grant reimbursement will be claimable or payable for training and your agreement file will be closed.</p>
+                    <p>Are you sure you want to cancel your grant agreement?</p>
+                    <div class="form__group">
+                        <div class="form__group">
+                            <div class="label-wrapper"><label class="form__label">Please give your reason for rejecting the agreement <abbr title="Required">*</abbr></label></div>
+                            <div class="control-wrapper form-control">
+                                <textarea class="input--full textarea--medium" ng-model="ngDialogData.CancelReason" maxlength="800"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button name="btnCancelWithdraw" class="btn btn--secondary" ng-click="closeThisDialog()">No, continue with application</button>
+                        <button class="btn btn--primary btn--forward confirm-link pull-right" ng-disabled="!ngDialogData.CancelReason" ng-click="confirm(ngDialogData.CancelReason)">Cancel Agreement</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

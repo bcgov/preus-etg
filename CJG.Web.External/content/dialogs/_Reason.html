@@ -1,0 +1,35 @@
+﻿<div>
+	<div class="dialog-header">
+		<h3>{{ngDialogData.title}}</h3>
+	</div>
+	<div class="dialog-content">
+		<div class="modal-content">
+			<div class="main">
+				<p>
+					Enter a reason for your recommendation in the box below and then click '{{ngDialogData.trigger}}' to confirm your decision, or click 'Cancel' to return to the
+					grant file.
+				</p>
+				<p>
+					The reason will be added to the grant file and will be used to inform the application contact on approval or denial using the following
+					introduction:
+				</p>
+
+				<p><i>"{{ngDialogData.text}}"</i></p>
+
+				<div class="form__group">
+					<label class="form__label form__label--align-top" for="Reason">
+						Please provide a reason<abbr title='Required'>*</abbr>
+					</label>
+					<div class="form__control">
+						<textarea id="Reason" class="input--full" ng-model="ngDialogData.reason" maxlength="800"></textarea>
+					</div>
+				</div>
+
+				<div class="button-group">
+					<button class="btn btn--secondary" ng-click="closeThisDialog()">Cancel</button>
+					<button class="btn btn--primary pull-right" name="btnSubmit" ng-disabled="!ngDialogData.reason" ng-click="confirm(ngDialogData.reason)">{{ngDialogData.trigger}}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

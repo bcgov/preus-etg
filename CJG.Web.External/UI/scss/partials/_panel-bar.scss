@@ -1,0 +1,324 @@
+// Reset Kendo UI styles
+.panel-bar {
+  background: none;
+  border: 0;
+  margin-bottom: gap(2);
+  padding: 0;
+  position: relative;
+  clear: both;
+  div:empty {
+    display: none;
+  }
+
+  .form__label {
+    margin-bottom: 0;
+    font-weight: bold;
+    color: color('Charcoal');
+
+    // &:after {
+    //   content:":"
+    // }
+  }
+
+  .k-item,
+  .k-link {
+    color: color('Charcoal');
+    border-color: color('Charcoal');
+  }
+  .k-item:first-child {
+    .panel-bar__heading {
+      border-top: solid 1px color('Charcoal');
+    }
+  }
+  >.k-item>.k-link {
+    line-height: 1.5em;
+  }
+
+  .k-item[data-state="disabled"] {
+    .k-link {
+      cursor: default;
+
+      > .k-icon {
+        display: none;
+      }
+    }
+  }
+
+  .panel-bar__content {
+    display: none;
+    border-color: color('Charcoal');
+    padding-bottom: $gutter;
+    @include media-breakpoint-up(md) {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  }
+
+  &.k-widget {
+    box-shadow: none;
+    .panel-bar__content {
+      // display: block;
+    }
+  }
+
+  &.k-panelbar {
+    > .k-item {
+      > .k-link {
+        padding: 20px 80px 20px 0;
+        @include media-breakpoint-up(md) {
+          padding: 6px 80px 6px 0;
+        }
+        @include clearfix;
+      }
+    }
+    .k-item {
+      .k-header {
+        border-color: color('Charcoal');
+      }
+    }
+  }
+
+  .k-icon {
+    top: 30px;
+    margin-top: 0;
+    right: 20px;
+    @include media-breakpoint-up(md) {
+      transform: translateY(-50%);
+      top: 50%;
+    }
+  }
+
+  &> li {
+    list-style-type: none;
+    display: block;
+    border-width: 0;
+    margin: 0;
+    zoom: 1;
+    border-radius: 0;
+    clear: both;
+    &> span {
+      display: block;
+      position: relative;
+      border-bottom-style: solid;
+      border-bottom-width: 1px;
+      line-height: 2.34em;
+      text-decoration: none;
+      zoom: 1;
+      border-color: #ccc;
+      padding: 10px 25px;
+      background-color: color('white');
+
+      &.k-state-hover {
+        color: color('Charcoal');
+        background-color: color('white');
+      }
+    }
+  }
+
+  & > li.k-item:first-child {
+    span.k-header:not(.k-state-selected) {
+      border-top-width: 1px;
+      border-top-style: solid;
+    }
+  }
+
+  &> li.k-item {
+    span.k-header.k-state-selected {
+      color: color('Charcoal');
+      // border: solid 1px color('Charcoal');
+      // box-shadow: inset 0 -1px 0 0 color('Charcoal'), inset 0 1px 0 0 color('Charcoal');
+      box-shadow: none;
+    }
+  }
+
+  .k-header {
+    @include font-size(18px);
+
+    .panel-bar__status {
+      @include font-size(16px);
+      @include media-breakpoint-up(md) {
+        padding-left: 293px;
+        display: block;
+        float: none;
+
+        .label {
+          margin-right: 0;
+        }
+        .btn {
+          float: right;
+        }
+      }
+    }
+  }
+
+  .k-item:not(.k-state-highlight) + .k-state-highlight {
+    position: relative;
+    &:before {
+      // content: " ";
+      // top: -2px;
+      // left: 0;
+      // width: 100%;
+      // height: 2px;
+      // display: block;
+      // background-color: white;
+      // position: absolute;
+    }
+  }
+
+  // .k-state-active + .k-item {
+  //   margin-top: 80px;
+  //   @include media-breakpoint-up(md) {
+  //     margin-top: 100px;
+  //   }
+  // }
+
+  .form--readonly {
+    // padding-left: 20px;
+    margin: 0;
+    .form__group {
+      padding-top: 10px;
+      padding-bottom: 10px;
+      margin: 0;
+
+      @include media-breakpoint-up(md) {
+        > .form__label:nth-child(1),
+        .label-desc-group {
+          width: 250px;
+        }
+      }
+    }
+  }
+
+  .well {
+    padding: 10px 0 0;
+    overflow: scroll;
+    @include media-breakpoint-up(sm) {
+      overflow: inherit;
+    }
+    @include media-breakpoint-up(md) {
+      padding-top: 10px 20px 20px;
+    }
+
+    @media (max-width: 942px) {
+      overflow-x: scroll;
+    }
+
+    .table--expenses-total th {
+      padding-top: 0;
+      vertical-align: middle;
+    }
+  }
+
+  .btn {
+    width: 100%;
+    text-align: left;
+    @include media-breakpoint-up(md) {
+      width: auto;
+      text-align: center;
+    }
+  }
+
+  .label + .btn--secondary {
+    margin-top: 10px;
+    @include media-breakpoint-up(md) {
+      margin-top: 0;
+    }
+  }
+  .form__group__num-participant--orig-val {
+    .form__label, .form__control {
+      opacity: 0.5;
+    }
+  }
+}
+
+.panel-bar__status {
+  width: 100%;
+  min-height: 48px;
+  .label {
+    display: block;
+    margin-top: 4px;
+    min-width: 104px;
+    box-sizing: border-box;
+  }
+
+  @include media-breakpoint-up(md) {
+    width: auto;
+    float: right;
+
+    .label {
+      margin-right: 110px;
+      display: inline-block;
+      margin-top: 0;
+      position: absolute;
+      top: 50%;
+      left: 45%;
+      -webkit-transform: translateY(-50%);
+      transform: translateY(-50%);
+    }
+  }
+}
+
+.panel-bar + .button-group .btn {
+  width: 100%;
+  @include media-breakpoint-up(md) {
+    width: auto;
+  }
+}
+
+.panel-bar__heading--text {
+  width: 275px;
+  display: inline-block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  @include media-breakpoint-up(md) {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.panel-bar__heading--description {
+  color: #494949;
+  font-size: 0.875rem;
+
+  @include media-breakpoint-up(md) {
+    position: absolute;
+    left: 0;
+    top: 80%;
+    transform: translateY(-50%);
+  }
+}
+
+.btn--expand-all {
+  position: relative;
+  padding-right: 65px;
+  margin: 5px 15px 5px 0;
+  cursor: pointer;
+  .k-icon {
+    top: 15px;
+  }
+  &.all-open {
+    .k-icon {
+      border-top: none;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 10px solid #494949;
+    }
+  }
+}
+
+.panel-bar.panel-bar__claim-assessment {
+  &.panel-bar.k-panelbar {
+    .k-item {
+      .k-header {
+        padding: 6px 0 6px 25px;
+      }
+    }
+  }
+  .k-icon {
+    right: auto;
+    left: 0;
+  }
+}

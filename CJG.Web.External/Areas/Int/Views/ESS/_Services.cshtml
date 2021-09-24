@@ -1,0 +1,24 @@
+﻿<div ng-switch-when="EmploymentServicesAndSupports" ng-controller="EmploymentServices">
+	<span class="panel-section-item">
+		<span class="panel-section-title" ng-click="toggle($event)">{{component.Caption}}</span>
+		<span class="panel-section-buttons">
+			<span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+			<a class="btn btn--secondary" ng-if="component.CanAdd && !section.editing" ng-disabled="parent.editing" ng-click="addProvider()">Add Provider</a>
+			<section-edit-buttons ng-model="section.editing" ng-if="component.CanEdit"></section-edit-buttons>
+			<span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+		</span>
+	</span>
+	<div class="panel-section-content" ng-if="section.show">
+		<div class="form__group form__group--checkbox-list">
+			<div class="form__control">
+				<ul ng-validation="errors.Scopes">
+					<li class="form-control" ng-repeat="item in section.serviceLines">
+						<input type="checkbox" id="service-line-{{$index}}-{{section.name}}" ng-model="item.isChecked" ng-item="item" ng-value="item.Key" ng-selected="model.SelectedServiceLineIds" ng-editing />
+						<label for="service-line-{{$index}}-{{section.name}}">{{item.Value}}</label>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+

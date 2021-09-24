@@ -1,0 +1,19 @@
+﻿<span class="form__group--edit-wrapper">
+	<label class="label-wrapper" ng-if="$ctrl.label || $ctrl.ngLabel">
+		{{$ctrl.label || $ctrl.ngLabel}}
+	</label>
+	<span class="control-wrapper">
+		<span class="wrapper--dropdown selectmenu" ng-show="$ctrl.editing()">
+			<select class="form-control"
+					ng-model="$ctrl.ngModel"
+					ng-options="{{$ctrl.options}}"
+					ng-class="{'has-error': $ctrl.getError()}"
+					ng-disabled="$ctrl.ngDisabled">
+				<option value="" selected ng-if="$ctrl.default">{{$ctrl.default}}</option>
+			</select>
+		</span>
+		<text ng-if="!$ctrl.editing()">{{$ctrl.ngText}}</text>
+		<span ng-if="$ctrl.getError()" class="field-validation-error">{{$ctrl.getError()}}</span>
+		<ng-transclude></ng-transclude>
+	</span>
+</span>

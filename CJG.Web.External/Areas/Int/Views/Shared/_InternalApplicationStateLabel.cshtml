@@ -1,0 +1,25 @@
+﻿@using CJG.Core.Entities
+
+<span ng-switch="Summary.ApplicationStateInternalViewModel.Id">
+    <text ng-switch-when="@((int)ApplicationStateInternal.RecommendedForApproval)">
+        <span class="label label--success">Recommended for approval</span>
+    </text>
+    <text ng-switch-when="@((int)ApplicationStateInternal.RecommendedForDenial)">
+        <span class="label label--danger">Recommended for denial</span>
+    </text>
+    <text ng-switch-when="@((int)ApplicationStateInternal.OfferIssued)">
+        <span class="label label--success">Offer issued</span>
+    </text>
+    <text ng-switch-when="@((int)ApplicationStateInternal.ClaimApproved)">
+        <span class="label label--success">Claim Approved</span>
+    </text>
+    <text ng-switch-when="@((int)ApplicationStateInternal.ClaimDenied)">
+        <span class="label label--danger">Claim Denied</span>
+    </text>
+    <text ng-switch-when="@((int)ApplicationStateInternal.ClaimReturnedToApplicant)">
+        <span class="label label--warning">Claim Returned to Applicant</span>
+    </text>
+    <text ng-switch-default>
+        <span class="label label--warning">{{Summary.ApplicationStateInternalViewModel.Description}}</span>
+    </text>
+</span>

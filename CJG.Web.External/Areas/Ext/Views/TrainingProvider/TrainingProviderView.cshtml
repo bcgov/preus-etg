@@ -1,0 +1,48 @@
+﻿@using CJG.Web.External.Areas.Ext.Controllers
+@{
+    ViewBag.Title = "Edit Training Provider";
+}
+
+<div ng-controller="ApplicationTrainingProviderView" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-training-provider-id="@ViewBag.TrainingProviderId">
+    <div class="row">
+        @Html.ActionLink("Return", nameof(ApplicationController.ApplicationOverviewView), typeof(ApplicationController), new { grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "link--back" })
+    </div>
+    <div class="row">
+        <div class="main">
+            <h1>Edit Training Provider</h1>
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            <div ng-if="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
+                <p>
+                Enter the information about the training provider you have selected below. When you have completed the form, click Done to move to the next step.
+                <ul>
+                    <li>
+                        If your training provider is not registered with the
+                        <a target="_blank" href="http://www.privatetraininginstitutions.gov.bc.ca/">BC Private Training Institutions Branch</a>
+                        then you will need to attached proof of instructor qualifications and a course outline.
+                    </li>
+                    <li>
+                        If your training takes place outside BC you will need to attach a business case.
+                    </li>
+                </ul>
+                </p>
+            </div>
+
+            <h3 class="subheader--body">Training Provider</h3>
+
+            @Html.Partial("_TrainingProvider")
+
+            <div class="button-group">
+                @Html.Button("Cancel",
+                        new { @class = "btn btn--secondary", @onclick = "window.location='" + @Url.Action(nameof(ApplicationController.ApplicationOverviewView),
+                                typeof(ApplicationController).Name.Replace("Controller", ""),
+                                new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'"
+                             })
+                <button class="btn btn--primary btn--forward" ng-click="save()">Done</button>
+            </div>
+        </div>
+        </div>
+</div>

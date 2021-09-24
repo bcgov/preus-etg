@@ -1,0 +1,61 @@
+@model CJG.Web.External.Areas.Int.Models.ParticipantInfoViewModel
+<div class="infoTable">
+    <div class="infotable-tbody">
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">File Number:</div>
+                    <div class="infoTable--data">@Model.FileNo</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Employer:</div>
+                    <div class="infoTable--data">@Model.OrganizationName</div>
+                </div>
+            </div>
+        </div>
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Reporting date:</div>
+                    <div class="infoTable--data">@Model.ReportingDate</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Administrator:</div>
+                    <div class="infoTable--data">@Model.EmployerAdministrator</div>
+                </div>
+            </div>
+        </div>
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Training Start:</div>
+                    <div class="infoTable--data">@Model.TrainingStartDate</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Email:</div>
+                    <div class="infoTable--data">@Model.EmployerAdministratorEmail</div>
+                </div>
+            </div>
+        </div>
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Total Participants:</div>
+                    <div class="infoTable--data">@Model.TotalParticipants</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Phone:</div>
+                    <div class="infoTable--data">@Model.EmployerAdministratorPhone</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+.block--intake-queue-table-reset {
+  .notice {
+    display: flex;
+    justify-content: space-between;
+    &:before {
+      top: calc(50% - 9px);
+    }
+    p {
+      margin: auto 0;
+      flex-grow: 2;
+    }
+    button {
+      align-self: flex-end;
+    }
+  }
+}
+
+.layout-internal {
+  .dataTable {
+    .selectmenu {
+      margin-right: 10px;
+    }
+  }
+}
+
+.content-wrapper__intake-queue {
+  font-size: $font-size-xs;
+}

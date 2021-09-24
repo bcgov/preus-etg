@@ -1,0 +1,92 @@
+﻿@{
+    ViewBag.Title = "Application Delivery";
+}
+<div ng-controller="ApplicationReviewDeliveryPartnerView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+    <div class="row">
+        <a class="link--back" href="{{model.PreviousStepUrl}}">Return</a>
+    </div>
+    <div class="row">
+        <div class="main">
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            <h1>Submit Application</h1>
+
+            <p class="subheader--step">Step {{model.CurrentStep}} of {{model.Steps}}</p>
+            <h2 class="subheader">Did anyone assist you with this application?</h2>
+
+            <div class="form__group form__group--radio-inline">
+                <div class="form__label">
+                    Have you received or requested any other government or third-party funding for this training? <abbr title="Required">*</abbr>
+                </div>
+                <div ng-validation="errors.UsedDeliveryPartner">
+                    <div class="form-item">
+                        <input type="radio" id="used-delivery-partner-yes" ng-value="true" ng-model="model.UsedDeliveryPartner" name="model.UsedDeliveryPartner">
+                        <label for="used-delivery-partner-yes">Yes</label>
+                    </div>
+                    <div class="form-item">
+                        <input type="radio" id="used-delivery-partner-no" ng-value="false" ng-model="model.UsedDeliveryPartner" name="model.UsedDeliveryPartner">
+                        <label for="used-delivery-partner-no">No</label>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-show="model.UsedDeliveryPartner">
+                <div class="form__label">
+                    Which Delivery Partner did you use? <abbr title='Required'>*</abbr>
+                </div>
+                <div class="form__control">
+                    <div class="control-wrapper selectmenu input--medium" ng-validation="errors.DeliveryPartnerId">
+                        <select class="input--medium"
+                                ng-model="model.DeliveryPartnerId"
+                                ng-options="item.Id as item.Caption for item in model.DeliveryPartners">
+                            <option value="">&lt; Select one &gt;</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form__group form__group--checkbox-list">
+                    <label class="form__label">What services were provided by your Delivery Partner? (Select any that apply.) <abbr title="Required">*</abbr></label>
+                    <div class="form__control" ng-validation="errors.SelectedDeliveryPartnerServices">
+                        <ul>
+                            <li ng-repeat="service in model.DeliveryPartnerServices">
+                                <input type="checkbox"
+                                       id="deliver-services-{{service.Id}}" name="deliver-services"
+                                       ng-checked="model.SelectedDeliveryPartnerServices != null && model.SelectedDeliveryPartnerServices.indexOf(service.Id) > -1"
+                                       ng-click="toggleSelection('SelectedDeliveryPartnerServices', service.Id)" />
+                                <label for="deliver-services-{{service.Id}}">{{service.Caption}}</label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                @Html.Button("Cancel",
+                           new
+                                {
+                                    @class = "btn btn--secondary",
+                               @onclick = "window.location='" +
+                               @Url.Action(nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController.ApplicationOverviewView),
+                                            nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController).Replace("Controller", ""),
+                                           new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'"
+                                })
+                <button class="btn btn--primary btn--forward" ng-click="submit()">Continue</button>
+            </div>
+        </div>
+        <div class="sidebar">
+            <div class="sidebar__container">
+                <h5 class="sidebar__heading">What is a delivery partner?</h5>
+                <div class="sidebar__content">
+                    <ul>
+                        <li>A delivery partner is an organization that can help you identify your training needs, develop a training plan, and apply to the Canada-BC Job Grant program.</li>
+                        <li>You may choose to engage a delivery partner or you may apply to the grant without a delivery partner.</li>
+                        <li>Learn more about delivery partners at <a href="https://www.workbc.ca/Employer-Resources/Canada-BC-Job-Grant.aspx" target="_blank">About Canada-BC Job Grant</a>.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

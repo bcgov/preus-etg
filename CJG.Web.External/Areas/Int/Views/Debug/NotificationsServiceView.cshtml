@@ -1,0 +1,119 @@
+﻿@{
+    ViewBag.Title = "Debug Notifications Service";
+}
+<div>
+    <h1>Notification Service Debugger</h1>
+    <div ng-controller="NotificationsServiceView">
+        <div class="form-section">
+            <div class="form__group">
+                <div class="form__label">Run as Date:</div>
+                <div class="form__control">
+                    <div class="control-wrapper float-left">
+                        <datedropdown ng-model="model.RunAsDate" ng-editing="true" ng-validation></datedropdown>
+                    </div>
+                    <div class="float-right">
+                        <button class="btn btn--secondary" ng-click="queueScheduledNotifications()" title="Add notifications to the queue">Queue Scheduled Notifications</button>
+                        <button class="btn btn--primary" ng-click="sendNotifications()" title="Send notifications currently in the queue">Send Notifications in Queue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form__section">
+            <h2>Results</h2>
+            <hr />
+            <div class="form__group">
+                <div class="form__label float-left">Notifications in Queue:&nbsp;</div>
+                <div class="form_control float-left">{{model.NotificationsInQueue}} </div>
+            </div>
+            <div class="clear-both"></div>
+            <div class="form__group" ng-show="section.sent">
+                <div class="form__label float-left">Added to Queue:&nbsp;</div>
+                <div class="form_control float-left">{{model.AddedToQueue}} </div>
+            </div>
+            <div class="clear-both"></div>
+            <div class="form__group" ng-show="section.sent">
+                <div class="form__label float-left">Notifications Sent:&nbsp;</div>
+                <div class="form_control float-left">{{model.Queue.length}}</div>
+            </div>
+            <div class="clear-both"></div>
+
+            <div class="form__group">
+                <div class="form__control float-left margin-right-10">
+                    <div>Quantity</div>
+                    <div class="selectmenu">
+                        <select ng-model="filter.Quantity" ng-options="item as item for item in quantities" class="input--small" ng-change="applyFilter()"></select>
+                    </div>
+                </div>
+
+                <div class="form__control float-left margin-right-10">
+                    <div>Search</div>
+                    <input style="height: 30px;" ng-model="filter.Search" ng-keypress="search($event)" />
+                </div>
+            </div>
+            <div class="form-table">
+                <div class="form-table-heading">
+                    <div class="form-table-cell width-100px">
+                        <label class="action {{sortDirection('State')}}" ng-click="sort('State')">Status</label>
+                    </div>
+                    <div class="form-table-cell">
+                        <label class="action {{sortDirection('Organization.LegalName')}}" ng-click="sort('Organization.LegalName')">Applicant</label>
+                    </div>
+                    <div class="form-table-cell">
+                        <label class="action {{sortDirection('EmailSubject')}}" ng-click="sort('EmailSubject')">Subject</label>
+                    </div>
+                    <div class="form-table-cell">
+                        <label class="action {{sortDirection('NotificationType.Caption')}}" ng-click="sort('NotificationType.Caption')">Notification Name</label>
+                    </div>
+                    <div class="form-table-cell">
+                        <label class="action {{sortDirection('NotificationType.NotificationTriggerId')}}" ng-click="sort('NotificationType.NotificationTriggerId')">Trigger</label>
+                    </div>
+                    <div class="form-table-cell">
+                        <label class="action {{sortDirection('BatchNumber')}}" ng-click="sort('BatchNumber')">Batch</label>
+                    </div>
+                    <div class="form-table-cell"></div>
+                </div>
+                <div ng-repeat="notification in model.Queue" class="form-table-row">
+                    <div class="form-table-cell width-50px" title="{{notification.ErrorMessage}}" }>
+                        {{notification.StateCaption}}
+                    </div>
+                    <div class="form-table-cell">
+                        {{notification.OrganizationLegalName}}
+                    </div>
+                    <div class="form-table-cell">
+                        {{notification.EmailSubject}}
+                    </div>
+                    <div class="form-table-cell">
+                        {{notification.NotificationTypeCaption || '*Program Notification*'}}
+                    </div>
+                    <div class="form-table-cell">
+                        {{notification.NotificationTypeTriggerCaption || 'Send On: ' + toPST(notification.SendDate)}}
+                    </div>
+                    <div class="form-table-cell">
+                        {{notification.BatchNumber}}
+                    </div>
+                    <div class="form-table-cell">
+                        <button class="btn btn--secondary float-right" ng-click="viewNotification(notification)">View</button>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <span ng-show="model.NotificationsInQueue">
+                    Showing {{pager.items.first}} to {{pager.items.last}} of {{pager.items.total}} entries
+                </span>
+                <div class="button-group">
+                    <div class="float-right">
+                        <button class="btn btn--secondary internal-previous" ng-disabled="!pager.enablePrevious" tabindex="0" ng-click="!pager.enablePrevious || applyFilter(pager.page - 1)">Previous</button>
+                        <span>
+                            <button class="btn btn--secondary btn--page" tabindex="0" ng-show="pager.showFirstPage" ng-click="applyFilter(pager.showFirstPage)">{{pager.showFirstPage}}</button>
+                            <span class="ellipsis" ng-show="pager.showFirstPage">…</span>
+                            <button ng-repeat="page in pager.pages" class="btn btn--secondary btn--page" ng-class="{ 'btn--current' : pager.page === page }" tabindex="0" ng-click="applyFilter(page)" ng-disabled="pager.page === page">{{page}}</button>
+                            <span class="ellipsis" ng-show="pager.showLastPage">…</span>
+                            <button class="btn btn--secondary btn--page" tabindex="0" ng-show="pager.showLastPage" ng-click="applyFilter(pager.showLastPage)">{{pager.showLastPage}}</button>
+                        </span>
+                        <button class="btn btn--secondary internal-next" ng-disabled="!pager.enableNext" tabindex="0" ng-click="!pager.enableNext || applyFilter(pager.page + 1)">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,73 @@
+﻿@model CJG.Web.External.Areas.Ext.Models.DebugViewModel
+@{
+    ViewBag.Title = "Debug";
+}
+
+<table>
+    <tr>
+        <td colspan="2">
+            <h2>SiteMinder</h2>
+            <p>The following values are provided by SiteMinder, or the SiteMinder Simulator on developer workstations.</p>
+        </td>
+    </tr>
+    <tr>
+        <th>Field</th>
+        <th>Value</th>
+    </tr>
+    <tr>
+        <td>@CJG.Application.Services.Constants.SiteMinder_UserGuid_ServerVariableName</td>
+        <td>@Model.SiteMinderInfo.CurrentUserGuid</td>
+    </tr>
+    <tr>
+        <td>@CJG.Application.Services.Constants.SiteMinder_UserType_ServerVariableName</td>
+        <td>@Model.SiteMinderInfo.CurrentUserType</td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <h2>BCeID</h2>
+            <p>The following values are provided by the BCeID web service, or potentially the mock on developer workstations.</p>
+        </td>
+    </tr>
+    @if (@Model == null || @Model.User == null)
+    {
+        <tr><td colspan="2">No BCeID data found.</td></tr>
+    }
+    else
+    {
+        <tr><td colspan="2"><h3>User</h3></td></tr>
+        <tr><th>Field</th><th>Value</th></tr>
+        <tr><td>Guid</td><td>@Model.User.BCeIDGuid</td></tr>
+        <tr><td>AccountType</td><td>@Model.User.AccountType</td></tr>
+        <tr><td>FirstName</td><td>@Model.User.FirstName</td></tr>
+        <tr><td>LastName</td><td>@Model.User.LastName </td></tr>
+        <tr><td>EmailAddress</td><td>@Model.User.EmailAddress </td></tr>
+        <tr><td>PhoneNumber</td><td>@Model.User.PhoneNumber</td></tr>
+        <tr><td colspan="2"><h3>Business</h3></td></tr>
+        if (@Model.User.Organization == null)
+        {
+            <tr><td colspan="2">No Organization data found.</td></tr>
+        }
+        else
+        {
+            <tr><th>Field</th><th>Value</th></tr>
+            <tr><td>Guid</td><td>@Model.User.Organization.BCeIDGuid</td></tr>
+            <tr><td>LegalName</td><td>@Model.User.Organization.LegalName</td></tr>
+            <tr><td>DoingBusinessAs</td><td>@Model.User.Organization.DoingBusinessAs</td></tr>
+            if (Model.User.Organization.HeadOfficeAddress == null)
+            {
+                <tr><td colspan="2">No Address data found.</td></tr>
+            }
+            else
+            {
+                <tr><td colspan="2"><h3>Address</h3></td></tr>
+                <tr><th>Field</th><th>Value</th></tr>
+                <tr><td>Id</td><td>@Model.User.Organization.HeadOfficeAddress.Id</td></tr>
+                <tr><td>AddressLine1</td><td>@Model.User.Organization.HeadOfficeAddress.AddressLine1</td></tr>
+                <tr><td>AddressLine2</td><td>@Model.User.Organization.HeadOfficeAddress.AddressLine2</td></tr>
+                <tr><td>City</td><td>@Model.User.Organization.HeadOfficeAddress.City</td></tr>
+                <tr><td>PostalCode</td><td>@Model.User.Organization.HeadOfficeAddress.PostalCode</td></tr>
+                <tr><td>Province</td><td>@Model.User.Organization.HeadOfficeAddress.Region.Name</td></tr>
+            }
+        }
+    }
+</table>

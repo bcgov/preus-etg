@@ -1,0 +1,144 @@
+﻿@using CJG.Core.Entities
+<div ng-controller="ReconciliationReport" reconciliation-report-id="@ViewBag.ReconciliationReportId">
+    <div>
+        <p class="no-margin">
+            <a class="link--back no-margin-force" href="/Int/Payment/Reconciliation/View">Return</a>
+        </p>
+    </div>
+
+    <div ng-if="alert.message" class="row row--alert">
+        <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+    </div>
+
+    <h1>Reconciliation Report</h1>
+
+    <div class="reconciliation-report-view form__section">
+        <div class="form form---col">
+            <div class="width-35">
+                <div class="form__group">
+                    <div class="form__label">Date Run:</div>
+                    <div class="form__control">{{toPST(model.DateRun, 'YYYY-MM-DD hh:mm:ss a')}}</div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Requestor:</div>
+                    <div class="form__control">{{model.Requestor}}</div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Reported By:</div>
+                    <div class="form__control">{{model.ReportedBy}}</div>
+                </div>
+            </div>
+            <div class="width-35 vertical-align-top">
+                <div class="form__group">
+                    <div class="form__label">Period From:</div>
+                    <div class="form__control">{{toPST(model.PeriodFrom, 'MMM DD')}}</div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Period To:</div>
+                    <div class="form__control">{{toPST(model.PeriodTo, 'MMM DD')}}</div>
+                </div>
+            </div>
+            <div class="width-15 vertical-align-top">
+                <div>
+                    <label class="{{ model.IsReconciled ? 'blue' : 'red' }}">{{ model.IsReconciled ? 'RECONCILED' : 'NOT RECONCILED' }}</label>
+                </div>
+                <div class="form__control">
+                    <input type="checkbox" id="show-all" ng-model="section.showAll" ng-change="changeShowAll()"/>
+                    <label for="show-all">Show All</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="clear-both">&nbsp;</div>
+
+    <h2>Payments</h2>
+
+    <div class="table-wrapper">
+        <pager ng-if="model.Payments" ng-filter="getReconciliationReport"
+               ng-local="true"  ng-page-search="false">
+            <table class="form-table">
+                <thead>
+                    <tr class="form-table-heading display--table-row">
+                        <th class="form-table-cell width-15px"></th>
+                        <th class="form-table-cell width-135px">
+                            <label class="action {{sortDirection('DocumentNumber')}}" ng-click="sort('DocumentNumber')">Document Number</label>
+                        </th>
+                        <th class="form-table-cell text-center">
+                            <label class="action {{sortDirection('PaymentType')}}" ng-click="sort('PaymentType')">Payment Type</label>
+                        </th>
+                        <th class="form-table-cell">
+                            <label class="action {{sortDirection('SupplierName')}}" ng-click="sort('SupplierName')">Supplier Name</label>
+                        </th>
+                        <th class="form-table-cell text-right">
+                            <label class="action {{sortDirection('Amount')}}" ng-click="sort('Amount')">Amount</label>
+                        </th>
+                        <th class="form-table-cell text-center">
+                            <label class="action {{sortDirection('DateCreated')}}" ng-click="sort('DateCreated')">Creation Date</label>
+                        </th>
+                        <th class="form-table-cell">
+                            <label class="action {{sortDirection('IssuedDate')}}" ng-click="sort('IssuedDate')">Issue Date</label>
+                        </th>
+                        <th class="form-table-cell text-center">
+                            <label class="action {{sortDirection('State')}}" ng-click="sort('State')">State</label>
+                        </th>
+                        <th class="form-table-cell">&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody class="category-table-body">
+                    <tr class="form-table-row"
+                        ng-repeat-start="payment in $parent.$ctrl.ngItems"
+                        ng-show="$parent.$parent.$ctrl.showPage($index)"
+                        title="{{status(payment)}}" ng-dblclick="reconcile(payment)">
+                        <td class="form-table-cell width-35px">
+                            <span class="small" ng-if="payment.Payments.length > 0"
+                                  ng-class="payment.expand ? 'up-arrow': 'down-arrow'"
+                                  ng-click="payment.expand = !payment.expand"></span>
+                        </td>
+                        <td class="form-table-cell width-135px"
+                            ng-class="{'red' : (payment.State === @((int)ReconciliationStates.InvalidDocumentNumber) || payment.State === @((int)ReconciliationStates.NoMatch) || payment.State === @((int)ReconciliationStates.Duplicate))}">
+                            <label ng-if="!payment.ClaimId">{{payment.DocumentNumber}}</label>
+                            <a ng-if="payment.ClaimId" target="_blank" href="/Int/Claim/Assessment/View/{{payment.ClaimId}}/{{payment.ClaimVersion}}">{{payment.DocumentNumber}}</a>
+                        </td>
+                        <td class="form-table-cell text-center">{{payment.PaymentTypeCaption}}</td>
+                        <td class="form-table-cell"
+                            ng-class="{'red' : payment.State === @((int)ReconciliationStates.InvalidSupplierName)}">
+                            {{payment.SupplierName}}
+                        </td>
+                        <td class="form-table-cell text-right"
+                            ng-class="{'red' : payment.State === @((int)ReconciliationStates.InvalidAmount) || payment.State === @((int)ReconciliationStates.Duplicate)}">
+                            <span ng-if="payment.FromCAS">{{payment.Amount | currency}}</span>
+                            <span ng-if="!payment.FromCAS">{{payment.PaymentAmount | currency}}</span>
+                        </td>
+                        <td class="form-table-cell text-center">{{payment.DateCreated ? toPST(payment.DateCreated) : ''}}</td>
+                        <td class="form-table-cell text-center">{{payment.IssuedDate ? toPST(payment.IssuedDate) : ''}}</td>
+                        <td class="form-table-cell text-center"
+                            ng-class="{'red' : payment.State !== @((int)ReconciliationStates.Reconciled)}">
+                            {{payment.StateCaption}}
+                        </td>
+                        <td class="form-table-cell">
+                            <input type="image" src="~/images/icons/reconcile.png" ng-click="reconcile(payment)" width="30" height="30" ng-show="payment.FromCAS">
+                        </td>
+                    </tr>
+                    <tr class="reconciliation-report-view-subrow"
+                        ng-if="payment.expand && (section.showAll || payment.State !== @((int)ReconciliationStates.Reconciled))"
+                        ng-repeat="_payment in payment.Payments" ng-repeat-end>
+                        <td class="form-table-cell width-15px">&nbsp;</td>
+                        <td class="form-table-cell width-135px">
+                            <label>{{_payment.DocumentNumber}}</label>
+                        </td>
+                        <td class="form-table-cell text-center">{{_payment.PaymentTypeCaption}}</td>
+                        <td class="form-table-cell">{{_payment.SupplierName}}</td>
+                        <td class="form-table-cell text-right">
+                            <span ng-if="_payment.FromCAS">{{_payment.Amount | currency}}</span>
+                        </td>
+                        <td class="form-table-cell text-center">{{_payment.DateCreated ? toPST(_payment.DateCreated) : ''}}</td>
+                        <td class="form-table-cell text-center">{{_payment.IssuedDate? toPST(_payment.IssuedDate) : ''}}</td>
+                        <td class="form-table-cell text-center" ng-class="{'red' : _payment.State !== @((int)ReconciliationStates.Reconciled)}">{{_payment.StateCaption}}</td>
+                        <td class="form-table-cell"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </pager>
+    </div>
+</div>

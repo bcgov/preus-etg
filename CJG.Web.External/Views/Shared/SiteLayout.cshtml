@@ -1,0 +1,57 @@
+﻿@{
+	Layout = "~/Views/Shared/Master.cshtml";
+
+	var hideAlert = false;
+
+	if (ViewBag.HideAlert != null)
+	{
+		if (!bool.TryParse(ViewBag.HideAlert.ToString(), out hideAlert))
+		{
+			hideAlert = false;
+		}
+	}
+}
+
+@* Scripts that should be added before the closing </head> tag *@
+@section HeadScripts {
+	@Html.Partial("GoogleAnalytics")
+}
+
+@* Scripts that should be added before the closing </body> tag *@
+@section Scripts {
+	<script src="~/Scripts/angular-1.7.8/angular.min.js"></script>
+	<script src="~/Scripts/angular-1.7.8/angular-sanitize.js"></script>
+	<script src="~/Scripts/angular-1.7.8/ngDialog.min.js"></script>
+	<script src="~/Scripts/angular-1.7.8/moment.min.js"></script>
+	<script src="~/Scripts/angular-1.7.8/moment-timezone.min.js"></script>
+	<script src="~/Scripts/angular-1.7.8/moment-timezone-with-data.min.js"></script>
+	<script src="~/Scripts/angular-1.7.8/angular-moment.min.js"></script>
+	<script src="~/Scripts/angular-1.7.8/ng-loading-overlay.min.js"></script>
+	<script src="https://cdn.tiny.cloud/1/ne7sj6l952t6973w2yrbbavskqrlkl5nvz89j0h11endvj03/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+	<script src="~/Scripts/angular-1.7.8/tinymce.min.js"></script>
+	<script src="~/js/external.js"></script>
+	<script>
+		window.version = '@ViewBag.Version.ToString()';
+	</script>
+}
+
+<div class="layout-external">
+    @Html.Partial("Header")
+    <div class="container main-container ng-cloak" ng-app="grantApp" ng-cloak>
+        <div class="side-padding">
+
+            @if (!hideAlert)
+            {
+                @Html.Partial("Alert", new ViewDataDictionary(ViewData) {
+                    { "alertMessage", ViewBag.Message },
+                    { "alertType", ViewBag.MessageType }
+                })
+            }
+
+            @RenderBody()
+        </div>
+    </div>
+    <div>
+        @Html.Partial("Footer")
+    </div>
+</div>

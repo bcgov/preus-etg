@@ -1,0 +1,62 @@
+﻿<div class="form__group form__group--radio-inline">
+    <label class="form__label" for="allParticipantsCompletedTraining">
+        {{question.Question}} <abbr title="Required" ng-if="question.IsRequired">*</abbr>
+    </label>
+</div>
+
+<div class="block--completion-report">
+    <p>{{question.Description}}</p>
+    <pager ng-filter="getParticipants" ng-local="true">
+        <div class="scroll-horizontal-wrapper">
+            <div class="table-wrapper scroll-horizontal-header" ng-style="{ 'width' : serviceTable.headerWidth }">
+                <table class="form__group--data-grid">
+                    <thead>
+                        <tr>
+                            <th class="data-grid-bottom-data" rowspan="2">Participant<br />Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="participant in $parent.$ctrl.ngItems" ng-show="$parent.$parent.$ctrl.showPage($index)">
+                            <td>{{participant.FirstName}} {{participant.LastName}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-wrapper scroll-horizontal-content" ng-style="{ 'width' : serviceTable.contentWidth }">
+                <table class="form__group--data-grid">
+                    <thead>
+                        <tr>
+                            <th class="data-grid-header" ng-repeat="serviceCategory in ESSs.ServiceCategories" colspan="{{serviceCategory.ServiceLines.length}}">
+                                {{serviceCategory.Caption}}
+                            </th>
+                            <th class="data-grid-bottom-data" rowspan="2" nowrap style="text-align: center;">Completed <abbr title="Required">*</abbr></th>
+                        </tr>
+                        <tr>
+                            <th class="data-grid-sub-header" ng-repeat="serviceLine in serviceLines">
+                                {{serviceLine.Caption}}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="participant in $parent.$ctrl.ngItems" ng-show="$parent.$parent.$ctrl.showPage($index)">
+                            <td class="data-grid-center-data" ng-repeat="serviceLine in serviceLines">
+                                <div class="form__control">
+                                    <input type="checkbox" class="input--medium" id="select-serviceLine-{{serviceLine.Id}}-{{participant.Id}}"
+                                           ng-checked="getParticipantEligibleCostBreakdown(question, participant.Id, serviceLine.EligibleCostBreakdownId)"
+                                           ng-click="updateParticipantEligibleCostBreakdown(question, participant.Id, serviceLine.EligibleCostBreakdownId)" />
+                                    <label class="form__label" for="select-serviceLine-{{serviceLine.Id}}-{{participant.Id}}">&nbsp;</label>
+                                </div>
+                            </td>
+                            <td class="data-grid-center-data">
+                                <div class="form__control">
+                                    <input type="checkbox" class="input--medium" id="complete-participant-{{question.Id}}-{{participant.Id}}" ng-model="participant.completed" />
+                                    <label class="form__label" for="complete-participant-{{question.Id}}-{{participant.Id}}">&nbsp;</label>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </pager>
+</div>

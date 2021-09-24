@@ -1,0 +1,43 @@
+﻿@using CJG.Core.Entities
+@model CJG.Core.Entities.ApplicationStateInternal
+
+@{
+    switch (Model)
+    {
+        case ApplicationStateInternal.RecommendedForApproval:
+            <text>
+                <span class="label label--success">Recommended for approval</span>
+            </text>
+            break;
+        case ApplicationStateInternal.RecommendedForDenial:
+            <text>
+                <span class="label label--danger">Recommended for denial</span>
+            </text>
+            break;
+        case ApplicationStateInternal.OfferIssued:
+            <text>
+                <span class="label label--success">Offer issued</span>
+            </text>
+            break;
+        case ApplicationStateInternal.ClaimApproved:
+            <text>
+                <span class="label label--success">Claim Approved</span>
+            </text>
+            break;
+        case ApplicationStateInternal.ClaimDenied:
+            <text>
+                <span class="label label--danger">Claim Denied</span>
+            </text>
+            break;
+        case ApplicationStateInternal.ClaimReturnedToApplicant:
+            <text>
+                <span class="label label--warning">Claim Returned to Applicant</span>
+            </text>
+            break;
+        default:
+            <text>
+                <span class="label label--warning">@Model.GetDescription()</span>
+            </text>
+            break;
+    }
+}

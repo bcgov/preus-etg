@@ -1,0 +1,132 @@
+﻿<div class="form--readonly">
+    <div class="form__group">
+        <div class="form__label">Training course title:</div>
+        <div class="form__control">
+            {{model.TrainingProgram.CourseTitle}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Training course link:</div>
+        <div class="form__control">
+            <a href="{{model.TrainingProgram.CourseLink}}" target="_blank">{{model.TrainingProgram.CourseLink}}</a>
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Training start date:</div>
+        <div class="form__control">
+            {{toPST(model.TrainingProgram.StartDate)}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Training end date:</div>
+        <div class="form__control">
+            {{toPST(model.TrainingProgram.EndDate)}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Primary Delivery Method:</div>
+        <div class="form__control">
+            <ul ng-if="model.TrainingProgram.DeliveryMethods != null && model.TrainingProgram.DeliveryMethods.length > 0">
+
+                <li ng-repeat="method in model.TrainingProgram.DeliveryMethods">
+                    {{method.Caption}}
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Total training hours:</div>
+        <div class="form__control">
+            {{model.TrainingProgram.TotalTrainingHours}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Skill level:</div>
+        <div class="form__control">
+            <div ng-if="model.TrainingProgram.SkillLevel != null">
+                {{model.TrainingProgram.SkillLevel.Caption}}
+            </div>
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Training skill focus:</div>
+        <div class="form__control">
+            <div ng-if="model.TrainingProgram.SkillFocus != null">
+                {{model.TrainingProgram.SkillFocus.Caption}}
+            </div>
+        </div>
+    </div>
+
+    <div id="skillFocusFields" ng-if="model.TrainingProgram.ShowSkillFocusFields">
+        <div class="form__group">
+            <div class="form__label">Apprenticeship training is for:</div>
+            <div class="form__control">
+                <div ng-if="model.TrainingProgram.InDemandOccupation != null">
+                    {{model.TrainingProgram.InDemandOccupation.Caption}}
+                </div>
+            </div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Training level:</div>
+            <div class="form__control">
+                <div ng-if="model.TrainingProgram.TrainingLevel != null">
+                    {{model.TrainingProgram.TrainingLevel.Caption}}
+                </div>
+            </div>
+        </div>
+
+        <div class="form__group" ng-if="model.TrainingProgram.MemberOfUnderRepresentedGroup != null">
+            <div class="form__label">
+                Participants in apprenticeship or foundation programs, are members from the underrepresented groups in the labour force:
+            </div>
+            <div class="form__control">
+                <span ng-if="!model.TrainingProgram.MemberOfUnderRepresentedGroup">No</span>
+                <ul ng-if="model.TrainingProgram.MemberOfUnderRepresentedGroup">
+
+                    <li ng-repeat="group in model.TrainingProgram.UnderRepresentedGroups">
+                        {{group.Caption}}
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Expected certificates, qualifications, or credentials:</div>
+        <div class="form__control">
+            <div ng-if="model.TrainingProgram.ExpectedQualification != null">
+                {{model.TrainingProgram.ExpectedQualification.Caption}}
+            </div>
+        </div>
+    </div>
+
+    <div id="applicableQualificationFields" ng-if="model.TrainingProgram.TitleOfQualification != null">
+        <div class="form__group">
+            <div class="form__label">Title of certificates, qualifications, or credentials:</div>
+            <div class="form__control">
+                {{model.TrainingProgram.TitleOfQualification}}
+            </div>
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Have you offered this type of training to employees in the past:</div>
+        <div class="form__control">
+            <span>{{ model.TrainingProgram.HasOfferedThisTypeOfTrainingBefore ? 'Yes' : 'No' }}</span>
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Have you received or requested any other government or third-party funding for this training:</div>
+        <div class="form__control">
+            <span>{{ model.TrainingProgram.HasRequestedAdditionalFunding ? 'Yes' : 'No' }}</span>
+        </div>
+    </div>
+
+    <div class="form__group" ng-if="model.TrainingProgram.HasRequestedAdditionalFunding">
+        <div class="form__label">Description of funding requested:</div>
+        <div class="form__control">
+            <span>{{model.TrainingProgram.DescriptionOfFundingRequested}}</span>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+﻿@{
+    ViewBag.Title = "Confirm BCeID Details";
+}
+<div class="row" ng-controller="ConfirmDetails">
+    <div class="main">
+
+        <h1 class="header--large">Get Started</h1>
+
+        <p>
+            Hi {{model.UserProfileConfirmation.FirstName}} {{model.UserProfileConfirmation.LastName}}. Welcome to the Skills Training Grant application portal.
+        </p>
+
+        <p>
+            Let's start by creating your user profile. This should just take a minute.
+        </p>
+
+        <h2 class="header--small">Create User Profile</h2>
+
+        <p class="subheader--step">
+            Step 1 of 2
+        </p>
+
+        <div>
+            <h3 class="subheader">Review your contact information</h3>
+            @Html.Partial("_UserProfileReview")
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn--primary btn--forward" ng-click="confirm()">Continue</button>
+        </div>
+    </div>
+
+    <div class="sidebar">
+    </div>
+</div>

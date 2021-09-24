@@ -1,0 +1,27 @@
+﻿@{
+    ViewBag.Title = "Edit User Profile";
+}
+<div class="row" ng-controller="EditUserProfile">
+    <input type="hidden" id="currentUserId" value="@ViewBag.UserId" />
+    <div class="main">
+        <div>
+            <a href="/Ext/Home" class="link--back">Home</a>
+        </div>
+
+        <div ng-if="alert.message" class="row row--alert">
+            <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+        </div>
+
+        <h1 class="header--small">Edit User Profile</h1>
+        <h2 class="subheader">Business Contact Information</h2>
+        <p class="text--small text--uppercase">* Information must be provided</p>
+        <p>In order to complete your profile we just need a little more information.</p>
+
+        @Html.Partial("_UserProfileDetails")
+
+        <div class="button-group">
+            <a class="btn btn--secondary" href="@((string)ViewBag.BackURL)">Cancel</a>
+            <button class="btn btn--primary btn--forward" ng-click="save()">Save Profile</button>
+        </div>
+    </div>
+</div>

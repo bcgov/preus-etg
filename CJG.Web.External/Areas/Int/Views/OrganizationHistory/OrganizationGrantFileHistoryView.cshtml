@@ -1,0 +1,136 @@
+﻿@using CJG.Web.External.Areas.Int.Controllers
+@{
+    ViewBag.Title = "Organization Grant File History";
+}
+
+<div ng-controller="OrganizationHistory" org-id="@ViewBag.OrganizationId" class="page--training-provider-history">
+    <div class="clearfix">
+        @if (ViewBag.Path != null && ViewBag.Path[2] == "Organization")
+        {
+            @Html.ActionLink("Return", nameof(OrganizationController.OrganizationsView), typeof(OrganizationController), null, new { @class = "link--back" })
+        }
+        else if (ViewBag.Path != null && ViewBag.Path[2] == "Work")
+        {
+            @Html.ActionLink("Return", nameof(WorkQueueController.WorkQueueView), typeof(WorkQueueController), null, new { @class = "link--back" })
+        }
+        else
+        {
+            @Html.ActionLink("Return", nameof(ApplicationController.ApplicationDetailsView), typeof(ApplicationController), new { grantApplicationId = ViewBag.Path[5] }, new { @class = "link--back" })
+        }
+
+        <div class="row row--alert" ng-if="alert.message">
+            <div class="alert alert--default" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+        </div>
+
+        <div class="clearfix">
+            <h2>Organization Grant File History</h2>
+        </div>
+        <hr />
+        <h1 id="organizationName">{{model.LegalName}} | Doing Business As: {{model.DoingBusinessAs}}</h1>
+        <div class="form__label">
+            <b>Total for: &nbsp;{{GrantProgramDescription}}</b>
+        </div>
+        <div class="form__label">
+            <b>YTD Requested: &nbsp;{{model.YTDRequested | currency : '$' : 2}}</b>
+        </div>
+        <div class="form__label">
+            <b>YTD Approved: &nbsp;{{model.YTDApproved | currency : '$' : 2}}</b>
+        </div>
+        <div class="form__label">
+            <b>YTD Paid: &nbsp;{{model.YTDPaid | currency : '$' : 2}}</b>
+        </div>
+        <br />
+        <div class="form__group form__group--radio-inline">
+            <div class="form__label">
+                Flag Organization as a risk?
+            </div>
+            <div ng-validation="errors.RiskFlag" ng-if="model.AllowDeleteOrganization">
+                <div class="form-item">
+                    <input type="radio" id="risk-flag-yes" ng-value="true" ng-model="model.RiskFlag" name="model.RiskFlag">
+                    <label for="risk-flag-yes">Yes</label>
+                </div>
+                <div class="form-item">
+                    <input type="radio" id="risk-flag-no" ng-value="false" ng-model="model.RiskFlag" name="model.RiskFlag">
+                    <label for="risk-flag-no">No</label>
+                </div>
+            </div>
+            <div ng-validation="errors.RiskFlag" ng-if="!model.AllowDeleteOrganization">
+                <div class="form-item">
+                    <input type="radio" id="risk-flag-yes" ng-value="true" ng-model="model.RiskFlag" name="model.RiskFlag" disabled="disabled">
+                    <label for="risk-flag-yes">Yes</label>
+                </div>
+                <div class="form-item">
+                    <input type="radio" id="risk-flag-no" ng-value="false" ng-model="model.RiskFlag" name="model.RiskFlag" disabled="disabled">
+                    <label for="risk-flag-no">No</label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="form__group block--training-provider-history__note">
+            <label class="form__label">
+                Notes:
+            </label>
+            <div class="form__control padding-bottom-20">
+                <textarea ng-model="model.Notes"
+                          ng-class="{'has-error': $ctrl.getError()}"
+                          maxlength="2000" class="input--full copy-box--med"></textarea>
+                <span class="char-count-status">{{(2000 - model.Notes.length)}} chars left</span>
+            </div>
+            <button type="button" class="pull-left btn btn--secondary" ng-disabled="checkNotesDiff()" ng-click="resetNote()">Reset Notes</button>
+            <button type="button" class="pull-right btn btn--primary" ng-click="updateOrg()">Save</button>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="wrapper--intake-queue-datatable">
+        <pager ng-if="model.OrgId" ng-filter="getOrganizationHistory" ng-page-size="[10, 25, 50, 100]">
+            <div class="form__control float-right" style="padding-top:15px;">
+                <span>Select Grant Program: </span>
+                <span class="selectmenu">
+                    <select id="grantProgramId" ng-model="model.GrantProgramId" ng-change="getOrganizationHistoryGrant()" ng-options="item.Key as item.Value for item in grantPrograms">
+                        <option value="">All Programs</option>
+                    </select>
+                </span>
+            </div>
+            <br />
+            <table class="form__group--data-grid">
+                <thead>
+                    <tr>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('FileNumber')"><img src="{{imgSrcFileNumber}}" />File No.</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('CurrentStatus')"><img src="{{imgSrcCurrentStatus}}" />Status</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('ApplicationStream')"><img src="{{imgSrcApplicationStream}}" />Stream</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('ApplicantName')"><img src="{{imgSrcApplicantName}}" />Contact Name</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('ApplicantEmail')"><img src="{{imgSrcApplicantEmail}}" />Contact Email</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('TrainingProgramTitle')"><img src="{{imgSrcTrainingProgramTitle}}" />Training Program Title</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('StartDate')"><img src="{{imgSrcStartDate}}" />Start Date</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('EndDate')"><img src="{{imgSrcEndDate}}" />End Date</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('NumberOfParticipants')"><img src="{{imgSrcNumberOfParticipants}}" />No. of Part.</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('RequestedAmount')"><img src="{{imgSrcRequestedAmount}}" />Requested</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('ApprovedAmount')"><img src="{{imgSrcApprovedAmount}}" />Approved</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('PaidAmount')"><img src="{{imgSrcPaidAmount}}" />Paid</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('AverageCostPerParticipant')"><img src="{{imgSrcAverageCostPerParticipant}}" />Avg Cost per Part.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="application in $parent.$ctrl.ngItems |orderBy:sort.column:sort.descending">
+                        <td style="padding:0px;"><a href="/Int/Application/Details/View/{{application.Id}}">{{application.FileNumber}}</a></td>
+                        <td style="padding:0px;">{{application.CurrentStatus}}</td>
+                        <td style="padding:0px;">{{application.ApplicationStream}}</td>
+                        <td style="padding:0px;">{{application.ApplicantName}}</td>
+                        <td style="padding:0px;">{{application.ApplicantEmail}}</td>
+                        <td style="padding:0px; text-align:center;">{{application.TrainingProgramTitle}}</td>
+                        <td style="padding:0px;">{{application.StartDate}}</td>
+                        <td style="padding:0px;">{{application.EndDate}}</td>
+                        <td style="padding:0px; text-align:center;">{{application.NumberOfParticipants}}</td>
+                        <td style="padding:0px; text-align:center;">{{application.RequestedAmount| currency : '$' : 2}}</td>
+                        <td style="padding:0px; text-align:center;">{{application.ApprovedAmount| currency : '$' : 2}}</td>
+                        <td style="padding:0px; text-align:center;">{{application.PaidAmount| currency : '$' : 2}}</td>
+                        <td style="padding:0px; text-align:center;">{{application.AverageCostPerParticipant| currency : '$' : 2}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </pager>
+    </div>
+</div>

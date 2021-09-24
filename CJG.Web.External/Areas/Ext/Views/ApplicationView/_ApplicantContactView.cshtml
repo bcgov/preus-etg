@@ -1,0 +1,90 @@
+﻿<div class="form--readonly">
+    <div class="form__group">
+        <div class="form__label">Name:</div>
+        <div class="form__control">
+            {{model.ApplicantContact.ApplicantSalutation}} {{model.ApplicantContact.ApplicantFirstName}} {{ model.ApplicantContact.ApplicantLastName}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Business Email:</div>
+        <div class="form__control">
+            {{model.ApplicantContact.ApplicantEmail}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Preferred Contact Number:</div>
+        <div class="form__control">
+            {{model.ApplicantContact.ApplicantPhoneNumber}}
+            <text ng-if="model.ApplicantContact.ApplicantPhoneExtension != null">Ext: {{ model.ApplicantContact.ApplicantPhoneExtension }}</text>
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Position/Title:</div>
+        <div class="form__control">
+            {{model.ApplicantContact.ApplicantJobTitle}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Business address:</div>
+        <div class="form__control">
+            <text ng-if="!model.ApplicantContact.HasPhysicalAddress">n/a</text>
+            <div ng-if="model.ApplicantContact.HasPhysicalAddress">
+                {{model.ApplicantContact.ApplicantPhysicalAddressLine1}}<br />
+                <div ng-if="model.ApplicantContact.ApplicantPhysicalAddressLine2 != null">
+                    {{model.ApplicantContact.ApplicantPhysicalAddressLine2 }} <br />
+                </div>
+                {{model.ApplicantContact.ApplicantPhysicalCity}}<br />
+                <div ng-if="model.ApplicantContact.ApplicantPhysicalRegion != null">
+                    {{model.ApplicantContact.ApplicantPhysicalRegion }} <br />
+                </div>
+                {{model.ApplicantContact.ApplicantPhysicalPostalCode}}<br />
+                {{model.ApplicantContact.ApplicantPhysicalCountry}}
+            </div>
+        </div>
+    </div>
+    <div class="form__group" ng-if="!model.ApplicantContact.MailingAddressSameAsPhysical">
+        <div class="form__label">Mailing address:</div>
+        <div class="form__control">
+            {{model.ApplicantContact.ApplicantMailingAddressLine1}}<br />
+            <div ng-if="model.ApplicantContact.ApplicantMailingAddressLine2 != null">
+                {{model.ApplicantContact.ApplicantMailingAddressLine2 }} <br />
+            </div>
+            {{model.ApplicantContact.ApplicantMailingCity}}<br />
+            <div ng-if="model.ApplicantContact.ApplicantMailingRegion != null">
+                {{model.ApplicantContact.ApplicantMailingRegion }} <br />
+            </div>
+            {{model.ApplicantContact.ApplicantMailingPostalCode}}<br />
+            {{model.ApplicantContact.ApplicantMailingCountry}}
+        </div>
+    </div>
+    <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
+
+        <div class="form__group">
+            <div class="form__label">Alternate Contact Name:</div>
+            <div class="form__control">
+                {{model.ApplicantContact.AlternateSalutation}} {{model.ApplicantContact.AlternateFirstName}} {{ model.ApplicantContact.AlternateLastName}}
+            </div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Alternate Business Email:</div>
+            <div class="form__control">
+                {{model.ApplicantContact.AlternateEmail}}
+            </div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Alternate Contact Number:</div>
+            <div class="form__control">
+                {{model.ApplicantContact.AlternatePhoneNumber}}
+                <text ng-if="model.ApplicantContact.AlternatePhoneExtension != null">Ext: {{ model.ApplicantContact.AlternatePhoneExtension }}</text>
+            </div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Alternate Contact Position/Title:</div>
+            <div class="form__control">
+                {{model.ApplicantContact.AlternateJobTitle}}
+            </div>
+        </div>
+
+
+    </div>
+</div>

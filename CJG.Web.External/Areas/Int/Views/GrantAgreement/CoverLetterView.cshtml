@@ -1,0 +1,14 @@
+﻿<div ng-controller="CoverLetter">
+    <span class="panel-section-item">
+        <span class="panel-section-title" ng-click="toggle($event)">Approval Letter</span>
+        <span class="panel-section-buttons">
+            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            <span ng-if="grantAgreement.CoverLetterConfirmed" class="label label--complete">Complete</span>
+            <span ng-if="!grantAgreement.CoverLetterConfirmed" class="label label--notstarted">Not Started</span>
+            <span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+        </span>
+    </span>
+    <div class="panel-section-content" ng-if="section.show">
+        <div ng-bind-html="model.Body"></div>
+    </div>
+</div>

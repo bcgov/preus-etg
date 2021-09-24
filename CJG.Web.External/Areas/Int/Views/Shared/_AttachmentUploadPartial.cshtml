@@ -1,0 +1,29 @@
+﻿@model CJG.Web.External.Helpers.FormControl
+
+<div class="form__group" @Html.Raw(Model.CustomAttributes)>
+    <label class="form__label">@Model.Label</label>
+    <div>
+        <div class="form__control" ng-if="@(Model.Model).@(Model.Value).Id > 0">
+            <a class="link" href="/int/application/training/provider/{{@(Model.Model).Id == null ? 0 : @(Model.Model).Id}}/download/attachment/{{@(Model.Model).@(Model.Value).Id}}">{{@(Model.Model).@(Model.Value).Name}}</a> &nbsp;
+            <a class="remove-attachment"
+               ng-click="deleteDocument('@(Model.Value)', @(Model.Model))"
+               ng-if="@(Model.EnableTextSwitch.EditCondition)">
+                <span class="k-icon k-i-close k-delete" title="Remove"></span>
+            </a>
+        </div>
+        <div class="form__control" ng-if="@(Model.EnableTextSwitch.EditCondition)">
+            <button class="k-button k-upload-button" ng-click="clickUploadDocument($index, '@(Model.Value)')">
+                <span ng-if="!@(Model.Model).@(Model.Value).Id">Upload</span>
+                <span ng-if="@(Model.Model).@(Model.Value).Id">Replace</span>
+            </button>
+            <input id="file-upload-{{$index}}-@(Model.Value)"
+                   style="display: none"
+                   type="file"
+                   name="file"
+                   accept=".pdf,image/*"
+                   data-index="{{$index}}"
+                   data-type="@(Model.Value)"
+                   onchange="angular.element('#manage-skill-traning-container').scope().uploadDocument(this, this.files)" />
+        </div>
+    </div>
+</div>

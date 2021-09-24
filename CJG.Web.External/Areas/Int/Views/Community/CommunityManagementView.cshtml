@@ -1,0 +1,57 @@
+﻿@{
+	ViewBag.Title = "Community Management";
+}
+<div ng-controller="CommunityManagementDashboard">
+	@* Header *@
+	<div class="form-section">
+		<div>
+			<h2>Community List</h2>
+		</div>
+		<div>
+			<p>Click 'Add New' to add a new community. To correct or inactivate a community, click on its 'Edit' button in the list below.</p>
+		</div>
+	</div>
+	@* Alerts *@
+	<div class="row row--alert" ng-if="model.SummaryMessage">
+		<div class="alert alert--default" ng-class="'alert--' + model.SummaryType" role="alert" ng-bind-html="model.SummaryMessage">
+		</div>
+	</div>
+	@* Content *@
+	<div>
+		<div>
+			<div class="form__group">
+				@* Add New btn *@
+				<div class="form__control float-left">
+					<button class="btn btn--secondary" ng-click="openCommunityModal()">Add New</button>
+				</div>
+				@* Search input *@
+				<div class="form__control float-right">
+					<div class="">Search Name</div>
+					<input type="text" ng-model="searchCriteria" ng-keypress="search($event)" />
+					<button class="btn btn--search" ng-click="search($event)"></button>
+				</div>
+			</div>
+			@* Table *@
+			<div>
+				<table class="form-table">
+					<thead class="table-header">
+						<tr class="form-table-heading display--table-row">
+							<th class="">No.</th>
+							<th class="">Active</th>
+							<th class="">Community Name - Development Region</th>
+							<th class=""></th>
+						</tr>
+					</thead>
+					<tbody class="category-table-body">
+						<tr class="form-table-row-with-hover" ng-repeat="item in model.Communities  | filter: {Caption: CommunitySearch} | orderBy: 'Caption'" id="{{item.Id}}">
+							<td class="form-table-cell width-10">{{item.Id}}</td>
+							<td class="form-table-cell width-10"><span>{{item.Active ? "Yes" : "No"}}</span></td>
+							<td class="form-table-cell"><span>{{item.Caption}}</span></td>
+							<td class="form-table-cell width-5"><button class="btn btn--secondary" ng-click="openCommunityModal(item.Id)">Edit</button></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

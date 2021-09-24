@@ -1,0 +1,39 @@
+﻿<div>
+    <div class="block--claim-outcome {{model.ClaimAssessmentOutcome.SummaryCSS}}" ng-bind-html="model.ClaimAssessmentOutcome.SummaryDescription">
+    </div>
+
+    <table class="table--claims table--claims__list">
+        <thead>
+            <tr>
+                <th>Claim</th>
+                <th>Submitted</th>
+                <th>Assessed</th>
+                <th>Status</th>
+                <th>Amount</th>
+                <th>{{ model.ClaimAssessmentOutcome.ClaimProcessed ? 'Payment ID' : '' }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="claim in model.ClaimAssessmentOutcome.Claims">
+                <td ng-if="claim.ClaimState == @((int)CJG.Core.Entities.ClaimState.Unassessed)">
+                    <a href="/Ext/Claim/Details/View/{{claim.ClaimId}}/{{claim.ClaimVersion}}">View Claim</a>
+                </td>
+                <td ng-if="claim.ClaimState != @((int)CJG.Core.Entities.ClaimState.Unassessed)">
+                    <a href="/Ext/Claim/assessment/View/{{claim.ClaimId}}/{{claim.ClaimVersion}}">View Claim Assessment</a>
+                </td>
+                <td>{{toPST(claim.DateSubmitted)}}</td>
+                <td ng-if="claim.DateAssessed">{{toPST(claim.DateAssessed)}}</td>
+                <td ng-if="!claim.DateAssessed" colspan="1"></td>
+                <td>{{claim.Description}}</td>
+                <td ng-style="claim.DisplayAmount < 0 && {'color': 'red'}">
+                    {{claim.DisplayAmount | currencyParentheses : "$" : 2 }}
+                </td>
+                <td ng-style="claim.DocumentNumber == '-' && {'text-align': 'center'}">
+                    <span ng-if="claim.ClaimState == @((int)CJG.Core.Entities.ClaimState.ClaimPaid) || claim.ClaimState == @((int)CJG.Core.Entities.ClaimState.PaymentRequested) || claim.ClaimState == @((int)CJG.Core.Entities.ClaimState.AmountOwing) || claim.ClaimState == @((int)CJG.Core.Entities.ClaimState.AmountReceived)">
+                        {{claim.DocumentNumber}}
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

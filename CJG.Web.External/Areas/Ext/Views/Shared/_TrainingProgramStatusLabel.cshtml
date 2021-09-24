@@ -1,0 +1,18 @@
+﻿@using CJG.Core.Entities
+@model CJG.Core.Entities.TrainingProgramStates
+@{
+    switch (Model)
+    {
+        case TrainingProgramStates.Complete:
+            <text>
+                <span class="label label--complete">Complete</span>
+            </text>
+            break;
+        case TrainingProgramStates.Incomplete:
+        default:
+            <text>
+                <span class="label label--incomplete">Incomplete</span>
+            </text>
+            break;
+    }
+}

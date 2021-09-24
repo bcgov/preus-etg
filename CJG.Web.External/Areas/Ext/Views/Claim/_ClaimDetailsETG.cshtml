@@ -1,0 +1,211 @@
+﻿@using CJG.Core.Entities
+@using CJG.Web.External.Areas.Ext.Controllers
+
+@if (ViewBag.Reporting)
+{
+    <div class="pull-right">
+        @Html.ActionLink("Read the Reimbursement Guidelines", nameof(ApplicationAttachmentController.DownloadResource), typeof(ApplicationAttachmentController), new { filename = $"{ViewBag.GrantProgramCode}-reimbursement-guidelines", message = "guidelines" }, null)
+    </div>
+    <br />
+}
+<div ng-if="!model.RequireAllParticipantsBeforeSubmission && model.Claim.CountParticipants < model.Claim.MaximumParticipants">
+    <div>
+        <div class="alert alert--warning notice--icon"><p>{{ model.Claim.CountParticipants }} out of {{ model.Claim.MaximumParticipants }} participants have submitted their Participant Information Form. Participants who have not submitted their Participant Information Forms will not be eligible in your claim.</p></div>
+    </div>
+</div>
+
+<div ng-if="model.Claim.ClaimAssessmentNotes != null">
+    <div>
+        <strong>Assessment Notes</strong>
+    </div>
+    <div class="message-box">
+        <span class="inline-help" ng-bind-html="model.Claim.ClaimAssessmentNotes"></span>
+    </div>
+</div>
+
+<div class="clearfix clearfix">
+    <div class="row--alert" ng-if="EligibleCostSummaryMessage">
+        <div class="alert alert--deafult alert--error" role="alert" ng-bind-html="EligibleCostSummaryMessage"></div>
+    </div>
+    <div class="row--alert" ng-if="EligibleCostSuccessMessage">
+        <div class="alert alert--deafult alert--success" role="alert" ng-bind-html="EligibleCostSuccessMessage"></div>
+    </div>
+
+    <ul class="panel-bar k-widget k-reset k-header k-panelbar" style="margin-bottom: 0px;" ng-if="model.Claim.EligibleCosts.length > 0" id="panelBar">        
+        <li class="k-item k-state-default" ng-if="model.RequireAllParticipantsBeforeSubmission">
+            <span class="panel-bar__heading k-link k-header" style="padding-right:0px" ng-click="toggleParticipants()" id="panel-header-participantAttendance">
+                <span><b>Participant Attendance</b></span>
+                <span id="panel-header-toggle-icon-participantAttendance" class="small down-arrow pull-right" style="margin-top:5px;"></span>
+                <span class="pull-right" ng-if="model.Claim.IsEditable">
+                    <span class="label {{model.Claim.AttendanceCompleted ? 'label--complete' : 'label--default' }}">
+                        {{model.Claim.AttendanceCompleted ? 'Completed' : 'Incomplete' }}
+                    </span>
+                </span>
+                <span><br />Please report attendance for all participants before starting a claim</span>
+            </span>
+            <div class="panel-bar panel-bar__content" id="participantAttendance" style="padding-left:inherit;padding-right:inherit;">
+                <span class="pull-left">
+                    <strong>I certify the following participants received this training</strong>
+                </span>
+                <table class="participant-form-table">
+                    <tr class="participant-form-tr__header">
+                        <td>Name</td>
+                        <td>Received Training</td>
+                    </tr>                    
+                    <tr ng-repeat="participant in model.Claim.Participants | orderBy : 'Name'">
+                        <td>{{participant.Name}}</td>
+                        <td ng-if="model.Claim.IsEditable">
+                            <input type="radio" ng-model="participant.Attended" id="approved-yes-{{participant.Id}}" name="approved-{{participant.Id}}" ng-value="true" class="form__group--radio-inline" />
+                            <label for="approved-yes-{{participant.Id}}">Yes</label>
+                            <input type="radio" ng-model="participant.Attended" id="approved-no-{{participant.Id}}" name="approved-{{participant.Id}}" ng-value="false" class="form__group--radio-inline" />
+                            <label for="approved-no-{{participant.Id}}">No</label>
+                        </td>
+                        <td ng-if="!model.Claim.IsEditable">
+                            <span class="no-border entry--display-number-align-with-input" ng-if="!model.Claim.IsEditable">
+                                {{ participant.Attended ? "Yes" : "No" }}
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+                <div class="margin-bottom pull-right" ng-if="model.RequireAllParticipantsBeforeSubmission && model.Claim.IsEditable">
+                    <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-click="saveAttendance()">Save Attendance</a>
+                </div>
+            </div>
+        </li>
+        <li class="k-item k-state-default" ng-repeat="eligibleCost in model.Claim.EligibleCosts">
+            <span class="panel-bar__heading k-link k-header" style="padding-right:0px"
+                  ng-click="toggle(eligibleCost, model.Claim.AttendanceCompleted)" id="panel-header-eligible-cost-{{eligibleCost.Id}}">
+                <span class="display-block">
+                    <span>
+                        <b>Expense Type {{$index+1}}: {{eligibleCost.EligibleExpenseTypeCaption}}</b>
+                    </span>
+                    <span ng-if="model.Claim.AttendanceCompleted" id="panel-header-toggle-eligible-cost-icon-{{eligibleCost.Id}}" class="small down-arrow pull-right" style="margin-top:5px;"></span>
+                </span>
+                <div class="notice notice--icon margin-top" ng-if="eligibleCost.SumOfParticipantCostUnitsUnassigned > 0">
+                    <p>
+                        There are {{eligibleCost.SumOfParticipantCostUnitsUnassigned | currency : '$' : 2}} of actual costs reported but not assigned to participants for '{{eligibleCost.EligibleExpenseTypeCaption}}'.
+                    </p>
+                </div>
+            </span>
+            <div class="panel-bar panel-bar__content" id="claim-eligible-cost-{{eligibleCost.Id}}" style="padding-left:inherit;padding-right:inherit;">
+                <div class="entry--claim-line">
+                    <div class="text--uppercase"><b>Total {{eligibleCost.EligibleExpenseTypeCaption}}</b></div>
+                    <br />
+                    <div class="">
+                        <b>Total Approved Amount</b>
+                        <span class="text--bold pull-right type-claim-total entry--display-number-align-with-input">{{ model.Claim.TotalApprovedAmount | currency : '$' : 2 }}</span>
+                    </div>
+                    <div class="text--italic">Refer to Schedule A of your Agreement.</div>
+                </div>
+                <div class="entry--claim-line">
+                    <div>
+                        <b>Number of Participants Approved</b>
+                        <span class="text--bold pull-right type-claim-total entry--display-number-align-with-input">
+                            {{eligibleCost.AgreedMaxParticipants}}
+                        </span>
+                    </div>
+                    <div class="text--italic">Refer to Schedule A of your Agreement.</div>
+                </div>
+                <div class="entry--claim-line">
+                    <div>
+                        <b>Number of Participants who completed training</b>
+                        <span class="text--bold pull-right no-border entry--display-number-align-with-input" ng-if="model.Claim.IsEditable">
+                            {{ model.Claim.CountAttended }}
+                        </span>
+                        <span class="text--bold pull-right no-border entry--display-number-align-with-input" ng-if="!model.Claim.IsEditable">
+                            {{ model.Claim.CountAttended }}
+                        </span>
+                    </div>
+                    <div class="text--italic">Participants must submit a Participant Information Form to be included in your claim.</div>
+                </div>
+
+                <div class="entry--claim-line">
+                    <div>
+                        <b>Paid Amount</b>
+                        <span class="text--bold pull-right no-border" ng-if="model.Claim.IsEditable">
+                            <input type="text" class="input-inline-align input-right-align input--small currency-width-wide" ng-model="eligibleCost.ClaimCost"
+                                   id="claim-cost-{{eligibleCost.Id}}" ng-class="{'has-error':eligibleCost.ClaimCostErrorMessage}" ng-currency="13" ng-change="recalculateTrainingCost(eligibleCost)">
+                        </span>
+                        <span class="text--bold pull-right no-border entry--display-number-align-with-input" ng-if="!model.Claim.IsEditable">
+                            {{ eligibleCost.ClaimCost | currency : '$' : 2 }}
+                        </span>
+                    </div>
+                    <div class="text--italic">Enter the total amount for {{eligibleCost.EligibleExpenseTypeCaption}} paid for all participants that attended the training.</div>
+                </div>
+
+                <div class="entry--claim-line">
+                    <div>
+                        <b>Maximum government contribution per participant</b>
+                        <span class="pull-right no-border">
+                            <span id="claim-max-participant-cost-{{eligibleCost.Id}}" class="text--bold entry--display-number-align-with-input">
+                                {{ eligibleCost.ClaimMaxParticipantReimbursementCost | currency : '$' : 2 }}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="text--italic">This is the maximum amount you may claim per participant.</div>
+                </div>
+                <br />
+
+                <div class="text--uppercase"><b>{{eligibleCost.EligibleExpenseTypeCaption}} PER PARTICIPANT</b></div>
+                <div class="">Now enter the amount for {{eligibleCost.EligibleExpenseTypeCaption}} paid for each individual participant.</div>
+                <br />
+
+                <div class="notice notice--icon" ng-if="!model.RequireAllParticipantsBeforeSubmission"><p>If one of the participants below did not complete training, or if another participant completed training that is not listed here, return to your application home page and click the Report Participants button. There you will be able to remove a participant or to invite a different participant to complete their Personal Information Form. Only after participants have completed their Personal Information Form will they be included in your claim.</p></div>
+                <div class="notice notice--icon" ng-if="model.RequireAllParticipantsBeforeSubmission"><p>Only participants who were approved during the assessment of your application can be included in your reimbursement claim. Please see Schedule A of your Agreement for approved participants. You are responsible for the full cost of training for any participant not listed in Schedule A of your Agreement.</p></div>
+
+                <div class="entry--claim-line">                            
+                        <div ng-repeat="participantCost in eligibleCost.ParticipantCosts | orderBy : 'Name'">
+                            <div class="entry--claim-line">
+                                <div>
+                                    <span class="col--participant-name text--italic text--bold">{{participantCost.Name}}</span>
+                                    <span class="text--bold pull-right no-border" ng-if="model.Claim.IsEditable">
+                                        <input class="text--bold input-inline-align input-right-align input--small currency-width-wide pull-right js-actual-participant-cost" type="text" ng-if="model.Claim.IsEditable" ng-model="participantCost.ClaimParticipantCost"
+                                               id='participant-cost-{{participantCost.Id}}' ng-change="recalculateParticipantCost(participantCost, eligibleCost)" ng-currency="13" />
+                                    </span>
+                                    <span class="text--bold pull-right entry--display-number-align-with-input" ng-if="!model.Claim.IsEditable">{{ participantCost.ClaimParticipantCost | currency : '$' : 2 }}</span>
+                                </div>
+                                <div><b>Amount for {{eligibleCost.EligibleExpenseTypeCaption}} paid</b></div>
+                            </div>
+
+                            <div style="display: block;">
+                                Government contribution per participant
+                                <span class="text--bold pull-right col--government-contribution entry--display-number-align-with-input">{{ participantCost.ClaimReimbursement | currency : '$' : 2 }}</span>
+                            </div>
+                            <span ng-if="model.Claim.IsEditable && !model.RequireAllParticipantsBeforeSubmission">
+                                <span class="pull-right">
+                                    <a href="/Ext/Reporting/Participant/View/{{model.Id}}">Remove Participant</a>
+                                </span>
+                                <br />
+                            </span>
+                            <br />
+                        </div>
+                </div>
+                <div class="entry--claim-line">
+                    <span class="text--italic">
+                        <b>The total Government contribution for {{eligibleCost.EligibleExpenseTypeCaption}}</b>
+                    </span>
+                    <span class="text--bold pull-right entry--display-number-align-with-input" ng-class="{'no-border' : model.Claim.ClaimType == @((int)ClaimTypes.MultipleClaimsWithoutAmendments)}">
+                        {{ eligibleCost.TotalClaimedReimbursement | currency : '$' : 2 }}
+                    </span>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <div style="padding-top:1em;">
+        <h2>
+            <span class="pull-left text--uppercase">
+                <strong>Total Reimbursement Claim:</strong>
+            </span>
+
+            <span class="pull-right">
+                <strong><span class="grand-total entry--display-number-align-with-input">{{model.Claim.TotalClaimReimbursement | currency : '$' : 2}}</span></strong>
+            </span>
+        </h2>
+        <ul class="panel-bar" ng-if="model.Claim.EligibleCosts.length == 0">
+            <text>Selected Claim does not have Eligible Costs</text>
+        </ul>
+        <p>&nbsp;</p>
+    </div>
+
+    <p>&nbsp;</p>
+</div>

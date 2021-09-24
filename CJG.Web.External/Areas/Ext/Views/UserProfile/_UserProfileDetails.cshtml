@@ -1,0 +1,120 @@
+﻿<div>
+    <div class="form__group">
+        <div class="form__label">Position/Title <abbr title='Required'>*</abbr></div>
+        <div class="form__control">
+            <div class="control-wrapper">
+                <input type="text" class="input--medium" ng-model="model.UserProfileDetails.Title" ng-validation>
+            </div>
+        </div>
+    </div>
+    <div class="form__group">
+        <label class="form__label">Preferred Contact <span class="nowrap">Number <abbr title="Required">*</abbr></span></label>
+        <div class="form__control">
+            <div ng-validation="errors.UserProfileDetails.Phone">
+                <span class="form__group--tel validation-group">
+                    <input type="text" class="input--small" ng-model="model.UserProfileDetails.PhoneAreaCode" maxlength="3" ng-number ng-class="{ 'has-error' : errors.UserProfileDetails.Phone }">
+                    <span class="spacer">-</span>
+                    <input type="text" class="input--small" ng-model="model.UserProfileDetails.PhoneExchange" maxlength="3" ng-number ng-class="{ 'has-error' : errors.UserProfileDetails.Phone }">
+                    <span class="spacer">-</span>
+                    <input type="text" class="input--small" ng-model="model.UserProfileDetails.PhoneNumber" maxlength="4" ng-number ng-class="{ 'has-error' : errors.UserProfileDetails.Phone }">
+                </span>
+                <span class="form__group--tel-ext">
+                    <label>Ext</label>
+                    <input type="text" class="input--small" ng-model="model.UserProfileDetails.PhoneExtension" maxlength="10" ng-number ng-validation>
+                </span>
+                <p class="inline-help">This is your primary business phone number</p>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="subheader--body">Business address</h3>
+
+    <p>The address of the business you work at. This can be different from your head office.</p>
+
+    <div class="form__group">
+        <div class="label-wrapper"><label class="form__label">Address line 1 <abbr title="Required">*</abbr></label></div>
+        <div class="control-wrapper form-control"><input type="text" class="input--full" ng-model="model.UserProfileDetails.PhysicalAddressLine1" ng-validation></div>
+    </div>
+
+    <div class="form__group">
+        <div class="label-wrapper"><label class="form__label">Address line 2</label></div>
+        <div class="control-wrapper form-control"><input type="text" class="input--full" ng-model="model.UserProfileDetails.PhysicalAddressLine2" ng-validation></div>
+    </div>
+
+    <div class="form__group">
+        <div class="label-wrapper"><label class="form__label">City <abbr title="Required">*</abbr></label></div>
+        <div class="control-wrapper form-control"><input type="text" class="input--full" ng-model="model.UserProfileDetails.PhysicalCity" ng-validation></div>
+    </div>
+
+    <div class="form__group input--medium">
+        <div class="label-wrapper"><label class="form__label">Province <abbr title="Required">*</abbr></label></div>
+        <div class="control-wrapper">
+            <div class="selectmenu input--medium" ng-validation="errors.UserProfileDetails.PhysicalRegionId">
+                <select class="input--medium form-control" ng-model="model.UserProfileDetails.PhysicalRegionId" ng-options="item.Key as item.Value for item in model.UserProfileDetails.Provinces">
+                    <option value="" class="">&lt; Select value &gt;</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="label-wrapper"><label class="form__label">Postal Code <abbr title="Required">*</abbr></label></div>
+        <div class="control-wrapper form-control"><input type="text" class="input--small" ng-model="model.UserProfileDetails.PhysicalPostalCode" maxlength="6" ng-postal ng-validation></div>
+    </div>
+
+    <h3 class="subheader--body">Mailing Address</h3>
+
+    <p>Mailing address at which you receive business mail.</p>
+
+    <div class="form__group">
+        <input type="checkbox" ng-model="model.UserProfileDetails.MailingAddressSameAsBusiness" id="same-as-physical" name="same-as-physical" />
+        <label class="checkbox" for="same-as-physical">Mailing address is the same as business address.</label>
+    </div>
+
+    <div ng-if="!model.UserProfileDetails.MailingAddressSameAsBusiness" class="form__section">
+        <div class="form__group">
+            <div class="label-wrapper"><label class="form__label">Address line 1 <abbr title="Required">*</abbr></label></div>
+            <div class="control-wrapper form-control"><input type="text" class="input--full" ng-model="model.UserProfileDetails.MailingAddressLine1" ng-validation></div>
+        </div>
+
+        <div class="form__group">
+            <div class="label-wrapper"><label class="form__label">Address line 2</label></div>
+            <div class="control-wrapper form-control"><input type="text" class="input--full" ng-model="model.UserProfileDetails.MailingAddressLine2" ng-validation></div>
+        </div>
+
+        <div class="form__group">
+            <div class="label-wrapper"><label class="form__label">City <abbr title="Required">*</abbr></label></div>
+            <div class="control-wrapper form-control"><input type="text" class="input--full" ng-model="model.UserProfileDetails.MailingCity" ng-validation></div>
+        </div>
+
+        <div class="form__group input--medium">
+            <div class="label-wrapper"><label class="form__label">Province <abbr title="Required">*</abbr></label></div>
+            <div class="control-wrapper">
+                <div class="selectmenu input--medium" ng-validation="errors.UserProfileDetails.MailingRegionId">
+                    <select class="input--medium form-control" ng-model="model.UserProfileDetails.MailingRegionId" ng-options="item.Key as item.Value for item in model.UserProfileDetails.Provinces">
+                        <option value="" class="">&lt; Select value &gt;</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form__group">
+            <div class="label-wrapper"><label class="form__label">Postal Code <abbr title="Required">*</abbr></label></div>
+            <div class="control-wrapper form-control"><input type="text" class="input--small" ng-model="model.UserProfileDetails.MailingPostalCode" maxlength="6" ng-postal ng-validation></div>
+        </div>
+    </div>
+
+    <h3 class="subheader--body">Notification preferences</h3>
+
+    <p>
+        Email updates are used occasionally to inform you of grant program changes. The updates
+        will contain information useful to grant program users.
+    </p>
+
+    <div class="form__group">
+        <input type="checkbox" ng-model="model.UserProfileDetails.Subscribe" id="notification-subscribe" name="notification-subscribe" />
+        <label class="checkbox" for="notification-subscribe">
+            Subscribe to email updates from the skills training grant programs you are using
+        </label>
+    </div>
+</div>

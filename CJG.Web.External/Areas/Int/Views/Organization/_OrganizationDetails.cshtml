@@ -1,0 +1,199 @@
+﻿<div>
+    <div class="dialog-header">
+        <h3>{{ngDialogData.title}}</h3>
+    </div>
+    <div class="dialog-content">
+        <div class="modal-content">
+            <div id="select-training-provider" class="form well">
+                <div>
+                    <div class="row row--alert" ng-if="alert.message">
+                        <div class="alert alert--default" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="notice notice--icon" ng-if="!ngDialogData.model.org.OrgId">
+                            <p>You are creating or editing the master list of organizations; make sure you have searched for the organization before you create a new organization.</p>
+                        </div>
+
+                        <div class="form__group" ng-if="ngDialogData.model.org.OrgId">
+                            <label class="form__label" for="OrganizationId">ID</label>
+                            <div>{{ngDialogData.model.org.OrgId}}</div>
+                        </div>
+
+                        <div class="form__group">
+                            <label class="form__label" for="LegalName">Legal Name</label>
+                            <div>{{ngDialogData.model.org.LegalName}}</div>
+                        </div>
+
+                        <div class="form__group">
+                            <label class="form__label" for="DoingBusinessAs">Doing Business As</label>
+                            <div>{{ngDialogData.model.org.DoingBusinessAs}}</div>
+                        </div>
+
+                        <div class="form__group form__group--radio-inline">
+                            <label class="form__label">Organization type <abbr title="Required">*</abbr></label>
+                            <div class="form__control">
+                                <div class="form-item" style="display: inline-block; width: auto;" ng-repeat="type in organizationTypes">
+                                    <input id="option-{{type.Key}}" type="radio" class="k-valid" name="OrganizationTypeId" ng-value="type.Key"
+                                           ng-model="ngDialogData.model.org.OrganizationTypeId" />
+                                    <label for="option-{{type.Key}}">{{type.Value}}</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form__group">
+                            <div class="form__label">Legal structure <abbr title="Required">*</abbr></div>
+                            <div class="form__control">
+                                <div class="control-wrapper">
+                                    <div class="wrapper--dropdown selectmenu input--medium" ng-validation="errors.LegalStructureId">
+                                        <select ng-model="ngDialogData.model.org.LegalStructureId" ng-options="item.Key as item.Value for item in legalStructures" class="input--medium">
+                                            <option value="">{{'&lt; Select Value &gt;'}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form__group">
+                            <label class="form__label" for="YearEstablished">Year established <abbr title="Required">*</abbr></label>
+                            <div class="form__control">
+                                <input type="text" id="YearEstablished" class="input--medium" maxlength="250" ng-model="ngDialogData.model.org.YearEstablished" ng-validation />
+                            </div>
+                        </div>
+
+                        <div class="form__group">
+                            <label class="form__label" for="NumberOfEmployeesWorldwide">Number of employees worldwide (including BC) <abbr title="Required">*</abbr></label>
+                            <div class="form__control">
+                                <input type="text" id="NumberOfEmployeesWorldwide" class="input--medium" maxlength="250" ng-model="ngDialogData.model.org.NumberOfEmployeesWorldwide" ng-validation />
+                            </div>
+                        </div>
+
+                        <div class="form__group">
+                            <label class="form__label" for="NumberOfEmployeesInBC">Number of employees in BC <abbr title="Required">*</abbr></label>
+                            <div class="form__control">
+                                <input type="text" id="NumberOfEmployeesInBC" class="input--medium" maxlength="250" ng-model="ngDialogData.model.org.NumberOfEmployeesInBC" ng-validation />
+                            </div>
+                        </div>
+
+                        <div class="form__group">
+                            <label class="form__label" for="AnnualTrainingBudget">Money spent each year on average for training <abbr title="Required">*</abbr></label>
+                            <div class="form__control">
+                                <input type="text" id="AnnualTrainingBudget" class="input--medium" maxlength="250" ng-model="ngDialogData.model.org.AnnualTrainingBudget" ng-validation />
+                            </div>
+                        </div>
+
+                        <div class="form__group">
+                            <label class="form__label" for="AnnualEmployeesTrained">Number of employees trained on average each year <abbr title="Required">*</abbr></label>
+                            <div class="form__control">
+                                <input type="text" class="input--medium" id="AnnualEmployeesTrained" maxlength="250" ng-model="ngDialogData.model.org.AnnualEmployeesTrained" ng-validation />
+                            </div>
+                        </div>
+
+                        <div class="form__group">
+                            <label class="form__label">North American Industry Classification System (<b>NAICS</b>) code for your primary sector <abbr title="Required">*</abbr></label>
+                            <div class="form__control">
+                                <div class="control-wrapper input--full"
+                                     ng-validation="errors.Naics1Id">
+                                    <select class="form-control input--full"
+                                            ng-model="ngDialogData.model.org.Naics1Id" ng-value="2211"
+                                            ng-options="item.Key as item.Value for item in naics1"
+                                            ng-change="changeNAICS(2)">
+                                        <option value="">&lt; Select Value &gt;</option>
+                                    </select>
+                                </div>
+                                <div class="control-wrapper margin-top-10 input--full"
+                                     ng-validation="errors.Naics2Id"
+                                     ng-if="ngDialogData.model.org.Naics1Id">
+                                    <select class="form-control input--full"
+                                            ng-model="ngDialogData.model.org.Naics2Id"
+                                            ng-options="item.Key as item.Value for item in naics2"
+                                            ng-change="changeNAICS(3)">
+                                        <option value="">&lt; Select Value &gt;</option>
+                                    </select>
+                                </div>
+                                <div class="control-wrapper margin-top-10 input--full"
+                                     ng-validation="errors.Naics3Id"
+                                     ng-if="ngDialogData.model.org.Naics2Id">
+                                    <select class="form-control input--full"
+                                            ng-model="ngDialogData.model.org.Naics3Id"
+                                            ng-options="item.Key as item.Value for item in naics3"
+                                            ng-change="changeNAICS(4)">
+                                        <option value="">&lt; Select Value &gt;</option>
+                                    </select>
+                                </div>
+                                <div class="control-wrapper margin-top-10 input--full"
+                                     ng-validation="errors.Naics4Id"
+                                     ng-if="ngDialogData.model.org.Naics3Id">
+                                    <select class="form-control input--full"
+                                            ng-model="ngDialogData.model.org.Naics4Id"
+                                            ng-options="item.Key as item.Value for item in naics4"
+                                            ng-change="changeNAICS(5)">
+                                        <option value="">&lt; Select Value &gt;</option>
+                                    </select>
+                                </div>
+                                <div class="control-wrapper margin-top-10 input--full"
+                                     ng-validation="errors.Naics5Id"
+                                     ng-if="ngDialogData.model.org.Naics4Id">
+                                    <select class="form-control input--full"
+                                            ng-model="ngDialogData.model.org.Naics5Id"
+                                            ng-options="item.Key as item.Value for item in naics5">
+                                        <option value="">&lt; Select Value &gt;</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 class="subheader--body">Head Office Mailing Address</h3>
+                        <div class="form__group">
+                            <label class="form__label">Address line 1 <abbr title="Required">*</abbr></label>
+                            <div class="form__control">
+                                <input type="text" class="input--medium" ng-model="ngDialogData.model.org.HeadOfficeAddress.AddressLine1" ng-validation />
+                            </div>
+                        </div>
+
+                        <div class="form__group">
+                            <label class="form__label">Address line 2</label>
+                            <div class="form__control">
+                                <input type="text" class="input--medium" ng-model="ngDialogData.model.org.HeadOfficeAddress.AddressLine2" />
+                            </div>
+                        </div>
+
+                        <div class="form__group">
+                            <label class="form__label">City <abbr title="Required">*</abbr></label>
+                            <div class="form__control">
+                                <input type="text" class="input--medium" ng-model="ngDialogData.model.org.HeadOfficeAddress.City" ng-validation />
+                            </div>
+                        </div>
+
+                        <div class="form__group">
+                            <div class="form__label">Province <abbr title="Required">*</abbr></div>
+                            <div class="form__control">
+                                <div class="control-wrapper">
+                                    <div class="wrapper--dropdown selectmenu input--medium">
+                                        <select class="input--medium"
+                                                ng-model="ngDialogData.model.org.HeadOfficeAddress.RegionId"
+                                                ng-options="item.Key as item.Value for item in provinces"
+                                                ng-validation></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form__group">
+                            <label class="form__label">Postal Code <abbr title="Required">*</abbr></label>
+                            <div class="form__control">
+                                <input type="text" class="input--small" ng-model="ngDialogData.model.org.HeadOfficeAddress.PostalCode" maxlength="6" ng-postal ng-validation />
+                            </div>
+                        </div>
+
+                        <div>
+                            <button class="btn btn--primary" ng-if="!ngDialogData.model.org.OrgId" ng-click="saveOrganization()">Add Organization</button>
+                            <button class="btn btn--primary" ng-if="ngDialogData.model.org.OrgId" ng-click="saveOrganization()">Save Organization</button>
+                            <button class="btn btn--secondary" ng-click="cancelOrganization()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

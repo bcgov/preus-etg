@@ -1,0 +1,18 @@
+﻿@using CJG.Core.Entities
+@model CJG.Core.Entities.TrainingCostStates
+@{
+    switch (Model)
+    {
+        case TrainingCostStates.Complete:
+            <text>
+                <span class="label label--complete">Complete</span>
+            </text>
+            break;
+        case TrainingCostStates.Incomplete:
+        default:
+            <text>
+                <span class="label label--incomplete">Incomplete</span>
+            </text>
+            break;
+    }
+}

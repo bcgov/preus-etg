@@ -1,0 +1,51 @@
+﻿<div ng-controller="ApplicationDetailsNotification">
+	<div class="form-section">
+		<div>
+			<!-- Header -->
+			<h2 class="header__title">Notification</h2>
+		</div>
+		<!-- Error message -->
+		<div class="row row--alert" ng-if="alert.message">
+			<div class="alert alert--default" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message">
+			</div>
+		</div>
+		<div class="">
+			<!-- Name -->
+			<div class="form__group">
+				<div class="form__label k">Name</div>
+				<div class="form__control">{{model.Name}}</div>
+				<!-- Status -->
+				<div class="form__label">Status</div>
+				<div class="form__control">{{model.Status}}</div>
+				<!-- Sent On -->
+				<div class="form__label">Sent On</div>
+
+				<div class="form__control">{{model.SentOn ? toPST(model.SentOn, 'YYYY-MM-DD hh:mm a'): ''}}</div>
+			</div>
+			<!-- Description -->
+			<div class="form__group">
+				<div class="form__label">Description</div>
+				<div class="form__control">{{model.Description}}</div>
+			</div>
+			<div class="form__group">
+				<div class="form__label">To</div>
+				<div class="form__control">{{model.EmailRecipients}}</div>
+			</div>
+			<div class="form__group">
+				<div class="form__label">Subject</div>
+				<div class="form__control">{{model.EmailSubject}}</div>
+			</div>
+		</div>
+		<!-- Body -->	
+		<div>
+			<div id="Template" class="dataTables_scroll">
+				<div class="form__control" ng-bind-html="model.EmailBody"></div>
+			</div>
+		</div>
+	</div>
+	<hr />
+	<div>
+		<button class="btn btn--secondary pull-left" ng-click="closeThisDialog()">Cancel</button>
+		<button class="btn btn--primary pull-right" ng-click="sendNotification()">{{model.Status == 'Sent' ? 'Resend' : 'Send'}}</button>
+	</div>
+</div>

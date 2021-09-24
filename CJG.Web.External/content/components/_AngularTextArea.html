@@ -1,0 +1,16 @@
+﻿<span class="form__group--edit-wrapper">
+	<label class="label-wrapper" ng-if="$ctrl.label || $ctrl.ngLabel">
+		{{$ctrl.label || $ctrl.ngLabel}}
+	</label>
+	<span class="control-wrapper">
+		<textarea ng-show="$ctrl.editing()"
+				  ng-model="$ctrl.ngModel"
+				  ng-change="$ctrl.ngChange()"
+				  ng-class="{'has-error': $ctrl.getError()}"
+				  ng-disabled="$ctrl.ngDisabled">
+				{{$ctrl.default}}
+			</textarea>
+		<text ng-if="!$ctrl.editing()">{{ $ctrl.ngModel }}</text>
+		<span ng-if="$ctrl.getError()" class="field-validation-error">{{$ctrl.getError()}}</span>
+	</span>
+</span>

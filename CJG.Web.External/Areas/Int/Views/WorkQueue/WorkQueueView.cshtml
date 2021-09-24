@@ -1,0 +1,153 @@
+﻿@model int
+@{
+	ViewBag.Title = "Grant Files";
+}
+
+<div ng-controller="WorkQueue" user-id="@Model" class="internal-application">
+	<div>
+		<div class="application-header internal-application-header">
+			<h2>Grant Files</h2>
+
+			<div class="form__group">
+				<div class="form__control" ng-if="showMyFiles()" style="vertical-align: bottom;">
+					<button class="btn btn--secondary" ng-click="selectMyFiles($event)">My Files</button>
+				</div>
+				<div class="form__control">
+					<div class="selectmenu">
+						<select ng-model="filter.AssessorId" ng-options="item.Key as item.Value for item in assessors" ng-change="changeAssessor()" ng-keypress="search($event)">
+							<option value="">All Assessors</option>
+						</select>
+					</div>
+				</div>
+				<div class="form__control margin-left-10" ng-show="showAssigned()" style="vertical-align: bottom;">
+					<button class="btn btn--secondary" ng-click="toggleAssigned($event)">{{ filter.IsAssigned ? 'All Assigned' : filter.IsAssigned === false ? 'Not Assigned' : 'All' }}</button>
+				</div>
+				<div class="form__control margin-left-10">
+					<div class="selectmenu">
+						<select ng-model="filter.FiscalYearId" ng-options="item.Key as item.Value for item in fiscalYears" ng-change="loadTrainingPeriods()" ng-keypress="search($event)">
+							<option value="">All Fiscal Periods</option>
+						</select>
+					</div>
+				</div>
+				<div class="form__control margin-left-10">
+					<div class="selectmenu input--medium">
+						<select ng-model="filter.GrantProgramId" ng-options="item.Key as item.Value for item in grantPrograms" class="input--medium" ng-change="loadGrantStreams()" ng-keypress="search($event)">
+							<option value="">All Grant Programs</option>
+						</select>
+					</div>
+				</div>
+                <div class="form__control margin-left-10">
+                    <div class="selectmenu input--medium">
+                        <select ng-model="filter.GrantStreamId" ng-options="item.Key as item.Value for item in grantStreams" class="input--medium" ng-change="loadTrainingPeriods()" ng-keypress="search($event)">
+                            <option value="">All Grant Streams</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form__control margin-left-10">
+                    <div class="selectmenu">
+                        <select ng-model="filter.TrainingPeriodCaption" ng-options="item.Key as item.Value for item in trainingPeriods" ng-keypress="search($event)">
+                            <option value="">All Intake Periods</option>
+                        </select>
+                    </div>
+                </div>
+				<div class="form__control margin-left-10">
+					<button class="btn btn--primary" ng-click="applyFilter()">Apply Filter</button>
+				</div>
+				<div class="form__control margin-left-10">
+					<button class="btn btn--secondary" ng-click="clearFilter()">Clear</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="application-body internal-application-body">
+
+			<div>
+				@Html.Partial("~/Areas/Int/Views/WorkQueue/_Filters.cshtml")
+			</div>
+
+			<div ng-if="alert.message" class="row row--alert">
+				<div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+			</div>
+
+			<div class="form__group">
+				<div class="form__control float-left margin-right-10">
+					<div>Quantity</div>
+					<div class="selectmenu">
+						<select ng-model="filter.Quantity" ng-options="item as item for item in quantities" class="input--small" ng-change="applyFilter()"></select>
+					</div>
+				</div>
+
+				<div class="form__control float-left margin-right-10">
+					<div>Search File Number</div>
+					<input style="height: 30px;" ng-model="filter.FileNumber" ng-keypress="search($event)" />
+				</div>
+
+				<div class="form__control float-left">
+					<div>Applicant</div>
+					<input style="height: 30px;" ng-model="filter.Applicant" ng-keypress="search($event)" />
+				</div>
+			</div>
+			<div class="form-table">
+				<div class="form-table-heading">
+					<div class="form-table-cell width-100px">
+						<label class="action {{sortDirection('FileNumber')}}" ng-click="sort('FileNumber')">File No.</label>
+					</div>
+					<div class="form-table-cell">
+						<label class="action {{sortDirection('OrganizationLegalName')}}" ng-click="sort('OrganizationLegalName')">Applicant</label>
+					</div>
+					<div class="form-table-cell">
+						<label class="action {{sortDirection('StartDate')}}" ng-click="sort('StartDate')">Training Start</label>
+					</div>
+					<div class="form-table-cell">
+						<label class="action {{sortDirection('ApplicationStateInternal')}}" ng-click="sort('ApplicationStateInternal')">Status</label>
+					</div>
+					<div class="form-table-cell">
+						<label class="action {{sortDirection('StateChanges')}}" ng-click="sort('StateChanges')">Status Changed</label>
+					</div>
+					<div class="form-table-cell">
+						<label class="action {{sortDirection('GrantOpening.GrantStream.Name')}}" ng-click="sort('GrantOpening.GrantStream.Name')">Stream</label>
+					</div>
+				</div>
+				<div ng-repeat="application in model.Items" class="form-table-row" ng-dblclick="loadDetails(application)">
+					<div class="form-table-cell width-100px">
+						<a href="/Int/Application/Details/View/{{application.Id}}">{{application.FileNumber||'*******'}}</a>
+					</div>
+                    <div class="form-table-cell">
+                        <img class="center" ng-if="application.RiskFlag" src="../../../../images/icons/risk-flag.png" />
+                        <a href="/Int/Organization/History/View/{{application.OrgId}}">{{application.Applicant}}</a>
+                    </div>
+					<div class="form-table-cell">
+						{{toPST(application.StartDate)}}
+					</div>
+					<div class="form-table-cell">
+						{{application.ApplicationStateInternalCaption}}
+					</div>
+					<div class="form-table-cell">
+						{{toPST(application.StatusChanged, 'YYYY-MM-DD hh:mm')}}
+					</div>
+					<div class="form-table-cell">
+						{{application.GrantStreamName}}
+					</div>
+				</div>
+			</div>
+			<div>
+				<span ng-show="model.Total">
+					Showing {{pager.items.first}} to {{pager.items.last}} of {{pager.items.total}} entries
+				</span>
+				<div class="button-group">
+					<div class="float-right">
+						<button class="btn btn--secondary internal-previous" ng-disabled="!pager.enablePrevious" tabindex="0" ng-click="!pager.enablePrevious || applyFilter(pager.page - 1)">Previous</button>
+						<span>
+							<button class="btn btn--secondary btn--page" tabindex="0" ng-show="pager.showFirstPage" ng-click="applyFilter(pager.showFirstPage)">{{pager.showFirstPage}}</button>
+							<span class="ellipsis" ng-show="pager.showFirstPage">…</span>
+							<button ng-repeat="page in pager.pages" class="btn btn--secondary btn--page" ng-class="{ 'btn--current' : pager.page === page }" tabindex="0" ng-click="applyFilter(page)" ng-disabled="pager.page === page">{{page}}</button>
+							<span class="ellipsis" ng-show="pager.showLastPage">…</span>
+							<button class="btn btn--secondary btn--page" tabindex="0" ng-show="pager.showLastPage" ng-click="applyFilter(pager.showLastPage)">{{pager.showLastPage}}</button>
+						</span>
+						<button class="btn btn--secondary internal-next" ng-disabled="!pager.enableNext" tabindex="0" ng-click="!pager.enableNext || applyFilter(pager.page + 1)">Next</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

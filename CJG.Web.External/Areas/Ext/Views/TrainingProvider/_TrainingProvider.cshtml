@@ -1,0 +1,286 @@
+﻿<div class="form__group">
+    <div class="label-wrapper"><label class="form__label">Training provider name <abbr title="Required">*</abbr></label></div>
+    <div class="control-wrapper form-control"> <input type="text" class="input--medium" ng-model="model.Name" ng-validation></div>
+</div>
+
+@Html.IncludeCanadaPostAutoComplete()
+
+<div class="form__group">
+    <div class="form__label">
+        Type of training provider <abbr title='Required'>*</abbr>
+        <span class="inline-help tooltip">
+            <span class="tooltiptext edit-training-provider">
+                <b>Training Provider Definitions</b>
+                <br /><b>B.C. Public Post-Secondary Institution</b> - Authorized under provincial legislation to deliver post-secondary education and training. List of <a href="https://www2.gov.bc.ca/gov/content/education-training/post-secondary-education/find-a-program-or-institution/find-an-institution" target="_blank">BC public post-secondary institutions </a>. Examples: UBC, SFU, UVic.
+                <br /><b>Trade or technical school designated by the Industry Training Authority</b> - Colleges, universities and private institutions designated by the ITA that provide technical (or classroom) training for apprenticeship and pre-apprenticeship programs. List of <a href="https://www.itabc.ca/training-providers/overview" target="_blank">designated training providers.</a> Examples: BCIT, Thompson Rivers University, Pacific Institute of Culinary Arts.
+                <br /><b>Private training institution certified by the Private Training Institutions Branch.</b> - Institutions certified by the Private Training Institutions Branch, which administers how standards for these schools are met. List of <a href="http://www.privatetraininginstitutions.gov.bc.ca/students/pti-directory" target="_blank">Institutions Certified by PTIB.</a> Examples: Sprott Shaw College, Vancouver Island College.
+                <br /><b>Private training institution not certified by the Private Training Institutions Branch.</b> - Institutions not certified by the Private Training Institutions Branch. Students must check with the institution to make sure it meets quality education standards or is authorized to grant degrees in B.C. Examples: Dale Carnegie Training, Columbia Mountains Institute of Applied Ecology, Building it Right.
+                <br /><b>Training organization run by a B.C. school district</b> - Ongoing adult education. Examples: Langley Continuing Education, Burnaby Community and Continuing Education.
+                <br /><b>Industry association</b> - An organization that operates in a specific industry that supports companies and employers of that industry. Example: BC Construction Safety Alliance, CPA Canada.
+                <br /><b>Small Business BC</b> - Training delivered by Small Business BC.
+                <br /><b>In-house training</b> - Training developed by the organization in which they are used.
+            </span>
+        </span>
+    </div>
+    <div class="form__control">
+        <div class="control-wrapper selectmenu input--full" ng-validation="errors.TrainingProviderTypeId">
+            <select ng-model="model.TrainingProviderTypeId" ng-options="item.Id as item.Caption for item in ProviderTypes" class="input--full" ng-change="setTrainingProviderTypeName()">
+                <option value="" selected="selected">&lt; Select value &gt;</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div ng-show="model.ProofOfInstructorQualifications">
+    <div class="form__group">
+        <label class="form__label">Proof of instructors qualifications from Training Provider <abbr title="Required">*</abbr></label>
+        <p>
+            One file of the following type may be attached: PDF, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}} MB.
+        </p>
+        <div ng-validation="errors.ProofOfQualificationsDocument">
+            <div class="form__control" ng-if="model.ProofOfQualificationsDocument.FileName">
+                <a class="link"
+                   ng-if="model.ProofOfQualificationsDocument.Id"
+                   ng-click="downloadAttachment(model.ProofOfQualificationsDocument.Id)">
+                    {{model.ProofOfQualificationsDocument.FileName}}
+                </a>
+                <span ng-if="!model.ProofOfQualificationsDocument.Id">
+                    {{model.ProofOfQualificationsDocument.FileName}}
+                </span>
+                <button class="btn btn--primary pull-right" ng-click="changeAttachment('ProofOfQualificationsDocument')">Change</button>
+            </div>
+            <div class="form__control" ng-if="!model.ProofOfQualificationsDocument.FileName">
+                <span>None</span>
+                <button class="btn btn--primary pull-right" ng-click="addAttachment('ProofOfQualificationsDocument')">Upload</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div ng-show="model.CourseOutline">
+    <div class="form__group">
+        <label class="form__label">Course outline including defined instructional objectives, delivery method and assessment methods <abbr title="Required">*</abbr></label>
+        <p>One file of the following type may be attached: PDF, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}} MB.</p>
+
+        <div ng-validation="errors.CourseOutlineDocument">
+            <div class="form__control" ng-if="model.CourseOutlineDocument.FileName">
+                <a class="link"
+                   ng-if="model.CourseOutlineDocument.Id"
+                   ng-click="downloadAttachment(model.CourseOutlineDocument.Id)">
+                    {{model.CourseOutlineDocument.FileName}}
+                </a>
+                <span ng-if="!model.CourseOutlineDocument.Id">
+                    {{model.CourseOutlineDocument.FileName}}
+                </span>
+                <button class="btn btn--primary pull-right" ng-click="changeAttachment('CourseOutlineDocument')">Change</button>
+            </div>
+            <div class="form__control" ng-if="!model.CourseOutlineDocument.FileName">
+                <span>None</span>
+                <button class="btn btn--primary pull-right" ng-click="addAttachment('CourseOutlineDocument')">Upload</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form__group" ng-if="model.SelectedDeliveryMethodIds != 3 &&
+                 model.SelectedDeliveryMethodIds != null &&
+                 model.SelectedDeliveryMethodIds != 0">
+    <h3 class="subheader--body">Address of Training Location</h3>
+
+    <div class="form__group form__group--radio-inline">
+        <div ng-validation="errors.IsCanadianAddress">
+            <div class="form-item">
+                <input type="radio" id="IsCanadianAddressTrue" ng-value="true" ng-model="model.IsCanadianAddress" name="model.IsCanadianAddress" ng-change="countryChange()">
+                <label for="IsCanadianAddressTrue">Canada</label>
+            </div>
+            <div class="form-item">
+                <input type="radio" id="IsCanadianAddressFalse" ng-value="false" ng-model="model.IsCanadianAddress" name="model.IsCanadianAddress" ng-change="countryChange()">
+                @*<label for="IsCanadianAddressFalse">Other Countries</label>*@
+                <label for="IsCanadianAddressFalse">Other Country</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form__group" ng-show="!model.IsCanadianAddress">
+        <label class="form__label">Country <abbr title="Required">*</abbr></label>
+        <div class="form__control">
+            <div class="control-wrapper selectmenu input--medium" ng-validation="errors.CountryId">
+                <select ng-model="model.CountryId" ng-options="item.Key as item.Caption for item in Countries | filter: filterItems" class="input--medium">
+                    <option id="Country" value="" selected="selected">&lt; Select value &gt;</option>
+                </select>
+            </div>
+            <p class="text--small">
+                Select the country if your training provider is outside of Canada.
+            </p>
+        </div>
+    </div>
+  
+    <div class="form__group">
+        <div class="label-wrapper"><label class="form__label">Address line 1 <abbr title="Required">*</abbr></label></div>
+        <div class="control-wrapper form-control"><input Id="AddressLine1" type="text" class="input--full" ng-model="model.AddressLine1" ng-mouseleave ="AddressLine1Change()" ng-validation></div>
+    </div>
+
+
+    <div class="form__group">
+        <div class="label-wrapper"><label class="form__label">Address line 2</label></div>
+        <div class="control-wrapper form-control"><input id="AddressLine2" type="text" class="input--full" ng-model="model.AddressLine2" ng-validation></div>
+    </div>
+
+    <div class="form__group">
+        <div class="label-wrapper"><label class="form__label">City <abbr title="Required">*</abbr></label></div>
+        <div class="control-wrapper form-control"><input Id="City" type="text" class="input--medium" ng-model="model.City" ng-validation></div>
+    </div>
+
+    <div class="form__group" ng-show="model.IsCanadianAddress">
+        <label class="form__label">Province <abbr title="Required">*</abbr></label>
+        <div class="form__control">
+            <div class="control-wrapper selectmenu input--medium" ng-validation="errors.RegionId">
+                <select Id="RegionId" class="input--medium form-control" ng-model="model.RegionId" ng-options="item.Key as item.Caption for item in Provinces">
+                    <option value="" selected="selected">&lt; Select value &gt;</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="form__group" ng-show="model.IsCanadianAddress">
+        <div class="form__group">
+            <div class="label-wrapper"><label class="form__label">Postal code <abbr title="Required">*</abbr></label></div>
+            <div class="control-wrapper form-control"><input Id="PostalCode" type="text" class="input--medium" ng-model="model.PostalCode" maxlength="6" ng-postal ng-validation></div>
+        </div>
+    </div>
+
+    <div ng-show="!model.IsCanadianAddress">
+        <div class="form__group">
+            <div class="label-wrapper"><label class="form__label">Province / State / Region <abbr title="Required">*</abbr></label></div>
+            <div class="control-wrapper form-control"><input Id="OtherRegion" type="text" class="input--medium" ng-model="model.OtherRegion" ng-validation></div>
+        </div>
+        <div class="form__group">
+            <div class="label-wrapper"><label class="form__label">Postal / Zip Code <abbr title="Required">*</abbr></label></div>
+            <div class="control-wrapper form-control"><input id="OtherZipCode" type="text" class="input--medium" ng-model="model.OtherZipCode" ng-validation></div>
+        </div>
+    </div>
+</div>
+<h3 class="subheader--body">Address of Training Provider</h3>
+
+<div class="form__group form__group--radio-inline">
+    <div ng-validation="errors.IsCanadianAddressTrainingProvider">
+        <div class="form-item">
+            <input type="radio" id="IsCanadianAddressTrainingProviderTrue" ng-value="true" ng-model="model.IsCanadianAddressTrainingProvider" name="model.IsCanadianAddressTrainingProvider" ng-change="countryChangeTrainingProvider()">
+            <label for="IsCanadianAddressTrainingProviderTrue">Canada</label>
+        </div>
+        <div class="form-item">
+            <input type="radio" id="IsCanadianAddressTrainingProviderFalse" ng-value="false" ng-model="model.IsCanadianAddressTrainingProvider" name="model.IsCanadianAddressTrainingProvider" ng-change="countryChangeTrainingProvider()">
+            @*<label for="IsCanadianAddressFalse">Other Countries</label>*@
+            <label for="IsCanadianAddressTrainingProviderFalse">Other Country</label>
+        </div>
+    </div>
+</div>
+
+<div class="form__group" ng-show="!model.IsCanadianAddressTrainingProvider">
+    <label class="form__label">Country <abbr title="Required">*</abbr></label>
+    <div class="form__control">
+        <div class="control-wrapper selectmenu input--medium" ng-validation="errors.CountryIdTrainingProvider">
+            <select ng-model="model.CountryIdTrainingProvider" ng-options="item.Key as item.Caption for item in Countries | filter: filterItems" class="input--medium">
+                <option value="" selected="selected">&lt; Select value &gt;</option>
+            </select>
+        </div>
+        <p class="text--small">
+            Select the country if your training provider is outside of Canada.
+        </p>
+    </div>
+</div>
+
+<div class="form__group">
+    <div class="label-wrapper"><label class="form__label">Address line 1 <abbr title="Required">*</abbr></label></div>
+    <div class="control-wrapper form-control"><input Id="AddressLine1TrainingProvider" type="text" class="input--full" ng-model="model.AddressLine1TrainingProvider" ng-mouseleave="AddressLine1TrainingProviderChange()" ng-validation></div>
+</div>
+
+
+<div class="form__group">
+    <div class="label-wrapper"><label class="form__label">Address line 2</label></div>
+    <div class="control-wrapper form-control"><input id="AddressLine2TrainingProvider" type="text" class="input--full" ng-model="model.AddressLine2TrainingProvider" ng-validation></div>
+</div>
+
+<div class="form__group">
+    <div class="label-wrapper"><label class="form__label">City <abbr title="Required">*</abbr></label></div>
+    <div class="control-wrapper form-control"><input Id="CityTrainingProvider" type="text" class="input--medium" ng-model="model.CityTrainingProvider" ng-validation></div>
+</div>
+
+<div class="form__group" ng-show="model.IsCanadianAddressTrainingProvider">
+    <label class="form__label">Province <abbr title="Required">*</abbr></label>
+    <div class="form__control">
+        <div class="control-wrapper selectmenu input--medium" ng-validation="errors.RegionIdTrainingProvider">
+            <select Id="RegionIdTrainingProvider" class="input--medium form-control" ng-model="model.RegionIdTrainingProvider" ng-options="item.Key as item.Caption for item in Provinces">
+                <option value="" selected="selected">&lt; Select value &gt;</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="form__group" ng-show="model.IsCanadianAddressTrainingProvider">
+    <div class="form__group">
+        <div class="label-wrapper"><label class="form__label">Postal code <abbr title="Required">*</abbr></label></div>
+        <div class="control-wrapper form-control"><input Id="PostalCodeTrainingProvider" type="text" class="input--medium" ng-model="model.PostalCodeTrainingProvider" maxlength="6" ng-postal ng-validation></div>
+    </div>
+</div>
+
+<div ng-show="!model.IsCanadianAddressTrainingProvider">
+    <div class="form__group">
+        <div class="label-wrapper"><label class="form__label">Province / State / Region <abbr title="Required">*</abbr></label></div>
+        <div class="control-wrapper form-control"><input id="OtherRegionTrainingProvider" type="text" class="input--medium" ng-model="model.OtherRegionTrainingProvider" ng-validation></div>
+    </div>
+    <div class="form__group">
+        <div class="label-wrapper"><label class="form__label">Postal / Zip Code <abbr title="Required">*</abbr></label></div>
+        <div class="control-wrapper form-control"><input id="OtherZipCodeTrainingProvider" type="text" class="input--medium" ng-model="model.OtherZipCodeTrainingProvider" ng-validation></div>
+    </div>
+</div>
+
+<h3 class="subheader--body">Training Provider Contact</h3>
+<p>Enter the contact information for your training provider.</p>
+
+<div class="form__group">
+    <div class="label-wrapper"><label class="form__label">Contact first name <abbr title="Required">*</abbr></label></div>
+    <div class="control-wrapper form-control"><input type="text" class="input--medium" ng-model="model.ContactFirstName" maxlength="128" ng-validation></div>
+</div>
+
+<div class="form__group">
+    <div class="label-wrapper"><label class="form__label">Contact last name <abbr title="Required">*</abbr></label></div>
+    <div class="control-wrapper form-control"><input type="text" class="input--medium" ng-model="model.ContactLastName" maxlength="128" ng-validation></div>
+</div>
+
+<div class="form__group">
+    <div class="label-wrapper">
+        <label class="form__label">
+            Contact email <abbr title="Required">*</abbr>
+        </label>
+    </div>
+    <div class="control-wrapper form-control">
+        <input type="text" class="input--medium" ng-model="model.ContactEmail"
+               maxlength="128" ng-validation>
+    </div>
+</div>
+
+<div class="form__group">
+    <label class="form__label">Contact phone <nobr>number <abbr title="Required">*</abbr></nobr></label>
+    <div class="form__control">
+        <input type="text" class="input--small"
+               ng-class="errors.ContactPhone ? 'has-error': ''"
+               ng-model="model.ContactPhoneAreaCode"
+               maxlength="3" ng-number>
+        <span class="spacer">-</span>
+        <input type="text" class="input--small"
+               ng-class="errors.ContactPhone ? 'has-error': ''"
+               ng-model="model.ContactPhoneExchange"
+               maxlength="3" ng-number>
+        <span class="spacer">-</span>
+        <input type="text" class="input--small"
+               ng-class="errors.ContactPhone ? 'has-error': ''"
+               ng-model="model.ContactPhoneNumber"
+               maxlength="4" ng-number>
+        <label>Ext</label>
+        <input type="text" class="input--small"
+               ng-class="errors.ContactPhone ? 'has-error': ''"
+               ng-model="model.ContactPhoneExtension"
+               maxlength="10" ng-number>
+        <validation ng-model="errors.ContactPhone">
+            Contact phone number must be 10-digit number
+        </validation>
+    </div>
+</div>

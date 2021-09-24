@@ -1,0 +1,62 @@
+﻿@model CJG.Web.External.Areas.Ext.Models.ApplicantViewModel
+
+<div class="form--readonly">
+    <div class="form__group">
+        <div class="form__label">Name:</div>
+
+        <div class="form__control">
+            @(Model.ApplicantSalutation) @(Model.ApplicantFirstName) @(Model.ApplicantLastName)
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Business Email:</div>
+        <div class="form__control">
+            @Model.ApplicantEmail
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Preferred Contact Number:</div>
+        <div class="form__control">
+            @Model.ApplicantPhoneNumber
+            @{
+                if (!string.IsNullOrEmpty(Model.ApplicantPhoneExtension))
+                {
+                    <text>Ext: @Model.ApplicantPhoneExtension</text>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Position/Title:</div>
+        <div class="form__control">
+            @Model.ApplicantJobTitle
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Business address:</div>
+        <div class="form__control">
+            @if (Model.ApplicantPhysicalAddress == null)
+            {
+                <text>n/a</text>
+            }
+            else
+            {
+                @Html.Raw(Model.ApplicantPhysicalAddress.ToString().Replace(Environment.NewLine, "<br />"))
+            }
+        </div>
+    </div>
+
+    @if (Model.ApplicantMailingAddress != null && !Model.ApplicantMailingAddress.IsSameAddress(Model.ApplicantPhysicalAddress))
+    {
+        <div class="form__group">
+            <div class="form__label">Mailing address:</div>
+            <div class="form__control">
+                @Html.Raw(Model.ApplicantMailingAddress.ToString().Replace(Environment.NewLine, "<br />"))
+            </div>
+        </div>
+    }
+</div>

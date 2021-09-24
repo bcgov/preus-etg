@@ -1,0 +1,124 @@
+@using CJG.Core.Entities
+@using CJG.Web.External.Areas.Ext.Controllers
+@model CJG.Web.External.Areas.Ext.Models.SidebarViewModel
+@{
+	ViewBag.Title = "Grant Files";
+}
+
+@if (TempData["Message"] != null)
+{
+	ViewBag.Message = TempData["Message"].ToString();
+	TempData["Message"] = "";
+}
+
+<div class="row">
+	@Html.ActionLink("Home", nameof(HomeController.Index), nameof(HomeController).Replace("Controller", ""), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
+</div>
+<div id="grant-file-container" ng-controller="ReportingGrantFileView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+	<div class="grant-files row">
+        <div class="main">
+
+            <program-title-label ng-model="model.ProgramTitleLabel"></program-title-label>
+
+            <div ng-if="model.AllowParticipantReport || model.AllowClaimReport">
+                <div ng-if="model.RequireAllParticipantsBeforeSubmission">
+                    <h2>Claim Reporting</h2>
+                </div>
+                <div ng-if="!model.RequireAllParticipantsBeforeSubmission">
+                    <h2>Participant <span class="text--lowercase">and</span> Claim Reporting</h2>
+                </div>
+
+                <div class="notice notice--icon" ng-if="!model.RequireAllParticipantsBeforeSubmission" ng-show="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                    <p>Once you have reported participants and they have submitted their Personal Information Forms, you will be able to submit your Reimbursement Claim.</p>
+                </div>
+                <div class="notice notice--icon" ng-show="model.ProgramType == @((int)ProgramTypes.WDAService)">
+                    <p>Get started with reporting particpants below and when all your particpants have reported you can prepare and submit a claim for reimbursement.</p>
+                </div>
+                <div ng-if="!model.RequireAllParticipantsBeforeSubmission && model.ParticipantCount < model.MaxParticipants" class="notice notice--icon">
+                    <p>
+                        {{model.ParticipantCount}} out of {{model.MaxParticipants}} participants have submitted their Participant Information Form.
+                        Participants who have not submitted their Participant Information Form will not be eligible in your claim.
+                    </p>
+                </div>
+            </div>
+            <div ng-if="model.ClaimAssessmentOutcome.Claims.length > 0">
+                @Html.Partial("_ClaimAssessmentOutcomeBlock")
+            </div>
+            <ul class="step-flow--list">
+                <li class="step-flow__item" ng-if="model.AllowParticipantReport && !model.RequireAllParticipantsBeforeSubmission">
+                    <div class="step-flow__heading">Participant Report</div>
+
+                    <div class="step-flow__status">
+                        <span class="label label--default">
+                            <span class="text--capitalize text--normal">Due:</span> {{toPST(model.ParticipantDueDate)}}
+                        </span>
+                    </div>
+
+                    <div class="step-flow__status">
+                        <span class="label {{model.ParticipantCount == 0 ? 'label--default' : (model.ParticipantCount == model.MaxParticipants ? 'label--complete' : (model.ParticipantCount > model.MaxParticipants ? 'label--danger' : 'label--warning'))}}">
+                            {{model.ParticipantCount}} of {{model.MaxParticipants}} reported
+                        </span>
+                    </div>
+
+                    <div class="step-flow__action" style="padding-left:8px;">
+                        @Html.ActionLink("Report Participants", nameof(ParticipantReportingController.ParticipantReportingView), nameof(ParticipantReportingController).Replace("Controller", ""), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary" })
+                    </div>
+                </li>
+                <li class="step-flow__item" ng-if="model.AllowClaimReport">
+                    <div class="step-flow__heading">Reimbursement <br />Claim</div>
+                    <div class="step-flow__status">
+                        <span class="label label--default" ng-if="model.ClaimType == @((int)ClaimTypes.SingleAmendableClaim)">
+                            <span class="text--capitalize text--normal">Due:</span> {{toPST(model.ClaimDueDate)}}
+                        </span>
+                    </div>
+                    <div class="step-flow__status" ng-if="model.ClaimType == @((int)ClaimTypes.SingleAmendableClaim)">
+                        <span class="label {{model.ParticipantCount == 0 ? 'label--default' : (model.ParticipantsWithCostCount != model.MaxParticipants ? 'label--warning' : 'label--success')}}">
+                            {{model.ParticipantsWithCostCount > 0 ? (model.ParticipantsWithCostCount == model.MaxParticipants && model.CurrentClaimState == @((int)ClaimState.Complete) ? 'Complete' : 'Incomplete') :  'Not Started'}}
+                        </span>
+                    </div>
+                    <div class="step-flow__status" ng-if="model.ClaimType == @((int)ClaimTypes.MultipleClaimsWithoutAmendments)">
+                        <span class="label {{model.CurrentClaimState == @((int)ClaimState.Complete)? 'label--success': (model.CurrentClaimState == @((int)ClaimState.Incomplete) ? 'label--warning' : 'label--default') }}">
+                            {{model.CurrentClaimState == @((int)ClaimState.Complete)? 'Complete': (model.CurrentClaimState == @((int)ClaimState.Incomplete) ? 'InComplete' : 'Not Started') }}
+                        </span>
+                    </div>
+                    <div class="step-flow__action">
+                        <div ng-if="model.AllowClaimReport">
+                            <a class="btn btn--secondary"
+                               style="height: auto; vertical-align:middle;"
+                               href="/Ext/Claim/Report/View/{{model.Id}}">Begin Reimbursement<br />Claim</a>
+                        </div>
+                        <div ng-if="!model.AllowClaimReport">
+                            <a class="btn btn--secondary disabled">Begin Reimbursement<br />Claim</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="step-flow__item" ng-if="model.AllowReportCompletion">
+                    <div class="step-flow__heading">Completion Report</div>
+
+                    <div class="step-flow__status">
+                        <span class="label label--default">
+                            <span class="text--capitalize text--normal">Due:</span> {{toPST(model.CompletionDueDate)}}
+                        </span>
+                    </div>
+
+                    <div class="step-flow__status">
+                        <span class="label label--{{model.CompletionReport.LabelClass}}">{{model.CompletionReport.StatusText}}</span>
+                    </div>
+
+                    <div class="step-flow__action">
+                        @Html.ActionLink("Report Completion", nameof(CompletionReportingController.CompletionReportView), typeof(CompletionReportingController), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary" })
+                    </div>
+                </li>
+            </ul>
+            <div class="button-group" ng-if="model.AllowReviewAndSubmit">
+                <div ng-if="model.EnableSubmit">
+                    @Html.ActionLink("Review and submit claim", nameof(ClaimController.ClaimReviewView), nameof(ClaimController).Replace("Controller", ""), new { claimId = ViewBag.ClaimId, claimVersion = ViewBag.ClaimVersion }, new { @class = "btn btn--primary pull-right" })
+                </div>
+                <div ng-if="!model.EnableSubmit">
+                    <a class="btn btn--primary pull-right disabled">Review and submit claim</a>
+                </div>
+            </div>
+        </div>
+		@Html.Partial("_GrantApplicationSidebar", Model)
+	</div>
+</div>

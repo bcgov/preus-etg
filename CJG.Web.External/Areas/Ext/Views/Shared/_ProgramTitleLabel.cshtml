@@ -1,0 +1,106 @@
+﻿@using CJG.Core.Entities
+@model GrantApplication
+
+<div class="grant-summary">
+    <h4>
+        @if (!string.IsNullOrEmpty(@Model.FileNumber))
+        { <span class="grant-summary__filenbr">@Model.FileNumber</span> }
+
+        @Model.GetFileName()
+
+        @if (Model.TrainingPrograms.FirstOrDefault() != null)
+        {
+            <span class="grant-summary__date">
+                @if (Model.StartDate != DateTime.MinValue)
+                {
+                    <text>(start date </text>
+                    <span>@Model.StartDate.ToLocalMorning().ToString("yyyy-MM-dd"))</span>
+                }
+            </span>
+        }
+    </h4>
+
+    @if (Model.GrantOpening.GrantStream.Name != null && Model.GrantOpening.GrantStream.GrantProgram.Name != null)
+    {
+        <b>@Model.GrantOpening.GrantStream.GrantProgram.Name  &#x2013; @Model.GrantOpening.GrantStream.Name</b>
+    }
+
+    <p class="grant-summary__date">
+        @if (Model.DateSubmitted != null && Model.ApplicationStateExternal == CJG.Core.Entities.ApplicationStateExternal.Submitted)
+        {
+            <text>Date submitted: </text>
+            <span>@Model.DateSubmitted.Value.ToLocalMorning().ToString("yyyy-MM-dd")</span>
+        }
+        @*else if (Model.GrantOpening.OpeningDate != null && (Model.ApplicationStateExternal == CJG.Core.Entities.ApplicationStateExternal.Incomplete || Model.ApplicationStateExternal == CJG.Core.Entities.ApplicationStateExternal.Complete))
+        {
+            <text>Earliest submission date: </text>
+            <span>@Model.GrantOpening.OpeningDate.ToLocalMorning().ToString("yyyy-MM-dd")</span>
+        }*@
+        else if (Model.ApplicationStateExternal == ApplicationStateExternal.AcceptGrantAgreement && Model.GrantAgreement != null)
+        {
+            <span class="label label--acceptby">
+                Accept by @Model.GrantAgreement.StartDate.AddDays(5).ToLocalMorning().ToString("yyyy-MM-dd")
+            </span>
+        }
+    </p>
+    
+    @if (!(Html.ViewContext.RouteData.Values["controller"].ToString() == "Claim" && Html.ViewContext.RouteData.Values["action"].ToString() == "ViewAssessmentOutcome"))
+    {
+        if (Model.ApplicationStateExternal.In(ApplicationStateExternal.ApplicationDenied, ApplicationStateExternal.ChangeRequestDenied, ApplicationStateExternal.ClaimDenied))
+         {
+             var denyState = string.Empty;
+             var denyReason = string.Empty;
+
+             switch (Model.ApplicationStateExternal)
+             {
+                 case ApplicationStateExternal.ApplicationDenied:
+                     denyState = "application";
+                     denyReason = Model.GetReason(ApplicationStateInternal.ApplicationDenied);
+                     break;
+                 case ApplicationStateExternal.ChangeRequestDenied:
+                     denyState = "change request";
+                     denyReason = Model.GetReason(ApplicationStateInternal.ChangeRequestDenied);
+                     break;
+                 case ApplicationStateExternal.ClaimDenied:
+                     denyState = "claim";
+                     denyReason = Model.GetReason(ApplicationStateInternal.ClaimDenied);
+                     break;
+             }
+
+             <p>
+                 <br/>
+                 Your @denyState has been denied for the following reason:<br/>
+                 <span><em>@denyReason</em></span>
+             </p>
+         }
+         else if (Model.ApplicationStateExternal.In(ApplicationStateExternal.AgreementWithdrawn))
+         {
+             <p>
+                 <br/>
+                 Your agreement has been withdrawn by the ministry for the following reason:<br/>
+                 <span><em>@Model.GetStateChange(Model.ApplicationStateExternal.GetInternalState()).Reason</em></span>
+             </p>
+         }
+
+        if (Model.ApplicationStateExternal.In(ApplicationStateExternal.CancelledByAgreementHolder, ApplicationStateExternal.CancelledByMinistry))
+         {
+             var cancelText = string.Empty;
+
+             switch (Model.ApplicationStateExternal)
+             {
+                 case ApplicationStateExternal.CancelledByAgreementHolder:
+                     cancelText = "by you";
+                     break;
+                 case ApplicationStateExternal.CancelledByMinistry:
+                     cancelText = "by the Ministry";
+                     break;
+             }
+
+             <p>
+                 <br/>
+                 Your agreement has been cancelled @cancelText for the following reason:<br/>
+                 <span><em>@Model.GetStateChange(Model.ApplicationStateExternal.GetInternalState()).Reason</em></span>
+             </p>
+         }
+    }
+</div>

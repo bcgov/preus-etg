@@ -1,0 +1,15 @@
+﻿<div ng-controller="ApplicationAttachmentsView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+    <div class="form--readonly">
+        <div class="form__group" ng-if="model.Attachments">
+            <table style="width:100%;">
+                <tr ng-repeat="attachment in model.Attachments">
+                    <td style="width:60%;vertical-align:top;word-wrap: break-word;word-break: break-all;">
+                        <a ng-if="attachment.Id" target="_blank" href="/Ext/Application/Attachment/Download/{{model.Id}}/{{attachment.Id}}">{{attachment.FileName}}</a>
+                        <span ng-if="!attachment.Id">{{attachment.FileName}}</span>
+                        <br />{{attachment.Description}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

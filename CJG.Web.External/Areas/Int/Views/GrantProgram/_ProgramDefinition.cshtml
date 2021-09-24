@@ -1,0 +1,82 @@
+﻿@using CJG.Core.Entities
+<div ng-controller="GrantProgramDefinition" class="form-section" ng-show="model.Id || section.editing">
+	<span class="panel-section-item">
+		<span class="panel-section-title" ng-click="toggle($event)">
+			Grant Program Definition
+			<strong ng-if="model.State === @((int)GrantProgramStates.Implemented)"> - this program is Implemented</strong>
+		</span>
+		<span class="panel-section-buttons">
+			<span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+			<section-edit-buttons ng-model="section.editing"></section-edit-buttons>
+			<span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+		</span>
+	</span>
+	
+	<div class="panel-section-content" ng-if="section.show">
+		<div class="form form-section-container">
+			<div class="form__group">
+				<div class="form__label">Grant program name:</div>
+				<div class="form__control">
+					<div class="control-wrapper input--full">
+						<input ng-model="model.Name" class="input--full" ng-validation ng-editing />
+					</div>
+				</div>
+			</div>
+
+			<div class="form__group">
+				<div class="form__label">Grant Code:</div>
+				<div class="form__control">
+					<div class="control-wrapper">
+						<input ng-model="model.ProgramCode" class="input--small" ng-validation ng-editing />
+						<p>A short form grant program identifier used internally by the system.</p>
+					</div>
+				</div>
+			</div>
+
+			<div style="clear:both "></div>
+
+			<div class="form__group">
+				<div class="form__label">Program Type:</div>
+				<div class="form__control">
+					<div class="control-wrapper">
+						<div class="wrapper--dropdown selectmenu input--medium" ng-if="model.State !== @((int)GrantProgramStates.Implemented)" ng-validation="errors.ProgramTypeId">
+							<select ng-model="model.ProgramTypeId" ng-options="item.Key as item.Value for item in programTypes" class="input--medium" ng-editing>
+								<option value="">{{'&lt; Select Type &gt;'}}</option>
+							</select>
+						</div>
+						<div class="form__control" ng-if="model.State === @((int)GrantProgramStates.Implemented)">
+							{{programTypeCaption()}}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form__group">
+				<div class="form__label">Program Configuration:</div>
+				<div class="form__control">
+					<div class="control-wrapper input--full">
+						<div class="wrapper--dropdown selectmenu input--medium" ng-if="model.State !== @((int)GrantProgramStates.Implemented)" ng-validation="errors.ProgramConfigurationId">
+							<select ng-model="model.ProgramConfigurationId" ng-options="item.Key as item.Value for item in programConfigurations" class="input--medium" ng-editing>
+								<option value="">{{'&lt; Select Type &gt;'}}</option>
+							</select>
+						</div>
+						<div class="form__control" ng-if="model.State === @((int)GrantProgramStates.Implemented)">
+							{{programConfigurationCaption()}}
+						</div>
+						<p>A program configuration can be shared with many other grant programs.  It provides a way to keep multiple grant programs in sync.  This includes their application process steps, expense types, user guidance and claim limits.</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="form__group">
+				<div class="form__label">Intake Fund Reservation</div>
+				<div class="form__control">
+					<div class="control-wrapper">
+						<input type="checkbox" ng-model="model.UseFIFOReservation" id="use-fifo" ng-disabled="!section.editing" />
+						<label for="use-fifo">Manage Intake Using FIFO Fund Reservations</label>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<User>
+  <Guid>11000000-0000-0000-0000-000000000002</Guid>
+  <AccountType>Internal</AccountType>
+  <FirstName>Matt</FirstName>
+  <LastName>Mason</LastName>
+  <EmailAddress>matt.mason@fcvinteractive.com</EmailAddress>
+  <TelephoneNumber>1 604-662-8407</TelephoneNumber>
+  <BusinessGuid>10000000-0000-0000-0000-000000000002</BusinessGuid>
+  <Business>
+    <Guid>10000000-0000-0000-0000-000000000002</Guid>
+    <LegalName>FCV Interactive (Vancouver)</LegalName>
+    <DoingBusinessAs>FCV Vancouver</DoingBusinessAs>
+    <AddressId>8</AddressId>
+    <Address>
+      <Id>8</Id>
+      <AddressLine1>333 Seymour St.</AddressLine1>
+      <AddressLine2>Suite 1000</AddressLine2>
+      <City>Vancouver</City>
+      <PostalCode>V6B 5A6</PostalCode>
+      <Province>British Columbia</Province>
+      <Country>CA</Country>
+      <UnstructuredAddress></UnstructuredAddress>
+      <Businesses></Businesses>
+    </Address>
+    <Users></Users>
+  </Business>
+</User>

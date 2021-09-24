@@ -1,0 +1,110 @@
+﻿@{
+    ViewBag.Title = "Claim Assessment";
+}
+
+<div class="row">
+    @Html.ActionLink("Return", nameof(CJG.Web.External.Areas.Ext.Controllers.ReportingController.GrantFileView),
+        nameof(CJG.Web.External.Areas.Ext.Controllers.ReportingController).Replace("Controller", ""),
+        new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
+</div>
+<div id="claim-assessed-container" ng-controller="ClaimAssessmentView" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-claim-id="@ViewBag.ClaimId" ng-claim-version="@ViewBag.ClaimVersion">
+    <div class="row">
+        <div id="assessment-outcome-list">
+
+            <program-title-label ng-model="model.ProgramTitleLabel"></program-title-label>
+
+            <h2>Claim Assessment</h2>
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            <div>
+                <div class="block--claim-outcome block--claim-outcome__success">
+                    Your Claim assessment is shown below. The assessment notes explain the outcome of assessment.
+                    <br />
+                    The total of this assessment is shown at the bottom of this page. The payment amount will be determined from this and any prior assessments.
+                </div>
+            </div>
+
+            <div>
+                <strong ng-if="model.Claim.DateAssessed != null">
+                    Date assessed: {{ toPST(model.Claim.DateAssessed) }}
+                </strong>
+                <strong ng-if="model.Claim.DateAssessed == null">
+                    Date assessed: N/A
+                </strong>
+            </div>
+
+            <br />
+            <div ng-if="model.Claim.ClaimAssessmentNotes != null">
+                <div>
+                    <strong>Assessment Notes</strong>
+                </div>
+                <div class="message-box">
+                    <span class="inline-help" ng-bind-html="model.Claim.ClaimAssessmentNotes">
+                    </span>
+                </div>
+            </div>
+            <br />
+
+            <div class="heading--assessment-detail">
+                <span class="heading"><strong>Eligible expense types</strong></span>
+                <span class="pull-right"><strong>Reimbursement Claim</strong></span>
+                <br />
+
+                @Html.Partial("_ClaimAssessment")
+
+                <div ng-if="model.Claim.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
+                    <h2>Participant List</h2>
+                    <div class="panel-bar__content">
+                        <table class="table--claims table--claims__cost" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th style="width:25%"><b>Name</b></th>
+                                    <th style="width:25%; text-align:center;"><b>Email</b></th>
+                                    <th style="width:25%; text-align:center;"><b>Phone</b></th>
+                                    <th style="width:25%; text-align:center;"><b>Work Location</b></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="participant in model.Claim.Participants">
+                                    <td style="width:25%">{{participant.Name}}</td>
+                                    <td style="width:25%; text-align:center;"><a href="mailto:{{participant.Email}}">{{participant.Email}}</a></td>
+                                    <td style="width:25%; text-align:center;">{{participant.Phone}}</td>
+                                    <td style="width:25%; text-align:center;">{{participant.WorkLocation}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br />
+                </div>
+
+                <div>
+                    <h2>{{model.Attachments.Title}}</h2>
+                    <div ng-if="!model.IsWDAService">
+                        <p>
+                            Attach all receipts, paid invoices or other valid proof of payments that relate to the actual training costs you have entered for each
+                            eligible expense type. For each attachment, enter a description to identify what part of your claim it supports.
+                        </p>
+                    </div>
+                    <div ng-if="model.IsWDAService">
+                        <p>Your assessor may request you to attach documentation to support your claim.</p>
+                    </div>
+
+                    <div>
+                        <div class="form__group" ng-if="model.Attachments.Attachments">
+                            <table style="width:100%;">
+                                <tr ng-repeat="attachment in model.Attachments.Attachments">
+                                    <td style="width:10%;vertical-align:top">{{$index + 1}}</td>
+                                    <td style="width:60%;vertical-align:top;word-wrap: break-word;word-break: break-all;"><a href="/Ext/Claim/Attachment/Download/{{model.Claim.Id}}/{{model.Claim.Version}}/{{attachment.Id}}">{{attachment.FileName}}</a><br />{{attachment.Description}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <p ng-if="model.Attachments.Attachments == null || model.Attachments.Attachments.length == 0">There are no attachments.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

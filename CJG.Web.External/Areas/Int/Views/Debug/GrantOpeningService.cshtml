@@ -1,0 +1,45 @@
+﻿@model CJG.Web.External.Areas.Int.Models.DebugGrantOpeningViewModel
+@{
+    ViewBag.Title = "Debug GrantOpeningService";
+}
+<div>
+    <h1>Debug GrantOpening Schedule Service</h1>
+    
+    <div>
+        Parameters to define date range used to rocess grant opening states. 
+        It will process grant opening records that falls into condition:  [current date] - [days before] < [milestone date] AND [milestone date] < [current date]
+    </div>
+
+    @using (Html.BeginForm("GrantOpeningService", "Debug", FormMethod.Post))
+    {
+        <div class="form__group">
+            @Html.Label("Current Date:", new { @class = "form__label" })
+            <div class="form__control">
+                @Html.TextBoxFor(x => x.CurrentDate, new { @class = "input--medium" })
+            </div>
+        </div>
+
+        <div class="form__group">
+            @Html.Label("Number of 'days before' current date:", new { @class = "form__label" })
+            <div class="form__control">
+                @Html.TextBoxFor(x => x.NumberOfDaysBefore, new { @class = "input--medium" })
+            </div>
+        </div>
+
+        <input type="submit" class="btn btn--primary" value="Start GrantOpeningService" />
+    }
+    <br />
+    @if (Model.LogRecords != null && Model.LogRecords.Any())
+    {
+        <div class="form__group">
+            <label class="form__label">Log records</label>
+            <ul class="panel-bar">
+                @foreach (var item in Model.LogRecords)
+                {
+                    <li>@item</li>
+                }
+            </ul>
+        </div>
+    }
+
+</div>

@@ -1,0 +1,80 @@
+﻿@using CJG.Core.Entities
+
+<div class="form__group">
+    <div class="form__label">
+        <span ng-bind-html="parseQuestionText(question.Question)"></span> <abbr title="Required" ng-if="question.IsRequired">*</abbr>
+        <div style="display:inline;" ng-if="question.Id == @(Constants.CompletionReportQuestionIntakePeriods)" class="inline-help tooltip">
+            <div style="display:inline;" class="tooltiptext tooltiptext-large edit-training-provider">
+                <b>
+                    Intake periods and delivery dates change every year and can be found
+                    <a href="https://www.workbc.ca/Employment-Services/Community-Workforce-Response-Grant.aspx" target="_blank">here</a>
+                    for each stream.
+                    Below is an example of intake periods and delivery dates for 2020-2021 fiscal year.
+                </b>
+                <br />
+                <table cellspacing="1" cellpadding="1" border="1" class="table--workbc-emulation"
+                       style="margin-left:auto;margin-right:auto;margin-top:10px;">
+                    <thead>
+                        <tr>
+                            <th scope="col">&nbsp;INTAKES</th>
+                            <th scope="col">ACCEPTING APPLICATIONS</th>
+                            <th scope="col" style="padding-right: 15px;">SKILLS TRAINING START DATES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                2021/22<br>
+                                Intake 1
+                            </td>
+                            <td>
+                                March 3, 2021 –<br>
+                                May 14, 2021
+                            </td>
+                            <td>
+                                April 1, 2021 –&nbsp;<br>
+                                Aug 31, 2021
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                2021/22<br>
+                                Intake 2
+                            </td>
+                            <td>
+                                June 10, 2021 –&nbsp;<br>
+                                Aug 2, 2021
+                            </td>
+                            <td>
+                                Sep 1, 2021 –<br>
+                                Dec 31, 2021
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                2021/22<br>
+                                Intake 3
+                            </td>
+                            <td>
+                                Oct 15, 2021 –&nbsp;<br>
+                                Nov 30, 2021
+                            </td>
+                            <td>
+                                Jan 1, 2022 –<br>
+                                March 1, 2022
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <div class="form__control">
+        <div class="control-wrapper selectmenu">
+            <select class="form-control"
+                    ng-model="question.Level1Answers[0].IntAnswer"
+                    ng-options="item.Id as item.Answer for item in question.Level1Options"></select>
+        </div>
+    </div>
+</div>

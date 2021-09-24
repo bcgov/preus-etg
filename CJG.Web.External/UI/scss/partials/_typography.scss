@@ -1,0 +1,384 @@
+// TypeKit fonts available
+// myriad-pro
+//  400 normal
+//  400 italic
+//  600 normal
+//  600 italic
+//  700 normal
+//  700 italic
+
+html {
+  background-color: color('htmlBackgroundColor');
+  color: color('bodyText');
+  font-family: 'myriad-pro', Calibri, Candara, Segoe, Optima, sans serif;
+  font-size: $base-font-size;
+  line-height: $base-line-height;
+}
+
+.layout-internal {
+  background: color('white');
+  width: 100%;
+  .container {
+    background: color('white');
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+ol,
+dl,
+table {
+  margin-top: 0;
+  margin-bottom: gap(2);
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-bottom: 0.55em;
+}
+
+
+
+// Header styles (taken from Design styleguide)
+.header--large {
+  font-size: $font-size-xx-large;
+  font-weight: bold;
+  line-height: 1;
+  text-transform: capitalize;
+}
+
+.header--small {
+  font-size: fs(20px);
+  @include media-breakpoint-up(md) {
+    font-size: $font-size-large;
+  }
+  // TODO: adjust when we have webfonts loading
+  font-weight: 400;
+  line-height: 1.16;
+}
+
+.subheader {
+  font-size: fs(24px);
+  @include media-breakpoint-up(md) {
+    font-size: $font-size-x-large;
+  }
+  font-weight: bold;
+  line-height: 1.25;
+  text-transform: none;
+
+  .subheader--step + & {
+    margin-top: gap(2)*-1;
+  }
+}
+
+.subheader--step {
+  font-size: $font-size-small;
+  font-weight: 400;
+  text-transform: uppercase;
+  &.with-pad {
+    padding-bottom: gap(2);
+  }
+}
+
+.subheader--body {
+  font-size: $font-size-medium;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: gap(4) 0 gap(3);
+  & + p {
+    margin-top: gap(2) * -1;
+  }
+}
+
+h1 {
+  @extend .header--large;
+}
+
+h2 {
+  @extend .subheader;
+}
+
+h3 {
+  @extend .header--small;
+}
+
+.form__group + h3 {
+  margin-top: gap(2);
+}
+
+h4 {
+  font-size: $font-size-medium;
+  line-height: 1.22;
+  font-weight: bold;
+  overflow-wrap: break-word;
+  -ms-word-wrap: break-word;
+
+  &.light {
+    font-weight: normal;
+  }
+}
+
+h5,
+h6 {
+  @include font-size($base-font-size);
+  font-weight: bold;
+}
+
+.heading--no-margin-bottom {
+  margin-bottom: 0;
+}
+
+.heading--margin-top {
+  margin-top: 1em;
+}
+
+.heading--sidebar {
+  @extend .heading--no-margin-bottom;
+  @extend .heading--margin-top;
+}
+
+p {
+  @include font-size(16px);
+  overflow-wrap: break-word;
+  -ms-word-wrap: break-word;
+}
+dd {
+  overflow-wrap: break-word;
+}
+a {
+  color: color('linkColor');
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+small, .text--small {
+  @include font-size(14px);
+}
+
+.text--normal {
+  font-weight: normal;
+}
+
+.text--bold {
+  font-weight: bold;
+}
+.text--italic {
+  font-style: italic;
+}
+
+.text--uppercase {
+  text-transform: uppercase;
+}
+
+.text--lowercase {
+  text-transform: lowercase;
+}
+
+.text--capitalize {
+  text-transform: capitalize;
+}
+
+.text--link {
+  color: #1A5A96 !important;
+}
+
+blockquote {
+  @include font-size(24px);
+  font-weight: bold;
+  margin: 0 gap(6) gap(2);
+
+  &:before {
+    content: '\0201C';
+  }
+
+  &:after {
+    content: '\0201D';
+  }
+}
+
+hr {
+  border: 1px solid color('border');
+  border-bottom: 0;
+  clear: both;
+  margin: gap(2) 0;
+}
+
+ul, ol {
+  padding-left: 20px;
+}
+
+.spacer {
+  padding: 0 5px;
+}
+
+.nobr {
+  white-space: nowrap;
+}
+
+.red {
+  color: color('Warning');
+}
+
+.fc-warning {
+  color: color('Warning') !important;
+}
+
+address {
+  font-style: normal;
+}
+
+.heading-group {
+  min-height: 50px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-top: 1px solid color('Charcoal');
+  border-bottom: 1px solid color('Charcoal');
+
+  .btn {
+    width: 100%;
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  h3, h4 {
+    margin-bottom: 0;
+    padding-top: 9px;
+  }
+
+  @include media-breakpoint-up(md) {
+    display: flex;
+
+    .btn {
+      width: auto;
+      margin-left: auto;
+      margin-top: 0;
+    }
+  }
+
+  &--no-border-bottom {
+    @extend .heading-group;
+    border-bottom: 0;
+  }
+}
+
+.heading-group--reverse {
+  @include media-breakpoint-up(md) {
+    h3, h4 {
+      order: 1;
+    }
+    .btn {
+      width: auto;
+      margin-left: 0;
+      margin-right: auto;
+      order: 0;
+    }
+  }
+}
+
+.heading-group--2-col {
+  @include clearfix;
+  min-height: 40px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-top: 1px solid color('Charcoal');
+  border-bottom: 1px solid color('Charcoal');
+
+  .btn {
+    width: 100%;
+    margin-top: 10px;
+    text-align: center;
+  }
+  h3,h4 {
+    margin-bottom: 0;
+    padding-top: 9px;
+  }
+
+  @include media-breakpoint-up(md) {
+    display: flex;
+    h3,h4 {
+      float: left;
+      width: 54%;
+      padding-right: 50px;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    .btn {
+      display: inline-block;
+      float: left;
+      width: auto;
+      max-width: 46%;
+      margin-left: 20px;
+      margin-top: 0;
+    }
+  }
+}
+
+.link--back {
+  display: inline-block;
+  margin-bottom: 20px;
+  padding-left: 15px;
+  position: relative;
+  &:before {
+    border-style: solid;
+    border-width: 4px 6.9px 4px 0;
+    border-color: transparent color('linkColor') transparent transparent;
+    content: ' ';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-top: -4px;
+    position: absolute;
+    top: 50%;
+    left: 0;
+  }
+}
+
+.icon {
+  position: relative;
+  top: 15px;
+}
+
+.icon--checkmark {
+  @include inline-icons('icon-checkmark.png');
+}
+
+.icon--denied {
+  @include inline-icons('icon-denied.png');
+}
+
+.icon--warning {
+  @include inline-icons('icon-warning.png');
+}
+
+.k-icon.k-i-arrow-s {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 10px solid color('Charcoal');
+  background: none;
+}
+
+.k-i-arrow-n.k-panelbar-collapse {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 10px solid color('Charcoal');
+  background: none;
+}

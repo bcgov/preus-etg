@@ -1,0 +1,108 @@
+﻿@using CJG.Core.Entities
+<div class="{{model.IsEditable ? 'table--horizontal-wrapper-wide':'table--horizontal-wrapper'}}">
+    <table id="tblExpenses" class="clearfix table table--expenses js-table-expense-list">
+        <thead>
+            <tr>
+                <th class="table-col__expense-type">Expense Type</th>
+                <th class="num-col table-col__num-part">Number of Participants</th>
+                <th ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)" class="num-col table-col__cost-per-part">Cost per<br />Participant</th>
+                <th ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)" class="num-col table-col__total-train-cost">Total Training Cost</th>
+                <th ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)" class="num-col table-col__cost-per-part">Average<br /> Cost per<br />Participant</th>
+                <th ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)" class="num-col table-col__total-train-cost">Total<br />Cost</th>
+                <th class="col-small table-col__edit" ng-if="model.IsEditable"><span>Edit Expense</span></th>
+                <th class="col-small table-col__delete" ng-if="model.IsEditable"><span>Delete Expense</span></th>
+            </tr>
+        </thead>
+        <tbody ng-repeat="cost in model.EligibleCosts">
+            <tr>
+                <td>{{cost.EligibleExpenseType.Caption}}</td>
+                <td class="num-col">
+                    <span ng-if="cost.EligibleExpenseType.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)">
+                        {{cost.EstimatedParticipants}}
+                    </span>
+                </td>
+                <td class="num-col">
+                    <span ng-if="cost.EligibleExpenseType.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)">
+                        {{cost.EstimatedParticipantCost | currency}}
+                    </span>
+                </td>
+                <td class="num-col">{{cost.EstimatedCost | currency}}</td>
+                <td></td>
+                <td class="col-small">
+                    <button ng-if="model.IsEditable && cost.EligibleExpenseType.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.SkillsTraining)" ng-disabled="EnableEdit || EnableEditBreakdown" class="btn--secondary" ng-click="editEligibleCost($index)">Edit</button>
+
+                    <button ng-if="model.IsEditable && !cost.EligibleExpenseType.AutoInclude" ng-disabled="EnableEdit" class="js-confirm btn--secondary" ng-click="deleteEligibleCost($index)">Delete</button>
+                </td>
+            </tr>
+
+            <tr ng-repeat="breakdown in cost.Breakdowns" ng-if="cost.ShowBreakdowns">
+                <td>> {{breakdown.TrainingProgramTitle ? breakdown.TrainingProgramTitle : breakdown.EligibleExpenseBreakdown.Caption}}</td>
+                <td class="num-col"></td>
+                <td class="num-col"></td>
+                <td class="num-col">{{breakdown.EstimatedCost | currency}}</td>
+                <td class="num-col" ng-if="model.ShouldDisplayEmployerContribution"></td>
+                <td class="num-col"></td>
+
+                <td ng-if="model.IsEditable " class="col-small">
+                    <button ng-disabled="EnableEditBreakdown || EnableEdit || !breakdown.EligibleExpenseBreakdown.EnableCost"
+                            class="btn--secondary"
+                            ng-click="editEligibleCostBreakdown($index, cost.Breakdowns, $parent.$parent.$parent.$index)">
+                        Edit
+                    </button>
+                </td>
+                <td class="col-small" style="text-align: center">
+                    <button ng-disabled="EnableEditBreakdown || EnableEdit"
+                            class="js-confirm btn--secondary"
+                            ng-if="cost.EligibleExpenseType.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.SkillsTraining)"
+                            ng-click="deleteEligibleCostBreakdown($index, cost.Breakdowns,  $parent.$parent.$parent.$index)">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table>
+        <tbody>
+            <tr>
+                <td><b>Totals</b></td>
+                <td></td>
+                <td></td>
+                <td class="num-col">
+                    <b>{{model.TotalEstimatedCost | currency}}</b>
+                </td>
+                <td></td>
+                <td></td>
+                <td ng-if="model.IsEditable" style="width: 76px;" class="col-small"></td>
+                <td ng-if="model.IsEditable" style="width: 86px;" class="col-small"></td>
+            </tr>
+            <tr ng-if="model.ShouldDisplayEmployerContribution">
+                <td>Employer Contribution</td>
+                <td></td>
+                <td></td>
+                <td class="num-col" ng-if="model.ShouldDisplayEmployerContribution">
+                    <b>{{model.TotalEmployer | currency}}</b>
+                </td>
+                <td></td>
+                <td></td>
+                <td ng-if="model.IsEditable" style="width: 76px;" class="col-small"></td>
+                <td ng-if="model.IsEditable" style="width: 86px;" class="col-small"></td>
+            </tr>
+            <tr>
+                <td>Requested Government Contribution</td>
+                <td></td>
+                <td></td>
+                <td class="num-col num-col__total-gov-contribution">
+                    <b>{{model.TotalRequest | currency}}</b>
+                </td>
+                <td></td>
+                <td></td>
+                <td ng-if="model.IsEditable" style="width: 76px;" class="col-small"></td>
+                <td ng-if="model.IsEditable" style="width: 86px;" class="col-small"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<p ng-if="model.ShouldDisplayESSSummary" style="padding-top: 15px;">
+    Employment Supports total average cost per participant is {{ESSTotalAverage | currency}}
+</p>

@@ -1,0 +1,22 @@
+@model CJG.Core.Entities.InternalUser
+
+@if (TempData["_RemoveHeader"] as bool? != true)
+{
+    <header class="header header--internal">
+
+        @Html.Partial("_InternalNav")
+
+        @if (Model != null)
+        {
+
+            <ul class="primary-utilities">
+                <li>@string.Format("{0} {1}", Model.FirstName, Model.LastName)</li>
+                <li>
+                    <b>@Html.ActionLink("Logout", "Logout", "Auth")</b>
+                </li>
+            </ul>
+
+        }
+
+    </header>
+}

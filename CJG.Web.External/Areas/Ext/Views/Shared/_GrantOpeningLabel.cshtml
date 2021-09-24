@@ -1,0 +1,44 @@
+﻿@using CJG.Core.Entities
+@model CJG.Core.Entities.GrantOpeningState
+
+@{
+    switch (Model)
+    {
+        case GrantOpeningStates.Unscheduled:
+            <text>
+                <span class="label label--unpublished">Unscheduled</span>
+            </text>
+            break;
+        case GrantOpeningStates.Scheduled:
+            <text>
+                <span class="label label--scheduled">Scheduled</span>
+            </text>
+            break;
+        case GrantOpeningStates.Published:
+            <text>
+                <span class="label label--published">Published</span>
+            </text>
+            break;
+        case GrantOpeningStates.Open:
+            <text>
+                <span class="label label--open">Open</span>
+            </text>
+            break;
+        case GrantOpeningStates.Closed:
+            <text>
+                <span class="label label--closed">Closed</span>
+            </text>
+            break;
+        case GrantOpeningStates.OpenForSubmit:
+            <text>
+                <span class="label label--unpublished">Open for Submit</span>
+            </text>
+            break;
+
+        default:
+            <text>
+                <span class="label label--notstarted">Not Started</span>
+            </text>
+            break;
+    }
+}

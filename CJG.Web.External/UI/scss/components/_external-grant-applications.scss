@@ -1,0 +1,129 @@
+.program-information {
+  margin-left: 10px;
+  display: table;
+  max-width: 300px;
+}
+
+.program-text-top {
+  display: table-cell;
+  vertical-align: top;
+}
+
+
+.header-container {
+  position: relative;
+}
+
+
+.header-logo__link:hover {
+  text-decoration: none;
+}
+
+.header-logo__link img {
+  max-height: 66px;
+  vertical-align: middle;
+}
+
+.header-logo__link .divider {
+  border-left: 1px solid #82764a;
+  padding-left: 10px;
+}
+
+.header-logo__link .text {
+  display: inline-block;
+  font-family: Garamond;
+  font-size: 40px;
+  position: absolute;
+  bottom: 31px;
+}
+
+
+.header .header-logo__link {
+  width: 60%;
+}
+
+
+@media screen and (max-width: 960px) {
+
+  .header-logo__link .text {
+    display: inline-block;
+    font-family: Garamond;
+    font-size: 25px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .header-logo__link .text {
+    display: inline-block;
+    font-family: Garamond;
+    font-size: 20px;
+    position: static;
+    bottom: 42px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .header-logo__link .text {
+    display: inline-block;
+    font-family: Garamond;
+    font-size: 18px;
+    position: static;
+    bottom: 42px;
+  }
+
+  .mobile-menu {
+    width: 40%;
+  }
+}
+
+
+@media screen and (max-width: 593px) {
+  .header-logo__link .text {
+    display: inline-block;
+    font-family: Garamond;
+    font-size: 18px;
+    position: static;
+    bottom: 42px;
+  }
+
+  .mobile-menu {
+    width: 20%;
+  }
+
+  .header .header-logo__link {
+    width: 80%;
+  }
+}
+
+
+.program-information-container {
+  margin-bottom: 30px;
+}
+
+.program-action a {
+  white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
+  white-space: -pre-wrap; /* Opera 4-6 */
+  white-space: -o-pre-wrap; /* Opera 7 */
+  white-space: pre-wrap; /* css-3 */
+  word-wrap: break-word; /* Internet Explorer 5.5+ */
+  word-break: break-word;
+  white-space: normal;
+  border-radius: 5px;
+}
+
+.program-action {
+  max-width: 35%;
+}
+
+.program-information-overwrite {
+  max-width: 55%;
+}
+
+.program-information-openings {
+  overflow-wrap: break-word;
+  -ms-word-wrap: break-word;
+}
+
+.program-information-openings .no-wrap {
+  white-space: nowrap;
+}

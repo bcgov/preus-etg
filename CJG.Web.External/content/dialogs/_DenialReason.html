@@ -1,0 +1,52 @@
+﻿<div>
+    <div class="dialog-header">
+        <h3>{{ngDialogData.title}}</h3>
+    </div>
+    <div class="dialog-content">
+        <div class="modal-content">
+            <div class="main">
+                <p>
+                    Select your denial reason(s) recommendation using the checkboxes below, these are for internal review purpose only and will NOT been seen by the applicant. Then click '{{ngDialogData.trigger}}' to confirm your decision and return to the  grant file.
+                </p>
+                <p>
+                    The message entered in the text box will be added to the grant file and will inform the application contact on the reasons for the denial of their application.
+                </p>
+
+                <div class="form__group form__group--checkbox-list">
+                    <label class="form__label">Select high-level denial reason<abbr title='Required'>*</abbr></label>
+                    <div class="form__group">
+                        <div ng-if="ngDialogData.denialReasonList.length == 0"><b>No Denial Reasons Found!</b></div>
+                        <div class="form form--2-col" ng-repeat="reason in ngDialogData.denialReasonList">
+                            <div class="col-50p" ng-if="$odd">
+                                <input type="checkbox" id="denialReason-{{reason.Id}}" name="denial-reasons-{{reason.Id}}" value="{{reason.Id}}"
+                                       ng-checked="ngDialogData.denialReasonsSelection.indexOf(reason.Id) > -1"
+                                       ng-click="ngDialogData.toggleDenialSelection(reason.Id)">
+                                <label for="denialReason-{{reason.Id}}">{{reason.Caption}}</label>
+                            </div>
+                            <div class="w-100"></div>
+                            <div class="col-50p" ng-if="$even">
+                                <input type="checkbox" id="denialReason-{{reason.Id}}" name="denial-reasons-{{reason.Id}}" value="{{reason.Id}}"
+                                       ng-checked="ngDialogData.denialReasonsSelection.indexOf(reason.Id) > -1"
+                                       ng-click="ngDialogData.toggleDenialSelection(reason.Id)">
+                                <label for="denialReason-{{reason.Id}}">{{reason.Caption}}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p>&nbsp;</p>
+                <div class="form__group">
+                    <label class="form__label form__label--align-top" for="Reason">
+                        Please enter a denial message for the applicant<abbr title='Required'>*</abbr>
+                    </label>
+                    <div class="form__control">
+                        <textarea id="Reason" class="input--full" ng-model="ngDialogData.reason" maxlength="2000"></textarea>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn btn--secondary" ng-click="closeThisDialog()">Cancel</button>
+                    <button class="btn btn--primary pull-right" name="btnSubmit" ng-disabled="!ngDialogData.denialReasonsSelection.length > 0 || !ngDialogData.reason" ng-click="confirm(ngDialogData.getDenialReasonsSelection(ngDialogData.denialReasonsSelection,ngDialogData.reason))">{{ngDialogData.trigger}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

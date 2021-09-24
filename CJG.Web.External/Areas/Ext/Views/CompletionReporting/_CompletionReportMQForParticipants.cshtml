@@ -1,0 +1,162 @@
+﻿@using CJG.Core.Entities
+
+<div class="block--completion-report">
+    <div class="table-wrapper">
+        <pager ng-filter="getParticipants" ng-local="true">
+            <table class="form__group--data-grid">
+                <thead>
+                    <tr>
+                        <th ng-repeat="heading in group.Questions[0].TableHeadings">{{heading}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="participant in $parent.$ctrl.ngItems" ng-show="$parent.$parent.$ctrl.showPage($index)">
+                        <td class="participant-name-panel">{{participant.FirstName}} {{participant.LastName}}</td>
+                        <td>
+                            <div ng-repeat="question in group.Questions">
+                                <div ng-show="getParticipantAnswer(question.Level1Answers, participant.Id).Display">
+                                    <div ng-switch="question.QuestionType">
+                                        <div ng-switch-when="@((int)CompletionReportQuestionTypes.MultipleChoice)">
+                                            <div class="form__group">
+                                                <label class="form__label">
+                                                    <span ng-bind-html="parseQuestionText(question.Question)"></span> <abbr title="Required" ng-if="question.IsRequired">*</abbr>
+                                                </label>
+                                                <div class="form__control select--medium-xlarge">
+                                                    <div class="control-wrapper selectmenu">
+                                                        <select class="form-control"
+                                                                ng-model="getParticipantAnswer(question.Level1Answers, participant.Id).IntAnswer"
+                                                                ng-options="item.Id as item.Answer for item in question.Level1Options"
+                                                                ng-change="updateMQReason(group, participant.Id, $index)"></select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div ng-switch-when="@((int)CompletionReportQuestionTypes.CommunityList)">
+                                            <div class="form__group">
+                                                <label class="form__label">
+                                                    <span ng-bind-html="parseQuestionText(question.Question)"></span> <abbr title="Required" ng-if="question.IsRequired">*</abbr>
+                                                </label>
+                                                <div class="form__control select--medium-xlarge">
+                                                    <div class="control-wrapper selectmenu">
+                                                        <select class="form-control"
+                                                                ng-model="getParticipantAnswer(question.Level1Answers, participant.Id).CommunityId"
+                                                                ng-options="item.Id as item.Caption for item in Communities.Communities"
+                                                                ng-change="updateMQReason(group, participant.Id, $index)"></select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div ng-switch-when="@((int)CompletionReportQuestionTypes.NOCList)">
+                                            <div class="form__group">
+                                                <label class="form__label">
+                                                    <span ng-bind-html="parseQuestionText(question.Question)"></span> <abbr title="Required" ng-if="question.IsRequired">*</abbr>
+                                                </label>
+                                                <div class="form__control select--medium-xlarge">
+                                                    <div class="control-wrapper selectmenu">
+                                                        <select class="form-control"
+                                                                ng-model="getParticipantAnswer(question.Level1Answers, participant.Id).Noc1Id"
+                                                                ng-options="item.Key as item.Value for item in participant.nocs1"
+                                                                ng-change="changeNOC(participant, question.Level1Answers, 2)">
+                                                            <option value="">&lt;Participant NOC&gt;</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form__control select--medium-xlarge">
+                                                    <div class="control-wrapper selectmenu margin-top-10" ng-if="getParticipantAnswer(question.Level1Answers, participant.Id).Noc1Id">
+                                                        <select class="form-control"
+                                                                ng-model="getParticipantAnswer(question.Level1Answers, participant.Id).Noc2Id"
+                                                                ng-options="item.Key as item.Value for item in participant.nocs2"
+                                                                ng-change="changeNOC(participant, question.Level1Answers, 3)">
+                                                            <option value="">&lt;Participant NOC&gt;</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form__control select--medium-xlarge">
+                                                    <div class="control-wrapper selectmenu margin-top-10" ng-if="getParticipantAnswer(question.Level1Answers, participant.Id).Noc2Id">
+                                                        <select class="form-control"
+                                                                ng-model="getParticipantAnswer(question.Level1Answers, participant.Id).Noc3Id"
+                                                                ng-options="item.Key as item.Value for item in participant.nocs3"
+                                                                ng-change="changeNOC(participant, question.Level1Answers, 4)">
+                                                            <option value="">&lt;Participant NOC&gt;</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form__control select--medium-xlarge">
+                                                    <div class="control-wrapper selectmenu margin-top-10" ng-if="getParticipantAnswer(question.Level1Answers, participant.Id).Noc3Id">
+                                                        <select class="form-control"
+                                                                ng-model="getParticipantAnswer(question.Level1Answers, participant.Id).Noc4Id"
+                                                                ng-options="item.Key as item.Value for item in participant.nocs4"
+                                                                ng-change="updateMQReason(group, participant.Id, $index)">
+                                                            <option value="">&lt;Participant NOC&gt;</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div ng-switch-when="@((int)CompletionReportQuestionTypes.NAICSList)">
+                                            <div class="form__group">
+                                                <label class="form__label">
+                                                    <span ng-bind-html="parseQuestionText(question.Question)"></span> <abbr title="Required" ng-if="question.IsRequired">*</abbr>
+                                                </label>
+                                                <div class="form__control select--medium-xlarge">
+                                                    <div class="control-wrapper selectmenu">
+                                                        <select class="form-control"
+                                                                ng-model="getParticipantAnswer(question.Level1Answers, participant.Id).Naics1Id"
+                                                                ng-options="item.Key as item.Value for item in participant.naics1"
+                                                                ng-change="changeNAICS(participant, question.Level1Answers, 2);updateMQReason(group, participant.Id, $index)">
+                                                            <option value="">&lt;Employer NAICS&gt;</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form__control select--medium-xlarge">
+                                                    <div class="control-wrapper selectmenu margin-top-10" ng-if="getParticipantAnswer(question.Level1Answers, participant.Id).Naics1Id">
+                                                        <select class="form-control"
+                                                                ng-model="getParticipantAnswer(question.Level1Answers, participant.Id).Naics2Id"
+                                                                ng-options="item.Key as item.Value for item in participant.naics2"
+                                                                ng-change="changeNAICS(participant, question.Level1Answers, 3);updateMQReason(group, participant.Id, $index)">
+                                                            <option value="">&lt;Employer NAICS&gt;</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form__control select--medium-xlarge">
+                                                    <div class="control-wrapper selectmenu margin-top-10" ng-if="getParticipantAnswer(question.Level1Answers, participant.Id).Naics2Id">
+                                                        <select class="form-control"
+                                                                ng-model="getParticipantAnswer(question.Level1Answers, participant.Id).Naics3Id"
+                                                                ng-options="item.Key as item.Value for item in participant.naics3"
+                                                                ng-change="changeNAICS(participant, question.Level1Answers, 4);updateMQReason(group, participant.Id, $index)">
+                                                            <option value="">&lt;Employer NAICS&gt;</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form__control select--medium-xlarge">
+                                                    <div class="control-wrapper selectmenu margin-top-10" ng-if="getParticipantAnswer(question.Level1Answers, participant.Id).Naics3Id">
+                                                        <select class="form-control"
+                                                                ng-model="getParticipantAnswer(question.Level1Answers, participant.Id).Naics4Id"
+                                                                ng-options="item.Key as item.Value for item in participant.naics4"
+                                                                ng-change="changeNAICS(participant, question.Level1Answers, 5);updateMQReason(group, participant.Id, $index)">
+                                                            <option value="">&lt;Employer NAICS&gt;</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form__control select--medium-xlarge">
+                                                    <div class="control-wrapper selectmenu margin-top-10" ng-if="getParticipantAnswer(question.Level1Answers, participant.Id).Naics4Id">
+                                                        <select class="form-control"
+                                                                ng-model="getParticipantAnswer(question.Level1Answers, participant.Id).Naics5Id"
+                                                                ng-options="item.Key as item.Value for item in participant.naics5"
+                                                                ng-change="updateMQReason(group, participant.Id, $index)">
+                                                            <option value="">&lt;Employer NAICS&gt;</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </pager>
+    </div>
+</div>

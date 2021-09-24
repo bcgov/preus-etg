@@ -1,0 +1,33 @@
+﻿<div>
+    <div class="dialog-header">
+        <h3>{{ngDialogData.title}}</h3>
+    </div>
+    <div class="dialog-content">
+        <div class="modal-content">
+            <div ng-controller="ClaimWithdrawView" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-claim-id="@ViewBag.ClaimId" ng-claim-version="@ViewBag.ClaimVersion" ng-row-version="@ViewBag.RowVersion">
+
+                <div ng-if="alert.message" class="row row--alert">
+                    <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+                </div>
+
+                <div class="content--withdraw-application">
+                    <p>Are you sure you wish to withdraw your claim?</p>
+
+                    <div class="form__group">
+                        <label class="form__label form__label--align-top" for="withdraw-reason">Please provide a reason</label>
+                        <div class="form__control">
+                            <textarea ng-model="model.WithdrawReason" id="withdraw-reason" class="input--full" maxlength="800"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn--secondary" ng-click="closeThisDialog()">Cancel</button>
+                        <button class="btn btn--primary btn--forward confirm-link pull-right" ng-disabled="!model.WithdrawReason" ng-click="withdraw()">
+                            Yes, withdraw claim
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

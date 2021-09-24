@@ -1,0 +1,17 @@
+﻿@model CJG.Web.External.Areas.Part.Models.ParticipantInfoViewModel
+@{
+    ViewBag.Title = "Participant Information Form";
+}
+
+<div ng-controller="ParticipantInformationView" ng-session-duration="@Model.ParticipantInfoStep1ViewModel.TimeoutPeriod">
+    <div class="form-section">
+        <div class="float-left">
+            <h1 class="header__title">Participant Information Form</h1>
+        </div>
+    </div>
+    <div ng-if="alert.message" class="row row--alert">
+        <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+    </div>
+
+    @Html.Partial("_Step1", Model.ParticipantInfoStep1ViewModel)
+</div>

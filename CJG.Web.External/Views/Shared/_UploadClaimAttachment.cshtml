@@ -1,0 +1,116 @@
+﻿@model CJG.Web.External.Areas.Ext.Models.ClaimUploadAttachmentModel
+
+<div id="upload-claim-attachment-controller" ng-controller="UploadClaimAttachmentController">
+    <input type="hidden" id="attachment-claim-url" value="@Model.ClaimBaseHref" />
+    <h2>@Model.Title</h2>
+    @if (!Model.ShowWDADescription && Model.CanEdit)
+    {
+        <div>
+            <p>
+                Attach all receipts, paid invoices or other valid proof of payments that relate to the actual training costs you have entered for each
+                eligible expense type. For each attachment, enter a description to identify what part of your claim it supports.
+            </p>
+            <p>
+                Accepted file types: PDF, JPG, JPEG, PNG, GIF. Maximum file size is @Model.MaxUploadSize MB.
+            </p>
+        </div>
+    }
+
+    @if (Model.ShowWDADescription && Model.CanEdit)
+    {
+        <div>
+            <p>Your assessor may request you to attach documentation to support your claim.</p>
+            <p>For each attachment, enter a description to identify what part of your claim it supports.</p>
+            <p>Accepted file types: PDF, JPG, JPEG, PNG, GIF. Maximum file size is @Model.MaxUploadSize MB.</p>
+        </div>
+    }
+
+    <div id="claim-attachment">
+        <div class="form__group" ng-if="model.ClaimAttachments">
+            <table style="width:100%;">
+                <tr ng-repeat="attachment in model.ClaimAttachments">
+                    <td style="width:10%;vertical-align:top">{{attachment.Attachment.Sequence}}</td>
+                    @if (Model.IsExternal)
+                    {
+                        <td style="width:60%;vertical-align:top;word-wrap: break-word;word-break: break-all;"><a href="/Ext/Claim/Attachment/Download/@Model.ClaimId/@Model.ClaimVersion/{{attachment.Attachment.Id}}">{{attachment.Attachment.Name}}</a><br />{{attachment.Attachment.Description}}</td>
+                    }
+                    else
+                    {
+                        <td style="width:60%;vertical-align:top;word-wrap: break-word;word-break: break-all;"><a href="/Int/Application/Claim/Attachment/Download/@Model.ClaimId/@Model.ClaimVersion/{{attachment.Attachment.Id}}">{{attachment.Attachment.Name}}</a><br />{{attachment.Attachment.Description}}</td>
+                    }
+
+
+                    @if (Model.CanEdit)
+                    {
+                        <td style="vertical-align:top">
+                            <button class="btn btn--secondary pull-right margin-left-10" ng-click="RemoveAttachment(attachment)" ng-disabled="readonly">Remove</button>
+                            <button class="btn btn--secondary pull-right margin-left-10" ng-click="ChangeAttachment(attachment)" ng-disabled="readonly">Change</button>
+                        </td>
+                    }
+                </tr>
+            </table>
+        </div>
+        @if (Model.CanEdit)
+        {
+            <button ng-if="model.ClaimAttachments.length < model.MaximumNumberOfAttachmentsAllowed" class="btn btn--secondary" ng-click="AddAttachment()" ng-disabled="readonly" data-disableonsubmit="false">Add attachment</button>
+        }
+        else
+        {
+            <p ng-if="model.ClaimAttachments == null || model.ClaimAttachments.length == 0">There are no attachments.</p>
+        }
+
+        <div id="claim-attachment-modal">
+            <div data-modal-title="Attachment" class="modal-content">
+                <div class="form well">
+                    <div class="row--alert" ng-if="modalData.SummaryMessage">
+                        <div class="alert alert--deafult" ng-class="'alert--' + modalData.SummaryType" role="alert" ng-bind-html="modalData.SummaryMessage">
+                        </div>
+                    </div>
+                    <div class="form__group">
+                        <div class="form__label">Name: </div>
+                        <div class="form__control">
+                            <span>
+                                {{modalData.Attachment.Name}} <input type="file" name="AsyncDocumentsFiles" id="claim-upload" accept=".pdf,.jpg,.jpeg,.png,.gif" autocomplete="off" />
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form__group">
+                        <div class="form__label">Description: </div>
+                        <div class="form__control">
+                            <textarea ng-model="modalData.Attachment.Description" maxlength="500"></textarea>
+                            <span class="pull-right ">{{500 - modalData.Attachment.Description.length}} chars left</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="form well">
+                        <button class="btn btn--secondary" data-disableonsubmit="false" ng-click="CancelAttachment()">Cancel</button>
+                        <button class="btn btn--primary pull-right save-attachment" ng-click="UploadAttachment()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            ul.k-upload-files {
+                display: none;
+            }
+
+            .k-upload-selected {
+                display: none !important;
+            }
+
+            .k-upload-status-total {
+                display: none !important;
+            }
+
+            .narrow-space-list ul {
+                margin-bottom: 0;
+            }
+
+                .narrow-space-list ul:not([class]) li {
+                    margin-bottom: 0;
+                }
+        </style>
+    </div>
+</div>

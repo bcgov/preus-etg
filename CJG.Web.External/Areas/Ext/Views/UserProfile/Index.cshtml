@@ -1,0 +1,18 @@
+﻿@model CJG.Core.Entities.User
+
+@{
+    ViewBag.Title = "User Profile";
+}
+
+@using (Html.BeginForm("Index", "UserProfile"))
+{
+    <h1>Edit User Profile</h1>
+    <div>
+        @Html.EditorFor(m => m)
+        <p>
+            <button name="button" value="Save">Save Changes</button>
+            <button name="button" value="Cancel">Cancel Edit</button>
+
+        </p>
+    </div>
+}

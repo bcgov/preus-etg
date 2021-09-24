@@ -1,0 +1,72 @@
+﻿
+<table @(ViewData.ContainsKey("tableName") ? Html.Raw(string.Format(" id=\"{0}\"", ViewData["tableName"])) : null) width="100%">
+    <thead>
+    <tr>
+        <th>
+            Application ID
+        </th>
+        <th>
+            Organization Name
+        </th>
+        <th>
+            Date Submitted
+        </th>
+        <th>
+            Current Status
+        </th>
+        <th>
+            Stream Name
+        </th>
+        <th>
+            Training Date
+        </th>
+        <th>
+            Assigned Assessor
+        </th>
+        <th>
+            Action Due Date
+        </th>
+        <th data-orderable="false"></th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    $(document)
+        .ready(function() {
+            var oTable = $('#@(ViewData.ContainsKey("tableName") ? ViewData["tableName"] : null)')
+                .DataTable({
+                    "serverSide": true,
+                    "ajax": {
+                        "type": "POST",
+                        "url": '@(ViewData.ContainsKey("ajaxEndpointUrl") ? ViewData["ajaxEndpointUrl"] : null)',
+                        "contentType": 'application/json; charset=utf-8',
+                        'data': function(data) { return data = JSON.stringify(data); }
+                    },
+                    "processing": true,
+                    "columns": [
+                        { "data": "Id" },
+                        { "data": "OrganizationName" },
+                        { "data": "DateSubmitted" },
+                        { "data": "CurrentStatus" },
+                        { "data": "StreamName" },
+                        { "data": "TrainingDate" },
+                        { "data": "AssignedAssessor" },
+                        { "data": "ActionDueDate" },
+                        { "render": function(data, type, full, meta) {
+                            
+                            return '<a href="/Int/Application/ApplicationDetails/' + full.Id + '">View</a>';
+                        }}
+                        //{ "render": function(data, type, full, meta) {
+                            //  return '<a class="btn btn--primary">Select</a>'
+                        //}}
+                    ],
+                    "order": [2, "asc"],
+                    "language": {
+                        "lengthMenu": "Show <div class='selectmenu'>_MENU_</div> entries"
+                    }
+                });
+        });
+</script>

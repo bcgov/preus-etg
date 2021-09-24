@@ -1,0 +1,56 @@
+﻿<div ng-controller="ApplicationDetailsNotifications">
+    <span class="panel-section-item">
+        <span class="panel-section-title" ng-click="toggle($event)">Notifications</span>
+        <span class="panel-section-buttons">
+            <span ng-if="section.show">
+                <a class="btn btn--empty text--link" ng-click="toggleNotificationsDialog()">{{model.ScheduledNotificationsEnabled ? 'Disable' : 'Enable'}} Scheduled Notifications</a>
+            </span>
+            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            <span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+        </span>
+    </span>
+    <div class="panel-section-content" ng-if="section.show">
+        <pager ng-filter="getNotifications" ng-page-size="[10]" ng-page-header="false">
+            <div class="data-grid-page-size">
+                <!-- Triggers dropdown -->
+                <div class="form__control float-left margin-right-10">
+                    <div>Trigger</div>
+                    <div class="selectmenu">
+                        <select ng-model="filter.triggerType" ng-options="item.Id as item.Caption for item in triggers" ng-change="$parent.$ctrl.updateItems()">
+                            <option value="">< All Triggers ></option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Search -->
+                <div class="form__control float-left">
+                    <div>Name</div>
+                    <input type="text" ng-model="$parent.$ctrl.ngKeyword" ng-change="$parent.$ctrl.updateItems()" />
+                    <button class="btn btn--search" ng-click="$parent.$ctrl.updateItems()"></button>
+                </div>
+            </div>
+            <div class="form-table notification-table">
+                <div class="form-table-heading">
+                    <div class="form-table-cell action {{sortDirection('NotificationType.Caption')}}" ng-click="sort('NotificationType.Caption')">Name</div>
+                    <div class="form-table-cell action {{sortDirection('State')}}" ng-click="sort('State')">Status</div>
+                    <div class="form-table-cell action {{sortDirection('NotificationType.Description')}}" ng-click="sort('NotificationType.Description')">Description</div>
+                    <div class="form-table-cell action {{sortDirection('DateUpdated')}}" ng-click="sort('DateUpdated')">Sent On</div>
+                    <div class="form-table-cell"></div>
+                </div>
+                <div class="form-table-row" ng-repeat="item in $parent.$ctrl.ngItems">
+                    <!-- Name -->
+                    <div class="form-table-cell">{{item.Name}}</div>
+                    <!-- Status -->
+                    <div class="form-table-cell">{{item.Status}}</div>
+                    <!-- Description -->
+                    <div class="form-table-cell">{{item.Description}}</div>
+                    <!-- Sent On -->
+                    <div class="form-table-cell">{{item.SentOn ? toPST(item.SentOn, 'YYYY-MM-DD hh:mm a'): ''}}</div>
+                    <!-- View btn -->
+                    <div class="form-table-cell">
+                        <button class="btn btn--secondary pull-right" ng-click="openNotificationModal(item.Id)">View</button>
+                    </div>
+                </div>
+            </div>
+        </pager>
+    </div>
+</div>

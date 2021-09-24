@@ -1,0 +1,12 @@
+﻿
+<div class="form__group">
+    <label class="form__label">
+        <span ng-bind-html="parseQuestionText(question.Question)"></span> <abbr title="Required" ng-if="question.IsRequired">*</abbr>
+    </label>
+    <div class="form__control">
+        <textarea ng-model="question.Level1Answers[0].StringAnswer"
+                  ng-class="{'has-error': $ctrl.getError()}"
+                  maxlength="2000" class="input--full copy-box--med"></textarea>
+        <span class="char-count-status">{{(2000 - question.Level1Answers[0].StringAnswer.length)}} chars left</span>
+    </div>
+</div>

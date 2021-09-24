@@ -1,0 +1,133 @@
+﻿@using CJG.Core.Entities
+@model CJG.Core.Entities.ApplicationStateExternal
+
+@{
+    switch (Model)
+    {
+        case ApplicationStateExternal.NotStarted:
+            <text>
+                <span class="label label--notstarted">NOT STARTED</span>
+            </text>
+            break;
+        case ApplicationStateExternal.Incomplete:
+            <text>
+                <span class="label label--incomplete">INCOMPLETE</span>
+            </text>
+            break;
+        case ApplicationStateExternal.Complete:
+            <text>
+                <span class="label label--notsubmitted">NOT SUBMITTED</span>
+            </text>
+            break;
+        case ApplicationStateExternal.Submitted:
+            <text>
+                <span class="label label--complete">COMPLETE</span>
+            </text>
+            break;
+        case ApplicationStateExternal.ApplicationWithdrawn:
+            <text>
+                <span class="label label--notstarted">APPLICATION WITHDRAWN</span>
+            </text>
+            break;
+        case ApplicationStateExternal.Approved:
+            <text>
+                <span class="label label--complete">APPROVED</span>
+            </text>
+            break;
+        case ApplicationStateExternal.ApplicationDenied:
+            <text>
+                <span class="label label--notstarted">APPLICATION DENIED</span>
+            </text>
+            break;
+        case ApplicationStateExternal.CancelledByMinistry:
+            <text>
+                <span class="label label--warning">CANCELLED BY MINISTRY</span>
+            </text>
+            break;
+        case ApplicationStateExternal.CancelledByAgreementHolder:
+            <text>
+                <span class="label label--warning">CANCELLED BY AGREEMENT HOLDER</span>
+            </text>
+            break;
+        case ApplicationStateExternal.AcceptGrantAgreement:
+            <text>
+                <span class="label label--danger">ACCEPT GRANT AGREEMENT</span>
+            </text>
+            break;
+        case ApplicationStateExternal.ChangeRequestSubmitted:
+            <text>
+                <span class="label label--success">CHANGE REQUEST SUBMITTED</span>
+            </text>
+            break;
+        case ApplicationStateExternal.ChangeRequestApproved:
+            <text>
+                <span class="label label--success">CHANGE REQUEST APPROVED</span>
+            </text>
+            break;
+        case ApplicationStateExternal.ChangeRequestDenied:
+            <text>
+                <span class="label label--warning">CHANGE REQUEST DENIED</span>
+            </text>
+            break;
+        case ApplicationStateExternal.NotAccepted:
+            <text>
+                <span class="label label--warning">NOT ACCEPTED</span>
+            </text>
+            break;
+        case ApplicationStateExternal.AgreementWithdrawn:
+            <text>
+                <span class="label label--warning">AGREEMENT WITHDRAWN</span>
+            </text>
+            break;
+        case ApplicationStateExternal.AgreementRejected:
+            <text>
+                <span class="label label--warning">AGREEMENT REJECTED</span>
+            </text>
+            break;
+        case ApplicationStateExternal.ClaimSubmitted:
+            <text>
+                <span class="label label--complete">CLAIM SUBMITTED</span>
+            </text>
+            break;
+        case ApplicationStateExternal.ClaimReturned:
+            <text>
+                <span class="label label--warning">CLAIM RETURNED</span>
+            </text>
+            break;
+        case ApplicationStateExternal.ClaimDenied:
+            <text>
+                <span class="label label--warning">CLAIM DENIED</span>
+            </text>
+            break;
+        case ApplicationStateExternal.ClaimApproved:
+            <text>
+                <span class="label label--complete">CLAIM APPROVED</span>
+            </text>
+            break;
+        case ApplicationStateExternal.AmendClaim:
+            <text>
+                <span class="label label--warning">AMEND CLAIM</span>
+            </text>
+            break;
+        case ApplicationStateExternal.Closed:
+            <text>
+                <span class="label label--warning">CLOSED</span>
+            </text>
+            break;
+        case ApplicationStateExternal.ReportCompletion:
+            <text>
+                <span class="label label--complete">REPORT COMPLETION</span>
+            </text>
+            break;
+        case ApplicationStateExternal.ReturnedUnassessed:
+            <text>
+                <span class="label label--warning">RETURNED TO APPLICANT UNASSESSED</span>
+            </text>
+            break;
+        default:
+            <text>
+                <span class="label label--notstarted">NOT STARTED</span>
+            </text>
+            break;
+    }
+}
