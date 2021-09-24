@@ -1,1 +1,0 @@
-require('./claim-management-dashboard');

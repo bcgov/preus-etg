@@ -1,1 +1,0 @@
-require('./training-costs-view');

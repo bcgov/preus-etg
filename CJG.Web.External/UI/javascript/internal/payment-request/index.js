@@ -1,1 +1,0 @@
-require('./request-management-view');

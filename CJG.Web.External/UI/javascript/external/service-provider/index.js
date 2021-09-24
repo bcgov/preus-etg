@@ -1,1 +1,0 @@
-require('./service-provider-view');

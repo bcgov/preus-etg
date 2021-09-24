@@ -1,1 +1,0 @@
-require('./view-participant-info');

@@ -1,1 +1,0 @@
-require('./program-description-view');

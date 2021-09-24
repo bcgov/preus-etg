@@ -1,1 +1,0 @@
-require('./participant-reporting-view');
