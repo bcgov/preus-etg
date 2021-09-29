@@ -30,8 +30,7 @@ namespace CJG.Infrastructure.GrantOpeningService
 			_logger.Info($"Starting '{nameof(GrantOpeningJob)}' on {currentDate:G}");
 
 			int succeedCount = 0, failedCount = 0, ignoredCount = 0;
-			foreach (var grantOpening in _grantOpeningService.GetGrantOpeningsInStates(new[] { GrantOpeningStates.Scheduled,
-				GrantOpeningStates.Published, GrantOpeningStates.Open }))
+			foreach (var grantOpening in _grantOpeningService.GetGrantOpeningsInStates(new[] { GrantOpeningStates.Scheduled, GrantOpeningStates.Published, GrantOpeningStates.Open }))
 			{
 				var grantOpeningTitle = FormatGrantOpeningTitle(grantOpening);
 				var result = TryVerifyAndUpdateGrantOpening(grantOpening, currentDate.ToUniversalTime(), numberOfDaysBefore);

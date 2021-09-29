@@ -24,7 +24,6 @@ namespace CJG.Application.Services
 		{
 		}
 
-		#region Methods
 		/// <summary>
 		/// Add the specified <typeparamref name="ParticipantForm"/> if the invitation has not expired.
 		/// </summary>
@@ -107,7 +106,8 @@ namespace CJG.Application.Services
 		/// <summary>
 		/// used when the assessor sets the Approved property for the participants
 		/// </summary>
-		/// <param name="participantApproved"></param>
+		/// <param name="grantApplicationId"></param>
+		/// <param name="participantsApproved"></param>
 		public void ApproveDenyParticipants(int grantApplicationId, Dictionary<int?, bool?> participantsApproved)
 		{
 			var grantApplication = _dbContext.GrantApplications.FirstOrDefault(w => w.Id == grantApplicationId);
@@ -128,14 +128,13 @@ namespace CJG.Application.Services
 			}
 
 			//do we need to adjust the training costs
-			int totalParticipants = grantApplication.ParticipantForms.Count();
-			int totalApproved = participantsApproved.Where(w => w.Value.HasValue && w.Value.Value == true).Count();
+			var totalApproved = participantsApproved.Count(w => w.Value.HasValue && w.Value.Value == true);
 
 			//if the total approved does not match the agreed participant count
 			if (totalApproved != grantApplication.TrainingCost.AgreedParticipants)
 			{
 				//adjust the costs if the maxAgreedParticipants is the same for all eligible costs and match the training costs agreed participant number
-				var agreedParticipantsDoNotMatch = grantApplication.TrainingCost.EligibleCosts.Where(w => w.AgreedMaxParticipants != grantApplication.TrainingCost.AgreedParticipants).Count();
+				var agreedParticipantsDoNotMatch = grantApplication.TrainingCost.EligibleCosts.Count(w => w.AgreedMaxParticipants != grantApplication.TrainingCost.AgreedParticipants);
 
 				if (agreedParticipantsDoNotMatch == 0)
 				{
@@ -241,17 +240,20 @@ namespace CJG.Application.Services
 		{
 			var currentDateUtc = currentDate.ToUniversalTime();
 			var cutoffDateUtc = cutoffDate.ToUniversalTime();
+			var defaultGrantProgramId = GetDefaultGrantProgramId();
 
 			// Is Currently receiving EI benefits
 			return (from pf in _dbContext.ParticipantForms
 					join ga in _dbContext.GrantApplications on pf.GrantApplicationId equals ga.Id
-					where pf.DateAdded >= cutoffDateUtc
+					where
+						pf.DateAdded >= cutoffDateUtc
+						&& ga.GrantOpening.GrantStream.GrantProgramId == defaultGrantProgramId
 						&& (pf.ReceivingEIBenefit || pf.EIBenefitId == 1)  // "Currently Receiving"
-							&& (!pf.ReportedOn.HasValue || pf.ReportedOn > currentDateUtc)
-							&& ga.ApplicationStateInternal != ApplicationStateInternal.Draft
+						&& (!pf.ReportedOn.HasValue || pf.ReportedOn > currentDateUtc)
+						&& ga.ApplicationStateInternal != ApplicationStateInternal.Draft
 					select pf
-					).Include(x => x.GrantApplication)
-					.Take(take);
+				).Include(x => x.GrantApplication)
+				.Take(take);
 		}
 
 		/// <summary>
@@ -292,8 +294,9 @@ namespace CJG.Application.Services
 			{
 				// Remove all participant costs associated with this participant.
 				var participantCosts = _dbContext.ParticipantCosts
-					.Where(pc => pc.ParticipantFormId == participant.Id && pc.ClaimEligibleCost.ClaimId == claim.Id
-					                                                    && pc.ClaimEligibleCost.ClaimVersion == claim.ClaimVersion);
+					.Where(pc => pc.ParticipantFormId == participant.Id
+					             && pc.ClaimEligibleCost.ClaimId == claim.Id
+					             && pc.ClaimEligibleCost.ClaimVersion == claim.ClaimVersion);
 
 				foreach (var participantCost in participantCosts)
 					_dbContext.ParticipantCosts.Remove(participantCost);
@@ -331,17 +334,6 @@ namespace CJG.Application.Services
 						_dbContext.ParticipantForms.Remove(participantForm);
 					}
 				}
-
-				//if (_dbContext.ClaimParticipants != null)
-				//{
-				//	var claimParticipants = _dbContext.ClaimParticipants.Where(cp => cp.ClaimId == claim.Id
-				//																	&& cp.ClaimVersion == claim.ClaimVersion
-				//																	&& cp.ParticipantFormId == participant.Id);
-				//	if (claimParticipants.Any())
-				//	{
-				//		_dbContext.ClaimParticipants.RemoveRange(claimParticipants);
-				//	}
-				//}
 			}
 
 			// also need to check to see if this participant has been included on a completion report, in which case their answers need to be removed
@@ -354,7 +346,6 @@ namespace CJG.Application.Services
 
 			participant.EligibleCostBreakdowns.Clear();
 
-
 			_dbContext.ParticipantForms.Remove(participant);
 			_dbContext.CommitTransaction();
 		}
@@ -365,7 +356,8 @@ namespace CJG.Application.Services
 		/// <param name="participant"></param>
 		public void IncludeParticipant(ParticipantForm participant)
 		{
-			if (participant == null) throw new ArgumentNullException(nameof(participant));
+			if (participant == null)
+				throw new ArgumentNullException(nameof(participant));
 
 			var grantApplication = participant.GrantApplication;
 
@@ -415,7 +407,8 @@ namespace CJG.Application.Services
 		/// <param name="participant"></param>
 		public void ExcludeParticipant(ParticipantForm participant)
 		{
-			if (participant == null) throw new ArgumentNullException(nameof(participant));
+			if (participant == null)
+				throw new ArgumentNullException(nameof(participant));
 
 			var grantApplication = participant.GrantApplication;
 
@@ -468,52 +461,35 @@ namespace CJG.Application.Services
 		public IDictionary<string, decimal> GetParticipantYTD(GrantApplication grantApplication)
 		{
 			var enteredSiNs = grantApplication.ParticipantForms.Select(x => x.SIN).ToList();
-
-			ApplicationStateInternal[] ApplicationStates = new ApplicationStateInternal[] {ApplicationStateInternal.AgreementAccepted,ApplicationStateInternal.ChangeRequest,
-						 ApplicationStateInternal.ChangeForApproval, ApplicationStateInternal.ChangeForDenial,
-						 ApplicationStateInternal.ChangeReturned, ApplicationStateInternal.ChangeRequestDenied, ApplicationStateInternal.NewClaim,
-						 ApplicationStateInternal.ClaimAssessEligibility, ApplicationStateInternal.ClaimReturnedToApplicant,
-						 ApplicationStateInternal.ClaimDenied, ApplicationStateInternal.ClaimApproved, ApplicationStateInternal.Closed,
-						 ApplicationStateInternal.ClaimAssessReimbursement, ApplicationStateInternal.CompletionReporting };
-
-			//TODO: Left this here for find usages
 			var defaultGrantProgramId = GetDefaultGrantProgramId();
-
-			//TODO: Strip code out of respective CWRG/ETG Branches
-			if (grantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
+			var applicationStates = new[]
 			{
-				var queryParticipantCost = (from pc in _dbContext.ParticipantCosts
-											join pf in _dbContext.ParticipantForms on pc.ParticipantFormId equals pf.Id
-											join ga in _dbContext.GrantApplications on pf.GrantApplicationId equals ga.Id
-											where ApplicationStates.Contains(ga.ApplicationStateInternal)
-											&& ga.GrantOpening.TrainingPeriod.FiscalYearId == grantApplication.GrantOpening.TrainingPeriod.FiscalYearId
-										    && enteredSiNs.Contains(pf.SIN)
-											select new { pc, pf } into pg
-											select pg).ToList();
+				ApplicationStateInternal.AgreementAccepted, ApplicationStateInternal.ChangeRequest,
+				ApplicationStateInternal.ChangeForApproval, ApplicationStateInternal.ChangeForDenial,
+				ApplicationStateInternal.ChangeReturned, ApplicationStateInternal.ChangeRequestDenied,
+				ApplicationStateInternal.NewClaim,
+				ApplicationStateInternal.ClaimAssessEligibility, ApplicationStateInternal.ClaimReturnedToApplicant,
+				ApplicationStateInternal.ClaimDenied, ApplicationStateInternal.ClaimApproved,
+				ApplicationStateInternal.Closed,
+				ApplicationStateInternal.ClaimAssessReimbursement, ApplicationStateInternal.CompletionReporting
+			};
 
-				return queryParticipantCost.GroupBy(o => o.pf.SIN).Select(o => new { Amount = o.Sum(b => b.pc.AssessedReimbursement), SIN = o.Key }).ToDictionary(x => x.SIN, x => x.Amount);
-			}
-			else if (grantApplication.GetProgramType() == ProgramTypes.WDAService)
-			{
-				var queryParticipantCost = (from pf in _dbContext.ParticipantForms
-											join ga in _dbContext.GrantApplications on pf.GrantApplicationId equals ga.Id
-											join cl in _dbContext.Claims on ga.Id equals cl.GrantApplicationId
-											join ce in _dbContext.ClaimEligibleCosts on cl.Id equals ce.ClaimId
-											join gos in _dbContext.GrantOpenings on ga.GrantOpeningId equals gos.Id
-											join gs in _dbContext.GrantStreams on gos.GrantStreamId equals gs.Id
-											join gp in _dbContext.GrantPrograms on gs.GrantProgramId equals gp.Id
-											where ApplicationStates.Contains(ga.ApplicationStateInternal)
-											&& ga.GrantOpening.TrainingPeriod.FiscalYearId == grantApplication.GrantOpening.TrainingPeriod.FiscalYearId
-										    && enteredSiNs.Contains(pf.SIN) && cl.ClaimState != ClaimState.Incomplete && gp.ProgramCode == grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramCode
-											select new { ce, pf } into pg
-											select pg).ToList();
+			var queryParticipantCost = (from pc in _dbContext.ParticipantCosts
+					join pf in _dbContext.ParticipantForms on pc.ParticipantFormId equals pf.Id
+					join ga in _dbContext.GrantApplications on pf.GrantApplicationId equals ga.Id
+					where applicationStates.Contains(ga.ApplicationStateInternal)
+					      && ga.GrantOpening.GrantStream.GrantProgramId == defaultGrantProgramId
+					      && ga.GrantOpening.TrainingPeriod.FiscalYearId == grantApplication.GrantOpening.TrainingPeriod.FiscalYearId
+					      && enteredSiNs.Contains(pf.SIN)
+					select new {pc, pf}
+					into pg
+					select pg)
+				.ToList();
 
-				return queryParticipantCost.GroupBy(o => o.pf.SIN).Select(o => new { Amount = o.Sum(b => b.ce.AssessedMaxParticipantReimbursementCost), SIN = o.Key }).ToDictionary(x => x.SIN, x => x.Amount);
-			}
-			return null;
+			return queryParticipantCost
+				.GroupBy(o => o.pf.SIN)
+				.Select(o => new { Amount = o.Sum(b => b.pc.AssessedReimbursement), SIN = o.Key })
+				.ToDictionary(x => x.SIN, x => x.Amount);
 		}
 	}
-
-		#endregion
-	}
-
+}

@@ -86,12 +86,6 @@ namespace CJG.Infrastructure.ReportingService
 			var trainingStartDate = ga.StartDate;
 			var trainingEndDate = ga.EndDate;
 
-			if (ga.GetProgramType() == ProgramTypes.WDAService)
-			{
-				trainingStartDate = ga.TrainingPrograms.Min(programs => programs.StartDate);
-				trainingEndDate = ga.TrainingPrograms.Max(programs => programs.EndDate);
-			}
-
 			var placeholders = new Dictionary<string, string>
 			{
 				{"ParticipantFormId", participant.Id.ToString()},
@@ -135,13 +129,12 @@ namespace CJG.Infrastructure.ReportingService
 
 		internal static double DateDiffInWeeks(DateTime startDate, DateTime endDate, bool isEndDateInclusive = false)
 		{
-			return ((endDate.Date - startDate.Date).TotalDays + (isEndDateInclusive ? 1 : 0))/ 7;
+			return ((endDate.Date - startDate.Date).TotalDays + (isEndDateInclusive ? 1 : 0)) / 7;
 		}
 
 		private static string ExportToHtmlFile(string sourceTemplateText, IDictionary<string, string> placeholders, string targetFilePathTemplate)
 		{
 			var fileContent = Utilities.ParseTemplate(placeholders, sourceTemplateText).ToString();
-
 			var filePath = Utilities.ParseTemplate(placeholders, targetFilePathTemplate).ToString();
 
 			File.WriteAllText(filePath, fileContent);

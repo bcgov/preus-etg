@@ -11,12 +11,9 @@ namespace CJG.Infrastructure.NotificationService
 	/// </summary>
 	internal class NotificationJob : INotificationJob
 	{
-		#region Variables
 		private readonly INotificationService _notificationService;
 		private readonly ILogger _logger;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="NotificationJob"/> object.
 		/// </summary>
@@ -27,9 +24,7 @@ namespace CJG.Infrastructure.NotificationService
 			_notificationService = notificationService;
 			_logger = logger;
 		}
-		#endregion
 
-		#region Methods
 		/// <summary>
 		/// Start the notification schedule queue service process.
 		/// </summary>
@@ -42,9 +37,11 @@ namespace CJG.Infrastructure.NotificationService
 			_notificationService.QueueScheduledNotifications(currentDate);
 
 			// Send notifications
-			var notifications = _notificationService.SendScheduledNotifications(currentDate);
-			foreach (var notification in notifications) {
-				switch (notification.State) {
+			var notifications = _notificationService.SendScheduledNotifications(currentDate).ToList();
+			foreach (var notification in notifications)
+			{
+				switch (notification.State)
+				{
 					case NotificationState.Sent:
 						_logger.Info("Successfully sent notification for Application Id: {0} / Notification Type: {1}", notification.GrantApplicationId, notification.NotificationType.Caption);
 						break;
@@ -61,13 +58,12 @@ namespace CJG.Infrastructure.NotificationService
 			}
 
 			_logger.Info("Processed {0} notifications - Sent: {1}, Failed: {2}, Queued: {3}",
-				notifications.Count(),
-				notifications.Where(n => n.State == NotificationState.Sent).Count(),
-				notifications.Where(n => n.State == NotificationState.Failed).Count(),
-				notifications.Where(n => n.State == NotificationState.Queued).Count());
+				notifications.Count,
+				notifications.Count(n => n.State == NotificationState.Sent),
+				notifications.Count(n => n.State == NotificationState.Failed),
+				notifications.Count(n => n.State == NotificationState.Queued));
 
 			return SystemExitCode.Success;
 		}
-		#endregion
 	}
 }
