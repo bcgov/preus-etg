@@ -1,15 +1,15 @@
 using CJG.Core.Entities;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration.Conventions;
+using CJG.Core.Entities.Attributes;
 using CJG.Infrastructure.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
-using System.Data.Entity.Validation;
-using CJG.Core.Entities.Attributes;
-using System.Data.Entity.Infrastructure.Annotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using NLog;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Infrastructure.Annotations;
+using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Data.Entity.Validation;
 using System.Web;
 
 namespace CJG.Infrastructure.EF
