@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 
 namespace CJG.Testing.Core
 {
@@ -14,6 +15,7 @@ namespace CJG.Testing.Core
 		public static Exception Throws<T>(Action action)
 			where T : Exception
 		{
+			
 			try
 			{
 				action.Invoke();
