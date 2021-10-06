@@ -294,7 +294,7 @@
                         <div ng-if="ngDialogData.model.State == 4">
                             <a class="btn btn--primary" ng-click="changeGrantStatus($event, 'OpenForSubmit')">Open for Submit</a>
                             <text>&nbsp;&nbsp;</text>
-                            <a ng-if="ngDialogData.model.IsTraingEndDateInThePass" class="btn btn--primary js-btn-opening-status" ng-click="changeGrantStatus($event, 'Reopen')">Reopen</a>
+                            <a ng-if="ngDialogData.model.IsTrainingEndDateInThePast" class="btn btn--primary js-btn-opening-status" ng-click="changeGrantStatus($event, 'Reopen')">Reopen</a>
                             <text>&nbsp;&nbsp;</text>
                             <a class="btn btn--secondary" ng-click="handleCheckboxToggle()" ng-show="ngDialogData.model.NumberUnfundedApplications">Return Unfunded Applications</a>
                             <div class="margin-top" ng-show="ngDialogData.model.NumberUnfundedApplications">
