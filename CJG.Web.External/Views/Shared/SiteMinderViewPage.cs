@@ -1,14 +1,15 @@
-﻿using System.Web;
-using CJG.Core.Entities;
-using CJG.Core.Interfaces.Service;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Web;
 using System.Web.Mvc;
 using CJG.Application.Services;
-using System.IO;
-using System;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces.Service;
 
 namespace CJG.Web.External.Views.Shared
 {
-	public abstract class SiteMinderViewPage : WebViewPage
+    public abstract class SiteMinderViewPage : WebViewPage
 	{
 		public IUserService UserService { get; set; }
 
@@ -56,6 +57,7 @@ namespace CJG.Web.External.Views.Shared
 
 			return true;
 		}
+
 		public bool ShowEnvironmentInfo()
 		{
 			CheckDevPreconditions();
@@ -97,9 +99,9 @@ namespace CJG.Web.External.Views.Shared
 				file.Read(bytes, 0, bytes.Length);
 			}
 
-			var headerPos = System.BitConverter.ToInt32(bytes, peHeaderOffset);
-			var secondsSince1970 = System.BitConverter.ToInt32(bytes, headerPos + linkerTimestampOffset);
-			var dt = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
+			var headerPos = BitConverter.ToInt32(bytes, peHeaderOffset);
+			var secondsSince1970 = BitConverter.ToInt32(bytes, headerPos + linkerTimestampOffset);
+			var dt = new DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
 			return dt.AddSeconds(secondsSince1970);
 		}
 
@@ -110,20 +112,26 @@ namespace CJG.Web.External.Views.Shared
 			EnvironmentShortName = Request.Url.Host;
 		}
 
-		[System.Diagnostics.Conditional("QA")]
+		[System.Diagnostics.Conditional("DEBUG")]
 		private void CheckQAPreconditions()
 		{
 			ShowSTGInfo = true;
 
-			var QAEnvironmentNamesByPort = new System.Collections.Generic.Dictionary<int, string>()
+			var qaEnvironmentNamesByPort = new Dictionary<int, string>
 			{
-				[80] = "QA1",
-				[8080] = "QA2",
-				[8081] = "QA3",
-				[8082] = "QA4"
+				[8080] = "ETG-DEV",
+				[8081] = "ETG-QA",
+				[8090] = "CWRG-DEV",
+				[8091] = "CWRG-QA"
 			};
 
-			EnvironmentShortName = QAEnvironmentNamesByPort[Request.Url.Port];
+			if (qaEnvironmentNamesByPort.TryGetValue(Request.Url.Port, out var possibleName))
+			{
+				EnvironmentShortName = possibleName;
+				return;
+			}
+
+			EnvironmentShortName = "N/A";
 		}
 	}
 }
