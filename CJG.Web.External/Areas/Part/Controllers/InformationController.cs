@@ -7,7 +7,6 @@ using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using Newtonsoft.Json;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -697,9 +696,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 
 		private void PrepareStep1(ref ParticipantInfoViewModel model, Guid invitationKey)
 		{
-			//
 			// Prepare to display Step1 (Confirmation)
-			//
 			if (model == null)
 				model = new ParticipantInfoViewModel();
 
@@ -715,12 +712,14 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				InvitationKey = invitationKey
 			};
 
-			var EmployerNames = new string[] { grantApplication.Organization.LegalName, grantApplication.Organization.DoingBusinessAs };
+			var employerNames = new[] { grantApplication.Organization.LegalName, grantApplication.Organization.DoingBusinessAs };
 
-			model.ParticipantInfoStep1ViewModel = new ParticipantInfoStep1ViewModel()
+			model.ParticipantInfoStep1ViewModel = new ParticipantInfoStep1ViewModel
 			{
+				RecaptchaEnabled = _reCaptchaService.IsEnabled(),
+				RecaptchaSiteKey = _reCaptchaService.GetSiteKey(),
 				ProgramEmployerName = grantApplication.Organization.LegalName,
-				ProgramEmployerFullName = string.Join(", doing business as ", EmployerNames.Where(n=>!string.IsNullOrEmpty(n))),
+				ProgramEmployerFullName = string.Join(", doing business as ", employerNames.Where(n => !string.IsNullOrEmpty(n))),
 				GrantProgramName = grantApplication.GrantOpening.GrantStream.GrantProgram.Name,
 				GrantProgramId = grantApplication.GrantOpening.GrantStream.GrantProgram.AccountCodeId,
 				ProgramSponsorName = grantApplication.ApplicantLastName + ", " + grantApplication.ApplicantFirstName,
@@ -728,15 +727,12 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				ProgramStartDate = grantApplication.StartDate.ToLocalMorning(),
 				ProgramType = grantApplication.GetProgramType(),
 				TimeoutPeriod = ConfigurationManager.AppSettings["ParticipantSessionDuration"].ToString()
-
 			};
 		}
 
 		private void PrepareStep2(ref ParticipantInfoViewModel model)
 		{
-			//
 			// Prepare to display Step2 (Contact Info)
-			//
 			if (model == null)
 				model = new ParticipantInfoViewModel();
 
@@ -773,7 +769,6 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				model.ParticipantInfoStep2ViewModel.ParticipantOldestAge = participantOldestAge;
 				model.ParticipantInfoStep2ViewModel.ParticipantYoungestAge = participantYoungestAge;
 				model.ParticipantInfoStep2ViewModel.EnteredSINs = grantApplication.ParticipantForms.Select(x => x.SIN.Replace("-", "")).ToList();
-
 			}
 
 			PrimeStep2(ref model);
@@ -782,13 +777,15 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		private void PrimeStep2(ref ParticipantInfoViewModel model)
 		{
 			// Prime objects such as dropdown lists for this step
-			model.ParticipantInfoStep2ViewModel.Provinces = _staticDataService.GetProvinces().OrderBy(x => x.Name).Select(x => new KeyValuePair<string, string>(x.Id, x.Name)).ToList();
+			model.ParticipantInfoStep2ViewModel.Provinces = _staticDataService.GetProvinces()
+				.OrderBy(x => x.Name)
+				.Select(x => new KeyValuePair<string, string>(x.Id, x.Name))
+				.ToList();
 		}
+
 		private void PrepareStep3(ref ParticipantInfoViewModel model)
 		{
-			//
 			// Prepare to display Step3 (Demographic Info)
-			//
 			if (model == null)
 				model = new ParticipantInfoViewModel();
 
@@ -836,9 +833,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 
 		private void PrepareStep4(ref ParticipantInfoViewModel model)
 		{
-			//
 			// Prepare to display Step4 (Employment Info)
-			//
 			if (model == null)
 				model = new ParticipantInfoViewModel();
 
@@ -870,9 +865,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 
 		private void PrepareStep5(ref ParticipantInfoViewModel model)
 		{
-			//
 			// Prepare to display Step5 (Consent)
-			//
 			if (model == null)
 				model = new ParticipantInfoViewModel();
 
@@ -895,14 +888,12 @@ namespace CJG.Web.External.Areas.Part.Controllers
 
 		private void PrepareStep6(ref ParticipantInfoViewModel model)
 		{
-			//
 			// Prepare to display Step6 (Completion)
-			//
 			if (model == null)
 				model = new ParticipantInfoViewModel();
 
 			if (model.ParticipantInfoStep6ViewModel == null
-			 && model.ParticipantInfoStep0ViewModel.DataCollected == 0)
+			    && model.ParticipantInfoStep0ViewModel.DataCollected == 0)
 			{
 				// Create Step6
 				model.ParticipantInfoStep6ViewModel = new ParticipantInfoStep6ViewModel();
@@ -937,7 +928,6 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				RedirectUrl = Url.Action(action)
 			};
 			return Json(data, JsonRequestBehavior.AllowGet);
-
 		}
 
 		private void LookupNocCodes(ref ParticipantInfoViewModel model)
@@ -1125,7 +1115,6 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				throw;
 			}
 		}
-
 
 		private bool HasConsentForm()
 		{

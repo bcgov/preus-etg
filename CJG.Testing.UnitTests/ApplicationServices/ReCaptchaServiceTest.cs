@@ -13,7 +13,6 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 	[TestClass]
     public class ReCaptchaServiceTest
     {
-
         [TestMethod, TestCategory("ReCaptcha"), TestCategory("Service")]
         public void Validate_withNullAsFirstParameter_ReturnFalse()
         {
@@ -36,26 +35,38 @@ namespace CJG.Testing.UnitTests.ApplicationServices
             result.Should().Be(false);
         }
 
-        [Ignore, TestMethod, TestCategory("ReCaptcha"), TestCategory("Service")]
+        [TestMethod, TestCategory("ReCaptcha"), TestCategory("Service")]
+		[ExpectedException(typeof(ConfigurationErrorsException))]
         public void Validate_withNonNullValueAsFirstParameter_ShouldReturnFalseWhenSecretKeyIsEmpty()
         {
             // Arrange
             ConfigurationManager.AppSettings["EnableReCaptcha"] = "true";
             ConfigurationManager.AppSettings["AcceptAllCertifications"] = "true";
             ConfigurationManager.AppSettings["ReCaptchaUrl"] = "https://www.google.com/recaptcha/api/siteverify";
-            ConfigurationManager.AppSettings["ReCaptchaSecret"] = "";
+            ConfigurationManager.AppSettings["ReCaptchaSecret"] = null;
+            ConfigurationManager.AppSettings["ReCaptchaSiteKey"] = "AFakeKey";
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             var httpContextMock = new Mock<HttpContextBase>();
             var loggerMock = new Mock<ILogger>();
 			var unitOfWork = new Mock<IDataContext>();
             var service = new ReCaptchaService(unitOfWork.Object, httpContextMock.Object, loggerMock.Object);
-            string errorCode = "";
+        }
 
-            // Act
-            var result = service.Validate("Response", ref errorCode);
-
-            // Assert
-            result.Should().Be(false);
+        [TestMethod, TestCategory("ReCaptcha"), TestCategory("Service")]
+		[ExpectedException(typeof(ConfigurationErrorsException))]
+        public void Validate_withNonNullValueAsFirstParameter_ShouldReturnFalseWhenSiteKeyIsEmpty()
+        {
+            // Arrange
+            ConfigurationManager.AppSettings["EnableReCaptcha"] = "true";
+            ConfigurationManager.AppSettings["AcceptAllCertifications"] = "true";
+            ConfigurationManager.AppSettings["ReCaptchaUrl"] = "https://www.google.com/recaptcha/api/siteverify";
+            ConfigurationManager.AppSettings["ReCaptchaSecret"] = "AFakeKey";
+            ConfigurationManager.AppSettings["ReCaptchaSiteKey"] = null;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            var httpContextMock = new Mock<HttpContextBase>();
+            var loggerMock = new Mock<ILogger>();
+			var unitOfWork = new Mock<IDataContext>();
+            var service = new ReCaptchaService(unitOfWork.Object, httpContextMock.Object, loggerMock.Object).Should();
         }
     }
 }

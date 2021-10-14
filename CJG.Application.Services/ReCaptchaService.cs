@@ -3,6 +3,8 @@ using CJG.Infrastructure.Entities;
 using NLog;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Web;
 using System.Web.Script.Serialization;
 
@@ -13,14 +15,12 @@ namespace CJG.Application.Services
 	/// </summary>
 	public class ReCaptchaService : Service, IReCaptchaService
 	{
-		#region Variables
 		private readonly bool _enabled;
 		private readonly string _url;
 		private readonly string _secret;
+		private readonly string _siteKey;
 		private readonly bool _allowInvalidCertificate;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a ReCaptchaService object.
 		/// Initializes configuration property values.
@@ -34,15 +34,32 @@ namespace CJG.Application.Services
 			bool.TryParse(ConfigurationManager.AppSettings["AcceptAllCertifications"], out _allowInvalidCertificate);
 			_url = ConfigurationManager.AppSettings["ReCaptchaUrl"] ?? throw new ConfigurationErrorsException("Application Setting 'ReCaptchaUrl' is missing.");
 			_secret = ConfigurationManager.AppSettings["ReCaptchaSecret"] ?? throw new ConfigurationErrorsException("Application Setting 'ReCaptchaSecret' is missing.");
+			_siteKey = ConfigurationManager.AppSettings["ReCaptchaSiteKey"] ?? throw new ConfigurationErrorsException("Application Setting 'ReCaptchaSiteKey' is missing.");
 
 			if (_allowInvalidCertificate)
 			{
-				System.Net.ServicePointManager.ServerCertificateValidationCallback = new System.Net.Security.RemoteCertificateValidationCallback(AcceptAllCertifications);
+				System.Net.ServicePointManager.ServerCertificateValidationCallback = AcceptAllCertifications;
 			}
 		}
-		#endregion
 
-		#region Methods
+		/// <summary>
+		/// Is the Recaptcha Service enabled or disabled
+		/// </summary>
+		/// <returns></returns>
+		public bool IsEnabled()
+		{
+			return _enabled;
+		}
+
+		/// <summary>
+		/// Get the site key for the Google Recaptcha element on the page
+		/// </summary>
+		/// <returns></returns>
+		public string GetSiteKey()
+		{
+			return _siteKey;
+		}
+
 		/// <summary>
 		/// Sends the ReCaptcha information to Google to verify that the user is human.
 		/// </summary>
@@ -88,10 +105,9 @@ namespace CJG.Application.Services
 		/// <param name="chain"></param>
 		/// <param name="sslPolicyErrors"></param>
 		/// <returns></returns>
-		public static bool AcceptAllCertifications(object sender, System.Security.Cryptography.X509Certificates.X509Certificate certification, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+		public static bool AcceptAllCertifications(object sender, X509Certificate certification, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
 			return true;
 		}
-		#endregion
 	}
 }
