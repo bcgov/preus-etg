@@ -77,27 +77,22 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		[Route("{invitationKey}")]
 		public ActionResult Index(string invitationKey)
 		{
-			//
 			// Launched on page load - displays Step1 of the wizard
-			//
 			try
 			{
 				var model = new ParticipantInfoViewModel();
 				var expired = IsInvitationExpired(invitationKey, out Guid guidResult);
 
 				if (expired != null)
-				{
 					return expired;
-				}
-				else
-				{
-					var maxparticipation = IsMaxParticipantenrolled(new Guid(invitationKey));
-					if (maxparticipation != null)
-						return maxparticipation;
-				}
+
+				var maxParticipantEnrolled = IsMaxParticipantEnrolled(new Guid(invitationKey));
+				if (maxParticipantEnrolled != null)
+					return maxParticipantEnrolled;
 
 				// Continue with the participant information collection process
 				PrepareStep1(ref model, guidResult);
+
 				return View(model);
 			}
 			catch (DbEntityValidationException e)
@@ -121,9 +116,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		[Route("Applicant/View/{invitationKey}")]
 		public ActionResult ApplicantReportingView(string invitationKey)
 		{
-			//
 			// Launched on page load - displays Step1 of the wizard
-			//
 			try
 			{
 				if (HasConsentForm())
@@ -287,7 +280,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				}
 				else
 				{
-					var maxparticipation = IsMaxParticipantenrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
+					var maxparticipation = IsMaxParticipantEnrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
 					if (maxparticipation != null)
 						return maxparticipation;
 				}
@@ -341,7 +334,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				}
 				else
 				{
-					var maxparticipation = IsMaxParticipantenrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
+					var maxparticipation = IsMaxParticipantEnrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
 					if (maxparticipation != null)
 						return maxparticipation;
 				}
@@ -395,7 +388,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				}
 				else
 				{
-					var maxparticipation = IsMaxParticipantenrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
+					var maxparticipation = IsMaxParticipantEnrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
 					if (maxparticipation != null)
 						return maxparticipation;
 				}
@@ -450,7 +443,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				}
 				else
 				{
-					var maxparticipation = IsMaxParticipantenrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
+					var maxparticipation = IsMaxParticipantEnrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
 					if (maxparticipation != null)
 						return maxparticipation;
 				}
@@ -671,7 +664,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			return null;
 		}
 
-		private ActionResult IsMaxParticipantenrolled(Guid invitationKey)
+		private ActionResult IsMaxParticipantEnrolled(Guid invitationKey)
 		{
 			var grantApplication = _grantApplicationService.Get(invitationKey);
 

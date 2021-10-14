@@ -51,11 +51,12 @@ namespace CJG.Application.Services
 		/// <returns></returns>
 		public bool Validate(string encodedResponse, ref string errorCodes)
 		{
-			if (string.IsNullOrEmpty(encodedResponse)) return false;
-
 			// Configuration option to fake ReCaptcha.  Doing to to unblock QA issues.
 			if (!_enabled)
 				return true;
+
+			if (string.IsNullOrEmpty(encodedResponse))
+				return false;
 
 			string googleReply;
 			using (var client = new System.Net.WebClient())
