@@ -180,7 +180,8 @@ namespace CJG.Application.Services
 			var accountType = _httpContext.User.GetAccountType();
 			if (accountType == AccountTypes.Internal)
 			{
-				if (_grantAgreementService.AgreementUpdateRequired(grantApplication)) _grantAgreementService.UpdateAgreement(grantApplication);
+				if (_grantAgreementService.AgreementUpdateRequired(grantApplication))
+					_grantAgreementService.UpdateAgreement(grantApplication);
 				_noteService.GenerateUpdateNote(grantApplication);
 			}
 
@@ -202,9 +203,12 @@ namespace CJG.Application.Services
 			var trainingProviders = _dbContext.TrainingProviders.Where(tp => tp.GrantApplicationId == grantApplication.Id);
 			foreach (var trainingProvider in trainingProviders)
 			{
-				if (trainingProvider.BusinessCaseDocument != null) _dbContext.Attachments.Remove(trainingProvider.BusinessCaseDocument);
-				if (trainingProvider.CourseOutlineDocument != null) _dbContext.Attachments.Remove(trainingProvider.CourseOutlineDocument);
-				if (trainingProvider.ProofOfQualificationsDocument != null) _dbContext.Attachments.Remove(trainingProvider.ProofOfQualificationsDocument);
+				if (trainingProvider.BusinessCaseDocument != null)
+					_dbContext.Attachments.Remove(trainingProvider.BusinessCaseDocument);
+				if (trainingProvider.CourseOutlineDocument != null)
+					_dbContext.Attachments.Remove(trainingProvider.CourseOutlineDocument);
+				if (trainingProvider.ProofOfQualificationsDocument != null)
+					_dbContext.Attachments.Remove(trainingProvider.ProofOfQualificationsDocument);
 				_dbContext.TrainingProviders.Remove(trainingProvider);
 			}
 
@@ -242,14 +246,18 @@ namespace CJG.Application.Services
 				_dbContext.EligibleCosts.Remove(eligibleCost);
 			}
 
-			if (grantApplication.ApplicantMailingAddress != null) _dbContext.ApplicationAddresses.Remove(grantApplication.ApplicantMailingAddress);
-			if (grantApplication.ApplicantPhysicalAddress != null) _dbContext.ApplicationAddresses.Remove(grantApplication.ApplicantPhysicalAddress);
-			if (grantApplication.OrganizationAddress != null) _dbContext.ApplicationAddresses.Remove(grantApplication.OrganizationAddress);
+			if (grantApplication.ApplicantMailingAddress != null)
+				_dbContext.ApplicationAddresses.Remove(grantApplication.ApplicantMailingAddress);
+			if (grantApplication.ApplicantPhysicalAddress != null)
+				_dbContext.ApplicationAddresses.Remove(grantApplication.ApplicantPhysicalAddress);
+			if (grantApplication.OrganizationAddress != null)
+				_dbContext.ApplicationAddresses.Remove(grantApplication.OrganizationAddress);
 
 			var notes = _dbContext.Notes.Where(n => n.GrantApplicationId == grantApplication.Id).Include(n => n.Attachment);
 			foreach (var note in notes)
 			{
-				if (note.Attachment != null) _dbContext.Attachments.Remove(note.Attachment);
+				if (note.Attachment != null)
+					_dbContext.Attachments.Remove(note.Attachment);
 				_dbContext.Notes.Remove(note);
 			}
 
@@ -304,7 +312,8 @@ namespace CJG.Application.Services
 		/// <returns></returns>
 		public void UpdateDeliveryDates(GrantApplication grantApplication)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
 
 			if (!_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.SubmitChangeRequest))
 				throw new NotAuthorizedException("The delivery dates cannot be changed at this time.");
@@ -334,7 +343,8 @@ namespace CJG.Application.Services
 		/// <param name="grantApplication"></param>
 		public void ChangeGrantOpening(GrantApplication grantApplication)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
 
 			// Only allow changing the opening during application development.
 			if (!grantApplication.ApplicationStateInternal.In(ApplicationStateInternal.Draft, ApplicationStateInternal.ApplicationWithdrawn, ApplicationStateInternal.Unfunded))
@@ -374,9 +384,12 @@ namespace CJG.Application.Services
 								var trainingProviders = trainingProgram.TrainingProviders.ToArray();
 								foreach (var trainingProvider in trainingProviders)
 								{
-									if (trainingProvider.BusinessCaseDocumentId.HasValue) _dbContext.Attachments.Remove(trainingProvider.BusinessCaseDocument);
-									if (trainingProvider.ProofOfQualificationsDocumentId.HasValue) _dbContext.Attachments.Remove(trainingProvider.ProofOfQualificationsDocument);
-									if (trainingProvider.CourseOutlineDocumentId.HasValue) _dbContext.Attachments.Remove(trainingProvider.CourseOutlineDocument);
+									if (trainingProvider.BusinessCaseDocumentId.HasValue)
+										_dbContext.Attachments.Remove(trainingProvider.BusinessCaseDocument);
+									if (trainingProvider.ProofOfQualificationsDocumentId.HasValue)
+										_dbContext.Attachments.Remove(trainingProvider.ProofOfQualificationsDocument);
+									if (trainingProvider.CourseOutlineDocumentId.HasValue)
+										_dbContext.Attachments.Remove(trainingProvider.CourseOutlineDocument);
 									_dbContext.ApplicationAddresses.Remove(trainingProvider.TrainingAddress);
 									_dbContext.TrainingProviders.Remove(trainingProvider);
 								}
@@ -409,9 +422,12 @@ namespace CJG.Application.Services
 							var programTrainingProviders = trainingProgram.TrainingProviders.ToArray();
 							foreach (var trainingProvider in programTrainingProviders)
 							{
-								if (trainingProvider.BusinessCaseDocumentId.HasValue) _dbContext.Attachments.Remove(trainingProvider.BusinessCaseDocument);
-								if (trainingProvider.ProofOfQualificationsDocumentId.HasValue) _dbContext.Attachments.Remove(trainingProvider.ProofOfQualificationsDocument);
-								if (trainingProvider.CourseOutlineDocumentId.HasValue) _dbContext.Attachments.Remove(trainingProvider.CourseOutlineDocument);
+								if (trainingProvider.BusinessCaseDocumentId.HasValue)
+									_dbContext.Attachments.Remove(trainingProvider.BusinessCaseDocument);
+								if (trainingProvider.ProofOfQualificationsDocumentId.HasValue)
+									_dbContext.Attachments.Remove(trainingProvider.ProofOfQualificationsDocument);
+								if (trainingProvider.CourseOutlineDocumentId.HasValue)
+									_dbContext.Attachments.Remove(trainingProvider.CourseOutlineDocument);
 								_dbContext.ApplicationAddresses.Remove(trainingProvider.TrainingAddress);
 								_dbContext.TrainingProviders.Remove(trainingProvider);
 							}
@@ -427,9 +443,12 @@ namespace CJG.Application.Services
 
 					foreach (var trainingProvider in trainingProviders)
 					{
-						if (trainingProvider.BusinessCaseDocumentId.HasValue) _dbContext.Attachments.Remove(trainingProvider.BusinessCaseDocument);
-						if (trainingProvider.ProofOfQualificationsDocumentId.HasValue) _dbContext.Attachments.Remove(trainingProvider.ProofOfQualificationsDocument);
-						if (trainingProvider.CourseOutlineDocumentId.HasValue) _dbContext.Attachments.Remove(trainingProvider.CourseOutlineDocument);
+						if (trainingProvider.BusinessCaseDocumentId.HasValue)
+							_dbContext.Attachments.Remove(trainingProvider.BusinessCaseDocument);
+						if (trainingProvider.ProofOfQualificationsDocumentId.HasValue)
+							_dbContext.Attachments.Remove(trainingProvider.ProofOfQualificationsDocument);
+						if (trainingProvider.CourseOutlineDocumentId.HasValue)
+							_dbContext.Attachments.Remove(trainingProvider.CourseOutlineDocument);
 						_dbContext.ApplicationAddresses.Remove(trainingProvider.TrainingAddress);
 						_dbContext.TrainingProviders.Remove(trainingProvider);
 					}
@@ -537,7 +556,8 @@ namespace CJG.Application.Services
 		/// <param name="assessorId"></param>
 		public void AssignAssessor(GrantApplication grantApplication, int? assessorId)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
 
 			if (!_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.ReassignAssessor))
 			{
@@ -642,9 +662,9 @@ namespace CJG.Application.Services
 			var states = StateExtensions.GetInternalStatesForSummary();
 			return _dbContext.GrantApplications
 				.Where(x => x.GrantOpening.GrantStream.GrantProgramId == grantApplication.GrantOpening.GrantStream.GrantProgramId
-				            && x.OrganizationId == grantApplication.OrganizationId
-				            && x.GrantOpening.TrainingPeriod.FiscalYearId == grantApplication.GrantOpening.TrainingPeriod.FiscalYearId
-				            && states.Contains(x.ApplicationStateInternal));
+							&& x.OrganizationId == grantApplication.OrganizationId
+							&& x.GrantOpening.TrainingPeriod.FiscalYearId == grantApplication.GrantOpening.TrainingPeriod.FiscalYearId
+							&& states.Contains(x.ApplicationStateInternal));
 		}
 
 		public GrantApplicationStateChange GetStateChange(int grantApplicationId, ApplicationStateInternal state)
@@ -756,7 +776,7 @@ namespace CJG.Application.Services
 						.Take(quantity);
 				else
 					query = query.Distinct()
-						.OrderBy(g =>g.StateChanges.OrderByDescending(sc => sc.ChangedDate).FirstOrDefault().ChangedDate)
+						.OrderBy(g => g.StateChanges.OrderByDescending(sc => sc.ChangedDate).FirstOrDefault().ChangedDate)
 						.Skip((page - 1) * quantity)
 						.Take(quantity);
 			}
@@ -797,7 +817,7 @@ namespace CJG.Application.Services
 			var result = filtered
 				.Skip((page - 1) * quantity)
 				.Take(quantity);
-			
+
 			return new PageList<GrantApplication>(page, quantity, total, result.ToArray());
 		}
 
@@ -813,9 +833,9 @@ namespace CJG.Application.Services
 
 			var filtered = grantApplications
 				.Where(x => (grantProgramId == 0 || x.GrantOpening.GrantStream.GrantProgramId == grantProgramId)
-				            && (string.IsNullOrEmpty(search) ||
-				                x.FileNumber != null && x.FileNumber.Contains(search) ||
-				                x.ApplicantFirstName.Contains(search) || x.ApplicantLastName.Contains(search))
+							&& (string.IsNullOrEmpty(search) ||
+								x.FileNumber != null && x.FileNumber.Contains(search) ||
+								x.ApplicantFirstName.Contains(search) || x.ApplicantLastName.Contains(search))
 				).OrderBy(x => x.FileNumber);
 
 			var total = filtered.Count();
@@ -948,7 +968,8 @@ namespace CJG.Application.Services
 		/// <param name="reason"></param>
 		public void Withdraw(GrantApplication grantApplication, string reason)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
 
 			CreateWorkflowStateMachine(grantApplication).WithdrawApplication(reason);
 		}
@@ -972,12 +993,12 @@ namespace CJG.Application.Services
 
 			grantApp.ApplicantMailingAddress = new ApplicationAddress(withdrawnApp.ApplicantMailingAddress);
 			grantApp.ApplicantPhysicalAddress = new ApplicationAddress(withdrawnApp.ApplicantPhysicalAddress);
-			grantApp.OrganizationAddress = new ApplicationAddress(withdrawnApp.OrganizationAddress);		
+			grantApp.OrganizationAddress = new ApplicationAddress(withdrawnApp.OrganizationAddress);
 
 
-			foreach(var busContact in withdrawnApp.BusinessContactRoles)
+			foreach (var busContact in withdrawnApp.BusinessContactRoles)
 			{
-				grantApp.BusinessContactRoles.Add(new BusinessContactRole { UserId = busContact.UserId});
+				grantApp.BusinessContactRoles.Add(new BusinessContactRole { UserId = busContact.UserId });
 			}
 
 			//add GrantApplication to the database
@@ -1011,9 +1032,12 @@ namespace CJG.Application.Services
 			decimal totalEstimatedReimbursement = 0;
 			int firstEligibleCostBreakdowns = 0;
 
-			foreach(var cost in costs)
+			//TODO: These should be DependencyResolved properly rather than newing them up
+			var attachmentService = new AttachmentService(_dbContext, _httpContext, _logger);
+
+			foreach (var cost in costs)
 			{
-				var ec = new EligibleCost();				
+				var ec = new EligibleCost();
 				ec.Clone(cost);
 
 				totalEstimateCost += ec.EstimatedCost;
@@ -1022,7 +1046,7 @@ namespace CJG.Application.Services
 				ec.GrantApplicationId = grantApp.Id;
 				ec.TrainingCost = grantApp.TrainingCost;
 				ec.TrainingCost.TotalEstimatedCost = totalEstimateCost;
-				ec.TrainingCost.TotalEstimatedReimbursement = totalEstimatedReimbursement;				
+				ec.TrainingCost.TotalEstimatedReimbursement = totalEstimatedReimbursement;
 
 				eligibleCostService.Add(ec);
 
@@ -1035,14 +1059,13 @@ namespace CJG.Application.Services
 					newBD.EligibleCostId = ec.Id;
 					eligibleCostBreakdownService.Add(newBD);
 
-					if(firstEligibleCostBreakdowns == 0)
+					if (firstEligibleCostBreakdowns == 0)
 					{
 						firstEligibleCostBreakdowns = newBD.Id;
 					}
 				}
 
 				//TODO: These should be DependencyResolved properly rather than newing them up
-				AttachmentService attachmentService = new AttachmentService(_dbContext, _httpContext, _logger);
 				TrainingProviderService tps = new TrainingProviderService(this, null, null, null, _noteService, _dbContext, _httpContext, _logger);
 
 				foreach (var tp in cost.TrainingProviders)
@@ -1051,7 +1074,7 @@ namespace CJG.Application.Services
 					newTrainingProvider.Clone(tp);
 
 					//clone the documents
-					if(tp.BusinessCase != null)
+					if (tp.BusinessCase != null)
 					{
 						Attachment doc = new Attachment(tp.BusinessCaseDocument);
 						attachmentService.Add(doc);
@@ -1076,7 +1099,7 @@ namespace CJG.Application.Services
 					}
 
 					newTrainingProvider.TrainingAddress = new ApplicationAddress(tp.TrainingAddress);
-					newTrainingProvider.TrainingProviderInventoryId = null;									
+					newTrainingProvider.TrainingProviderInventoryId = null;
 
 					newTrainingProvider.GrantApplication = grantApp;
 					newTrainingProvider.GrantApplicationId = grantApp.Id;
@@ -1086,7 +1109,7 @@ namespace CJG.Application.Services
 					//add the training provider
 					tps.Add(newTrainingProvider);
 				}
-			}			
+			}
 
 			//TrainingPrograms
 			TrainingProgramService trainingProgramService = new TrainingProgramService(this, _grantAgreementService, _noteService, _dbContext, _httpContext, _logger);
@@ -1100,11 +1123,13 @@ namespace CJG.Application.Services
 				trainingProgramService.Add(tp);
 			}
 
-
-			//attachments			
-			foreach (var a in withdrawnApp.Attachments)
+			// Attachments			
+			foreach (var existingAttachment in withdrawnApp.Attachments)
 			{
-				AddAttachment(grantApp.Id, new Attachment(a));
+				var newAttachment = existingAttachment.Clone();
+				grantApp.Attachments.Add(newAttachment);
+
+				attachmentService.Add(newAttachment, commit: true);
 			}
 
 			return grantApp.Id;
@@ -1138,21 +1163,24 @@ namespace CJG.Application.Services
 
 		public void RecommendForApproval(GrantApplication grantApplication)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
 
 			CreateWorkflowStateMachine(grantApplication).RecommendForApproval();
 		}
 
 		public void RecommendForDenial(GrantApplication grantApplication, string reason = null)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
 
 			CreateWorkflowStateMachine(grantApplication).RecommendForDenial(reason);
 		}
 
 		public void IssueOffer(GrantApplication grantApplication)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
 
 			CreateWorkflowStateMachine(grantApplication).IssueOffer();
 		}
@@ -1367,75 +1395,6 @@ namespace CJG.Application.Services
 		#endregion
 
 		#region Attachments
-		public Attachment UpdateAttachment(int grantApplicationId, Attachment attachment)
-		{
-			if (attachment == null)
-				throw new ArgumentNullException(nameof(attachment));
-			var grantApplication = Get(grantApplicationId);
-
-			if (!grantApplication.GrantOpening.GrantStream.AttachmentsIsEnabled)
-			{
-				throw new NotAuthorizedException($"User does not have permission to edit attachments for this application'{grantApplicationId}'.");
-			}
-			if (!_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditApplicationAttachments))
-				throw new NotAuthorizedException($"User does not have permission to access application '{grantApplication?.Id}'.");
-
-			var existingAttachment = Get<Attachment>(attachment.Id);
-
-			existingAttachment.RowVersion = attachment.RowVersion;
-
-			// Only create a new version if the file has changed.
-			if (attachment.AttachmentData != null)
-			{
-				existingAttachment.CreateNewVersion(attachment.FileName, attachment.Description, attachment.FileExtension, attachment.AttachmentData);
-			}
-			else
-			{
-				existingAttachment.Description = attachment.Description;
-			}
-
-			_dbContext.CommitTransaction();
-			return attachment;
-		}
-
-		public Attachment AddAttachment(int grantApplicationId, Attachment attachment)
-		{
-			if (attachment == null)
-				throw new ArgumentNullException(nameof(attachment));
-
-			var grantApplication = Get(grantApplicationId);
-
-			if (!grantApplication.GrantOpening.GrantStream.AttachmentsIsEnabled)
-				throw new NotAuthorizedException($"User does not have permission to edit attachments for this application'{grantApplicationId}'.");
-
-			if (!_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditApplicationAttachments))
-				throw new NotAuthorizedException($"User does not have permission to access application '{grantApplication?.Id}'.");
-
-			grantApplication.Attachments.Add(attachment);
-			_dbContext.Update<GrantApplication>(grantApplication);
-			_dbContext.CommitTransaction();
-			return attachment;
-		}
-
-		public void DeleteAttachment(int grantApplicationId, int id, string rowVersion)
-		{
-			var grantApplication = Get<GrantApplication>(grantApplicationId);
-			if (!grantApplication.GrantOpening.GrantStream.AttachmentsIsEnabled)
-			{
-				throw new NotAuthorizedException($"User does not have permission to edit attachments for this application'{grantApplicationId}'.");
-			}
-
-			if (!_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditApplicationAttachments))
-				throw new NotAuthorizedException($"User does not have permission to access application '{grantApplication?.Id}'.");
-
-			var attachment = Get<Attachment>(id);
-
-			attachment.RowVersion = System.Convert.FromBase64String(rowVersion);
-			grantApplication.Attachments.Remove(attachment);
-			_dbContext.Attachments.Remove(attachment);
-			_dbContext.CommitTransaction();
-		}
-
 		public IEnumerable<AttachmentModel> GetAttachments(int id)
 		{
 			var grantApplication = _dbContext.GrantApplications.Find(id);
@@ -1465,7 +1424,8 @@ namespace CJG.Application.Services
 		#region Training Costs
 		public void UpdateTrainingCosts(GrantApplication grantApplication)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
 
 			if (!_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCosts))
 				throw new NotAuthorizedException($"User does not have permission to edit training costs.");
@@ -1497,9 +1457,12 @@ namespace CJG.Application.Services
 					foreach (var trainingProvider in program.TrainingProviders.ToArray())
 					{
 						// Remove attachments if they exists.
-						if (trainingProvider.ProofOfQualificationsDocumentId.HasValue) _dbContext.Attachments.Remove(trainingProvider.ProofOfQualificationsDocument);
-						if (trainingProvider.BusinessCaseDocumentId.HasValue) _dbContext.Attachments.Remove(trainingProvider.BusinessCaseDocument);
-						if (trainingProvider.CourseOutlineDocumentId.HasValue) _dbContext.Attachments.Remove(trainingProvider.CourseOutlineDocument);
+						if (trainingProvider.ProofOfQualificationsDocumentId.HasValue)
+							_dbContext.Attachments.Remove(trainingProvider.ProofOfQualificationsDocument);
+						if (trainingProvider.BusinessCaseDocumentId.HasValue)
+							_dbContext.Attachments.Remove(trainingProvider.BusinessCaseDocument);
+						if (trainingProvider.CourseOutlineDocumentId.HasValue)
+							_dbContext.Attachments.Remove(trainingProvider.CourseOutlineDocument);
 						_dbContext.ApplicationAddresses.Remove(trainingProvider.TrainingAddress);
 						_dbContext.TrainingProviders.Remove(trainingProvider);
 					}
@@ -1533,9 +1496,12 @@ namespace CJG.Application.Services
 					foreach (var trainingProvider in removeTrainingProviders)
 					{
 						// Remove attachments if they exists.
-						if (trainingProvider.ProofOfQualificationsDocumentId.HasValue) _dbContext.Attachments.Remove(trainingProvider.ProofOfQualificationsDocument);
-						if (trainingProvider.BusinessCaseDocumentId.HasValue) _dbContext.Attachments.Remove(trainingProvider.BusinessCaseDocument);
-						if (trainingProvider.CourseOutlineDocumentId.HasValue) _dbContext.Attachments.Remove(trainingProvider.CourseOutlineDocument);
+						if (trainingProvider.ProofOfQualificationsDocumentId.HasValue)
+							_dbContext.Attachments.Remove(trainingProvider.ProofOfQualificationsDocument);
+						if (trainingProvider.BusinessCaseDocumentId.HasValue)
+							_dbContext.Attachments.Remove(trainingProvider.BusinessCaseDocument);
+						if (trainingProvider.CourseOutlineDocumentId.HasValue)
+							_dbContext.Attachments.Remove(trainingProvider.CourseOutlineDocument);
 						_dbContext.ApplicationAddresses.Remove(trainingProvider.TrainingAddress);
 						_dbContext.TrainingProviders.Remove(trainingProvider);
 					}
@@ -1602,7 +1568,8 @@ namespace CJG.Application.Services
 
 			if (isInternal)
 			{
-				if (_grantAgreementService.AgreementUpdateRequired(grantApplication)) _grantAgreementService.UpdateAgreement(grantApplication);
+				if (_grantAgreementService.AgreementUpdateRequired(grantApplication))
+					_grantAgreementService.UpdateAgreement(grantApplication);
 				_noteService.GenerateUpdateNote(grantApplication);
 			}
 
@@ -1814,7 +1781,8 @@ namespace CJG.Application.Services
 			var accountType = _httpContext.User.GetAccountType();
 			if (accountType == AccountTypes.Internal)
 			{
-				if (_grantAgreementService.AgreementUpdateRequired(grantApplication)) _grantAgreementService.UpdateAgreement(grantApplication);
+				if (_grantAgreementService.AgreementUpdateRequired(grantApplication))
+					_grantAgreementService.UpdateAgreement(grantApplication);
 				_noteService.GenerateUpdateNote(grantApplication);
 			}
 

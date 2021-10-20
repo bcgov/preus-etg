@@ -123,12 +123,6 @@ namespace CJG.Core.Interfaces.Service
 
 		#region Attachments
 		IEnumerable<AttachmentModel> GetAttachments(int id);
-
-		Attachment AddAttachment(int grantApplicationId, Attachment attachment);
-
-		Attachment UpdateAttachment(int grantApplicationId, Attachment attachment);
-
-		void DeleteAttachment(int grantApplicationId, int id, string rowVersion);
 		#endregion
 
 		#region TrainingCosts

@@ -527,7 +527,6 @@ namespace CJG.Testing.Core
 			mockGrantApplicationService = new Mock<IGrantApplicationService>();
 			mockGrantApplicationService.Setup(x => x.Get(It.IsAny<int>())).Returns(grantApplication);
 			mockGrantApplicationService.Setup(x => x.GetDefaultApplicationType()).Returns(grantApplication.ApplicationType);
-			mockGrantApplicationService.Setup(x => x.AddAttachment(It.IsAny<int>(), It.IsAny<Attachment>())).Returns(grantApplication.Attachments.First());
 			mockGrantApplicationService.Setup(x => x.Update(It.IsAny<GrantApplication>(), It.IsAny<ApplicationWorkflowTrigger>(), null)).Returns(grantApplication);
 			var users = new List<User>
 			{
@@ -553,7 +552,6 @@ namespace CJG.Testing.Core
 			var mockGrantApplicationService = new Mock<IGrantApplicationService>();
 			mockGrantApplicationService.Setup(x => x.Get(It.IsAny<int>())).Throws(ex);
 			mockGrantApplicationService.Setup(x => x.GetDefaultApplicationType()).Throws(ex);
-			mockGrantApplicationService.Setup(x => x.AddAttachment(It.IsAny<int>(), It.IsAny<Attachment>())).Throws(ex);
 			mockGrantApplicationService.Setup(x => x.Update(It.IsAny<GrantApplication>(), It.IsAny<ApplicationWorkflowTrigger>(), null)).Throws(ex);
 			var users = new List<User>
 			{
