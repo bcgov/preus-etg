@@ -147,7 +147,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			var helper = new ServiceHelper(typeof(GrantApplicationService), user);
 			helper.GetMock<IGrantStreamService>().Setup(m => m.GetDefaultGrantProgramId()).Returns(57);
 
-			helper.MockDbSet( new List<GrantApplication>
+			helper.MockDbSet(new List<GrantApplication>
 			{
 				new GrantApplication { ApplicationStateInternal = ApplicationStateInternal.New, FileNumber = "tesT",
 					GrantOpening = new GrantOpening
@@ -165,7 +165,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			});
 
 			var service = helper.Create<GrantApplicationService>();
-			var filter = new ApplicationFilter(new[] {ApplicationStateInternal.New });
+			var filter = new ApplicationFilter(new[] { ApplicationStateInternal.New });
 
 			// Act
 			var page = service.GetGrantApplications(1, 10, filter);
@@ -671,7 +671,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			grantApplication.TrainingPrograms.Add(new TrainingProgram(grantApplication, grantApplication.TrainingProviders.First()) { Id = 1, StartDate = DateTime.UtcNow, EndDate = DateTime.UtcNow.AddMonths(3) });
 
 			var helper = new ServiceHelper(typeof(GrantApplicationService), user);
-			helper.MockDbSet( new[]
+			helper.MockDbSet(new[]
 			{
 				grantApplication
 			});
@@ -831,263 +831,6 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 		}
 
 		[TestMethod, TestCategory("Grant Application"), TestCategory("Service")]
-		public void UpdateAttachment_When_GrantApplication_Is_Null_Throws_Exception()
-		{
-			// Arrange
-			var applicationAdmin = EntityHelper.CreateExternalUser();
-			var helper = new ServiceHelper(typeof(GrantApplicationService), applicationAdmin);
-			helper.MockDbSet<GrantApplication>();
-			helper.MockDbSet<Attachment>();
-			var service = helper.Create<GrantApplicationService>(applicationAdmin);
-
-			// Act
-			Action action = () => service.UpdateAttachment(999, new Attachment());
-
-			// Assert
-			action.Should().Throw<NoContentException>();
-		}
-
-
-		[TestMethod, TestCategory("Grant Application"), TestCategory("Service")]
-		public void UpdateAttachment_When_IsApplicationAdministrator_Is_False_Throws_Exception()
-		{
-			// Arrange
-			var user = EntityHelper.CreateExternalUser();
-			var applicationAdmin = EntityHelper.CreateExternalUser(2);
-			var helper = new ServiceHelper(typeof(GrantApplicationService), user);
-			var service = helper.Create<GrantApplicationService>();
-			var grantApplication = EntityHelper.CreateGrantApplication(applicationAdmin);
-
-			helper.MockDbSet( new[] { grantApplication });
-
-			// Act
-			Action action = () => service.UpdateAttachment(grantApplication.Id, new Attachment());
-
-			// Assert
-			action.Should().Throw<NotAuthorizedException>();
-		}
-
-		[TestMethod, TestCategory("Grant Application"), TestCategory("Service")]
-		public void UpdateAttachment_When_GrantApplication_ApplicationStateInternal_Is_Not_Draft_Or_New_Throw_Exception()
-		{
-			// Arrange
-			var assessor = EntityHelper.CreateInternalUser();
-			var helper = new ServiceHelper(typeof(GrantApplicationService), assessor, "Assessor");
-			var service = helper.Create<GrantApplicationService>();
-			var grantApplication = EntityHelper.CreateGrantApplication(assessor, ApplicationStateInternal.PendingAssessment);
-
-			helper.MockDbSet( new[] { grantApplication });
-
-			// Act
-			Action action = () => service.UpdateAttachment(grantApplication.Id, null);
-
-			// Assert
-			action.Should().Throw<ArgumentNullException>();
-		}
-
-		[TestMethod, TestCategory("Grant Application"), TestCategory("Service")]
-		public void UpdateAttachment_When_ExistingAttachment_Is_Not_NULL_With_Only_Description_Change()
-		{
-			// Arrange
-			var applicationAdmin = EntityHelper.CreateExternalUser();
-			var helper = new ServiceHelper(typeof(GrantApplicationService), applicationAdmin);
-			var service = helper.Create<GrantApplicationService>();
-			var grantApplication = EntityHelper.CreateGrantApplication(applicationAdmin, ApplicationStateInternal.Draft);
-			grantApplication.GrantOpening.GrantStream.AttachmentsIsEnabled = true;
-
-			var attachment = new Attachment { Id = 1, RowVersion = new byte[9999] };
-			var versionedAttachment = new VersionedAttachment(attachment);
-
-			helper.MockDbSet(grantApplication);
-			helper.MockDbSet(attachment);
-			var attachmentDbSet = helper.MockDbSet(versionedAttachment);
-
-			// Act
-			service.UpdateAttachment(grantApplication.Id, attachment);
-
-			// Assert
-			attachmentDbSet.Verify(x => x.Add(It.IsAny<VersionedAttachment>()), Times.Never);
-			Assert.AreEqual(attachment.VersionNumber, 1);
-			helper.GetMock<IDataContext>().Verify(x => x.CommitTransaction(), Times.Once);
-		}
-
-		[TestMethod, TestCategory("Grant Application"), TestCategory("Service")]
-		public void UpdateAttachment_When_ExistingAttachment_Is_Not_NULL_VersionedAttachments_Add_And_Commit_Are_Called_Once()
-		{
-			// Arrange
-			var applicationAdmin = EntityHelper.CreateExternalUser();
-			var helper = new ServiceHelper(typeof(GrantApplicationService), applicationAdmin);
-			var service = helper.Create<GrantApplicationService>();
-			var grantApplication = EntityHelper.CreateGrantApplication(applicationAdmin, ApplicationStateInternal.Draft);
-			grantApplication.GrantOpening.GrantStream.AttachmentsIsEnabled = true;
-
-			var attachment = new Attachment { Id = 1, RowVersion = new byte[9999], AttachmentData = new byte[10], FileExtension = "txt", FileName = "test" };
-			var versionedAttachment = new VersionedAttachment(attachment);
-			attachment.Versions.Add(versionedAttachment);
-
-			helper.MockDbSet(grantApplication);
-			helper.MockDbSet(attachment);
-			helper.MockDbSet(versionedAttachment);
-
-			// Act
-			service.UpdateAttachment(grantApplication.Id, attachment);
-
-			// Assert
-			Assert.AreEqual(attachment.VersionNumber, 2);
-			Assert.AreEqual(attachment.Versions.Count(), 2);
-			helper.GetMock<IDataContext>().Verify(x => x.CommitTransaction(), Times.Once);
-		}
-
-		[TestMethod, TestCategory("Grant Application"), TestCategory("Service")]
-		public void AddAttachment_When_GrantApplication_Is_Null_Throws_Exception()
-		{
-			// Arrange
-			var user = EntityHelper.CreateInternalUser();
-			var identity = HttpHelper.CreateIdentity(user, "Assessor");
-			var helper = new ServiceHelper(typeof(GrantApplicationService), identity);
-			var service = helper.Create<GrantApplicationService>();
-
-			// Act
-			Action action = () => service.AddAttachment(999, null);
-
-			// Assert
-			action.Should().Throw<ArgumentNullException>();
-		}
-
-		[TestMethod, TestCategory("Grant Application"), TestCategory("Service")]
-		public void AddAttachment_When_IsApplicationAdministrator_Is_False_Throws_Exception()
-		{
-			// Arrange
-			var user = EntityHelper.CreateExternalUser();
-			var identity = HttpHelper.CreateIdentity(user);
-			var helper = new ServiceHelper(typeof(GrantApplicationService), identity);
-			var service = helper.Create<GrantApplicationService>();
-			var applicationAdmin = EntityHelper.CreateExternalUser(2);
-			var grantApplication = EntityHelper.CreateGrantApplication(applicationAdmin);
-
-			helper.MockDbSet(grantApplication).Setup(x => x.Find(It.IsAny<int>())).Returns(grantApplication);
-
-			// Act
-			Action action = () => service.AddAttachment(grantApplication.Id, new Attachment());
-
-			// Assert
-			action.Should().Throw<NotAuthorizedException>();
-		}
-
-		[TestMethod, TestCategory("Grant Application"), TestCategory("Service")]
-		public void AddAttachment_When_GrantApplication_ApplicationStateInternal_Is_Not_Draft_Or_New_Throw_Exception()
-		{
-			// Arrange
-			var user = EntityHelper.CreateInternalUser();
-			var identity = HttpHelper.CreateIdentity(user, "Assessor");
-			var helper = new ServiceHelper(typeof(GrantApplicationService), identity);
-			var service = helper.Create<GrantApplicationService>();
-			var grantApplication = EntityHelper.CreateGrantApplication(user);
-			grantApplication.ApplicationStateInternal = ApplicationStateInternal.PendingAssessment;
-
-			helper.MockDbSet( new[] { grantApplication });
-
-			// Act
-			Action action = () => service.AddAttachment(grantApplication.Id, null);
-
-			// Assert
-			action.Should().Throw<ArgumentNullException>();
-		}
-
-		[TestMethod, TestCategory("Grant Application"), TestCategory("Service")]
-		public void AddAttachment_When_ExistingAttachment_Is_Not_NULL_VersionedAttachments_Add_And_Commit_Are_Called_Once()
-		{
-			// Arrange
-			var user = EntityHelper.CreateInternalUser();
-			var helper = new ServiceHelper(typeof(GrantApplicationService), user, "Assessor");
-			var service = helper.Create<GrantApplicationService>();
-			var grantApplication = EntityHelper.CreateGrantApplication(user);
-			grantApplication.GrantOpening.GrantStream.AttachmentsIsEnabled = true;
-			grantApplication.ApplicationStateInternal = ApplicationStateInternal.ReturnedToAssessment;
-
-			var attachment = new Attachment { Id = 1, RowVersion = new byte[9999] };
-
-			helper.MockDbSet(grantApplication).Setup(x => x.Find(It.IsAny<int>())).Returns(grantApplication);
-			helper.MockDbSet(attachment).Setup(x => x.Find(It.IsAny<int>())).Returns(attachment);
-
-			// Act
-			service.AddAttachment(grantApplication.Id, attachment);
-
-			// Assert
-			grantApplication.Attachments.Count().Should().Be(1);
-			helper.GetMock<IDataContext>().Verify(x => x.CommitTransaction(), Times.Once);
-		}
-
-		[TestMethod, TestCategory("Grant Application"), TestCategory("Service")]
-		public void DeleteAttachment_When_GrantApplication_Is_Null_Throws_Exception()
-		{
-			// Arrange
-			var user = EntityHelper.CreateExternalUser();
-			var helper = new ServiceHelper(typeof(GrantApplicationService), user);
-			helper.MockDbSet<GrantApplication>();
-			helper.MockDbSet<Attachment>();
-			var service = helper.Create<GrantApplicationService>(user);
-
-			// Act
-			Action action = () => service.DeleteAttachment(1, 1, "");
-
-			// Assert
-			action.Should().Throw<NoContentException>();
-		}
-
-		[TestMethod, TestCategory("Grant Application"), TestCategory("Service")]
-		public void DeleteAttachment_When_IsApplicationAdministrator_Is_False_Throws_Exception()
-		{
-			// Arrange
-			var applicationAdmin = EntityHelper.CreateExternalUser();
-			var helper = new ServiceHelper(typeof(GrantApplicationService), applicationAdmin);
-			var service = helper.Create<GrantApplicationService>();
-			var grantApplication = EntityHelper.CreateGrantApplication(applicationAdmin);
-			var grantApplicationId = 1;
-			var id = 1;
-			string rowVersion = "1";
-
-			grantApplication.BusinessContactRoles = new List<BusinessContactRole>() {
-				new BusinessContactRole {UserId = 999 }
-			};
-
-			helper.MockDbSet(grantApplication).Setup(x => x.Find(It.IsAny<int>())).Returns(grantApplication);
-
-			// Act
-			Action action = () => service.DeleteAttachment(grantApplicationId, id, rowVersion);
-
-			// Assert
-			action.Should().Throw<NotAuthorizedException>();
-		}
-
-		[TestMethod, TestCategory("Grant Application"), TestCategory("Service")]
-		public void DeleteAttachment_When_GrantApplication_Attachment_Exists_Remove_It_From_GrantApplication()
-		{
-			// Arrange
-			var applicationAdmin = EntityHelper.CreateExternalUser();
-			var helper = new ServiceHelper(typeof(GrantApplicationService), applicationAdmin);
-			var service = helper.Create<GrantApplicationService>();
-			var grantApplication = EntityHelper.CreateGrantApplication(applicationAdmin);
-			grantApplication.Attachments.Clear();
-			grantApplication.GrantOpening.GrantStream.AttachmentsIsEnabled = true;
-
-			var attachment = new Attachment { Id = 1 };
-			grantApplication.Attachments.Add(attachment);
-
-			helper.MockDbSet(grantApplication).Setup(x => x.Find(It.IsAny<int>())).Returns(grantApplication);
-			var attachmentSetMock = helper.MockDbSet(attachment);
-			attachmentSetMock.Setup(x => x.Find(It.IsAny<int>())).Returns(attachment);
-
-			// Act
-			service.DeleteAttachment(1, 1, "");
-
-			// Assert
-			grantApplication.Attachments.Count().Should().Be(0);
-			attachmentSetMock.Verify(x => x.Remove(It.IsAny<Attachment>()), Times.Once);
-			helper.GetMock<IDataContext>().Verify(x => x.CommitTransaction(), Times.Once);
-		}
-
-		[TestMethod, TestCategory("Grant Application"), TestCategory("Service")]
 		public void GetAttachments_When_GrantApplication_Is_Null_Throws_Exception()
 		{
 			// Arrange
@@ -1141,7 +884,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			};
 			grantApplication.ApplicationStateInternal = ApplicationStateInternal.New;
 
-			var attachment = new Attachment {Id = 1, FileName = "Avo", Description = "Unit Test", RowVersion = new byte[999] };
+			var attachment = new Attachment { Id = 1, FileName = "Avo", Description = "Unit Test", RowVersion = new byte[999] };
 
 			grantApplication.Attachments.Add(attachment);
 
