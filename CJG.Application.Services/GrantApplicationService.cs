@@ -205,10 +205,13 @@ namespace CJG.Application.Services
 			{
 				if (trainingProvider.BusinessCaseDocument != null)
 					_dbContext.Attachments.Remove(trainingProvider.BusinessCaseDocument);
+
 				if (trainingProvider.CourseOutlineDocument != null)
 					_dbContext.Attachments.Remove(trainingProvider.CourseOutlineDocument);
+
 				if (trainingProvider.ProofOfQualificationsDocument != null)
 					_dbContext.Attachments.Remove(trainingProvider.ProofOfQualificationsDocument);
+
 				_dbContext.TrainingProviders.Remove(trainingProvider);
 			}
 
@@ -219,6 +222,15 @@ namespace CJG.Application.Services
 				var providers = _dbContext.TrainingProviders.Where(tp => trainingProviderIds.Contains(tp.Id));
 				foreach (var trainingProvider in providers)
 				{
+					if (trainingProvider.BusinessCaseDocument != null)
+						_dbContext.Attachments.Remove(trainingProvider.BusinessCaseDocument);
+
+					if (trainingProvider.CourseOutlineDocument != null)
+						_dbContext.Attachments.Remove(trainingProvider.CourseOutlineDocument);
+
+					if (trainingProvider.ProofOfQualificationsDocument != null)
+						_dbContext.Attachments.Remove(trainingProvider.ProofOfQualificationsDocument);
+
 					_dbContext.TrainingProviders.Remove(trainingProvider);
 				}
 				trainingProgram.UnderRepresentedGroups.Clear();
@@ -231,6 +243,7 @@ namespace CJG.Application.Services
 				grantApplication.ProgramDescription.Communities.Clear();
 				grantApplication.ProgramDescription.UnderRepresentedPopulations.Clear();
 				grantApplication.ProgramDescription.VulnerableGroups.Clear();
+				grantApplication.ProgramDescription.ParticipantEmploymentStatuses.Clear();
 				_dbContext.ProgramDescriptions.Remove(grantApplication.ProgramDescription);
 			}
 
@@ -302,6 +315,7 @@ namespace CJG.Application.Services
 
 			_dbContext.TrainingCosts.Remove(grantApplication.TrainingCost);
 			_dbContext.GrantApplications.Remove(grantApplication);
+
 			CommitTransaction();
 		}
 
