@@ -198,16 +198,62 @@ namespace CJG.Core.Entities
 
 			if (eligibleCost.TrainingCost.GrantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
 			{
-
+				eligibleCost.EstimatedReimbursement = CapitalizeEstimatedReimbursement(eligibleCost);
 				eligibleCost.EstimatedEmployerContribution = eligibleCost.EstimatedCost - eligibleCost.EstimatedReimbursement;
 			}
+		}
+
+		/// <summary>
+		/// Limit estimated cost per expense cap
+		/// </summary>
+		/// <param name="eligibleCost"></param>
+		/// <returns></returns>
+		private static decimal CapitalizeEstimatedReimbursement(EligibleCost eligibleCost)
+		{
+			if (eligibleCost.TrainingCost == null)
+				throw new ArgumentNullException(nameof(eligibleCost), $"The argument {nameof(eligibleCost)}.{nameof(TrainingCost)}.{nameof(GrantApplication)} cannot be null.");
+
+			var maxReimbursementAmount = eligibleCost.TrainingCost.GrantApplication.MaxReimbursementAmt;
+			var newEstimatedReimbursement = eligibleCost.EstimatedReimbursement;
+			var perExpenseCap = maxReimbursementAmount * eligibleCost.EstimatedParticipants;
+
+			if (eligibleCost?.TrainingCost?.EligibleCosts.Sum(ec => ec.EstimatedCost) > 0)
+				perExpenseCap = (maxReimbursementAmount * (eligibleCost.EstimatedCost / eligibleCost.TrainingCost.EligibleCosts.Sum(ec => ec.EstimatedCost)) * eligibleCost.EstimatedParticipants);
+
+			if (eligibleCost.EstimatedReimbursement > perExpenseCap)
+				newEstimatedReimbursement = perExpenseCap;
+
+			return Math.Round(newEstimatedReimbursement, 2);
+		}
+
+		/// <summary>
+		/// Limit agreed cost per expense cap
+		/// </summary>
+		/// <param name="eligibleCost"></param>
+		/// <returns></returns>
+		private static decimal CapitalizeAgreedReimbursement(EligibleCost eligibleCost, decimal totalAgreedMaxCost = 0)
+		{
+			if (eligibleCost.TrainingCost == null)
+				throw new ArgumentNullException(nameof(eligibleCost), $"The argument {nameof(eligibleCost)}.{nameof(TrainingCost)}.{nameof(GrantApplication)} cannot be null.");
+
+			var newAgreedReimbursement = eligibleCost.AgreedMaxReimbursement;
+			var maxReimbursementAmount = eligibleCost.TrainingCost.GrantApplication.MaxReimbursementAmt;
+			var perExpenseCap = maxReimbursementAmount * eligibleCost.AgreedMaxParticipants;
+
+			if (totalAgreedMaxCost > 0)
+				perExpenseCap = (maxReimbursementAmount * (eligibleCost.AgreedMaxCost / totalAgreedMaxCost) * eligibleCost.AgreedMaxParticipants);
+
+			if (eligibleCost.AgreedMaxReimbursement > perExpenseCap)
+				newAgreedReimbursement = perExpenseCap;
+
+			return Math.Round(newAgreedReimbursement, 2);
 		}
 
 		/// <summary>
 		/// Calculate the agreed participant cost, reimbursement and employer contribution.
 		/// </summary>
 		/// <param name="eligibleCost"></param>
-		public static void RecalculateAgreedCosts(this EligibleCost eligibleCost)
+		public static void RecalculateAgreedCosts(this EligibleCost eligibleCost, decimal totalAgreedMaxCost = 0)
 		{
 			eligibleCost.AgreedMaxParticipantCost = eligibleCost.CalculateAgreedParticipantCost();
 			eligibleCost.AgreedMaxReimbursement = eligibleCost.CalculateAgreedReimbursement();
@@ -215,7 +261,7 @@ namespace CJG.Core.Entities
 
 			if (eligibleCost.TrainingCost.GrantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
 			{
-
+				eligibleCost.AgreedMaxReimbursement = CapitalizeAgreedReimbursement(eligibleCost, totalAgreedMaxCost);
 				eligibleCost.AgreedEmployerContribution = eligibleCost.AgreedMaxCost - eligibleCost.AgreedMaxReimbursement;
 			}
 		}

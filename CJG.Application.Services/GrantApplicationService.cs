@@ -1750,7 +1750,7 @@ namespace CJG.Application.Services
 
 				entity.EligibleExpenseTypeId = cost.EligibleExpenseType.Id;
 				entity.RecalculateEstimatedCost();
-				entity.RecalculateAgreedCosts();
+				entity.RecalculateAgreedCosts(model.TotalAgreedCost); //model.TotalAgreedCost will have the updated total agreed cost.
 
 				if (cost.Id == 0)
 				{
