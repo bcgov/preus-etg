@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Web;
 using System.Web.Mvc;
@@ -84,6 +85,11 @@ namespace CJG.Web.External.Views.Shared
 		public string GetAssemblyBuildDate()
 		{
 			return GetLinkerTimestampUtc().ToStringLocalTime();
+		}
+
+		public string GetCurrentCulture()
+		{
+			return CultureInfo.CurrentCulture.Name;
 		}
 
 		public DateTime GetLinkerTimestampUtc()
