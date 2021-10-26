@@ -13,10 +13,6 @@ namespace CJG.Application.Services
 	/// </summary>
 	public class SettingService : Service, ISettingService
 	{
-		#region Variables
-		#endregion
-
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a SettingService object.
 		/// </summary>
@@ -26,13 +22,11 @@ namespace CJG.Application.Services
 		public SettingService(IDataContext context, HttpContextBase httpContext, ILogger logger) : base(context, httpContext, logger)
 		{
 		}
-		#endregion
 
-		#region Methods
 		/// <summary>
 		/// Get the setting specified by the key.  
 		/// </summary>
-		/// <param name="key">Unique key to idenfity the setting.</param>
+		/// <param name="key">Unique key to identify the setting.</param>
 		/// <returns></returns>
 		public Setting Get(string key)
 		{
@@ -54,8 +48,7 @@ namespace CJG.Application.Services
 		/// <param name="setting"></param>
 		public void AddOrUpdate(Setting setting)
 		{
-			var exists = _dbContext.Settings.Where(s => s.Key == setting.Key).FirstOrDefault();
-
+			var exists = _dbContext.Settings.FirstOrDefault(s => s.Key == setting.Key);
 			if (exists != null)
 			{
 				exists.Value = setting.Value;
@@ -82,7 +75,7 @@ namespace CJG.Application.Services
 		/// <param name="setting"></param>
 		public void Update(Setting setting)
 		{
-			_dbContext.Update<Setting>(setting);
+			_dbContext.Update(setting);
 			_dbContext.Commit();
 		}
 
@@ -92,9 +85,15 @@ namespace CJG.Application.Services
 		/// <param name="setting"></param>
 		public void Delete(Setting setting)
 		{
-			Remove<Setting>(setting);
+			if (setting == null)
+				return;
+
+			var exists = _dbContext.Settings.FirstOrDefault(s => s.Key == setting.Key);
+			if (exists == null)
+				return;
+
+			Remove(exists);
 			_dbContext.Commit();
 		}
-		#endregion
 	}
 }

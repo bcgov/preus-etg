@@ -1,48 +1,38 @@
 ﻿using System;
+using System.Net;
 using System.Web.Mvc;
+using CJG.Application.Services;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
-using CJG.Web.External.Helpers;
 using CJG.Web.External.Controllers;
-using System.Net;
-using CJG.Core.Interfaces;
+using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
-using CJG.Core.Entities;
-using CJG.Application.Services;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	/// <summary>
-	/// <typeparamref name="SettingController" /> class, provides endpoints for managing the application settings.
-	/// </summary>
-	[RouteArea("Int")]
+    /// <summary>
+    /// <typeparamref name="SettingController" /> class, provides endpoints for managing the application settings.
+    /// </summary>
+    [RouteArea("Int")]
 	public class SettingController : BaseController
 	{
-		#region Variables
-		private readonly ISiteMinderService _siteMinderService;
 		private readonly IUserService _userService;
 		private readonly ISettingService _settingService;
-		#endregion
-
-		#region Constructors
 
 		/// <summary>
 		///     Creates a new instance of a <typeparamref name="SettingController" /> object.
 		/// </summary>
-		/// <param name="logService"></param>
+		/// <param name="controllerService"></param>
 		/// <param name="settingService"></param>
 		public SettingController(
 			IControllerService controllerService,
 			ISettingService settingService) : base(controllerService.Logger)
 		{
-			_siteMinderService = controllerService.SiteMinderService;
 			_userService = controllerService.UserService;
 			_settingService = settingService;
 		}
-
-		#endregion
-
-		#region Methods
 
 		/// <summary>
 		/// Display the debug screen menu with all settings.
@@ -145,6 +135,5 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 			return Json(model);
 		}
-		#endregion
 	}
 }
