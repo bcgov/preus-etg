@@ -21,13 +21,12 @@ namespace CJG.Application.Services
 	/// </summary>
 	public abstract class Service : IService
 	{
-		#region Properties
 		protected readonly ILogger _logger;
 		protected readonly IDataContext _dbContext;
 		protected readonly HttpContextBase _httpContext;
-		#endregion
 
-		#region Constructors
+		private const string DefaultProgramCode = "ETG";
+
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="Service"/> class.
 		/// </summary>
@@ -41,14 +40,16 @@ namespace CJG.Application.Services
 			_httpContext = httpContext;
 			_logger = logger;
 		}
-		#endregion
 
-		#region Methods
-		//TODO This might need to be introduced from somewhere other than here. The Service layer shouldn't contain Entity specific info.
+		public string GetDefaultGrantProgramCode()
+		{
+			return DefaultProgramCode;
+		}
+
 		public int GetDefaultGrantProgramId()
 		{
 			var defaultGrantProgram = _dbContext.GrantPrograms
-				.FirstOrDefault(gp => gp.ProgramCode == "ETG");
+				.FirstOrDefault(gp => gp.ProgramCode == DefaultProgramCode);
 
 			return defaultGrantProgram?.Id ?? 0;
 		}
@@ -275,6 +276,5 @@ namespace CJG.Application.Services
 			var expression = (MemberExpression)property.Body;
 			return (P)_dbContext.Entry(model).OriginalValues[expression.Member.Name];
 		}
-		#endregion
 	}
 }

@@ -1,5 +1,4 @@
-﻿@model System.Version
-
+﻿@model Tuple<Version, string>
 @{
     ViewBag.Title = "Version";
 }
@@ -8,5 +7,6 @@
 
     <h1>@ViewBag.Title</h1>
 
-    @Model
+    <p><strong>Version:</strong> @Model.Item1</p>
+    <p><strong>Program:</strong> @Model.Item2</p>
 </div>

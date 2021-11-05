@@ -10,6 +10,7 @@ namespace CJG.Core.Interfaces.Service
 	{
 		void Commit();
 		void CommitTransaction();
+		string GetDefaultGrantProgramCode();
 		int GetDefaultGrantProgramId();
 
 		IEnumerable<ValidationResult> Validate<TEntity>(TEntity entity) where TEntity : class;
