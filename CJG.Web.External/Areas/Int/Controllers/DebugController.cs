@@ -17,6 +17,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
+using CJG.Application.Services;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
@@ -408,7 +409,11 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[HttpGet]
 		public ActionResult Version()
 		{
-			return View(typeof(MvcApplication).Assembly.GetName().Version);
+			var defaultGrantProgramCode = _settingService.GetDefaultGrantProgramCode();
+			var defaultProgramFound = _settingService.GetDefaultGrantProgramId();
+			var model = new Tuple<Version, string>(typeof(MvcApplication).Assembly.GetName().Version, $"[{defaultGrantProgramCode}]. Program ID found: {defaultProgramFound}");
+
+			return View(model);
 		}
 		#endregion
 
