@@ -700,9 +700,10 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			if (model == null)
 				model = new ParticipantInfoViewModel();
 
+			model.CanadaPostKey = new CanadaPostConfiguration(HttpContext).GetCanadaPostKey().Key;
+
 			// Create Step1
 			var grantApplication = _grantApplicationService.Get(invitationKey);
-
 			model.ParticipantInfoStep0ViewModel = new ParticipantInfoStep0ViewModel
 			{
 				GrantApplicationId = grantApplication.Id,
@@ -735,6 +736,8 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			// Prepare to display Step2 (Contact Info)
 			if (model == null)
 				model = new ParticipantInfoViewModel();
+
+			model.CanadaPostKey = new CanadaPostConfiguration(HttpContext).GetCanadaPostKey().Key;
 
 			if (model.ParticipantInfoStep2ViewModel == null)
 			{
