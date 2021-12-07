@@ -47,3 +47,34 @@
         </button>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        setTimeout(function() {
+            // Destroy existing addressCompletes that are hooked up - they interfere with the load events
+            addressComplete.destroy();
+
+            var fields = [
+                { element: "AddressLine1", field: "Line1", mode: pca.fieldMode.DEFAULT },
+                { element: "AddressLine2", field: "Line2", mode: pca.fieldMode.POPULATE },
+                { element: "City", field: "City", mode: pca.fieldMode.POPULATE },
+                { element: "PostalCode", field: "PostalCode", mode: pca.fieldMode.POPULATE },
+                { element: "Country", field: "CountryName", mode: pca.fieldMode.COUNTRY }
+            ];
+
+            const options = {
+                key: "@Model.CanadaPostKey",
+                culture: "en-us",
+                list: {
+                    className: 'participant-view'
+                }
+            };
+
+            var addressLocation = new pca.Address(fields, options);
+            addressLocation.listen("populate", function(address) {
+                 document.getElementById("RegionId").value = "string:" + address.ProvinceCode;
+            });
+        }, 1500);
+    });
+
+</script>

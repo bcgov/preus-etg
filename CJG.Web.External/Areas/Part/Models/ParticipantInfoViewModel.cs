@@ -4,7 +4,9 @@ namespace CJG.Web.External.Areas.Part.Models
 {
     public class ParticipantInfoViewModel : BaseViewModel
     {
-        public ParticipantInfoStep0ViewModel ParticipantInfoStep0ViewModel { get; set; }
+		public string CanadaPostKey { get; set; }
+
+	    public ParticipantInfoStep0ViewModel ParticipantInfoStep0ViewModel { get; set; }
 
         public ParticipantInfoStep1ViewModel ParticipantInfoStep1ViewModel { get; set; }
 
@@ -17,6 +19,5 @@ namespace CJG.Web.External.Areas.Part.Models
         public ParticipantInfoStep5ViewModel ParticipantInfoStep5ViewModel { get; set; }
 
         public ParticipantInfoStep6ViewModel ParticipantInfoStep6ViewModel { get; set; }
-
     }
 }
