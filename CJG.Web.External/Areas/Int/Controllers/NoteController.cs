@@ -1,14 +1,11 @@
-﻿using CJG.Application.Business.Models;
-using CJG.Application.Services;
+﻿using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
-using CJG.Infrastructure.Identity;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -18,42 +15,25 @@ namespace CJG.Web.External.Areas.Int.Controllers
 	[RouteArea("Int")]
 	public class NoteController : BaseController
 	{
-		#region Variables
 		private readonly IStaticDataService _staticDataService;
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IAttachmentService _attachmentService;
 		private readonly INoteService _noteService;
-		private readonly IUserManagerAdapter _userManager;
-		private readonly IUserService _userService;
-		private readonly ISiteMinderService _siteMinderService;
-		private readonly ApplicationUserManager _applicationUserManager;
-		#endregion
 
-		#region Constructors
 		public NoteController(
 			IControllerService controllerService,
 			IGrantApplicationService grantApplicationService,
 			IAttachmentService attachmentService,
-			INoteService noteService,
-			IUserManagerAdapter userManager,
-			IUserService userService,
-			ISiteMinderService siteMinderService,
-			ApplicationUserManager applicationUserManager
+			INoteService noteService
 
 		   ) : base(controllerService.Logger)
 		{
 			_staticDataService = controllerService.StaticDataService;
 			_grantApplicationService = grantApplicationService;
 			_attachmentService = attachmentService;
-			_userManager = userManager;
 			_noteService = noteService;
-			_userService = userService;
-			_siteMinderService = siteMinderService;
-			_applicationUserManager = applicationUserManager;
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
 		/// Get the notes for the application details view.
 		/// </summary>
@@ -124,7 +104,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		{
 			try
 			{
-				var noteTypes = _staticDataService.GetNoteTypes().Select(x => new {x.Id, x.Description, x.IsSystem}).ToArray();
+				var noteTypes = _staticDataService.GetNoteTypes().Select(x => new { x.Id, x.Description, x.IsSystem }).ToArray();
 				return Json(noteTypes, JsonRequestBehavior.AllowGet);
 			}
 			catch (Exception ex)
@@ -224,13 +204,17 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				HandleAngularException(ex, model);
 			}
+
+			// Replace the new lines when reloading the note after edit
+			model.Content = model.Content.Replace(Environment.NewLine, "<br />");
+
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
 
 		/// <summary>
 		/// Add a new note to the datasource.
 		/// </summary>
-		/// <param name="viewModel"></param>
+		/// <param name="model"></param>
 		/// <param name="file"></param>
 		/// <returns></returns>
 		[HttpPost]
@@ -265,6 +249,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				HandleAngularException(ex, model);
 			}
+
+			// Replace the new lines when reloading the note after edit
+			model.Content = model.Content.Replace(Environment.NewLine, "<br />");
 
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
@@ -328,6 +315,5 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
-		#endregion
 	}
 }
