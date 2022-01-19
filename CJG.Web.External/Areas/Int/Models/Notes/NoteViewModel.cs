@@ -9,7 +9,6 @@ namespace CJG.Web.External.Areas.Int.Models.Notes
 {
 	public class NoteViewModel : BaseViewModel
 	{
-		#region Properties
 		public string RowVersion { get; set; }
 		public int GrantApplicationId { get; set; }
 
@@ -35,14 +34,11 @@ namespace CJG.Web.External.Areas.Int.Models.Notes
 		public bool IsCreator { get; set; }
 		public bool AllowEdit { get; set; }
 
-		#endregion
-
-		#region Constructor
 		public NoteViewModel()
 		{
 		}
 
-		public NoteViewModel(Note note, IPrincipal user, bool includeAttachment = true)
+		public NoteViewModel(Note note, IPrincipal user, bool includeAttachment = true, bool replaceNewLines = false)
 		{
 			if (note == null)
 				throw new ArgumentNullException(nameof(note));
@@ -51,7 +47,7 @@ namespace CJG.Web.External.Areas.Int.Models.Notes
 			Id = note.Id;
 			CreatorId = note.CreatorId ?? 0;
 			CreatorName = note.CreatorId == 0 ? "Applicant" : note.Creator != null ? $"{note.Creator.FirstName} {note.Creator.LastName}" : null;
-			Content = note.Content.Replace(Environment.NewLine, "<br />");
+			Content = replaceNewLines ? note.Content.Replace(Environment.NewLine, "<br />") : note.Content;
 			Caption = note.GetCaption();
 			AttachmentId = note.AttachmentId;
 			if (includeAttachment)
@@ -67,6 +63,5 @@ namespace CJG.Web.External.Areas.Int.Models.Notes
 			IsCreator = user.GetUserId() == CreatorId;
 			AllowEdit = IsCreator && (NoteTypeId?.In(NoteTypes.AS, NoteTypes.PD, NoteTypes.PM, NoteTypes.QA, NoteTypes.NR) ?? false);
 		}
-		#endregion
 	}
 }
