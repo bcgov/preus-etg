@@ -42,10 +42,11 @@ namespace CJG.Web.External
 			logger.Info("CJG Web Application Starting");
 
 			// Makes it possible for Windows Authentication to work along side Form-based authentication.
-			//CJG-1022 - disabled - System.Security.Claims.ClaimsPrincipal.PrimaryIdentitySelector = (i) => i.FirstOrDefault(ci => ci.GetType() == typeof(System.Security.Claims.ClaimsIdentity));
-			
+			//System.Security.Claims.ClaimsPrincipal.PrimaryIdentitySelector = (i) => i.FirstOrDefault(ci => ci.GetType() == typeof(System.Security.Claims.ClaimsIdentity));
+			//CJG-1022 - disabled - 
 			logger.Info(System.Security.Principal.WindowsIdentity.GetCurrent().AuthenticationType);
-			//logger.Info(typeof(System.Security.Claims.ClaimsPrincipal.PrimaryIdentitySelector));
+			logger.Info(typeof(System.Security.Claims.ClaimsIdentity));
+			logger.Info(System.Security.Claims.ClaimsIdentity.AuthenticationType);
 			logger.Info(System.Security.Claims.ClaimsPrincipal.PrimaryIdentitySelector);
 
 
