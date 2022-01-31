@@ -46,7 +46,6 @@ namespace CJG.Web.External
 			//CJG-1022 - disabled - 
 			logger.Info(System.Security.Principal.WindowsIdentity.GetCurrent().AuthenticationType);
 			logger.Info(typeof(System.Security.Claims.ClaimsIdentity));
-			logger.Info(System.Security.Claims.ClaimsIdentity.AuthenticationType);
 			logger.Info(System.Security.Claims.ClaimsPrincipal.PrimaryIdentitySelector);
 
 
