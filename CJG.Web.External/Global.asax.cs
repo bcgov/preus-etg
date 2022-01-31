@@ -45,7 +45,8 @@ namespace CJG.Web.External
 			//CJG-1022 - disabled - System.Security.Claims.ClaimsPrincipal.PrimaryIdentitySelector = (i) => i.FirstOrDefault(ci => ci.GetType() == typeof(System.Security.Claims.ClaimsIdentity));
 			
 			logger.Info(System.Security.Principal.WindowsIdentity.GetCurrent().AuthenticationType);
-			logger.Info(typeof(System.Security.Claims.ClaimsIdentity));
+			logger.Info(typeof(System.Security.Claims.ClaimsPrincipal.PrimaryIdentitySelector));
+			logger.Info(System.Security.Claims.ClaimsPrincipal.PrimaryIdentitySelector);
 
 
 			// ...The reason why you need this is the way RegularExpressionAttribute is implemented. It doesn't implement IClientValidatable 
