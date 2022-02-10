@@ -1,19 +1,5 @@
 ﻿<div>
-	<h2>{{model.GrantProgramName}} Selection</h2>
-
 	<input class="js-training-program-start-date" type="hidden" ng-model="model.TrainingStartDate">
-
-    <div ng-if="model.ProgramType === @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
-        <p>To create an application, you must select a grant from the ones available below. Make your selection based on your delivery start date and the stream that matches your training plan.</p>
-        <p>Click "Show description" to read the stream description.</p>
-        <p>The earliest date you may submit your application is shown for each grant selection.</p>
-    </div>
-
-    <div ng-if="model.ProgramType === @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
-        <p>To create an application, please select the appropriate training stream below.</p>
-        <p>Training must start during the selected intake period.</p>
-        <p>It is not possible to change streams after an application has been submitted. Failure to apply under the correct stream will result in your application being denied.</p>
-    </div>
 
 	<div class="js-training-date-warning alert alert--warning is-hidden" role="alert">
 		<p>The training period for your grant selection does not include your current training start date. If you keep this selection, you will need to edit your training program and select new training dates.</p>
