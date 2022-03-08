@@ -52,18 +52,18 @@
                         </th>
                     </tr>
                     <tr>
-                        <th class="data-grid-sub-header">File No.</th>
-                        <th class="data-grid-sub-header">Status</th>
-                        <th class="data-grid-sub-header">Applicant</th>
-                        <th class="data-grid-sub-header">Training Program Title</th>
-                        <th class="data-grid-sub-header">Start Date</th>
-                        <th class="data-grid-sub-header">No. of Part.</th>
-                        <th class="data-grid-sub-header">Total Gov Contribution</th>
-                        <th class="data-grid-sub-header">Avg Cost per Part.</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('FileNumber')"><img src="{{imgSrcFileNumber}}" />File No.</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('CurrentStatus')"><img src="{{imgSrcCurrentStatus}}" />Status</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('Applicant')"><img src="{{imgSrcApplicant}}" />Applicant</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('TrainingProgramTitle')"><img src="{{imgSrcTrainingProgramTitle}}" />Training Program Title</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('StartDate')"><img src="{{imgSrcStartDate}}" />Start Date</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('NumberOfParticipants')"><img src="{{imgSrcNumberOfParticipants}}" />No. of Part.</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('TotalGovContribution')"><img src="{{imgSrcTotalGovContribution}}" />Total Gov Contribution</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('AvgCostperPart')"><img src="{{imgSrcAvgCostperPart}}" />Avg Cost per Part.</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="application in $parent.$ctrl.ngItems">
+                    <tr ng-repeat="application in $parent.$ctrl.ngItems |orderBy:sort.column:sort.descending">
                         <td><a href="/Int/Application/Details/View/{{application.Id}}">{{application.FileNumber}}</a></td>
                         <td>{{application.CurrentStatus}}</td>
                         <td>{{application.ApplicantName}}</td>
