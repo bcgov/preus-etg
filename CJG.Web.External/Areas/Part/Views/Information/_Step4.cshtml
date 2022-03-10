@@ -1,5 +1,6 @@
 ﻿@using CJG.Core.Entities
 @model CJG.Web.External.Areas.Part.Models.ParticipantInfoViewModel
+
 <div ng-if="model.ParticipantInfoStep4ViewModel" ng-show="model.ParticipantInfoStep0ViewModel.Step == 4">
     <p class="subheader--step">Step 4 of {{model.ParticipantInfoStep0ViewModel.TotalSteps}}</p>
     <h2 class="subheader">Employment information</h2>
@@ -245,10 +246,10 @@
                 </div>
 
                 @Html.ValidationError("model.ParticipantInfoStep4ViewModel.EIBenefit", true)
-            <p class="inline-help" ng-show="model.ParticipantInfoStep4ViewModel.EIBenefit == 1">
-                If you have indicated that you are "currently receiving" EI benefits, the Program will inform the Ministry of Social Development and Poverty Reduction (SDPR) of the
-                appropriate training dates to ensure benefits are not discontinued during training.
-            </p>
+                <p class="inline-help" ng-show="model.ParticipantInfoStep4ViewModel.EIBenefit == 1">
+                    If you have indicated that you are "currently receiving" EI benefits, the Program will inform the Ministry of Social Development and Poverty Reduction (SDPR) of the
+                    appropriate training dates to ensure benefits are not discontinued during training.
+                </p>
             </div>
         </div>
 
@@ -322,8 +323,8 @@
             </div>
         </div>
     </div>
-
     <div>
+
         <div class="form__group form__group--radio-inline" ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3">
             <div class="form__label">
                 <span ng-if="model.ParticipantInfoStep0ViewModel.GrantProgramId == 2">
@@ -364,10 +365,10 @@
             <label class="form__label">How long have you been <span>{{selectedEmploymentStatus()}}</span> in this job <abbr title="Required">*</abbr></label>
             <div class="form__control">
                 <div class="form__group--yearsmonths">
-                    @Html.TextBox(new FormControl() { CssClass = "no-generic-mask", Size = "input--small", Model = "model.ParticipantInfoStep4ViewModel.HowLongYears", Options = "maxlength = '2'" })
+                    @Html.TextBox(new FormControl { CssClass = "no-generic-mask", Size = "input--small", Model = "model.ParticipantInfoStep4ViewModel.HowLongYears", Options = "maxlength = '2'" })
                     &nbsp;&nbsp;Years
                     &nbsp;&nbsp;
-                    @Html.TextBox(new FormControl() { CssClass = "no-generic-mask", Size = "input--small", Model = "model.ParticipantInfoStep4ViewModel.HowLongMonths", Options = "maxlength = '2'" })
+                    @Html.TextBox(new FormControl { CssClass = "no-generic-mask", Size = "input--small", Model = "model.ParticipantInfoStep4ViewModel.HowLongMonths", Options = "maxlength = '2'" })
                     &nbsp;&nbsp;Months
                 </div>
                 <div class="participant--employed-length-error">
@@ -493,6 +494,14 @@
                 </div>
             </div>
 
+            @Html.TextBoxBlock(new FormControl
+            {
+                Label = "Current Job Title <abbr title='Required'>*</abbr>",
+                Model = "model.ParticipantInfoStep4ViewModel.JobTitleBefore",
+                Size = "input--full",
+                IsInnerModel = true
+            })
+
             @Html.TextBoxBlock(new FormControl()
             {
                 Label = "In what city do you <u><em>currently</em></u> perform your work <abbr title='Required'>*</abbr>",
@@ -539,6 +548,14 @@
                 </div>
             </div>
         </div>
+
+        @Html.TextBoxBlock(new FormControl
+        {
+            Label = "After Training Job Title <abbr title='Required'>*</abbr>",
+            Model = "model.ParticipantInfoStep4ViewModel.JobTitleFuture",
+            Size = "input--full",
+            IsInnerModel = true
+        })
     </div>
 
     <div class="form__group form__group--radio-inline">
@@ -548,7 +565,7 @@
 
         <div>
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
+                @Html.RadioButton(new FormControl
                 {
                     Label = "Yes",
                     Id = "ApprenticeYes",
@@ -558,7 +575,7 @@
             </div>
 
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
+                @Html.RadioButton(new FormControl
                 {
                     Label = "No",
                     Id = "ApprenticeNo",

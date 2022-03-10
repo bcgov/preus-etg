@@ -1051,6 +1051,8 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					ItaRegistered = model.ParticipantInfoStep4ViewModel.ItaRegistered ?? false,
 					OtherPrograms = model.ParticipantInfoStep4ViewModel.OtherPrograms ?? false,
 					OtherProgramDesc = model.ParticipantInfoStep4ViewModel.OtherProgramDesc,
+					JobTitleBefore = model.ParticipantInfoStep4ViewModel.JobTitleBefore,
+					JobTitleFuture = model.ParticipantInfoStep4ViewModel.JobTitleFuture,
 
 					// Step 5 of 6
 					ConsentDateEntered = AppDateTime.UtcNow
