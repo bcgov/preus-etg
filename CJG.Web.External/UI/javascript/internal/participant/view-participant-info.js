@@ -5,7 +5,7 @@ app.controller('ViewParticipantInfo', function ($scope, $attrs, $controller, $ti
 
   angular.extend(this, $controller('Section', { $scope, $attrs }));
 
-  $scope.showEmployerInfo = false;
+  $scope.showEmployerInfo = 0;
 
   /**
    * Toggle the view

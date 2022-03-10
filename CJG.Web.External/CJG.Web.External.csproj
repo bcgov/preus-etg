@@ -873,6 +873,7 @@
     <Content Include="Areas\Int\Views\TrainingCost\_TrainingCostWithdrawn.cshtml" />
     <Content Include="Areas\Ext\Views\ApplicationReview\_ParticipantList.cshtml" />
     <Content Include="Areas\Ext\Views\ApplicationView\_ParticipantList.cshtml" />
+    <Content Include="Areas\Int\Views\Participant\ParticipantHistory.cshtml" />
     <None Include="NLog.Training.config">
       <DependentUpon>NLog.config</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1319,6 +1320,7 @@
     <Compile Include="Areas\Int\Models\Organizations\OrganizationProfileViewModel.cs" />
     <Compile Include="Areas\Int\Models\Organizations\OrganizationListViewModel.cs" />
     <Compile Include="Areas\Int\Models\Organizations\OrganizationsViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ParticipantTrainingHistory.cs" />
     <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationPreviewModel.cs" />
     <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationListViewModel.cs" />
     <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationRecipientViewModel.cs" />
