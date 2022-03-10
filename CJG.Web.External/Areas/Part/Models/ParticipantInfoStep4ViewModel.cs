@@ -57,6 +57,12 @@ namespace CJG.Web.External.Areas.Part.Models
 		public List<KeyValueParent<int, string, int>> FutureNoc4Codes { get; set; } = new List<KeyValueParent<int, string, int>>();
 		#endregion
 
+		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidateJobTitleBefore")]
+		public string JobTitleBefore { get; set; }
+
+		[Required(ErrorMessage = "Your Job Title after training is required.")]
+		public string JobTitleFuture { get; set; }
+
 		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidateCurrentReceiveEI")]
 		public bool? CurrentReceiveEI { get; set; }
 
