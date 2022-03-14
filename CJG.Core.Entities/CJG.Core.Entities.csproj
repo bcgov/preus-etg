@@ -118,6 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppClaimTypes.cs" />
+    <Compile Include="AttachmentType.cs" />
     <Compile Include="ClaimParticipant.cs" />
     <Compile Include="ClassificationOfInstructionalProgram.cs" />
     <Compile Include="DenialReason.cs" />

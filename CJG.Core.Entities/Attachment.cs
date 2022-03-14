@@ -49,6 +49,12 @@ namespace CJG.Core.Entities
 		public byte[] AttachmentData { get; set; }
 
 		/// <summary>
+		/// get/set - The type of attachment. Applicants upload attachments. Admins can upload Attachments or Documents. Applicant cannot affect Documents.
+		/// </summary>
+		[DefaultValue(AttachmentType.Attachment)]
+		public AttachmentType AttachmentType { get; set; }
+
+		/// <summary>
 		/// get - All of the versions of this attachment.
 		/// </summary>
 		public ICollection<VersionedAttachment> Versions { get; set; } = new List<VersionedAttachment>();
@@ -57,6 +63,7 @@ namespace CJG.Core.Entities
 		/// get - All of the grant applications associated with this attachment.
 		/// </summary>
 		public ICollection<GrantApplication> GrantApplications { get; set; } = new List<GrantApplication>();
+
 		#endregion
 
 		/// <summary>
@@ -74,7 +81,8 @@ namespace CJG.Core.Entities
 		/// <param name="description"></param>
 		/// <param name="fileExtension"></param>
 		/// <param name="data"></param>
-		public Attachment(string fileName, string description, string fileExtension, byte[] data)
+		/// <param name="attachmentType"></param>
+		public Attachment(string fileName, string description, string fileExtension, byte[] data, AttachmentType attachmentType = AttachmentType.Attachment)
 		{
 			if (string.IsNullOrEmpty(fileName))
 				throw new ArgumentNullException(nameof(fileName));
@@ -89,6 +97,7 @@ namespace CJG.Core.Entities
 			Description = description;
 			FileExtension = fileExtension;
 			AttachmentData = data;
+			AttachmentType = attachmentType;
 		}
 
 		/// <summary>
@@ -105,6 +114,7 @@ namespace CJG.Core.Entities
 			Description = attachment.Description;
 			FileExtension = attachment.FileExtension;
 			AttachmentData = attachment.AttachmentData;
+			AttachmentType = attachment.AttachmentType;
 			Versions.Clear();
 		}
 
@@ -116,7 +126,8 @@ namespace CJG.Core.Entities
 		/// <param name="description"></param>
 		/// <param name="fileExtension"></param>
 		/// <param name="data"></param>
-		public void CreateNewVersion(string fileName, string description, string fileExtension, byte[] data)
+		/// <param name="attachmentType"></param>
+		public void CreateNewVersion(string fileName, string description, string fileExtension, byte[] data, AttachmentType attachmentType = AttachmentType.Attachment)
 		{
 			if (String.IsNullOrEmpty(fileName))
 				throw new ArgumentNullException(nameof(fileName));
@@ -133,6 +144,7 @@ namespace CJG.Core.Entities
 			Description = description;
 			FileExtension = fileExtension;
 			AttachmentData = data;
+			AttachmentType = attachmentType;
 		}
 	}
 }

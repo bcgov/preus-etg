@@ -62,7 +62,8 @@ namespace CJG.Application.Services
 		/// <summary>
 		/// Updates the current attachment and creates a versioned copy of the previous attachment.  Updates the datasource.
 		/// </summary>
-		/// <param name="newAttachment"></param>
+		/// <param name="attachment"></param>
+		/// <param name="commit"></param>
 		/// <returns></returns>
 		public Attachment Update(Attachment attachment, bool commit = false)
 		{
@@ -70,7 +71,7 @@ namespace CJG.Application.Services
 
 			var existingAttachment = Get<Attachment>(attachment.Id);
 			existingAttachment.RowVersion = attachment.RowVersion ?? existingAttachment.RowVersion;
-			existingAttachment.CreateNewVersion(attachment.FileName, attachment.Description, attachment.FileExtension, attachment.AttachmentData);
+			existingAttachment.CreateNewVersion(attachment.FileName, attachment.Description, attachment.FileExtension, attachment.AttachmentData, attachment.AttachmentType);
 			_dbContext.Update(existingAttachment);
 
 			if (commit)
@@ -82,6 +83,7 @@ namespace CJG.Application.Services
 		/// Adds the attachment to the datasource.
 		/// </summary>
 		/// <param name="attachment"></param>
+		/// <param name="commit"></param>
 		/// <returns></returns>
 		public Attachment Add(Attachment attachment, bool commit = false)
 		{

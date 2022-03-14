@@ -1,14 +1,13 @@
-﻿using CJG.Core.Entities;
-using CJG.Web.External.Models.Shared;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CJG.Core.Entities;
+using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Ext.Models.Attachments
 {
 	public class GrantApplicationAttachmentsViewModel : BaseViewModel
 	{
-		#region Properties
 		public string RowVersion { get; set; }
 		public string AttachmentsHeader { get; set; }
 		public bool AttachmentsIsEnabled { get; set; }
@@ -16,25 +15,23 @@ namespace CJG.Web.External.Areas.Ext.Models.Attachments
 		public int AttachmentsMaximum { get; set; }
 		public string AttachmentsUserGuidance { get; set; }
 		public IEnumerable<AttachmentViewModel> Attachments { get; set; }
-		#endregion
 
-		#region Constructors
 		public GrantApplicationAttachmentsViewModel() { }
 
 		public GrantApplicationAttachmentsViewModel(GrantApplication grantApplication)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
 
-			this.Id = grantApplication.Id;
-			this.RowVersion = Convert.ToBase64String(grantApplication.RowVersion);
-			this.AttachmentsHeader = grantApplication.GrantOpening.GrantStream.AttachmentsHeader;
-			this.AttachmentsIsEnabled = grantApplication.GrantOpening.GrantStream.AttachmentsIsEnabled;
-			this.AttachmentsRequired = grantApplication.GrantOpening.GrantStream.AttachmentsRequired;
-			this.AttachmentsMaximum = grantApplication.GrantOpening.GrantStream.AttachmentsMaximum;
-			this.AttachmentsUserGuidance = grantApplication.GrantOpening.GrantStream.AttachmentsUserGuidance;
+			Id = grantApplication.Id;
+			RowVersion = Convert.ToBase64String(grantApplication.RowVersion);
+			AttachmentsHeader = grantApplication.GrantOpening.GrantStream.AttachmentsHeader;
+			AttachmentsIsEnabled = grantApplication.GrantOpening.GrantStream.AttachmentsIsEnabled;
+			AttachmentsRequired = grantApplication.GrantOpening.GrantStream.AttachmentsRequired;
+			AttachmentsMaximum = grantApplication.GrantOpening.GrantStream.AttachmentsMaximum;
+			AttachmentsUserGuidance = grantApplication.GrantOpening.GrantStream.AttachmentsUserGuidance;
 
-			this.Attachments = grantApplication.Attachments.Select(a => new AttachmentViewModel(a));
+			Attachments = grantApplication.Attachments.Select(a => new AttachmentViewModel(a));
 		}
-		#endregion
 	}
 }

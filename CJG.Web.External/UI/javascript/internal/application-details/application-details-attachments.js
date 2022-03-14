@@ -93,8 +93,9 @@ app.controller('Attachments', function ($scope, $attrs, $controller, $timeout, U
       Id: 0,
       FileName: '',
       Description: '',
+      AttachmentType: 0,
       File: {}
-    })
+    }, true)
       .then(function (attachment) {
         $scope.model.Attachments.push(attachment);
         $scope.section.attachments.push(attachment);
@@ -103,17 +104,21 @@ app.controller('Attachments', function ($scope, $attrs, $controller, $timeout, U
   }
 
   /**
-   * Open modal file uploader popup and allow user to updte the attachment and/or file.
+   * Open modal file uploader popup and allow user to update the attachment and/or file.
    * @function changeAttachment
    * @param {any} attachment - The attachment to update.
    * @returns {void}
    */
   $scope.changeAttachment = function (attachment) {
     $scope.section.attachment = attachment;
-    return $scope.attachmentDialog('Update Attachment', attachment)
+    return $scope.attachmentDialog('Update Attachment', attachment, true)
       .then(function (attachment) {
         $scope.section.attachments.push(attachment); // TODO: Fix
       })
       .catch(angular.noop);
+  }
+
+  $scope.countAttachments = function() {
+    return $scope.model.Attachments.filter(d => d.AttachmentType === 0).length;
   }
 });
