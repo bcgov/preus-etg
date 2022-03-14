@@ -19,7 +19,7 @@ namespace CJG.Web.External.Areas.Int.Models
 		#endregion
 
 		//ParticipantForm participant
-		public ParticipantTrainingHistory(TrainingProgram trainingProgram)
+		public ParticipantTrainingHistory(TrainingProgram trainingProgram, decimal govContri, decimal paid)
 		{
 			this.GrantId = trainingProgram.GrantApplication.Id;
 			this.FileNo = trainingProgram.GrantApplication.FileNumber ?? "";
@@ -32,8 +32,8 @@ namespace CJG.Web.External.Areas.Int.Models
 			this.TrainingProvider = trainingProgram.TrainingProvider.Name;
 			this.TrainingCourse = trainingProgram.CourseTitle;
 
-			this.ApprovedGovtContribution = 0;
-			this.AmountPaid = 0;
+			this.ApprovedGovtContribution = govContri;
+			this.AmountPaid = paid;
 		}
 	}
 }

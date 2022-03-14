@@ -51,9 +51,24 @@ namespace CJG.Web.External.Areas.Int.Models
 			var pifs = participantService.GetParticipantFormsBySIN(participant.SIN);
 			foreach (var p in pifs)
 			{
+				decimal reimbursement = 0.0m;
+				decimal amtPaid = 0.0m;
+				foreach(var c in p.ParticipantCosts)
+                {
+					reimbursement += c.AssessedReimbursement;
+					if(c.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimApproved)
+                    {
+						amtPaid += c.AssessedReimbursement;
+					}
+				}
+
 				foreach (var t in p.GrantApplication.TrainingPrograms)
 				{
-					this.TrainingHistory.Add(new ParticipantTrainingHistory(t));
+					//do not show grant apps that have not yet been submitted
+					//grant apps get a filenumber when they are submitted
+					if (t.GrantApplication.FileNumber != null){
+						this.TrainingHistory.Add(new ParticipantTrainingHistory(t, reimbursement, amtPaid));
+					}					
 				}
 			}
 		}
