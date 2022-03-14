@@ -455,6 +455,14 @@
         </div>
 
         <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3">
+            @Html.TextBoxBlock(new FormControl
+            {
+                Label = "Current Job Title <abbr title='Required'>*</abbr>",
+                Model = "model.ParticipantInfoStep4ViewModel.JobTitleBefore",
+                Size = "input--full",
+                IsInnerModel = true
+            })
+
             <div class="form__group form__group--radio-inline">
                 <label class="form__label" for="">What is your <u><em>current</em></u> National Occupation Classification (NOC) <u><em>before training</em></u> <abbr title="Required">*</abbr></label>
                 <div class="form__control">
@@ -494,14 +502,6 @@
                 </div>
             </div>
 
-            @Html.TextBoxBlock(new FormControl
-            {
-                Label = "Current Job Title <abbr title='Required'>*</abbr>",
-                Model = "model.ParticipantInfoStep4ViewModel.JobTitleBefore",
-                Size = "input--full",
-                IsInnerModel = true
-            })
-
             @Html.TextBoxBlock(new FormControl()
             {
                 Label = "In what city do you <u><em>currently</em></u> perform your work <abbr title='Required'>*</abbr>",
@@ -509,6 +509,14 @@
                 IsInnerModel = true
             })
         </div>
+        
+        @Html.TextBoxBlock(new FormControl
+        {
+            Label = "After Training Job Title <abbr title='Required'>*</abbr>",
+            Model = "model.ParticipantInfoStep4ViewModel.JobTitleFuture",
+            Size = "input--full",
+            IsInnerModel = true
+        })
 
         <div class="form__group form__group--radio-inline">
             <label class="form__label" for="">What <u><em>will</em></u> your National Occupation Classification (NOC) be <u><em>after training</em></u> <abbr title="Required">*</abbr></label>
@@ -548,14 +556,6 @@
                 </div>
             </div>
         </div>
-
-        @Html.TextBoxBlock(new FormControl
-        {
-            Label = "After Training Job Title <abbr title='Required'>*</abbr>",
-            Model = "model.ParticipantInfoStep4ViewModel.JobTitleFuture",
-            Size = "input--full",
-            IsInnerModel = true
-        })
     </div>
 
     <div class="form__group form__group--radio-inline">
