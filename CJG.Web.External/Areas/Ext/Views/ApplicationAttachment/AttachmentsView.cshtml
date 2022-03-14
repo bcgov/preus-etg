@@ -6,45 +6,50 @@
 <div class="row" ng-controller="ApplicationAttachmentsView" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-redirect-url="@Url.ActionUrl(nameof(ApplicationController.ApplicationOverviewView), typeof(ApplicationController), new { grantApplicationId = (int)ViewBag.GrantApplicationId })">
     @Html.ActionLink("Return", nameof(ApplicationController.ApplicationOverviewView), typeof(ApplicationController), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
     <div class="row">
-		<div class="main">
-			<div ng-if="alert.message" class="row row--alert">
-				<div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
-			</div>
-			<h1 style="text-transform: inherit;" ng-if="model.AttachmentsHeader">
-				Edit {{model.AttachmentsHeader}}
-			</h1>
+        <div class="main">
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+            <h1 style="text-transform: inherit;" ng-if="model.AttachmentsHeader">
+                Edit {{model.AttachmentsHeader}}
+            </h1>
 
-			<div class="notice notice--icon" ng-if="model.AttachmentsUserGuidance">
-			<div ng-bind-html="model.AttachmentsUserGuidance" class="narrow-space-list"></div>
-			</div>
+            <div class="notice notice--icon" ng-if="model.AttachmentsUserGuidance">
+                <div ng-bind-html="model.AttachmentsUserGuidance" class="narrow-space-list"></div>
+            </div>
 
-			<p>Use Add Attachment below and enter a description to identify each attachment. You may attach up to {{model.AttachmentsMaximum}} attachments.</p>
-			<p>Accepted file types: PDF, JPG, JPEG, PNG, GIF.</p>
+            <p>Use Add Attachment below and enter a description to identify each attachment. You may attach up to {{model.AttachmentsMaximum}} attachments.</p>
+            <p>Accepted file types: PDF, JPG, JPEG, PNG, GIF.</p>
+             
+            <div class="form__group" ng-if="model.Attachments">
+                <table style="width: 100%;">
+                    <tr>
+                        <th></th>
+                        <th style="text-align: left">File</th>
+                        <th style="text-align: left">Added By</th>
+                        <th></th>
+                    </tr>
+                    <tr ng-repeat="attachment in model.Attachments | orderBy: 'AttachmentType'">
+                        <td style="width: 10%; vertical-align: top">{{$index + 1}}</td>
+                        <td style="width: 40%; vertical-align: top; word-wrap: break-word; word-break: break-all;">
+                            <a ng-if="attachment.Id" target="_blank" href="/Ext/Application/Attachment/Download/{{model.Id}}/{{attachment.Id}}">{{attachment.FileName}}</a>
+                            <span ng-if="!attachment.Id">{{attachment.FileName}}</span>
+                            <br/>{{attachment.Description}}
+                        </td>
+                        <td style="vertical-align: top">{{ (attachment.AttachmentType == 1 ? "Ministry Attachment" : "Applicant Attachment") }}</td>
+                        <td style="vertical-align: top">
+                            <button class="btn btn--secondary pull-right margin-left-10" ng-show="attachment.AttachmentType === 0" ng-click="removeAttachment($index)">Remove</button>
+                            <button class="btn btn--secondary pull-right margin-left-10" ng-show="attachment.AttachmentType === 0" ng-click="changeAttachment(attachment)">Change</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <button ng-if="model.AttachmentsMaximum > getTotals()" class="btn btn--secondary" ng-click="addAttachment()" data-disableonsubmit="false">Add attachment</button>
 
-
-			<div class="form__group" ng-if="model.Attachments">
-				<table style="width:100%;">
-					<tr ng-repeat="attachment in model.Attachments">
-						<td style="width:10%;vertical-align:top">{{$index + 1}}</td>
-						<td style="width:60%;vertical-align:top;word-wrap: break-word;word-break: break-all;">
-							<a ng-if="attachment.Id" target="_blank" href="/Ext/Application/Attachment/Download/{{model.Id}}/{{attachment.Id}}">{{attachment.FileName}}</a>
-							<span ng-if="!attachment.Id">{{attachment.FileName}}</span>
-							<br />{{attachment.Description}}
-						</td>
-						<td style="vertical-align:top">
-							<button class="btn btn--secondary pull-right margin-left-10" ng-click="removeAttachment($index)">Remove</button>
-							<button class="btn btn--secondary pull-right margin-left-10" ng-click="changeAttachment(attachment)">Change</button>
-						</td>
-					</tr>
-				</table>
-			</div>
-			<button ng-if="model.AttachmentsMaximum > model.Attachments.length" class="btn btn--secondary" ng-click="addAttachment()" data-disableonsubmit="false">Add attachment</button>
-
-
-			<div class="button-group">
-				<button class="btn btn--secondary" ng-click="cancel()">Cancel</button>
-				<button class="btn btn--primary btn--forward" ng-click="save()">Done</button>
-			</div>
-		</div>
+            <div class="button-group">
+                <button class="btn btn--secondary" ng-click="cancel()">Cancel</button>
+                <button class="btn btn--primary btn--forward" ng-click="save()">Done</button>
+            </div>
+        </div>
     </div>
 </div>

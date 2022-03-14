@@ -97,6 +97,16 @@ app.controller('ApplicationAttachmentsView', function ($scope, $attrs, $controll
       }).catch(angular.noop);
   };
 
+  // Count the number of attachments that are 'Applicant Attachments'
+  $scope.getTotals = function () {
+    var attachments = $scope.model.Attachments;
+    if (attachments === undefined || attachments == null)
+      return 0;
+
+    var attachmentTotal = attachments.filter(d => d.AttachmentType === 0).length;
+    return attachmentTotal;
+  }
+
   /**
    * Open modal file uploader popup and then add the new file to the model.
    * @function addAttachment
@@ -107,7 +117,8 @@ app.controller('ApplicationAttachmentsView', function ($scope, $attrs, $controll
       Id: 0,
       FileName: '',
       Description: '',
-      File: {}
+      File: {},
+      AttachmentType: 0
     })
       .then(function (attachment) {
         $scope.model.Attachments.push(attachment);
@@ -117,14 +128,14 @@ app.controller('ApplicationAttachmentsView', function ($scope, $attrs, $controll
   };
 
   /**
-   * Open modal file uploader popup and allow user to updte the attachment and/or file.
+   * Open modal file uploader popup and allow user to update the attachment and/or file.
    * @function changeAttachment
    * @param {any} attachment - The attachment to update.
    * @returns {void}
    */
   $scope.changeAttachment = function (attachment) {
     $scope.section.attachment = attachment;
-    return $scope.attachmentDialog('Update Attachment', attachment)
+    return $scope.attachmentDialog('Update Attachment', attachment, false)
       .then(function (attachment) {
         if ($scope.section.attachments.indexOf(attachment) === -1) {
           $scope.section.attachments.push(attachment);
