@@ -26,5 +26,6 @@ namespace CJG.Core.Interfaces.Service
 		void RemoveParticipant(ParticipantForm participantForm);
 		void IncludeParticipant(ParticipantForm participant);
 		void ExcludeParticipant(ParticipantForm participant);
+		IEnumerable<ParticipantForm> GetParticipantFormsBySIN(string sin);
 	}
 }

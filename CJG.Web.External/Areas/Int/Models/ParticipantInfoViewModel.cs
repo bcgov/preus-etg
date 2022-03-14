@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CJG.Core.Entities;
 
@@ -18,10 +19,14 @@ namespace CJG.Web.External.Areas.Int.Models
 		public string EmployerAdministratorPhone { get; set; }
 		public ParticipantContactInfoViewModel ContactInfo { get; set; }
 		public ParticipantEmploymentInfoViewModel EmployerInfo { get; set; }
+		public List<ParticipantTrainingHistory> TrainingHistory { get; set; }
 		#endregion
 
 		#region Constructors
-		public ParticipantInfoViewModel(ParticipantForm participant, CJG.Core.Interfaces.Service.INationalOccupationalClassificationService nationalOccupationalClassificationService, CJG.Core.Interfaces.Service.IUserService userService)
+		public ParticipantInfoViewModel(ParticipantForm participant,
+										CJG.Core.Interfaces.Service.INationalOccupationalClassificationService nationalOccupationalClassificationService,
+										CJG.Core.Interfaces.Service.IUserService userService,
+										CJG.Core.Interfaces.Service.IParticipantService participantService)
 		{
 			this.FileNo = participant.GrantApplication.FileNumber;
 			this.OrganizationName = participant.GrantApplication.OrganizationLegalName;
@@ -40,6 +45,32 @@ namespace CJG.Web.External.Areas.Int.Models
 			this.TotalParticipants = participant.GrantApplication.ParticipantForms.Count;
 			this.ContactInfo = new ParticipantContactInfoViewModel(participant);
 			this.EmployerInfo = new ParticipantEmploymentInfoViewModel(participant, nationalOccupationalClassificationService);
+
+			this.TrainingHistory = new List<ParticipantTrainingHistory>();
+
+			var pifs = participantService.GetParticipantFormsBySIN(participant.SIN);
+			foreach (var p in pifs)
+			{
+				decimal reimbursement = 0.0m;
+				decimal amtPaid = 0.0m;
+				foreach(var c in p.ParticipantCosts)
+                {
+					reimbursement += c.AssessedReimbursement;
+					if(c.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimApproved)
+                    {
+						amtPaid += c.AssessedReimbursement;
+					}
+				}
+
+				foreach (var t in p.GrantApplication.TrainingPrograms)
+				{
+					//do not show grant apps that have not yet been submitted
+					//grant apps get a filenumber when they are submitted
+					if (t.GrantApplication.FileNumber != null){
+						this.TrainingHistory.Add(new ParticipantTrainingHistory(t, reimbursement, amtPaid));
+					}					
+				}
+			}
 		}
 
 		public ParticipantInfoViewModel()

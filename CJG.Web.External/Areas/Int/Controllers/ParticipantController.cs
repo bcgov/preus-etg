@@ -35,7 +35,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			IUserService userService,
 			IParticipantService participantService,
 			INationalOccupationalClassificationService nationalOccupationalClassificationService,
-			IAttachmentService attachmentService): base(controllerService.Logger)
+			IAttachmentService attachmentService) : base(controllerService.Logger)
 		{
 			_grantApplicationService = grantApplicationService;
 			_userService = userService;
@@ -61,7 +61,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
 				viewModel = new ParticipantListViewModel(grantApplication, _participantService);
-			} catch (Exception ex) {
+			}
+			catch (Exception ex)
+			{
 				HandleAngularException(ex, viewModel);
 			}
 
@@ -79,11 +81,14 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		{
 			ParticipantForm participantForm = _participantService.Get(participantId);
 
-			if (participantForm.ParticipantConsentAttachment != null) {
+			if (participantForm.ParticipantConsentAttachment != null)
+			{
 				var attachment = _attachmentService.Get(participantForm.ParticipantConsentAttachment.Id);
 
 				return File(attachment.AttachmentData, System.Net.Mime.MediaTypeNames.Application.Octet, $"{attachment.FileName}{attachment.FileExtension}");
-			} else {
+			}
+			else
+			{
 				return null;
 			}
 		}
@@ -101,9 +106,12 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			ParticipantInfoViewModel model;
 			ParticipantForm participantForm = _participantService.Get(participantId);
 
-			if (participantForm != null) {
-				model = new ParticipantInfoViewModel(participantForm, _nationalOccupationalClassificationService, _userService);
-			} else {
+			if (participantForm != null)
+			{
+				model = new ParticipantInfoViewModel(participantForm, _nationalOccupationalClassificationService, _userService, _participantService);
+			}
+			else
+			{
 				model = new ParticipantInfoViewModel();
 			}
 
@@ -112,7 +120,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 #endif
 
 			// Mask the social insurance number for anyone without privilege IA3
-			if (!User.HasPrivilege(Privilege.IA3)) {
+			if (!User.HasPrivilege(Privilege.IA3))
+			{
 				model.ContactInfo.SIN = string.Concat(model.ContactInfo.SIN?.Substring(0, 1), "** *** ***");
 			}
 
@@ -125,20 +134,20 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[ValidateRequestHeader]
 		[Route("Participants")]
 		public JsonResult ApproveDenyParticipants(ParticipantListViewModel model)
-        {
+		{
 			//set the Approved property
 			try
 			{
 				if (ModelState.IsValid)
 				{
 					int grantApplicationId = model.Id;
-					
-					var participantsApproved = model.ParticipantInfo.Where(w=>w.ParticipantId != null).ToDictionary(d=> d.ParticipantId, d => d.Approved);
-					
+
+					var participantsApproved = model.ParticipantInfo.Where(w => w.ParticipantId != null).ToDictionary(d => d.ParticipantId, d => d.Approved);
+
 					_participantService.ApproveDenyParticipants(grantApplicationId, participantsApproved);
 
 					var grantApplication = _grantApplicationService.Get(grantApplicationId);
-				
+
 					model = new ParticipantListViewModel(grantApplication, _participantService);
 				}
 				else
