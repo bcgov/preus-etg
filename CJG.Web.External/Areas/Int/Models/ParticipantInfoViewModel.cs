@@ -56,7 +56,7 @@ namespace CJG.Web.External.Areas.Int.Models
 				foreach(var c in p.ParticipantCosts)
                 {
 					reimbursement += c.AssessedReimbursement;
-					if(c.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimApproved)
+					if(c.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimApproved || c.ClaimEligibleCost.Claim.ClaimState == ClaimState.PaymentRequested)
                     {
 						amtPaid += c.AssessedReimbursement;
 					}
