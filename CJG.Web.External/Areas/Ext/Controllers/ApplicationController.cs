@@ -598,6 +598,23 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			return RedirectToAction("ApplicationOverviewView", new { grantApplicationId = newId });
 		}
 
+		[Route("Application/Duplicate/{grantApplicationId}")]
+		public ActionResult ApplicationDuplicate(int grantApplicationId)
+		{
+			ViewBag.GrantApplicationId = grantApplicationId;
+
+			var errMsg = _grantApplicationService.CanDuplicate(grantApplicationId);
+
+			if(string.IsNullOrEmpty(errMsg) == false)
+            {
+				this.SetAlert(errMsg, AlertType.Warning, true);
+				return RedirectToAction(nameof(HomeController.Index), nameof(HomeController).Replace("Controller", ""));
+			}
+
+			var newId = _grantApplicationService.DuplicateApplication(grantApplicationId);
+			return RedirectToAction("ApplicationOverviewView", new { grantApplicationId = newId });
+		}
+
 
 		/// <summary>
 		/// Get the data for the ApplicationOverviewView page.

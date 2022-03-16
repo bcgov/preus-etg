@@ -1149,6 +1149,175 @@ namespace CJG.Application.Services
 			return grantApp.Id;
 		}
 
+		public int DuplicateApplication(int id)
+		{
+			var originalApp = Get(id);
+			var grantApp = GrantApplicationExtensions.Clone(originalApp);
+
+			grantApp.FileNumber = null;
+			grantApp.ApplicationStateExternal = ApplicationStateExternal.Incomplete;
+			grantApp.ApplicationStateInternal = ApplicationStateInternal.Draft;
+			grantApp.DateSubmitted = null;
+			grantApp.DateCancelled = null;
+			grantApp.DateUpdated = null;
+
+			grantApp.ApplicantMailingAddress = new ApplicationAddress(originalApp.ApplicantMailingAddress);
+			grantApp.ApplicantPhysicalAddress = new ApplicationAddress(originalApp.ApplicantPhysicalAddress);
+			grantApp.OrganizationAddress = new ApplicationAddress(originalApp.OrganizationAddress);
+
+
+			foreach (var busContact in originalApp.BusinessContactRoles)
+			{
+				grantApp.BusinessContactRoles.Add(new BusinessContactRole { UserId = busContact.UserId });
+			}
+
+			//add GrantApplication to the database
+			grantApp = Add(grantApp);
+
+			//clone ProgramDescription
+			var programDescription = new ProgramDescription(grantApp);
+			programDescription.Clone(originalApp.ProgramDescription);
+			programDescription.Description = "created from " + programDescription.Description;
+
+			//add ProgramDescription to the database
+			var programDescriptionService = new ProgramDescriptionService(_dbContext, _httpContext, _logger);
+			programDescriptionService.Add(programDescription);
+
+			grantApp.ProgramDescription = programDescription;
+			grantApp.ProgramDescription.DescriptionState = ProgramDescriptionStates.Incomplete;
+
+
+			//Training
+			grantApp.TrainingCost = new TrainingCost(grantApp, originalApp.TrainingCost.EstimatedParticipants);
+			grantApp.TrainingCost.Clone(originalApp.TrainingCost);
+
+			//Eligible Costs
+			var eligibleCostService = new EligibleCostService(_dbContext, _httpContext, _logger);
+			var eligibleCostBreakdownService = new EligibleCostBreakdownService(_dbContext, _httpContext, _logger);
+
+			//get a list of the costs from the withdrawn app
+			var costs = eligibleCostService.GetForGrantApplication(originalApp.Id).ToList();
+
+			decimal totalEstimateCost = 0;
+			decimal totalEstimatedReimbursement = 0;
+			int firstEligibleCostBreakdowns = 0;
+
+			//TODO: These should be DependencyResolved properly rather than newing them up
+			var attachmentService = new AttachmentService(_dbContext, _httpContext, _logger);
+
+			foreach (var cost in costs)
+			{
+				var ec = new EligibleCost();
+				ec.Clone(cost);
+
+				totalEstimateCost += ec.EstimatedCost;
+				totalEstimatedReimbursement += ec.EstimatedReimbursement;
+
+				ec.GrantApplicationId = grantApp.Id;
+				ec.TrainingCost = grantApp.TrainingCost;
+				ec.TrainingCost.TotalEstimatedCost = totalEstimateCost;
+				ec.TrainingCost.TotalEstimatedReimbursement = totalEstimatedReimbursement;
+
+				eligibleCostService.Add(ec);
+
+				//breakdowns
+				foreach (var bd in cost.Breakdowns)
+				{
+					var newBD = new EligibleCostBreakdown();
+					newBD.Clone(bd);
+					newBD.EligibleCost = ec;
+					newBD.EligibleCostId = ec.Id;
+					eligibleCostBreakdownService.Add(newBD);
+
+					if (firstEligibleCostBreakdowns == 0)
+					{
+						firstEligibleCostBreakdowns = newBD.Id;
+					}
+				}
+
+				//TODO: These should be DependencyResolved properly rather than newing them up
+				TrainingProviderService tps = new TrainingProviderService(this, null, null, null, _noteService, _dbContext, _httpContext, _logger);
+
+				foreach (var tp in cost.TrainingProviders)
+				{
+					TrainingProvider newTrainingProvider = new TrainingProvider();
+					newTrainingProvider.Clone(tp);
+
+					//clone the documents
+					if (tp.BusinessCase != null)
+					{
+						Attachment doc = new Attachment(tp.BusinessCaseDocument);
+						attachmentService.Add(doc);
+						newTrainingProvider.BusinessCaseDocument = doc;
+						newTrainingProvider.BusinessCaseDocumentId = doc.Id;
+					}
+
+					if (tp.ProofOfQualificationsDocument != null)
+					{
+						Attachment doc = new Attachment(tp.ProofOfQualificationsDocument);
+						attachmentService.Add(doc);
+						newTrainingProvider.ProofOfQualificationsDocument = doc;
+						newTrainingProvider.ProofOfQualificationsDocumentId = doc.Id;
+					}
+
+					if (tp.CourseOutlineDocument != null)
+					{
+						Attachment doc = new Attachment(tp.CourseOutlineDocument);
+						attachmentService.Add(doc);
+						newTrainingProvider.CourseOutlineDocument = doc;
+						newTrainingProvider.CourseOutlineDocumentId = doc.Id;
+					}
+
+					newTrainingProvider.TrainingAddress = new ApplicationAddress(tp.TrainingAddress);
+					newTrainingProvider.TrainingProviderInventoryId = null;
+
+					newTrainingProvider.GrantApplication = grantApp;
+					newTrainingProvider.GrantApplicationId = grantApp.Id;
+					newTrainingProvider.EligibleCost = ec;
+					newTrainingProvider.EligibleCostId = ec.Id;
+
+					//add the training provider
+					tps.Add(newTrainingProvider);
+				}
+			}
+
+			//TrainingPrograms
+			TrainingProgramService trainingProgramService = new TrainingProgramService(this, _grantAgreementService, _noteService, _dbContext, _httpContext, _logger);
+			foreach (var trainingProgram in originalApp.TrainingPrograms)
+			{
+				//clone training program
+				var tp = new TrainingProgram(grantApp);
+				tp.Clone(trainingProgram);
+				tp.EligibleCostBreakdownId = firstEligibleCostBreakdowns;
+				//add trainingprogram to the database
+				trainingProgramService.Add(tp);
+			}
+
+			// Attachments			
+			foreach (var existingAttachment in originalApp.Attachments)
+			{
+				var newAttachment = existingAttachment.Clone();
+				grantApp.Attachments.Add(newAttachment);
+
+				attachmentService.Add(newAttachment, commit: true);
+			}
+
+			return grantApp.Id;
+		}
+		public string CanDuplicate(int id)
+		{
+			var grantApplication = Get(id);
+			if (grantApplication == null)
+			{
+				return "Cannot duplicate this application, the application was not found.";
+			}
+			if (grantApplication.GrantOpening.ClosingDate < DateTime.Now)
+			{
+				 return "Cannot duplicate this application, the Grant Opening Period has closed.";
+			}
+			return "";
+		}
+
 		public void SelectForAssessment(GrantApplication grantApplication)
 		{
 			if (grantApplication == null)
