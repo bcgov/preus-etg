@@ -207,7 +207,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 
 			// Replace the new lines when reloading the note after edit
-			model.Content = model.Content.Replace(Environment.NewLine, "<br />");
+			//model.Content = model.Content.Replace(Environment.NewLine, "<br />");
 
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
@@ -253,7 +253,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 
 			// Replace the new lines when reloading the note after edit
-			model.Content = model.Content.Replace(Environment.NewLine, "<br />");
+			//model.Content = model.Content.Replace(Environment.NewLine, "<br />");
 
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}

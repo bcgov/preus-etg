@@ -19,6 +19,8 @@ require('./application-details-completion-report');
 require('./application-details-notification');
 require('./application-details-notifications');
 
+app.filter('unsafe', function ($sce) { return $sce.trustAsHtml; });
+
 app.controller('ApplicationDetails', function ($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
   $scope.section = {
     name: 'ApplicationDetails',
@@ -37,6 +39,7 @@ app.controller('ApplicationDetails', function ($scope, $attrs, $controller, $tim
   };
 
   angular.extend(this, $controller('ParentSection', { $scope: $scope, $attrs: $attrs }));
+
 
   /**
    * Make AJAX request for assessors data
@@ -188,6 +191,10 @@ app.controller('ApplicationDetails', function ($scope, $attrs, $controller, $tim
         text: text,
         denialReasonList: denialReasonList,
         denialReasonsSelection: $scope.denialReasonsSelection,
+        denialEditorHasContent: function () {
+          var content = tinymce.activeEditor.getContent({ format: "text" });
+          return content != null && content.length > 0;
+        },
         toggleDenialSelection: function (reason) {
           var idx = $scope.denialReasonsSelection.indexOf(reason);
           // Is currently selected
@@ -199,11 +206,14 @@ app.controller('ApplicationDetails', function ($scope, $attrs, $controller, $tim
           }
         },
         getDenialReasonsSelection: function (selection, reason) {
+          var deniedReason = tinymce.activeEditor.getContent();
+
           return JSON.stringify({
             selectedReasons: selection,
-            deniedReason: reason
+            deniedReason: deniedReason
           });
-        }
+        },
+
       }
     }).then(function (reason) {
       return doWorkflowTrigger(url, reason);
@@ -235,6 +245,23 @@ app.controller('ApplicationDetails', function ($scope, $attrs, $controller, $tim
       }
     });
   }
+
+  // Doesn't seem to be loading correctly
+  $scope.tinymceOptions = {
+    plugins: 'link image code autoresize preview fullscreen lists advlist anchor',
+    toolbar: 'undo redo | bold italic | formatselect | alignleft aligncenter alignright | outdent indent | numlist bullist | anchor | preview | fullscreen | code ',
+    forced_root_blocks: true,
+    setup: function (ed) {
+      ed.on('init', function (ed) {
+        $('div.tox-tinymce-aux').css('z-index', '999999');
+      });
+    }
+  };
+
+  $(document).on('focusin', function (e) {
+    if ($(e.target).closest(".mce-window").length)
+      e.stopImmediatePropagation();
+  });
 
   /**
    * An application workflow action has been triggered.
