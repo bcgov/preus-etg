@@ -245,6 +245,7 @@ app.controller('ApplicationNotes', function ($scope, $attrs, $controller, $timeo
     }
   }
 });
+
 app.filter('filterExistNoteTypes', function () {
   return function (item, noteTypes, notes) {
    if (noteTypes == undefined || notes == undefined) {

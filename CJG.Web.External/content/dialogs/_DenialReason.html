@@ -39,14 +39,15 @@
                         Please enter a denial message for the applicant<abbr title='Required'>*</abbr>
                     </label>
                     <div class="form__control">
-                        <textarea id="Reason" class="input--full" ng-model="ngDialogData.reason" maxlength="2000"></textarea>
+                        <textarea id="Reason" class="input--full" ng-model="ngDialogData.reason" ui-tinymce="tinymceOptions" maxlength="2000"></textarea>
                     </div>
                 </div>
                 <div class="button-group">
                     <button class="btn btn--secondary" ng-click="closeThisDialog()">Cancel</button>
-                    <button class="btn btn--primary pull-right" name="btnSubmit" ng-disabled="!ngDialogData.denialReasonsSelection.length > 0 || !ngDialogData.reason" ng-click="confirm(ngDialogData.getDenialReasonsSelection(ngDialogData.denialReasonsSelection,ngDialogData.reason))">{{ngDialogData.trigger}}</button>
+                    <button class="btn btn--primary pull-right" name="btnSubmit" ng-disabled="!ngDialogData.denialReasonsSelection.length > 0 || !ngDialogData.denialEditorHasContent()" ng-click="confirm(ngDialogData.getDenialReasonsSelection(ngDialogData.denialReasonsSelection,ngDialogData.reason))">{{ngDialogData.trigger}}</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+

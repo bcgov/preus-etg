@@ -437,7 +437,16 @@ namespace CJG.Application.Services
 			var sender = $"{_notificationSettings.DefaultSenderName} <{_notificationSettings.DefaultSenderAddress}>";
 			var type = grantProgramNotificationType.NotificationType;
 
+			// Decode the output if any encoded html is detected (ie: HTML Denial Reason)
+			if (ContainsEncodedHtml(body))
+				body = HttpUtility.HtmlDecode(body);
+
 			return new NotificationQueue(grantApplication, user, sender, body, subject, type);
+		}
+
+		private static bool ContainsEncodedHtml(string body)
+		{
+			return body.Contains("&lt");
 		}
 
 		/// <summary>
