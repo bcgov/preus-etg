@@ -189,6 +189,11 @@ app.controller('ApplicationDetails', function ($scope, $attrs, $controller, $tim
         title: title,
         trigger: title,
         text: text,
+        tinymceOptions: {
+          plugins: 'link image code autoresize preview fullscreen lists advlist anchor',
+          toolbar: 'undo redo | bold italic | formatselect | alignleft aligncenter alignright | outdent indent | numlist bullist | anchor | preview | fullscreen | code ',
+          forced_root_blocks: true
+        },
         denialReasonList: denialReasonList,
         denialReasonsSelection: $scope.denialReasonsSelection,
         denialEditorHasContent: function () {
