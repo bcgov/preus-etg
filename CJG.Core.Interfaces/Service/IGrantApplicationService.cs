@@ -72,7 +72,7 @@ namespace CJG.Core.Interfaces.Service
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		int DuplicateApplication(int id);
+		int DuplicateApplication(int id, Core.Entities.User currentUser);
 		/// <summary>
 		/// Determine if an Application can be duplicated. If it cannot be duplicated then return the reason
 		/// </summary>

@@ -602,8 +602,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		public ActionResult ApplicationDuplicate(int grantApplicationId)
 		{
 			ViewBag.GrantApplicationId = grantApplicationId;
-
-			var errMsg = _grantApplicationService.CanDuplicate(grantApplicationId);
+			
+			var errMsg = _grantApplicationService.CanDuplicate(grantApplicationId );
 
 			if(string.IsNullOrEmpty(errMsg) == false)
             {
@@ -611,7 +611,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				return RedirectToAction(nameof(HomeController.Index), nameof(HomeController).Replace("Controller", ""));
 			}
 
-			var newId = _grantApplicationService.DuplicateApplication(grantApplicationId);
+			var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
+			var newId = _grantApplicationService.DuplicateApplication(grantApplicationId, currentUser);
 			return RedirectToAction("ApplicationOverviewView", new { grantApplicationId = newId });
 		}
 

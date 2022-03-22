@@ -1149,9 +1149,10 @@ namespace CJG.Application.Services
 			return grantApp.Id;
 		}
 
-		public int DuplicateApplication(int id)
+		public int DuplicateApplication(int id, User currentUser)
 		{
 			var originalApp = Get(id);
+
 			var grantApp = GrantApplicationExtensions.Clone(originalApp);
 
 			grantApp.FileNumber = null;
@@ -1161,30 +1162,44 @@ namespace CJG.Application.Services
 			grantApp.DateCancelled = null;
 			grantApp.DateUpdated = null;
 
-			grantApp.ApplicantMailingAddress = new ApplicationAddress(originalApp.ApplicantMailingAddress);
-			grantApp.ApplicantPhysicalAddress = new ApplicationAddress(originalApp.ApplicantPhysicalAddress);
-			grantApp.OrganizationAddress = new ApplicationAddress(originalApp.OrganizationAddress);
+			grantApp.CopyApplicant(currentUser);
+			grantApp.AddApplicationAdministrator(currentUser);
 
+			grantApp.InvitationKey = Guid.NewGuid();			
 
-			foreach (var busContact in originalApp.BusinessContactRoles)
+			grantApp.RequireAllParticipantsBeforeSubmission = originalApp.RequireAllParticipantsBeforeSubmission;
+
+			var attachmentService = new AttachmentService(_dbContext, _httpContext, _logger);
+
+			// Business Case Document
+			if (originalApp.BusinessCaseDocumentId.HasValue)
 			{
-				grantApp.BusinessContactRoles.Add(new BusinessContactRole { UserId = busContact.UserId });
+				var attachment = attachmentService.Get(originalApp.BusinessCaseDocumentId.Value);
+
+				if (attachment != null)
+				{
+					var newAttachment = attachment.Clone();
+					var retval = attachmentService.Add(newAttachment, commit: true);
+					grantApp.BusinessCaseDocumentId = retval.Id;
+				}
+			}
+
+			//clone ProgramDescription
+			if (originalApp.ProgramDescription != null){
+				var programDescription = new ProgramDescription(grantApp);
+				programDescription.Clone(originalApp.ProgramDescription);
+				programDescription.Description = "created from " + programDescription.Description;
+
+				//add ProgramDescription to the database
+				var programDescriptionService = new ProgramDescriptionService(_dbContext, _httpContext, _logger);
+				programDescriptionService.Add(programDescription);
+
+				grantApp.ProgramDescription = programDescription;
+				grantApp.ProgramDescription.DescriptionState = ProgramDescriptionStates.Incomplete;
 			}
 
 			//add GrantApplication to the database
 			grantApp = Add(grantApp);
-
-			//clone ProgramDescription
-			var programDescription = new ProgramDescription(grantApp);
-			programDescription.Clone(originalApp.ProgramDescription);
-			programDescription.Description = "created from " + programDescription.Description;
-
-			//add ProgramDescription to the database
-			var programDescriptionService = new ProgramDescriptionService(_dbContext, _httpContext, _logger);
-			programDescriptionService.Add(programDescription);
-
-			grantApp.ProgramDescription = programDescription;
-			grantApp.ProgramDescription.DescriptionState = ProgramDescriptionStates.Incomplete;
 
 
 			//Training
@@ -1201,9 +1216,6 @@ namespace CJG.Application.Services
 			decimal totalEstimateCost = 0;
 			decimal totalEstimatedReimbursement = 0;
 			int firstEligibleCostBreakdowns = 0;
-
-			//TODO: These should be DependencyResolved properly rather than newing them up
-			var attachmentService = new AttachmentService(_dbContext, _httpContext, _logger);
 
 			foreach (var cost in costs)
 			{
@@ -1281,29 +1293,31 @@ namespace CJG.Application.Services
 				}
 			}
 
-			//TrainingPrograms
-			TrainingProgramService trainingProgramService = new TrainingProgramService(this, _grantAgreementService, _noteService, _dbContext, _httpContext, _logger);
-			foreach (var trainingProgram in originalApp.TrainingPrograms)
+			if (originalApp.TrainingPrograms != null)
 			{
-				//clone training program
-				var tp = new TrainingProgram(grantApp);
-				tp.Clone(trainingProgram);
-				tp.EligibleCostBreakdownId = firstEligibleCostBreakdowns;
-				//add trainingprogram to the database
-				trainingProgramService.Add(tp);
-			}
-
-			// Attachments			
-			foreach (var existingAttachment in originalApp.Attachments)
-			{
-				var newAttachment = existingAttachment.Clone();
-				grantApp.Attachments.Add(newAttachment);
-
-				attachmentService.Add(newAttachment, commit: true);
+				if (originalApp.TrainingPrograms.Count > 0)
+				{
+					//TrainingPrograms
+					TrainingProgramService trainingProgramService = new TrainingProgramService(this, _grantAgreementService, _noteService, _dbContext, _httpContext, _logger);
+					foreach (var trainingProgram in originalApp.TrainingPrograms)
+					{
+						//clone training program
+						var tp = new TrainingProgram(grantApp);
+						tp.Clone(trainingProgram);
+						if (firstEligibleCostBreakdowns > 0)
+						{
+							tp.EligibleCostBreakdownId = firstEligibleCostBreakdowns;
+						}
+						
+						//add trainingprogram to the database
+						trainingProgramService.Add(tp);
+					}
+				}
 			}
 
 			return grantApp.Id;
 		}
+
 		public string CanDuplicate(int id)
 		{
 			var grantApplication = Get(id);
@@ -1311,9 +1325,10 @@ namespace CJG.Application.Services
 			{
 				return "Cannot duplicate this application, the application was not found.";
 			}
+
 			if (grantApplication.GrantOpening.ClosingDate < DateTime.Now)
 			{
-				 return "Cannot duplicate this application, the Grant Opening Period has closed.";
+				return "Cannot duplicate this application, the grant opening period has closed.";
 			}
 			return "";
 		}
