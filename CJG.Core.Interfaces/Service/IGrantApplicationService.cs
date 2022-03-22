@@ -64,7 +64,21 @@ namespace CJG.Core.Interfaces.Service
 
 		void Withdraw(GrantApplication grantApplication, string withdrawReason);
 
+
 		int RestartApplicationFromWithdrawn(int id);
+
+		/// <summary>
+		/// Duplicate a GrantApplication, create a new GrantApplication based on the data in the current app
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		int DuplicateApplication(int id, Core.Entities.User currentUser);
+		/// <summary>
+		/// Determine if an Application can be duplicated. If it cannot be duplicated then return the reason
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		string CanDuplicate(int id);
 
 		void SelectForAssessment(GrantApplication grantApplication);
 

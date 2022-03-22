@@ -1405,7 +1405,7 @@ namespace CJG.Core.Entities
 
 			retval.GrantOpeningId = grantApplication.GrantOpeningId;
 			retval.GrantOpening = grantApplication.GrantOpening;
-
+	
 			retval.ApplicationTypeId = grantApplication.ApplicationTypeId;
 			retval.ApplicationType = grantApplication.ApplicationType;
 
@@ -1430,9 +1430,7 @@ namespace CJG.Core.Entities
 			retval.OrganizationLegalStructureId = grantApplication.OrganizationLegalStructureId;
 			retval.OrganizationLegalStructure = grantApplication.OrganizationLegalStructure;
 			retval.OrganizationBusinessLicenseNumber = grantApplication.OrganizationBusinessLicenseNumber;
-
-			
-
+		
 			retval.OrganizationBCeID = grantApplication.OrganizationBCeID;
 
 			retval.OrganizationYearEstablished = grantApplication.OrganizationYearEstablished;
