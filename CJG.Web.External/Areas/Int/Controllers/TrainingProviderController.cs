@@ -95,7 +95,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			var viewModel = new Models.TrainingProviders.TrainingProviderViewModel();
 			try
 			{
-				var model = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.TrainingProviders.UpdateTrainingProviderViewModel>(provider);
+				var model = Newtonsoft.Json.JsonConvert.DeserializeObject<UpdateTrainingProviderViewModel>(provider);
 				var trainingProvider = _trainingProviderService.Get(model.Id);
 				if (model.TrainingLocationListViewModel != null)
 				{

@@ -15,22 +15,6 @@
                 <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
             </div>
 
-            <div ng-if="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
-                <p>
-                Enter the information about the training provider you have selected below. When you have completed the form, click Done to move to the next step.
-                <ul>
-                    <li>
-                        If your training provider is not registered with the
-                        <a target="_blank" href="http://www.privatetraininginstitutions.gov.bc.ca/">BC Private Training Institutions Branch</a>
-                        then you will need to attached proof of instructor qualifications and a course outline.
-                    </li>
-                    <li>
-                        If your training takes place outside BC you will need to attach a business case.
-                    </li>
-                </ul>
-                </p>
-            </div>
-
             <h3 class="subheader--body">Training Provider</h3>
 
             @Html.Partial("_TrainingProvider")

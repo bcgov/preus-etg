@@ -284,3 +284,32 @@
         </validation>
     </div>
 </div>
+
+<div class="form__group">
+    <h3 class="subheader--body">Alternative Training Options</h3>
+    <div class="notice notice--icon">
+        <p>Please provide details of alternative B.C.-based training providers and/or courses that you considered. These details are used to determine whether costs are reasonable and that the chosen training demonstrates high value for money. @*In the absence of alternative training provider information submitted in this section by the applicant, the ETG may consider similar training found online that may or may not be fully comparable to the specific training chosen by the applicant. For more details about how we determine value for money see our <a href="https://www.workbc.ca/Employer-Resources/BC-Employer-Training-Grant/What-is-the-B-C-Employer-Training-Grant/Frequently-Asked-Questions.aspx" target="_blank">FAQs</a>.*@</p>
+    </div>
+    <div class="form__control">
+        <textarea ng-model="model.AlternativeTrainingOptions" class="input--full textarea--medium"
+                  ng-validation="errors.AlternativeTrainingOptions"
+                  ui-tinymce="tinymceOptions"></textarea>
+    </div>
+</div>
+
+<div class="form__group">
+    <h3 class="subheader--body">Choice of Trainer/Program</h3>
+    <div class="notice notice--icon">
+        <p>Please describe why the chosen training provider is best positioned to meet the needs of your business and deliver improved job-related skills for participants. In other words, why did you choose this trainer and not one of the alternatives listed above?</p>
+        <p>Note: Training delivered by a training provider located outside of B.C. may be considered only when no similar training is available from a B.C.-based training provider.</p>
+    </div>
+    <div class="form__control">
+        <textarea ng-model="model.ChoiceOfTrainerOrProgram" class="input--full textarea--medium"
+                  ng-validation="errors.ChoiceOfTrainerOrProgram"
+                  ui-tinymce="tinymceOptions"></textarea>
+    </div>
+</div>
+
+
+
+
