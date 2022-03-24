@@ -44,10 +44,10 @@ app.controller('ApplicationNote', function ($scope, $controller, $timeout) {
      * @returns {Promise}
      **/
     function init() {
-        if ($scope.ngDialogData.note.Id) {
-            return loadNote($scope.ngDialogData.note.Id)
-              .catch(angular.noop);
-        }
+      if ($scope.ngDialogData.note.Id) {
+        return loadNote($scope.ngDialogData.note.Id)
+          .catch(angular.noop);
+      }
     }
 
     /**
@@ -55,20 +55,20 @@ app.controller('ApplicationNote', function ($scope, $controller, $timeout) {
      * @function deleteNote
      * @returns {Promise}
      **/
-    $scope.deleteNote = function () {
-        return $scope.confirmDialog('Delete Note', 'Do you want to delete this note?')
-            .then(function () {
-                return $scope.ajax({
-                    url: '/Int/Application/Note/Delete',
-                    method: 'PUT',
-                    data: function () {
-                        return $scope.ngDialogData.note;
-                    }
-                }).then(function () {
-                    $scope.ngDialogData.note.Id = 0;
-                    $scope.confirm($scope.ngDialogData.note);
-                })
-            }).catch(angular.noop);
+    $scope.deleteNote = function() {
+      return $scope.confirmDialog('Delete Note', 'Do you want to delete this note?')
+        .then(function() {
+          return $scope.ajax({
+            url: '/Int/Application/Note/Delete',
+            method: 'PUT',
+            data: function() {
+              return $scope.ngDialogData.note;
+            }
+          }).then(function() {
+            $scope.ngDialogData.note.Id = 0;
+            $scope.confirm($scope.ngDialogData.note);
+          })
+        }).catch(angular.noop);
     }
 
     /**
@@ -137,6 +137,22 @@ app.controller('ApplicationNote', function ($scope, $controller, $timeout) {
           })
           .catch(angular.noop);
     }
+
+    $scope.tinymceOptions = {
+      plugins: 'link image code autoresize preview fullscreen lists advlist anchor',
+      toolbar: 'undo redo | bold italic | formatselect | alignleft aligncenter alignright | outdent indent | numlist bullist | anchor | preview | fullscreen | code ',
+      forced_root_blocks: true,
+      setup: function (ed) {
+        ed.on('init', function (ed) {
+          $('div.tox-tinymce-aux').css('z-index', '999999');
+        });
+      }
+  };
+
+    $(document).on('focusin', function (e) {
+      if ($(e.target).closest(".mce-window").length)
+        e.stopImmediatePropagation();
+    });
 
     init();
 });

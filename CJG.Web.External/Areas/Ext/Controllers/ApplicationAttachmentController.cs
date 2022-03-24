@@ -1,5 +1,4 @@
 ﻿using CJG.Application.Services;
-using CJG.Core.Entities;
 using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Areas.Ext.Models.Attachments;
@@ -12,6 +11,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using CJG.Core.Entities;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
@@ -166,6 +166,10 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 				foreach (var attachment in data)
 				{
+					// Applicant cannot update Assessor-uploaded files
+					if (attachment.AttachmentType == AttachmentType.Document)
+						continue;
+					
 					if (attachment.Delete) // Delete
 					{
 						var existing = _attachmentService.Get(attachment.Id);

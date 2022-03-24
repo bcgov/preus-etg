@@ -89,7 +89,7 @@ app.controller('Participants', function ($scope, $attrs, $controller, $timeout, 
       }
 
       if (column == 'ReportedOn') {
-        $scope.imgSrimgSrcReportedOncLastName = '../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcLastName = '../../../../images/icons/icon--sort.svg';
         if (sort.descending) {
           $scope.imgSrcReportedOn = '../../../../images/icons/icon--sort-desc.svg';
         } else {

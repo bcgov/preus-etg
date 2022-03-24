@@ -298,17 +298,23 @@ app.controller('Base', function ($scope, $sce, $timeout, Utils, ngDialog) {
    * @param {any} attachment - The attachment to update/add.
    * @returns {Promise}
    */
-  $scope.attachmentDialog = function (title, attachment) {
-    if (!title) title = 'Attachment';
-    if (!attachment) attachment = Object.assign({
-      Id: 0
-    }, attachment);
+  $scope.attachmentDialog = function (title, attachment, showAttachmentType = false) {
+    if (!title)
+      title = 'Attachment';
+
+    if (!attachment) {
+      attachment = Object.assign({
+          Id: 0
+        },
+        attachment);
+    }
 
     return ngDialog.openConfirm({
       template: '/content/dialogs/_ApplicationAttachments.html',
       data: {
         title: title,
-        attachment: attachment
+        attachment: attachment,
+        showAttachmentType: showAttachmentType
       },
       controller: function ($scope, Utils) {
         /**

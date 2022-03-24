@@ -8,7 +8,7 @@ namespace CJG.Web.External.Areas.Part.Models
 	{
 		private static bool IsEmployed(int employmentType)
 		{
-			return (employmentType == 2 || employmentType == 3);
+			return employmentType == 2 || employmentType == 3;
 		}
 
 		public static ValidationResult ValidateHowLongYears(int? HowLongYears, ValidationContext context)
@@ -279,13 +279,26 @@ namespace CJG.Web.External.Areas.Part.Models
 			return result;
 		}
 
+		public static ValidationResult ValidateJobTitleBefore(string currentJobTitle, ValidationContext context)
+		{
+			var model = context.ObjectInstance as ParticipantInfoStep4ViewModel;
+
+			if (model == null)
+				throw new ArgumentNullException();
+
+			if (IsEmployed(model.EmploymentStatus) && string.IsNullOrWhiteSpace(currentJobTitle))
+				return new ValidationResult("Your Job Title before training is required.");
+
+			return ValidationResult.Success;
+		}
+
 		public static ValidationResult ValidateCurrentNoc(int? nocCode, ValidationContext context)
 		{
 			ParticipantInfoStep4ViewModel model = context.ObjectInstance as ParticipantInfoStep4ViewModel;
 			if (model == null) throw new ArgumentNullException();
 			ValidationResult result = ValidationResult.Success;
 
-			if (model.EmploymentStatus == 2 || model.EmploymentStatus == 3)
+			if (IsEmployed(model.EmploymentStatus))
 			{
 				if (!nocCode.HasValue || nocCode <= 0)
 				{

@@ -44,7 +44,7 @@ namespace CJG.Application.Services.Notifications
 		public string CompletionReportDueDate { get; set; }
 		public string ChangeRequestDeniedReason { get; set; }
 		public string ChangeRequestResults { get; set; }
-		public string DeniedReason { get; set; }
+		public HtmlString DeniedReason { get; set; }
 		public string CancellationReason { get; set; }
 		public decimal ReimbursementPayment { get; set; }
 		public string ClaimDeniedReason { get; set; }
@@ -98,7 +98,7 @@ namespace CJG.Application.Services.Notifications
 			CompletionReportDueDate = FormatDate(grantApplication.EndDate.AddDays(30));
 			ParticipantsWithCompletionReport = grantApplication.ParticipantForms.Where(pf => pf.ParticipantCompletionReportAnswers.Any()).Count();
 
-			DeniedReason = grantApplication.GetReason(ApplicationStateInternal.ApplicationDenied);
+			DeniedReason = new HtmlString(grantApplication.GetReason(ApplicationStateInternal.ApplicationDenied));
 			CancellationReason = grantApplication.GetReason(ApplicationStateInternal.CancelledByMinistry);
 			IsPayment = IsReimbursementPayment(grantApplication);
 			ReimbursementPayment = GetReimbursementPayment(grantApplication);

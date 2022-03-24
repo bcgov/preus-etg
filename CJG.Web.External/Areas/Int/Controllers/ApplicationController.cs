@@ -263,6 +263,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 					else if (files.Length > attachment.Index.Value && files[attachment.Index.Value] != null && attachment.Id == 0) // Add
 					{
 						var file = files[attachment.Index.Value].UploadFile(attachment.Description, attachment.FileName);
+						file.AttachmentType = attachment.AttachmentType;
 						grantApplication.Attachments.Add(file);
 						_noteService.AddSystemNote(grantApplication, $"Attachment \'{file.FileName}\' uploaded.");
 						_attachmentService.Add(file, true);

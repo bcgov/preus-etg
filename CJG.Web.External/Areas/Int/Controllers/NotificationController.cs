@@ -1,9 +1,11 @@
-﻿using CJG.Application.Business.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using CJG.Application.Business.Models;
 using CJG.Application.Services;
 using CJG.Core.Entities;
-using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
-using CJG.Core.Interfaces.Service.Settings;
 using CJG.Infrastructure.Identity;
 using CJG.Web.External.Areas.Int.Models;
 using CJG.Web.External.Areas.Int.Models.Notifications;
@@ -12,21 +14,14 @@ using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
-using RazorEngine.Templating;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
-using DeliveryPartnerService = CJG.Core.Entities.DeliveryPartnerService;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	[RouteArea("Int")]
+    [RouteArea("Int")]
 	public class NotificationController : BaseController
 	{
 		#region Variables
 		private readonly INotificationService _notificationService;
-		private readonly INotificationSettings _notificationSettings;
 		private readonly INotificationTypeService _notificationTypeService;
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IGrantProgramService _grantProgramService;
@@ -43,7 +38,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <param name="notificationService"></param>
 		/// <param name="notificationTypeService"></param>
 		/// <param name="grantApplicationService"></param>
-		/// <param name="notificationSettings"></param>
 		/// <param name="grantProgramService"></param>
 		/// <param name="fiscalYearService"></param>
 		/// <param name="settingService"></param>
@@ -53,14 +47,12 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			INotificationService notificationService,
 			INotificationTypeService notificationTypeService,
 			IGrantApplicationService grantApplicationService,
-			INotificationSettings notificationSettings,
 			IGrantProgramService grantProgramService,
 			IFiscalYearService fiscalYearService,
 			ISettingService settingService,
 			IUserService userService) : base(controllerService.Logger)
 		{
 			_notificationService = notificationService;
-			_notificationSettings = notificationSettings;
 			_notificationTypeService = notificationTypeService;
 			_grantApplicationService = grantApplicationService;
 			_grantProgramService = grantProgramService;
@@ -553,7 +545,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		private NotificationQueue GenerateNotification(NotificationQueuePreviewModel model)
 		{
 			var data = model.GenerateTestEntities(User, _userService, _grantProgramService, _fiscalYearService);
-
+			
 			return _notificationService.GenerateNotificationMessage(data.GrantApplication, data.Applicant,
 				new NotificationType(model.NotificationTriggerId, model.Name, model.Description,
 				new NotificationTemplate(model.Name ?? "N/A", model.Subject ?? "N/A", model.Body ?? "N/A")));

@@ -1,3 +1,5 @@
+app.filter('unsafe', function ($sce) { return $sce.trustAsHtml; });
+
 app.controller('ApplicationNotes', function ($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
   $scope.section = {
     name: 'ApplicationNotes',
@@ -76,6 +78,7 @@ app.controller('ApplicationNotes', function ($scope, $attrs, $controller, $timeo
     if ($scope.section.grantApplicationId == null) {
       return;
     }
+
     return $scope.load({
       url: '/Int/Application/Notes/' + $scope.section.grantApplicationId,
       set: 'model'
@@ -242,6 +245,7 @@ app.controller('ApplicationNotes', function ($scope, $attrs, $controller, $timeo
     }
   }
 });
+
 app.filter('filterExistNoteTypes', function () {
   return function (item, noteTypes, notes) {
    if (noteTypes == undefined || notes == undefined) {

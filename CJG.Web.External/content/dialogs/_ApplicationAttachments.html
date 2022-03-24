@@ -1,36 +1,49 @@
 ﻿<div>
-	<div class="dialog-header">
-		<h3>{{ngDialogData.title}}</h3>
-	</div>
-	<div class="dialog-content">
-		<div data-modal-title="Attachment" class="modal-content">
-			<div class="form well">
-				<div class="form__group">
-					<div class="form__label">Name: </div>
-					<div class="form__control">
-						<div class="float-left">
-							<span>{{ngDialogData.attachment.FileName || 'No file selected'}}</span>
-						</div>
-						<div class="control-wrapper float-right">
-							<button class="btn btn--small btn--secondary" ng-click="chooseFile()" ng-validation="errors.File">{{ ngDialogData.attachment.FileName ? 'Change' : 'Choose' }} File</button>
-							<input type="file" id="grant-application-upload" name="AsyncDocumentsFiles" accept=".pdf,.jpg,.jpeg,.png,.gif" autocomplete="off" style="display:none;" ng-file-changed="fileChanged($files)" />
-						</div>
-					</div>
-				</div>
-				<div class="form__group">
-					<div class="form__label">Description: </div>
-					<div class="form__control">
-						<textarea ng-model="ngDialogData.attachment.Description" maxlength="500"></textarea>
-						<span class="pull-right ">{{500 - ngDialogData.attachment.Description.length}} chars left</span>
-					</div>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<div class="form well">
-					<button class="btn btn--secondary" data-disableonsubmit="false" ng-click="closeThisDialog()">Cancel</button>
-					<button class="btn btn--primary pull-right save-attachment" ng-click="save()" ng-disabled="!ngDialogData.attachment.FileName">Ok</button>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="dialog-header">
+        <h3>{{ngDialogData.title}}</h3>
+    </div>
+    <div class="dialog-content">
+        <div data-modal-title="Attachment" class="modal-content">
+            <div class="form well">
+                <div class="form__group">
+                    <div class="form__label">Name: </div>
+                    <div class="form__control">
+                        <div class="float-left">
+                            <span>{{ngDialogData.attachment.FileName || 'No file selected'}}</span>
+                        </div>
+                        <div class="control-wrapper float-right">
+                            <button class="btn btn--small btn--secondary" ng-click="chooseFile()" ng-validation="errors.File">{{ ngDialogData.attachment.FileName ? 'Change' : 'Choose' }} File</button>
+                            <input type="file" id="grant-application-upload" name="AsyncDocumentsFiles" accept=".pdf,.jpg,.jpeg,.png,.gif" autocomplete="off" style="display:none;" ng-file-changed="fileChanged($files)" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Description: </div>
+                    <div class="form__control">
+                        <textarea ng-model="ngDialogData.attachment.Description" maxlength="500"></textarea>
+                        <span class="pull-right ">{{500 - ngDialogData.attachment.Description.length}} chars left</span>
+                    </div>
+                </div>
+                <input type="hidden" id="attachment-type-hidden" ng-model="ngDialogData.attachment.AttachmentType" name="model.attachment.AttachmentType" ng-if="!ngDialogData.showAttachmentType" value="0">
+                <div class="form__group" ng-if="ngDialogData.showAttachmentType && ngDialogData.attachment.AttachmentType != null">
+                    <div class="form__label">Attachment Type: </div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <input type="radio" id="attachment-type-attachment" ng-value="0" ng-model="ngDialogData.attachment.AttachmentType" name="model.attachment.AttachmentType">
+                            <label for="attachment-type-attachment">Applicant Attachment</label>
+
+                            <input type="radio" id="attachment-type-document" ng-value="1" ng-model="ngDialogData.attachment.AttachmentType" name="model.attachment.AttachmentType">
+                            <label for="attachment-type-document">Ministry Attachment</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form well">
+                    <button class="btn btn--secondary" data-disableonsubmit="false" ng-click="closeThisDialog()">Cancel</button>
+                    <button class="btn btn--primary pull-right save-attachment" ng-click="save()" ng-disabled="!ngDialogData.attachment.FileName">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

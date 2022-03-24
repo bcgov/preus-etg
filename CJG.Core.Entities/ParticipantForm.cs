@@ -438,10 +438,22 @@ namespace CJG.Core.Entities
 		public string LastHighSchoolName { get; set; }
 
 		/// <summary>
-		/// get/set - The last highs school city attended by this participant.
+		/// get/set - The last high school city attended by this participant.
 		/// </summary>
 		[MaxLength(250)]
 		public string LastHighSchoolCity { get; set; }
+
+		/// <summary>
+		/// get/set - The Job Title the participant had before the training took place
+		/// </summary>
+		[MaxLength(2000)]
+		public string JobTitleBefore { get; set; }
+
+		/// <summary>
+		/// get/set - The Job Title the participant should have after the training takes place
+		/// </summary>
+		[MaxLength(2000)]
+		public string JobTitleFuture { get; set; }
 
 		/// <summary>
 		/// get/set - The foreign key to the current NOC before training for this participant.
@@ -556,6 +568,7 @@ namespace CJG.Core.Entities
 		/// Indicated that a participant attended (received) the training
 		/// </summary>
 		public bool? Attended { get; set; }
+
 		#endregion
 
 		#region Constructors

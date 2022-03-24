@@ -1,19 +1,18 @@
-﻿using CJG.Application.Business.Models;
-using CJG.Core.Entities;
-using CJG.Web.External.Models.Shared;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using CJG.Core.Interfaces.Service;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Security.Principal;
 using CJG.Application.Services;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces.Service;
+using CJG.Web.External.Areas.Int.Models.Attachments;
+using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Int.Models.Applications
 {
-	public class ApplicationSummaryViewModel : BaseViewModel
+    public class ApplicationSummaryViewModel : BaseViewModel
 	{
-		#region Properties
 		public string RowVersion { get; set; }
 		public int TotalGrantApplications { get; set; }
 		public decimal TotalGrantApplicationCost { get; set; }
@@ -55,12 +54,9 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 
 		public string DescriptionOfFundingRequested { get; set; }
 		public string BusinessCaseHeader { get; set; } = "Business Case";
-		public Attachments.AttachmentViewModel BusinessCaseDocument { get; set; }
+		public AttachmentViewModel BusinessCaseDocument { get; set; }
 		public ProgramTypes ProgramType { get; private set; }
 
-		#endregion
-
-		#region Contructors
 		public ApplicationSummaryViewModel() { }
 
 		public ApplicationSummaryViewModel(GrantApplication grantApplication,
@@ -70,17 +66,23 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 											IRiskClassificationService riskClassificationService,
 											IPrincipal user)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
-			if (deliveryPartnerService == null) throw new ArgumentNullException(nameof(deliveryPartnerService));
-			if (authorizationService == null) throw new ArgumentNullException(nameof(authorizationService));
-			if (grantApplicationService == null) throw new ArgumentNullException(nameof(grantApplicationService));
-			if (riskClassificationService == null) throw new ArgumentNullException(nameof(riskClassificationService));
-			if (user == null) throw new ArgumentNullException(nameof(user));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
+			if (deliveryPartnerService == null)
+				throw new ArgumentNullException(nameof(deliveryPartnerService));
+			if (authorizationService == null)
+				throw new ArgumentNullException(nameof(authorizationService));
+			if (grantApplicationService == null)
+				throw new ArgumentNullException(nameof(grantApplicationService));
+			if (riskClassificationService == null)
+				throw new ArgumentNullException(nameof(riskClassificationService));
+			if (user == null)
+				throw new ArgumentNullException(nameof(user));
 
-			this.Id = grantApplication.Id;
-			this.RowVersion = Convert.ToBase64String((byte[])grantApplication.RowVersion);
+			Id = grantApplication.Id;
+			RowVersion = Convert.ToBase64String(grantApplication.RowVersion);
 
-			this.Assessor = grantApplication.Assessor == null ? null : new InternalUser
+			Assessor = grantApplication.Assessor == null ? null : new InternalUser
 			{
 				Id = grantApplication.Assessor.Id,
 				LastName = grantApplication.Assessor.LastName,
@@ -89,59 +91,57 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 				Email = grantApplication.Assessor.Email
 			};
 
-			this.ShowAssessorName = grantApplication.Assessor != null && grantApplication.ApplicationStateInternal >= ApplicationStateInternal.UnderAssessment;
-			this.TerminalReason = grantApplication.GetTerminalReason();
-			this.HighLevelDenialReasons = grantApplication.GetSelectedDeniedReason();
-			this.TotalGrantApplications = grantApplicationService.GetApplicationsCountByFiscal(grantApplication);
-			this.TotalGrantApplicationCost = grantApplicationService.GetApplicationsCostByFiscal(grantApplication);
-			this.EligibleTotalCost = grantApplication.TrainingCost != null ? (grantApplication.ApplicationStateInternal.ShowAgreedCosts() ? grantApplication.TrainingCost.TotalAgreedMaxCost : grantApplication.TrainingCost.TotalEstimatedCost) : 0;
-			this.ApplicationStateExternalViewModel = new ApplicationStateViewModel
+			ShowAssessorName = grantApplication.Assessor != null && grantApplication.ApplicationStateInternal >= ApplicationStateInternal.UnderAssessment;
+			TerminalReason = grantApplication.GetTerminalReason();
+			HighLevelDenialReasons = grantApplication.GetSelectedDeniedReason();
+			TotalGrantApplications = grantApplicationService.GetApplicationsCountByFiscal(grantApplication);
+			TotalGrantApplicationCost = grantApplicationService.GetApplicationsCostByFiscal(grantApplication);
+			EligibleTotalCost = grantApplication.TrainingCost != null ? (grantApplication.ApplicationStateInternal.ShowAgreedCosts() ? grantApplication.TrainingCost.TotalAgreedMaxCost : grantApplication.TrainingCost.TotalEstimatedCost) : 0;
+			ApplicationStateExternalViewModel = new ApplicationStateViewModel
 			{
 				Id = (int)grantApplication.ApplicationStateExternal,
 				Name = grantApplication.ApplicationStateExternal.ToString(),
 				Description = grantApplication.ApplicationStateExternal.GetDescription()
 			};
-			this.ApplicationStateInternalViewModel = new ApplicationStateViewModel
+			ApplicationStateInternalViewModel = new ApplicationStateViewModel
 			{
 				Id = (int)grantApplication.ApplicationStateInternal,
 				Name = grantApplication.ApplicationStateInternal.ToString(),
 				Description = grantApplication.ApplicationStateInternal.GetDescription()
 			};
-			this.DateSubmitted = grantApplication.DateSubmitted?.ToLocalTime();
-			this.DateUpdated = grantApplication.DateUpdated?.ToLocalTime();
-			this.FileNumber = grantApplication.FileNumber;
-			this.GrantStreamFullName = grantApplication.GrantOpening.GrantStream.FullName;
-			this.GrantProgramId = grantApplication.GrantOpening.GrantStream.GrantProgramId;
-			this.OrgId = grantApplication.Organization.Id;
-			this.OrganizationLegalName = grantApplication.OrganizationLegalName;
-			this.DoingBusinessAs = grantApplication.OrganizationDoingBusinessAs;
-			this.DoingBusinessAsMinistry = grantApplication.Organization.DoingBusinessAsMinistry;
-			this.StatementOfRegistrationNumber = grantApplication.Organization.StatementOfRegistrationNumber;
-			this.TrainingPeriodStartDate = grantApplication.GrantOpening.TrainingPeriod.StartDate.ToLocalTime();
-			this.TrainingPeriodEndDate = grantApplication.GrantOpening.TrainingPeriod.EndDate.ToLocalTime();
-			this.DeliveryStartDate = grantApplication.StartDate.ToLocalTime();
-			this.DeliveryEndDate = grantApplication.EndDate.ToLocalTime();
-			this.DeliveryPartnerId = grantApplication.DeliveryPartner?.Id;
-			this.RiskClassificationId = grantApplication.RiskClassification?.Id;
-			this.AssignedBy = grantApplication.GetStateChange(ApplicationStateInternal.UnderAssessment)?.Assessor.FirstName + " " + grantApplication.GetStateChange(ApplicationStateInternal.UnderAssessment)?.Assessor.LastName;
+			DateSubmitted = grantApplication.DateSubmitted?.ToLocalTime();
+			DateUpdated = grantApplication.DateUpdated?.ToLocalTime();
+			FileNumber = grantApplication.FileNumber;
+			GrantStreamFullName = grantApplication.GrantOpening.GrantStream.FullName;
+			GrantProgramId = grantApplication.GrantOpening.GrantStream.GrantProgramId;
+			OrgId = grantApplication.Organization.Id;
+			OrganizationLegalName = grantApplication.OrganizationLegalName;
+			DoingBusinessAs = grantApplication.OrganizationDoingBusinessAs;
+			DoingBusinessAsMinistry = grantApplication.Organization.DoingBusinessAsMinistry;
+			StatementOfRegistrationNumber = grantApplication.Organization.StatementOfRegistrationNumber;
+			TrainingPeriodStartDate = grantApplication.GrantOpening.TrainingPeriod.StartDate.ToLocalTime();
+			TrainingPeriodEndDate = grantApplication.GrantOpening.TrainingPeriod.EndDate.ToLocalTime();
+			DeliveryStartDate = grantApplication.StartDate.ToLocalTime();
+			DeliveryEndDate = grantApplication.EndDate.ToLocalTime();
+			DeliveryPartnerId = grantApplication.DeliveryPartner?.Id;
+			RiskClassificationId = grantApplication.RiskClassification?.Id;
+			AssignedBy = grantApplication.GetStateChange(ApplicationStateInternal.UnderAssessment)?.Assessor.FirstName + " " + grantApplication.GetStateChange(ApplicationStateInternal.UnderAssessment)?.Assessor.LastName;
 
-			this.SelectedDeliveryPartnerServiceIds = grantApplication.DeliveryPartnerServices.Select(d => d.Id).ToArray();
-			this.AllowEditDeliveryPartner = grantApplication.GrantOpening.GrantStream.IncludeDeliveryPartner;
+			SelectedDeliveryPartnerServiceIds = grantApplication.DeliveryPartnerServices.Select(d => d.Id).ToArray();
+			AllowEditDeliveryPartner = grantApplication.GrantOpening.GrantStream.IncludeDeliveryPartner;
 
-			this.EditSummary = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditApplication);
-			this.CanModifyDeliveryDates = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditApplication);
-			this.AllowReAssign = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.ReassignAssessor);
-			this.AllowDirectorUpdate = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.DenyApplication);
-			this.HasRequestedAdditionalFunding = grantApplication.HasRequestedAdditionalFunding;
-			this.DescriptionOfFundingRequested = grantApplication.DescriptionOfFundingRequested;
+			EditSummary = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditApplication);
+			CanModifyDeliveryDates = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditApplication);
+			AllowReAssign = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.ReassignAssessor);
+			AllowDirectorUpdate = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.DenyApplication);
+			HasRequestedAdditionalFunding = grantApplication.HasRequestedAdditionalFunding;
+			DescriptionOfFundingRequested = grantApplication.DescriptionOfFundingRequested;
 			if (grantApplication.BusinessCaseDocument != null)
-				this.BusinessCaseDocument = new Attachments.AttachmentViewModel(grantApplication.BusinessCaseDocument);
-			this.ProgramType = grantApplication.GetProgramType();
-			this.BusinessCaseHeader = grantApplication.GrantOpening.GrantStream.BusinessCaseInternalHeader;
+				BusinessCaseDocument = new AttachmentViewModel(grantApplication.BusinessCaseDocument);
+			ProgramType = grantApplication.GetProgramType();
+			BusinessCaseHeader = grantApplication.GrantOpening.GrantStream.BusinessCaseInternalHeader;
 		}
-		#endregion
 
-		#region Methods
 		public GrantApplication MapToGrantApplication(ApplicationSummaryViewModel model, GrantApplication grantApplication)
 		{
 			grantApplication.RowVersion = Convert.FromBase64String(model.RowVersion);
@@ -152,6 +152,5 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 
 			return grantApplication;
 		}
-		#endregion
 	}
 }

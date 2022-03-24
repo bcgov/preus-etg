@@ -1,34 +1,29 @@
-﻿using CJG.Core.Entities;
-using System;
+﻿using System;
+using CJG.Core.Entities;
 
 namespace CJG.Web.External.Areas.Int.Models.Attachments
 {
 	public class UpdateAttachmentViewModel : AttachmentViewModel
 	{
-		#region Properties
 		public int? Index { get; set; }
 		public bool Delete { get; set; }
-		#endregion
 
-		#region Constructors
 		public UpdateAttachmentViewModel() { }
 
 		public UpdateAttachmentViewModel(Attachment attachment) : base(attachment)
 		{
 		}
-		#endregion
 
-		#region Methods
 		public void MapToEntity(Attachment attachment)
 		{
 			if (attachment == null) throw new ArgumentNullException(nameof(attachment));
 
-			attachment.Id = this.Id;
-			attachment.RowVersion = !String.IsNullOrWhiteSpace(this.RowVersion) ? Convert.FromBase64String(this.RowVersion) : null;
-			attachment.FileName = this.FileName;
-			attachment.Description = this.Description;
-			attachment.FileExtension = this.FileExtension;
+			attachment.Id = Id;
+			attachment.RowVersion = !String.IsNullOrWhiteSpace(RowVersion) ? Convert.FromBase64String(RowVersion) : null;
+			attachment.FileName = FileName;
+			attachment.Description = Description;
+			attachment.FileExtension = FileExtension;
+			attachment.AttachmentType = AttachmentType;
 		}
-		#endregion
 	}
 }

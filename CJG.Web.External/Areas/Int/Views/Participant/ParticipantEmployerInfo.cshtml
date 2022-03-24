@@ -21,26 +21,6 @@
             <div class="infotable-td">
                 <div class="infoTable">
                     <div class="infotable-tr">
-                        <div class="infotable-td">
-                            <div class="infoTable--cell-wrap">
-                                <div class="infoTable--label">Receiving EI:</div>
-                                <div class="infoTable--data">@Model.ReceivingEIValue</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="infotable-tr">
-                        <div class="infotable-td">
-                            <div class="infoTable--cell-wrap">
-                                <div class="infoTable--label">- Maternal / Parental Benefits:</div>
-                                <div class="infoTable--data">@Model.MaternalParentalBenefits</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="infotable-td">
-                <div class="infoTable">
-                    <div class="infotable-tr">
                         <div class="infoTable--cell-wrap">
                             <div class="infoTable--label">Before Training National Occupation Code:</div>
                             <div class="infoTable--data">
@@ -52,7 +32,18 @@
                         </div>
                     </div>
                     <div class="infotable-tr">
-
+                        <div class="infotable-td">
+                            <div class="infoTable--cell-wrap">
+                                <div class="infoTable--label">Before Training Job Title:</div>
+                                <div class="infoTable--data">@Model.JobTitleBeforeTraining</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable">
+                    <div class="infotable-tr">
                         <div class="infoTable--cell-wrap">
                             <div class="infoTable--label">After Training National Occupation Code:</div>
                             <div class="infoTable--data">
@@ -62,6 +53,31 @@
                                 }
                             </div>
                         </div>
+                    </div>
+                    <div class="infotable-tr">
+                        <div class="infotable-td">
+                            <div class="infoTable--cell-wrap">
+                                <div class="infoTable--label">After Training Job Title:</div>
+                                <div class="infoTable--data">@Model.JobTitleAfterTraining</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Receiving EI:</div>
+                    <div class="infoTable--data">@Model.ReceivingEIValue</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--cell-wrap">
+                        <div class="infoTable--label">- Maternal / Parental Benefits:</div>
+                        <div class="infoTable--data">@Model.MaternalParentalBenefits</div>
                     </div>
                 </div>
             </div>

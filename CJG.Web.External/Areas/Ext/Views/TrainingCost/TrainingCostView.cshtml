@@ -3,43 +3,29 @@
 @{
     ViewBag.Title = "Edit Training Costs";
 }
+
 <div class="row">
-    @Html.ActionLink("Return", nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController.ApplicationOverviewView),
-                    nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController).Replace("Controller", ""),
-                    new { grantApplicationId = (int)ViewBag.GrantApplicationId },
-                    new { @class = "link--back" })
+    @Html.ActionLink("Return", nameof(ApplicationController.ApplicationOverviewView),
+        nameof(ApplicationController).Replace("Controller", ""),
+        new { grantApplicationId = (int)ViewBag.GrantApplicationId },
+        new { @class = "link--back" })
 </div>
 
 <div class="row" ng-controller="TrainingCostsView" ng-grant-application-id="@ViewBag.GrantApplicationId">
     <div class="main main--full">
         <div ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
             <h1>Edit Training Costs</h1>
-            @*<p>Enter the total number of participants in the training program in part 1 below.</p>
-                <p>To enter your training cost estimates in part 2, click "Add a new expense type", select the eligible expense type and then enter the total training cost and number of participants for that expense.</p>
-                <p>When the cost for an expense type varies for one or more participants, enter multiple expense lines of the same type and vary the total training cost and number of participants for each one.</p>
-                <p>* INFORMATION MUST BE PROVIDED</p>*@
             <div class="notice notice--icon">
-                <p>Grants will be calculated based on the stream reimbursement amounts outlined in the Eligibility Criteria.</p>
+                <p>Grants will be calculated based on the reimbursement amount outlined in the Eligibility Criteria.</p>
             </div>
-        </div>
-
-        <div ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
-            <h1>Edit Training Costs</h1>
-            <p>The total number of participants in the program is shown below. You may verify and edit your cost estimates below.</p>
-            <p ng-if="model.UserGuidanceCostEstimates" ng-bind-html="model.UserGuidanceCostEstimates"></p>
-            <p ng-if="!model.UserGuidanceCostEstimates">The administration fees offset costs associated with project management, outreach and recruitment of participants, claims and reporting.</p>
-            <p> When you have verified and completed your training costs then click Done.</p>
         </div>
 
         <div ng-if="alert.message" class="row row--alert">
             <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
         </div>
 
-        <div ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+        <div>
             <h2>Enter Number of Participants in the Training Program*</h2>
-        </div>
-        <div ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
-            <h2>Number of Participants In the Program<abbr title='Required'>*</abbr></h2>
         </div>
         <div class="alert alert--warning js-participant-mismatch is-hidden">
             <p><b>Participant numbers for one or more of your expense types exceed the total number of participants you have specified.</b></p>
@@ -53,17 +39,11 @@
             </div>
         </div>
         <br />
-        <div ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
-            <h2 class="title--cost-estimate">Training Costs</h2>
-        </div>
-        <div ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
+        <div>
             <h2 class="title--cost-estimate">Training Costs</h2>
         </div>
         <div id="ExpensesList">
-            <div ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
-                @Html.Partial("_EligibleCosts")
-            </div>
-            <div ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+            <div>
                 @Html.Partial("_ETGEligibleCosts")
             </div>
         </div>
@@ -111,7 +91,7 @@
                                 <th class="num-col etg-table-col__empty" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
                                 </th>
                                 <th class="num-col etg-table-col__num-part" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
-                                    Enter the total expense that will be divided and assigned to these participants
+                                    Enter the total expense for all participants
                                 </th>
                                 <th class="num-col etg-table-col__empty" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
                                 </th>
@@ -255,15 +235,10 @@
             </div>
         </div>
         <div class="button-group" ng-if="!EnableEdit && !EnableEditBreakdown">
-            @Html.Button("Cancel",
-                           new
-                                {
-                                    @class = "btn btn--secondary",
-                               @onclick = "window.location='" +
-                                   @Url.Action(nameof(ApplicationController.ApplicationOverviewView),
-                                       nameof(ApplicationController).Replace("Controller", ""),
-                                       new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'"
-                                })
+            @Html.Button("Cancel", new { @class = "btn btn--secondary", onclick = "window.location='" + Url.Action(nameof(ApplicationController.ApplicationOverviewView),
+                nameof(ApplicationController).Replace("Controller", ""),
+                new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'"
+            })
             <button id="btnDone" name="btnDone" class="btn btn--primary btn--forward" ng-click="save()">Done</button>
         </div>
     </div>

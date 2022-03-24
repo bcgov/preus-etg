@@ -123,4 +123,291 @@ app.controller('TrainingProviderHistory', function ($scope, $attrs, $controller,
   };
 
   init();
+
+  $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort.svg';
+  $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort.svg';
+  $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort.svg';
+  $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort.svg';
+  $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort.svg';
+  $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort.svg';
+  $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort.svg';
+  $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort.svg';
+
+  $scope.sort = {
+    column: '',
+    descending: false
+  };
+
+
+  $scope.changeSorting = function (column) {
+    var sort = $scope.sort;
+    if (sort.column == column) {
+      sort.descending = !sort.descending;
+
+      if (column == 'FileNumber') {
+       
+        $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort.svg';
+
+        if (sort.descending) {
+          $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort-desc.svg';
+        } else {
+          $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort-asc.svg';
+        }
+      }
+
+      if (column == 'CurrentStatus') {
+        $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort.svg';
+
+        if (sort.descending) {
+          $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort-desc.svg';
+        } else {
+          $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort-asc.svg';
+        }
+      }
+
+      if (column == 'Applicant') {
+        $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort.svg';
+
+        if (sort.descending) {
+          $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort-desc.svg';
+        } else {
+          $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort-asc.svg';
+        }
+      }
+
+      if (column == 'TrainingProgramTitle') {
+        $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort.svg';
+
+        if (sort.descending) {
+          $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort-desc.svg';
+        } else {
+          $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort-asc.svg';
+        }
+      }
+
+      if (column == 'StartDate') {
+        $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort.svg';
+
+        if (sort.descending) {
+          $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort-desc.svg';
+        } else {
+          $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort-asc.svg';
+        }
+      }
+
+      if (column == 'NumberOfParticipants') {
+        $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort.svg';
+
+        if (sort.descending) {
+          $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort-desc.svg';
+        } else {
+          $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort-asc.svg';
+        }
+      }
+
+      if (column == 'TotalGovContribution') {
+        $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort.svg';
+
+        if (sort.descending) {
+          $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort-desc.svg';
+        } else {
+          $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort-asc.svg';
+        }
+      }
+
+      if (column == 'AvgCostperPart') {
+        $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort.svg';
+
+        if (sort.descending) {
+          $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort-desc.svg';
+        } else {
+          $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort-asc.svg';
+        }
+      }
+
+    } else {
+      sort.column = column;
+      sort.descending = false;
+
+      if (column == 'FileNumber') {
+        $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort.svg';
+
+        if (sort.descending) {
+          $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort-desc.svg';
+        } else {
+          $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort-asc.svg';
+        }
+      }
+
+      if (column == 'CurrentStatus') {
+        $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort.svg';
+
+        if (sort.descending) {
+          $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort-desc.svg';
+        } else {
+          $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort-asc.svg';
+        }
+      }
+
+      if (column == 'Applicant') {
+        $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort.svg';
+
+        if (sort.descending) {
+          $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort-desc.svg';
+        } else {
+          $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort-asc.svg';
+        }
+      }
+
+
+      if (column == 'TrainingProgramTitle') {
+        $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort.svg';
+
+        if (sort.descending) {
+          $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort-desc.svg';
+        } else {
+          $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort-asc.svg';
+        }
+      }
+
+      if (column == 'StartDate') {
+        $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort.svg';
+
+        if (sort.descending) {
+          $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort-desc.svg';
+        } else {
+          $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort-asc.svg';
+        }
+      }
+
+      if (column == 'NumberOfParticipants') {
+        $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort.svg';
+
+        if (sort.descending) {
+          $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort-desc.svg';
+        } else {
+          $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort-asc.svg';
+        }
+      }
+
+      if (column == 'TotalGovContribution') {
+        $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort.svg';
+
+        if (sort.descending) {
+          $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort-desc.svg';
+        } else {
+          $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort-asc.svg';
+        }
+      }
+
+      if (column == 'AvgCostperPart') {
+        $scope.imgSrcFileNumber = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcCurrentStatus = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcApplicant = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTrainingProgramTitle = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcStartDate = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcNumberOfParticipants = '../../../../../images/icons/icon--sort.svg';
+        $scope.imgSrcTotalGovContribution = '../../../../../images/icons/icon--sort.svg';
+
+        if (sort.descending) {
+          $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort-desc.svg';
+        } else {
+          $scope.imgSrcAvgCostperPart = '../../../../../images/icons/icon--sort-asc.svg';
+        }
+      }
+
+    }
+  };
+
+
 });

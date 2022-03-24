@@ -10,18 +10,24 @@
     <div class="view-participant-info--container">
         <div class="k-content">
             <ul class="view-participant-info--wrapper">
-                <li class="view-participant-info--tab" ng-class="{'active': !showEmployerInfo}" ng-click="toggleEmployerInfo(false)">
+                <li class="view-participant-info--tab" ng-class="{'active': showEmployerInfo==0}" ng-click="toggleEmployerInfo(0)">
                     Contact and Demographic
                 </li>
-                <li class="view-participant-info--tab" ng-class="{'active': showEmployerInfo}" ng-click="toggleEmployerInfo(true)">
+                <li class="view-participant-info--tab" ng-class="{'active': showEmployerInfo==1}" ng-click="toggleEmployerInfo(1)">
                     Employment
                 </li>
+                <li class="view-participant-info--tab" ng-class="{'active': showEmployerInfo==2}" ng-click="toggleEmployerInfo(2)">
+                    Training History
+                </li>
             </ul>
-            <div class="view-participant-info--content" ng-show="!showEmployerInfo">
+            <div class="view-participant-info--content" ng-show="showEmployerInfo==0">
                 @Html.Partial("~/Areas/Int/Views/Participant/ParticipantContactInfo.cshtml", Model.ContactInfo)
             </div>
-            <div class="view-participant-info--content" ng-show="showEmployerInfo">
+            <div class="view-participant-info--content" ng-show="showEmployerInfo==1">
                 @Html.Partial("~/Areas/Int/Views/Participant/ParticipantEmployerInfo.cshtml", Model.EmployerInfo)
+            </div>
+            <div class="view-participant-info--content" ng-show="showEmployerInfo==2">
+                @Html.Partial("~/Areas/Int/Views/Participant/ParticipantHistory.cshtml", Model)
             </div>
         </div>
     </div>
