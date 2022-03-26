@@ -1149,23 +1149,11 @@ namespace CJG.Application.Services
 			return grantApp.Id;
 		}
 
-		public int DuplicateApplication(int id, User currentUser)
+		public int DuplicateApplication(GrantApplication grantApp, int seedId)
 		{
-			var originalApp = Get(id);
+			var originalApp = Get(seedId);
 
-			var grantApp = GrantApplicationExtensions.Clone(originalApp);
-
-			grantApp.FileNumber = null;
-			grantApp.ApplicationStateExternal = ApplicationStateExternal.Incomplete;
-			grantApp.ApplicationStateInternal = ApplicationStateInternal.Draft;
-			grantApp.DateSubmitted = null;
-			grantApp.DateCancelled = null;
-			grantApp.DateUpdated = null;
-
-			grantApp.CopyApplicant(currentUser);
-			grantApp.AddApplicationAdministrator(currentUser);
-
-			grantApp.InvitationKey = Guid.NewGuid();			
+			grantApp.Clone(originalApp);
 
 			grantApp.RequireAllParticipantsBeforeSubmission = originalApp.RequireAllParticipantsBeforeSubmission;
 
@@ -1188,7 +1176,7 @@ namespace CJG.Application.Services
 			if (originalApp.ProgramDescription != null){
 				var programDescription = new ProgramDescription(grantApp);
 				programDescription.Clone(originalApp.ProgramDescription);
-				programDescription.Description = "created from " + programDescription.Description;
+				programDescription.Description = programDescription.Description;
 
 				//add ProgramDescription to the database
 				var programDescriptionService = new ProgramDescriptionService(_dbContext, _httpContext, _logger);
@@ -1198,13 +1186,17 @@ namespace CJG.Application.Services
 				grantApp.ProgramDescription.DescriptionState = ProgramDescriptionStates.Incomplete;
 			}
 
-			//add GrantApplication to the database
-			grantApp = Add(grantApp);
 
+			Commit();
 
 			//Training
 			grantApp.TrainingCost = new TrainingCost(grantApp, originalApp.TrainingCost.EstimatedParticipants);
 			grantApp.TrainingCost.Clone(originalApp.TrainingCost);
+
+			grantApp.TrainingCost.TrainingCostState = TrainingCostStates.Incomplete;
+			grantApp.TrainingCost.AgreedParticipants = 0;
+			grantApp.TrainingCost.TotalAgreedMaxCost = 0;
+			grantApp.TrainingCost.AgreedCommitment = 0;
 
 			//Eligible Costs
 			var eligibleCostService = new EligibleCostService(_dbContext, _httpContext, _logger);
@@ -1214,7 +1206,6 @@ namespace CJG.Application.Services
 			var costs = eligibleCostService.GetForGrantApplication(originalApp.Id).ToList();
 
 			decimal totalEstimateCost = 0;
-			decimal totalEstimatedReimbursement = 0;
 			int firstEligibleCostBreakdowns = 0;
 
 			foreach (var cost in costs)
@@ -1222,13 +1213,19 @@ namespace CJG.Application.Services
 				var ec = new EligibleCost();
 				ec.Clone(cost);
 
-				totalEstimateCost += ec.EstimatedCost;
-				totalEstimatedReimbursement += ec.EstimatedReimbursement;
+				ec.AgreedMaxCost = 0;
 
+				ec.AgreedMaxParticipants = 0;
+				ec.AgreedMaxParticipantCost = 0;
+				ec.AgreedMaxReimbursement = 0;
+				ec.AgreedEmployerContribution = 0;
+				
 				ec.GrantApplicationId = grantApp.Id;
 				ec.TrainingCost = grantApp.TrainingCost;
-				ec.TrainingCost.TotalEstimatedCost = totalEstimateCost;
-				ec.TrainingCost.TotalEstimatedReimbursement = totalEstimatedReimbursement;
+
+				totalEstimateCost += ec.EstimatedCost;
+
+				grantApp.TrainingCost.TotalEstimatedCost = totalEstimateCost;
 
 				eligibleCostService.Add(ec);
 
@@ -1237,6 +1234,11 @@ namespace CJG.Application.Services
 				{
 					var newBD = new EligibleCostBreakdown();
 					newBD.Clone(bd);
+
+					newBD.AssessedCost = 0;
+					newBD.IsEligible = false;
+					newBD.AddedByAssessor = false;
+
 					newBD.EligibleCost = ec;
 					newBD.EligibleCostId = ec.Id;
 					eligibleCostBreakdownService.Add(newBD);
@@ -1255,6 +1257,7 @@ namespace CJG.Application.Services
 					TrainingProvider newTrainingProvider = new TrainingProvider();
 					newTrainingProvider.Clone(tp);
 
+					tp.TrainingProviderState = TrainingProviderStates.Incomplete;
 					//clone the documents
 					if (tp.BusinessCase != null)
 					{
@@ -1304,11 +1307,16 @@ namespace CJG.Application.Services
 						//clone training program
 						var tp = new TrainingProgram(grantApp);
 						tp.Clone(trainingProgram);
+
+						tp.TrainingProgramState = TrainingProgramStates.Incomplete;
+						tp.StartDate = grantApp.StartDate;
+						tp.EndDate = grantApp.EndDate;
+
 						if (firstEligibleCostBreakdowns > 0)
 						{
 							tp.EligibleCostBreakdownId = firstEligibleCostBreakdowns;
 						}
-						
+
 						//add trainingprogram to the database
 						trainingProgramService.Add(tp);
 					}

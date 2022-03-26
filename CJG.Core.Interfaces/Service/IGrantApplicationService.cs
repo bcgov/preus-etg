@@ -68,11 +68,12 @@ namespace CJG.Core.Interfaces.Service
 		int RestartApplicationFromWithdrawn(int id);
 
 		/// <summary>
-		/// Duplicate a GrantApplication, create a new GrantApplication based on the data in the current app
+		/// Update grant application based on values in gtant app == seeId
 		/// </summary>
 		/// <param name="id"></param>
+		/// <param name="seedId"></param>
 		/// <returns></returns>
-		int DuplicateApplication(int id, Core.Entities.User currentUser);
+		int DuplicateApplication(GrantApplication id, int seedId);
 		/// <summary>
 		/// Determine if an Application can be duplicated. If it cannot be duplicated then return the reason
 		/// </summary>

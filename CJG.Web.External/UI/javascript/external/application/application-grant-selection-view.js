@@ -2,6 +2,7 @@ app.controller('GrantSelectionView', function ($scope, $attrs, $controller, $sce
   $scope.section = {
     grantApplicationId: $attrs.ngGrantApplicationId,
     grantProgramId: $attrs.ngGrantProgramId,
+    seedGrantApplicationId: $attrs.ngSeedGrantApplicationId,
     save: {
       url: '/Ext/Application',
       method: function () {
@@ -26,7 +27,7 @@ app.controller('GrantSelectionView', function ($scope, $attrs, $controller, $sce
    **/
   function loadGrantSelections() {
     return $scope.load({
-      url: '/Ext/Application/Grant/Selection/' + $scope.section.grantApplicationId + '/' + $scope.section.grantProgramId,
+      url: '/Ext/Application/Grant/Selection/' + $scope.section.grantApplicationId + '/' + $scope.section.grantProgramId + '/' + $scope.section.seedGrantApplicationId,
       set: 'model'
     });
   }
@@ -49,6 +50,7 @@ app.controller('GrantSelectionView', function ($scope, $attrs, $controller, $sce
           }
           $scope.showApplicationForm = $scope.model.TrainingPeriods && $scope.model.TrainingPeriods.length > 0;
           $scope.isNewApplication = ($scope.model.GrantApplicationId === 0);
+          $scope.isDuplication = ($scope.model.SeedGrantApplicationId > 0);
         })
       })
       .catch(angular.noop);

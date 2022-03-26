@@ -3,7 +3,11 @@
 
 @model CJG.Web.External.Areas.Ext.Models.ApplicationStartViewModel
 
-<div ng-controller="GrantSelectionView" ng-init="init()" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-grant-program-id="@ViewBag.GrantProgramId">
+<div ng-controller="GrantSelectionView" ng-init="init()" 
+     ng-grant-application-id="@ViewBag.GrantApplicationId" 
+     ng-grant-program-id="@ViewBag.GrantProgramId" 
+     ng-seed-grant-application-id="@ViewBag.SeedGrantApplicationId">
+
     <div class="row" ng-if="isNewApplication">
         @Html.ActionLink("Return", "Index", "Home", null, new { @class = "link--back" })
     </div>
@@ -16,7 +20,12 @@
     <div class="row" ng-if="showApplicationForm">
         <div class="main" role="main">
             <div ng-show="isNewApplication">
-                <h1 class="header--large">Start <span class="text--lowercase">a</span> new application</h1>
+                <div ng-show="isDuplication">
+                    <h1 class="header--large">Duplicate <span class="text--lowercase">a</span> new application</h1>
+                </div>
+                <div ng-show="!isDuplication">
+                    <h1 class="header--large">Start <span class="text--lowercase">a</span> new application</h1>
+                </div>                
                 <div class="notice notice--icon">
                     <div ng-if="model.ProgramType === @((int) ProgramTypes.WDAService)">
                         <p><strong>Before you start:</strong> As a creator of a grant application, you must have the authority in your organization to enter into a grant agreement with the Ministry.</p>
@@ -27,7 +36,7 @@
                     <div ng-if="model.ProgramType === @((int) ProgramTypes.EmployerGrant)">
                         <p><strong>Before you start:</strong> Employers or authorized employees of the applicant employer must submit their application on their own behalf, using their Business BCeID.</p>
                         <p>Employers are not permitted to share their BCeID user login ID and third parties (e.g. training providers, fee-based service providers) cannot apply on an employer’s behalf.</p>
-                    </div>                    
+                    </div>
                 </div>
             </div>
             <div ng-show="!isNewApplication">

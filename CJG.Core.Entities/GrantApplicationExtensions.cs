@@ -1395,6 +1395,60 @@ namespace CJG.Core.Entities
 			return false;
 		}
 
+		public static void Clone(this GrantApplication grantApplication, GrantApplication seedGrantApplication)
+		{
+			
+			grantApplication.OrganizationTypeId = seedGrantApplication.OrganizationTypeId;
+			grantApplication.OrganizationType = seedGrantApplication.OrganizationType;
+
+			grantApplication.OrganizationLegalName = seedGrantApplication.OrganizationLegalName;
+			grantApplication.OrganizationLegalStructureId = seedGrantApplication.OrganizationLegalStructureId;
+			grantApplication.OrganizationLegalStructure = seedGrantApplication.OrganizationLegalStructure;
+			grantApplication.OrganizationBusinessLicenseNumber = seedGrantApplication.OrganizationBusinessLicenseNumber;
+
+			grantApplication.OrganizationBCeID = seedGrantApplication.OrganizationBCeID;
+
+			grantApplication.OrganizationYearEstablished = seedGrantApplication.OrganizationYearEstablished;
+			grantApplication.OrganizationNumberOfEmployeesWorldwide = seedGrantApplication.OrganizationNumberOfEmployeesWorldwide;
+			grantApplication.OrganizationAnnualTrainingBudget = seedGrantApplication.OrganizationAnnualTrainingBudget;
+			grantApplication.OrganizationAnnualEmployeesTrained = seedGrantApplication.OrganizationAnnualEmployeesTrained;
+			grantApplication.PrioritySectorId = seedGrantApplication.PrioritySectorId;
+			grantApplication.OrganizationDoingBusinessAs = seedGrantApplication.OrganizationDoingBusinessAs;
+			grantApplication.NAICSId = seedGrantApplication.NAICSId;
+
+
+			grantApplication.OrganizationNumberOfEmployeesInBC = seedGrantApplication.OrganizationNumberOfEmployeesInBC;
+			grantApplication.RiskClassificationId = seedGrantApplication.RiskClassificationId;
+			grantApplication.RiskClassification = seedGrantApplication.RiskClassification;
+
+			grantApplication.EligibilityConfirmed = seedGrantApplication.EligibilityConfirmed;
+			grantApplication.CanApplicantReportParticipants = seedGrantApplication.CanApplicantReportParticipants;
+
+			grantApplication.HoldPaymentRequests = seedGrantApplication.HoldPaymentRequests;
+
+			grantApplication.UsedDeliveryPartner = seedGrantApplication.UsedDeliveryPartner;
+			grantApplication.DeliveryPartnerId = seedGrantApplication.DeliveryPartnerId;
+
+
+			grantApplication.OrganizationBusinessLicenseNumber = seedGrantApplication.OrganizationBusinessLicenseNumber;
+			grantApplication.CanReportParticipants = seedGrantApplication.CanReportParticipants;
+
+			grantApplication.ScheduledNotificationsEnabled = seedGrantApplication.ScheduledNotificationsEnabled;
+
+			grantApplication.AlternateSalutation = seedGrantApplication.AlternateSalutation;
+			grantApplication.AlternateFirstName = seedGrantApplication.AlternateFirstName;
+			grantApplication.AlternateLastName = seedGrantApplication.AlternateLastName;
+			grantApplication.AlternatePhoneNumber = seedGrantApplication.AlternatePhoneNumber;
+			grantApplication.AlternatePhoneExtension = seedGrantApplication.AlternatePhoneExtension;
+			grantApplication.AlternateJobTitle = seedGrantApplication.AlternateJobTitle;
+			grantApplication.AlternateEmail = seedGrantApplication.AlternateEmail;
+			grantApplication.IsAlternateContact = seedGrantApplication.IsAlternateContact;
+			grantApplication.HasRequestedAdditionalFunding = seedGrantApplication.HasRequestedAdditionalFunding;
+			grantApplication.DescriptionOfFundingRequested = seedGrantApplication.DescriptionOfFundingRequested;
+
+			grantApplication.BusinessCase = seedGrantApplication.BusinessCase;
+		}
+
 		public static GrantApplication Clone(this GrantApplication grantApplication)
 		{
 			GrantApplication retval = new GrantApplication();
