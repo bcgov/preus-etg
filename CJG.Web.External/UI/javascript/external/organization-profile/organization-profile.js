@@ -1,3 +1,5 @@
+app.filter('unsafe', function ($sce) { return $sce.trustAsHtml; });
+
 app.controller('OrganizationProfile', function ($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
 
   $scope.section = {
@@ -137,6 +139,23 @@ app.controller('OrganizationProfile', function ($scope, $attrs, $controller, $ti
       }
     return null;
   };
+
+  $scope.tinymceOptions = {
+    plugins: 'link code autoresize preview fullscreen lists advlist anchor',
+    toolbar: 'undo redo | bold italic | formatselect | alignleft aligncenter alignright | outdent indent | numlist bullist | anchor | preview | fullscreen | code ',
+    forced_root_blocks: true,
+    setup: function (ed) {
+      ed.on('init', function (ed) {
+        $('div.tox-tinymce-aux').css('z-index', '999999');
+        $('.tox.tox-tinymce').css('height', '300px');
+      });
+    }
+  };
+
+  $(document).on('focusin', function (e) {
+    if ($(e.target).closest(".mce-window").length)
+      e.stopImmediatePropagation();
+  });
 
   init();
 });

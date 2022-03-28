@@ -92,6 +92,18 @@
                         </div>
                     </div>
                 </div>
+                <div class="form__group">
+                    <div class="form__label">Business Website:</div>
+                    <div class="form__control">
+                        {{businessInfo.BusinessWebsite}}
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Business Description:</div>
+                    <div class="form__control">
+                        <div ng-bind-html="businessInfo.BusinessDescription | unsafe"></div>
+                    </div>
+                </div>
             </div>
 
             <div class="col-50p">

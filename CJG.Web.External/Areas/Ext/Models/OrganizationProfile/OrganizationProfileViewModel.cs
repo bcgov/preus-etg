@@ -1,11 +1,12 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 {
@@ -82,9 +83,16 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 		public string AdminUserEmailAddress { get; set; }
 
 		public string StatementOfRegistrationNumber { get; set; }
-
 		public string BusinessLicenseNumber { get; set; }
+		
+		[MaxLength(2000, ErrorMessage = "Business website cannot exceed 2000 characters.")]
+		[Url(ErrorMessage = "Business website must be a valid, fully-qualified http or https URL.")]
+		public string BusinessWebsite { get; set; }
 
+		[AllowHtml]
+		[Required(ErrorMessage = "Business description is required")]
+		[MaxLength(2300, ErrorMessage = "Business description cannot exceed 2000 characters.")] // Max length is longer than message to allow for HTML content
+		public string BusinessDescription { get; set; }
 
 		public string RowVersion { get; set; }
 		#endregion
@@ -101,19 +109,19 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 
 			Utilities.MapProperties(organization, this);
 
-			this.HeadOfficeAddress = organization.HeadOfficeAddress != null ? new AddressViewModel(organization.HeadOfficeAddress) : new AddressViewModel();
-			this.OrganizationTypeId = organization.OrganizationTypeId ?? (int)OrganizationTypeCodes.Default;
+			HeadOfficeAddress = organization.HeadOfficeAddress != null ? new AddressViewModel(organization.HeadOfficeAddress) : new AddressViewModel();
+			OrganizationTypeId = organization.OrganizationTypeId ?? (int)OrganizationTypeCodes.Default;
 
-			var adminUserInfo = organization.Users.Where(u => u.IsOrganizationProfileAdministrator == true)
+			var adminUserInfo = organization.Users.Where(u => u.IsOrganizationProfileAdministrator)
 												  .Select(u => new { AdminUserName = u.FirstName + " " + u.LastName, AdminUserEmailAddress = u.EmailAddress })
 												  .FirstOrDefault();
-			this.AdminUserName = adminUserInfo?.AdminUserName;
-			this.AdminUserEmailAddress = adminUserInfo?.AdminUserEmailAddress;
+			AdminUserName = adminUserInfo?.AdminUserName;
+			AdminUserEmailAddress = adminUserInfo?.AdminUserEmailAddress;
 
 			var naics = naIndustryClassificationSystemService.GetNaIndustryClassificationSystems(organization.NaicsId);
 			naics.ForEach(item =>
 			{
-				var property = this.GetType().GetProperty($"Naics{item.Level}Id");
+				var property = GetType().GetProperty($"Naics{item.Level}Id");
 				property?.SetValue(this, item.Id);
 			});
 		}
@@ -136,39 +144,42 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 			}
 			else
 			{
-				organization.RowVersion = Convert.FromBase64String(this.RowVersion);
+				organization.RowVersion = Convert.FromBase64String(RowVersion);
 			}
 
-			organization.DoingBusinessAs = this.DoingBusinessAs;
-			organization.OrganizationType = (OrganizationTypeCodes)this.OrganizationTypeId == OrganizationTypeCodes.Default ? organizationService.GetDefaultOrganizationType() : organizationService.GetOrganizationType(this.OrganizationTypeId);
-			organization.YearEstablished = this.YearEstablished.Value;
-			organization.NumberOfEmployeesWorldwide = this.NumberOfEmployeesWorldwide.Value;
-			organization.AnnualTrainingBudget = this.AnnualTrainingBudget.Value;
-			organization.AnnualEmployeesTrained = this.AnnualEmployeesTrained.Value;
-			organization.NumberOfEmployeesInBC = this.NumberOfEmployeesInBC.Value;
+			organization.DoingBusinessAs = DoingBusinessAs;
+			organization.OrganizationType = (OrganizationTypeCodes)OrganizationTypeId == OrganizationTypeCodes.Default ? organizationService.GetDefaultOrganizationType() : organizationService.GetOrganizationType(OrganizationTypeId);
+			organization.YearEstablished = YearEstablished.Value;
+			organization.NumberOfEmployeesWorldwide = NumberOfEmployeesWorldwide.Value;
+			organization.AnnualTrainingBudget = AnnualTrainingBudget.Value;
+			organization.AnnualEmployeesTrained = AnnualEmployeesTrained.Value;
+			organization.NumberOfEmployeesInBC = NumberOfEmployeesInBC.Value;
 
 			if (organization.HeadOfficeAddress == null)
 			{
 				organization.HeadOfficeAddress = new Address();
 			}
 
-			organization.HeadOfficeAddress.AddressLine1 = this.HeadOfficeAddress.AddressLine1;
-			organization.HeadOfficeAddress.AddressLine2 = this.HeadOfficeAddress.AddressLine2;
-			organization.HeadOfficeAddress.City = this.HeadOfficeAddress.City;
-			organization.HeadOfficeAddress.PostalCode = this.HeadOfficeAddress.PostalCode;
-			organization.HeadOfficeAddress.RegionId = this.HeadOfficeAddress.RegionId;
-			organization.HeadOfficeAddress.CountryId = this.HeadOfficeAddress.CountryId;
+			organization.HeadOfficeAddress.AddressLine1 = HeadOfficeAddress.AddressLine1;
+			organization.HeadOfficeAddress.AddressLine2 = HeadOfficeAddress.AddressLine2;
+			organization.HeadOfficeAddress.City = HeadOfficeAddress.City;
+			organization.HeadOfficeAddress.PostalCode = HeadOfficeAddress.PostalCode;
+			organization.HeadOfficeAddress.RegionId = HeadOfficeAddress.RegionId;
+			organization.HeadOfficeAddress.CountryId = HeadOfficeAddress.CountryId;
 
-			organization.LegalStructureId = this.LegalStructureId;
-			organization.OtherLegalStructure = organization.LegalStructureId == 10 ? this.OtherLegalStructure : null;
-			organization.BusinessLicenseNumber = this.BusinessLicenseNumber;
+			organization.LegalStructureId = LegalStructureId;
+			organization.OtherLegalStructure = organization.LegalStructureId == 10 ? OtherLegalStructure : null;
+			organization.BusinessLicenseNumber = BusinessLicenseNumber;
 
-			organization.NaicsId = this.NaicsId;
+			organization.NaicsId = NaicsId;
 			organization.IsNaicsUpdated = true;
+
+			organization.BusinessWebsite = BusinessWebsite;
+			organization.BusinessDescription = BusinessDescription;
 
 			userService.Update(currentUser);
 
-			this.RowVersion = Convert.ToBase64String(organization.RowVersion);
+			RowVersion = Convert.ToBase64String(organization.RowVersion);
 		}
 		#endregion
 	}

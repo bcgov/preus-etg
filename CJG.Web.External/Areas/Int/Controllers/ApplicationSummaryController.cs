@@ -72,6 +72,30 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		}
 
 		/// <summary>
+		/// Get the business information for the application details view.
+		/// </summary>
+		/// <param name="grantApplicationId"></param>
+		/// <returns></returns>
+		[HttpGet]
+		[Route("Application/BusinessInfo/{grantApplicationId}")]
+		public JsonResult GetBusinessInfo(int grantApplicationId)
+		{
+			var model = new ApplicationBusinessViewModel();
+			try
+			{
+				var grantApplication = _grantApplicationService.Get(grantApplicationId);
+				model.BusinessWebsite = grantApplication.Organization.BusinessWebsite;
+				model.BusinessDescription = grantApplication.Organization.BusinessDescription;
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex);
+			}
+
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
 		/// Get an array of delivery programs.
 		/// </summary>
 		/// <param name="grantProgramId"></param>

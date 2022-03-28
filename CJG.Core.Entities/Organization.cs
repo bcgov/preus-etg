@@ -166,6 +166,16 @@ namespace CJG.Core.Entities
 		/// </summary>
 		[MaxLength(20)]
 		public string BusinessLicenseNumber { get; set; }
+		
+		/// <summary>
+		/// The website associated with the Business
+		/// </summary>
+		public string BusinessWebsite { get; set; }
+
+		/// <summary>
+		/// A description of the Business and it's aims
+		/// </summary>
+		public string BusinessDescription { get; set; }
 
 		/// <summary>
 		/// get/set - Whether the NAICS code has been updated from 2012 to 2017 version

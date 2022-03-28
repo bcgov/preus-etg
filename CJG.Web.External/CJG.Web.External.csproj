@@ -1241,6 +1241,7 @@
     <Compile Include="Areas\Ext\Models\Services\EmploymentServiceViewModel.cs" />
     <Compile Include="Areas\Ext\Models\ProgramDescriptions\ProgramDescriptionExtViewModel.cs" />
     <Compile Include="Areas\Ext\Models\Reports\CompletionReportViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Applications\ApplicationBusinessViewModel.cs" />
     <Compile Include="Areas\Int\Models\Applications\InternalStateListViewModel.cs" />
     <Compile Include="Areas\Int\Models\Admin\UserRoleViewModel.cs" />
     <Compile Include="Areas\Int\Models\Admin\UserRoleListViewModel.cs" />
