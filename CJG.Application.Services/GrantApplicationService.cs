@@ -1306,11 +1306,17 @@ namespace CJG.Application.Services
 					{
 						//clone training program
 						var tp = new TrainingProgram(grantApp);
+
 						tp.Clone(trainingProgram);
 
 						tp.TrainingProgramState = TrainingProgramStates.Incomplete;
 						tp.StartDate = grantApp.StartDate;
 						tp.EndDate = grantApp.EndDate;
+
+						foreach (var provider in tp.TrainingProviders)
+						{
+							provider.TrainingProviderState = TrainingProviderStates.Incomplete;
+						}
 
 						if (firstEligibleCostBreakdowns > 0)
 						{
