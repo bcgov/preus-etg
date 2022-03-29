@@ -49,19 +49,20 @@ namespace CJG.Web.External.Areas.Int.Models
 			this.TrainingHistory = new List<ParticipantTrainingHistory>();
 
 			var pifs = participantService.GetParticipantFormsBySIN(participant.SIN);
-			foreach (var p in pifs)
+
+			//ETG grants only
+			foreach (var p in pifs.Where(w=>w.GrantApplication.IsWDAService() == false))
 			{
 				decimal reimbursement = 0.0m;
 				decimal amtPaid = 0.0m;
-				foreach(var c in p.ParticipantCosts)
-                {
-					reimbursement += c.AssessedReimbursement;
-					if(c.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimApproved || c.ClaimEligibleCost.Claim.ClaimState == ClaimState.PaymentRequested)
-                    {
-						amtPaid += c.AssessedReimbursement;
-					}
-				}
 
+				reimbursement = p.ParticipantCosts.Sum(s => s.AssessedReimbursement);
+				amtPaid = p.ParticipantCosts
+					.Where(w => w.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimApproved ||
+					            w.ClaimEligibleCost.Claim.ClaimState == ClaimState.PaymentRequested ||
+								w.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimPaid)
+					.Sum(s => s.AssessedReimbursement);
+				
 				foreach (var t in p.GrantApplication.TrainingPrograms)
 				{
 					//do not show grant apps that have not yet been submitted
