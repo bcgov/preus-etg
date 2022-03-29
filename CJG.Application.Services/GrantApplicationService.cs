@@ -1149,46 +1149,39 @@ namespace CJG.Application.Services
 			return grantApp.Id;
 		}
 
-		public int DuplicateApplication(int id, User currentUser)
+		public int DuplicateApplication(GrantApplication grantApp, int seedId)
 		{
-			var originalApp = Get(id);
+			var originalApp = Get(seedId);
 
-			var grantApp = GrantApplicationExtensions.Clone(originalApp);
-
-			grantApp.FileNumber = null;
-			grantApp.ApplicationStateExternal = ApplicationStateExternal.Incomplete;
-			grantApp.ApplicationStateInternal = ApplicationStateInternal.Draft;
-			grantApp.DateSubmitted = null;
-			grantApp.DateCancelled = null;
-			grantApp.DateUpdated = null;
-
-			grantApp.CopyApplicant(currentUser);
-			grantApp.AddApplicationAdministrator(currentUser);
-
-			grantApp.InvitationKey = Guid.NewGuid();			
+			grantApp.Clone(originalApp);
 
 			grantApp.RequireAllParticipantsBeforeSubmission = originalApp.RequireAllParticipantsBeforeSubmission;
 
 			var attachmentService = new AttachmentService(_dbContext, _httpContext, _logger);
 
-			// Business Case Document
-			if (originalApp.BusinessCaseDocumentId.HasValue)
+			//Business Case Document
+			//migrate the business case info if the BusinessCase flag is true for both new and seed grants
+			if (grantApp.GrantOpening.GrantStream.BusinessCaseIsEnabled &&
+				originalApp.GrantOpening.GrantStream.BusinessCaseIsEnabled)
 			{
-				var attachment = attachmentService.Get(originalApp.BusinessCaseDocumentId.Value);
-
-				if (attachment != null)
+				if (originalApp.BusinessCaseDocumentId.HasValue)
 				{
-					var newAttachment = attachment.Clone();
-					var retval = attachmentService.Add(newAttachment, commit: true);
-					grantApp.BusinessCaseDocumentId = retval.Id;
-				}
+					var attachment = attachmentService.Get(originalApp.BusinessCaseDocumentId.Value);
+
+					if (attachment != null)
+					{
+						var newAttachment = attachment.Clone();
+						var retval = attachmentService.Add(newAttachment, commit: true);
+						grantApp.BusinessCaseDocumentId = retval.Id;
+					}
+				}				
 			}
 
 			//clone ProgramDescription
 			if (originalApp.ProgramDescription != null){
 				var programDescription = new ProgramDescription(grantApp);
 				programDescription.Clone(originalApp.ProgramDescription);
-				programDescription.Description = "created from " + programDescription.Description;
+				programDescription.Description = programDescription.Description;
 
 				//add ProgramDescription to the database
 				var programDescriptionService = new ProgramDescriptionService(_dbContext, _httpContext, _logger);
@@ -1198,98 +1191,125 @@ namespace CJG.Application.Services
 				grantApp.ProgramDescription.DescriptionState = ProgramDescriptionStates.Incomplete;
 			}
 
-			//add GrantApplication to the database
-			grantApp = Add(grantApp);
-
+			Commit();
 
 			//Training
 			grantApp.TrainingCost = new TrainingCost(grantApp, originalApp.TrainingCost.EstimatedParticipants);
 			grantApp.TrainingCost.Clone(originalApp.TrainingCost);
+
+			grantApp.TrainingCost.TrainingCostState = TrainingCostStates.Incomplete;
+			grantApp.TrainingCost.AgreedParticipants = 0;
+			grantApp.TrainingCost.TotalAgreedMaxCost = 0;
+			grantApp.TrainingCost.AgreedCommitment = 0;
 
 			//Eligible Costs
 			var eligibleCostService = new EligibleCostService(_dbContext, _httpContext, _logger);
 			var eligibleCostBreakdownService = new EligibleCostBreakdownService(_dbContext, _httpContext, _logger);
 
 			//get a list of the costs from the withdrawn app
-			var costs = eligibleCostService.GetForGrantApplication(originalApp.Id).ToList();
+			var origEligibleCostList = eligibleCostService.GetForGrantApplication(originalApp.Id);
 
 			decimal totalEstimateCost = 0;
 			decimal totalEstimatedReimbursement = 0;
 			int firstEligibleCostBreakdowns = 0;
 
-			foreach (var cost in costs)
+			//list of valid expense types for this stream
+			var validExpenseTypes = grantApp.GrantOpening.GrantStream.ProgramConfiguration.EligibleExpenseTypes.Where(w=>w.IsActive).ToList();
+			//var eligibleExpenseTypes = grantApp.GrantOpening.GrantStream.ProgramConfiguration.EligibleExpenseTypes.ToList();
+
+			foreach (var origEligibleCost in origEligibleCostList)
 			{
-				var ec = new EligibleCost();
-				ec.Clone(cost);
+				//add cost if it is the list of valid expense types for this stream
+				var expType = origEligibleCost.EligibleExpenseType;
 
-				totalEstimateCost += ec.EstimatedCost;
-				totalEstimatedReimbursement += ec.EstimatedReimbursement;
-
-				ec.GrantApplicationId = grantApp.Id;
-				ec.TrainingCost = grantApp.TrainingCost;
-				ec.TrainingCost.TotalEstimatedCost = totalEstimateCost;
-				ec.TrainingCost.TotalEstimatedReimbursement = totalEstimatedReimbursement;
-
-				eligibleCostService.Add(ec);
-
-				//breakdowns
-				foreach (var bd in cost.Breakdowns)
+				if (validExpenseTypes.Contains(expType))
 				{
-					var newBD = new EligibleCostBreakdown();
-					newBD.Clone(bd);
-					newBD.EligibleCost = ec;
-					newBD.EligibleCostId = ec.Id;
-					eligibleCostBreakdownService.Add(newBD);
+					var ec = new EligibleCost();
+					ec.Clone(origEligibleCost);
 
-					if (firstEligibleCostBreakdowns == 0)
+					ec.AgreedMaxCost = 0;
+
+					ec.AgreedMaxParticipants = 0;
+					ec.AgreedMaxParticipantCost = 0;
+					ec.AgreedMaxReimbursement = 0;
+					ec.AgreedEmployerContribution = 0;
+				
+					ec.GrantApplicationId = grantApp.Id;
+					ec.TrainingCost = grantApp.TrainingCost;
+
+					totalEstimateCost += ec.EstimatedCost;
+					totalEstimatedReimbursement += ec.EstimatedReimbursement;
+
+					grantApp.TrainingCost.TotalEstimatedCost = totalEstimateCost;
+					grantApp.TrainingCost.TotalEstimatedReimbursement = totalEstimatedReimbursement;
+
+					eligibleCostService.Add(ec);
+
+					//breakdowns
+					foreach (var bd in origEligibleCost.Breakdowns)
 					{
-						firstEligibleCostBreakdowns = newBD.Id;
-					}
-				}
+						var newBD = new EligibleCostBreakdown();
+						newBD.Clone(bd);
 
-				//TODO: These should be DependencyResolved properly rather than newing them up
-				TrainingProviderService tps = new TrainingProviderService(this, null, null, null, _noteService, _dbContext, _httpContext, _logger);
+						newBD.AssessedCost = 0;
+						newBD.IsEligible = false;
+						newBD.AddedByAssessor = false;
 
-				foreach (var tp in cost.TrainingProviders)
-				{
-					TrainingProvider newTrainingProvider = new TrainingProvider();
-					newTrainingProvider.Clone(tp);
+						newBD.EligibleCost = ec;
+						newBD.EligibleCostId = ec.Id;
+						eligibleCostBreakdownService.Add(newBD);
 
-					//clone the documents
-					if (tp.BusinessCase != null)
-					{
-						Attachment doc = new Attachment(tp.BusinessCaseDocument);
-						attachmentService.Add(doc);
-						newTrainingProvider.BusinessCaseDocument = doc;
-						newTrainingProvider.BusinessCaseDocumentId = doc.Id;
-					}
-
-					if (tp.ProofOfQualificationsDocument != null)
-					{
-						Attachment doc = new Attachment(tp.ProofOfQualificationsDocument);
-						attachmentService.Add(doc);
-						newTrainingProvider.ProofOfQualificationsDocument = doc;
-						newTrainingProvider.ProofOfQualificationsDocumentId = doc.Id;
-					}
-
-					if (tp.CourseOutlineDocument != null)
-					{
-						Attachment doc = new Attachment(tp.CourseOutlineDocument);
-						attachmentService.Add(doc);
-						newTrainingProvider.CourseOutlineDocument = doc;
-						newTrainingProvider.CourseOutlineDocumentId = doc.Id;
+						if (firstEligibleCostBreakdowns == 0)
+						{
+							firstEligibleCostBreakdowns = newBD.Id;
+						}
 					}
 
-					newTrainingProvider.TrainingAddress = new ApplicationAddress(tp.TrainingAddress);
-					newTrainingProvider.TrainingProviderInventoryId = null;
+					//TODO: These should be DependencyResolved properly rather than newing them up
+					TrainingProviderService tps = new TrainingProviderService(this, null, null, null, _noteService, _dbContext, _httpContext, _logger);
 
-					newTrainingProvider.GrantApplication = grantApp;
-					newTrainingProvider.GrantApplicationId = grantApp.Id;
-					newTrainingProvider.EligibleCost = ec;
-					newTrainingProvider.EligibleCostId = ec.Id;
+					foreach (var tp in origEligibleCost.TrainingProviders)
+					{
+						TrainingProvider newTrainingProvider = new TrainingProvider();
+						newTrainingProvider.Clone(tp);
 
-					//add the training provider
-					tps.Add(newTrainingProvider);
+						tp.TrainingProviderState = TrainingProviderStates.Incomplete;
+						//clone the documents
+						if (tp.BusinessCase != null)
+						{
+							Attachment doc = new Attachment(tp.BusinessCaseDocument);
+							attachmentService.Add(doc);
+							newTrainingProvider.BusinessCaseDocument = doc;
+							newTrainingProvider.BusinessCaseDocumentId = doc.Id;
+						}
+
+						if (tp.ProofOfQualificationsDocument != null)
+						{
+							Attachment doc = new Attachment(tp.ProofOfQualificationsDocument);
+							attachmentService.Add(doc);
+							newTrainingProvider.ProofOfQualificationsDocument = doc;
+							newTrainingProvider.ProofOfQualificationsDocumentId = doc.Id;
+						}
+
+						if (tp.CourseOutlineDocument != null)
+						{
+							Attachment doc = new Attachment(tp.CourseOutlineDocument);
+							attachmentService.Add(doc);
+							newTrainingProvider.CourseOutlineDocument = doc;
+							newTrainingProvider.CourseOutlineDocumentId = doc.Id;
+						}
+
+						newTrainingProvider.TrainingAddress = new ApplicationAddress(tp.TrainingAddress);
+						newTrainingProvider.TrainingProviderInventoryId = null;
+
+						newTrainingProvider.GrantApplication = grantApp;
+						newTrainingProvider.GrantApplicationId = grantApp.Id;
+						newTrainingProvider.EligibleCost = ec;
+						newTrainingProvider.EligibleCostId = ec.Id;
+
+						//add the training provider
+						tps.Add(newTrainingProvider);
+					}
 				}
 			}
 
@@ -1303,12 +1323,23 @@ namespace CJG.Application.Services
 					{
 						//clone training program
 						var tp = new TrainingProgram(grantApp);
+
 						tp.Clone(trainingProgram);
+
+						tp.TrainingProgramState = TrainingProgramStates.Incomplete;
+						tp.StartDate = grantApp.StartDate;
+						tp.EndDate = grantApp.EndDate;
+
+						foreach (var provider in tp.TrainingProviders)
+						{
+							provider.TrainingProviderState = TrainingProviderStates.Incomplete;
+						}
+
 						if (firstEligibleCostBreakdowns > 0)
 						{
 							tp.EligibleCostBreakdownId = firstEligibleCostBreakdowns;
 						}
-						
+
 						//add trainingprogram to the database
 						trainingProgramService.Add(tp);
 					}

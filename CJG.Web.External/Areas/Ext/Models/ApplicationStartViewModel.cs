@@ -19,6 +19,7 @@ namespace CJG.Web.External.Areas.Ext.Models
 		public byte[] RowVersion { get; set; }
 
 		public int GrantProgramId { get; set; }
+		public int SeedGrantApplicationId { get; set; }
 
 		public string GrantProgramName { get; set; }
 
@@ -98,7 +99,7 @@ namespace CJG.Web.External.Areas.Ext.Models
 		}
 
 		public ApplicationStartViewModel(GrantApplication grantApplication, IGrantOpeningService grantOpeningService, IGrantProgramService grantProgramService, IStaticDataService staticDataService, IGrantStreamService grantStreamService)
-			: this(grantApplication.GrantOpening.GrantStream.GrantProgramId, grantOpeningService, grantProgramService, staticDataService, grantStreamService)
+			: this(grantApplication.GrantOpening.GrantStream.GrantProgramId, 0, grantOpeningService, grantProgramService, staticDataService, grantStreamService)
 		{
 			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
 
@@ -163,7 +164,7 @@ namespace CJG.Web.External.Areas.Ext.Models
 			applicationStartViewModel.AlternatePhoneExtension = grantApplication.AlternatePhoneExtension;
 		}
 
-		public ApplicationStartViewModel(int grantProgramId, IGrantOpeningService grantOpeningService, IGrantProgramService grantProgramService, IStaticDataService staticDataService, IGrantStreamService grantStreamService)
+		public ApplicationStartViewModel(int grantProgramId, int seedGrantApplicationId, IGrantOpeningService grantOpeningService, IGrantProgramService grantProgramService, IStaticDataService staticDataService, IGrantStreamService grantStreamService)
 		{
 			if (grantOpeningService == null) throw new ArgumentNullException(nameof(grantOpeningService));
 			if (grantProgramService == null) throw new ArgumentNullException(nameof(grantProgramService));
@@ -173,6 +174,7 @@ namespace CJG.Web.External.Areas.Ext.Models
 			var grantProgram = grantProgramService.Get(GrantProgramId);
 			GrantProgramName = grantProgram.Name;
 			ProgramType = grantProgram.ProgramTypeId;
+			SeedGrantApplicationId = seedGrantApplicationId;
 
 			var grantOpenings = grantOpeningService.GetGrantOpenings(AppDateTime.UtcNow, GrantProgramId).GroupBy(o => new { o.TrainingPeriod.StartDate, o.TrainingPeriod.EndDate });
 
