@@ -12,7 +12,7 @@
             <div class="notice notice--icon" ng-if="model.AttachmentGuidance">
                 <div ng-bind-html="model.AttachmentGuidance" class="narrow-space-list"></div>
             </div>
-			<p>Use Add Attachment below and enter a description to identify each attachment. You may attach up to {{model.AttachmentsMaximum}} attachments.</p>
+			<p>Use Add Attachment below and enter a description to identify each attachment. You may attach up to {{model.AttachmentsMaximum}} Applicant Attachments. Ministry Attachments are unlimited.</p>
 			<p>Accepted file types: PDF, JPG, JPEG, PNG, GIF.</p>
 		</div>
 
@@ -36,8 +36,9 @@
                     </tr>
                 </table>
 			</div>
-			<button ng-if="section.editing" class="btn btn--secondary" ng-click="addAttachment()" data-disableonsubmit="false">Add attachment</button>
-		</div>
+			<button ng-if="section.editing" class="btn btn--secondary" ng-click="addAttachment(0)" ng-disabled="countAttachments() >= model.AttachmentsMaximum" data-disableonsubmit="false">Add Applicant Attachment</button>
+			<button ng-if="section.editing" class="btn btn--secondary" style="margin-left: 10px;" ng-click="addAttachment(1)" data-disableonsubmit="false">Add Ministry Attachment</button>
+        </div>
 
 		<div id="grant-application-attachment"></div>
 	</div>

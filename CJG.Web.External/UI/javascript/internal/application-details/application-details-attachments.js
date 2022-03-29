@@ -88,14 +88,14 @@ app.controller('Attachments', function ($scope, $attrs, $controller, $timeout, U
    * @function addAttachment
    * @returns {void}
    **/
-  $scope.addAttachment = function () {
+  $scope.addAttachment = function (attachmentType = 0) {
     return $scope.attachmentDialog('Add Attachment', {
       Id: 0,
       FileName: '',
       Description: '',
-      AttachmentType: 0,
+      AttachmentType: attachmentType,
       File: {}
-    }, true)
+    }, false)
       .then(function (attachment) {
         $scope.model.Attachments.push(attachment);
         $scope.section.attachments.push(attachment);
@@ -111,9 +111,9 @@ app.controller('Attachments', function ($scope, $attrs, $controller, $timeout, U
    */
   $scope.changeAttachment = function (attachment) {
     $scope.section.attachment = attachment;
-    return $scope.attachmentDialog('Update Attachment', attachment, true)
+    return $scope.attachmentDialog('Update Attachment', attachment, false)
       .then(function (attachment) {
-        $scope.section.attachments.push(attachment); // TODO: Fix
+        $scope.section.attachments.push(attachment);
       })
       .catch(angular.noop);
   }
