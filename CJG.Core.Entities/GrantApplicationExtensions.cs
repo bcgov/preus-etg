@@ -1446,7 +1446,12 @@ namespace CJG.Core.Entities
 			grantApplication.HasRequestedAdditionalFunding = seedGrantApplication.HasRequestedAdditionalFunding;
 			grantApplication.DescriptionOfFundingRequested = seedGrantApplication.DescriptionOfFundingRequested;
 
-			grantApplication.BusinessCase = seedGrantApplication.BusinessCase;
+			//migrate the business case info if the BusinessCase flag is true for both new and seed grants
+			if (grantApplication.GrantOpening.GrantStream.BusinessCaseIsEnabled &&
+				seedGrantApplication.GrantOpening.GrantStream.BusinessCaseIsEnabled)
+			{
+				grantApplication.BusinessCase = seedGrantApplication.BusinessCase;
+			}			
 		}
 
 		public static GrantApplication Clone(this GrantApplication grantApplication)

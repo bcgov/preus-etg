@@ -1159,17 +1159,22 @@ namespace CJG.Application.Services
 
 			var attachmentService = new AttachmentService(_dbContext, _httpContext, _logger);
 
-			// Business Case Document
-			if (originalApp.BusinessCaseDocumentId.HasValue)
+			//Business Case Document
+			//migrate the business case info if the BusinessCase flag is true for both new and seed grants
+			if (grantApp.GrantOpening.GrantStream.BusinessCaseIsEnabled &&
+				originalApp.GrantOpening.GrantStream.BusinessCaseIsEnabled)
 			{
-				var attachment = attachmentService.Get(originalApp.BusinessCaseDocumentId.Value);
-
-				if (attachment != null)
+				if (originalApp.BusinessCaseDocumentId.HasValue)
 				{
-					var newAttachment = attachment.Clone();
-					var retval = attachmentService.Add(newAttachment, commit: true);
-					grantApp.BusinessCaseDocumentId = retval.Id;
-				}
+					var attachment = attachmentService.Get(originalApp.BusinessCaseDocumentId.Value);
+
+					if (attachment != null)
+					{
+						var newAttachment = attachment.Clone();
+						var retval = attachmentService.Add(newAttachment, commit: true);
+						grantApp.BusinessCaseDocumentId = retval.Id;
+					}
+				}				
 			}
 
 			//clone ProgramDescription
@@ -1185,7 +1190,6 @@ namespace CJG.Application.Services
 				grantApp.ProgramDescription = programDescription;
 				grantApp.ProgramDescription.DescriptionState = ProgramDescriptionStates.Incomplete;
 			}
-
 
 			Commit();
 
@@ -1203,96 +1207,109 @@ namespace CJG.Application.Services
 			var eligibleCostBreakdownService = new EligibleCostBreakdownService(_dbContext, _httpContext, _logger);
 
 			//get a list of the costs from the withdrawn app
-			var costs = eligibleCostService.GetForGrantApplication(originalApp.Id).ToList();
+			var origEligibleCostList = eligibleCostService.GetForGrantApplication(originalApp.Id);
 
 			decimal totalEstimateCost = 0;
+			decimal totalEstimatedReimbursement = 0;
 			int firstEligibleCostBreakdowns = 0;
 
-			foreach (var cost in costs)
+			//list of valid expense types for this stream
+			var validExpenseTypes = grantApp.GrantOpening.GrantStream.ProgramConfiguration.EligibleExpenseTypes.Where(w=>w.IsActive).ToList();
+			//var eligibleExpenseTypes = grantApp.GrantOpening.GrantStream.ProgramConfiguration.EligibleExpenseTypes.ToList();
+
+			foreach (var origEligibleCost in origEligibleCostList)
 			{
-				var ec = new EligibleCost();
-				ec.Clone(cost);
+				//add cost if it is the list of valid expense types for this stream
+				var expType = origEligibleCost.EligibleExpenseType;
 
-				ec.AgreedMaxCost = 0;
+				if (validExpenseTypes.Contains(expType))
+				{
+					var ec = new EligibleCost();
+					ec.Clone(origEligibleCost);
 
-				ec.AgreedMaxParticipants = 0;
-				ec.AgreedMaxParticipantCost = 0;
-				ec.AgreedMaxReimbursement = 0;
-				ec.AgreedEmployerContribution = 0;
+					ec.AgreedMaxCost = 0;
+
+					ec.AgreedMaxParticipants = 0;
+					ec.AgreedMaxParticipantCost = 0;
+					ec.AgreedMaxReimbursement = 0;
+					ec.AgreedEmployerContribution = 0;
 				
-				ec.GrantApplicationId = grantApp.Id;
-				ec.TrainingCost = grantApp.TrainingCost;
+					ec.GrantApplicationId = grantApp.Id;
+					ec.TrainingCost = grantApp.TrainingCost;
 
-				totalEstimateCost += ec.EstimatedCost;
+					totalEstimateCost += ec.EstimatedCost;
+					totalEstimatedReimbursement += ec.EstimatedReimbursement;
 
-				grantApp.TrainingCost.TotalEstimatedCost = totalEstimateCost;
+					grantApp.TrainingCost.TotalEstimatedCost = totalEstimateCost;
+					grantApp.TrainingCost.TotalEstimatedReimbursement = totalEstimatedReimbursement;
 
-				eligibleCostService.Add(ec);
+					eligibleCostService.Add(ec);
 
-				//breakdowns
-				foreach (var bd in cost.Breakdowns)
-				{
-					var newBD = new EligibleCostBreakdown();
-					newBD.Clone(bd);
-
-					newBD.AssessedCost = 0;
-					newBD.IsEligible = false;
-					newBD.AddedByAssessor = false;
-
-					newBD.EligibleCost = ec;
-					newBD.EligibleCostId = ec.Id;
-					eligibleCostBreakdownService.Add(newBD);
-
-					if (firstEligibleCostBreakdowns == 0)
+					//breakdowns
+					foreach (var bd in origEligibleCost.Breakdowns)
 					{
-						firstEligibleCostBreakdowns = newBD.Id;
-					}
-				}
+						var newBD = new EligibleCostBreakdown();
+						newBD.Clone(bd);
 
-				//TODO: These should be DependencyResolved properly rather than newing them up
-				TrainingProviderService tps = new TrainingProviderService(this, null, null, null, _noteService, _dbContext, _httpContext, _logger);
+						newBD.AssessedCost = 0;
+						newBD.IsEligible = false;
+						newBD.AddedByAssessor = false;
 
-				foreach (var tp in cost.TrainingProviders)
-				{
-					TrainingProvider newTrainingProvider = new TrainingProvider();
-					newTrainingProvider.Clone(tp);
+						newBD.EligibleCost = ec;
+						newBD.EligibleCostId = ec.Id;
+						eligibleCostBreakdownService.Add(newBD);
 
-					tp.TrainingProviderState = TrainingProviderStates.Incomplete;
-					//clone the documents
-					if (tp.BusinessCase != null)
-					{
-						Attachment doc = new Attachment(tp.BusinessCaseDocument);
-						attachmentService.Add(doc);
-						newTrainingProvider.BusinessCaseDocument = doc;
-						newTrainingProvider.BusinessCaseDocumentId = doc.Id;
+						if (firstEligibleCostBreakdowns == 0)
+						{
+							firstEligibleCostBreakdowns = newBD.Id;
+						}
 					}
 
-					if (tp.ProofOfQualificationsDocument != null)
+					//TODO: These should be DependencyResolved properly rather than newing them up
+					TrainingProviderService tps = new TrainingProviderService(this, null, null, null, _noteService, _dbContext, _httpContext, _logger);
+
+					foreach (var tp in origEligibleCost.TrainingProviders)
 					{
-						Attachment doc = new Attachment(tp.ProofOfQualificationsDocument);
-						attachmentService.Add(doc);
-						newTrainingProvider.ProofOfQualificationsDocument = doc;
-						newTrainingProvider.ProofOfQualificationsDocumentId = doc.Id;
+						TrainingProvider newTrainingProvider = new TrainingProvider();
+						newTrainingProvider.Clone(tp);
+
+						tp.TrainingProviderState = TrainingProviderStates.Incomplete;
+						//clone the documents
+						if (tp.BusinessCase != null)
+						{
+							Attachment doc = new Attachment(tp.BusinessCaseDocument);
+							attachmentService.Add(doc);
+							newTrainingProvider.BusinessCaseDocument = doc;
+							newTrainingProvider.BusinessCaseDocumentId = doc.Id;
+						}
+
+						if (tp.ProofOfQualificationsDocument != null)
+						{
+							Attachment doc = new Attachment(tp.ProofOfQualificationsDocument);
+							attachmentService.Add(doc);
+							newTrainingProvider.ProofOfQualificationsDocument = doc;
+							newTrainingProvider.ProofOfQualificationsDocumentId = doc.Id;
+						}
+
+						if (tp.CourseOutlineDocument != null)
+						{
+							Attachment doc = new Attachment(tp.CourseOutlineDocument);
+							attachmentService.Add(doc);
+							newTrainingProvider.CourseOutlineDocument = doc;
+							newTrainingProvider.CourseOutlineDocumentId = doc.Id;
+						}
+
+						newTrainingProvider.TrainingAddress = new ApplicationAddress(tp.TrainingAddress);
+						newTrainingProvider.TrainingProviderInventoryId = null;
+
+						newTrainingProvider.GrantApplication = grantApp;
+						newTrainingProvider.GrantApplicationId = grantApp.Id;
+						newTrainingProvider.EligibleCost = ec;
+						newTrainingProvider.EligibleCostId = ec.Id;
+
+						//add the training provider
+						tps.Add(newTrainingProvider);
 					}
-
-					if (tp.CourseOutlineDocument != null)
-					{
-						Attachment doc = new Attachment(tp.CourseOutlineDocument);
-						attachmentService.Add(doc);
-						newTrainingProvider.CourseOutlineDocument = doc;
-						newTrainingProvider.CourseOutlineDocumentId = doc.Id;
-					}
-
-					newTrainingProvider.TrainingAddress = new ApplicationAddress(tp.TrainingAddress);
-					newTrainingProvider.TrainingProviderInventoryId = null;
-
-					newTrainingProvider.GrantApplication = grantApp;
-					newTrainingProvider.GrantApplicationId = grantApp.Id;
-					newTrainingProvider.EligibleCost = ec;
-					newTrainingProvider.EligibleCostId = ec.Id;
-
-					//add the training provider
-					tps.Add(newTrainingProvider);
 				}
 			}
 
