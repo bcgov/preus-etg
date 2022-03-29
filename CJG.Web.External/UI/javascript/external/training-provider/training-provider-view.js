@@ -170,6 +170,18 @@ app.controller('ApplicationTrainingProviderView', function ($scope, $attrs, $con
     trainingProviderControl = new pca.Address(trainingProviderAddressFields, options);
   }
 
+  function loadAlternateProvidersInfoIfEmpty() {
+    const alternativeEditor = tinymce.get('ui-tinymce-1');  // Can't seem to set the id on the tinymce textarea. Using the default name.
+    const content = alternativeEditor.getContent({ format: "text" });
+    const hasContent = content != null && content.length > 0;
+
+    if (!hasContent) {
+      const details = '<p>Training provider: </p><p>Program or course: </p><p>Total cost per participant: </p><p>Duration: </p><p>Outcome (e.g. name of certificate, if applicable): </p><p>Web link to program or course: </p>';
+      const defaultText = '<p><strong>Alternate Provider 1</strong></p>' + details + '<p><strong>Alternate Provider 2</strong></p>' + details;
+      alternativeEditor.setContent(defaultText);
+    }
+  }
+
   $scope.AddressLine1Change = function () {
     if ($scope.model.IsCanadianAddress) {
       trainingLocationControl.listen("populate", function(address) {
@@ -262,7 +274,7 @@ app.controller('ApplicationTrainingProviderView', function ($scope, $attrs, $con
     setup: function (ed) {
       ed.on('init', function (ed) {
         $('div.tox-tinymce-aux').css('z-index', '999999');
-        $('.tox.tox-tinymce').css('height', '300px');
+        $('.tox.tox-tinymce').css('min-height', '300px');
       });
     }
   };
@@ -372,6 +384,7 @@ app.controller('ApplicationTrainingProviderView', function ($scope, $attrs, $con
         // Suppress any auto-created addressComplete instances - might be a dev-only issue
         addressComplete.destroy();
         fieldMappingCanadaPost();
+        loadAlternateProvidersInfoIfEmpty();
       })
       .catch(angular.noop);
   }
