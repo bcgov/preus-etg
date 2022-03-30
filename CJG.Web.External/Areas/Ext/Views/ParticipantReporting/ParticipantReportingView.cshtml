@@ -1,16 +1,14 @@
 ﻿@using CJG.Core.Entities
-@using CJG.Web.External.Areas.Ext.Controllers
-
 @{
     ViewBag.Title = "Participant Report";
 }
 
 <div class="row" ng-controller="ParticipantReportingView" ng-grant-application-id="@ViewBag.GrantApplicationId">
     <div class="row" ng-if="model.ApplicationStateInternal !== @((int)CJG.Core.Entities.ApplicationStateInternal.Draft) && model.ApplicationStateInternal !== @((int)CJG.Core.Entities.ApplicationStateInternal.ApplicationWithdrawn)">
-        @Html.ActionLink("Return", nameof(ReportingController.GrantFileView), nameof(ReportingController).Replace("Controller", ""), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
+        @Html.ActionLink("Return", "GrantFileView", "Reporting", new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
     </div>
     <div class="row" ng-if="model.ApplicationStateInternal === @((int)CJG.Core.Entities.ApplicationStateInternal.Draft) || model.ApplicationStateInternal === @((int)CJG.Core.Entities.ApplicationStateInternal.ApplicationWithdrawn)">
-        @Html.ActionLink("Return", nameof(ApplicationController.ApplicationOverviewView), typeof(ApplicationController), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
+        @Html.ActionLink("Return", "ApplicationOverviewView", "Application", new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
     </div>
 
     <program-title-label ng-model="model.ProgramTitleLabel"></program-title-label>
@@ -35,16 +33,6 @@
             <div style="display: block;" class="with-participant-report" ng-if="model.ParticipantsEditable && Model.ApplicationStateExternal !== @((int)CJG.Core.Entities.ApplicationStateExternal.ClaimSubmitted) && model.Participants.length > 0">
                 <div class="notice">
                     <div class="inline-help">
-                        <p ng-show="model.ProgramType != @((int)ProgramTypes.EmployerGrant)">
-                            You have been approved to train {{model.MaxParticipantsAllowed}} participants.
-                            Use "Show participant invitation" below to send a link to your participants to enable them to submit their Participant Information Form.
-                            Only participants eligible for the {{model.GrantProgramName}} should be reported.
-                        </p>
-                        <p ng-show="model.ProgramType != @((int)ProgramTypes.EmployerGrant)">
-                            <span id="enrollmentCount">{{model.Participants.length}}</span> out of {{model.MaxParticipantsAllowed}}
-                            participants have successfully reported their participant information.
-                            Remove any individuals that do not attend training.
-                        </p>
                         <p ng-show="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
                             Before you can submit an application, participants must electronically submit their own Participant Information Forms (PIFs). Employers cannot submit PIFs on behalf of participants.
                         </p>
@@ -55,17 +43,6 @@
                             </b> – Participants who currently receive EI or IA benefits must have approval prior to the start of
                             training if they wish to maintain their financial supports. Refer to Appendix A in the criteria of for the stream under which you applied
                             for details. EI or IA clients who do not obtain pre-approval before participating in training may become ineligible for continued financial supports under EI or IA.
-                        </p>
-                        <p ng-show="model.ProgramType != @((int)ProgramTypes.EmployerGrant)">
-                            <b>IMPORTANT!</b>
-                            Participants on Employment Insurance (EI) or British Columbia Employment Assistance clients in receipt of Income Assistance (IA)
-                            must indicate on their Participant Information Forms (PIF) that they are receiving these benefits.
-                            All Participant Information Forms are due no less than 5 days prior to the start of training.
-                            To prevent impacts to participants benefits, ensure the training dates stated in the online portal are accurate and communicate
-                            the correct and confirmed training dates to all participants. For those participants receiving EI benefits,
-                            CWRG will submit a Section 25 referral on their behalf. For those participants receiving IA benefits,
-                            instruct participants to contact an Employment Assistance Worker at the SDPR Delivery Division to ensure that the training received under the Program
-                            will not affect their IA benefits. See Appendix A of the CWRG General criteria for more details.
                         </p>
                     </div>
                 </div>
@@ -97,21 +74,6 @@
                             <b>Getting Started with Participant Reporting</b>
                         </p>
 
-                        <div class="notice notice--icon" ng-show="model.ProgramType != @((int)ProgramTypes.EmployerGrant)">
-                            <p>You have been approved to train {{model.MaxParticipantsAllowed}} participants.</p>
-                            <p>
-                                <b>IMPORTANT!</b>
-                                Participants on Employment Insurance (EI) or British Columbia Employment Assistance clients in receipt of Income Assistance (IA)
-                                must indicate on their Participant Information Forms (PIF) that they are receiving these benefits.
-                                All Participant Information Forms are due no less than 5 days prior to the start of training.
-                                To prevent impacts to participants benefits, ensure the training dates stated in the online portal are accurate and communicate
-                                the correct and confirmed training dates to all participants. For those participants receiving EI benefits,
-                                CWRG will submit a Section 25 referral on their behalf. For those participants receiving IA benefits,
-                                instruct participants to contact an Employment Assistance Worker at the SDPR Delivery Division to ensure that the training received under the Program
-                                will not affect their IA benefits. See Appendix A of the CWRG General criteria for more details.
-                            </p>
-                        </div>
-
                         <div class="notice notice--icon" ng-show="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
                             <p>
                                 Before you can submit an application, participants must electronically submit their own Participant Information Forms (PIFs). Employers cannot submit PIFs on behalf of participants.
@@ -131,18 +93,6 @@
                             Please copy the email below into your own email and send it to participants. You will be able to see who has completed their PIF in your Participant Report as soon as they are finished.
                         </p>
                     </div>
-                    <p ng-show="model.ProgramType != @((int)ProgramTypes.EmployerGrant)">
-                        Each participant must complete and submit a Participant Information Form in order to participate in the {{model.GrantProgramName}} program.
-                        Only participants eligible for the {{model.GrantProgramName}} should be reported.
-                    </p>
-                    <p ng-show="model.ProgramType != @((int)ProgramTypes.EmployerGrant)">
-                        For your convenience, you may use the invitation below to provide participants with the link.
-                        Please copy and paste it into your own email and send it to your participants.
-                        You may revise the email to make it better suited to your business needs.
-                    </p>
-                    <p ng-show="model.ProgramType != @((int)ProgramTypes.EmployerGrant)">
-                        You will be able to see who has completed their form in your Participant Report as soon as they have reported.
-                    </p>
                 </div>
 
                 <div class="copy-boxes">
@@ -162,24 +112,8 @@
                 </div>
             </div>
             <div class="button-group" ng-if="model.ApplicationStateInternal === @((int)CJG.Core.Entities.ApplicationStateInternal.Draft)">
-                @Html.Button("Cancel",
-                           new
-                           {
-                                @class = "btn btn--secondary",
-                                @onclick = "window.location='" +
-                                @Url.Action(nameof(ApplicationController.ApplicationOverviewView),
-                                       nameof(ApplicationController).Replace("Controller", ""),
-                                       new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'"
-                           })
-                @Html.Button("Done",
-                           new
-                           {
-                                @class = "btn btn--primary btn--forward",
-                                @onclick = "window.location='" +
-                                @Url.Action(nameof(ApplicationController.ApplicationOverviewView),
-                                       nameof(ApplicationController).Replace("Controller", ""),
-                                       new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'"
-                           })
+                @Html.Button("Cancel", new { @class = "btn btn--secondary", @onclick = "window.location='" + Url.Action("ApplicationOverviewView", "Application", new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'" })
+                @Html.Button("Done", new { @class = "btn btn--primary btn--forward", @onclick = "window.location='" + Url.Action("ApplicationOverviewView", "Application", new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'" })
             </div>
         </div>
     </div>

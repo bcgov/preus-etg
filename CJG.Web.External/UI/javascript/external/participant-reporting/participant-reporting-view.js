@@ -121,7 +121,27 @@ app.controller('ParticipantReportingView', function ($scope, $attrs, $controller
           method: 'PUT',
           data: participant,
           set: 'model'
-        })
+        });
+      })
+      .catch(angular.noop);
+  }
+
+  /**
+   * Shows confirmation prompt and deletes participant form.
+   * @function removeParticipant
+   * @param {object} participant - The participant to remove.
+   * @returns {Promise}
+   */
+  $scope.setExpectedTrainingOutcome = function (participant, outcome) {
+    let selectedOutcome = $scope.model.ExpectedOutcomes.filter(a => a.Key === participant.ExpectedOutcome).pop().Value;
+    return $scope.confirmDialog('Set Training Outcome', '<p>Set training outcome for ' + participant.FirstName + ' ' + participant.LastName + ' to <strong>' + selectedOutcome + '</strong>?</p>')
+      .then(function () {
+        return $scope.load({
+          url: '/Ext/Reporting/Participant/SetOutcome',
+          method: 'PUT',
+          data: participant,
+          set: 'model'
+        });
       })
       .catch(angular.noop);
   }

@@ -23,6 +23,7 @@ namespace CJG.Core.Interfaces.Service
 		IDictionary<string, decimal> GetParticipantYTD(GrantApplication grantApplication);
 
 		void UpdateReportedDate(IEnumerable<ParticipantForm> participantEnrollments, DateTime reportedDate);
+		void UpdateExpectedOutcome(ParticipantForm participantForm, ExpectedParticipantOutcome? modelExpectedOutcome);
 		void RemoveParticipant(ParticipantForm participantForm);
 		void IncludeParticipant(ParticipantForm participant);
 		void ExcludeParticipant(ParticipantForm participant);

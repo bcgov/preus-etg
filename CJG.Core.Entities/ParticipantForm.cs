@@ -564,10 +564,16 @@ namespace CJG.Core.Entities
 		/// indicates whether the ministry has approved this participant
 		/// </summary>
 		public bool? Approved { get; set; }
+
 		/// <summary>
 		/// Indicated that a participant attended (received) the training
 		/// </summary>
 		public bool? Attended { get; set; }
+
+		/// <summary>
+		/// What does the Applicant see as the expected outcome for this Participant?
+		/// </summary>
+		public ExpectedParticipantOutcome? ExpectedParticipantOutcome { get; set; }
 
 		#endregion
 
