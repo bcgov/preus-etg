@@ -412,6 +412,12 @@ $int-header-height: 32px;
   }
 }
 
+.collapsed__html {
+  p:last-child {
+      margin-bottom: 0;
+  }
+}
+
 // Training Provider List
 #TrainingProviderDetails {
   margin-top: 40px;

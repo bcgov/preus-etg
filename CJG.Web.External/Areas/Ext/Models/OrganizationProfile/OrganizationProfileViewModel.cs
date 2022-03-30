@@ -94,6 +94,11 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 		[MaxLength(2300, ErrorMessage = "Business description cannot exceed 2000 characters.")] // Max length is longer than message to allow for HTML content
 		public string BusinessDescription { get; set; }
 
+		[AllowHtml]
+		//[Required(ErrorMessage = "Business training relevance is required")]
+		[MaxLength(2300, ErrorMessage = "Business training relevance cannot exceed 2000 characters.")] // Max length is longer than message to allow for HTML content
+		public string BusinessTrainingRelevance { get; set; }
+
 		public string RowVersion { get; set; }
 		#endregion
 
@@ -176,6 +181,7 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 
 			organization.BusinessWebsite = BusinessWebsite;
 			organization.BusinessDescription = BusinessDescription;
+			organization.BusinessTrainingRelevance = BusinessTrainingRelevance;
 
 			userService.Update(currentUser);
 

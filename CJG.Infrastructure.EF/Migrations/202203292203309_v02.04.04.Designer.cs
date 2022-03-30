@@ -7,13 +7,13 @@ namespace CJG.Infrastructure.EF.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class v020405 : IMigrationMetadata
+    public sealed partial class v020404 : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(v020405));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(v020404));
         
         string IMigrationMetadata.Id
         {
-            get { return "202203281730155_v02.04.05"; }
+            get { return "202203292203309_v02.04.04"; }
         }
         
         string IMigrationMetadata.Source

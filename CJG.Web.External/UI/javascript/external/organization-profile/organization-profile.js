@@ -147,7 +147,7 @@ app.controller('OrganizationProfile', function ($scope, $attrs, $controller, $ti
     setup: function (ed) {
       ed.on('init', function (ed) {
         $('div.tox-tinymce-aux').css('z-index', '999999');
-        $('.tox.tox-tinymce').css('height', '300px');
+        $('.tox.tox-tinymce').css('min-height', '250px');
       });
     }
   };
