@@ -3,6 +3,7 @@ using CJG.Core.Entities;
 using CJG.Core.Entities.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace CJG.Core.Interfaces.Service
@@ -29,7 +30,7 @@ namespace CJG.Core.Interfaces.Service
 
 		PageList<GrantApplication> GetGrantApplications(int page, int quantity, ApplicationFilter filter);
 
-		PageList<GrantApplication> GetGrantApplications(int trainingProviderInventoryId, int page, int quantity, string search);
+		IOrderedQueryable<GrantApplication> GetGrantApplications(int trainingProviderInventoryId, string search);
 
 		PageList<GrantApplication> GetGrantApplicationsForOrg(int orgId, int page, int quantity, int grantProgramId, string search);
 

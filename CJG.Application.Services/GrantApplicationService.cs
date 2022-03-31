@@ -806,7 +806,7 @@ namespace CJG.Application.Services
 			return new PageList<GrantApplication>(page, quantity, total, query.ToArray());
 		}
 
-		public PageList<GrantApplication> GetGrantApplications(int trainingProviderInventoryId, int page, int quantity, string search)
+		public IOrderedQueryable<GrantApplication> GetGrantApplications(int trainingProviderInventoryId, string search)
 		{
 			var defaultGrantProgramId = GetDefaultGrantProgramId();
 			var grantApplicationWithTrainingProviders = _dbContext.GrantApplications
@@ -826,13 +826,7 @@ namespace CJG.Application.Services
 				.Where(x => string.IsNullOrEmpty(search) || x.FileNumber.Contains(search) || x.OrganizationLegalName != null && x.OrganizationLegalName.Contains(search))
 				.OrderBy(o => o.FileNumber);
 
-
-			var total = filtered.Count();
-			var result = filtered
-				.Skip((page - 1) * quantity)
-				.Take(quantity);
-
-			return new PageList<GrantApplication>(page, quantity, total, result.ToArray());
+			return filtered;
 		}
 
 		public PageList<GrantApplication> GetGrantApplicationsForOrg(int orgId, int page, int quantity, int grantProgramId, string search)
