@@ -51,7 +51,7 @@
                         <select class="input--large"
                                 ng-model="participant.ExpectedOutcome"
                                 ng-options="item.Key as item.Value for item in model.ExpectedOutcomes"
-                                ng-change="setExpectedTrainingOutcome(participant, participant.ExpectedOutcome)"></select>
+                                ng-change="setExpectedTrainingOutcome(participant, participant.ExpectedOutcome, '{{participant.ExpectedOutcome}}')"></select>
                     </div>
                 </td>
                 <td ng-if="model.ParticipantsEditable"></td>

@@ -50,7 +50,7 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 			Approved = participantForm.Approved;
 			ShowEligibility = showEligibility;
 
-			ExpectedOutcome = participantForm.ExpectedParticipantOutcome;
+			ExpectedOutcome = participantForm.ExpectedParticipantOutcome.HasValue ? participantForm.ExpectedParticipantOutcome.Value : 0;
 		}
 	}
 }
