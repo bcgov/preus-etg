@@ -14,6 +14,7 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 		public string PhoneNumber1 { get; set; }
 		public string PhoneExtension1 { get; set; }
 		public string PrimaryCity { get; set; }
+		public ExpectedParticipantOutcome? ExpectedOutcome { get; set; }
 		public bool ClaimReported { get; set; }
 		public bool IsIncludedInClaim { get; set; }
 		public DateTime DateAdded { get; set; }
@@ -48,6 +49,8 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 			IsLate = DateAdded > participantForm.GrantApplication.GetParticipantReportingDueDate();
 			Approved = participantForm.Approved;
 			ShowEligibility = showEligibility;
+
+			ExpectedOutcome = participantForm.ExpectedParticipantOutcome;
 		}
 	}
 }

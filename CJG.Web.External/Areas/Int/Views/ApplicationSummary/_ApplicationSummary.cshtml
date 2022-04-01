@@ -92,6 +92,24 @@
                         </div>
                     </div>
                 </div>
+                <div class="form__group">
+                    <div class="form__label">Business Website:</div>
+                    <div class="form__control">
+                        {{businessInfo.BusinessWebsite}}
+                    </div>
+                </div>
+                <div class="form__group form__group__with_html">
+                    <div class="form__label">Business Description:</div>
+                    <div class="form__control collapsed__html">
+                        <div ng-bind-html="businessInfo.BusinessDescription | unsafe"></div>
+                    </div>
+                </div>
+                <div class="form__group form__group__with_html">
+                    <div class="form__label">Business Training Relevance:</div>
+                    <div class="form__control collapsed__html">
+                        <div ng-bind-html="businessInfo.BusinessTrainingRelevance | unsafe"></div>
+                    </div>
+                </div>
             </div>
 
             <div class="col-50p">
@@ -197,6 +215,6 @@
                     </div>
                 </div>
             </div>
-            </div>
+        </div>
     </div>
 </div>

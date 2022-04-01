@@ -1,11 +1,12 @@
 ﻿@using CJG.Core.Entities
 @using CJG.Web.External.Areas.Ext.Controllers
+
 @model CJG.Web.External.Areas.Ext.Models.SidebarViewModel
 @{
     ViewBag.Title = "Application Overview";
 }
 <div class="row">
-    @Html.ActionLink("Home", nameof(HomeController.Index), nameof(HomeController).Replace("Controller", ""), null, new { @class = "link--back" })
+    @Html.ActionLink("Home", "Index", "Home", null, new { @class = "link--back" })
 </div>
 <div ng-controller="ApplicationOverviewView" ng-grant-application-id="@ViewBag.GrantApplicationId">
     <div class="row">
@@ -187,7 +188,7 @@
                                 <span class="label {{PopulateClass('Program')}}">{{PopulateText('Program')}}</span>
                             </text>
                             <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
-                                <a class="btn btn--secondary" href="/Ext/training/program/view/{{model.Id}}/{{model.TrainingProgram == null? 0 : model.TrainingProgram.Id}}">Edit</a>
+                                <a class="btn btn--secondary" href="/Ext/Training/Program/View/{{model.Id}}/{{model.TrainingProgram == null? 0 : model.TrainingProgram.Id}}">Edit</a>
                             </span>
                         </span>
                         <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
@@ -205,7 +206,7 @@
                                 <span class="label {{PopulateClass('AssociatedProvider')}}">{{PopulateText('AssociatedProvider')}}</span>
                             </text>
                             <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
-                                <a class="btn btn--secondary" href="/Ext/training/provider/view/{{model.Id}}/{{model.TrainingProvider == null? 0 : model.TrainingProvider.Id}}">Edit</a>
+                                <a class="btn btn--secondary" href="/Ext/Training/Provider/View/{{model.Id}}/{{model.TrainingProvider == null? 0 : model.TrainingProvider.Id}}">Edit</a>
                             </span>
                         </span>
                         <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>

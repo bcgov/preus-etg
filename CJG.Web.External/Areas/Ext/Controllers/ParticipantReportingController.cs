@@ -92,9 +92,38 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		}
 
 		/// <summary>
+		/// Launched when the 'Set Outcome' modal on the 'ParticipantsReport' page is clicked
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		[HttpPut]
+		[PreventSpam]
+		[ValidateRequestHeader]
+		[Route("Reporting/Participant/SetOutcome")]
+		public ActionResult SetOutcome(ParticipantViewModel model)
+		{
+			var viewModel = new ReportingViewModel();
+			try
+			{
+				var participant = _participantService.Get(model.Id);
+				participant.RowVersion = Convert.FromBase64String(model.RowVersion);
+				var grantApplication = participant.GrantApplication;
+				_participantService.UpdateExpectedOutcome(participant, model.ExpectedOutcome);
+
+				viewModel = new ReportingViewModel(grantApplication, this.HttpContext);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, viewModel);
+			}
+
+			return Json(viewModel, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
 		/// Launched when the 'Remove' link on the 'ParticipantsReport' page is clicked
 		/// </summary>
-		/// <param name="participantId"></param>
+		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[PreventSpam]

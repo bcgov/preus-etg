@@ -271,6 +271,19 @@ namespace CJG.Application.Services
 			_dbContext.Commit();
 		}
 
+
+		public void UpdateExpectedOutcome(ParticipantForm participant, ExpectedParticipantOutcome? modelExpectedOutcome)
+		{
+			var pf = _dbContext.ParticipantForms.FirstOrDefault(pf => pf.Id == participant.Id);
+			if (pf != null)
+			{
+				pf.ExpectedParticipantOutcome = modelExpectedOutcome;
+				_dbContext.Update(pf);
+			}
+
+			_dbContext.Commit();
+		}
+
 		/// <summary>
 		/// Remove the participant from the grant application.
 		/// Remove any costs associated with them.

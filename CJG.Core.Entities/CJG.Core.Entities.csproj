@@ -122,6 +122,7 @@
     <Compile Include="ClaimParticipant.cs" />
     <Compile Include="ClassificationOfInstructionalProgram.cs" />
     <Compile Include="DenialReason.cs" />
+    <Compile Include="ExpectedParticipantOutcome.cs" />
     <Compile Include="GrantStreamEligibilityAnswer.cs" />
     <Compile Include="GrantStreamEligibilityQuestion.cs" />
     <Compile Include="IPrincipalExtensions.cs" />

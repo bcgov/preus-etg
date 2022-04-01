@@ -100,6 +100,10 @@ textarea {
   min-height: 10em;
 }
 
+.textarea--medium {
+  min-height: 20em;
+}
+
 .textarea--large {
   min-height: 30em;
 }
@@ -275,6 +279,10 @@ input[type=radio] {
 
   .input--medium {
     width: 300px;
+  }
+
+  .input--large {
+    width: 525px;
   }
 
   .input--full {

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Principal;
 using System.Web;
+using System.Web.Mvc;
 using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
@@ -181,6 +182,14 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingProviders
 		public int? ParentProviderId { get; set; }
 		public bool IsServiceProvider { get; set; }
 
+		[AllowHtml]
+		[StringLength(2500, ErrorMessage = "Choice of Trainer/Program must be 2500 characters or less.")]
+		public string ChoiceOfTrainerOrProgram { get; set; }
+
+		[AllowHtml]
+		[StringLength(2500, ErrorMessage = "Alternative Training Options must be 2500 characters or less.")]
+		public string AlternativeTrainingOptions { get; set; }
+
 		public string BusinessCase { get; set; }
 		public TrainingProviderPrivateSectorValidationTypes PrivateSectorValidationType { get; set; }
 		public TrainingProviderAttachmentViewModel ProofOfQualificationsDocument { get; set; } = new TrainingProviderAttachmentViewModel(TrainingProviderAttachmentTypes.ProofOfQualifications);
@@ -188,6 +197,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingProviders
 		public TrainingProviderAttachmentViewModel CourseOutlineDocument { get; set; } = new TrainingProviderAttachmentViewModel(TrainingProviderAttachmentTypes.CourseOutline);
 
 		public int[] SelectedDeliveryMethodIds { get; set; }
+
 		#endregion
 
 		#region Constructors
@@ -422,6 +432,8 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingProviders
 				BusinessCase = "";
 			}
 
+			trainingProvider.ChoiceOfTrainerOrProgram = ChoiceOfTrainerOrProgram;
+			trainingProvider.AlternativeTrainingOptions = AlternativeTrainingOptions;
 
 			trainingProvider.BusinessCase = BusinessCase;
 

@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using CJG.Core.Entities;
-
+using CJG.Core.Interfaces.Service;
 
 namespace CJG.Web.External.Areas.Int.Models
 {
 	public class ParticipantInfoViewModel
 	{
-		#region Properties
 		public string FileNo { get; set; }
 		public string OrganizationName { get; set; }
 		public string ReportingDate { get; set; }
+		public string ExpectedTrainingOutcome { get; set; }
 		public string EmployerAdministrator { get; set; }
 		public string TrainingStartDate { get; set; }
 		public string EmployerAdministratorEmail { get; set; }
@@ -20,33 +19,34 @@ namespace CJG.Web.External.Areas.Int.Models
 		public ParticipantContactInfoViewModel ContactInfo { get; set; }
 		public ParticipantEmploymentInfoViewModel EmployerInfo { get; set; }
 		public List<ParticipantTrainingHistory> TrainingHistory { get; set; }
-		#endregion
 
-		#region Constructors
 		public ParticipantInfoViewModel(ParticipantForm participant,
-										CJG.Core.Interfaces.Service.INationalOccupationalClassificationService nationalOccupationalClassificationService,
-										CJG.Core.Interfaces.Service.IUserService userService,
-										CJG.Core.Interfaces.Service.IParticipantService participantService)
+										INationalOccupationalClassificationService nationalOccupationalClassificationService,
+										IUserService userService,
+										IParticipantService participantService)
 		{
-			this.FileNo = participant.GrantApplication.FileNumber;
-			this.OrganizationName = participant.GrantApplication.OrganizationLegalName;
+			FileNo = participant.GrantApplication.FileNumber;
+			OrganizationName = participant.GrantApplication.OrganizationLegalName;
+
 			var daysLate = (int)(participant.GrantApplication.StartDate - participant.DateAdded).TotalDays;
-			this.ReportingDate = String.Format("{0:yyyy-MM-dd} {1}", participant.DateAdded.Date, (daysLate > 5) ? "" : string.Format("(Late {0} days)", daysLate));
+			ReportingDate = $"{participant.DateAdded.Date:yyyy-MM-dd} {(daysLate > 5 ? "" : $"(Late {daysLate} days)")}";
+			ExpectedTrainingOutcome = participant.ExpectedParticipantOutcome.HasValue ? participant.ExpectedParticipantOutcome.Value.GetDescription() : string.Empty;
 			participant.GrantApplication.Organization.Users.Any();
+
 			var businessContact = participant.GrantApplication.BusinessContactRoles.FirstOrDefault(c => c.GrantApplicationId > 0);
 			var employerAdministrator = userService.GetUser(businessContact.UserId);
 			if (employerAdministrator != null)
 			{
-				this.EmployerAdministrator = string.Format("{0} {1}", employerAdministrator.FirstName, employerAdministrator.LastName);
-				this.EmployerAdministratorEmail = employerAdministrator.EmailAddress;
-				this.EmployerAdministratorPhone = employerAdministrator.PhoneNumber + (string.IsNullOrWhiteSpace(employerAdministrator.PhoneNumber) ? "" : employerAdministrator.PhoneExtension);
+				EmployerAdministrator = $"{employerAdministrator.FirstName} {employerAdministrator.LastName}";
+				EmployerAdministratorEmail = employerAdministrator.EmailAddress;
+				EmployerAdministratorPhone = employerAdministrator.PhoneNumber + (string.IsNullOrWhiteSpace(employerAdministrator.PhoneNumber) ? "" : employerAdministrator.PhoneExtension);
 			}
-			this.TrainingStartDate = String.Format("{0:yyyy-MM-dd}", participant.GrantApplication.StartDate.ToLocalMorning());
-			this.TotalParticipants = participant.GrantApplication.ParticipantForms.Count;
-			this.ContactInfo = new ParticipantContactInfoViewModel(participant);
-			this.EmployerInfo = new ParticipantEmploymentInfoViewModel(participant, nationalOccupationalClassificationService);
+			TrainingStartDate = $"{participant.GrantApplication.StartDate.ToLocalMorning():yyyy-MM-dd}";
+			TotalParticipants = participant.GrantApplication.ParticipantForms.Count;
+			ContactInfo = new ParticipantContactInfoViewModel(participant);
+			EmployerInfo = new ParticipantEmploymentInfoViewModel(participant, nationalOccupationalClassificationService);
 
-			this.TrainingHistory = new List<ParticipantTrainingHistory>();
+			TrainingHistory = new List<ParticipantTrainingHistory>();
 
 			var pifs = participantService.GetParticipantFormsBySIN(participant.SIN);
 
@@ -68,7 +68,7 @@ namespace CJG.Web.External.Areas.Int.Models
 					//do not show grant apps that have not yet been submitted
 					//grant apps get a filenumber when they are submitted
 					if (t.GrantApplication.FileNumber != null){
-						this.TrainingHistory.Add(new ParticipantTrainingHistory(t, reimbursement, amtPaid));
+						TrainingHistory.Add(new ParticipantTrainingHistory(t, reimbursement, amtPaid));
 					}					
 				}
 			}
@@ -76,10 +76,8 @@ namespace CJG.Web.External.Areas.Int.Models
 
 		public ParticipantInfoViewModel()
 		{
-			this.ContactInfo = new ParticipantContactInfoViewModel();
-			this.EmployerInfo = new ParticipantEmploymentInfoViewModel();
+			ContactInfo = new ParticipantContactInfoViewModel();
+			EmployerInfo = new ParticipantEmploymentInfoViewModel();
 		}
-		#endregion
 	}
-
 }

@@ -194,6 +194,16 @@ namespace CJG.Core.Entities
 		public string ChangeRequestReason { get; set; }
 
 		/// <summary>
+		/// Applicant-supplied HTML content about Alternative Training Options
+		/// </summary>
+		public string AlternativeTrainingOptions { get; set; }
+
+		/// <summary>
+		/// Applicant-supplied HTML content about Alternative Training Options
+		/// </summary>
+		public string ChoiceOfTrainerOrProgram { get; set; }
+
+		/// <summary>
 		/// get - All the associated training programs.
 		/// The relationship is many-to-many, but in practice it's one training program with many training providers.
 		/// </summary>
@@ -265,6 +275,7 @@ namespace CJG.Core.Entities
 				}
 			}
 		}
+
 		#endregion
 
 		#region Constructors

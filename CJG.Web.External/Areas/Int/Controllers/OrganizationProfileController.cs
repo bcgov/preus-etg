@@ -17,12 +17,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 	[RoutePrefix("Admin")]
 	public class OrganizationProfileController : BaseController
 	{
-		#region Variables
 		private readonly IOrganizationService _organizationService;
 		private readonly IUserService _userService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a <paramtyperef name="OrganizationProfileController"/> object.
 		/// </summary>
@@ -37,9 +34,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_organizationService = organizationService;
 			_userService = controllerService.UserService;
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
 		/// Returns a view that provides a way to search for organizations and set their profile administrators.
 		/// </summary>
@@ -139,7 +134,5 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				return Json(model, JsonRequestBehavior.AllowGet);
 			}
 		}
-
-		#endregion
 	}
 }
