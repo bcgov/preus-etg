@@ -111,9 +111,10 @@
                     </div>
                 </div>
             </div>
+
             <div class="button-group" ng-if="model.ApplicationStateInternal === @((int)CJG.Core.Entities.ApplicationStateInternal.Draft)">
                 @Html.Button("Cancel", new { @class = "btn btn--secondary", @onclick = "window.location='" + Url.Action("ApplicationOverviewView", "Application", new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'" })
-                @Html.Button("Done", new { @class = "btn btn--primary btn--forward", @onclick = "window.location='" + Url.Action("ApplicationOverviewView", "Application", new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'" })
+                <a class="btn btn--primary btn--forward" href="/Ext/Application/Overview/View/@((int)ViewBag.GrantApplicationId)" ng-disabled="!participantOutcomesReported()">Done</a>
             </div>
         </div>
     </div>

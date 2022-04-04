@@ -107,6 +107,12 @@ app.controller('ParticipantReportingView', function ($scope, $attrs, $controller
     return toggleParticipants([ participant.Id ], participant.IsIncludedInClaim);
   }
 
+  $scope.participantOutcomesReported = function () {
+    if ($scope.model.Participants === null)
+      return true;
+
+    return $scope.model.Participants.filter(p => p.ExpectedOutcome === 0).length === 0;
+  }
   /**
    * Shows confirmation prompt and deletes participant form.
    * @function removeParticipant

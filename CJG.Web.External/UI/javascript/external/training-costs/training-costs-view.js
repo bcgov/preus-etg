@@ -137,7 +137,7 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
         $scope.model.EligibleCosts.splice(index, 1);
         calculateTotals();
       })
-      .catch(angular.noop); x
+      .catch(angular.noop);
   }
 
   $scope.cancelEligibleCost = function () {

@@ -631,13 +631,12 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
 
-				if(grantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
+				if (grantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
                 {
 					if (grantApplication.RequireAllParticipantsBeforeSubmission != grantApplication.GrantOpening.GrantStream.RequireAllParticipantsBeforeSubmission)
                     {
-						//RequirePIFs flag in this grant application is not in sync with the GrantStream
-
-						if(grantApplication.ApplicationStateExternal == ApplicationStateExternal.NotStarted || grantApplication.ApplicationStateExternal == ApplicationStateExternal.Incomplete)
+						// RequirePIFs flag in this grant application is not in sync with the GrantStream
+						if (grantApplication.ApplicationStateExternal == ApplicationStateExternal.NotStarted || grantApplication.ApplicationStateExternal == ApplicationStateExternal.Incomplete)
 						{
 							grantApplication.RequireAllParticipantsBeforeSubmission = grantApplication.GrantOpening.GrantStream.RequireAllParticipantsBeforeSubmission;
 						}

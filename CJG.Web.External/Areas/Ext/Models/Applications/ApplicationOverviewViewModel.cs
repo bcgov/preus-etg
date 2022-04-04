@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
-using CJG.Web.External.Areas.Ext.Models.ParticipantReporting;
 
 namespace CJG.Web.External.Areas.Ext.Models.Applications
 {
