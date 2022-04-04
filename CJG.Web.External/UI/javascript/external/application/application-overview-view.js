@@ -94,9 +94,10 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
         return populateTypes.NOTSTART;
       }
     } else if (type === types.PIF) {
+
       // Grey No participants yet, Yellow some participants, Green all participants have signed up
-      if (!$scope.model.Participants || $scope.model.Participants.length == 0) {
-        if ($scope.model.ProgramType === 2) {
+      if (!$scope.model.Participants || $scope.model.Participants.length === 0) {
+        if ($scope.model.ProgramType === 2) {  // CWRG
           return populateTypes.OPTIONAL;
         } else {
           return populateTypes.NOTSTART;
@@ -106,6 +107,10 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
         return populateTypes.INPROGRESS;
       }
       else {
+        const totalNoOutcome = $scope.model.Participants.filter(p => p.ExpectedOutcome === 0).length;
+        if (totalNoOutcome > 0)
+          return populateTypes.INPROGRESS;
+
         return populateTypes.COMPLETE;
       }
     } else if (type === types.BUSINESSCASE) {
