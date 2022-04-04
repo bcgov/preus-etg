@@ -264,7 +264,7 @@
                                                 Model.SideBarLinks[SidebarLinkType.ViewCompletionReport].IsHighlighted ? highlighedAttributes : null)
                     </div>
                 }
-                
+
                 @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.AlternateContact) && Model.GrantApplication.IsWDAService())
                 {
                     <div>
@@ -308,8 +308,16 @@
                         });
                     </script>
                 }
+
+
+
             </div>
 
         </div>
     }
+
+    <div>
+        <a class="btn btn--secondary" href="/Ext/Application/Duplicate/{{model.Id}}" value="Duplicate">Duplicate Application</a>
+    </div>
+    
 </div>

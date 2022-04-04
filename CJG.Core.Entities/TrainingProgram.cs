@@ -457,7 +457,7 @@ namespace CJG.Core.Entities
 		}
 
 
-		public void Clone(TrainingProgram tp)
+		public void Clone(TrainingProgram tp,  bool cloneTrainingProviders = true)
 		{
 			InDemandOccupationId = tp.InDemandOccupationId;
 			SkillLevelId = tp.SkillLevelId;
@@ -495,9 +495,12 @@ namespace CJG.Core.Entities
 				UnderRepresentedGroups.Add(grp);
 			}
 
-			foreach(var provider in tp.TrainingProviders)
+			if (cloneTrainingProviders)
 			{
-				TrainingProviders.Add(provider);
+				foreach (var provider in tp.TrainingProviders)
+				{
+					TrainingProviders.Add(provider);
+				}
 			}
 		}
 		#endregion

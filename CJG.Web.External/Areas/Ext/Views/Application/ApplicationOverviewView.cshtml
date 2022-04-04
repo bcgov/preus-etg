@@ -254,11 +254,8 @@
             <p class="notice notice--icon" ng-if="(model.CanSubmit && !model.PIFCompletionConfirmed)">
                 You must ensure the number of Participant Information Forms submitted ({{model.Participants.length}}) is equal to the number of participants ({{model.MaxParticipantsAllowed}}) that will receive training.
             </p>
+            
             <div class="button-group">
-                <span ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
-                    <a class="btn btn--primary" href="/Ext/Application/Duplicate/{{model.Id}}" value="Duplicate">Duplicate Application</a>
-                </span>
-
                 <span ng-if="model.ProgramType == @((int)ProgramTypes.WDAService) && model.ApplicationStateExternal == @((int)ApplicationStateExternal.ApplicationWithdrawn)">
                     <a class="btn btn--primary" href="/Ext/Application/Resume/{{model.Id}}" value="Resume">Resume Application</a>
                 </span>

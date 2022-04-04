@@ -1264,87 +1264,83 @@ namespace CJG.Application.Services
 							firstEligibleCostBreakdowns = newBD.Id;
 						}
 					}
-
-					//TODO: These should be DependencyResolved properly rather than newing them up
-					TrainingProviderService tps = new TrainingProviderService(this, null, null, null, _noteService, _dbContext, _httpContext, _logger);
-
-					foreach (var tp in origEligibleCost.TrainingProviders)
-					{
-						TrainingProvider newTrainingProvider = new TrainingProvider();
-						newTrainingProvider.Clone(tp);
-
-						tp.TrainingProviderState = TrainingProviderStates.Incomplete;
-						//clone the documents
-						if (tp.BusinessCase != null)
-						{
-							Attachment doc = new Attachment(tp.BusinessCaseDocument);
-							attachmentService.Add(doc);
-							newTrainingProvider.BusinessCaseDocument = doc;
-							newTrainingProvider.BusinessCaseDocumentId = doc.Id;
-						}
-
-						if (tp.ProofOfQualificationsDocument != null)
-						{
-							Attachment doc = new Attachment(tp.ProofOfQualificationsDocument);
-							attachmentService.Add(doc);
-							newTrainingProvider.ProofOfQualificationsDocument = doc;
-							newTrainingProvider.ProofOfQualificationsDocumentId = doc.Id;
-						}
-
-						if (tp.CourseOutlineDocument != null)
-						{
-							Attachment doc = new Attachment(tp.CourseOutlineDocument);
-							attachmentService.Add(doc);
-							newTrainingProvider.CourseOutlineDocument = doc;
-							newTrainingProvider.CourseOutlineDocumentId = doc.Id;
-						}
-
-						newTrainingProvider.TrainingAddress = new ApplicationAddress(tp.TrainingAddress);
-						newTrainingProvider.TrainingProviderInventoryId = null;
-
-						newTrainingProvider.GrantApplication = grantApp;
-						newTrainingProvider.GrantApplicationId = grantApp.Id;
-						newTrainingProvider.EligibleCost = ec;
-						newTrainingProvider.EligibleCostId = ec.Id;
-
-						//add the training provider
-						tps.Add(newTrainingProvider);
-					}
 				}
 			}
 
-			if (originalApp.TrainingPrograms != null)
+
+			//******************************************************************************************************************************
+			//Training Providers & Training Programs
+			
+			TrainingProviderService tps = new TrainingProviderService(this, null, null, null, _noteService, _dbContext, _httpContext, _logger);
+			TrainingProgramService trainingProgramService = new TrainingProgramService(this, _grantAgreementService, _noteService, _dbContext, _httpContext, _logger);
+
+			//add the training Programs
+			foreach (var trainingProgram in originalApp.TrainingPrograms)
 			{
-				if (originalApp.TrainingPrograms.Count > 0)
+				var newTrainingProgram = new TrainingProgram(grantApp);
+
+				newTrainingProgram.Clone(trainingProgram, false);
+
+				newTrainingProgram.TrainingProgramState = TrainingProgramStates.Incomplete;
+				newTrainingProgram.StartDate = grantApp.StartDate;
+				newTrainingProgram.EndDate = grantApp.EndDate;
+
+				trainingProgramService.Add(newTrainingProgram);
+
+				foreach(var trainingProvider in trainingProgram.TrainingProviders)
 				{
-					//TrainingPrograms
-					TrainingProgramService trainingProgramService = new TrainingProgramService(this, _grantAgreementService, _noteService, _dbContext, _httpContext, _logger);
-					foreach (var trainingProgram in originalApp.TrainingPrograms)
+					TrainingProvider newTrainingProvider = new TrainingProvider();
+					newTrainingProvider.Clone(trainingProvider);
+
+					trainingProvider.TrainingProviderState = TrainingProviderStates.Incomplete;
+
+					if(trainingProvider.TrainingProviderAddress != null)
 					{
-						//clone training program
-						var tp = new TrainingProgram(grantApp);
+						newTrainingProvider.TrainingProviderAddress = new ApplicationAddress(trainingProvider.TrainingProviderAddress);
+					}					
 
-						tp.Clone(trainingProgram);
-
-						tp.TrainingProgramState = TrainingProgramStates.Incomplete;
-						tp.StartDate = grantApp.StartDate;
-						tp.EndDate = grantApp.EndDate;
-
-						foreach (var provider in tp.TrainingProviders)
-						{
-							provider.TrainingProviderState = TrainingProviderStates.Incomplete;
-						}
-
-						if (firstEligibleCostBreakdowns > 0)
-						{
-							tp.EligibleCostBreakdownId = firstEligibleCostBreakdowns;
-						}
-
-						//add trainingprogram to the database
-						trainingProgramService.Add(tp);
+					//clone the documents
+					if (trainingProvider.BusinessCaseDocument != null)
+					{
+						Attachment doc = new Attachment(trainingProvider.BusinessCaseDocument);
+						attachmentService.Add(doc);
+						newTrainingProvider.BusinessCaseDocument = doc;
+						newTrainingProvider.BusinessCaseDocumentId = doc.Id;
 					}
+
+					if (trainingProvider.ProofOfQualificationsDocument != null)
+					{
+						Attachment doc = new Attachment(trainingProvider.ProofOfQualificationsDocument);
+						attachmentService.Add(doc);
+						newTrainingProvider.ProofOfQualificationsDocument = doc;
+						newTrainingProvider.ProofOfQualificationsDocumentId = doc.Id;
+					}
+
+					if (trainingProvider.CourseOutlineDocument != null)
+					{
+						Attachment doc = new Attachment(trainingProvider.CourseOutlineDocument);
+						attachmentService.Add(doc);
+						newTrainingProvider.CourseOutlineDocument = doc;
+						newTrainingProvider.CourseOutlineDocumentId = doc.Id;
+					}
+
+					if (trainingProvider.TrainingAddress != null)
+					{
+						newTrainingProvider.TrainingAddress = new ApplicationAddress(trainingProvider.TrainingAddress);
+					}
+					
+					newTrainingProvider.TrainingProviderInventoryId = null;
+
+					newTrainingProvider.GrantApplication = grantApp;
+					newTrainingProvider.GrantApplicationId = grantApp.Id;
+
+					//add the training provider
+					tps.Add(newTrainingProvider);
+
+					newTrainingProgram.TrainingProviders.Add(newTrainingProvider);
 				}
-			}
+				trainingProgramService.Commit();
+			}		
 
 			return grantApp.Id;
 		}
