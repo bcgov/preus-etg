@@ -107,6 +107,12 @@ app.controller('ParticipantReportingView', function ($scope, $attrs, $controller
     return toggleParticipants([ participant.Id ], participant.IsIncludedInClaim);
   }
 
+  $scope.participantOutcomesReported = function () {
+    if ($scope.model.Participants === null)
+      return true;
+
+    return $scope.model.Participants.filter(p => p.ExpectedOutcome === 0).length === 0;
+  }
   /**
    * Shows confirmation prompt and deletes participant form.
    * @function removeParticipant
@@ -121,9 +127,25 @@ app.controller('ParticipantReportingView', function ($scope, $attrs, $controller
           method: 'PUT',
           data: participant,
           set: 'model'
-        })
+        });
       })
       .catch(angular.noop);
+  }
+
+  $scope.setExpectedTrainingOutcome = function (participant, outcome, oldValue) {
+    let selectedOutcome = $scope.model.ExpectedOutcomes.filter(a => a.Key === participant.ExpectedOutcome).pop().Value;
+    return $scope.confirmDialog('Set Training Outcome', '<p>Set training outcome for ' + participant.FirstName + ' ' + participant.LastName + ' to <strong>' + selectedOutcome + '</strong>?</p>')
+      .then(function () {
+        return $scope.load({
+          url: '/Ext/Reporting/Participant/SetOutcome',
+          method: 'PUT',
+          data: participant,
+          set: 'model'
+        });
+      })
+      .catch(function () {
+        participant.ExpectedOutcome = parseInt(oldValue);
+      });
   }
 
   init();

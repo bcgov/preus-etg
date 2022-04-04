@@ -29,6 +29,9 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingProviders
 		public TrainingOutsideBCListViewModel TrainingOutsideBcListViewModel { get; set; }
 		public bool RequiresTrainingProviderValidation { get; set; }
 
+		public string AlternativeTrainingOptions { get; set; }
+		public string ChoiceOfTrainerOrProgram { get; set; }
+
 		public bool CanValidateTrainingProvider { get; set; }
 		public ProgramTypes ProgramType { get; set; }
 
@@ -60,6 +63,9 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingProviders
 			RequiresTrainingProviderValidation = trainingProvider.TrainingProviderInventoryId == null;
 			CanValidateTrainingProvider = user.CanPerformAction(trainingProvider, ApplicationWorkflowTrigger.ValidateTrainingProvider);
 
+			AlternativeTrainingOptions = trainingProvider.AlternativeTrainingOptions;
+			ChoiceOfTrainerOrProgram = trainingProvider.ChoiceOfTrainerOrProgram;
+			
 			if (trainingProvider.CourseOutlineDocument != null)
 				CourseOutlineDocument = new AttachmentViewModel(trainingProvider.CourseOutlineDocument);
 

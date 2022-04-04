@@ -364,6 +364,21 @@ $int-header-height: 32px;
   }
 }
 
+.notes-list__preview {
+  z-index: 999999;
+  position: absolute;
+  max-width: 450px;
+  min-width: 300px;
+  max-height: 400px;
+  overflow: hidden;
+  border: 1px solid darken(color('border'), 15%);
+  background-color: #efefef;
+  right: 285px;
+  top: 150px;
+  padding: 10px;
+  box-shadow: 0px 5px 8px -3px #666;
+}
+
 .notes-list__caption {
   border-bottom: 1px solid color('border');
   flex-basis: 20%;
@@ -392,6 +407,10 @@ $int-header-height: 32px;
   flex-basis: 80%;
   max-width: 80%;
   padding: 5px;
+
+  p {
+      margin-bottom: 0.5rem;
+  }
 }
 
 .notes-list__attachment {
@@ -405,6 +424,12 @@ $int-header-height: 32px;
     width: 16px;
     height: 16px;
     text-indent: -9999px;
+  }
+}
+
+.collapsed__html {
+  p:last-child {
+      margin-bottom: 0;
   }
 }
 

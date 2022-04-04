@@ -1,3 +1,5 @@
+app.filter('unsafe', function ($sce) { return $sce.trustAsHtml; });
+
 app.controller('ApplicationNotes', function ($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
   $scope.section = {
     name: 'ApplicationNotes',
@@ -76,6 +78,7 @@ app.controller('ApplicationNotes', function ($scope, $attrs, $controller, $timeo
     if ($scope.section.grantApplicationId == null) {
       return;
     }
+
     return $scope.load({
       url: '/Int/Application/Notes/' + $scope.section.grantApplicationId,
       set: 'model'
@@ -180,13 +183,13 @@ app.controller('ApplicationNotes', function ($scope, $attrs, $controller, $timeo
    * @param {any} note
    * @returns {Promise}
    */
-  $scope.openNote = function ($event, note) {
+  $scope.openNote = function($event, note) {
     return showDialog(note)
-      .then(function (data) {
+      .then(function(data) {
         if (data.Id) {
           return $scope.sync(data, note);
         } else {
-          return $timeout(function () {
+          return $timeout(function() {
             var index = $scope.model.Notes.indexOf(note);
             $scope.model.Notes.splice(index, 1);
             index = $scope.model.filterNotes.indexOf(note);
@@ -196,6 +199,10 @@ app.controller('ApplicationNotes', function ($scope, $attrs, $controller, $timeo
       })
       .catch(angular.noop);
     $event.stopPropagation();
+  }
+
+  $scope.toggleNote = function ($event, note, toggleState) {
+      note.ShowNote = toggleState;
   }
 
   /**
@@ -242,6 +249,7 @@ app.controller('ApplicationNotes', function ($scope, $attrs, $controller, $timeo
     }
   }
 });
+
 app.filter('filterExistNoteTypes', function () {
   return function (item, noteTypes, notes) {
    if (noteTypes == undefined || notes == undefined) {

@@ -27,7 +27,7 @@ namespace CJG.Web.External.Areas.Int.Models.Notes
 			RowVersion = Convert.ToBase64String(grantApplication.RowVersion);
 			Notes = grantApplication.Notes
 				.OrderByDescending(n => n.DateAdded)
-				.Select(n => new NoteViewModel(n, user, false, true))
+				.Select(n => new NoteViewModel(n, user, false))
 				.ToArray();
 			MaxUploadSize = int.Parse(ConfigurationManager.AppSettings["MaxUploadSizeInBytes"]);
 			PermittedAttachmentTypes = ConfigurationManager.AppSettings["PermittedAttachmentTypes"];

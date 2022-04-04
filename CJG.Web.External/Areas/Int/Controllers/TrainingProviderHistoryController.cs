@@ -1,4 +1,5 @@
 ﻿using CJG.Application.Services;
+using CJG.Core.Entities.Helpers;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
 using CJG.Web.External.Areas.Int.Models.TrainingProviders;
@@ -96,18 +97,34 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[HttpGet, Route("History/Search/{trainingProviderInventoryId}/{page}/{quantity}")]
 		[ValidateRequestHeader]
 		[AuthorizeAction(Privilege.IA1)]
-		public JsonResult GetTrainingProviderGrantFileHistory(int trainingProviderInventoryId, int page, int quantity, string search)
+		public JsonResult GetTrainingProviderGrantFileHistory(int trainingProviderInventoryId, int page, int quantity, string search, string sortby, bool sortDesc)
 		{
 			var model = new BaseViewModel();
 			try
 			{
-				var grantApplications = _grantApplicationService.GetGrantApplications(trainingProviderInventoryId, page, quantity, search);
+				var grantApplications = _grantApplicationService.GetGrantApplications(trainingProviderInventoryId, search);
+				var orderby = "FileNumber desc";
+
+				if (string.IsNullOrEmpty(sortby) == false)
+				{
+					orderby = sortDesc ? sortby + " desc" : sortby + " asc";
+				}
+
+				var trainingProviderGrants = grantApplications.ToList().Select(o => new TrainingProviderGrantFileHistoryDataTableModel(o)).AsQueryable();
+
+				var filtered = trainingProviderGrants
+					.OrderByProperty(orderby)
+					.Skip((page - 1) * quantity)
+					.Take(quantity)
+					.ToArray();
+
 				var result = new
 				{
-					RecordsFiltered = grantApplications.Items.Count(),
-					RecordsTotal = grantApplications.Total,
-					Data = grantApplications.Items.Select(o => new TrainingProviderGrantFileHistoryDataTableModel(o)).ToArray()
+					RecordsFiltered = filtered.Count(),
+					RecordsTotal = trainingProviderGrants.Count(),
+					Data = filtered
 				};
+
 				return Json(result, JsonRequestBehavior.AllowGet);
 			}
 			catch (Exception ex)

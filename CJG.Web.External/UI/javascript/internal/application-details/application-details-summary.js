@@ -58,6 +58,19 @@ app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $tim
   }
 
   /**
+   * Make AJAX request for assessors data
+   * @function loadAssessors
+   * @returns {Promise}
+   **/
+  function loadBusinessInfo() {
+    return $scope.load({
+      url: '/Int/Application/BusinessInfo/' + $scope.parent.grantApplicationId,
+      set: 'businessInfo',
+      condition: !$scope.businessInfo
+    });
+  }
+
+  /**
    * Make AJAX request for risk classifications
    * @function loadRiskClassifications
    * @returns {Promise}
@@ -122,6 +135,7 @@ app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $tim
   $scope.init = function() {
     return Promise.all([
       loadAssessors(),
+      loadBusinessInfo(),
       loadRiskClassifications(),
       loadDeliveryPartners(),
       loadDeliveryPartnerServices()
@@ -161,7 +175,6 @@ app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $tim
     }
     return;
   }
-
 
   /**
    * Open the modal file uploaded.

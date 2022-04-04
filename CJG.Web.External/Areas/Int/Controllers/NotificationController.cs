@@ -545,7 +545,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		private NotificationQueue GenerateNotification(NotificationQueuePreviewModel model)
 		{
 			var data = model.GenerateTestEntities(User, _userService, _grantProgramService, _fiscalYearService);
-
+			
 			return _notificationService.GenerateNotificationMessage(data.GrantApplication, data.Applicant,
 				new NotificationType(model.NotificationTriggerId, model.Name, model.Description,
 				new NotificationTemplate(model.Name ?? "N/A", model.Subject ?? "N/A", model.Body ?? "N/A")));

@@ -79,7 +79,7 @@ app.controller('NotificationType', function ($scope, $attrs, $controller, uiTiny
       condition: $scope.ngDialogData.NotificationType.Id && $scope.ngDialogData.NotificationType.Id != 0
     })
       .then(function () {
-        console.debug("Success: NotificationType");
+        //console.debug("Success: NotificationType");
         // open rules tab by default
         $scope.openTab('rules-block');
         document.getElementById("rules-tab").className += " active";

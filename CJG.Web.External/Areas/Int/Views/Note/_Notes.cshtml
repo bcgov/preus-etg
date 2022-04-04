@@ -16,15 +16,16 @@
     </div>
     <div class="notes-list">
         <div ng-repeat="note in model.filterNotes">
-            <div class="notes-list__item" ng-click="openNote($event, note);" title="{{note.Caption}}">
+            <div class="notes-list__item" ng-click="openNote($event, note);" @*title="{{note.Caption}}"*@ ng-mouseenter="toggleNote($event, note, true)" ng-mouseleave="toggleNote($event, note, false)">
                 <div class="notes-list__caption"><abbr title={{note.NoteTypeDescription}}>{{note.NoteTypeCaption}}</abbr></div>
                 <div class="notes-list__date">{{toPST(note.DateAdded, 'YYYY-MM-DD h:mm:ss a')}}</div>
                 <div class="notes-list__owner" ng-if="note.CreatorName">{{note.CreatorName}}</div>
-                <div class="notes-list__content" ng-bind-html="note.Content"></div>
+                <div class="notes-list__content" ng-bind-html="note.Content | unsafe"></div>
                 <div class="notes-list__attachment" ng-if="note.AttachmentId">
                     <a class="link" title="download" ng-click="downloadAttachment($event, note.Id, note.AttachmentId)">{{note.AttachmentFileName}}</a>
                 </div>
             </div>
+            <div class="notes-list__preview" ng-show="note.ShowNote" ng-bind-html="note.Caption | unsafe"></div>
         </div>
     </div>
 

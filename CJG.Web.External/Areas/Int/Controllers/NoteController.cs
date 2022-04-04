@@ -145,12 +145,13 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Update the note in the datasource.
 		/// </summary>
-		/// <param name="viewModel"></param>
+		/// <param name="model"></param>
 		/// <param name="file"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[PreventSpam]
 		[ValidateRequestHeader]
+		[ValidateInput(false)]  // We're expecting HTML, so this needs to be here. Not sure why actions like NotificationController don't need this tag.
 		[Route("Application/Note")]
 		public JsonResult UpdateNote(Models.Notes.NoteViewModel model, HttpPostedFileBase file)
 		{
@@ -206,7 +207,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 
 			// Replace the new lines when reloading the note after edit
-			model.Content = model.Content.Replace(Environment.NewLine, "<br />");
+			//model.Content = model.Content.Replace(Environment.NewLine, "<br />");
 
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
@@ -220,6 +221,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[HttpPost]
 		[PreventSpam]
 		[ValidateRequestHeader]
+		[ValidateInput(false)]  // We're expecting HTML, so this needs to be here. Not sure why actions like NotificationController don't need this tag.
 		[Route("Application/Note")]
 		public JsonResult AddNote(Models.Notes.NoteViewModel model, HttpPostedFileBase file)
 		{
@@ -251,7 +253,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 
 			// Replace the new lines when reloading the note after edit
-			model.Content = model.Content.Replace(Environment.NewLine, "<br />");
+			//model.Content = model.Content.Replace(Environment.NewLine, "<br />");
 
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}

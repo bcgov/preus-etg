@@ -72,6 +72,31 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		}
 
 		/// <summary>
+		/// Get the business information for the application details view.
+		/// </summary>
+		/// <param name="grantApplicationId"></param>
+		/// <returns></returns>
+		[HttpGet]
+		[Route("Application/BusinessInfo/{grantApplicationId}")]
+		public JsonResult GetBusinessInfo(int grantApplicationId)
+		{
+			var model = new ApplicationBusinessViewModel();
+			try
+			{
+				var grantApplication = _grantApplicationService.Get(grantApplicationId);
+				model.BusinessWebsite = grantApplication.Organization.BusinessWebsite;
+				model.BusinessDescription = grantApplication.Organization.BusinessDescription;
+				model.BusinessTrainingRelevance = grantApplication.Organization.BusinessTrainingRelevance;
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex);
+			}
+
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
 		/// Get an array of delivery programs.
 		/// </summary>
 		/// <param name="grantProgramId"></param>
@@ -141,7 +166,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Update the summary information in the datasource.
 		/// </summary>
-		/// <param name="model"></param>
+		/// <param name="summary"></param>
+		/// <param name="file"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[PreventSpam]
@@ -154,7 +180,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				model = Newtonsoft.Json.JsonConvert.DeserializeObject<ApplicationSummaryViewModel>(summary);
 
-				GrantApplication grantApplication = _grantApplicationService.Get(model.Id);
+				var grantApplication = _grantApplicationService.Get(model.Id);
 				grantApplication.RowVersion = Convert.FromBase64String(model.RowVersion);
 
 				bool deliveryDatesModified = (model.DeliveryStartDate.ToLocalTime().Date != grantApplication.StartDate.ToLocalTime().Date || model.DeliveryEndDate.ToLocalTime().Date != grantApplication.EndDate.ToLocalTime().Date);
@@ -192,28 +218,29 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 						if (grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId != ProgramTypes.EmployerGrant)
 						{
-							DateTime? lastestStartTime = null;
-							DateTime? earlistEndTime = null;
+							DateTime? latestStartTime = null;
+							DateTime? earliestEndTime = null;
 							foreach (TrainingProgram tp in grantApplication.TrainingPrograms)
 							{
-								if (lastestStartTime == null)
+								if (latestStartTime == null)
 								{
-									lastestStartTime = tp.StartDate;
+									latestStartTime = tp.StartDate;
 								}
-								if (earlistEndTime == null)
+								if (earliestEndTime == null)
 								{
-									earlistEndTime = tp.EndDate;
+									earliestEndTime = tp.EndDate;
 								}
-								if (lastestStartTime > tp.StartDate)
+								if (latestStartTime > tp.StartDate)
 								{
-									lastestStartTime = tp.StartDate;
+									latestStartTime = tp.StartDate;
 								}
-								if (earlistEndTime < tp.EndDate)
+								if (earliestEndTime < tp.EndDate)
 								{
-									earlistEndTime = tp.EndDate;
+									earliestEndTime = tp.EndDate;
 								}
 							}
-							if (grantApplication.StartDate > lastestStartTime || grantApplication.EndDate < earlistEndTime)
+
+							if (grantApplication.StartDate > latestStartTime || grantApplication.EndDate < earliestEndTime)
 							{
 								throw new InvalidOperationException("Skills training dates do not fall within your delivery period and will need to be rescheduled. Make sure all your skills training dates are accurate to your plan.");
 							}

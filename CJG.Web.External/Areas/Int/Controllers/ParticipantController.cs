@@ -8,7 +8,6 @@ using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using System;
 using System.Linq;
-using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
@@ -127,7 +126,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 			return View(model);
 		}
-
 
 		[HttpPut]
 		[PreventSpam]

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using CJG.Application.Services;
@@ -115,6 +116,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					trainingProvider = _trainingProviderService.Get(trainingProviderId);
 				}
 				viewModel = new TrainingProviderViewModel(trainingProvider);
+				viewModel.AlternativeTrainingOptions = trainingProvider.AlternativeTrainingOptions;
+				viewModel.ChoiceOfTrainerOrProgram = trainingProvider.ChoiceOfTrainerOrProgram;
 			}
 			catch (Exception ex)
 			{
@@ -132,6 +135,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		[HttpPost]
 		[PreventSpam]
 		[ValidateRequestHeader]
+		[ValidateInput(false)]   // We're expecting HTML, so this needs to be here.
 		[Route("Training/Provider")]
 		public JsonResult AddTrainingProvider(HttpPostedFileBase[] files, string component)
 		{
@@ -228,11 +232,11 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		[HttpPut]
 		[PreventSpam]
 		[ValidateRequestHeader]
+		[ValidateInput(false)]   // We're expecting HTML, so this needs to be here.
 		[Route("Training/Provider")]
 		public JsonResult UpdateTrainingProvider(HttpPostedFileBase[] files, string component)
 		{
 			var model = new TrainingProviderViewModel();
-			//var grantApplication = _grantApplicationService.Get(model.GrantApplicationId);
 
 			try
 			{

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Principal;
+using System.Web.Mvc;
 using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Web.External.Models.Shared;
@@ -22,6 +23,7 @@ namespace CJG.Web.External.Areas.Int.Models.Notes
 		public string CreatorName { get; set; }
 		public DateTime DateAdded { get; set; }
 
+		[AllowHtml]
 		[Required(ErrorMessage = "Message is required.")]
 		public string Content { get; set; }
 
@@ -33,6 +35,7 @@ namespace CJG.Web.External.Areas.Int.Models.Notes
 
 		public bool IsCreator { get; set; }
 		public bool AllowEdit { get; set; }
+		public bool ShowNote { get; set; }  // Used in Front End
 
 		public NoteViewModel()
 		{
