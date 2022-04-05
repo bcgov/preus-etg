@@ -110,6 +110,18 @@
                         <div ng-bind-html="businessInfo.BusinessTrainingRelevance | unsafe"></div>
                     </div>
                 </div>
+                <div class="form__group">
+                    <div class="form__label">Business License Documents:</div>
+                    <div class="form__control">
+                        <div ng-if="businessInfo.BusinessLicenseDocumentAttachments">
+                            <div style="margin-bottom: 5px;" ng-repeat="attachment in businessInfo.BusinessLicenseDocumentAttachments">
+                                <a class="link" ng-click="downloadBusinessLicense(attachment.Id)">{{attachment.FileName}}</a>
+                                <br/>
+                                {{attachment.Description}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="col-50p">

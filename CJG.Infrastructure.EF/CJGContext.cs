@@ -278,6 +278,21 @@ namespace CJG.Infrastructure.EF
 				.HasOptional(o => o.Naics)
 				.WithMany()
 				.WillCascadeOnDelete(false);
+
+			modelBuilder.Entity<Organization>()
+				.HasOptional(o => o.BusinessLicenseDocuments)
+				.WithMany()
+				.WillCascadeOnDelete(false);
+
+			modelBuilder.Entity<Organization>()
+				.HasMany(ga => ga.BusinessLicenseDocuments)
+				.WithMany()
+				.Map(m =>
+				{
+					m.ToTable("OrganizationBusinessLicenseDocuments");
+					m.MapLeftKey("OrganizationId");
+					m.MapRightKey("BusinessLicenseDocumentId");
+				});
 			#endregion
 
 			#region Address

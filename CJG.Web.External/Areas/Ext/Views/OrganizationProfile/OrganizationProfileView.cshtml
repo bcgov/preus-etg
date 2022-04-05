@@ -23,55 +23,33 @@
             </div>
             <div>
                 <div class="notice notice--icon" ng-if="model.CreateOrganizationProfile">
-                    <p>
-                        <b>Only one person from your organization may create and maintain your organization profile.</b>
-                    </p>
-                    <p>
-                        If you are not authorized to do this for your organization then please skip this
-                        step and request the authorized person to login and do this.
-                    </p>
-                    <p>
-                        Members of your organization will not be able to submit grant applications until
-                        your organization profile has been created.
-                    </p>
+                    <p><strong>Only one person from your organization may create and maintain your organization profile.</strong></p>
+                    <p>If you are not authorized to do this for your organization then please skip this step and request the authorized person to login and do this.</p>
+                    <p>Members of your organization will not be able to submit grant applications until your organization profile has been created.</p>
                 </div>
                 <div class="notice notice--icon" ng-if="!model.CreateOrganizationProfile && model.IsOrganizationProfileAdministrator">
-                    <p>
-                        You are the only person who can maintain the organization
-                        profile for your organization. The profile is included in all grant
-                        applications from your organization.
-                    </p>
-                    <p>
-                        You may edit the organization profile below.
-                        Make sure you click Save organization profile at
-                        the bottom of this form to save your changes.
-                    </p>
-                    <p>
-                        If you need to change the person who can maintain
-                        your organization profile then please use the link
-                        shown in the footer below to contact us.
-                    </p>
+                    <p>You are the only person who can maintain the organization profile for your organization. The profile is included in all grant applications from your organization.</p>
+                    <p>You may edit the organization profile below. Make sure you click Save organization profile at the bottom of this form to save your changes.</p>
+                    <p>If you need to change the person who can maintain your organization profile then please use the link shown in the footer below to contact us.</p>
                 </div>
                 <div class="notice notice--icon" ng-if="!model.IsOrganizationProfileAdministrator">
-                    <p>
-                        The organization profile below will be included in grant applications submitted by you.
-                    </p>
-                    <p>
-                        Your organization is responsible for ensuring that your profile is accurate. Only one
-                        member of your organization may create and maintain it. Your organization profile is
-                        maintained by {{model.AdminUserName}} (<a href="mailto:{{model.AdminUserEmailAddress}}" data-email="maintainer">{{model.AdminUserEmailAddress}}</a>)
-                    </p>
+                    <p>The organization profile below will be included in grant applications submitted by you.</p>
+                    <p>Your organization is responsible for ensuring that your profile is accurate. Only one member of your organization may create and maintain it. Your organization profile is maintained by {{model.AdminUserName}} (<a href="mailto:{{model.AdminUserEmailAddress}}" data-email="maintainer">{{model.AdminUserEmailAddress}}</a>)</p>
                 </div>
 
-                <p>
-                    Your business legal and operating names are provided by BCeID and are shown
-                    below. Please check that this information is correct.
-                </p>
-                <p>
-                    If the information is not correct, please visit
-                    <a href="https://www.bceid.ca" target="_blank">www.BCeID.ca</a>
-                    to update it.
-                </p>
+                <div class="notice notice--icon" ng-if="!model.CreateOrganizationProfile && model.IsOrganizationProfileAdministrator && model.RequiresBusinessLicenseDocuments">
+                    <p>The organization profile is missing important Business License documentation.</p>
+                    <p>You are the administrator. Please update this information.</p>
+                </div>
+
+                <div class="notice notice--icon" ng-if="!model.CreateOrganizationProfile && !model.IsOrganizationProfileAdministrator && model.RequiresBusinessLicenseDocuments">
+                    <p>The organization profile is missing important Business License documentation.</p>
+                    <p>Your organization is responsible for ensuring that your Business License documentation is accurate. Only one member of your organization may create and maintain it. Your organization profile is maintained by {{model.AdminUserName}} (<a href="mailto:{{model.AdminUserEmailAddress}}" data-email="maintainer">{{model.AdminUserEmailAddress}}</a>)</p>
+                </div>
+
+                <p>Your business legal and operating names are provided by BCeID and are shown below. Please check that this information is correct.</p>
+                <p>If the information is not correct, please visit <a href="https://www.bceid.ca" target="_blank">www.BCeID.ca</a> to update it.</p>
+            
                 <div class="form--2-col well well--dark">
                     <dl class="info-list">
                         <dt>Organization legal name</dt>
@@ -218,6 +196,68 @@
                         </div>
                     </div>
                 </div>
+                <div class="form__group">
+                    
+                    <h4>Business License Documents</h4>
+                    <div class="notice notice--icon" ng-if="model.IsOrganizationProfileAdministrator">
+                        <p>To be eligible, employers must have been fully operational for at least one year at the time of application. Please provide a copy of your business licence. If your current licence does not demonstrate one full year of operation at the time of application, please provide your business licence for both the current and previous years. Employers operating without a business licence are still eligible to apply but must provide alternative documentation that clearly demonstrates that they have been fully operational for at least one year at the time of application. If you have questions about please contact <a href="mailto: ETG@gov.bc.ca">ETG@gov.bc.ca</a>.</p>
+                    </div>
+                    <p ng-if="model.IsOrganizationProfileAdministrator">Accepted file types: PDF, JPG, JPEG, PNG, GIF.</p>
+                         
+                    <div ng-if="model.BusinessLicenseDocumentAttachments">
+                        <table style="width: 100%;">
+                            <tr ng-repeat="attachment in model.BusinessLicenseDocumentAttachments">
+                                <td style="width: 60%; vertical-align: top; word-wrap: break-word; word-break: break-all;">
+                                    <a ng-if="attachment.Id" target="_blank" href="/Ext/Organization/BusinessLicense/Download/{{attachment.Id}}">{{attachment.FileName}}</a>
+                                    <span ng-if="!attachment.Id">{{attachment.FileName}}</span>
+                                    <br />
+                                    {{attachment.Description}}
+                                </td>
+                                <td style="width: 40%; vertical-align: top">
+                                    <button class="btn btn--secondary pull-right margin-left-10" ng-if="model.IsOrganizationProfileAdministrator" ng-click="removeAttachment($index)">Remove</button>
+                                    <button class="btn btn--secondary pull-right margin-left-10" ng-if="model.IsOrganizationProfileAdministrator" ng-click="changeAttachment(attachment)">Change</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div ng-if="model.BusinessLicenseDocumentAttachments == null || model.BusinessLicenseDocumentAttachments.length === 0">
+                        <p>No Business License documents have been provided.</p>
+                    </div>
+                    <div >
+                        <button class="btn btn--secondary" ng-click="addAttachment()" data-disableonsubmit="false" ng-if="model.IsOrganizationProfileAdministrator">Add Document</button>
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Business Website (if applicable)</label>
+                    <div class="form__control">
+                        <input type="text" class="input--full" ng-model="model.BusinessWebsite" maxlength="2000" ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Business Description <abbr title="Required">*</abbr></label>
+                    <div class="form__control" ng-if="model.IsOrganizationProfileAdministrator">
+                        <textarea ng-model="model.BusinessDescription" class="input--full textarea--medium"
+                                ng-validation="errors.BusinessDescription"
+                                ui-tinymce="tinymceOptions"></textarea>
+                    </div>
+                    <div class="form__control" ng-if="!model.IsOrganizationProfileAdministrator">
+                        <div class="control-wrapper input--full" ng-bind-html="model.BusinessDescription | unsafe"></div>
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">How is this training relevant to your business and to the available job(s)? @*<abbr title="Required">*</abbr>*@</label>
+                    <div class="form__control" ng-if="model.IsOrganizationProfileAdministrator">
+                        <textarea ng-model="model.BusinessTrainingRelevance" class="input--full textarea--medium"
+                            ng-validation="errors.BusinessTrainingRelevance"
+                            ui-tinymce="tinymceOptions"></textarea>
+                    </div>
+                    <div class="form__control" ng-if="!model.IsOrganizationProfileAdministrator">
+                        <div class="control-wrapper input--full" ng-bind-html="model.BusinessTrainingRelevance | unsafe"></div>
+                    </div>
+                </div>
 
                 <h3 class="subheader--body">Head Office Mailing Address</h3>
 
@@ -261,37 +301,6 @@
                     <label class="form__label">Postal Code <abbr title="Required">*</abbr></label>
                     <div class="form__control">
                         <input type="text" class="input--small" ng-model="model.HeadOfficeAddress.PostalCode" maxlength="6" ng-postal ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
-                    </div>
-                </div>
-
-                <div class="form__group">
-                    <label class="form__label">Website (if applicable)</label>
-                    <div class="form__control">
-                        <input type="text" class="input--full" ng-model="model.BusinessWebsite" maxlength="2000" ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
-                    </div>
-                </div>
-
-                <div class="form__group">
-                    <label class="form__label">Business Description <abbr title="Required">*</abbr></label>
-                    <div class="form__control" ng-if="model.IsOrganizationProfileAdministrator">
-                        <textarea ng-model="model.BusinessDescription" class="input--full textarea--medium"
-                                ng-validation="errors.BusinessDescription"
-                                ui-tinymce="tinymceOptions"></textarea>
-                    </div>
-                    <div class="form__control" ng-if="!model.IsOrganizationProfileAdministrator">
-                        <div class="control-wrapper input--full" ng-bind-html="model.BusinessDescription | unsafe"></div>
-                    </div>
-                </div>
-
-                <div class="form__group">
-                    <label class="form__label">How is this training relevant to your business and to the available job(s)? @*<abbr title="Required">*</abbr>*@</label>
-                    <div class="form__control" ng-if="model.IsOrganizationProfileAdministrator">
-                        <textarea ng-model="model.BusinessTrainingRelevance" class="input--full textarea--medium"
-                            ng-validation="errors.BusinessTrainingRelevance"
-                            ui-tinymce="tinymceOptions"></textarea>
-                    </div>
-                    <div class="form__control" ng-if="!model.IsOrganizationProfileAdministrator">
-                        <div class="control-wrapper input--full" ng-bind-html="model.BusinessTrainingRelevance | unsafe"></div>
                     </div>
                 </div>
 

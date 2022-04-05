@@ -315,6 +315,32 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		}
 
 		/// <summary>
+		/// Downloads specified business license document
+		/// </summary>
+		/// <param name="grantApplicationId"></param>
+		/// <param name="attachmentId"></param>
+		/// <returns></returns>
+		[HttpGet]
+		[PreventSpam]
+		[Route("Application/BusinessLicense/Download/{grantApplicationId}/{attachmentId}")]
+		public ActionResult DownloadBusinessLicense(int grantApplicationId, int attachmentId)
+		{
+			var model = new BaseViewModel();
+			try
+			{
+				var grantApplication = _grantApplicationService.Get(grantApplicationId);
+				var organization = grantApplication.Organization;
+				var attachment = _attachmentService.GetBusinessLicenseAttachment(organization.Id, attachmentId);
+				return File(attachment.AttachmentData, MediaTypeNames.Application.Octet, $"{attachment.FileName}{attachment.FileExtension}");
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
 		/// Returns the scheduled notifications details for the specified grant application.
 		/// </summary>
 		/// <param name="grantApplicationId"></param>

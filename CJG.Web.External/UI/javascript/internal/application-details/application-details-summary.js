@@ -268,4 +268,14 @@ app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $tim
   $scope.downloadAttachment = function (attachmentId) {
     window.open('/Int/Application/Attachment/Download/' + $scope.model.Id + '/' + attachmentId);
   }
+
+  /**
+   * Download the specified business attachment.
+   * @function downloadAttachment
+   * @param {any} attachmentId - The attachment id.
+   * @returns {void}
+   */
+  $scope.downloadBusinessLicense = function (attachmentId) {
+    window.open('/Int/Application/BusinessLicense/Download/' + $scope.model.Id + '/' + attachmentId);
+  }
 });

@@ -25,7 +25,7 @@ namespace CJG.Web.External.Areas.Ext.Models
         [DefaultValue("British Columbia")]
         public string Region { get; set; } = "British Columbia";
 
-        [RegularExpression(CJG.Core.Entities.Constants.PostalCodeValidationRegEx, ErrorMessage = "Postal Code Invalid Format")]
+        [RegularExpression(Constants.PostalCodeValidationRegEx, ErrorMessage = "Postal Code Invalid Format")]
         [Required(ErrorMessage = "Postal Code is required")]
         public string PostalCode { get; set; }
 

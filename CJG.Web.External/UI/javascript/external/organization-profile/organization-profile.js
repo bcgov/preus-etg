@@ -9,17 +9,37 @@ app.controller('OrganizationProfile', function ($scope, $attrs, $controller, $ti
       method: function () {
         return $scope.model.Id ? 'PUT' : 'POST';
       },
+      dataType: 'file',
       data: function () {
+        var files = [];
+        var attachments = $scope.section.attachments.filter(function (attachment) {
+          if (typeof (attachment.File) !== 'undefined') {
+            attachment.Index = files.length;
+            files.push(attachment.File);
+          }
+          return attachment;
+        });
+
+        $scope.model.HeadOfficeAddressBlob = angular.toJson($scope.model.HeadOfficeAddress);
+        $scope.model.files = files;
+        $scope.model.attachments = JSON.stringify(attachments);
+
         return $scope.model;
       },
       backup: false
     },
-    onSave: function () {
-      if (!Utils.getValue($scope, 'alert.message'))
-        return $timeout(function () {
-          $scope.setAlert({ response: { status: 200 }, message: 'Organization Profile has been updated successfully.' });
-        });
-    }
+    onSave: function (event, data) {
+      if (data.response.data.RedirectURL)
+        window.location = data.response.data.RedirectURL;
+    },
+    //onRefresh: function () {
+    //  $scope.section.attachments = [];
+    //  return loadAttachments().catch(angular.noop);
+    //},
+    onCancel: function () {
+      $scope.section.attachments = [];
+    },
+    attachments: []
   };
 
   angular.extend(this, $controller('Section', { $scope, $attrs }));
@@ -113,6 +133,54 @@ app.controller('OrganizationProfile', function ($scope, $attrs, $controller, $ti
   }
 
   /**
+ * Open modal file uploader popup and then add the new file to the model.
+ * @function addAttachment
+ * @returns {void}
+ **/
+  $scope.addAttachment = function () {
+    return $scope.attachmentDialog('Add Business License Document', {
+        Id: 0,
+        FileName: '',
+        Description: '',
+        File: {},
+        AttachmentType: 0
+      })
+      .then(function (attachment) {
+        $scope.model.BusinessLicenseDocumentAttachments.push(attachment);
+        $scope.section.attachments.push(attachment);
+      })
+      .catch(angular.noop);
+  };
+
+  $scope.removeAttachment = function (index) {
+    var attachment = $scope.model.BusinessLicenseDocumentAttachments[index];
+    return $scope.confirmDialog('Remove Business License Document', 'Do you want to delete this document "' + attachment.FileName + '"?')
+      .then(function (response) {
+        if (response === true) {
+          var attachment = $scope.model.BusinessLicenseDocumentAttachments.splice(index, 1)[0];
+          attachment.Delete = true;
+          var i = $scope.section.attachments.indexOf(attachment);
+          if (i === -1) {
+            $scope.section.attachments.push(attachment);
+          } else if (attachment.Id === 0) {
+            $scope.section.attachments.splice(i, 1);
+          }
+        }
+      }).catch(angular.noop);
+  };
+
+  $scope.changeAttachment = function (attachment) {
+    $scope.section.attachment = attachment;
+    return $scope.attachmentDialog('Update Business License Document', attachment, false)
+      .then(function (attachment) {
+        if ($scope.section.attachments.indexOf(attachment) === -1) {
+          $scope.section.attachments.push(attachment);
+        }
+      })
+      .catch(angular.noop);
+  };
+
+  /**
    * Make an AJAX request to fetch the next NAICS dropdown data for the selected parent NAICS.
    * @function changeNAICS
    * @param {int} level - The level to load.
@@ -124,7 +192,7 @@ app.controller('OrganizationProfile', function ($scope, $attrs, $controller, $ti
     }
     loadNAICS(level, level > 1 ? $scope.model["Naics" + (level - 1) + "Id"] : 0);
   };
-
+  
   /**
    * Get the name for the organization type.
    * @function getOrganizationType

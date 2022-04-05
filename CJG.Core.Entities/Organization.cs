@@ -145,13 +145,13 @@ namespace CJG.Core.Entities
 		public string IncorporationNumber { get; set; }
 
 		/// <summary>
-		/// get/set - The juristriction the organization was incorporated under.
+		/// get/set - The jurisdiction the organization was incorporated under.
 		/// </summary>
 		[MaxLength(250)]
 		public string JurisdictionOfIncorporation { get; set; }
 
 		/// <summary>
-		/// get/set - The foriegn key for the NAICS
+		/// get/set - The foreign key for the NAICS
 		/// </summary>
 		public int? NaicsId { get; set; }
 
@@ -202,6 +202,9 @@ namespace CJG.Core.Entities
 		/// </summary>
 		[XmlIgnore]
 		public ICollection<User> Users { get; set; } = new List<User>();
+
+		public virtual ICollection<Attachment> BusinessLicenseDocuments { get; set; } = new List<Attachment>();
+
 		[NotMapped]
 		public bool RequiredProfileUpdate { get; set; } = false;
 
