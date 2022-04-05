@@ -113,6 +113,11 @@ namespace CJG.Application.Services
 			return applicationCount;
 		}
 
+		public bool RequiresBusinessLicenseDocuments(int orgId)
+		{
+			return !Get(orgId).BusinessLicenseDocuments.Any();
+		}
+
 		public int NotSubmittedGrantApplications(int orgId)
 		{
 			var defaultGrantProgramId = GetDefaultGrantProgramId();

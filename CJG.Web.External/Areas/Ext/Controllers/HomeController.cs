@@ -93,6 +93,12 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					"will need to update the NAICS codes on your Organization Profile before submitting an application.", AlertType.Warning);
 			}
 
+			if (_organizationService.RequiresBusinessLicenseDocuments(currentUser.Organization.Id))
+			{
+				_logger.Debug($"The user/administrator must add Business License Documents to the Organization Profile - '{_siteMinderService.CurrentUserName}':{_siteMinderService.CurrentUserGuid}");
+				return RedirectToAction("OrganizationProfileView", "OrganizationProfile");
+			}
+
 			if (_organizationService.NotSubmittedGrantApplicationsForUser(currentUser.Organization.Id, currentUser.BCeIDGuid) > 0)
 			{
 				//Clear NAICS and revert status in case application is complete and not submitted

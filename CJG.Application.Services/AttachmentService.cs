@@ -3,6 +3,7 @@ using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Entities;
 using NLog;
 using System;
+using System.Linq;
 using System.Web;
 
 namespace CJG.Application.Services
@@ -54,6 +55,25 @@ namespace CJG.Application.Services
 			if (!_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.ViewApplication))
 			{
 				throw new NotAuthorizedException($"User does not have permission to view application '{grantApplicationId}'.");
+			}
+
+			return Get<Attachment>(attachmentId);
+		}
+
+		/// <summary>
+		/// Get the business license attachment for the specified 'attachmentId' and verify that the current user has access to the users' organization
+		/// </summary>
+		/// <param name="organizationId"></param>
+		/// <param name="attachmentId"></param>
+		/// <returns></returns>
+		public Attachment GetBusinessLicenseAttachment(int organizationId, int attachmentId)
+		{
+			var organization = Get<Organization>(organizationId);
+			var businessLicense = organization.BusinessLicenseDocuments.FirstOrDefault(bl => bl.Id == attachmentId);
+
+			if (businessLicense == null)
+			{
+				throw new NotAuthorizedException("User does not have permission to view the requested business license.");
 			}
 
 			return Get<Attachment>(attachmentId);

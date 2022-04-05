@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using CJG.Web.External.Areas.Int.Models.Attachments;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
@@ -87,6 +88,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				model.BusinessWebsite = grantApplication.Organization.BusinessWebsite;
 				model.BusinessDescription = grantApplication.Organization.BusinessDescription;
 				model.BusinessTrainingRelevance = grantApplication.Organization.BusinessTrainingRelevance;
+				model.BusinessLicenseDocumentAttachments = grantApplication.Organization.BusinessLicenseDocuments.Select(a => new AttachmentViewModel(a));
 			}
 			catch (Exception ex)
 			{

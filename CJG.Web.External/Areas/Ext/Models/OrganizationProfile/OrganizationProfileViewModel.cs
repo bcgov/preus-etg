@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
+using CJG.Web.External.Areas.Ext.Models.Attachments;
 using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
@@ -36,6 +39,7 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 
 		public int? HeadOfficeAddressId { get; set; }
 
+		public string HeadOfficeAddressBlob { get; set; }
 		public AddressViewModel HeadOfficeAddress { get; set; }
 
 		public int OrganizationTypeId { get; set; }
@@ -84,7 +88,9 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 
 		public string StatementOfRegistrationNumber { get; set; }
 		public string BusinessLicenseNumber { get; set; }
-		
+
+		public bool RequiresBusinessLicenseDocuments { get; set; }
+
 		[MaxLength(2000, ErrorMessage = "Business website cannot exceed 2000 characters.")]
 		[Url(ErrorMessage = "Business website must be a valid, fully-qualified http or https URL.")]
 		public string BusinessWebsite { get; set; }
@@ -99,7 +105,10 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 		[MaxLength(2300, ErrorMessage = "Business training relevance cannot exceed 2000 characters.")] // Max length is longer than message to allow for HTML content
 		public string BusinessTrainingRelevance { get; set; }
 
+		public IEnumerable<AttachmentViewModel> BusinessLicenseDocumentAttachments { get;  }
+
 		public string RowVersion { get; set; }
+
 		#endregion
 
 		#region Constructors
@@ -122,6 +131,8 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 												  .FirstOrDefault();
 			AdminUserName = adminUserInfo?.AdminUserName;
 			AdminUserEmailAddress = adminUserInfo?.AdminUserEmailAddress;
+
+			BusinessLicenseDocumentAttachments = organization.BusinessLicenseDocuments.Select(a => new AttachmentViewModel(a));
 
 			var naics = naIndustryClassificationSystemService.GetNaIndustryClassificationSystems(organization.NaicsId);
 			naics.ForEach(item =>
@@ -186,6 +197,68 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 			userService.Update(currentUser);
 
 			RowVersion = Convert.ToBase64String(organization.RowVersion);
+		}
+
+		public void UpdateOrganizationBusinessLicenses(IUserService userService, ISiteMinderService siteMinderService, IAttachmentService attachmentService,
+			HttpPostedFileBase[] files, IEnumerable<UpdateAttachmentViewModel> data)
+		{
+			if (userService == null)
+				throw new ArgumentNullException(nameof(userService));
+
+			if (siteMinderService == null)
+				throw new ArgumentNullException(nameof(siteMinderService));
+
+			var currentUser = userService.GetUser(siteMinderService.CurrentUserGuid);
+			var organization = currentUser.Organization;
+
+			if (organization == null)
+			{
+				var bcUser = userService.GetBCeIDUser(currentUser.BCeIDGuid);
+				organization = bcUser.Organization ?? new Organization();
+				currentUser.Organization = organization;
+				if (organization.Id == 0)
+					currentUser.IsOrganizationProfileAdministrator = true;
+			}
+			else
+			{
+				organization.RowVersion = Convert.FromBase64String(RowVersion);
+			}
+
+			foreach (var attachment in data)
+			{
+				if (attachment.Delete) // Delete
+				{
+					var existing = attachmentService.Get(attachment.Id);
+					existing.RowVersion = Convert.FromBase64String(attachment.RowVersion);
+					organization.BusinessLicenseDocuments.Remove(existing);
+
+					attachmentService.Delete(existing);
+				}
+				else if (attachment.Index.HasValue == false) // Update data only
+				{
+					var existing = attachmentService.Get(attachment.Id);
+					existing.RowVersion = Convert.FromBase64String(attachment.RowVersion);
+					attachment.MapToEntity(existing);
+					attachmentService.Update(existing, true);
+				}
+				else if (files.Length > attachment.Index.Value && files[attachment.Index.Value] != null && attachment.Id == 0) // Add
+				{
+					var file = files[attachment.Index.Value].UploadFile(attachment.Description, attachment.FileName);
+					organization.BusinessLicenseDocuments.Add(file);
+
+					attachmentService.Add(file, true);
+				}
+				else if (files.Length > attachment.Index.Value && files[attachment.Index.Value] != null && attachment.Id != 0) // Update with file
+				{
+					var file = files[attachment.Index.Value].UploadFile(attachment.Description, attachment.FileName);
+					var existing = attachmentService.Get(attachment.Id);
+					existing.RowVersion = Convert.FromBase64String(attachment.RowVersion);
+
+					attachment.MapToEntity(existing);
+					existing.AttachmentData = file.AttachmentData;
+					attachmentService.Update(existing, true);
+				}
+			}
 		}
 		#endregion
 	}

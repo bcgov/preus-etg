@@ -6,6 +6,7 @@ namespace CJG.Core.Interfaces.Service
 	{
 		Attachment Get(int id);
 		Attachment GetAttachment(int grantApplicationId, int attachmentId);
+		Attachment GetBusinessLicenseAttachment(int organizationId, int attachmentId);
 		Attachment Update(Attachment attachment, bool commit = false);
 
 		Attachment Add(Attachment attachment, bool commit = false);
