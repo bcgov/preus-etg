@@ -41,7 +41,7 @@ namespace CJG.Web.External.Helpers
 			var key = GetCanadaPostKey();
 			var path = key.IsHttps
 				? "https://ws1.postescanada-canadapost.ca/js/addresscomplete-2.30.min.js?key="
-				: "http://ws1.postescanada-canadapost.ca/js/addresscomplete-2.30.min.js?key=";
+				: "https://ws1.postescanada-canadapost.ca/js/addresscomplete-2.30.min.js?key=";
 			
 			return $"{path}{key.Key}";
 		}
@@ -51,7 +51,7 @@ namespace CJG.Web.External.Helpers
 			var key = GetCanadaPostKey();
 			var path = key.IsHttps
 				? "https://ws1.postescanada-canadapost.ca/css/addresscomplete-2.30.min.css?key="
-				: "http://ws1.postescanada-canadapost.ca/css/addresscomplete-2.30.min.css?key=";
+				: "https://ws1.postescanada-canadapost.ca/css/addresscomplete-2.30.min.css?key=";
 			
 			return $"{path}{key.Key}";
 		}
