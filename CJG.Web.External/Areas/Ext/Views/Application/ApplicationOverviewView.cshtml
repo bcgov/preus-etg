@@ -255,13 +255,13 @@
             <p class="notice notice--icon" ng-if="(model.CanSubmit && !model.PIFCompletionConfirmed)">
                 You must ensure the number of Participant Information Forms submitted ({{model.Participants.length}}) is equal to the number of participants ({{model.MaxParticipantsAllowed}}) that will receive training.
             </p>
-            
+
             <div class="button-group">
                 <span ng-if="model.ProgramType == @((int)ProgramTypes.WDAService) && model.ApplicationStateExternal == @((int)ApplicationStateExternal.ApplicationWithdrawn)">
                     <a class="btn btn--primary" href="/Ext/Application/Resume/{{model.Id}}" value="Resume">Resume Application</a>
                 </span>
                 <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
-                    <a class="btn btn--primary" href="/Ext/Application/Review/View/{{model.Id}}" value="Review and submit" ng-disabled="!(model.CanSubmit && model.PIFCompletionConfirmed)">Review and submit</a>
+                    <a class="btn btn--primary" href="/Ext/Application/Review/View/{{model.Id}}" value="Review and submit" ng-disabled="!(model.CanSubmit && model.PIFCompletionConfirmed && AllParticipantsHaveOutcomes())">Review and submit</a>
                 </span>
             </div>
         </div>
