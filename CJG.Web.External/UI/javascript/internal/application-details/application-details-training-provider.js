@@ -64,6 +64,18 @@ app.controller('TrainingProvider', function ($scope, $attrs, $controller, $timeo
   }
 
   /**
+   * Make AJAX request to load training provider extra info data
+   * @function loadTrainingProviderExtraInfo
+   * @returns {Promise}
+   **/
+  function loadTrainingProviderExtraInfo() {
+    return $scope.load({
+      url: '/Int/Application/Training/Provider/ExtraInfo/' + $scope.provider.Id,
+      set: 'extraInfo'
+    });
+  }
+
+  /**
    * Initialize the form data
    * @function init
    * @returns {Promise}
@@ -74,6 +86,7 @@ app.controller('TrainingProvider', function ($scope, $attrs, $controller, $timeo
       $scope.loadProvinces(),
       $scope.loadProviderTypesDetails(),
       $scope.loadTrainingProviderTypes(),
+      loadTrainingProviderExtraInfo(),
       loadTrainingProvider()
     ]).catch(angular.noop);
   }

@@ -1340,6 +1340,7 @@
     <Compile Include="Areas\Int\Models\TrainingPrograms\TrainingProgramViewModel.cs" />
     <Compile Include="Areas\Int\Models\TrainingProviders\TrainingProvidersInventoryViewModel.cs" />
     <Compile Include="Areas\Int\Models\TrainingProviders\TrainingProviderInventoryViewModel.cs" />
+    <Compile Include="Areas\Int\Models\TrainingProviders\TrainingProviderExtraInfoViewModel.cs" />
     <Compile Include="Areas\Int\Models\TrainingProviders\UpdateTrainingProviderViewModel.cs" />
     <Compile Include="Areas\Int\Models\WDAServices\ServiceCategoryViewModel.cs" />
     <Compile Include="Areas\Int\Models\WDAServices\ServiceLineViewModel.cs" />
