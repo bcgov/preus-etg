@@ -8,8 +8,8 @@ namespace CJG.Web.External.Areas.Int.Models
 		#region Properties
 		public int GrantId { get; set; }
 		public string FileNo { get; set; }
-		public DateTime TrainingStartDate { get; set; }
-		public DateTime TrainingEndDate { get; set; }
+		public string TrainingStartDate { get; set; }
+		public string TrainingEndDate { get; set; }
 		public string TrainingStream { get; set; }
 		public string ApplicationStatus { get; set; }
 		public string TrainingProvider { get; set; }
@@ -24,8 +24,8 @@ namespace CJG.Web.External.Areas.Int.Models
 			this.GrantId = trainingProgram.GrantApplication.Id;
 			this.FileNo = trainingProgram.GrantApplication.FileNumber ?? "";
 
-			this.TrainingStartDate = trainingProgram.StartDate;
-			this.TrainingEndDate = trainingProgram.EndDate;
+			this.TrainingStartDate = trainingProgram.StartDate.ToString("yyyy-MM-dd");
+			this.TrainingEndDate = trainingProgram.EndDate.ToString("yyyy-MM-dd");
 			this.TrainingStream = trainingProgram.GrantApplication.GrantOpening.GrantStream.Name;
 			this.ApplicationStatus = trainingProgram.GrantApplication.ApplicationStateInternal.GetDescription();
 

@@ -127,6 +127,45 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			return View(model);
 		}
 
+
+		/// <summary>
+		/// Returns a view to display the participant information.
+		/// </summary>
+		/// <param name="participantId"></param>
+		/// <returns></returns>
+		[HttpGet]
+		[AuthorizeAction(Privilege.IA2)]
+		[Route("Participant/Info/View/{participantId}/TrainingHistory")]
+		public JsonResult ParticipantTrainingHistory(int participantId)
+		{
+			ViewBag.ParticipantId = participantId;
+
+			ParticipantInfoViewModel model;
+			ParticipantForm participantForm = _participantService.Get(participantId);
+
+			if (participantForm != null)
+			{
+				model = new ParticipantInfoViewModel(participantForm, _nationalOccupationalClassificationService, _userService, _participantService);
+			}
+			else
+			{
+				model = new ParticipantInfoViewModel();
+			}
+
+
+#if Training || Support
+             model.ContactInfo.SIN = string.Concat(model.ContactInfo.SIN?.Substring(0, 1), "** *** ***");
+#endif
+
+			// Mask the social insurance number for anyone without privilege IA3
+			if (!User.HasPrivilege(Privilege.IA3))
+			{
+				model.ContactInfo.SIN = string.Concat(model.ContactInfo.SIN?.Substring(0, 1), "** *** ***");
+			}
+
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
 		[HttpPut]
 		[PreventSpam]
 		[ValidateRequestHeader]

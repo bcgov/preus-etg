@@ -1,33 +1,36 @@
 ﻿@model CJG.Web.External.Areas.Int.Models.ParticipantInfoViewModel
 
-<table class="form__group--data-grid">
-    <thead>
-        <tr>
-            <th class="data-grid-header">File No.</th>
-            <th class="data-grid-header">Training Start Date</th>
-            <th class="data-grid-header">Training End Date</th>
-            <th class="data-grid-header">Training Stream</th>
-            <th class="data-grid-header">Application Status</th>
-            <th class="data-grid-header">Training Provider</th>
-            <th class="data-grid-header">Training Course</th>
-            <th class="data-grid-header">Approved Gov't Contribution</th>
-            <th class="data-grid-header">Amount Paid or Owing</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var hist in Model.TrainingHistory)
-        {
-            <tr>
-                <td><a href="/Int/Application/Details/View/@hist.GrantId" target="_blank">@hist.FileNo</a></td>
-                <td>@hist.TrainingStartDate.ToString("yyyy-MM-dd")</td>
-                <td>@hist.TrainingEndDate.ToString("yyyy-MM-dd")</td>
-                <td>@hist.TrainingStream</td>
-                <td>@hist.ApplicationStatus</td>
-                <td>@hist.TrainingProvider</td>
-                <td>@hist.TrainingCourse</td>
-                <td class="data-grid-right-data">@hist.ApprovedGovtContribution</td>
-                <td class="data-grid-right-data">@hist.AmountPaid</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div ng-controller="ViewParticipantInfo" participantId-id="@ViewBag.ParticipantId" class="page--training-provider-history">
+    <div class="wrapper--intake-queue-datatable">
+        <pager ng-if="model" ng-filter="getTrainingHistory" ng-page-size="[10, 25, 50, 100]">
+            <table class="form__group--data-grid">
+                <thead>
+                    <tr>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('FileNumber')"><img src="{{imgSrcFileNumber}}" />File No.</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('TrainingStartDate')"><img src="{{imgSrcTrainingStartDate}}" />TrainingStartDate</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('TrainingEndDate')"><img src="{{imgSrcTrainingEndDate}}" />TrainingEndDate</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('TrainingStream')"><img src="{{imgSrcTrainingStream}}" />TrainingStream</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('ApplicationStatus')"><img src="{{imgSrcApplicationStatus}}" />ApplicationStatus</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('TrainingProvider')"><img src="{{imgSrcTrainingProvider}}" />TrainingProvider</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('TrainingCourse')"><img src="{{imgSrcTrainingCourse}}" />TrainingCourse</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('ApprovedGovtContribution')"><img src="{{imgSrcApprovedGovtContribution}}" />ApprovedGovtContribution</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('AmountPaid')"><img src="{{imgSrcAmountPaid}}" />AmountPaid</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="thist in model.TrainingHistory |orderBy:sort.column:sort.descending">
+                        <td><a href="/Int/Application/Details/View/{{thist.GrantId}}" target="_blank">{{thist.FileNo}}</a></td>
+                        <td>{{thist.TrainingStartDate}}</td>
+                        <td>{{thist.TrainingEndDate}}</td>
+                        <td>{{thist.TrainingStream}}</td>
+                        <td>{{thist.ApplicationStatus}}</td>
+                        <td>{{thist.TrainingProvider}}</td>
+                        <td>{{thist.TrainingCourse}}</td>
+                        <td class="data-grid-right-data">{{thist.ApprovedGovtContribution}}</td>
+                        <td class="data-grid-right-data">{{thist.AmountPaid}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </pager>
+    </div>
+</div>
