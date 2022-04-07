@@ -1338,6 +1338,7 @@
     <Compile Include="Areas\Int\Models\SkillsTraining\SkillsTrainingProgramViewModel.cs" />
     <Compile Include="Areas\Int\Models\SkillsTraining\UpdateSkillsTrainingProviderViewModel.cs" />
     <Compile Include="Areas\Int\Models\SkillsTraining\SkillsTrainingProviderViewModel.cs" />
+    <Compile Include="Areas\Int\Models\TrainingPrograms\TrainingProgramExtraInfoViewModel.cs" />
     <Compile Include="Areas\Int\Models\TrainingPrograms\TrainingProgramViewModel.cs" />
     <Compile Include="Areas\Int\Models\TrainingProviders\TrainingProvidersInventoryViewModel.cs" />
     <Compile Include="Areas\Int\Models\TrainingProviders\TrainingProviderInventoryViewModel.cs" />

@@ -81,7 +81,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		}
 
 		/// <summary>
-		/// Get the specified training provider.
+		/// Get the specified training provider extra information. Mostly HTMl content we need to display, but not edit/post.
 		/// </summary>
 		/// <param name="trainingProviderId"></param>
 		/// <returns></returns>
@@ -134,6 +134,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				TryValidateModel(model.TrainingOutsideBcListViewModel, "TrainingOutsideBcListViewModel"); // TODO: I don't think this works.
 				TryValidateModel(model.TrainingTrainerDetailsListViewModel, "TrainingTrainerDetailsListViewModel"); // TODO: I don't think this works.
 				TryValidateModel(model);
+
 				if (model.SelectedDeliveryMethodIds.Contains(Core.Entities.Constants.Delivery_Classroom)
 					|| model.SelectedDeliveryMethodIds.Contains(Core.Entities.Constants.Delivery_Workplace))
 				{
@@ -147,6 +148,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 					}
 				}
+
 				if (ModelState.IsValid)
 				{
 					Utilities.MapProperties(model, trainingProvider);

@@ -247,18 +247,6 @@
                     </div>
                 </div>
 
-                <div class="form__group">
-                    <label class="form__label">How is this training relevant to your business and to the available job(s)? @*<abbr title="Required">*</abbr>*@</label>
-                    <div class="form__control" ng-if="model.IsOrganizationProfileAdministrator">
-                        <textarea ng-model="model.BusinessTrainingRelevance" class="input--full textarea--medium"
-                            ng-validation="errors.BusinessTrainingRelevance"
-                            ui-tinymce="tinymceOptions"></textarea>
-                    </div>
-                    <div class="form__control" ng-if="!model.IsOrganizationProfileAdministrator">
-                        <div class="control-wrapper input--full" ng-bind-html="model.BusinessTrainingRelevance | unsafe"></div>
-                    </div>
-                </div>
-
                 <h3 class="subheader--body">Head Office Mailing Address</h3>
 
                 <div class="form__group">

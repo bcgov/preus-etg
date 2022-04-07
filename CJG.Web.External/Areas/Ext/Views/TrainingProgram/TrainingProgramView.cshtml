@@ -27,6 +27,16 @@
                 <div class="label-wrapper"><label class="form__label">Training course title <abbr title="Required">*</abbr></label></div>
                 <div class="control-wrapper form-control"><input type="text" class="input--medium" ng-model="model.CourseTitle" ng-validation></div>
             </div>
+            
+            <div class="form__group">
+                <label class="form__label">How is this training relevant to your business and to the available job(s)? @*<abbr title="Required">*</abbr>*@</label>
+                <div class="form__control">
+                    <textarea ng-model="model.BusinessTrainingRelevance" class="input--full textarea--medium"
+                                ng-validation="errors.BusinessTrainingRelevance"
+                                ui-tinymce="tinymceOptions"></textarea>
+                </div>
+            </div>
+
 
             <div class="form__group">
                 <div class="label-wrapper"><label class="form__label">Link to Course Description</label></div>

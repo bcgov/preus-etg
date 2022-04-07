@@ -87,7 +87,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
 				model.BusinessWebsite = grantApplication.Organization.BusinessWebsite;
 				model.BusinessDescription = grantApplication.Organization.BusinessDescription;
-				model.BusinessTrainingRelevance = grantApplication.Organization.BusinessTrainingRelevance;
 				model.BusinessLicenseDocumentAttachments = grantApplication.Organization.BusinessLicenseDocuments.Select(a => new AttachmentViewModel(a));
 			}
 			catch (Exception ex)
