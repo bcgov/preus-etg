@@ -212,6 +212,8 @@ app.controller('OrganizationProfile', function ($scope, $attrs, $controller, $ti
     plugins: 'link code autoresize preview fullscreen lists advlist anchor',
     toolbar: 'undo redo | bold italic | formatselect | alignleft aligncenter alignright | outdent indent | numlist bullist | anchor | preview | fullscreen | code ',
     forced_root_blocks: true,
+    browser_spellcheck: true,
+    contextmenu: false,
     setup: function (ed) {
       ed.on('init', function (ed) {
         $('div.tox-tinymce-aux').css('z-index', '999999');
