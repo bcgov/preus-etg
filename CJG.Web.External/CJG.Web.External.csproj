@@ -538,6 +538,7 @@
     <Content Include="UI\javascript\internal\organization\organization-history-view.js" />
     <Content Include="UI\javascript\internal\organization\organization-list.js" />
     <Content Include="UI\javascript\internal\participant\index.js" />
+    <Content Include="UI\javascript\internal\participant\participant-history.js" />
     <Content Include="UI\javascript\internal\payment-request\index.js" />
     <Content Include="UI\javascript\internal\program-notification\index.js" />
     <Content Include="UI\javascript\internal\program-notification\program-notification-modal.js" />

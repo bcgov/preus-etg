@@ -7,7 +7,7 @@ namespace CJG.Web.External.Areas.Int.Models
 {
 	public class ParticipantInfoViewModel
 	{
-		public int? ParticipantId { get; set; }
+		public int ParticipantId { get; set; }
 		public string FileNo { get; set; }
 		public string OrganizationName { get; set; }
 		public string ReportingDate { get; set; }
@@ -26,7 +26,7 @@ namespace CJG.Web.External.Areas.Int.Models
 										IUserService userService,
 										IParticipantService participantService)
 		{
-			ParticipantId = participant.ParticipantId;
+			ParticipantId = participant.Id;
 			FileNo = participant.GrantApplication.FileNumber;
 			OrganizationName = participant.GrantApplication.OrganizationLegalName;
 

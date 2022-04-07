@@ -1,8 +1,9 @@
-﻿@model CJG.Web.External.Areas.Int.Models.ParticipantInfoViewModel
+﻿@using CJG.Web.External.Areas.Int.Controllers
+@model CJG.Web.External.Areas.Int.Models.ParticipantInfoViewModel
 
-<div ng-controller="ViewParticipantInfo" participantId-id="@ViewBag.ParticipantId" class="page--training-provider-history">
+<div ng-controller="ParticipantHistory" participant-id="@ViewBag.ParticipantId" class="page--training-provider-history">
     <div class="wrapper--intake-queue-datatable">
-        <pager ng-if="model" ng-filter="getTrainingHistory" ng-page-size="[10, 25, 50, 100]">
+        <pager ng-if="model" ng-filter="getTrainingHistory" ng-page-size="[10, 25, 50, 100]" ng-Page-Search="false">
             <table class="form__group--data-grid">
                 <thead>
                     <tr>
@@ -18,8 +19,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="thist in model.TrainingHistory |orderBy:sort.column:sort.descending">
-                        <td><a href="/Int/Application/Details/View/{{thist.GrantId}}" target="_blank">{{thist.FileNo}}</a></td>
+                    <tr ng-repeat="thist in $parent.$ctrl.ngItems |orderBy:sort.column:sort.descending">
+                        <td><a href="/Int/Application/Details/View/{{thist.GrantId}}" target="_blank">{{thist.FileNumber}}</a></td>
                         <td>{{thist.TrainingStartDate}}</td>
                         <td>{{thist.TrainingEndDate}}</td>
                         <td>{{thist.TrainingStream}}</td>
