@@ -16,4 +16,6 @@ app.controller('ViewParticipantInfo', function ($scope, $attrs, $controller, $ti
   $scope.toggleEmployerInfo = function (state) {
     $scope.showEmployerInfo = state;
   };
+
+
 });
