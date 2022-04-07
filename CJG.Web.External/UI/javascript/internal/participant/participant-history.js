@@ -1,35 +1,9 @@
 app.controller('ParticipantHistory', function ($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
   $scope.section = {
-    name: 'ParticipantHistory',
-    onRefresh: function () {
-      return loadTrainingHistory().catch(angular.noop);
-    }
+    name: 'ParticipantHistory'
   };
 
   angular.extend(this, $controller('Section', { $scope, $attrs }));
-
-  /**
- * Make AJAX request to load training provider history data.
- * @function loadTrainingHistory
- * @returns {Promise}
- **/
-  function loadTrainingHistory() {
-    return $scope.load({
-      url: '/Int/Application/Participant/TrainingHistory/' + $attrs.participantId,
-      set: 'model'
-    }).catch(angular.noop);
-  };
-
-  /**
- * Fetch all the data for the form.
- * @function init
- * @returns {Promise}
- **/
-  function init() {
-    return Promise.all([      
-      loadTrainingHistory()
-    ]);
-  };
 
   /**
  * Get the filtered training provider history.
@@ -44,34 +18,22 @@ app.controller('ParticipantHistory', function ($scope, $attrs, $controller, $tim
       url: useUrl
     })
       .then(function (response) {
+        resetSortImage();
         return Promise.resolve(response.data);
       })
       .catch(angular.noop);
-  };
-
-  init();
+  };  
 
   const noSort = '../../../../../images/icons/icon--sort.svg';
   const sortAsc = '../../../../../images/icons/icon--sort-asc.svg';
   const sortDesc = '../../../../../images/icons/icon--sort-desc.svg';
-
-  $scope.imgSrcFileNumber = noSort;
-  $scope.imgSrcTrainingStartDate = noSort;
-  $scope.imgSrcTrainingEndDate = noSort;
-  $scope.imgSrcTrainingStream = noSort;
-  $scope.imgSrcApplicationStatus = noSort;
-  $scope.imgSrcTrainingProvider = noSort;
-  $scope.imgSrcTrainingCourse = noSort;
-  $scope.imgSrcApprovedGovtContribution = noSort;
-  $scope.imgSrcAmountPaid = noSort;
 
   $scope.sort = {
     column: '',
     descending: false
   };
 
-  $scope.changeSorting = function (column) {
-    resetSortImage();
+  $scope.changeSorting = function (column) {    
     var sort = $scope.sort;
     var newSortImage = sortAsc;
 
