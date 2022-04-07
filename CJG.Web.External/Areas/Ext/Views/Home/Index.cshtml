@@ -86,7 +86,6 @@
                                 <span class="label" ng-class="'label--' + item.StatusCssClass">{{item.StatusText}}</span>
                             </text>
                             <div class="pull-right--md">
-                                <a class="btn btn--secondary" href="/Ext/Application/Duplicate/{{item.Id}}" value="Duplicate">Duplicate Application</a>
                                 <a ng-if="item.ApplicationStateExternal == @((int)ApplicationStateExternal.Incomplete) || item.ApplicationStateExternal == @((int)ApplicationStateExternal.Complete)" ng-click="deleteApplication(item.Id, item.RowVersion)" class="btn btn--danger btn--mobile-full-width">Delete</a>
                                 <a ng-if="item.ShowOverviewLink" ng-href="/Ext/Application/Overview/View/{{item.Id}}" class="btn btn--primary btn--mobile-full-width">Continue</a>
                                 <a ng-if="item.ShowViewLink" ng-href="/Ext/Application/Details/View/{{item.Id}}" class="btn btn--primary btn--mobile-full-width">View</a>
