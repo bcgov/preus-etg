@@ -178,11 +178,6 @@ namespace CJG.Core.Entities
 		public string BusinessDescription { get; set; }
 
 		/// <summary>
-		/// A description of the Immediate Needs of the Business and the relevance of training to it's business
-		/// </summary>
-		public string BusinessTrainingRelevance { get; set; }
-
-		/// <summary>
 		/// get/set - Whether the NAICS code has been updated from 2012 to 2017 version
 		/// </summary>
 		public bool IsNaicsUpdated { get; set; }

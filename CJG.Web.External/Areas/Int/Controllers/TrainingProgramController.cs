@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using CJG.Web.External.Areas.Int.Models.TrainingPrograms;
+using CJG.Web.External.Areas.Int.Models.TrainingProviders;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
@@ -64,6 +66,27 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				HandleAngularException(ex, model);
 			}
 
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
+		/// Get the specified training program extra information. Mostly HTMl content we need to display, but not edit/post.
+		/// </summary>
+		/// <param name="trainingProgramId"></param>
+		/// <returns></returns>
+		[HttpGet, Route("Application/Training/Program/ExtraInfo/{trainingProgramId}")]
+		public JsonResult GetTrainingProgramExtraInfo(int trainingProgramId)
+		{
+			var model = new TrainingProgramExtraInfoViewModel();
+			try
+			{
+				var trainingProgram = _trainingProgramService.Get(trainingProgramId);
+				model = new TrainingProgramExtraInfoViewModel(trainingProgram);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
 

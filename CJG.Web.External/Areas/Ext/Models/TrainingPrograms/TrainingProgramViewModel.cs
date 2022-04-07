@@ -1,11 +1,13 @@
-﻿using CJG.Core.Entities;
-using CJG.Core.Interfaces.Service;
-using CJG.Web.External.Helpers.Validation;
-using CJG.Web.External.Models.Shared;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Principal;
+using System.Web.Mvc;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces.Service;
+using CJG.Web.External.Helpers;
+using CJG.Web.External.Helpers.Validation;
+using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 {
@@ -16,9 +18,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 		public int GrantApplicationId { get; set; }
 		public string GrantApplicationRowVersion { get; set; }
 
-
 		public DateTime DeliveryStartDate { get; set; }
-
 		public DateTime DeliveryEndDate { get; set; }
 
 		[Required(ErrorMessage = "The Start Date field is required.")]
@@ -37,7 +37,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 		public string CourseTitle { get; set; }
 
 		[Required(ErrorMessage = "Total training hours is required.")]
-		[Helpers.ValidateNullableInt(ErrorMessage = "Please enter total training hours to the nearest hour.")]
+		[ValidateNullableInt(ErrorMessage = "Please enter total training hours to the nearest hour.")]
 		public int? TotalTrainingHours { get; set; }
 
 		[Required(ErrorMessage = "If you have expected qualifications you must include the title of the qualification."), MaxLength(500)]
@@ -77,6 +77,11 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 		[RequiredEnumerable(ErrorMessage = "You must select at least one underrepresented group.")]
 		public int[] SelectedUnderRepresentedGroupIds { get; set; }
 
+		[AllowHtml]
+		//[Required(ErrorMessage = "Business training relevance is required")]
+		[MaxLength(2300, ErrorMessage = "Business training relevance cannot exceed 2000 characters.")] // Max length is longer than message to allow for HTML content
+		public string BusinessTrainingRelevance { get; set; }
+
 		[CustomValidation(typeof(CourseLinkValidation), "ValidateCourseLink")]
 		public string CourseLink { get; set; }
 		#endregion
@@ -91,56 +96,57 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 			if (trainingProgram == null) throw new ArgumentNullException(nameof(trainingProgram));
 			if (trainingProgram.GrantApplication == null) throw new ArgumentNullException($"{nameof(trainingProgram)}.{nameof(trainingProgram.GrantApplication)}");
 
-			this.Id = trainingProgram.Id;
-			this.RowVersion = trainingProgram.RowVersion == null ? null : Convert.ToBase64String(trainingProgram.RowVersion);
+			Id = trainingProgram.Id;
+			RowVersion = trainingProgram.RowVersion == null ? null : Convert.ToBase64String(trainingProgram.RowVersion);
 
-			this.GrantApplicationId = trainingProgram.GrantApplicationId;
-			this.GrantApplicationRowVersion = Convert.ToBase64String(trainingProgram.GrantApplication.RowVersion);
+			GrantApplicationId = trainingProgram.GrantApplicationId;
+			GrantApplicationRowVersion = Convert.ToBase64String(trainingProgram.GrantApplication.RowVersion);
 
-			this.InDemandOccupationId = trainingProgram.InDemandOccupationId == 0 ? null : (int?)trainingProgram.InDemandOccupationId;
-			this.SkillLevelId = trainingProgram.SkillLevelId == 0 ? null : (int?)trainingProgram.SkillLevelId;
-			this.SkillFocusId = trainingProgram.SkillFocusId == 0 ? null : (int?)trainingProgram.SkillFocusId;
-			this.ExpectedQualificationId = trainingProgram.ExpectedQualificationId == 0 ? null : (int?)trainingProgram.ExpectedQualificationId;
-			this.TrainingLevelId = trainingProgram.TrainingLevelId == 0 ? null : trainingProgram.TrainingLevelId;
-			this.CourseTitle = trainingProgram.CourseTitle;
-			this.TrainingBusinessCase = trainingProgram.TrainingBusinessCase;
-			this.TotalTrainingHours = trainingProgram.TotalTrainingHours == 0 ? null : (int?)trainingProgram.TotalTrainingHours;
-			this.TitleOfQualification = trainingProgram.TitleOfQualification;
-			this.HasOfferedThisTypeOfTrainingBefore = trainingProgram.Id == 0 ? null : (bool?)trainingProgram.HasOfferedThisTypeOfTrainingBefore;
-			this.HasRequestedAdditionalFunding = trainingProgram.Id == 0 ? null : (bool?)trainingProgram.HasRequestedAdditionalFunding;
-			this.DescriptionOfFundingRequested = trainingProgram.DescriptionOfFundingRequested;
-			this.MemberOfUnderRepresentedGroup = trainingProgram.MemberOfUnderRepresentedGroup;
-			this.CourseLink = string.IsNullOrEmpty(trainingProgram.CourseLink) ? null :
+			InDemandOccupationId = trainingProgram.InDemandOccupationId == 0 ? null : trainingProgram.InDemandOccupationId;
+			SkillLevelId = trainingProgram.SkillLevelId == 0 ? null : (int?)trainingProgram.SkillLevelId;
+			SkillFocusId = trainingProgram.SkillFocusId == 0 ? null : trainingProgram.SkillFocusId;
+			ExpectedQualificationId = trainingProgram.ExpectedQualificationId == 0 ? null : (int?)trainingProgram.ExpectedQualificationId;
+			TrainingLevelId = trainingProgram.TrainingLevelId == 0 ? null : trainingProgram.TrainingLevelId;
+			CourseTitle = trainingProgram.CourseTitle;
+			TrainingBusinessCase = trainingProgram.TrainingBusinessCase;
+			TotalTrainingHours = trainingProgram.TotalTrainingHours == 0 ? null : (int?)trainingProgram.TotalTrainingHours;
+			TitleOfQualification = trainingProgram.TitleOfQualification;
+			HasOfferedThisTypeOfTrainingBefore = trainingProgram.Id == 0 ? null : (bool?)trainingProgram.HasOfferedThisTypeOfTrainingBefore;
+			HasRequestedAdditionalFunding = trainingProgram.Id == 0 ? null : (bool?)trainingProgram.HasRequestedAdditionalFunding;
+			DescriptionOfFundingRequested = trainingProgram.DescriptionOfFundingRequested;
+			MemberOfUnderRepresentedGroup = trainingProgram.MemberOfUnderRepresentedGroup;
+			CourseLink = string.IsNullOrEmpty(trainingProgram.CourseLink) ? null :
 				(trainingProgram.CourseLink.Contains("http://") || trainingProgram.CourseLink.Contains("https://") ? trainingProgram.CourseLink : "http://" + trainingProgram.CourseLink);
 
 			if (trainingProgram.GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.EmployerGrant)
 			{
-				this.StartDate = trainingProgram.GrantApplication.StartDate.ToLocalTime();
-				this.StartYear = trainingProgram.GrantApplication.StartDate.ToLocalTime().Year;
-				this.StartMonth = trainingProgram.GrantApplication.StartDate.ToLocalTime().Month;
-				this.StartDay = trainingProgram.GrantApplication.StartDate.ToLocalTime().Day;
-				this.EndDate = trainingProgram.GrantApplication.EndDate.ToLocalTime();
-				this.EndYear = trainingProgram.GrantApplication.EndDate.ToLocalTime().Year;
-				this.EndMonth = trainingProgram.GrantApplication.EndDate.ToLocalTime().Month;
-				this.EndDay = trainingProgram.GrantApplication.EndDate.ToLocalTime().Day;
+				StartDate = trainingProgram.GrantApplication.StartDate.ToLocalTime();
+				StartYear = trainingProgram.GrantApplication.StartDate.ToLocalTime().Year;
+				StartMonth = trainingProgram.GrantApplication.StartDate.ToLocalTime().Month;
+				StartDay = trainingProgram.GrantApplication.StartDate.ToLocalTime().Day;
+				EndDate = trainingProgram.GrantApplication.EndDate.ToLocalTime();
+				EndYear = trainingProgram.GrantApplication.EndDate.ToLocalTime().Year;
+				EndMonth = trainingProgram.GrantApplication.EndDate.ToLocalTime().Month;
+				EndDay = trainingProgram.GrantApplication.EndDate.ToLocalTime().Day;
 			}
 			else
 			{
-				this.StartDate = trainingProgram.StartDate.ToLocalTime();
-				this.StartYear = trainingProgram.StartDate.ToLocalTime().Year;
-				this.StartMonth = trainingProgram.StartDate.ToLocalTime().Month;
-				this.StartDay = trainingProgram.StartDate.ToLocalTime().Day;
-				this.EndDate = trainingProgram.EndDate.ToLocalTime();
-				this.EndYear = trainingProgram.EndDate.ToLocalTime().Year;
-				this.EndMonth = trainingProgram.EndDate.ToLocalTime().Month;
-				this.EndDay = trainingProgram.EndDate.ToLocalTime().Day;
+				StartDate = trainingProgram.StartDate.ToLocalTime();
+				StartYear = trainingProgram.StartDate.ToLocalTime().Year;
+				StartMonth = trainingProgram.StartDate.ToLocalTime().Month;
+				StartDay = trainingProgram.StartDate.ToLocalTime().Day;
+				EndDate = trainingProgram.EndDate.ToLocalTime();
+				EndYear = trainingProgram.EndDate.ToLocalTime().Year;
+				EndMonth = trainingProgram.EndDate.ToLocalTime().Month;
+				EndDay = trainingProgram.EndDate.ToLocalTime().Day;
 			}
 
-			this.SelectedDeliveryMethodIds = trainingProgram.DeliveryMethods.Select(dm => dm.Id).ToArray();
-			this.SelectedUnderRepresentedGroupIds = trainingProgram.UnderRepresentedGroups.Select(dm => dm.Id).ToArray();
-			this.GrantApplicationId = trainingProgram.GrantApplicationId;
-			this.DeliveryStartDate = trainingProgram.GrantApplication.StartDate.ToLocalTime();
-			this.DeliveryEndDate = trainingProgram.GrantApplication.EndDate.ToLocalTime();
+			SelectedDeliveryMethodIds = trainingProgram.DeliveryMethods.Select(dm => dm.Id).ToArray();
+			SelectedUnderRepresentedGroupIds = trainingProgram.UnderRepresentedGroups.Select(dm => dm.Id).ToArray();
+			GrantApplicationId = trainingProgram.GrantApplicationId;
+			DeliveryStartDate = trainingProgram.GrantApplication.StartDate.ToLocalTime();
+			DeliveryEndDate = trainingProgram.GrantApplication.EndDate.ToLocalTime();
+			BusinessTrainingRelevance = trainingProgram.BusinessTrainingRelevance;
 		}
 		#endregion
 
@@ -166,26 +172,27 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 			if (staticDataService == null) throw new ArgumentNullException(nameof(staticDataService));
 			if (user == null) throw new ArgumentNullException(nameof(user));
 
-			var grantApplication = grantApplicationService.Get(this.GrantApplicationId);
-			var create = this.Id == 0;
+			var grantApplication = grantApplicationService.Get(GrantApplicationId);
+			var create = Id == 0;
 
-			var trainingProgram = !create ? trainingProgramService.Get(this.Id) : new TrainingProgram(grantApplication);
+			var trainingProgram = !create ? trainingProgramService.Get(Id) : new TrainingProgram(grantApplication);
 			if (!create)
 			{
-				trainingProgram.RowVersion = Convert.FromBase64String(this.RowVersion);
+				trainingProgram.RowVersion = Convert.FromBase64String(RowVersion);
 			}
 
 			trainingProgram.TrainingProgramState = TrainingProgramStates.Complete;
-			trainingProgram.StartDate = ((DateTime)this.StartDate).ToLocalMorning().ToUtcMorning();
-			trainingProgram.EndDate = ((DateTime)this.EndDate).ToLocalMidnight().ToUtcMidnight();
-			trainingProgram.CourseTitle = this.CourseTitle;
-			trainingProgram.CourseLink = string.IsNullOrEmpty(this.CourseLink) ? null  :
-				( this.CourseLink.Contains("http://") || this.CourseLink.Contains("https://") ? this.CourseLink : "http://" + this.CourseLink);
+			trainingProgram.StartDate = ((DateTime)StartDate).ToLocalMorning().ToUtcMorning();
+			trainingProgram.EndDate = ((DateTime)EndDate).ToLocalMidnight().ToUtcMidnight();
+			trainingProgram.CourseTitle = CourseTitle;
+			trainingProgram.CourseLink = !string.IsNullOrWhiteSpace(CourseLink)
+				? CourseLink.Contains("http://") || CourseLink.Contains("https://") ? CourseLink : "http://" + CourseLink
+				: null;
 
 			// Only add/remove the specified delivery methods.
-			if (this.SelectedDeliveryMethodIds != null && this.SelectedDeliveryMethodIds.Any())
+			if (SelectedDeliveryMethodIds != null && SelectedDeliveryMethodIds.Any())
 			{
-				var thisIds = this.SelectedDeliveryMethodIds.ToArray();
+				var thisIds = SelectedDeliveryMethodIds.ToArray();
 				var currentIds = trainingProgram.DeliveryMethods.Select(dm => dm.Id).ToArray();
 				var removeIds = currentIds.Except(thisIds);
 				var addIds = thisIds.Except(currentIds).Except(removeIds);
@@ -201,7 +208,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 					var deliveryMethod = staticDataService.GetDeliveryMethod(addId);
 					trainingProgram.DeliveryMethods.Add(deliveryMethod);
 				}
-				if(this.SelectedDeliveryMethodIds.Contains(Core.Entities.Constants.Delivery_Classroom) || this.SelectedDeliveryMethodIds.Contains(Core.Entities.Constants.Delivery_Workplace))
+				if(SelectedDeliveryMethodIds.Contains(Constants.Delivery_Classroom) || SelectedDeliveryMethodIds.Contains(Constants.Delivery_Workplace))
                 {
 					if (trainingProgram.TrainingProvider != null)
 					{
@@ -212,7 +219,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 					}
                 }
 
-				else if (!(this.SelectedDeliveryMethodIds.Contains(Core.Entities.Constants.Delivery_Classroom) || this.SelectedDeliveryMethodIds.Contains(Core.Entities.Constants.Delivery_Workplace)))
+				else if (!(SelectedDeliveryMethodIds.Contains(Constants.Delivery_Classroom) || SelectedDeliveryMethodIds.Contains(Constants.Delivery_Workplace)))
 				{
 					if (trainingProgram.TrainingProvider != null)
 					{
@@ -229,44 +236,45 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 				trainingProgram.DeliveryMethods.Clear();
 			}
 
-			trainingProgram.SkillFocusId = this.SkillFocusId.Value;
-			trainingProgram.SkillLevelId = this.SkillLevelId.Value;
-			trainingProgram.TotalTrainingHours = this.TotalTrainingHours.Value;
-			trainingProgram.HasOfferedThisTypeOfTrainingBefore = this.HasOfferedThisTypeOfTrainingBefore.Value;
-			trainingProgram.HasRequestedAdditionalFunding = this.HasRequestedAdditionalFunding.Value;
+			trainingProgram.SkillFocusId = SkillFocusId.Value;
+			trainingProgram.SkillLevelId = SkillLevelId.Value;
+			trainingProgram.TotalTrainingHours = TotalTrainingHours.Value;
+			trainingProgram.HasOfferedThisTypeOfTrainingBefore = HasOfferedThisTypeOfTrainingBefore.Value;
+			trainingProgram.HasRequestedAdditionalFunding = HasRequestedAdditionalFunding.Value;
+			trainingProgram.BusinessTrainingRelevance = BusinessTrainingRelevance;
 
-			if (this.HasRequestedAdditionalFunding.Value)
+			if (HasRequestedAdditionalFunding.Value)
 			{
-				trainingProgram.DescriptionOfFundingRequested = this.DescriptionOfFundingRequested;
+				trainingProgram.DescriptionOfFundingRequested = DescriptionOfFundingRequested;
 			}
 			else
 			{
 				trainingProgram.DescriptionOfFundingRequested = null;
 			}
 
-			trainingProgram.ExpectedQualificationId = this.ExpectedQualificationId.Value;
-			if (new int[] { 5 }.Contains(this.ExpectedQualificationId.GetValueOrDefault()))
+			trainingProgram.ExpectedQualificationId = ExpectedQualificationId.Value;
+			if (new[] { 5 }.Contains(ExpectedQualificationId.GetValueOrDefault()))
 			{
 				trainingProgram.TitleOfQualification = null;
 			}
 			else
 			{
-				trainingProgram.TitleOfQualification = this.TitleOfQualification;
+				trainingProgram.TitleOfQualification = TitleOfQualification;
 			}
 
-			if (new int[] { 5 }.Contains(this.SkillFocusId.GetValueOrDefault()))
+			if (new[] { 5 }.Contains(SkillFocusId.GetValueOrDefault()))
 			{
-				trainingProgram.InDemandOccupationId = this.InDemandOccupationId;
-				trainingProgram.TrainingLevelId = this.TrainingLevelId;
+				trainingProgram.InDemandOccupationId = InDemandOccupationId;
+				trainingProgram.TrainingLevelId = TrainingLevelId;
 
 				//trainingProgram.MemberOfUnderRepresentedGroup = this.MemberOfUnderRepresentedGroup.Value;  // CJG-520. Should not call .Value on a nullable type
-				trainingProgram.MemberOfUnderRepresentedGroup = this.MemberOfUnderRepresentedGroup;
+				trainingProgram.MemberOfUnderRepresentedGroup = MemberOfUnderRepresentedGroup;
 
 				// Only add/remove the specified under represented groups.
 				//if (this.SelectedUnderRepresentedGroupIds != null && this.SelectedUnderRepresentedGroupIds.Any() && this.MemberOfUnderRepresentedGroup.Value) // Should not call .Value on a nullable type
-				if (this.SelectedUnderRepresentedGroupIds != null && this.SelectedUnderRepresentedGroupIds.Any() && (this.MemberOfUnderRepresentedGroup ?? false))
+				if (SelectedUnderRepresentedGroupIds != null && SelectedUnderRepresentedGroupIds.Any() && (MemberOfUnderRepresentedGroup ?? false))
 				{
-					var thisIds = this.SelectedUnderRepresentedGroupIds.ToArray();
+					var thisIds = SelectedUnderRepresentedGroupIds.ToArray();
 					var currentIds = trainingProgram.UnderRepresentedGroups.Select(dm => dm.Id).ToArray();
 					var removeIds = currentIds.Except(thisIds);
 					var addIds = thisIds.Except(currentIds).Except(removeIds);
@@ -298,19 +306,19 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 
 			if (grantApplication.MarkWithdrawnAndReturnedApplicationAsIncomplete())
 			{
-				grantApplication.RowVersion = Convert.FromBase64String(this.GrantApplicationRowVersion);
+				grantApplication.RowVersion = Convert.FromBase64String(GrantApplicationRowVersion);
 			}
 
 			// If the delivery dates fall outside of the valid dates, make the delivery dates equal to the earliest valid dates.
 			if (!grantApplication.HasValidStartDate())
 			{
-				grantApplication.RowVersion = Convert.FromBase64String(this.GrantApplicationRowVersion);
+				grantApplication.RowVersion = Convert.FromBase64String(GrantApplicationRowVersion);
 				grantApplication.StartDate = grantApplication.EarliestValidStartDate().ToUtcMorning();
 			}
 
 			if (!grantApplication.HasValidEndDate())
 			{
-				grantApplication.RowVersion = Convert.FromBase64String(this.GrantApplicationRowVersion);
+				grantApplication.RowVersion = Convert.FromBase64String(GrantApplicationRowVersion);
 				grantApplication.EndDate = grantApplication.StartDate < trainingProgram.EndDate ? trainingProgram.EndDate : grantApplication.StartDate;
 			}
 

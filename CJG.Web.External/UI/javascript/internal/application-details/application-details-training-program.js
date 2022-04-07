@@ -156,6 +156,7 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
     })
       .then(function (response) {
         return Promise.all([
+          loadTrainingProgramExtraInfo(),
           loadCipsCode(2, $scope.model.CipsCode1Id, 'programCipsCode2'),
           loadCipsCode(3, $scope.model.CipsCode2Id, 'programCipsCode3'),
         ])
@@ -165,6 +166,18 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
             });
           });
       });
+  }
+
+  /**
+ * Make AJAX request to load training program extra info data
+ * @function loadTrainingProgramExtraInfo
+ * @returns {Promise}
+ **/
+  function loadTrainingProgramExtraInfo() {
+    return $scope.load({
+      url: '/Int/Application/Training/Program/ExtraInfo/' + $scope.component.Id,
+      set: 'extraInfo'
+    });
   }
 
   /**
