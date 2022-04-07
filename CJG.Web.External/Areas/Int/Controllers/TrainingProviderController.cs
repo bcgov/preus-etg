@@ -145,7 +145,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 						ModelState.AddModelError(nameof(model.TrainingLocationListViewModel.PostalCode), "PostalCode is required");
 						ModelState.AddModelError(nameof(model.TrainingLocationListViewModel.Country), "Country is required");
 						ModelState.AddModelError(nameof(model.TrainingLocationListViewModel.RegionId), "Province is required");
-
 					}
 				}
 
