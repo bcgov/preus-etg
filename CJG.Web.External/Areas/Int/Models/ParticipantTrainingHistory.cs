@@ -14,8 +14,8 @@ namespace CJG.Web.External.Areas.Int.Models
 		public string ApplicationStatus { get; set; }
 		public string TrainingProvider { get; set; }
 		public string TrainingCourse { get; set; }
-		public decimal ApprovedGovtContribution { get; set; }
-		public decimal AmountPaid { get; set; }
+		public string ApprovedGovtContribution { get; set; }
+		public string AmountPaid { get; set; }
 		#endregion
 
 		//ParticipantForm participant
@@ -32,8 +32,8 @@ namespace CJG.Web.External.Areas.Int.Models
 			this.TrainingProvider = trainingProgram.TrainingProvider.Name;
 			this.TrainingCourse = trainingProgram.CourseTitle;
 
-			this.ApprovedGovtContribution = govContri;
-			this.AmountPaid = paid;
+			this.ApprovedGovtContribution = govContri.ToString("c");
+			this.AmountPaid = paid.ToString("c");
 		}
 	}
 }
