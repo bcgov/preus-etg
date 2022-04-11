@@ -1,5 +1,5 @@
 // ETG, Training program
-app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeout, Utils) {
+app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
   $scope.section = {
     name: 'TrainingProgram',
     displayName: 'Training Program',
@@ -241,6 +241,18 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
         $scope.programCipsCode3 = [];
     }
     return loadCipsCode(level, parentId, 'programCipsCode' + level);
+  }
+
+  $scope.previewBusinessTrainingRelevance = function () {
+    return ngDialog.open({
+        template: '/content/dialogs/_FullContent.html',
+        closeByDocument: true,
+        data: {
+          title: 'Business Training Relevance',
+          content: $scope.extraInfo.BusinessTrainingRelevance
+        }
+      }
+    );
   }
 
   /**

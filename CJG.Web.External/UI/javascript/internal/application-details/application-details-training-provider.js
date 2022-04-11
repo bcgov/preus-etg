@@ -107,6 +107,30 @@ app.controller('TrainingProvider', function ($scope, $attrs, $controller, $timeo
     $scope.model.TrainingProviderType.PrivateSectorValidationType = $scope.ProviderTypesDetails.find(function (element) {
       return element.Id == $scope.model.TrainingProviderType.Id;
     }).PrivateSectorValidationType;
-
   }
+
+  $scope.previewTrainingOptions = function() {
+    return ngDialog.open({
+      template: '/content/dialogs/_FullContent.html',
+      closeByDocument: true,
+        data: {
+          title: 'Alternative Training Options',
+          content: $scope.extraInfo.AlternativeTrainingOptions
+        }
+      }
+    );
+  }
+
+  $scope.previewChoiceOfTrainer = function () {
+    return ngDialog.open({
+      template: '/content/dialogs/_FullContent.html',
+      closeByDocument: true,
+        data: {
+          title: 'Choice of Trainer/Program',
+          content: $scope.extraInfo.ChoiceOfTrainerOrProgram
+        }
+      }
+    );
+  }
+
 });

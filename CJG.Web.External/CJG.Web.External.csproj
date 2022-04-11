@@ -294,6 +294,7 @@
     <Content Include="content\components\_AngularTextArea.html" />
     <Content Include="content\dialogs\_ChangeAlternateContact.html" />
     <Content Include="content\dialogs\_DenialReason.html" />
+    <Content Include="content\dialogs\_FullContent.html" />
     <Content Include="content\dialogs\_TestNotification.html" />
     <Content Include="content\dialogs\_ChangeApplicant.html" />
     <Content Include="content\dialogs\_Message.html" />

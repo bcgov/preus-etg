@@ -151,17 +151,29 @@ app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $tim
    **/
   $scope.reassign = function () {
     return $scope.load({
-      url: '/Int/Application/Summary/Assign',
-      data: function () {
-        return $scope.model;
-      },
-      set: 'model',
-      method: 'PUT'
-    })
-      .then(function () {
+        url: '/Int/Application/Summary/Assign',
+        data: function() {
+          return $scope.model;
+        },
+        set: 'model',
+        method: 'PUT'
+      })
+      .then(function() {
         return $scope.section.onSave();
       })
-      .catch(angular.noop)
+      .catch(angular.noop);
+  }
+
+  $scope.previewBusinessDescription = function () {
+    return ngDialog.open({
+        template: '/content/dialogs/_FullContent.html',
+        closeByDocument: true,
+        data: {
+          title: 'Business Description',
+          content: $scope.businessInfo.BusinessDescription
+        }
+      }
+    );
   }
 
   /**
