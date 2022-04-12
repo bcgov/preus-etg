@@ -144,7 +144,7 @@ namespace CJG.Application.Services
 					foreach (var ec in grantApplication.TrainingCost.EligibleCosts)
 					{
 						ec.AgreedMaxParticipants = totalApproved;
-						ec.AgreedMaxParticipantCost = ec.EstimatedParticipantCost;
+						ec.AgreedMaxParticipantCost = ec.AgreedMaxParticipantCost;
 
 						ec.AgreedMaxCost = ec.AgreedMaxParticipants * ec.AgreedMaxParticipantCost;
 						
