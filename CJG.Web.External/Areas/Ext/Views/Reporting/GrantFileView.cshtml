@@ -28,6 +28,10 @@
                     <h2>Participant <span class="text--lowercase">and</span> Claim Reporting</h2>
                 </div>
 
+                <div ng-if="!model.EnableSubmit">
+                    <p class="alert alert--warning"><em>Press review and submit claim button to submit your reimbursement claim!</em></p>
+                </div>                
+
                 <div class="notice notice--icon" ng-if="!model.RequireAllParticipantsBeforeSubmission" ng-show="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
                     <p>Once you have reported participants and they have submitted their Personal Information Forms, you will be able to submit your Reimbursement Claim.</p>
                 </div>
