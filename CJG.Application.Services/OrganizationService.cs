@@ -115,7 +115,12 @@ namespace CJG.Application.Services
 
 		public bool RequiresBusinessLicenseDocuments(int orgId)
 		{
-			return !Get(orgId).BusinessLicenseDocuments.Any();
+			var organization = Get(orgId);
+			if (organization == null)
+				return false;
+
+			var businessLicenseExpiry = AppDateTime.UtcNow.AddMonths(-12);
+			return !organization.BusinessLicenseDocuments.Any(bl => bl.DateAdded >= businessLicenseExpiry || bl.DateUpdated >= businessLicenseExpiry);
 		}
 
 		public int NotSubmittedGrantApplications(int orgId)

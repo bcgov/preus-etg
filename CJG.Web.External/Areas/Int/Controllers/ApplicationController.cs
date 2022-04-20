@@ -53,6 +53,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		{
 			ViewBag.GrantApplicationId = grantApplicationId;
 			var grantApplication = _grantApplicationService.Get(grantApplicationId);
+			ViewBag.GrantFileNumber = grantApplication.FileNumber;
+
 			return View();
 		}
 

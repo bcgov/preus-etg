@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Areas.Ext.Models;
 using CJG.Web.External.Areas.Ext.Models.Attachments;
@@ -11,7 +12,6 @@ using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
-using Newtonsoft.Json;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
@@ -144,6 +144,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 			var address = JsonConvert.DeserializeObject<AddressViewModel>(model.HeadOfficeAddressBlob);
 			model.HeadOfficeAddress = address;
+			model.BusinessLicenseDocumentAttachments = GetBusinessAttachmentsToValidate(attachments);
 
 			// Have to validate the sub-model since we cleared the original errors
 			TryValidateModel(model.HeadOfficeAddress, "HeadOfficeAddress");
@@ -156,8 +157,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 				if (ModelState.IsValid)
 				{
-					var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
-
 					model.UpdateOrganization(_userService, _siteMinderService, _organizationService);
 					model.UpdateOrganizationBusinessLicenses(_userService, _siteMinderService, _attachmentService, files, attachmentsModel);
 
@@ -177,6 +176,23 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			//model.RedirectURL = Url.Action("OrganizationProfileView");
 
 			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		private List<AttachmentViewModel> GetBusinessAttachmentsToValidate(string attachments)
+		{
+			var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
+			var currentOrganization = currentUser.Organization;
+			var currentBusinessDocs = currentOrganization?.BusinessLicenseDocuments.Select(a => new AttachmentViewModel(a)).ToList();
+
+			var postedAttachments = JsonConvert.DeserializeObject<IEnumerable<UpdateAttachmentViewModel>>(attachments).ToList();
+			var docIdsToRemove = postedAttachments.Where(a => a.Delete).Select(d => d.Id).ToList();
+			var docsToAdd = postedAttachments.Where(a => !a.Delete).ToList();
+
+			var documentsToValidate = new List<AttachmentViewModel>();
+			documentsToValidate.AddRange(docsToAdd);
+			documentsToValidate.AddRange(currentBusinessDocs.Where(c => !docIdsToRemove.Contains(c.Id)));
+
+			return documentsToValidate;
 		}
 
 		/// <summary>

@@ -691,7 +691,6 @@ namespace CJG.Core.Entities
 
 			if (user.PhysicalAddress == null)
 				throw new InvalidOperationException($"Applicant must have a physical address.");
-
 		}
 
 		/// <summary>
@@ -1039,8 +1038,8 @@ namespace CJG.Core.Entities
 		}
 
 		public static List<ParticipantForm> ApprovedParticipants(this GrantApplication grantApplication)
-		{			
-			return grantApplication.ParticipantForms.Where(w => w.Approved.HasValue && w.Approved.Value).ToList();			
+		{
+			return grantApplication.ParticipantForms.Where(w => w.Approved.HasValue && w.Approved.Value).ToList();
 		}
 
 		/// <summary>

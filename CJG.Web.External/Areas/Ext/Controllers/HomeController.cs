@@ -80,7 +80,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			}
 
 			//Check if an Organization NAICS code is updated to 2017
-			if (!(_organizationService.IsOrganizationNaicsStatusUpdated(currentUser.Organization.Id)))
+			if (!_organizationService.IsOrganizationNaicsStatusUpdated(currentUser.Organization.Id))
 			{
 				if (currentUser.IsOrganizationProfileAdministrator && _organizationService.NotSubmittedGrantApplications(currentUser.Organization.Id) > 0)
 				{
@@ -95,8 +95,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 			if (_organizationService.RequiresBusinessLicenseDocuments(currentUser.Organization.Id))
 			{
-				_logger.Debug($"The user/administrator must add Business License Documents to the Organization Profile - '{_siteMinderService.CurrentUserName}':{_siteMinderService.CurrentUserGuid}");
-				return RedirectToAction("OrganizationProfileView", "OrganizationProfile");
+				_logger.Info($"The Organization is missing up-to-date Business License Documents - {_siteMinderService.CurrentUserGuid}");
+				this.SetAlert("Your organization’s Business Information Documents (e.g. business licence) are currently out of date.", AlertType.Warning);
 			}
 
 			if (_organizationService.NotSubmittedGrantApplicationsForUser(currentUser.Organization.Id, currentUser.BCeIDGuid) > 0)
