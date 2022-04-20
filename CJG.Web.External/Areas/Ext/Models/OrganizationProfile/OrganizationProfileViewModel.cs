@@ -100,7 +100,8 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 		[MaxLength(2300, ErrorMessage = "Business description cannot exceed 2000 characters.")] // Max length is longer than message to allow for HTML content
 		public string BusinessDescription { get; set; }
 
-		public IEnumerable<AttachmentViewModel> BusinessLicenseDocumentAttachments { get;  }
+		[CustomValidation(typeof(OrganizationProfileViewModelValidation), "ValidateBusinessLicenseDocuments")]
+		public IEnumerable<AttachmentViewModel> BusinessLicenseDocumentAttachments { get; set; }
 
 		public string RowVersion { get; set; }
 

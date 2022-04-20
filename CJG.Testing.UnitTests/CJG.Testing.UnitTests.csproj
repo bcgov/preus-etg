@@ -209,6 +209,7 @@
     <Compile Include="ApplicationServices\NationalOccupationalClassificationServiceTest.cs" />
     <Compile Include="ApplicationServices\NoteServiceTest.cs" />
     <Compile Include="ApplicationServices\Notification\NotificationViewModelTests.cs" />
+    <Compile Include="ApplicationServices\OrganizationServiceBusinessLicenseTests.cs" />
     <Compile Include="ApplicationServices\OrganizationServiceTests.cs" />
     <Compile Include="ApplicationServices\ParticipantServiceTests.cs" />
     <Compile Include="ApplicationServices\PaymentRequestServiceTests.cs" />

@@ -28,20 +28,18 @@
                     <p>Members of your organization will not be able to submit grant applications until your organization profile has been created.</p>
                 </div>
                 <div class="notice notice--icon" ng-if="!model.CreateOrganizationProfile && model.IsOrganizationProfileAdministrator">
-                    <p>You are the only person who can maintain the organization profile for your organization. The profile is included in all grant applications from your organization.</p>
-                    <p>You may edit the organization profile below. Make sure you click Save organization profile at the bottom of this form to save your changes.</p>
-                    <p>If you need to change the person who can maintain your organization profile then please use the link shown in the footer below to contact us.</p>
+                    <p>Make sure you click Save organization profile at the bottom of this form to save your changes.</p>
                 </div>
                 <div class="notice notice--icon" ng-if="!model.IsOrganizationProfileAdministrator">
                     <p>The organization profile below will be included in grant applications submitted by you.</p>
                     <p>Your organization is responsible for ensuring that your profile is accurate. Only one member of your organization may create and maintain it. Your organization profile is maintained by {{model.AdminUserName}} (<a href="mailto:{{model.AdminUserEmailAddress}}" data-email="maintainer">{{model.AdminUserEmailAddress}}</a>)</p>
                 </div>
 
-                <div class="notice notice--icon" ng-if="!model.CreateOrganizationProfile && model.IsOrganizationProfileAdministrator && model.RequiresBusinessLicenseDocuments">
+                <div class="alert alert--warning notice--icon" ng-show="!model.CreateOrganizationProfile && model.IsOrganizationProfileAdministrator && model.RequiresBusinessLicenseDocuments">
                     <p>The organization profile is missing information about your business.</p>
                 </div>
 
-                <div class="notice notice--icon" ng-if="!model.CreateOrganizationProfile && !model.IsOrganizationProfileAdministrator && model.RequiresBusinessLicenseDocuments">
+                <div class="alert alert--warning notice--icon" ng-if="!model.CreateOrganizationProfile && !model.IsOrganizationProfileAdministrator && model.RequiresBusinessLicenseDocuments">
                     <p>The organization profile is missing information about your business. Your organization profile is maintained by {{model.AdminUserName}} (<a href="mailto:{{model.AdminUserEmailAddress}}" data-email="maintainer">{{model.AdminUserEmailAddress}}</a>).</p>
                 </div>
 
@@ -194,21 +192,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="form__group">
-                    
+            <div class="form__group">
+                <div ng-class="(model.RequiresBusinessLicenseDocuments || errors.BusinessLicenseDocumentAttachments) ? 'has-error padded-error' : '' ">
                     <h4>Business Information Documents</h4>
                     <div class="notice notice--icon" ng-if="model.IsOrganizationProfileAdministrator">
                         <p>To be eligible, employers must have been fully operational for at least one year at the time of application. Please provide a copy of your business licence. If your current licence does not demonstrate one full year of operation at the time of application, please provide your business licence for both the current and previous years. Employers operating without a business licence are still eligible to apply but must provide alternative documentation that clearly demonstrates that they have been fully operational for at least one year at the time of application. If you have questions about please contact <a href="mailto: ETG@gov.bc.ca">ETG@gov.bc.ca</a>.</p>
                     </div>
                     <p ng-if="model.IsOrganizationProfileAdministrator">Accepted file types: PDF, JPG, JPEG, PNG, GIF.</p>
-                         
+
                     <div ng-if="model.BusinessLicenseDocumentAttachments">
                         <table style="width: 100%;">
                             <tr ng-repeat="attachment in model.BusinessLicenseDocumentAttachments">
                                 <td style="width: 60%; vertical-align: top; word-wrap: break-word; word-break: break-all;">
                                     <a ng-if="attachment.Id" target="_blank" href="/Ext/Organization/BusinessLicense/Download/{{attachment.Id}}">{{attachment.FileName}}</a>
                                     <span ng-if="!attachment.Id">{{attachment.FileName}}</span>
-                                    <br />
+                                    <br/>
                                     {{attachment.Description}}
                                 </td>
                                 <td style="width: 40%; vertical-align: top">
@@ -225,6 +223,7 @@
                         <button class="btn btn--secondary" ng-click="addAttachment()" data-disableonsubmit="false" ng-if="model.IsOrganizationProfileAdministrator">Add Document</button>
                     </div>
                 </div>
+            </div>
 
                 <div class="form__group">
                     <label class="form__label">Business Website (if applicable)</label>

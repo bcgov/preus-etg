@@ -1,17 +1,17 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using CJG.Core.Entities;
-using CJG.Core.Interfaces.Service;
-using CJG.Core.Interfaces;
 using System.ComponentModel.DataAnnotations;
-using System.Web.Mvc;
-using CJG.Infrastructure.Identity;
 using System.Data.Entity.Validation;
+using System.Linq;
+using System.Web.Mvc;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces;
+using CJG.Core.Interfaces.Service;
+using CJG.Infrastructure.Identity;
 
 namespace CJG.Web.External.Helpers
 {
-	public static class EntityExtensions
+    public static class EntityExtensions
 	{
 		public static string GetUserFullName(this User model)
 		{

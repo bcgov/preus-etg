@@ -1,4 +1,7 @@
 ﻿@using CJG.Core.Entities
+@{
+    ViewBag.Title = $"Grant Application {ViewBag.GrantFileNumber}";
+}
 <div ng-controller="ApplicationDetails" grant-application-id="@ViewBag.GrantApplicationId" class="application">
 	<div class="application-header">
         <div class="clearfix">
