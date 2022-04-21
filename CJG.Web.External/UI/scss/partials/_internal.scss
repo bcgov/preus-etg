@@ -364,6 +364,21 @@ $int-header-height: 32px;
   }
 }
 
+.notes-list__preview {
+  z-index: 999999;
+  position: absolute;
+  max-width: 450px;
+  min-width: 300px;
+  max-height: 400px;
+  overflow: hidden;
+  border: 1px solid darken(color('border'), 15%);
+  background-color: #efefef;
+  right: 285px;
+  top: 150px;
+  padding: 10px;
+  box-shadow: 0px 5px 8px -3px #666;
+}
+
 .notes-list__caption {
   border-bottom: 1px solid color('border');
   flex-basis: 20%;
@@ -410,6 +425,27 @@ $int-header-height: 32px;
     height: 16px;
     text-indent: -9999px;
   }
+}
+
+.collapsed__html {
+  max-height: 120px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.collapsed__html:before {
+  content: ' ';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: linear-gradient(transparent 80px, white);
 }
 
 // Training Provider List

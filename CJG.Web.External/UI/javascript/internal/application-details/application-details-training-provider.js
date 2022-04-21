@@ -64,6 +64,18 @@ app.controller('TrainingProvider', function ($scope, $attrs, $controller, $timeo
   }
 
   /**
+   * Make AJAX request to load training provider extra info data
+   * @function loadTrainingProviderExtraInfo
+   * @returns {Promise}
+   **/
+  function loadTrainingProviderExtraInfo() {
+    return $scope.load({
+      url: '/Int/Application/Training/Provider/ExtraInfo/' + $scope.provider.Id,
+      set: 'extraInfo'
+    });
+  }
+
+  /**
    * Initialize the form data
    * @function init
    * @returns {Promise}
@@ -74,6 +86,7 @@ app.controller('TrainingProvider', function ($scope, $attrs, $controller, $timeo
       $scope.loadProvinces(),
       $scope.loadProviderTypesDetails(),
       $scope.loadTrainingProviderTypes(),
+      loadTrainingProviderExtraInfo(),
       loadTrainingProvider()
     ]).catch(angular.noop);
   }
@@ -94,6 +107,30 @@ app.controller('TrainingProvider', function ($scope, $attrs, $controller, $timeo
     $scope.model.TrainingProviderType.PrivateSectorValidationType = $scope.ProviderTypesDetails.find(function (element) {
       return element.Id == $scope.model.TrainingProviderType.Id;
     }).PrivateSectorValidationType;
-
   }
+
+  $scope.previewTrainingOptions = function() {
+    return ngDialog.open({
+      template: '/content/dialogs/_FullContent.html',
+      closeByDocument: true,
+        data: {
+          title: 'Alternative Training Options',
+          content: $scope.extraInfo.AlternativeTrainingOptions
+        }
+      }
+    );
+  }
+
+  $scope.previewChoiceOfTrainer = function () {
+    return ngDialog.open({
+      template: '/content/dialogs/_FullContent.html',
+      closeByDocument: true,
+        data: {
+          title: 'Choice of Trainer/Program',
+          content: $scope.extraInfo.ChoiceOfTrainerOrProgram
+        }
+      }
+    );
+  }
+
 });

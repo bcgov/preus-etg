@@ -38,7 +38,7 @@
 							  style="border-top-color: #A9A9A8" ng-validation="errors.Content"
 							  ui-tinymce="tinymceOptions"></textarea>
                 </div>
-                <div class="form__control" ng-if="!ngDialogData.note.AllowEdit" ng-bind-html="ngDialogData.note.Content"></div>
+                <div class="form__control" ng-if="!ngDialogData.note.AllowEdit" ng-bind-html="ngDialogData.note.Content | unsafe"></div>
             </div>
             <div class="form__group">
                 <div class="form__label">Attachment</div>

@@ -1,38 +1,41 @@
-﻿using CJG.Core.Interfaces.Service;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Newtonsoft.Json;
+using CJG.Core.Interfaces.Service;
+using CJG.Web.External.Areas.Ext.Models;
+using CJG.Web.External.Areas.Ext.Models.Attachments;
 using CJG.Web.External.Areas.Ext.Models.OrganizationProfile;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
-	/// <summary>
-	/// <typeparamref name="OrganizationProfileController"/> class, MVC Controller provides endpoints for managing external organization information.
-	/// </summary>
-	[ExternalFilter]
+    /// <summary>
+    /// <typeparamref name="OrganizationProfileController"/> class, MVC Controller provides endpoints for managing external organization information.
+    /// </summary>
+    [ExternalFilter]
 	[RouteArea("Ext")]
 	public class OrganizationProfileController : BaseController
 	{
-		#region Variables
 		private readonly IAuthenticationService _authenticationService;
 		private readonly ISiteMinderService _siteMinderService;
 		private readonly IUserService _userService;
 		private readonly IStaticDataService _staticDataService;
 		private readonly IOrganizationService _organizationService;
 		private readonly INaIndustryClassificationSystemService _naIndustryClassificationSystemService;
-		#endregion
+		private readonly IAttachmentService _attachmentService;
 
-		#region Constructors
 		public OrganizationProfileController(
 			IControllerService controllerService,
 			IAuthenticationService authenticationService,
 			IOrganizationService organizationService,
-			INaIndustryClassificationSystemService naIndustryClassificationSystem) : base(controllerService.Logger)
+			INaIndustryClassificationSystemService naIndustryClassificationSystem,
+			IAttachmentService attachmentService) : base(controllerService.Logger)
 		{
 			_authenticationService = authenticationService;
 			_userService = controllerService.UserService;
@@ -40,10 +43,9 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			_staticDataService = controllerService.StaticDataService;
 			_organizationService = organizationService;
 			_naIndustryClassificationSystemService = naIndustryClassificationSystem;
+			_attachmentService = attachmentService;
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
 		/// Return a view for organization.
 		/// </summary>
@@ -82,7 +84,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				{
 					BackURL = TempData["BackURL"]?.ToString() ?? "/Ext/Home/",
 					CreateOrganizationProfile = createOrganizationProfile,
-					IsOrganizationProfileAdministrator = currentUser.IsOrganizationProfileAdministrator || model.CreateOrganizationProfile
+					IsOrganizationProfileAdministrator = currentUser.IsOrganizationProfileAdministrator || model.CreateOrganizationProfile,
+					RequiresBusinessLicenseDocuments = _organizationService.RequiresBusinessLicenseDocuments(currentUser.OrganizationId)
 				};
 			}
 			catch (Exception ex)
@@ -127,20 +130,38 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// Update and save the specified organization.
 		/// </summary>
 		/// <param name="model"></param>
+		/// <param name="files"></param>
+		/// <param name="attachments"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[PreventSpam]
 		[ValidateRequestHeader]
 		[Route("Organization/Profile")]
-		public JsonResult UpdateOrganization(OrganizationProfileViewNewModel model)
+		public JsonResult UpdateOrganization(OrganizationProfileViewNewModel model, HttpPostedFileBase[] files, string attachments)
 		{
+			// Have to clear the default validation state since the address sub-model doesn't come over with the ajax 'datatype' set to 'file'.
+			ModelState.Clear();
+
+			var address = JsonConvert.DeserializeObject<AddressViewModel>(model.HeadOfficeAddressBlob);
+			model.HeadOfficeAddress = address;
+			model.BusinessLicenseDocumentAttachments = GetBusinessAttachmentsToValidate(attachments);
+
+			// Have to validate the sub-model since we cleared the original errors
+			TryValidateModel(model.HeadOfficeAddress, "HeadOfficeAddress");
+			TryValidateModel(model);
+
 			try
 			{
+				// Deserialize attachments model. This is required because it isn't easy to deserialize an array when including files in a multipart data form.
+				var attachmentsModel = JsonConvert.DeserializeObject<IEnumerable<UpdateAttachmentViewModel>>(attachments);
+
 				if (ModelState.IsValid)
 				{
-					var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
-
 					model.UpdateOrganization(_userService, _siteMinderService, _organizationService);
+					model.UpdateOrganizationBusinessLicenses(_userService, _siteMinderService, _attachmentService, files, attachmentsModel);
+
+					this.SetAlert("Organization Profile has been updated successfully.", AlertType.Success, true);
+					model.RedirectURL = Url.Action("OrganizationProfileView");
 				}
 				else
 				{
@@ -152,6 +173,51 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				HandleAngularException(ex, model);
 			}
 
+			//model.RedirectURL = Url.Action("OrganizationProfileView");
+
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		private List<AttachmentViewModel> GetBusinessAttachmentsToValidate(string attachments)
+		{
+			var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
+			var currentOrganization = currentUser.Organization;
+			var currentBusinessDocs = currentOrganization?.BusinessLicenseDocuments.Select(a => new AttachmentViewModel(a)).ToList();
+
+			var postedAttachments = JsonConvert.DeserializeObject<IEnumerable<UpdateAttachmentViewModel>>(attachments).ToList();
+			var docIdsToRemove = postedAttachments.Where(a => a.Delete).Select(d => d.Id).ToList();
+			var docsToAdd = postedAttachments.Where(a => !a.Delete).ToList();
+
+			var documentsToValidate = new List<AttachmentViewModel>();
+			documentsToValidate.AddRange(docsToAdd);
+			documentsToValidate.AddRange(currentBusinessDocs.Where(c => !docIdsToRemove.Contains(c.Id)));
+
+			return documentsToValidate;
+		}
+
+		/// <summary>
+		/// Downloads specified business license attachment
+		/// </summary>
+		/// <param name="attachmentId"></param>
+		/// <returns></returns>
+		[HttpGet]
+		[PreventSpam]
+		[Route("Organization/BusinessLicense/Download/{attachmentId}")]
+		public ActionResult DownloadAttachment(int attachmentId)
+		{
+			var model = new BaseViewModel();
+			try
+			{
+				var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
+				var organization = currentUser.Organization;
+
+				var attachment = _attachmentService.GetBusinessLicenseAttachment(organization.Id, attachmentId);
+				return File(attachment.AttachmentData, System.Net.Mime.MediaTypeNames.Application.Octet, $"{attachment.FileName}{attachment.FileExtension}");
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
 
@@ -240,6 +306,5 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				return Json(model, JsonRequestBehavior.AllowGet);
 			}
 		}
-		#endregion
 	}
 }

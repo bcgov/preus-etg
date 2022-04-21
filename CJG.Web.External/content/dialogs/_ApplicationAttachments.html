@@ -13,7 +13,7 @@
                         </div>
                         <div class="control-wrapper float-right">
                             <button class="btn btn--small btn--secondary" ng-click="chooseFile()" ng-validation="errors.File">{{ ngDialogData.attachment.FileName ? 'Change' : 'Choose' }} File</button>
-                            <input type="file" id="grant-application-upload" name="AsyncDocumentsFiles" accept=".pdf,.jpg,.jpeg,.png,.gif" autocomplete="off" style="display:none;" ng-file-changed="fileChanged($files)" />
+                            <input type="file" id="grant-application-upload" name="AsyncDocumentsFiles" accept=".pdf,.jpg,.jpeg,.png,.gif" autocomplete="off" style="display: none;" ng-file-changed="fileChanged($files)"/>
                         </div>
                     </div>
                 </div>
@@ -24,19 +24,7 @@
                         <span class="pull-right ">{{500 - ngDialogData.attachment.Description.length}} chars left</span>
                     </div>
                 </div>
-                <input type="hidden" id="attachment-type-hidden" ng-model="ngDialogData.attachment.AttachmentType" name="model.attachment.AttachmentType" ng-if="!ngDialogData.showAttachmentType" value="0">
-                <div class="form__group" ng-if="ngDialogData.showAttachmentType && ngDialogData.attachment.AttachmentType != null">
-                    <div class="form__label">Attachment Type: </div>
-                    <div class="form__control">
-                        <div class="control-wrapper">
-                            <input type="radio" id="attachment-type-attachment" ng-value="0" ng-model="ngDialogData.attachment.AttachmentType" name="model.attachment.AttachmentType">
-                            <label for="attachment-type-attachment">Applicant Attachment</label>
-
-                            <input type="radio" id="attachment-type-document" ng-value="1" ng-model="ngDialogData.attachment.AttachmentType" name="model.attachment.AttachmentType">
-                            <label for="attachment-type-document">Ministry Attachment</label>
-                        </div>
-                    </div>
-                </div>
+                <input type="hidden" id="attachment-type-hidden" ng-model="ngDialogData.attachment.AttachmentType" name="model.attachment.AttachmentType" value="ngDialogData.attachment.AttachmentType">
             </div>
             <div class="modal-footer">
                 <div class="form well">

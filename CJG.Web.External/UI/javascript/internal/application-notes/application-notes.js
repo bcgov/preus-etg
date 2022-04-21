@@ -183,13 +183,13 @@ app.controller('ApplicationNotes', function ($scope, $attrs, $controller, $timeo
    * @param {any} note
    * @returns {Promise}
    */
-  $scope.openNote = function ($event, note) {
+  $scope.openNote = function($event, note) {
     return showDialog(note)
-      .then(function (data) {
+      .then(function(data) {
         if (data.Id) {
           return $scope.sync(data, note);
         } else {
-          return $timeout(function () {
+          return $timeout(function() {
             var index = $scope.model.Notes.indexOf(note);
             $scope.model.Notes.splice(index, 1);
             index = $scope.model.filterNotes.indexOf(note);
@@ -199,6 +199,10 @@ app.controller('ApplicationNotes', function ($scope, $attrs, $controller, $timeo
       })
       .catch(angular.noop);
     $event.stopPropagation();
+  }
+
+  $scope.toggleNote = function ($event, note, toggleState) {
+      note.ShowNote = toggleState;
   }
 
   /**

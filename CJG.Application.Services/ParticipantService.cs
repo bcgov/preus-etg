@@ -144,7 +144,7 @@ namespace CJG.Application.Services
 					foreach (var ec in grantApplication.TrainingCost.EligibleCosts)
 					{
 						ec.AgreedMaxParticipants = totalApproved;
-						ec.AgreedMaxParticipantCost = ec.EstimatedParticipantCost;
+						ec.AgreedMaxParticipantCost = ec.AgreedMaxParticipantCost;
 
 						ec.AgreedMaxCost = ec.AgreedMaxParticipants * ec.AgreedMaxParticipantCost;
 						
@@ -266,6 +266,19 @@ namespace CJG.Application.Services
 			foreach (var participantEnrollment in participantEnrollments)
 			{
 				participantEnrollment.ReportedOn = reportedDate.ToUniversalTime();
+			}
+
+			_dbContext.Commit();
+		}
+
+
+		public void UpdateExpectedOutcome(ParticipantForm participant, ExpectedParticipantOutcome? modelExpectedOutcome)
+		{
+			var pf = _dbContext.ParticipantForms.FirstOrDefault(pf => pf.Id == participant.Id);
+			if (pf != null)
+			{
+				pf.ExpectedParticipantOutcome = modelExpectedOutcome;
+				_dbContext.Update(pf);
 			}
 
 			_dbContext.Commit();

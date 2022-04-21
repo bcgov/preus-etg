@@ -113,6 +113,16 @@ namespace CJG.Application.Services
 			return applicationCount;
 		}
 
+		public bool RequiresBusinessLicenseDocuments(int orgId)
+		{
+			var organization = Get(orgId);
+			if (organization == null)
+				return false;
+
+			var businessLicenseExpiry = AppDateTime.UtcNow.AddMonths(-12);
+			return !organization.BusinessLicenseDocuments.Any(bl => bl.DateAdded >= businessLicenseExpiry || bl.DateUpdated >= businessLicenseExpiry);
+		}
+
 		public int NotSubmittedGrantApplications(int orgId)
 		{
 			var defaultGrantProgramId = GetDefaultGrantProgramId();

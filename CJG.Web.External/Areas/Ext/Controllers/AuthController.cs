@@ -1,20 +1,18 @@
-﻿using CJG.Core.Entities;
+﻿using System;
+using System.Web.Mvc;
+using NLog;
+using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
-using CJG.Infrastructure.Identity;
 using CJG.Web.External.Areas.Ext.Models;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
-using NLog;
-using System;
-using System.Web.Helpers;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
-	/// <summary>
-	/// <typeparamref name="AuthController"/> class, MVC controller for authenticating external users.
-	/// </summary>
-	public class AuthController : BaseController
+    /// <summary>
+    /// <typeparamref name="AuthController"/> class, MVC controller for authenticating external users.
+    /// </summary>
+    public class AuthController : BaseController
 	{
 		#region Variables
 		private readonly IAuthenticationService _authenticationService;

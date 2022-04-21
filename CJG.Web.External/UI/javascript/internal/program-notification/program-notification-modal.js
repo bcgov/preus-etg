@@ -31,6 +31,8 @@ app.controller('ProgramNotificationModal', function ($scope, $attrs, $controller
     force_br_newlines: false,
     force_p_newlines: false,
     forced_root_block: '',
+    browser_spellcheck: true,
+    contextmenu: false,
     setup: function (ed) {
       ed.on('init', function (ed) {
         $('div.tox-tinymce-aux').css('z-index', '99999');

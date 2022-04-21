@@ -1,11 +1,15 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
+using CJG.Web.External.Areas.Ext.Models.Attachments;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 {
@@ -35,6 +39,7 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 
 		public int? HeadOfficeAddressId { get; set; }
 
+		public string HeadOfficeAddressBlob { get; set; }
 		public AddressViewModel HeadOfficeAddress { get; set; }
 
 		public int OrganizationTypeId { get; set; }
@@ -82,11 +87,24 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 		public string AdminUserEmailAddress { get; set; }
 
 		public string StatementOfRegistrationNumber { get; set; }
-
 		public string BusinessLicenseNumber { get; set; }
 
+		public bool RequiresBusinessLicenseDocuments { get; set; }
+
+		[MaxLength(2000, ErrorMessage = "Business website cannot exceed 2000 characters.")]
+		[Url(ErrorMessage = "Business website must be a valid, fully-qualified http or https URL.")]
+		public string BusinessWebsite { get; set; }
+
+		[AllowHtml]
+		[Required(ErrorMessage = "Business description is required")]
+		[MaxLength(2300, ErrorMessage = "Business description cannot exceed 2000 characters.")] // Max length is longer than message to allow for HTML content
+		public string BusinessDescription { get; set; }
+
+		[CustomValidation(typeof(OrganizationProfileViewModelValidation), "ValidateBusinessLicenseDocuments")]
+		public IEnumerable<AttachmentViewModel> BusinessLicenseDocumentAttachments { get; set; }
 
 		public string RowVersion { get; set; }
+
 		#endregion
 
 		#region Constructors
@@ -101,19 +119,21 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 
 			Utilities.MapProperties(organization, this);
 
-			this.HeadOfficeAddress = organization.HeadOfficeAddress != null ? new AddressViewModel(organization.HeadOfficeAddress) : new AddressViewModel();
-			this.OrganizationTypeId = organization.OrganizationTypeId ?? (int)OrganizationTypeCodes.Default;
+			HeadOfficeAddress = organization.HeadOfficeAddress != null ? new AddressViewModel(organization.HeadOfficeAddress) : new AddressViewModel();
+			OrganizationTypeId = organization.OrganizationTypeId ?? (int)OrganizationTypeCodes.Default;
 
-			var adminUserInfo = organization.Users.Where(u => u.IsOrganizationProfileAdministrator == true)
+			var adminUserInfo = organization.Users.Where(u => u.IsOrganizationProfileAdministrator)
 												  .Select(u => new { AdminUserName = u.FirstName + " " + u.LastName, AdminUserEmailAddress = u.EmailAddress })
 												  .FirstOrDefault();
-			this.AdminUserName = adminUserInfo?.AdminUserName;
-			this.AdminUserEmailAddress = adminUserInfo?.AdminUserEmailAddress;
+			AdminUserName = adminUserInfo?.AdminUserName;
+			AdminUserEmailAddress = adminUserInfo?.AdminUserEmailAddress;
+
+			BusinessLicenseDocumentAttachments = organization.BusinessLicenseDocuments.Select(a => new AttachmentViewModel(a));
 
 			var naics = naIndustryClassificationSystemService.GetNaIndustryClassificationSystems(organization.NaicsId);
 			naics.ForEach(item =>
 			{
-				var property = this.GetType().GetProperty($"Naics{item.Level}Id");
+				var property = GetType().GetProperty($"Naics{item.Level}Id");
 				property?.SetValue(this, item.Id);
 			});
 		}
@@ -136,39 +156,104 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 			}
 			else
 			{
-				organization.RowVersion = Convert.FromBase64String(this.RowVersion);
+				organization.RowVersion = Convert.FromBase64String(RowVersion);
 			}
 
-			organization.DoingBusinessAs = this.DoingBusinessAs;
-			organization.OrganizationType = (OrganizationTypeCodes)this.OrganizationTypeId == OrganizationTypeCodes.Default ? organizationService.GetDefaultOrganizationType() : organizationService.GetOrganizationType(this.OrganizationTypeId);
-			organization.YearEstablished = this.YearEstablished.Value;
-			organization.NumberOfEmployeesWorldwide = this.NumberOfEmployeesWorldwide.Value;
-			organization.AnnualTrainingBudget = this.AnnualTrainingBudget.Value;
-			organization.AnnualEmployeesTrained = this.AnnualEmployeesTrained.Value;
-			organization.NumberOfEmployeesInBC = this.NumberOfEmployeesInBC.Value;
+			organization.DoingBusinessAs = DoingBusinessAs;
+			organization.OrganizationType = (OrganizationTypeCodes)OrganizationTypeId == OrganizationTypeCodes.Default ? organizationService.GetDefaultOrganizationType() : organizationService.GetOrganizationType(OrganizationTypeId);
+			organization.YearEstablished = YearEstablished.Value;
+			organization.NumberOfEmployeesWorldwide = NumberOfEmployeesWorldwide.Value;
+			organization.AnnualTrainingBudget = AnnualTrainingBudget.Value;
+			organization.AnnualEmployeesTrained = AnnualEmployeesTrained.Value;
+			organization.NumberOfEmployeesInBC = NumberOfEmployeesInBC.Value;
 
 			if (organization.HeadOfficeAddress == null)
 			{
 				organization.HeadOfficeAddress = new Address();
 			}
 
-			organization.HeadOfficeAddress.AddressLine1 = this.HeadOfficeAddress.AddressLine1;
-			organization.HeadOfficeAddress.AddressLine2 = this.HeadOfficeAddress.AddressLine2;
-			organization.HeadOfficeAddress.City = this.HeadOfficeAddress.City;
-			organization.HeadOfficeAddress.PostalCode = this.HeadOfficeAddress.PostalCode;
-			organization.HeadOfficeAddress.RegionId = this.HeadOfficeAddress.RegionId;
-			organization.HeadOfficeAddress.CountryId = this.HeadOfficeAddress.CountryId;
+			organization.HeadOfficeAddress.AddressLine1 = HeadOfficeAddress.AddressLine1;
+			organization.HeadOfficeAddress.AddressLine2 = HeadOfficeAddress.AddressLine2;
+			organization.HeadOfficeAddress.City = HeadOfficeAddress.City;
+			organization.HeadOfficeAddress.PostalCode = HeadOfficeAddress.PostalCode;
+			organization.HeadOfficeAddress.RegionId = HeadOfficeAddress.RegionId;
+			organization.HeadOfficeAddress.CountryId = HeadOfficeAddress.CountryId;
 
-			organization.LegalStructureId = this.LegalStructureId;
-			organization.OtherLegalStructure = organization.LegalStructureId == 10 ? this.OtherLegalStructure : null;
-			organization.BusinessLicenseNumber = this.BusinessLicenseNumber;
+			organization.LegalStructureId = LegalStructureId;
+			organization.OtherLegalStructure = organization.LegalStructureId == 10 ? OtherLegalStructure : null;
+			organization.BusinessLicenseNumber = BusinessLicenseNumber;
 
-			organization.NaicsId = this.NaicsId;
+			organization.NaicsId = NaicsId;
 			organization.IsNaicsUpdated = true;
+
+			organization.BusinessWebsite = BusinessWebsite;
+			organization.BusinessDescription = BusinessDescription;
 
 			userService.Update(currentUser);
 
-			this.RowVersion = Convert.ToBase64String(organization.RowVersion);
+			RowVersion = Convert.ToBase64String(organization.RowVersion);
+		}
+
+		public void UpdateOrganizationBusinessLicenses(IUserService userService, ISiteMinderService siteMinderService, IAttachmentService attachmentService,
+			HttpPostedFileBase[] files, IEnumerable<UpdateAttachmentViewModel> data)
+		{
+			if (userService == null)
+				throw new ArgumentNullException(nameof(userService));
+
+			if (siteMinderService == null)
+				throw new ArgumentNullException(nameof(siteMinderService));
+
+			var currentUser = userService.GetUser(siteMinderService.CurrentUserGuid);
+			var organization = currentUser.Organization;
+
+			if (organization == null)
+			{
+				var bcUser = userService.GetBCeIDUser(currentUser.BCeIDGuid);
+				organization = bcUser.Organization ?? new Organization();
+				currentUser.Organization = organization;
+				if (organization.Id == 0)
+					currentUser.IsOrganizationProfileAdministrator = true;
+			}
+			else
+			{
+				organization.RowVersion = Convert.FromBase64String(RowVersion);
+			}
+
+			foreach (var attachment in data)
+			{
+				if (attachment.Delete) // Delete
+				{
+					var existing = attachmentService.Get(attachment.Id);
+					existing.RowVersion = Convert.FromBase64String(attachment.RowVersion);
+					organization.BusinessLicenseDocuments.Remove(existing);
+
+					attachmentService.Delete(existing);
+				}
+				else if (attachment.Index.HasValue == false) // Update data only
+				{
+					var existing = attachmentService.Get(attachment.Id);
+					existing.RowVersion = Convert.FromBase64String(attachment.RowVersion);
+					attachment.MapToEntity(existing);
+					attachmentService.Update(existing, true);
+				}
+				else if (files.Length > attachment.Index.Value && files[attachment.Index.Value] != null && attachment.Id == 0) // Add
+				{
+					var file = files[attachment.Index.Value].UploadFile(attachment.Description, attachment.FileName);
+					organization.BusinessLicenseDocuments.Add(file);
+
+					attachmentService.Add(file, true);
+				}
+				else if (files.Length > attachment.Index.Value && files[attachment.Index.Value] != null && attachment.Id != 0) // Update with file
+				{
+					var file = files[attachment.Index.Value].UploadFile(attachment.Description, attachment.FileName);
+					var existing = attachmentService.Get(attachment.Id);
+					existing.RowVersion = Convert.FromBase64String(attachment.RowVersion);
+
+					attachment.MapToEntity(existing);
+					existing.AttachmentData = file.AttachmentData;
+					attachmentService.Update(existing, true);
+				}
+			}
 		}
 		#endregion
 	}

@@ -80,7 +80,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			}
 
 			//Check if an Organization NAICS code is updated to 2017
-			if (!(_organizationService.IsOrganizationNaicsStatusUpdated(currentUser.Organization.Id)))
+			if (!_organizationService.IsOrganizationNaicsStatusUpdated(currentUser.Organization.Id))
 			{
 				if (currentUser.IsOrganizationProfileAdministrator && _organizationService.NotSubmittedGrantApplications(currentUser.Organization.Id) > 0)
 				{
@@ -91,6 +91,12 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				this.SetAlert("Your organization’s Canada North American Industry Classification System (NAICS) codes are currently out of date. " +
 					"The Profile Administrator (individual responsible for your Organization Profile) " +
 					"will need to update the NAICS codes on your Organization Profile before submitting an application.", AlertType.Warning);
+			}
+
+			if (_organizationService.RequiresBusinessLicenseDocuments(currentUser.Organization.Id))
+			{
+				_logger.Info($"The Organization is missing up-to-date Business License Documents - {_siteMinderService.CurrentUserGuid}");
+				this.SetAlert("Your organization’s Business Information Documents (e.g. business licence) are currently out of date.", AlertType.Warning);
 			}
 
 			if (_organizationService.NotSubmittedGrantApplicationsForUser(currentUser.Organization.Id, currentUser.BCeIDGuid) > 0)

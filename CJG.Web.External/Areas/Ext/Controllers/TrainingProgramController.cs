@@ -1,7 +1,6 @@
 ﻿using CJG.Application.Business.Models;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
-using CJG.Web.External.Areas.Ext.Models;
 using CJG.Web.External.Areas.Ext.Models.TrainingPrograms;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;

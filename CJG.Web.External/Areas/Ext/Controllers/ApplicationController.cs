@@ -78,8 +78,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <param name="grantApplicationId"></param>
 		/// <param name="grantProgramId"></param>
 		/// <returns></returns>
-		[Route("Application/Grant/Selection/View/{grantApplicationId}/{grantProgramId?}")]
-		public ActionResult GrantSelectionView(int grantApplicationId, int grantProgramId = 0)
+		[Route("Application/Grant/Selection/View/{grantApplicationId}/{grantProgramId?}/{seedGrantApplicationId?}")]
+		public ActionResult GrantSelectionView(int grantApplicationId, int grantProgramId = 0, int seedGrantApplicationId = 0)
 		{
 			if (grantApplicationId == 0)
 			{
@@ -97,6 +97,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 			ViewBag.GrantApplicationId = grantApplicationId;
 			ViewBag.GrantProgramId = grantProgramId;
+			ViewBag.SeedGrantApplicationId = seedGrantApplicationId;
 			return View();
 		}
 
@@ -106,8 +107,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <param name="grantApplicationId"></param>
 		/// <param name="grantProgramId"></param>
 		/// <returns></returns>
-		[Route("Application/Grant/Selection/{grantApplicationId}/{grantProgramId?}")]
-		public JsonResult GetGrantSelection(int grantApplicationId, int grantProgramId = 0)
+		[Route("Application/Grant/Selection/{grantApplicationId}/{grantProgramId?}/{seedGrantApplicationId?}")]
+		public JsonResult GetGrantSelection(int grantApplicationId, int grantProgramId = 0, int seedGrantApplicationId = 0)
 		{
 			var model = new ApplicationStartViewModel();
 			try
@@ -117,7 +118,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 				if (grantApplicationId == 0)
 				{
-					model = new ApplicationStartViewModel(grantProgramId, _grantOpeningService, _grantProgramService, _staticDataService, _grantStreamService);
+					model = new ApplicationStartViewModel(grantProgramId, seedGrantApplicationId, _grantOpeningService, _grantProgramService, _staticDataService, _grantStreamService);
 				}
 				else
 				{
@@ -283,6 +284,15 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 						}
 					}
 					_grantApplicationService.Add(grantApplication);
+
+
+					if(model.SeedGrantApplicationId > 0)
+                    {
+						//update grant app based on seed grant app
+						var newId = _grantApplicationService.DuplicateApplication(grantApplication, model.SeedGrantApplicationId);
+						grantApplication = _grantApplicationService.Get(newId);
+					}
+
 
 					model = new ApplicationStartViewModel(grantApplication, _grantOpeningService, _grantProgramService, _staticDataService, _grantStreamService)
 					{
@@ -598,31 +608,21 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			return RedirectToAction("ApplicationOverviewView", new { grantApplicationId = newId });
 		}
 
-		[Route("Application/Duplicate/{grantApplicationId}")]
-		public ActionResult ApplicationDuplicate(int grantApplicationId)
-		{
-			ViewBag.GrantApplicationId = grantApplicationId;
-			
-			var errMsg = _grantApplicationService.CanDuplicate(grantApplicationId );
-
-			if(string.IsNullOrEmpty(errMsg) == false)
-            {
-				this.SetAlert(errMsg, AlertType.Warning, true);
-				return RedirectToAction(nameof(HomeController.Index), nameof(HomeController).Replace("Controller", ""));
-			}
-
-			var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
-			var newId = _grantApplicationService.DuplicateApplication(grantApplicationId, currentUser);
-			return RedirectToAction("ApplicationOverviewView", new { grantApplicationId = newId });
-		}
+        [Route("Application/Duplicate/{grantApplicationId}")]
+        public ActionResult ApplicationDuplicate(int grantApplicationId)
+        {
+			var grantApplication = _grantApplicationService.Get(grantApplicationId);
+			//GrantSelectionView
+			return RedirectToAction("GrantSelectionView", new { grantApplicationId = 0, grantProgramId = grantApplication.GrantOpening.GrantStream.GrantProgramId, seedGrantApplicationId = grantApplicationId });
+        }
 
 
-		/// <summary>
-		/// Get the data for the ApplicationOverviewView page.
-		/// </summary>
-		/// <param name="grantApplicationId"></param>
-		/// <returns></returns>
-		[HttpGet]
+        /// <summary>
+        /// Get the data for the ApplicationOverviewView page.
+        /// </summary>
+        /// <param name="grantApplicationId"></param>
+        /// <returns></returns>
+        [HttpGet]
 		[Route("Application/Overview/{grantApplicationId}")]
 		public JsonResult GetApplicationOverview(int grantApplicationId)
 		{
@@ -631,13 +631,12 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
 
-				if(grantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
+				if (grantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
                 {
 					if (grantApplication.RequireAllParticipantsBeforeSubmission != grantApplication.GrantOpening.GrantStream.RequireAllParticipantsBeforeSubmission)
                     {
-						//RequirePIFs flag in this grant application is not in sync with the GrantStream
-
-						if(grantApplication.ApplicationStateExternal == ApplicationStateExternal.NotStarted || grantApplication.ApplicationStateExternal == ApplicationStateExternal.Incomplete)
+						// RequirePIFs flag in this grant application is not in sync with the GrantStream
+						if (grantApplication.ApplicationStateExternal == ApplicationStateExternal.NotStarted || grantApplication.ApplicationStateExternal == ApplicationStateExternal.Incomplete)
 						{
 							grantApplication.RequireAllParticipantsBeforeSubmission = grantApplication.GrantOpening.GrantStream.RequireAllParticipantsBeforeSubmission;
 						}

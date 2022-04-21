@@ -28,11 +28,12 @@
                     <h2>Participant <span class="text--lowercase">and</span> Claim Reporting</h2>
                 </div>
 
+                <div ng-if="model.AllowReviewAndSubmit && model.EnableSubmit">
+                    <p class="alert alert--warning"><em>Press review and submit claim button to submit your reimbursement claim!</em></p>
+                </div>                
+
                 <div class="notice notice--icon" ng-if="!model.RequireAllParticipantsBeforeSubmission" ng-show="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
                     <p>Once you have reported participants and they have submitted their Personal Information Forms, you will be able to submit your Reimbursement Claim.</p>
-                </div>
-                <div class="notice notice--icon" ng-show="model.ProgramType == @((int)ProgramTypes.WDAService)">
-                    <p>Get started with reporting particpants below and when all your particpants have reported you can prepare and submit a claim for reimbursement.</p>
                 </div>
                 <div ng-if="!model.RequireAllParticipantsBeforeSubmission && model.ParticipantCount < model.MaxParticipants" class="notice notice--icon">
                     <p>

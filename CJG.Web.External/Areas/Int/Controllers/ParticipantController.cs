@@ -7,8 +7,8 @@ using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
@@ -103,6 +103,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[Route("Participant/Info/View/{participantId}")]
 		public ActionResult ParticipantInformationView(int participantId)
 		{
+			ViewBag.ParticipantId = participantId;
 			ParticipantInfoViewModel model;
 			ParticipantForm participantForm = _participantService.Get(participantId);
 
@@ -126,6 +127,113 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 
 			return View(model);
+		}
+
+
+
+
+		[HttpGet]
+		[Route("Participant/TrainingHistory/{participantId}")]
+		public JsonResult LoadTrainingHistory(int participantId)
+		{
+			ViewBag.ParticipantId = participantId;
+
+			ParticipantInfoViewModel model;
+			ParticipantForm participantForm = _participantService.Get(participantId);
+
+			if (participantForm != null)
+			{
+				model = new ParticipantInfoViewModel(participantForm, _nationalOccupationalClassificationService, _userService, _participantService);
+			}
+			else
+			{
+				model = new ParticipantInfoViewModel();
+			}
+
+
+#if Training || Support
+             model.ContactInfo.SIN = string.Concat(model.ContactInfo.SIN?.Substring(0, 1), "** *** ***");
+#endif
+
+			// Mask the social insurance number for anyone without privilege IA3
+			if (!User.HasPrivilege(Privilege.IA3))
+			{
+				model.ContactInfo.SIN = string.Concat(model.ContactInfo.SIN?.Substring(0, 1), "** *** ***");
+			}
+
+			var result = new
+			{
+				RecordsFiltered = model.TrainingHistory.Count(),
+				RecordsTotal = model.TrainingHistory.Count(),
+				Data = model.TrainingHistory.OrderBy(o => o.FileNumber).ToArray()
+			};
+
+			return Json(result, JsonRequestBehavior.AllowGet);
+		}
+
+		[HttpGet]
+		[AuthorizeAction(Privilege.IA2)]
+		[Route("Participant/TrainingHistory/{participantId}/{page}/{quantity}")]
+		public JsonResult GetTrainingHistory(int participantId, int page, int quantity, string search, string sortby, bool sortDesc)
+		{
+			ViewBag.ParticipantId = participantId;
+
+			ParticipantInfoViewModel model;
+			ParticipantForm participantForm = _participantService.Get(participantId);
+
+			if (string.IsNullOrEmpty(sortby))
+			{
+				sortby = "FileNumber";
+			}
+
+			if (participantForm != null)
+			{
+				model = new ParticipantInfoViewModel(participantForm, _nationalOccupationalClassificationService, _userService, _participantService);
+			}
+			else
+			{
+				model = new ParticipantInfoViewModel();
+			}
+
+
+#if Training || Support
+             model.ContactInfo.SIN = string.Concat(model.ContactInfo.SIN?.Substring(0, 1), "** *** ***");
+#endif
+
+			// Mask the social insurance number for anyone without privilege IA3
+			if (!User.HasPrivilege(Privilege.IA3))
+			{
+				model.ContactInfo.SIN = string.Concat(model.ContactInfo.SIN?.Substring(0, 1), "** *** ***");
+			}
+
+			List<ParticipantTrainingHistory> trainingHistory;
+
+
+			//SORT
+			System.Reflection.PropertyInfo prop = typeof(ParticipantTrainingHistory).GetProperty(sortby);
+			if (sortDesc)
+            {
+				trainingHistory = model.TrainingHistory.OrderByDescending(o => prop.GetValue(o, null)).ToList();
+			}
+            else
+            {
+				trainingHistory = model.TrainingHistory.OrderBy(o => prop.GetValue(o, null)).ToList();
+			}
+
+			//FILTER
+			var filtered = trainingHistory
+				.Skip((page - 1) * quantity)
+				.Take(quantity)
+				.ToArray();
+
+			var result = new
+			{
+				RecordsFiltered = filtered.Count(),
+				RecordsTotal = filtered.Count(),
+				Data = filtered.ToArray()
+			};
+
+			return Json(result, JsonRequestBehavior.AllowGet);
 		}
 
 

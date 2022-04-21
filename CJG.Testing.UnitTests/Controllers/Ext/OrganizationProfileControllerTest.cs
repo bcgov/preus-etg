@@ -12,6 +12,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 
 namespace CJG.Testing.UnitTests.Controllers.Ext
@@ -149,7 +150,7 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 			Utilities.MapProperties(user.Organization, model);
 			model.HeadOfficeAddress = new AddressViewModel(user.Organization.HeadOfficeAddress);
 			model.RowVersion = Convert.ToBase64String(user.Organization.RowVersion);
-			var result = controller.UpdateOrganization(model);
+			var result = controller.UpdateOrganization(model, new HttpPostedFileBase[0], string.Empty);
 
 			// Assert
 			result.Should().NotBeNull().And.BeOfType<JsonResult>();
@@ -171,7 +172,7 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 			var controller = helper.Create();
 
 			// Act
-			var result = controller.UpdateOrganization(new OrganizationProfileViewNewModel());
+			var result = controller.UpdateOrganization(new OrganizationProfileViewNewModel(), new HttpPostedFileBase[0], string.Empty);
 
 			// Assert
 			result.Should().NotBeNull().And.BeOfType<JsonResult>();

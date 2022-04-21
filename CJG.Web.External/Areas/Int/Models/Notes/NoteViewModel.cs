@@ -35,6 +35,7 @@ namespace CJG.Web.External.Areas.Int.Models.Notes
 
 		public bool IsCreator { get; set; }
 		public bool AllowEdit { get; set; }
+		public bool ShowNote { get; set; }  // Used in Front End
 
 		public NoteViewModel()
 		{

@@ -82,6 +82,33 @@
     }
   }
 
+  .form__group__with_html {
+    border-bottom: none;
+
+    > .form__control {
+      display: inline-block;
+      width: 65%;
+
+      p {
+        margin-bottom: 0.6rem;
+      }
+
+      ul {
+        padding-left: 1.25em;
+        margin-bottom: 0.6rem;
+
+        li {
+          list-style: initial;
+        }
+      }
+
+      ol {
+        padding-left: 1.25em;
+        margin-bottom: 0.6rem;
+      }
+    }
+  }
+
   &.panel-summary-section-list {
     .panel-section-item {
       border-top: none;

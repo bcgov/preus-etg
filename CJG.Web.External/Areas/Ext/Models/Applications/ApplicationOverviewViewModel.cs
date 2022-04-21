@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
-using CJG.Web.External.Areas.Ext.Models.ParticipantReporting;
 
 namespace CJG.Web.External.Areas.Ext.Models.Applications
 {
@@ -19,6 +16,7 @@ namespace CJG.Web.External.Areas.Ext.Models.Applications
 		{
 
 		}
+
 		public ApplicationOverviewViewModel(GrantApplication grantApplication, ISettingService settingService) : base(grantApplication)
 		{
 			DateSubmitted = grantApplication.DateSubmitted.HasValue ? grantApplication.DateSubmitted.Value.ToLocalTime() : (DateTime?)null;

@@ -294,6 +294,7 @@
     <Content Include="content\components\_AngularTextArea.html" />
     <Content Include="content\dialogs\_ChangeAlternateContact.html" />
     <Content Include="content\dialogs\_DenialReason.html" />
+    <Content Include="content\dialogs\_FullContent.html" />
     <Content Include="content\dialogs\_TestNotification.html" />
     <Content Include="content\dialogs\_ChangeApplicant.html" />
     <Content Include="content\dialogs\_Message.html" />
@@ -538,6 +539,7 @@
     <Content Include="UI\javascript\internal\organization\organization-history-view.js" />
     <Content Include="UI\javascript\internal\organization\organization-list.js" />
     <Content Include="UI\javascript\internal\participant\index.js" />
+    <Content Include="UI\javascript\internal\participant\participant-history.js" />
     <Content Include="UI\javascript\internal\payment-request\index.js" />
     <Content Include="UI\javascript\internal\program-notification\index.js" />
     <Content Include="UI\javascript\internal\program-notification\program-notification-modal.js" />
@@ -1241,6 +1243,7 @@
     <Compile Include="Areas\Ext\Models\Services\EmploymentServiceViewModel.cs" />
     <Compile Include="Areas\Ext\Models\ProgramDescriptions\ProgramDescriptionExtViewModel.cs" />
     <Compile Include="Areas\Ext\Models\Reports\CompletionReportViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Applications\ApplicationBusinessViewModel.cs" />
     <Compile Include="Areas\Int\Models\Applications\InternalStateListViewModel.cs" />
     <Compile Include="Areas\Int\Models\Admin\UserRoleViewModel.cs" />
     <Compile Include="Areas\Int\Models\Admin\UserRoleListViewModel.cs" />
@@ -1336,9 +1339,11 @@
     <Compile Include="Areas\Int\Models\SkillsTraining\SkillsTrainingProgramViewModel.cs" />
     <Compile Include="Areas\Int\Models\SkillsTraining\UpdateSkillsTrainingProviderViewModel.cs" />
     <Compile Include="Areas\Int\Models\SkillsTraining\SkillsTrainingProviderViewModel.cs" />
+    <Compile Include="Areas\Int\Models\TrainingPrograms\TrainingProgramExtraInfoViewModel.cs" />
     <Compile Include="Areas\Int\Models\TrainingPrograms\TrainingProgramViewModel.cs" />
     <Compile Include="Areas\Int\Models\TrainingProviders\TrainingProvidersInventoryViewModel.cs" />
     <Compile Include="Areas\Int\Models\TrainingProviders\TrainingProviderInventoryViewModel.cs" />
+    <Compile Include="Areas\Int\Models\TrainingProviders\TrainingProviderExtraInfoViewModel.cs" />
     <Compile Include="Areas\Int\Models\TrainingProviders\UpdateTrainingProviderViewModel.cs" />
     <Compile Include="Areas\Int\Models\WDAServices\ServiceCategoryViewModel.cs" />
     <Compile Include="Areas\Int\Models\WDAServices\ServiceLineViewModel.cs" />

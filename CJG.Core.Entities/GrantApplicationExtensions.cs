@@ -691,7 +691,6 @@ namespace CJG.Core.Entities
 
 			if (user.PhysicalAddress == null)
 				throw new InvalidOperationException($"Applicant must have a physical address.");
-
 		}
 
 		/// <summary>
@@ -1039,8 +1038,8 @@ namespace CJG.Core.Entities
 		}
 
 		public static List<ParticipantForm> ApprovedParticipants(this GrantApplication grantApplication)
-		{			
-			return grantApplication.ParticipantForms.Where(w => w.Approved.HasValue && w.Approved.Value).ToList();			
+		{
+			return grantApplication.ParticipantForms.Where(w => w.Approved.HasValue && w.Approved.Value).ToList();
 		}
 
 		/// <summary>
@@ -1393,6 +1392,65 @@ namespace CJG.Core.Entities
 			if (changes.HasChanged(typeof(EligibleCostBreakdown))) return true;
 
 			return false;
+		}
+
+		public static void Clone(this GrantApplication grantApplication, GrantApplication seedGrantApplication)
+		{
+			
+			grantApplication.OrganizationTypeId = seedGrantApplication.OrganizationTypeId;
+			grantApplication.OrganizationType = seedGrantApplication.OrganizationType;
+
+			grantApplication.OrganizationLegalName = seedGrantApplication.OrganizationLegalName;
+			grantApplication.OrganizationLegalStructureId = seedGrantApplication.OrganizationLegalStructureId;
+			grantApplication.OrganizationLegalStructure = seedGrantApplication.OrganizationLegalStructure;
+			grantApplication.OrganizationBusinessLicenseNumber = seedGrantApplication.OrganizationBusinessLicenseNumber;
+
+			grantApplication.OrganizationBCeID = seedGrantApplication.OrganizationBCeID;
+
+			grantApplication.OrganizationYearEstablished = seedGrantApplication.OrganizationYearEstablished;
+			grantApplication.OrganizationNumberOfEmployeesWorldwide = seedGrantApplication.OrganizationNumberOfEmployeesWorldwide;
+			grantApplication.OrganizationAnnualTrainingBudget = seedGrantApplication.OrganizationAnnualTrainingBudget;
+			grantApplication.OrganizationAnnualEmployeesTrained = seedGrantApplication.OrganizationAnnualEmployeesTrained;
+			grantApplication.PrioritySectorId = seedGrantApplication.PrioritySectorId;
+			grantApplication.OrganizationDoingBusinessAs = seedGrantApplication.OrganizationDoingBusinessAs;
+			grantApplication.NAICSId = seedGrantApplication.NAICSId;
+
+
+			grantApplication.OrganizationNumberOfEmployeesInBC = seedGrantApplication.OrganizationNumberOfEmployeesInBC;
+			grantApplication.RiskClassificationId = seedGrantApplication.RiskClassificationId;
+			grantApplication.RiskClassification = seedGrantApplication.RiskClassification;
+
+			grantApplication.EligibilityConfirmed = seedGrantApplication.EligibilityConfirmed;
+			grantApplication.CanApplicantReportParticipants = seedGrantApplication.CanApplicantReportParticipants;
+
+			grantApplication.HoldPaymentRequests = seedGrantApplication.HoldPaymentRequests;
+
+			grantApplication.UsedDeliveryPartner = seedGrantApplication.UsedDeliveryPartner;
+			grantApplication.DeliveryPartnerId = seedGrantApplication.DeliveryPartnerId;
+
+
+			grantApplication.OrganizationBusinessLicenseNumber = seedGrantApplication.OrganizationBusinessLicenseNumber;
+			grantApplication.CanReportParticipants = seedGrantApplication.CanReportParticipants;
+
+			grantApplication.ScheduledNotificationsEnabled = seedGrantApplication.ScheduledNotificationsEnabled;
+
+			grantApplication.AlternateSalutation = seedGrantApplication.AlternateSalutation;
+			grantApplication.AlternateFirstName = seedGrantApplication.AlternateFirstName;
+			grantApplication.AlternateLastName = seedGrantApplication.AlternateLastName;
+			grantApplication.AlternatePhoneNumber = seedGrantApplication.AlternatePhoneNumber;
+			grantApplication.AlternatePhoneExtension = seedGrantApplication.AlternatePhoneExtension;
+			grantApplication.AlternateJobTitle = seedGrantApplication.AlternateJobTitle;
+			grantApplication.AlternateEmail = seedGrantApplication.AlternateEmail;
+			grantApplication.IsAlternateContact = seedGrantApplication.IsAlternateContact;
+			grantApplication.HasRequestedAdditionalFunding = seedGrantApplication.HasRequestedAdditionalFunding;
+			grantApplication.DescriptionOfFundingRequested = seedGrantApplication.DescriptionOfFundingRequested;
+
+			//migrate the business case info if the BusinessCase flag is true for both new and seed grants
+			if (grantApplication.GrantOpening.GrantStream.BusinessCaseIsEnabled &&
+				seedGrantApplication.GrantOpening.GrantStream.BusinessCaseIsEnabled)
+			{
+				grantApplication.BusinessCase = seedGrantApplication.BusinessCase;
+			}			
 		}
 
 		public static GrantApplication Clone(this GrantApplication grantApplication)

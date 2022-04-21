@@ -62,7 +62,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// </summary>
 		/// <param name="trainingProviderId"></param>
 		/// <returns></returns>
-		[HttpGet, Route("application/training/provider/{trainingProviderId:int}")]
+		[HttpGet, Route("Application/Training/Provider/{trainingProviderId:int}")]
 		public JsonResult GetTrainingProvider(int trainingProviderId)
 		{
 			var model = new Models.TrainingProviders.TrainingProviderViewModel();
@@ -81,6 +81,29 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		}
 
 		/// <summary>
+		/// Get the specified training provider extra information. Mostly HTMl content we need to display, but not edit/post.
+		/// </summary>
+		/// <param name="trainingProviderId"></param>
+		/// <returns></returns>
+		[HttpGet, Route("Application/Training/Provider/ExtraInfo/{trainingProviderId:int}")]
+		public JsonResult GetTrainingProviderExtraInfo(int trainingProviderId)
+		{
+			var model = new TrainingProviderExtraInfoViewModel();
+			try
+			{
+				var trainingProvider = _trainingProviderService.Get(trainingProviderId);
+				var grantApplication = trainingProvider.GetGrantApplication();
+
+				model = new TrainingProviderExtraInfoViewModel(trainingProvider, User);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
 		/// Update the specified training provider in the datasource.
 		/// </summary>
 		/// <param name="provider"></param>
@@ -89,13 +112,13 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[PreventSpam]
 		[ValidateRequestHeader]
 		[HttpPut]
-		[Route("application/training/provider")]
+		[Route("Application/Training/Provider")]
 		public JsonResult UpdateTrainingProvider(string provider, HttpPostedFileBase[] files)
 		{
 			var viewModel = new Models.TrainingProviders.TrainingProviderViewModel();
 			try
 			{
-				var model = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.TrainingProviders.UpdateTrainingProviderViewModel>(provider);
+				var model = Newtonsoft.Json.JsonConvert.DeserializeObject<UpdateTrainingProviderViewModel>(provider);
 				var trainingProvider = _trainingProviderService.Get(model.Id);
 				if (model.TrainingLocationListViewModel != null)
 				{
@@ -111,6 +134,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				TryValidateModel(model.TrainingOutsideBcListViewModel, "TrainingOutsideBcListViewModel"); // TODO: I don't think this works.
 				TryValidateModel(model.TrainingTrainerDetailsListViewModel, "TrainingTrainerDetailsListViewModel"); // TODO: I don't think this works.
 				TryValidateModel(model);
+
 				if (model.SelectedDeliveryMethodIds.Contains(Core.Entities.Constants.Delivery_Classroom)
 					|| model.SelectedDeliveryMethodIds.Contains(Core.Entities.Constants.Delivery_Workplace))
 				{
@@ -121,9 +145,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 						ModelState.AddModelError(nameof(model.TrainingLocationListViewModel.PostalCode), "PostalCode is required");
 						ModelState.AddModelError(nameof(model.TrainingLocationListViewModel.Country), "Country is required");
 						ModelState.AddModelError(nameof(model.TrainingLocationListViewModel.RegionId), "Province is required");
-
 					}
 				}
+
 				if (ModelState.IsValid)
 				{
 					Utilities.MapProperties(model, trainingProvider);

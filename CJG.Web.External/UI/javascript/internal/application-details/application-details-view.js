@@ -190,9 +190,11 @@ app.controller('ApplicationDetails', function ($scope, $attrs, $controller, $tim
         trigger: title,
         text: text,
         tinymceOptions: {
-          plugins: 'link image code autoresize preview fullscreen lists advlist anchor',
+          plugins: 'link code autoresize preview fullscreen lists advlist anchor',
           toolbar: 'undo redo | bold italic | formatselect | alignleft aligncenter alignright | outdent indent | numlist bullist | anchor | preview | fullscreen | code ',
-          forced_root_blocks: true
+          forced_root_blocks: true,
+          browser_spellcheck: true,
+          contextmenu: false,
         },
         denialReasonList: denialReasonList,
         denialReasonsSelection: $scope.denialReasonsSelection,
@@ -251,11 +253,12 @@ app.controller('ApplicationDetails', function ($scope, $attrs, $controller, $tim
     });
   }
 
-  // Doesn't seem to be loading correctly
   $scope.tinymceOptions = {
-    plugins: 'link image code autoresize preview fullscreen lists advlist anchor',
+    plugins: 'link code autoresize preview fullscreen lists advlist anchor',
     toolbar: 'undo redo | bold italic | formatselect | alignleft aligncenter alignright | outdent indent | numlist bullist | anchor | preview | fullscreen | code ',
     forced_root_blocks: true,
+    browser_spellcheck: true,
+    contextmenu: false,
     setup: function (ed) {
       ed.on('init', function (ed) {
         $('div.tox-tinymce-aux').css('z-index', '999999');

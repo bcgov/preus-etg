@@ -3,6 +3,7 @@ using CJG.Core.Entities;
 using CJG.Core.Entities.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace CJG.Core.Interfaces.Service
@@ -29,7 +30,7 @@ namespace CJG.Core.Interfaces.Service
 
 		PageList<GrantApplication> GetGrantApplications(int page, int quantity, ApplicationFilter filter);
 
-		PageList<GrantApplication> GetGrantApplications(int trainingProviderInventoryId, int page, int quantity, string search);
+		IOrderedQueryable<GrantApplication> GetGrantApplications(int trainingProviderInventoryId, string search);
 
 		PageList<GrantApplication> GetGrantApplicationsForOrg(int orgId, int page, int quantity, int grantProgramId, string search);
 
@@ -68,11 +69,12 @@ namespace CJG.Core.Interfaces.Service
 		int RestartApplicationFromWithdrawn(int id);
 
 		/// <summary>
-		/// Duplicate a GrantApplication, create a new GrantApplication based on the data in the current app
+		/// Update grant application based on values in gtant app == seeId
 		/// </summary>
 		/// <param name="id"></param>
+		/// <param name="seedId"></param>
 		/// <returns></returns>
-		int DuplicateApplication(int id, Core.Entities.User currentUser);
+		int DuplicateApplication(GrantApplication id, int seedId);
 		/// <summary>
 		/// Determine if an Application can be duplicated. If it cannot be duplicated then return the reason
 		/// </summary>

@@ -95,8 +95,8 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
       }
     } else if (type === types.PIF) {
       // Grey No participants yet, Yellow some participants, Green all participants have signed up
-      if (!$scope.model.Participants || $scope.model.Participants.length == 0) {
-        if ($scope.model.ProgramType === 2) {
+      if (!$scope.model.Participants || $scope.model.Participants.length === 0) {
+        if ($scope.model.ProgramType === 2) {  // CWRG
           return populateTypes.OPTIONAL;
         } else {
           return populateTypes.NOTSTART;
@@ -106,6 +106,10 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
         return populateTypes.INPROGRESS;
       }
       else {
+        const totalNoOutcome = $scope.model.Participants.filter(p => p.ExpectedOutcome === 0).length;
+        if (totalNoOutcome > 0)
+          return populateTypes.INPROGRESS;
+
         return populateTypes.COMPLETE;
       }
     } else if (type === types.BUSINESSCASE) {
@@ -314,6 +318,16 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
     } else {
       $scope.toggleHelper($element, 'hide', '&#9654;', "none");
     }
+  }
+
+  $scope.AllParticipantsHaveOutcomes = function() {
+    const currentParticipants = $scope.model.Participants.length;
+    const participantsWithOutcome = $scope.model.Participants.filter(p => p.ExpectedOutcome !== 0).length;
+
+    if (currentParticipants === participantsWithOutcome)
+      return true;
+
+    return false;
   }
 
   init();

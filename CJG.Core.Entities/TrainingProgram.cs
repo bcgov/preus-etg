@@ -158,6 +158,11 @@ namespace CJG.Core.Entities
 		public bool? MemberOfUnderRepresentedGroup { get; set; }
 
 		/// <summary>
+		/// A description of the Immediate Needs of the Business and the relevance of training to it's business
+		/// </summary>
+		public string BusinessTrainingRelevance { get; set; }
+
+		/// <summary>
 		/// get/set - The current state of this training program information collection.
 		/// </summary>
 		[Required, Index("IX_TrainingPrograms", Order = 1), DefaultValue(TrainingProgramStates.Incomplete)]
@@ -457,7 +462,7 @@ namespace CJG.Core.Entities
 		}
 
 
-		public void Clone(TrainingProgram tp)
+		public void Clone(TrainingProgram tp,  bool cloneTrainingProviders = true)
 		{
 			InDemandOccupationId = tp.InDemandOccupationId;
 			SkillLevelId = tp.SkillLevelId;
@@ -495,9 +500,12 @@ namespace CJG.Core.Entities
 				UnderRepresentedGroups.Add(grp);
 			}
 
-			foreach(var provider in tp.TrainingProviders)
+			if (cloneTrainingProviders)
 			{
-				TrainingProviders.Add(provider);
+				foreach (var provider in tp.TrainingProviders)
+				{
+					TrainingProviders.Add(provider);
+				}
 			}
 		}
 		#endregion

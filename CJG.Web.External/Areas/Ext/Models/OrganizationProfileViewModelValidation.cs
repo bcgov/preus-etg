@@ -1,7 +1,10 @@
 ﻿using CJG.Core.Entities;
 using CJG.Web.External.Areas.Ext.Models.OrganizationProfile;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using CJG.Web.External.Areas.Ext.Models.Attachments;
 
 namespace CJG.Web.External.Areas.Ext.Models
 {
@@ -29,7 +32,34 @@ namespace CJG.Web.External.Areas.Ext.Models
                 result = new ValidationResult("Number of employees in BC can't be greater than number of employees worldwide");
             }
             return result;
-        } 
-    }
+        }
 
+        public static ValidationResult ValidateBusinessLicenseDocuments(IEnumerable<AttachmentViewModel> BusinessLicenseDocumentAttachments,  ValidationContext context)
+        {
+            var model = context.ObjectInstance as OrganizationProfileViewNewModel;
+            if (model == null)
+	            throw new ArgumentNullException();
+
+            if (BusinessLicenseDocumentAttachments == null)
+	            return new ValidationResult("Please upload a business information document");
+
+			if (!BusinessLicenseDocumentAttachments.Any())
+				return new ValidationResult("Please upload a business information document");
+
+			// Do we have a new document being uploaded? Assume it's current.
+			if (BusinessLicenseDocumentAttachments.Any(b => b.Id == 0))
+				return ValidationResult.Success;
+
+			// Do we have existing documents? Check if they are newer than 12 months old.
+			var businessLicenseExpiry = AppDateTime.UtcNow.AddMonths(-12);
+			if (BusinessLicenseDocumentAttachments
+				.Where(b => b.Id > 0)
+				.All(b => b.DateAdded < businessLicenseExpiry || b.DateUpdated <= businessLicenseExpiry))
+			{
+				return new ValidationResult("Please upload a recent business information document");
+			}
+
+			return ValidationResult.Success;
+        }
+    } 
 }

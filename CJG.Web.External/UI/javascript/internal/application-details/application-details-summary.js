@@ -58,6 +58,19 @@ app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $tim
   }
 
   /**
+   * Make AJAX request for assessors data
+   * @function loadAssessors
+   * @returns {Promise}
+   **/
+  function loadBusinessInfo() {
+    return $scope.load({
+      url: '/Int/Application/BusinessInfo/' + $scope.parent.grantApplicationId,
+      set: 'businessInfo',
+      condition: !$scope.businessInfo
+    });
+  }
+
+  /**
    * Make AJAX request for risk classifications
    * @function loadRiskClassifications
    * @returns {Promise}
@@ -122,6 +135,7 @@ app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $tim
   $scope.init = function() {
     return Promise.all([
       loadAssessors(),
+      loadBusinessInfo(),
       loadRiskClassifications(),
       loadDeliveryPartners(),
       loadDeliveryPartnerServices()
@@ -137,17 +151,29 @@ app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $tim
    **/
   $scope.reassign = function () {
     return $scope.load({
-      url: '/Int/Application/Summary/Assign',
-      data: function () {
-        return $scope.model;
-      },
-      set: 'model',
-      method: 'PUT'
-    })
-      .then(function () {
+        url: '/Int/Application/Summary/Assign',
+        data: function() {
+          return $scope.model;
+        },
+        set: 'model',
+        method: 'PUT'
+      })
+      .then(function() {
         return $scope.section.onSave();
       })
-      .catch(angular.noop)
+      .catch(angular.noop);
+  }
+
+  $scope.previewBusinessDescription = function () {
+    return ngDialog.open({
+        template: '/content/dialogs/_FullContent.html',
+        closeByDocument: true,
+        data: {
+          title: 'Business Description',
+          content: $scope.businessInfo.BusinessDescription
+        }
+      }
+    );
   }
 
   /**
@@ -161,7 +187,6 @@ app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $tim
     }
     return;
   }
-
 
   /**
    * Open the modal file uploaded.
@@ -254,5 +279,15 @@ app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $tim
    */
   $scope.downloadAttachment = function (attachmentId) {
     window.open('/Int/Application/Attachment/Download/' + $scope.model.Id + '/' + attachmentId);
+  }
+
+  /**
+   * Download the specified business attachment.
+   * @function downloadAttachment
+   * @param {any} attachmentId - The attachment id.
+   * @returns {void}
+   */
+  $scope.downloadBusinessLicense = function (attachmentId) {
+    window.open('/Int/Application/BusinessLicense/Download/' + $scope.model.Id + '/' + attachmentId);
   }
 });
