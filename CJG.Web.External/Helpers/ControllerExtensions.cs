@@ -280,124 +280,59 @@ namespace CJG.Web.External.Helpers
         /// <summary>
         /// Adds alert messages to the session so that they can be displayed in the View.
         /// If called multiple times it will append the alert messages of the same type.
-        /// When called multiple times higher valued <typeparamref name="AlertType"/> will overwrite lower valued (i.e. Default = low, Error = high).
-        /// Views should display a Message based on the MessageType at the top of the View.
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="controller"></param>
         /// <param name="message"></param>
         /// <param name="messageType">[Error|Warning|Success]</param>
-        /// <param name="delimiter">The delimiter that separates messages of the same type.  Default is a single space " ".</param>
-        /// <param name="isRedirect">A redirect adds messages to TempData, otherwise it adds to the ViewBag.</param>
-        public static void SetAlerts(this ControllerContext context, string message, AlertType messageType, bool isRedirect = false, string delimiter = " ")
+        public static void SetAlerts(this Controller controller, string message, AlertType messageType, bool isRedirect = false)
         {
-            if (isRedirect)
-            {
-                var tempData = context.Controller.TempData;
-                if (tempData != null)
-                {
-                    if (tempData["AlertType"] != null && (AlertType)tempData["AlertType"] == messageType)
-                    {
-                        tempData["Message"] = $"{tempData["Message"]}{delimiter}{message}";
-                    }
-                    else if (tempData["AlertType"] == null || (AlertType)tempData["AlertType"] > messageType)
-                    {
-                        // Overwrite lower level alerts.
-                        tempData["Message"] = message;
-                        tempData["MessageType"] = messageType.ToString().ToLower();
-                        tempData["AlertType"] = messageType;
-                    }
-                }
-            }
-            else
-            {
-                var viewBag = context.Controller.ViewBag;
-                if (viewBag != null)
-                {
-                    if (viewBag.AlertType != null && (AlertType)viewBag.AlertType == messageType)
-                    {
-                        viewBag.Message = $"{viewBag.Message}{delimiter}{message}";
-                    }
-                    else if (viewBag.AlertType == null || (AlertType)viewBag.AlertType > messageType)
-                    {
-                        // Overwrite lower level alerts.
-                        viewBag.Message = message;
-                        viewBag.MessageType = messageType.ToString().ToLower();
-                        viewBag.AlertType = messageType;
-                    }
-                }
-            }
+	        if (isRedirect)
+	        {
+		        var tempData = controller.TempData;
+		        if (tempData != null)
+		        {
+			        var baggedAlerts = tempData["BaggedAlerts"] as List<Alert>;
+			        if (baggedAlerts == null)
+			        {
+				        baggedAlerts = new List<Alert>();
+				        tempData["BaggedAlerts"] = baggedAlerts;
+			        }
+
+			        baggedAlerts.Add(new Alert
+			        {
+				        Message = message,
+				        MessageType = messageType.ToString().ToLower(),
+				        AlertType = messageType
+			        });
+
+			        tempData["BaggedAlerts"] = baggedAlerts;
+		        }
+	        }
+	        else
+	        {
+		        var viewBag = controller.ViewBag;
+		        var baggedAlerts = viewBag.BaggedAlerts as List<Alert>;
+		        if (baggedAlerts == null)
+		        {
+			        baggedAlerts = new List<Alert>();
+			        viewBag.BaggedAlerts = baggedAlerts;
+		        }
+
+		        baggedAlerts.Add(new Alert
+		        {
+			        Message = message,
+			        MessageType = messageType.ToString().ToLower(),
+			        AlertType = messageType
+		        });
+	        }
         }
 
-        /// <summary>
-        /// Adds a generic message to indicate an exception, or if in DEBUG it will return the whole exception message.
-        /// Adds alert messages to the session so that they can be displayed in the View.
-        /// Views should display a Message based on the MessageType at the top of the View.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="error"></param>
-        /// <param name="isRedirect">A redirect adds messages to TempData, otherwise it adds to the ViewBag.</param>
-        public static void SetAlerts(this ControllerContext context, Exception error, bool isRedirect = false)
+        public struct Alert
         {
-            context.SetAlerts(error, isRedirect, " ");
-        }
-
-        /// <summary>
-        /// Adds a generic message to indicate an exception, or if in DEBUG it will return the whole exception message.
-        /// Adds alert messages to the session so that they can be displayed in the View.
-        /// Views should display a Message based on the MessageType at the top of the View.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="error"></param>
-        /// <param name="delimiter">The delimiter that separates multiple exception messages.</param>
-        /// <param name="isRedirect">A redirect adds messages to TempData, otherwise it adds to the ViewBag.</param>
-        public static void SetAlerts(this ControllerContext context, Exception error, bool isRedirect = false, string delimiter = " ")
-        {
-            string message;
-            AlertType message_type;
-            GetAlert(error, out message, out message_type, delimiter);
-            context.SetAlerts(message, message_type, isRedirect, delimiter);
-        }
-
-        /// <summary>
-        /// Adds alert messages to the session so that they can be displayed in the View.
-        /// Views should display a Message based on the MessageType at the top of the View.
-        /// </summary>
-        /// <param name="controller"></param>
-        /// <param name="message"></param>
-        /// <param name="messageType"></param>
-        /// <param name="delimiter">The delimiter that separates messages of the same type.  Default is a single space " ".</param>
-        /// <param name="isRedirect">A redirect adds messages to TempData, otherwise it adds to the ViewBag.</param>
-        public static void SetAlerts(this Controller controller, string message, AlertType messageType, bool isRedirect = false, string delimiter = " ")
-        {
-            controller.ControllerContext.SetAlerts(message, messageType, isRedirect, delimiter);
-        }
-
-        /// <summary>
-        /// Adds a generic message to indicate an exception, or if in DEBUG it will return the whole exception message.
-        /// Adds alert messages to the session so that they can be displayed in the View.
-        /// Views should display a Message based on the MessageType at the top of the View.
-        /// </summary>
-        /// <param name="controller"></param>
-        /// <param name="error"></param>
-        /// <param name="isRedirect">A redirect adds messages to TempData, otherwise it adds to the ViewBag.</param>
-        public static void SetAlerts(this Controller controller, Exception error, bool isRedirect = false)
-        {
-            controller.ControllerContext.SetAlerts(error, isRedirect, " ");
-        }
-
-        /// <summary>
-        /// Adds a generic message to indicate an exception, or if in DEBUG it will return the whole exception message.
-        /// Adds alert messages to the session so that they can be displayed in the View.
-        /// Views should display a Message based on the MessageType at the top of the View.
-        /// </summary>
-        /// <param name="controller"></param>
-        /// <param name="error"></param>
-        /// <param name="delimiter">The delimiter that separates multiple exception messages.</param>
-        /// <param name="isRedirect">A redirect adds messages to TempData, otherwise it adds to the ViewBag.</param>
-        public static void SetAlerts(this Controller controller, Exception error, bool isRedirect = false, string delimiter = " ")
-        {
-            controller.ControllerContext.SetAlerts(error, isRedirect, delimiter);
-        }
+	        public string Message { get; set; }
+			public string MessageType { get; set; }
+			public AlertType AlertType { get; set; }
+		}
 
         /// <summary>
         /// Generic way to handle when the user is not authorized to view or perform an action.

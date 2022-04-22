@@ -46,6 +46,8 @@
                     { "alertMessage", ViewBag.Message },
                     { "alertType", ViewBag.MessageType }
                 })
+				
+                @Html.Partial("BaggedAlert")
             }
 
             @RenderBody()
