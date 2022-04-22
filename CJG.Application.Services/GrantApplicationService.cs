@@ -529,7 +529,7 @@ namespace CJG.Application.Services
 				_dbContext.ApplicationAddresses.Remove(applicationPhysicalAddress);
 			}
 
-			var internalUser = _userManager.FindById(_siteMinderService.CurrentUserGuid.ToString()).InternalUser;
+			var internalUser = _userManager.FindById(_siteMinderService.CurrentUserGuid.ToString())?.InternalUser;
 			_noteService.AddValueChangedNote(grantApplication, "Applicant contact", oldName, newName);
 
 			_dbContext.CommitTransaction();

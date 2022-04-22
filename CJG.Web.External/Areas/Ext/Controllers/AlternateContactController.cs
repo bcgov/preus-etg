@@ -42,7 +42,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			return View(SidebarViewModelFactory.Create(grantApplication, ControllerContext));
 		}
 
-
 		/// <summary>
 		/// Get the applicant contact information for the application details view.
 		/// </summary>

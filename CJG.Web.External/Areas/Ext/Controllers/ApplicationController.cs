@@ -240,7 +240,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 					if (grantApplication.IsAlternateContact == true)
 					{
-
 						grantApplication.AlternateEmail = model.AlternateEmail;
 						grantApplication.AlternateFirstName = model.AlternateFirstName;
 						grantApplication.AlternateJobTitle = model.AlternateJobTitle;
@@ -597,7 +596,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			return View(SidebarViewModelFactory.Create(grantApplication, ControllerContext));
 		}
 
-
 		[Route("Application/Resume/{grantApplicationId}")]
 		public ActionResult ApplicationResume(int grantApplicationId)
 		{
@@ -704,5 +702,69 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		}
 		#endregion
 		#endregion
+
+
+		/// <summary>
+		/// Create a new Grant Application View / Edit an exist Grant Application View.
+		/// </summary>
+		/// <param name="grantApplicationId"></param>
+		/// <returns></returns>
+		[HttpGet]
+		[Route("Application/AlternateUsers/{grantApplicationId}")]
+		public JsonResult GetGrantApplicationAlternateContacts(int grantApplicationId)
+		{
+			var model = new List<KeyValuePair<int, string>>();
+			try
+			{
+				var grantApplication = _grantApplicationService.Get(grantApplicationId);
+				var orgContacts = new List<KeyValuePair<int, string>>
+				{
+					new KeyValuePair<int, string>(0, "Please select a new application contact")
+				};
+
+				var applicationContacts = _grantApplicationService
+					.GetAvailableApplicationContacts(grantApplication)
+					.Select(a => new KeyValuePair<int, string>(a.Id, $"{a.GetUserFullName()} | {a.JobTitle}"))
+					.ToList();
+				orgContacts.AddRange(applicationContacts);
+
+				model = orgContacts;
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex);
+			}
+
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
+		/// Launched when the 'Set Outcome' modal on the 'ParticipantsReport' page is clicked
+		/// </summary>
+		/// <returns></returns>
+		[HttpPut]
+		[PreventSpam]
+		[ValidateRequestHeader]
+		[Route("Application/AlternateUsers/ChangeUser")]
+		public ActionResult ChangeUser(ChangeAlternateContactViewModel model)
+		{
+			try
+			{
+				var grantApplication = _grantApplicationService.Get(model.Id);
+				grantApplication.RowVersion = Convert.FromBase64String(model.RowVersion);
+				_grantApplicationService.ChangeApplicationAdministrator(grantApplication, model.ApplicantContactId);
+
+//				model = new ChangeAlternateContactViewModel(grantApplication, _userService, User);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+
+			this.SetAlert("The application administrator has been updated.", AlertType.Success, true);
+			model.RedirectURL = "/Ext/Home/Index";
+
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
 	}
 }

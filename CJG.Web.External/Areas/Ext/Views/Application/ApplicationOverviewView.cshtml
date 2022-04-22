@@ -264,6 +264,19 @@
                     <a class="btn btn--primary" href="/Ext/Application/Review/View/{{model.Id}}" value="Review and submit" ng-disabled="!(model.CanSubmit && model.PIFCompletionConfirmed && AllParticipantsHaveOutcomes())">Review and submit</a>
                 </span>
             </div>
+            
+                
+            <hr/>
+            <div>
+                <h3>Change Application Contact</h3>
+                <div class="control-wrapper selectmenu input--more-medium">
+                    <select class="input--more-medium"
+                            ng-model="model.SelectedNewUser"
+                            ng-options="item.Key as item.Value for item in alternateUsers"></select>
+                </div>
+                <a class="btn btn--secondary" ng-click="changeApplicationContact()" ng-disabled="model.SelectedNewUser === 0">Change Administrator</a>
+            </div>
+            
         </div>
         {{initEventBinding()}}
         @Html.Partial("_GrantApplicationSidebar", Model)
