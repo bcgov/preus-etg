@@ -12,7 +12,7 @@ namespace CJG.Web.External.Helpers.Filters
             var viewData = filterContext.Controller.ViewData;
 
             // build an array of the different view bag properties to copy from temp data to view data
-            var properties = new string[] { "Message", "MessageType", "ChangeType" };
+            var properties = new string[] { "Message", "MessageType", "ChangeType", "BaggedAlerts" };
 
             foreach (var property in properties)
             {
