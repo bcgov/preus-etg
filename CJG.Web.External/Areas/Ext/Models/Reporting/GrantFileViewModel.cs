@@ -28,6 +28,7 @@ namespace CJG.Web.External.Areas.Ext.Models.Reporting
 		public bool AllowClaimReport { get; set; }
 		public DateTime ClaimDueDate { get; set; }
 		public bool AllowReviewAndSubmit { get; set; }
+		public bool ReportingPeriodIsOpen { get; set; }
 		public DateTime CompletionDueDate { get; set; }
 		public CompletionReportStatusViewModel CompletionReport { get; set; } = new CompletionReportStatusViewModel();
 		public bool AllowReportCompletion { get; set; }

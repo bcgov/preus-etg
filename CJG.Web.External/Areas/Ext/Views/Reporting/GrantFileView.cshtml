@@ -28,7 +28,10 @@
                     <h2>Participant <span class="text--lowercase">and</span> Claim Reporting</h2>
                 </div>
 
-                <div ng-if="model.AllowReviewAndSubmit && model.EnableSubmit">
+                <div ng-if="!model.model.ReportingPeriodIsOpen" class="notice">
+                    <p><em>The Reimbursement Claim Report will become available once training has started.</em></p>
+                </div>
+                <div ng-if="model.AllowReviewAndSubmit && model.EnableSubmit">                    
                     <p class="alert alert--warning"><em>Press review and submit claim button to submit your reimbursement claim!</em></p>
                 </div>                
 
