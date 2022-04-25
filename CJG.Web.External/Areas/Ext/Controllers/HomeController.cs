@@ -95,7 +95,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			if (_organizationService.RequiresBusinessLicenseDocuments(currentUser.Organization.Id))
 			{
 				_logger.Info($"The Organization is missing up-to-date Business License Documents - {_siteMinderService.CurrentUserGuid}");
-				this.SetAlert("Your organization’s Business Information Documents (e.g. business licence) are currently out of date.", AlertType.Default);
+				this.SetAlert("Your organization’s Business Information Documents (e.g. business licence) are currently out of date.", AlertType.Warning);
 			}
 
 			if (_organizationService.NotSubmittedGrantApplicationsForUser(currentUser.Organization.Id, currentUser.BCeIDGuid) > 0)
