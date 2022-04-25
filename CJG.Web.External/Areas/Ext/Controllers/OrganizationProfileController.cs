@@ -150,6 +150,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			TryValidateModel(model.HeadOfficeAddress, "HeadOfficeAddress");
 			TryValidateModel(model);
 
+			model.RequiresBusinessLicenseDocuments = false;  // Don't force the warning message. Let the validation pick up the warning instead. 
+
 			try
 			{
 				// Deserialize attachments model. This is required because it isn't easy to deserialize an array when including files in a multipart data form.
