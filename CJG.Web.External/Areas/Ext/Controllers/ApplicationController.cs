@@ -753,8 +753,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				var grantApplication = _grantApplicationService.Get(model.Id);
 				grantApplication.RowVersion = Convert.FromBase64String(model.RowVersion);
 				_grantApplicationService.ChangeApplicationAdministrator(grantApplication, model.ApplicantContactId);
-
-//				model = new ChangeAlternateContactViewModel(grantApplication, _userService, User);
 			}
 			catch (Exception ex)
 			{
