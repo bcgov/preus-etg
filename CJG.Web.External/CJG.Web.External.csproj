@@ -268,15 +268,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\PDF\CJG-reimbursement-guidelines.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Data\PDF\CJG-sample-agreement.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Data\PDF\ETG-reimbursement-guidelines.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="App_Data\PDF\ETG-sample-agreement.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -706,12 +697,6 @@
     <Content Include="Areas\Int\Views\WDAService\WDAServicesView.cshtml" />
     <Content Include="Areas\Part\Views\Shared\_PIFLayout.cshtml" />
     <Content Include="Areas\Part\Views\Information\_ViewStart.cshtml" />
-    <Content Include="App_Data\PDF\CWRG-reimbursement-guidelines.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Data\PDF\CWRG-sample-agreement.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Areas\Int\Views\Application\ApplicationDetailsView.cshtml" />
     <Content Include="Areas\Int\Views\ApplicationSummary\_ApplicationSummary.cshtml" />
     <Content Include="Areas\Int\Views\Shared\_InternalApplicationStateLabel.cshtml" />

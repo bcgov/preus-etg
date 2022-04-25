@@ -4,7 +4,7 @@
 @if (ViewBag.Reporting)
 {
     <div class="pull-right">
-        @Html.ActionLink("Read the Reimbursement Guidelines", nameof(ApplicationAttachmentController.DownloadResource), typeof(ApplicationAttachmentController), new { filename = $"{ViewBag.GrantProgramCode}-reimbursement-guidelines", message = "guidelines" }, null)
+        <a href="https://www.workbc.ca/getmedia/33f85e91-e8f8-4a90-a694-2fa5f1d0bdb7/Reimbursement-Guidelines.pdf.aspx" target="_blank">Read the Reimbursement Guidelines</a>
     </div>
     <br />
 }
