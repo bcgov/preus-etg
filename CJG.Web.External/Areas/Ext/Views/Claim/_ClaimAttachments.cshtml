@@ -6,8 +6,7 @@
     <div ng-if="!model.IsWDAService">
         <p>
             Attach all receipts, paid invoices or other valid proof of payments that support the costs you have entered for each eligible expense type. If you are unsure what is required to submit, please read the
-            @Html.ActionLink("Reimbursement Guidelines", nameof(ApplicationAttachmentController.DownloadResource), typeof(ApplicationAttachmentController), new { filename = $"{ViewBag.GrantProgramCode}-reimbursement-guidelines", message = "guidelines" }, null).
-
+            <a href="https://www.workbc.ca/getmedia/33f85e91-e8f8-4a90-a694-2fa5f1d0bdb7/Reimbursement-Guidelines.pdf.aspx" target="_blank">Read the Reimbursement Guidelines</a>.
         </p>
 
         <div class="notice notice--icon margin-top">
