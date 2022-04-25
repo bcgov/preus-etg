@@ -78,7 +78,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				_logger.Debug($"An existing user must complete the account profile - '{_siteMinderService.CurrentUserName}':{_siteMinderService.CurrentUserGuid}");
 				return RedirectToAction(nameof(OrganizationProfileController.OrganizationProfileView), nameof(OrganizationProfileController).Replace("Controller", ""));
 			}
-
 			//Check if an Organization NAICS code is updated to 2017
 			if (!_organizationService.IsOrganizationNaicsStatusUpdated(currentUser.Organization.Id))
 			{
@@ -96,7 +95,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			if (_organizationService.RequiresBusinessLicenseDocuments(currentUser.Organization.Id))
 			{
 				_logger.Info($"The Organization is missing up-to-date Business License Documents - {_siteMinderService.CurrentUserGuid}");
-				this.SetAlert("Your organization’s Business Information Documents (e.g. business licence) are currently out of date.", AlertType.Warning);
+				this.SetAlert("Your organization’s Business Information Documents (e.g. business licence) are currently out of date.", AlertType.Default);
 			}
 
 			if (_organizationService.NotSubmittedGrantApplicationsForUser(currentUser.Organization.Id, currentUser.BCeIDGuid) > 0)

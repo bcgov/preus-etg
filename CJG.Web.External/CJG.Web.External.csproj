@@ -1095,6 +1095,7 @@
     <None Include="UI\npm-config.cmd" />
     <None Include="UI\scss\components\_work-queues.scss" />
     <None Include="UI\scss\components\_training-provider-history.scss" />
+    <Content Include="Views\Shared\BaggedAlert.cshtml" />
     <None Include="Views\Shared\ReadMe.txt" />
     <Content Include="Views\web.config">
       <SubType>Designer</SubType>

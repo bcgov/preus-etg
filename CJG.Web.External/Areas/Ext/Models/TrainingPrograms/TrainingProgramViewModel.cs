@@ -78,7 +78,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 		public int[] SelectedUnderRepresentedGroupIds { get; set; }
 
 		[AllowHtml]
-		//[Required(ErrorMessage = "Business training relevance is required")]
+		[Required(ErrorMessage = "Business training relevance is required")]
 		[MaxLength(2300, ErrorMessage = "Business training relevance cannot exceed 2000 characters.")] // Max length is longer than message to allow for HTML content
 		public string BusinessTrainingRelevance { get; set; }
 
