@@ -88,9 +88,9 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 				if (!model.HasClaim || User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditClaim) || User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.CreateClaim))
 				{
-					var hasStarted = AppDateTime.UtcNow >= grantApplication.StartDate;
-					model.AllowReviewAndSubmit = User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.SubmitClaim) && hasStarted;
-					model.AllowClaimReport = (User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditClaim) || User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.CreateClaim)) && hasStarted;
+					model.ReportingPeriodIsOpen = AppDateTime.UtcNow >= grantApplication.StartDate;
+					model.AllowReviewAndSubmit = User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.SubmitClaim) && model.ReportingPeriodIsOpen;
+					model.AllowClaimReport = (User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditClaim) || User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.CreateClaim)) && model.ReportingPeriodIsOpen;
 				}
 				model.AllowParticipantReport = User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditParticipants);
 				model.EnableSubmit = User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.SubmitClaim);
