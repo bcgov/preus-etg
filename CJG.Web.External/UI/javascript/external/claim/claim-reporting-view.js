@@ -114,14 +114,20 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
     var claimParticipants;
     var claimCost;
 
+    console.log('recalculateTrainingCost 1');
+
     return $timeout(function () {
       if (claimEligibleCost.ServiceType == utils.ServiceTypes.SkillsTraining ||
         claimEligibleCost.ServiceType == utils.ServiceTypes.EmploymentServicesAndSupports ||
         claimEligibleCost.ServiceType == utils.ServiceTypes.Administration) {
-
+        console.log('recalculateTrainingCost 2');
         if (claimEligibleCost.ServiceType == utils.ServiceTypes.SkillsTraining ||
           claimEligibleCost.ServiceType == utils.ServiceTypes.EmploymentServicesAndSupports) {
-          claimParticipants = claimEligibleCost.CountAttended;
+
+          //claimParticipants = claimEligibleCost.CountAttended;
+          claimParticipants = claimEligibleCost.EligibleCosts.AgreedMaxParticipants;
+          console.log('claimParticipants ' + claimParticipants);
+
           if (claimEligibleCost.Breakdowns != null && claimEligibleCost.Breakdowns.length > 0) {
             claimEligibleCost.ClaimCost = 0.0;
             for (var i = 0; i < claimEligibleCost.Breakdowns.length; i++) {
@@ -162,14 +168,16 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
         var sumOfParticipantCosts = claimEligibleCost.ParticipantCosts.reduce(function (total, pc) {
           return total + MathFunction.truncate(pc.ClaimParticipantCost * 100);
         }, 0);
+
         claimEligibleCost.SumOfParticipantCostUnitsUnassigned = claimEligibleCost.ClaimCost - sumOfParticipantCosts;
 
         if ($scope.model.ProgramType === 1) {
-          claimEligibleCost.ClaimMaxParticipantCost = ($scope.model.Claim.CountParticipants === 0) ? 0 : MathFunction.truncate(claimCost / $scope.model.Claim.CountParticipants * 100);
+          //claimEligibleCost.ClaimMaxParticipantCost = ($scope.model.Claim.CountParticipants === 0) ? 0 : MathFunction.truncate(claimCost / $scope.model.Claim.CountParticipants * 100);
+          claimEligibleCost.ClaimMaxParticipantCost = (claimEligibleCost.AgreedMaxParticipants === 0) ? 0 : MathFunction.truncate(claimCost / claimEligibleCost.AgreedMaxParticipants * 100);
+          
           let result = Math.min(
-            //claimCost === 0 ? 0 : MathFunction.truncate(claimCost / $scope.model.Claim.CountParticipants * 100),
-            claimCost === 0 ? 0 : MathFunction.truncate($scope.model.Claim.TotalApprovedAmount / $scope.model.Claim.MaximumParticipants * 100),
-            claimCost === 0 ? 0 : MathFunction.truncate(claimCost / $scope.model.Claim.CountAttended * claimEligibleCost.AgreedReimbursementRate * 100),
+            claimCost === 0 ? 0 : MathFunction.truncate($scope.model.Claim.TotalApprovedAmount / claimEligibleCost.AgreedMaxParticipants * 100),
+            claimCost === 0 ? 0 : MathFunction.truncate(claimCost / claimEligibleCost.AgreedMaxParticipants * claimEligibleCost.AgreedReimbursementRate * 100),
             claimEligibleCost.AgreedMaxParticipantCost);
 
           claimEligibleCost.ClaimMaxParticipantReimbursementCost = result;
@@ -216,12 +224,12 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
     for (var i = 0; i < claimEligibleCost.ParticipantCosts.length; i++) {
       let participantCost = claimEligibleCost.ParticipantCosts[i];
       let claimParticipantCost = participantCost.ClaimParticipantCost == null ? 0 : participantCost.ClaimParticipantCost;
-      let maxPerParticipantCost = ($scope.model.Claim.TotalApprovedAmount / $scope.model.Claim.CountAttended);
+      let maxPerParticipantCost = ($scope.model.Claim.TotalApprovedAmount / claimEligibleCost.AgreedMaxParticipants);
 
       let rule0 = (claimParticipantCost === 0) ? 0 : claimParticipantCost;
-      let rule1 = (claimEligibleCost.ClaimCost === 0) ? 0 : MathFunction.truncate(claimEligibleCost.ClaimCost / $scope.model.Claim.CountAttended * 100);
-      let rule2 = (claimEligibleCost.ClaimCost === 0) ? 0 : MathFunction.truncate($scope.model.Claim.TotalApprovedAmount / $scope.model.Claim.CountAttended * 100);
-      let rule3 = (claimEligibleCost.ClaimCost === 0) ? 0 : MathFunction.truncate(((maxPerParticipantCost * $scope.model.Claim.CountAttended) + participantCost.ClaimReimbursement - $scope.model.Claim.TotalClaimReimbursement) * 100);
+      let rule1 = (claimEligibleCost.ClaimCost === 0) ? 0 : MathFunction.truncate(claimEligibleCost.ClaimCost / claimEligibleCost.AgreedMaxParticipants * 100);
+      let rule2 = (claimEligibleCost.ClaimCost === 0) ? 0 : MathFunction.truncate($scope.model.Claim.TotalApprovedAmount / claimEligibleCost.AgreedMaxParticipants * 100);
+      let rule3 = (claimEligibleCost.ClaimCost === 0) ? 0 : MathFunction.truncate(((maxPerParticipantCost * claimEligibleCost.AgreedMaxParticipants) + participantCost.ClaimReimbursement - $scope.model.Claim.TotalClaimReimbursement) * 100);
       let rule4 = (claimParticipantCost === 0) ? 0 : MathFunction.truncate(claimParticipantCost * participantCost.Rate * 100);
 
       participantCost.ClaimReimbursement = Math.min(rule0, rule1, rule2, rule3, rule4, claimEligibleCost.AgreedMaxParticipantCost, claimEligibleCost.ClaimMaxParticipantReimbursementCost);
@@ -249,11 +257,11 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
     claimEligibleCost.SumOfParticipantCostUnitsUnassigned = claimEligibleCost.ClaimCost - sumOfParticipantCosts;
 
     if ($scope.model.ProgramType === 1) {
-      let maxPerParticipantCost = ($scope.model.Claim.TotalApprovedAmount / $scope.model.Claim.CountAttended);
+      let maxPerParticipantCost = ($scope.model.Claim.TotalApprovedAmount / claimEligibleCost.AgreedMaxParticipants);
 
       let rule0 = (claimParticipantCost === 0) ? 0 : claimParticipantCost;
-      let rule1 = (claimEligibleCost.ClaimCost === 0) ? 0 : MathFunction.truncate(claimEligibleCost.ClaimCost / $scope.model.Claim.CountAttended * 100);
-      let rule2 = (claimEligibleCost.ClaimCost === 0) ? 0 : MathFunction.truncate($scope.model.Claim.TotalApprovedAmount / $scope.model.Claim.CountAttended * 100);
+      let rule1 = (claimEligibleCost.ClaimCost === 0) ? 0 : MathFunction.truncate(claimEligibleCost.ClaimCost / claimEligibleCost.AgreedMaxParticipants * 100);
+      let rule2 = (claimEligibleCost.ClaimCost === 0) ? 0 : MathFunction.truncate($scope.model.Claim.TotalApprovedAmount / claimEligibleCost.AgreedMaxParticipants * 100);
       let rule3 = (claimEligibleCost.ClaimCost === 0) ? 0 : MathFunction.truncate(((maxPerParticipantCost * $scope.model.Claim.CountParticipants) + participantCost.ClaimReimbursement - $scope.model.Claim.TotalClaimReimbursement) * 100);
       let rule4 = (claimParticipantCost === 0) ? 0 : MathFunction.truncate(claimParticipantCost * participantCost.Rate * 100);
 
