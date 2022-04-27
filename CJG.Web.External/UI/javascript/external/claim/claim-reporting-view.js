@@ -114,19 +114,16 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
     var claimParticipants;
     var claimCost;
 
-    console.log('recalculateTrainingCost 1');
-
     return $timeout(function () {
       if (claimEligibleCost.ServiceType == utils.ServiceTypes.SkillsTraining ||
         claimEligibleCost.ServiceType == utils.ServiceTypes.EmploymentServicesAndSupports ||
         claimEligibleCost.ServiceType == utils.ServiceTypes.Administration) {
-        console.log('recalculateTrainingCost 2');
+        
         if (claimEligibleCost.ServiceType == utils.ServiceTypes.SkillsTraining ||
           claimEligibleCost.ServiceType == utils.ServiceTypes.EmploymentServicesAndSupports) {
 
           //claimParticipants = claimEligibleCost.CountAttended;
           claimParticipants = claimEligibleCost.EligibleCosts.AgreedMaxParticipants;
-          console.log('claimParticipants ' + claimParticipants);
 
           if (claimEligibleCost.Breakdowns != null && claimEligibleCost.Breakdowns.length > 0) {
             claimEligibleCost.ClaimCost = 0.0;
