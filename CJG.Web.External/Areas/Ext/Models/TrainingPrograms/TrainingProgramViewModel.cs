@@ -79,7 +79,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 
 		[AllowHtml]
 		[Required(ErrorMessage = "Business training relevance is required")]
-		[MaxLength(2300, ErrorMessage = "Business training relevance cannot exceed 2000 characters.")] // Max length is longer than message to allow for HTML content
+		[MaxLength(150000, ErrorMessage = "Business training relevance cannot exceed 150000 characters.")]
 		public string BusinessTrainingRelevance { get; set; }
 
 		[CustomValidation(typeof(CourseLinkValidation), "ValidateCourseLink")]

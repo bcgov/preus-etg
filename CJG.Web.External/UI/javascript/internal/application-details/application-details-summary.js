@@ -176,6 +176,18 @@ app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $tim
     );
   }
 
+  $scope.previewDenialReason = function () {
+    return ngDialog.open({
+        template: '/content/dialogs/_FullContent.html',
+        closeByDocument: true,
+        data: {
+          title: 'Reason',
+          content: $scope.model.TerminalReason
+        }
+      }
+    );
+  }
+
   /**
    * Get the maximum training period date.
    * @function getTrainingPeriodMaxDate

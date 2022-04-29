@@ -268,9 +268,9 @@ app.controller('ApplicationTrainingProviderView', function ($scope, $attrs, $con
   };
 
   $scope.tinymceOptions = {
-    plugins: 'link code autoresize preview fullscreen lists advlist anchor',
+    plugins: 'link code autoresize preview fullscreen lists advlist anchor paste',
     toolbar: 'undo redo | bold italic | formatselect | alignleft aligncenter alignright | outdent indent | numlist bullist | anchor | preview | fullscreen | code ',
-    forced_root_blocks: true,
+    forced_root_block: 'p',
     browser_spellcheck: true,
     contextmenu: false,
     setup: function (ed) {
