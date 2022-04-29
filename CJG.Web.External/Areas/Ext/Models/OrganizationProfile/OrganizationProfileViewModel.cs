@@ -97,7 +97,7 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 
 		[AllowHtml]
 		[Required(ErrorMessage = "Business description is required")]
-		[MaxLength(2300, ErrorMessage = "Business description cannot exceed 2000 characters.")] // Max length is longer than message to allow for HTML content
+		[MaxLength(150000, ErrorMessage = "Business description cannot exceed 150000 characters.")]
 		public string BusinessDescription { get; set; }
 
 		[CustomValidation(typeof(OrganizationProfileViewModelValidation), "ValidateBusinessLicenseDocuments")]
