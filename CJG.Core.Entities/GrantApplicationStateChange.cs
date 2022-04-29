@@ -47,7 +47,7 @@ namespace CJG.Core.Entities
         /// <summary>
         /// get/set - The reason the state change occured.
         /// </summary>
-        [MaxLength(2000)]
+        [MaxLength(150000)]
         public string Reason { get; set; }
 
         /// <summary>
