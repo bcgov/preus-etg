@@ -13,12 +13,12 @@ app.controller('ApplicationDetailsView', function($scope, $attrs, $controller, $
     });
   }
 
-  function loadAlternateUsers() {
-    return $scope.load({
-      url: '/Ext/Application/AlternateUsers/' + $scope.section.grantApplicationId,
-      set: 'alternateUsers'
-    });
-  }
+  //function loadAlternateUsers() {
+  //  return $scope.load({
+  //    url: '/Ext/Application/AlternateUsers/' + $scope.section.grantApplicationId,
+  //    set: 'alternateUsers'
+  //  });
+  //}
 
   $scope.showComponent = function($event) {
     var section = $event.currentTarget.nextElementSibling;
@@ -36,36 +36,36 @@ app.controller('ApplicationDetailsView', function($scope, $attrs, $controller, $
     }
   }
 
-  $scope.changeApplicationContact = function () {
-    const selectedNewUserId = $scope.model.SelectedNewUser;
-    const selectedUser = $scope.alternateUsers.filter(a => a.Key === selectedNewUserId).pop().Value;
+  //$scope.changeApplicationContact = function () {
+  //  const selectedNewUserId = $scope.model.SelectedNewUser;
+  //  const selectedUser = $scope.alternateUsers.filter(a => a.Key === selectedNewUserId).pop().Value;
 
-    if (selectedNewUserId === 0)
-      return angular.noop;
+  //  if (selectedNewUserId === 0)
+  //    return angular.noop;
 
-    return $scope.confirmDialog('Change Application Contact', '<p>Please confirm that you\'d like to assign this application to <strong>' + selectedUser + '</strong>.</p>')
-      .then(function () {
-        return $scope.ajax({
-          url: '/Ext/Application/AlternateUsers/ChangeUser/',
-          method: 'PUT',
-          data: {
-            Id: $scope.section.grantApplicationId,
-            RowVersion: $scope.model.RowVersion,
-            ApplicantContactId: selectedNewUserId
-          }
-        });
-      })
-      .then(function (response) {
-        if (response.data.RedirectURL)
-          window.location = response.data.RedirectURL;
-      })
-      .catch(angular.noop);
-  }
+  //  return $scope.confirmDialog('Change Application Contact', '<p>Please confirm that you\'d like to assign this application to <strong>' + selectedUser + '</strong>.</p>')
+  //    .then(function () {
+  //      return $scope.ajax({
+  //        url: '/Ext/Application/AlternateUsers/ChangeUser/',
+  //        method: 'PUT',
+  //        data: {
+  //          Id: $scope.section.grantApplicationId,
+  //          RowVersion: $scope.model.RowVersion,
+  //          ApplicantContactId: selectedNewUserId
+  //        }
+  //      });
+  //    })
+  //    .then(function (response) {
+  //      if (response.data.RedirectURL)
+  //        window.location = response.data.RedirectURL;
+  //    })
+  //    .catch(angular.noop);
+  //}
 
   function init() {
     return Promise.all([
       loadApplicationDetails(),
-      loadAlternateUsers()
+      //loadAlternateUsers()
     ]).catch(angular.noop);
   }
 
