@@ -37,6 +37,7 @@ namespace CJG.Web.External.Areas.Ext.Models
 
 		public string GrantProgramName { get; set; }
 		public string GrantStreamName { get; set; }
+		public string GrantProgramDescriptor { get; set; }
 		public string RowVersion { get; set; }
 		#endregion
 
@@ -50,6 +51,11 @@ namespace CJG.Web.External.Areas.Ext.Models
 			this.FileName = grantApplication.GetFileName();
 			this.GrantProgramName = grantApplication.GrantOpening.GrantStream.GrantProgram?.Name;
 			this.GrantStreamName = grantApplication.GrantOpening.GrantStream.Name;
+
+			this.GrantProgramDescriptor = this.GrantStreamName == "B.C. Employer Training Grant" ?
+											this.GrantProgramName:
+											this.GrantProgramDescriptor = this.GrantProgramName + " - " + this.GrantStreamName;			
+
 			this.ApplicationStateInternal = grantApplication.ApplicationStateInternal;
 			this.ApplicationStateExternal = grantApplication.ApplicationStateExternal;
 			this.RowVersion = Convert.ToBase64String(grantApplication.RowVersion);
