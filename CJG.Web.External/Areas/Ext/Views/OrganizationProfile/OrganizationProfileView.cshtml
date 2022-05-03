@@ -232,11 +232,10 @@
                     </div>
                 </div>
 
-                <div class="form__group">
+                <div class="form__group boxed__error" ng-validation="errors.BusinessDescription">
                     <label class="form__label">Business Description <abbr title="Required">*</abbr></label>
                     <div class="form__control" ng-if="model.IsOrganizationProfileAdministrator">
                         <textarea ng-model="model.BusinessDescription" class="input--full textarea--medium"
-                                ng-validation="errors.BusinessDescription"
                                 ui-tinymce="tinymceOptions"></textarea>
                     </div>
                     <div class="form__control" ng-if="!model.IsOrganizationProfileAdministrator">
