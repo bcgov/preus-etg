@@ -1,12 +1,68 @@
 ﻿@using CJG.Core.Entities
 @using CJG.Web.External.Areas.Ext.Controllers
 @using CJG.Web.External.Areas.Ext.Models
+
 @model CJG.Web.External.Areas.Ext.Models.SidebarViewModel
-@* // TODO: Need to rewrite this to use AngularJs more *@
+
 <div class="sidebar" ng-controller="Sidebar" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-claim-id="@ViewBag.ClaimId" ng-claim-version="@ViewBag.ClaimVersion">
     <div class="sidebar__container">
+        @if(Model.ShowClaimInformation)
+        { 
+            <h5 class="sidebar__heading">Claim Status</h5>
+            <div class="sidebar__content">
+                <strong>
+                    @switch (Model.CurrentClaim.ClaimState)
+                    {
+                        case null:
+                            <span class="label label--notstarted">NOT STARTED</span>;
+                            break;
+                        case ClaimState.Incomplete:
+                            <span class="label label--incomplete">INCOMPLETE</span>
+                            break;
+                        case ClaimState.Complete:
+                            <span class="label label--incomplete">NOT SUBMITTED</span>
+                            break;
+                        case ClaimState.Unassessed:
+                            <span class="label label--incomplete">CLAIM SUBMITTED</span>
+                            break;
+                        case ClaimState.ClaimApproved:
+                        case ClaimState.AmountOwing:
+                        case ClaimState.PaymentRequested:
+                        case ClaimState.ClaimPaid:
+                        case ClaimState.AmountReceived:
+                        case ClaimState.ClaimAmended:
+                            <span class="label label--complete">CLAIM APPROVED</span>
+                            break;
+                        case ClaimState.ClaimDenied:
+                            <span class="label label--incomplete">CLAIM DENIED</span>
+                            break;
+                    }
+                </strong>
+
+                @switch (Model.CurrentClaim.ClaimState)
+                {
+                    case ClaimState.ClaimApproved:
+                    case ClaimState.AmountOwing:
+                    case ClaimState.PaymentRequested:
+                    case ClaimState.ClaimPaid:
+                    case ClaimState.AmountReceived:
+                    case ClaimState.ClaimAmended:
+                        <div>Approved on</div>
+                        <div><strong>@Model.CurrentClaim.ClaimStateDate.FormatMorning()</strong></div>
+                        break;
+                    case ClaimState.ClaimDenied:
+                        <div>Denied on</div>
+                        <div><strong>@Model.CurrentClaim.ClaimStateDate.FormatMorning()</strong></div>
+                        break;
+                }
+
+            </div>
+        }
+        
+        @if (!Model.ShowClaimInformation)
+        { 
         <h5 class="sidebar__heading">Status</h5>
-        <div class="sidebar__content ">
+        <div class="sidebar__content">
             <strong>@Html.Partial("_ApplicationStatusLabel", Model.GrantApplication.ApplicationStateExternal)</strong>
 
             @switch (Model.GrantApplication.ApplicationStateExternal)
@@ -19,45 +75,43 @@
                 case ApplicationStateExternal.Incomplete:
                     <text>
                         <div>Created on</div>
-                        <div><strong>@Model.GrantApplication.DateAdded.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
-                        <div ng-if="model.ProgramType === @((int)CJG.Core.Entities.ProgramTypes.WDAService)">Earliest Submission</div>
-                        <div ng-if="model.ProgramType === @((int)CJG.Core.Entities.ProgramTypes.WDAService)"><strong>@Model.GrantApplication.GrantOpening.OpeningDate.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.DateAdded.FormatMorning()</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.Submitted:
                     <text>
                         <div>Submitted on</div>
-                        <div><strong>@(Model.GrantApplication.DateSubmitted.HasValue ? Model.GrantApplication.DateSubmitted.Value.ToLocalMorning().ToString("yyyy-MM-dd") : "")</strong></div>
+                        <div><strong>@(Model.GrantApplication.DateSubmitted.HasValue ? Model.GrantApplication.DateSubmitted.Value.FormatMorning() : "")</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.ApplicationWithdrawn:
                     <text>
                         <div>Withdrawn on</div>
-                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.Approved:
                     <text>
                         <div>Approved on</div>
-                        <div><strong>@Model.GrantApplication.GrantAgreement.DateAccepted.Value.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GrantAgreement.DateAccepted.Value.FormatMorning()</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.ApplicationDenied:
                     <text>
                         <div>Denied on</div>
-                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.CancelledByAgreementHolder:
                     <text>
                         <div>Cancelled on</div>
-                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.CancelledByMinistry:
                     <text>
                         <div>Cancelled on</div>
-                        <div><strong>@Model.GrantApplication.DateCancelled.Value.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.DateCancelled.Value.FormatMorning()</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.AcceptGrantAgreement:
@@ -66,90 +120,89 @@
                         {
                             <p />
                             <div class="label label--acceptby">
-                                Accept by @Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateInternal).ChangedDate.AddDays(5).ToLocalMorning().ToString("yyyy-MM-dd")
+                                Accept by @Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateInternal).ChangedDate.AddDays(5).FormatMorning()
                             </div>
                             <p />
                         }
                         <div>Issued on</div>
-                        <div><strong>@Model.GrantApplication.GrantAgreement.DateAdded.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GrantAgreement.DateAdded.FormatMorning()</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.ChangeRequestSubmitted:
                     <text>
                         <div>Submitted on</div>
-                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.ChangeRequestDenied:
                     <text>
                         <div>Denied on</div>
-                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.ChangeRequestApproved:
                     <text>
                         <div>Approved on</div>
-                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
                     </text>
                     break;
                 @*case ApplicationStateExternal.ClaimSubmitted:
                     <text>
                         <div>Submitted on</div>
-                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
                     </text>
                     break;*@
                 case ApplicationStateExternal.ClaimReturned:
                     <text>
                         <div>Returned on</div>
-                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.ClaimDenied:
                     <text>
                         <div>Denied on</div>
-                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.ClaimApproved:
                     <text>
                         <div>Approved on</div>
-                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.Closed:
                     <text>
                         <div>Closed on</div>
-                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.NotAccepted:
                     <text>
                         <div>Returned on</div>
-                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.AgreementWithdrawn:
                     <text>
                         <div>Withdrawn on</div>
-                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.AgreementRejected:
                     <text>
                         <div>Rejected on</div>
-                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
                     </text>
                     break;
                 case ApplicationStateExternal.ReturnedUnassessed:
                     <text>
                         <div>Returned on</div>
-                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.ToLocalMorning().ToString("yyyy-MM-dd")</strong></div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
                     </text>
                     break;
-
-            }
-
-        </div>
+                }
+            </div>
+        }
     </div>
 
     @if (!Model.GrantApplication.ApplicationStateExternal.In(
@@ -165,17 +218,14 @@
         <div class="sidebar__container">
             <h5 class="sidebar__heading">Links</h5>
             <div class="sidebar__content ">
-
-                @{
-                    var highlighedAttributes = new { style = "font-weight:bold; color: red" };
-                }
+                @{ var highlightAttributes = new { style = "font-weight:bold; color: red" }; }
 
                 @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.GrantFiles)) //RR1
                 {
                     <div>
                         @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.GrantFiles].Title, nameof(ReportingController.GrantFileView), nameof(ReportingController).Replace("Controller", ""),
                             new { grantApplicationId = Model.GrantApplication.Id },
-                            Model.SideBarLinks[SidebarLinkType.GrantFiles].IsHighlighted ? highlighedAttributes : null)
+                            Model.SideBarLinks[SidebarLinkType.GrantFiles].IsHighlighted ? highlightAttributes : null)
                     </div>
                 }
 
@@ -184,7 +234,7 @@
                     <div>
                         @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ReviewAgreement].Title, nameof(GrantAgreementController.AgreementReviewView), nameof(GrantAgreementController).Replace("Controller", ""),
                                       new { grantApplicationId = Model.GrantApplication.Id },
-                                      Model.SideBarLinks[SidebarLinkType.ReviewAgreement].IsHighlighted ? highlighedAttributes : null)
+                                      Model.SideBarLinks[SidebarLinkType.ReviewAgreement].IsHighlighted ? highlightAttributes : null)
                     </div>
                 }
 
@@ -221,7 +271,7 @@
                     <div>
                         @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ApplicationView].Title, nameof(ApplicationViewController.ApplicationDetailsView), "ApplicationView",
                                                 new { grantApplicationId = Model.GrantApplication.Id },
-                                                Model.SideBarLinks[SidebarLinkType.ApplicationView].IsHighlighted ? highlighedAttributes : null)
+                                                Model.SideBarLinks[SidebarLinkType.ApplicationView].IsHighlighted ? highlightAttributes : null)
                     </div>
                 }
 
@@ -230,7 +280,7 @@
                     <div>
                         @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.AgreementOverview].Title, nameof(GrantAgreementController.AgreementOverviewView), "GrantAgreement",
                                       new { grantApplicationId = Model.GrantApplication.Id },
-                                      Model.SideBarLinks[SidebarLinkType.AgreementOverview].IsHighlighted ? highlighedAttributes : null)
+                                      Model.SideBarLinks[SidebarLinkType.AgreementOverview].IsHighlighted ? highlightAttributes : null)
                     </div>
                 }
 
@@ -239,7 +289,7 @@
                     <div>
                         @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ViewParticipantList].Title, nameof(ParticipantReportingController.ParticipantReportingView), nameof(ParticipantReportingController).Replace("Controller", ""),
                                                 new { grantApplicationId = Model.GrantApplication.Id },
-                                                Model.SideBarLinks[SidebarLinkType.ViewParticipantList].IsHighlighted ? highlighedAttributes : null)
+                                                Model.SideBarLinks[SidebarLinkType.ViewParticipantList].IsHighlighted ? highlightAttributes : null)
                     </div>
                 }
 
@@ -252,7 +302,7 @@
 
                         @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ViewClaim].Title, nameof(ClaimController.DetailsView), nameof(ClaimController).Replace("Controller", ""),
                                       new { claimId = claim.Id, claimVersion = claim.ClaimVersion },
-                                      Model.SideBarLinks[SidebarLinkType.ViewParticipantList].IsHighlighted ? highlighedAttributes : null)
+                                      Model.SideBarLinks[SidebarLinkType.ViewParticipantList].IsHighlighted ? highlightAttributes : null)
                     </div>
                 }
 
@@ -261,16 +311,7 @@
                     <div>
                         @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ViewCompletionReport].Title, nameof(CompletionReportingController.CompletionReportDetailsView), nameof(CompletionReportingController).Replace("Controller", ""),
                                                 new { grantApplicationId = Model.GrantApplication.Id },
-                                                Model.SideBarLinks[SidebarLinkType.ViewCompletionReport].IsHighlighted ? highlighedAttributes : null)
-                    </div>
-                }
-
-                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.AlternateContact) && Model.GrantApplication.IsWDAService())
-                {
-                    <div>
-                        @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.AlternateContact].Title, "AlternateContactView", "AlternateContact",
-                            new { grantApplicationId = Model.GrantApplication.Id },
-                            Model.SideBarLinks[SidebarLinkType.AlternateContact].IsHighlighted ? highlighedAttributes : null)
+                                                Model.SideBarLinks[SidebarLinkType.ViewCompletionReport].IsHighlighted ? highlightAttributes : null)
                     </div>
                 }
 
@@ -308,11 +349,7 @@
                         });
                     </script>
                 }
-
-
-
             </div>
-
         </div>
     }    
 </div>

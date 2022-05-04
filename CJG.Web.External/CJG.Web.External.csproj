@@ -1162,6 +1162,7 @@
     <Compile Include="Areas\Ext\Models\Claims\ClaimAttachmentsViewModel.cs" />
     <Compile Include="Areas\Ext\Models\Claims\EligibleExpenseBreakdownViewModel.cs" />
     <Compile Include="Areas\Ext\Models\Claims\EligibleExpenseTypeViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Claims\SidebarClaimModel.cs" />
     <Compile Include="Areas\Ext\Models\OrganizationProfile\OrganizationProfileViewModel.cs" />
     <Compile Include="Areas\Ext\Models\ParticipantReporting\IncludeParticipantsViewModel.cs" />
     <Compile Include="Areas\Ext\Models\ParticipantReporting\ParticipantViewModel.cs" />

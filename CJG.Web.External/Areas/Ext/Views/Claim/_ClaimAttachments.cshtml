@@ -1,9 +1,7 @@
-﻿@using CJG.Web.External.Areas.Ext.Controllers
-    
-<div ng-controller="ClaimAttachmentsView" ng-claim-id="@ViewBag.ClaimId" ng-claim-version="@ViewBag.ClaimVersion">
+﻿<div ng-controller="ClaimAttachmentsView" ng-claim-id="@ViewBag.ClaimId" ng-claim-version="@ViewBag.ClaimVersion">
 <div>
     <h2 class="text--uppercase">{{model.Title}}</h2>
-    <div ng-if="!model.IsWDAService">
+    <div>
         <p>
             Attach all receipts, paid invoices or other valid proof of payments that support the costs you have entered for each eligible expense type. If you are unsure what is required to submit, please read the
             <a href="https://www.workbc.ca/getmedia/33f85e91-e8f8-4a90-a694-2fa5f1d0bdb7/Reimbursement-Guidelines.pdf.aspx" target="_blank">Read the Reimbursement Guidelines</a>.
@@ -20,14 +18,6 @@
         <p style="font-style: italic;">
             For each attachment, enter a description to identify what part of your claim it supports (for example, type “Tuition” or “Mandatory student fees” in the description of each attachment).
         </p>
-
-        <p>Accepted file types: PDF, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}} MB.</p>
-
-
-    </div>
-    <div ng-if="model.IsWDAService">
-        <p>Your assessor may request you to attach documentation to support your claim.</p>
-        <p>For each attachment, enter a description to identify what part of your claim it supports.</p>
         <p>Accepted file types: PDF, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}} MB.</p>
     </div>
 </div>

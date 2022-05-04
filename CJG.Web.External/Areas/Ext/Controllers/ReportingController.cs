@@ -67,6 +67,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			ViewBag.GrantApplicationId = grantApplicationId;
 			ViewBag.ClaimId = claim?.Id ?? 0;
 			ViewBag.ClaimVersion = claim?.ClaimVersion ?? 0;
+
 			return View(SidebarViewModelFactory.Create(grantApplication, ControllerContext));
 		}
 
