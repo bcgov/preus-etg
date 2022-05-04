@@ -32,6 +32,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		private readonly IFiscalYearService _fiscalYearService;
 		private readonly IGrantProgramService _grantProgramService;
 		private readonly ISettingService _settingService;
+		private readonly IOrganizationService _organizationService;
 		#endregion
 
 		#region Constructors
@@ -54,7 +55,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			IGrantOpeningManageScheduledService grantOpeningManageScheduledService,
 			IGrantProgramService grantProgramService,
 			IFiscalYearService fiscalYearService,
-			ISettingService settingService) : base(controllerService.Logger)
+			ISettingService settingService,
+			IOrganizationService organizationService) : base(controllerService.Logger)
 		{
 			_userService = controllerService.UserService;
 			_staticDataService = controllerService.StaticDataService;
@@ -66,6 +68,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			_fiscalYearService = fiscalYearService;
 			_grantProgramService = grantProgramService;
 			_settingService = settingService;
+			_organizationService = organizationService;
 		}
 		#endregion
 
@@ -593,6 +596,27 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				_grantApplicationService.Update(grantApplication);
 			}
 
+			var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
+
+			if (!_organizationService.IsOrganizationNaicsStatusUpdated(currentUser.Organization.Id))
+			{
+				if (currentUser.IsOrganizationProfileAdministrator && _organizationService.NotSubmittedGrantApplications(currentUser.Organization.Id) > 0)
+				{
+					//Clear NAICS
+					_organizationService.ClearOrganizationOldNaicsCode(currentUser.Organization.Id);
+				}
+
+				this.SetAlerts("Your organization’s Canada North American Industry Classification System (NAICS) codes are currently out of date. " +
+					"The Profile Administrator (individual responsible for your Organization Profile) " +
+					"will need to update the NAICS codes on your Organization Profile before submitting an application.", AlertType.Warning);
+			}
+
+			if (_organizationService.RequiresBusinessLicenseDocuments(currentUser.Organization.Id))
+			{
+				_logger.Info($"The Organization is missing up-to-date Business License Documents - {_siteMinderService.CurrentUserGuid}");
+				this.SetAlerts("Your organization’s Business Information Documents (e.g. business licence) are currently out of date.", AlertType.Warning);
+			}
+
 			return View(SidebarViewModelFactory.Create(grantApplication, ControllerContext));
 		}
 
@@ -661,6 +685,18 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				}
 
 				model = new ApplicationOverviewViewModel(grantApplication, _settingService);
+
+				var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
+
+				if (!_organizationService.IsOrganizationNaicsStatusUpdated(currentUser.Organization.Id))
+				{
+					model.CanSubmit = false;
+				}
+
+				if (_organizationService.RequiresBusinessLicenseDocuments(currentUser.Organization.Id))
+				{
+					model.CanSubmit = false;
+				}				
 			}
 			catch (Exception ex)
 			{
