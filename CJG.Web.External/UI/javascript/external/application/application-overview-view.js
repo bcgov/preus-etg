@@ -117,7 +117,7 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
       else {
         const totalNoOutcome = $scope.model.Participants.filter(p => p.ExpectedOutcome === 0).length;
         if (totalNoOutcome > 0)
-          return populateTypes.INPROGRESS;
+          return populateTypes.INCOMPLETE;
 
         return populateTypes.COMPLETE;
       }
