@@ -69,12 +69,12 @@
                                     <span>{{item.TrainingProgramStartDate}})</span>
                                 </span>
                             </h4>
-                            <p class="grant-summary__filenbr"><b>{{item.GrantProgramName}} &#x2013; {{item.GrantStreamName}}</b></p>
+                            <p class="grant-summary__filenbr"><b>{{item.GrantProgramDescriptor}}</b></p>
                             <p class="grant-summary__date">
                                 <text ng-if="item.ShowSubmittedDate">Date submitted: </text>
                                 <span ng-if="item.ShowSubmittedDate">{{item.DateSubmitted}}</span>
                                 @*<text ng-if="item.ShowGrantOpeningDate">Earliest submission date: </text>
-                                <span ng-if="item.ShowGrantOpeningDate">{{item.GrantOpeningDate}}</span>*@
+            <span ng-if="item.ShowGrantOpeningDate">{{item.GrantOpeningDate}}</span>*@
                                 <span class="label label--acceptby" ng-if="item.ShowAgreementStartDate">
                                     Accept by {{item.AgreementStartDate}}
                                 </span>
