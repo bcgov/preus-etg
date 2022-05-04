@@ -1,5 +1,12 @@
 ﻿
 <br />
+<div class="notice" ng-if="!model.AllOutcomesAreReported">    
+    <div class="inline-help">
+        <p>
+            Please click Edit to return to this section and select the expected training outcome for each participant.
+        </p>
+    </div>    
+</div>
 <div>
     <h4>{{model.Participants.length}} out of {{model.MaxParticipantsAllowed}} participants have successfully reported their participant information.</h4>
 </div>
