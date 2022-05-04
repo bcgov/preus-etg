@@ -1,5 +1,4 @@
 ﻿@using CJG.Core.Entities
-@using CJG.Web.External.Areas.Ext.Controllers
 
 @if (ViewBag.Reporting)
 {
@@ -8,6 +7,7 @@
     </div>
     <br />
 }
+
 <div ng-if="!model.RequireAllParticipantsBeforeSubmission && model.Claim.CountParticipants < model.Claim.MaximumParticipants">
     <div>
         <div class="alert alert--warning notice--icon"><p>{{ model.Claim.CountParticipants }} out of {{ model.Claim.MaximumParticipants }} participants have submitted their Participant Information Form. Participants who have not submitted their Participant Information Forms will not be eligible in your claim.</p></div>

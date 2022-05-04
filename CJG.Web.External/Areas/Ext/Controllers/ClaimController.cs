@@ -121,7 +121,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			ViewBag.Reporting = true;
 			ViewBag.ReviewAndSubmit = false;
 			ViewBag.GrantProgramCode = grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramCode;
-			return View();
+
+			return View(SidebarViewModelFactory.Create(grantApplication, ControllerContext));
 		}
 
 		/// <summary>
