@@ -33,6 +33,7 @@ namespace CJG.Core.Interfaces.Service
 		IOrderedQueryable<GrantApplication> GetGrantApplications(int trainingProviderInventoryId, string search);
 
 		PageList<GrantApplication> GetGrantApplicationsForOrg(int orgId, int page, int quantity, int grantProgramId, string search);
+		IOrderedQueryable<GrantApplication> GetGrantApplicationsForOrg(int orgId, int grantProgramId, string search);
 
 		int GetTotalGrantApplications(List<ApplicationStateInternal> applicationStates, int assessorId, int grantOpeningId, int fiscalYearId, int intakePeriodId, int grantProgramId, int grantStreamId, string fileNumber, string applicant);
 

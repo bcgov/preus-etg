@@ -851,6 +851,25 @@ namespace CJG.Application.Services
 
 			return new PageList<GrantApplication>(page, quantity, total, result.ToArray());
 		}
+		public IOrderedQueryable<GrantApplication> GetGrantApplicationsForOrg(int orgId, int grantProgramId, string search)
+		{
+			var grantApplications =
+				_dbContext.GrantApplications
+					.Where(ga => ga.OrganizationId == orgId && ga.ApplicationStateInternal != ApplicationStateInternal.Draft)
+					.OrderBy(o => o.FileNumber);
+
+			if (grantProgramId == 0)
+				grantProgramId = GetDefaultGrantProgramId();
+
+			var filtered = grantApplications
+				.Where(x => (grantProgramId == 0 || x.GrantOpening.GrantStream.GrantProgramId == grantProgramId)
+							&& (string.IsNullOrEmpty(search) ||
+								x.FileNumber != null && x.FileNumber.Contains(search) ||
+								x.ApplicantFirstName.Contains(search) || x.ApplicantLastName.Contains(search))
+				).OrderBy(x => x.FileNumber);
+
+			return filtered;
+		}
 
 		public int GetTotalGrantApplications(List<ApplicationStateInternal> applicationStates, int assessorId, int grantOpeningId,
 			int fiscalYearId, int intakePeriodId, int grantProgramId, int grantStreamId, string fileNumber, string applicant)
