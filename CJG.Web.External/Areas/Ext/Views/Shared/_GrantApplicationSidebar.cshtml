@@ -14,7 +14,7 @@
                     @switch (Model.CurrentClaim.ClaimState)
                     {
                         case null:
-                            <span class="label label--notstarted">NOT STARTED</span>;
+                            <span class="label label--incomplete">NOT STARTED</span>;
                             break;
                         case ClaimState.Incomplete:
                             <span class="label label--incomplete">INCOMPLETE</span>
