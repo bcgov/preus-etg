@@ -1,54 +1,73 @@
 ﻿<div ng-controller="ClaimAttachmentsView" ng-claim-id="@ViewBag.ClaimId" ng-claim-version="@ViewBag.ClaimVersion">
-<div>
+
+    
     <h2 class="text--uppercase">{{model.Title}}</h2>
     <div>
-        <p>
-            Attach all receipts, paid invoices or other valid proof of payments that support the costs you have entered for each eligible expense type. If you are unsure what is required to submit, please read the
-            <a href="https://www.workbc.ca/getmedia/33f85e91-e8f8-4a90-a694-2fa5f1d0bdb7/Reimbursement-Guidelines.pdf.aspx" target="_blank">Read the Reimbursement Guidelines</a>.
-        </p>
 
-        <div class="notice notice--icon margin-top">
-            <p>
-                Employers are required to pay for the full cost of training. If receipts or invoices indicate that an employee paid for training, you must reimburse them in full, then have them complete and sign an Employer Reimbursement Verification Form and attach it to this claim.
-            </p>
-            <p>
-                For all training delivered by private training institutions not certified by the Private Training Institutions Branch, employers must submit a copy of the front and back of a cashed cheque or include a financial statement to verify that payment for training was processed through your financial institution. Please redact any information on the statement that is not associated to this claim.
-            </p>
+        <h3>Receipts</h3>
+        <div>
+            <p>To be reimbursed for pre-approved expenses, you must provide evidence that costs were both <u>incurred</u> and <u>paid</u>. When valid receipts are available, no other proofs of payment are required. A valid receipt is any document that contains the following <u>five</u> elements:</p>
+            <ol>
+                <li>Name of vendor (person or training provider you paid)</li>
+                <li>Transaction date (when you paid)</li>
+                <li>Detailed description and quantity of goods or services purchased (what you paid for)</li>
+                <li>Amount paid (including taxes)</li>
+                <li>Method of payment (cash, cheque, or last four digits of credit card)</li>
+            </ol>
+            <p><strong>NOTE:</strong> For online credit card purchases, the receipt would be a printout or email of the confirmation of purchase, registration, etc., provided by the training provider’s website after payment. It may be necessary for you to print the details of the purchase from a computer screen.</p>
+
+            <div class="notice margin-top">
+                <p><strong>Receipt examples:</strong>
+                    <a href="https://www.workbc.ca/getmedia/425adfd2-9134-489e-b0b0-f52b54df1918/ETG-Receipt-Example-1-Sales-Receipt.aspx" target="_blank">Sales Receipt/Paid Invoice</a> 
+                    | <a href="https://www.workbc.ca/getmedia/76c96ec0-d0c5-4178-9861-9f1b9d0b2504/ETG-Receipt-Example-2-Paper-Receipt.aspx" target="_blank">Paper Receipt</a> 
+                    | <a href="https://www.workbc.ca/getmedia/d36c8ae3-fcd7-47d6-9a12-ef81125fda6f/ETG-Receipt-Example-3-Digital-Receipt.aspx" target="_blank">Email Receipt for Online Purchase</a></p>
+                <p><strong>We accept clear photos of receipts and other documents taken with your smartphone</strong></p>
+            </div>
+
+            <h3>Additional Proof of Payment</h3>
+            <p>Additional proof of payment is only necessary when receipts do not contain all five elements above. The following documents are not sufficient on their own:</p>
+            <ul>
+                <li><strong>Cleared cheque</strong> — Provide a copy of the front and back of a cleared cheque (if paid by cheque). Most cleared cheques are available as scanned images from your online bank account.</li>
+                <li><strong>Credit card or bank statement</strong> — Provide a copy of your credit card or bank statement showing funds were transferred to the training provider. Cover up any details not relevant to the transaction for which reimbursement is requested. Do not cover up your business name or the beneficiary organization (e.g. training provider name).</li>
+            </ul>
+
+            <h3>Travel Expenses</h3>
+            <p>If applicable, you must attach a completed <a href="https://www.workbc.ca/getmedia/c438cf77-faa9-4eda-bfd8-8de583a0d916/Travel-Expense-Form.aspx" target="_blank">Travel Expense Form</a>. Receipts for travel expenses are only required for flights (if applicable).</p>
+            
+            <h3>Submit Your Claim</h3>
+            <div>
+                <p style="font-style: italic;">
+                    For each attachment, enter a description to identify what part of your claim it supports (for example, type “Tuition” or “Mandatory student fees” in the description of each attachment).
+                </p>
+                <p>Accepted file types: PDF, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}} MB.</p>
+            </div>
+            <div class="form__group" ng-if="model.Attachments.length != 0">
+                <table style="width:100%;">
+                    <thead>
+                    <tr>
+                        <th style="padding:5px 5px 5px 0;text-align:left; width:40%;" class="claim-title-font">Attachment</th>
+                        <th style="padding:5px 5px 5px 0;text-align:left; width:40%;" class="claim-title-font">Description</th>
+                        <th style="padding:5px 5px 5px 0;"></th>
+                    </tr>
+                    </thead>
+
+                    <tr ng-repeat="attachment in model.Attachments">
+                        <td style="padding:5px 5px 5px 0;width:40%;vertical-align:top;word-wrap: break-word;word-break: break-all;">
+                            <a ng-if="attachment.Id" target="_blank" href="/Ext/Claim/Attachment/Download/{{model.Id}}/{{model.ClaimVersion}}/{{attachment.Id}}">{{attachment.FileName}}</a>
+                            <span ng-if="!attachment.Id">{{attachment.FileName}}</span>
+                        </td>
+                        <td style="padding:5px 5px 5px 0;width:40%;vertical-align:top;word-wrap: break-word;word-break: break-all;">
+                            {{attachment.Description}}
+                        </td>
+                        <td style="padding:5px 5px 5px 0;vertical-align:top">
+                            <a ng-click="changeAttachment(attachment)">Edit</a>
+                            /
+                            <a ng-click="removeAttachment($index)">Remove</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <button ng-if="model.MaximumNumberOfAttachmentsAllowed > model.Attachments.length" class="btn btn--secondary" ng-click="addAttachment()" data-disableonsubmit="false">Add attachment</button>
         </div>
-        <p style="font-style: italic;">
-            For each attachment, enter a description to identify what part of your claim it supports (for example, type “Tuition” or “Mandatory student fees” in the description of each attachment).
-        </p>
-        <p>Accepted file types: PDF, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}} MB.</p>
     </div>
-</div>
-
-<div>
-    <div class="form__group" ng-if="model.Attachments.length != 0">
-        <table style="width:100%;">
-            <thead>
-                <tr>
-                    <th style="padding:5px 5px 5px 0;text-align:left; width:40%;" class="claim-title-font">Attachment</th>
-                    <th style="padding:5px 5px 5px 0;text-align:left; width:40%;" class="claim-title-font">Description</th>
-                    <th style="padding:5px 5px 5px 0;"></th>
-                </tr>
-            </thead>
-
-            <tr ng-repeat="attachment in model.Attachments">
-                <td style="padding:5px 5px 5px 0;width:40%;vertical-align:top;word-wrap: break-word;word-break: break-all;">
-                    <a ng-if="attachment.Id" target="_blank" href="/Ext/Claim/Attachment/Download/{{model.Id}}/{{model.ClaimVersion}}/{{attachment.Id}}">{{attachment.FileName}}</a>
-                    <span ng-if="!attachment.Id">{{attachment.FileName}}</span>
-                </td>
-                <td style="padding:5px 5px 5px 0;width:40%;vertical-align:top;word-wrap: break-word;word-break: break-all;">
-                    {{attachment.Description}}
-                </td>
-                <td style="padding:5px 5px 5px 0;vertical-align:top">
-                    <a ng-click="changeAttachment(attachment)">Edit</a>
-                    /
-                    <a ng-click="removeAttachment($index)">Remove</a>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <button ng-if="model.MaximumNumberOfAttachmentsAllowed > model.Attachments.length" class="btn btn--secondary" ng-click="addAttachment()" data-disableonsubmit="false">Add attachment</button>
-</div>
 </div>
