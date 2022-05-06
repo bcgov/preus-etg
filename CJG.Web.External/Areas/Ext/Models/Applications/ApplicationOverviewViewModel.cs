@@ -33,8 +33,10 @@ namespace CJG.Web.External.Areas.Ext.Models.Applications
 
 			MaxParticipantsAllowed = grantApplication.GetMaxParticipants();
 
-			//a value of zero indicates that the user has not selected an outcome from the list
-			AllOutcomesAreReported = !grantApplication.ParticipantForms.Any(p => p.ExpectedParticipantOutcome == 0);
+			// Do we have any PIFs with a training outcome that hasn't been set to a valid state?
+			var totalParticipants = grantApplication.ParticipantForms.Count;
+			var outcomesReported = grantApplication.ParticipantForms.Count(p => p.ExpectedParticipantOutcome != null && p.ExpectedParticipantOutcome > 0);
+			AllOutcomesAreReported = totalParticipants == outcomesReported;
 		}
 	}
 }
