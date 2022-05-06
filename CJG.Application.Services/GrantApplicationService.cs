@@ -529,7 +529,7 @@ namespace CJG.Application.Services
 				_dbContext.ApplicationAddresses.Remove(applicationPhysicalAddress);
 			}
 
-			var internalUser = _userManager.FindById(_siteMinderService.CurrentUserGuid.ToString()).InternalUser;
+			var internalUser = _userManager.FindById(_siteMinderService.CurrentUserGuid.ToString())?.InternalUser;
 			_noteService.AddValueChangedNote(grantApplication, "Applicant contact", oldName, newName);
 
 			_dbContext.CommitTransaction();
@@ -850,6 +850,25 @@ namespace CJG.Application.Services
 			var result = filtered.Skip((page - 1) * quantity).Take(quantity);
 
 			return new PageList<GrantApplication>(page, quantity, total, result.ToArray());
+		}
+		public IOrderedQueryable<GrantApplication> GetGrantApplicationsForOrg(int orgId, int grantProgramId, string search)
+		{
+			var grantApplications =
+				_dbContext.GrantApplications
+					.Where(ga => ga.OrganizationId == orgId && ga.ApplicationStateInternal != ApplicationStateInternal.Draft)
+					.OrderBy(o => o.FileNumber);
+
+			if (grantProgramId == 0)
+				grantProgramId = GetDefaultGrantProgramId();
+
+			var filtered = grantApplications
+				.Where(x => (grantProgramId == 0 || x.GrantOpening.GrantStream.GrantProgramId == grantProgramId)
+							&& (string.IsNullOrEmpty(search) ||
+								x.FileNumber != null && x.FileNumber.Contains(search) ||
+								x.ApplicantFirstName.Contains(search) || x.ApplicantLastName.Contains(search))
+				).OrderBy(x => x.FileNumber);
+
+			return filtered;
 		}
 
 		public int GetTotalGrantApplications(List<ApplicationStateInternal> applicationStates, int assessorId, int grantOpeningId,

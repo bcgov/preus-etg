@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 
@@ -8,6 +9,7 @@ namespace CJG.Web.External.Areas.Ext.Models.Applications
 	{
 		public DateTime? DateSubmitted { get; set; }
 		public DateTime? CheckPrivateSectorsOn { get; set; }
+		public int SelectedNewUser { get; set; }
 		public bool CanSubmit { get; set; }
 		public bool OrganizationCreated { get; set; }
 		public int MaxParticipantsAllowed { get; set; }

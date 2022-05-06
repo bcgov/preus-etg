@@ -39,7 +39,6 @@
             <program-title-label ng-model="model.ProgramTitleLabel"></program-title-label>
 
             <h2>View Grant Application</h2>
-
             <p class="notice notice--icon"
                ng-if="model.GrantOpeningState == @((int)CJG.Core.Entities.GrantOpeningStates.Closed) && model.ApplicationStateExternal < @((int)CJG.Core.Entities.ApplicationStateExternal.Submitted)">
                 Your grant selection is no longer available.  You must make a new grant selection for this application.

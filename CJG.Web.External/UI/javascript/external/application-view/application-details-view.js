@@ -1,4 +1,4 @@
-app.controller('ApplicationDetailsView', function ($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
+app.controller('ApplicationDetailsView', function($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
 
   $scope.section = {
     grantApplicationId: $attrs.ngGrantApplicationId
@@ -13,7 +13,14 @@ app.controller('ApplicationDetailsView', function ($scope, $attrs, $controller, 
     });
   }
 
-  $scope.showComponent = function ($event) {
+  //function loadAlternateUsers() {
+  //  return $scope.load({
+  //    url: '/Ext/Application/AlternateUsers/' + $scope.section.grantApplicationId,
+  //    set: 'alternateUsers'
+  //  });
+  //}
+
+  $scope.showComponent = function($event) {
     var section = $event.currentTarget.nextElementSibling;
     var icon = $event.currentTarget.getElementsByClassName("icon")[0];
     if (section.classList.contains('ng-hide')) {
@@ -29,8 +36,38 @@ app.controller('ApplicationDetailsView', function ($scope, $attrs, $controller, 
     }
   }
 
-  loadApplicationDetails()
-      .catch(angular.noop);
+  //$scope.changeApplicationContact = function () {
+  //  const selectedNewUserId = $scope.model.SelectedNewUser;
+  //  const selectedUser = $scope.alternateUsers.filter(a => a.Key === selectedNewUserId).pop().Value;
+
+  //  if (selectedNewUserId === 0)
+  //    return angular.noop;
+
+  //  return $scope.confirmDialog('Change Application Contact', '<p>Please confirm that you\'d like to assign this application to <strong>' + selectedUser + '</strong>.</p>')
+  //    .then(function () {
+  //      return $scope.ajax({
+  //        url: '/Ext/Application/AlternateUsers/ChangeUser/',
+  //        method: 'PUT',
+  //        data: {
+  //          Id: $scope.section.grantApplicationId,
+  //          RowVersion: $scope.model.RowVersion,
+  //          ApplicantContactId: selectedNewUserId
+  //        }
+  //      });
+  //    })
+  //    .then(function (response) {
+  //      if (response.data.RedirectURL)
+  //        window.location = response.data.RedirectURL;
+  //    })
+  //    .catch(angular.noop);
+  //}
+
+  function init() {
+    return Promise.all([
+      loadApplicationDetails(),
+      //loadAlternateUsers()
+    ]).catch(angular.noop);
+  }
+
+  init();
 });
-
-

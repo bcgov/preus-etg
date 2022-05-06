@@ -151,7 +151,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[HttpGet, Route("History/Search/{organizationId}/{page}/{quantity}")]
 		[ValidateRequestHeader]
 		[AuthorizeAction(Privilege.IA1)]
-		public JsonResult GetOrganizationGrantFileHistory(int organizationId,int page, int quantity, int grantProgramId, string search)
+		public JsonResult GetOrganizationGrantFileHistory(int organizationId,int page, int quantity, int grantProgramId, string search, string sortby, bool sortDesc)
 		{
 			var model = new BaseViewModel();
 			try
@@ -159,13 +159,37 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				if (grantProgramId == 0)
 					grantProgramId = _grantProgramService.GetDefaultGrantProgramId();
 
-				var grantApplications = _grantApplicationService.GetGrantApplicationsForOrg(organizationId, page, quantity, grantProgramId, search);
+				var grantApplications = _grantApplicationService.GetGrantApplicationsForOrg(organizationId, grantProgramId, search);
+
+				List<OrganizationGrantFileHistoryDataTableModel> history = grantApplications.ToList().Select(o => new OrganizationGrantFileHistoryDataTableModel(o, _userService)).ToList();
+
+				//SORT
+				if (string.IsNullOrEmpty(sortby))
+				{
+					sortby = "FileNumber";
+				}
+				System.Reflection.PropertyInfo prop = typeof(OrganizationGrantFileHistoryDataTableModel).GetProperty(sortby);
+				if (sortDesc)
+				{
+					history = history.OrderByDescending(o => prop.GetValue(o, null)).ToList();
+				}
+				else
+				{
+					history = history.OrderBy(o => prop.GetValue(o, null)).ToList();
+				}
+
+				var filtered = history
+					.Skip((page - 1) * quantity)
+					.Take(quantity)
+					.ToArray();
+
 				var result = new
 				{
-					RecordsFiltered = grantApplications.Items.Count(),
-					RecordsTotal = grantApplications.Total,
-					Data = grantApplications.Items.Select(o => new OrganizationGrantFileHistoryDataTableModel(o, _userService)).ToArray()
+					RecordsFiltered = filtered.Count(),
+					RecordsTotal = history.Count(),
+					Data = filtered
 				};
+
 				return Json(result, JsonRequestBehavior.AllowGet);
 			}
 			catch (Exception ex)

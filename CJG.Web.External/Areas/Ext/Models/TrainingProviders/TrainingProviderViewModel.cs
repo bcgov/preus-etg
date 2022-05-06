@@ -183,11 +183,11 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingProviders
 		public bool IsServiceProvider { get; set; }
 
 		[AllowHtml]
-		[StringLength(2500, ErrorMessage = "Choice of Trainer/Program must be 2500 characters or less.")]
+		[StringLength(150000, ErrorMessage = "Choice of Trainer/Program must be 150000 characters or less.")]
 		public string ChoiceOfTrainerOrProgram { get; set; }
 
 		[AllowHtml]
-		[StringLength(2500, ErrorMessage = "Alternative Training Options must be 2500 characters or less.")]
+		[StringLength(150000, ErrorMessage = "Alternative Training Options must be 150000 characters or less.")]
 		public string AlternativeTrainingOptions { get; set; }
 
 		public string BusinessCase { get; set; }

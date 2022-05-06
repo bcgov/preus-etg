@@ -32,6 +32,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		private readonly IFiscalYearService _fiscalYearService;
 		private readonly IGrantProgramService _grantProgramService;
 		private readonly ISettingService _settingService;
+		private readonly IOrganizationService _organizationService;
 		#endregion
 
 		#region Constructors
@@ -54,7 +55,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			IGrantOpeningManageScheduledService grantOpeningManageScheduledService,
 			IGrantProgramService grantProgramService,
 			IFiscalYearService fiscalYearService,
-			ISettingService settingService) : base(controllerService.Logger)
+			ISettingService settingService,
+			IOrganizationService organizationService) : base(controllerService.Logger)
 		{
 			_userService = controllerService.UserService;
 			_staticDataService = controllerService.StaticDataService;
@@ -66,6 +68,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			_fiscalYearService = fiscalYearService;
 			_grantProgramService = grantProgramService;
 			_settingService = settingService;
+			_organizationService = organizationService;
 		}
 		#endregion
 
@@ -240,7 +243,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 					if (grantApplication.IsAlternateContact == true)
 					{
-
 						grantApplication.AlternateEmail = model.AlternateEmail;
 						grantApplication.AlternateFirstName = model.AlternateFirstName;
 						grantApplication.AlternateJobTitle = model.AlternateJobTitle;
@@ -594,9 +596,29 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				_grantApplicationService.Update(grantApplication);
 			}
 
+			var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
+
+			if (!_organizationService.IsOrganizationNaicsStatusUpdated(currentUser.Organization.Id))
+			{
+				if (currentUser.IsOrganizationProfileAdministrator && _organizationService.NotSubmittedGrantApplications(currentUser.Organization.Id) > 0)
+				{
+					//Clear NAICS
+					_organizationService.ClearOrganizationOldNaicsCode(currentUser.Organization.Id);
+				}
+
+				this.SetAlerts("Your organization’s Canada North American Industry Classification System (NAICS) codes are currently out of date. " +
+					"The Profile Administrator (individual responsible for your Organization Profile) " +
+					"will need to update the NAICS codes on your Organization Profile before submitting an application.", AlertType.Warning);
+			}
+
+			if (_organizationService.RequiresBusinessLicenseDocuments(currentUser.Organization.Id))
+			{
+				_logger.Info($"The Organization is missing up-to-date Business License Documents - {_siteMinderService.CurrentUserGuid}");
+				this.SetAlerts("Your organization’s Business Information Documents (e.g. business licence) are currently out of date.", AlertType.Warning);
+			}
+
 			return View(SidebarViewModelFactory.Create(grantApplication, ControllerContext));
 		}
-
 
 		[Route("Application/Resume/{grantApplicationId}")]
 		public ActionResult ApplicationResume(int grantApplicationId)
@@ -663,6 +685,18 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				}
 
 				model = new ApplicationOverviewViewModel(grantApplication, _settingService);
+
+				var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
+
+				if (!_organizationService.IsOrganizationNaicsStatusUpdated(currentUser.Organization.Id))
+				{
+					model.CanSubmit = false;
+				}
+
+				if (_organizationService.RequiresBusinessLicenseDocuments(currentUser.Organization.Id))
+				{
+					model.CanSubmit = false;
+				}				
 			}
 			catch (Exception ex)
 			{
@@ -704,5 +738,67 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		}
 		#endregion
 		#endregion
+
+
+		/// <summary>
+		/// Create a new Grant Application View / Edit an exist Grant Application View.
+		/// </summary>
+		/// <param name="grantApplicationId"></param>
+		/// <returns></returns>
+		[HttpGet]
+		[Route("Application/AlternateUsers/{grantApplicationId}")]
+		public JsonResult GetGrantApplicationAlternateContacts(int grantApplicationId)
+		{
+			var model = new List<KeyValuePair<int, string>>();
+			try
+			{
+				var grantApplication = _grantApplicationService.Get(grantApplicationId);
+				var orgContacts = new List<KeyValuePair<int, string>>
+				{
+					new KeyValuePair<int, string>(0, "Please select a new application contact")
+				};
+
+				var applicationContacts = _grantApplicationService
+					.GetAvailableApplicationContacts(grantApplication)
+					.Select(a => new KeyValuePair<int, string>(a.Id, $"{a.GetUserFullName()} | {a.JobTitle}"))
+					.ToList();
+				orgContacts.AddRange(applicationContacts);
+
+				model = orgContacts;
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex);
+			}
+
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
+		/// Launched when the 'Set Outcome' modal on the 'ParticipantsReport' page is clicked
+		/// </summary>
+		/// <returns></returns>
+		[HttpPut]
+		[PreventSpam]
+		[ValidateRequestHeader]
+		[Route("Application/AlternateUsers/ChangeUser")]
+		public ActionResult ChangeUser(ChangeAlternateContactViewModel model)
+		{
+			try
+			{
+				var grantApplication = _grantApplicationService.Get(model.Id);
+				grantApplication.RowVersion = Convert.FromBase64String(model.RowVersion);
+				_grantApplicationService.ChangeApplicationAdministrator(grantApplication, model.ApplicantContactId);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+
+			this.SetAlert("The application administrator has been updated.", AlertType.Success, true);
+			model.RedirectURL = "/Ext/Home/Index";
+
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
 	}
 }

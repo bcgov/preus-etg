@@ -131,560 +131,63 @@ app.controller('OrganizationHistory', function ($scope, $attrs, $controller, $ti
     return $scope.originalNotes === $scope.model.Notes;
   };
 
+  const noSort = '../../../../../images/icons/icon--sort.svg';
+  const sortAsc = '../../../../../images/icons/icon--sort-asc.svg';
+  const sortDesc = '../../../../../images/icons/icon--sort-desc.svg';
 
-  $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-  $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-  $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-  $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-  $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-  $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-  $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-  $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-  $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-  $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-  $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-  $scope.imgSrcPaidAmount= '../../../../images/icons/icon--sort.svg';
-  $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
+  resetSortImage();
 
   $scope.sort = {
     column: '',
     descending: false
   };
 
-
   $scope.changeSorting = function (column) {
+    resetSortImage();
     var sort = $scope.sort;
+    var newSortImage = sortAsc;
+
     if (sort.column == column) {
       sort.descending = !sort.descending;
-      if (column == 'FileNumber') {
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'CurrentStatus') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'ApplicationStream') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'ApplicantName') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'ApplicantEmail') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'TrainingProgramTitle') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'StartDate') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcStartDate = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcStartDate = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'NumberOfParticipants') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'EndDate') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcEndDate = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcEndDate = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'RequestedAmount') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'ApprovedAmount') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'PaidAmount') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcPaiddAmount = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'AverageCostPerParticipant') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-    } else {
+    }
+    else {
       sort.column = column;
       sort.descending = false;
-
-      if (column == 'FileNumber') {
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'CurrentStatus') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'ApplicationStream') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'ApplicantName') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'ApplicantEmail') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'TrainingProgramTitle') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'StartDate') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcStartDate = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcStartDate = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'EndDate') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcEndDate = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcEndDate = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'NumberOfParticipants') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'RequestedAmount') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'ApprovedAmount') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'AverageCostPerParticipant') {
-        $scope.imgSrcFileNumber = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicationStream = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcCurrentStatus = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantEmail = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApplicantName = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcStartDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcEndDate = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcTrainingProgramTitle = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcRequestedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcApprovedAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcPaidAmount = '../../../../images/icons/icon--sort.svg';
-        $scope.imgSrcNumberOfParticipants = '../../../../images/icons/icon--sort.svg';
-
-        if (sort.descending) {
-          $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcAverageCostPerParticipant = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
     }
+    if (sort.descending) {
+      newSortImage = sortDesc
+    }
+    if (column == 'FileNumber') { $scope.imgSrcFileNumber = newSortImage; }
+    if (column == 'CurrentStatus') { $scope.imgSrcCurrentStatus = newSortImage; }
+    if (column == 'ApplicationStream') { $scope.imgSrcApplicationStream = newSortImage; }
+    if (column == 'ApplicantName') { $scope.imgSrcApplicantName = newSortImage; }
+    if (column == 'ApplicantEmail') { $scope.imgSrcApplicantEmail = newSortImage; }
+    if (column == 'TrainingProgramTitle') { $scope.imgSrcTrainingProgramTitle = newSortImage; }
+    if (column == 'StartDate') { $scope.imgSrcStartDate = newSortImage; }
+    if (column == 'EndDate') { $scope.imgSrcEndDate = newSortImage; }
+    if (column == 'NumberOfParticipants') { $scope.imgSrcNumberOfParticipants = newSortImage; }
+    if (column == 'RequestedAmount') { $scope.imgSrcRequestedAmount = newSortImage; }
+    if (column == 'ApprovedAmount') { $scope.imgSrcApprovedAmount = newSortImage; }
+    if (column == 'AverageCostPerParticipant') { $scope.imgSrcAverageCostPerParticipant = newSortImage; }
+
+    $scope.broadcast('refreshPager');
   };
+
+  function resetSortImage() {
+    $scope.imgSrcFileNumber = noSort;
+    $scope.imgSrcCurrentStatus = noSort;
+    $scope.imgSrcApplicationStream = noSort;
+    $scope.imgSrcApplicantName = noSort;
+    $scope.imgSrcApplicantEmail = noSort;
+    $scope.imgSrcTrainingProgramTitle = noSort;
+    $scope.imgSrcStartDate = noSort;
+    $scope.imgSrcEndDate = noSort;
+    $scope.imgSrcNumberOfParticipants = noSort;
+    $scope.imgSrcRequestedAmount = noSort;
+    $scope.imgSrcApprovedAmount = noSort;
+    $scope.imgSrcPaidAmount = noSort;
+    $scope.imgSrcAverageCostPerParticipant = noSort;
+  }
 
   /**
    * Reset the notes
@@ -704,9 +207,14 @@ app.controller('OrganizationHistory', function ($scope, $attrs, $controller, $ti
    * @returns {Promise}
    **/
   $scope.getOrganizationHistory = function (pageKeyword, page, quantity) {
+    var useUrl = '/Int/Organization/History/Search/' + $scope.model.OrgId + '/' + page + '/' + quantity
+      + '?grantProgramId=' + ($scope.model.GrantProgramId ? $scope.model.GrantProgramId : 0)
+      + '&sortby=' + $scope.sort.column
+      + '&sortDesc=' + $scope.sort.descending
+      + '&search=' + (pageKeyword ? pageKeyword : '')
+
     return $scope.ajax({
-      url: '/Int/Organization/History/Search/' + $scope.model.OrgId + '/' + page + '/' + quantity + '?grantProgramId='
-        + ($scope.model.GrantProgramId ? $scope.model.GrantProgramId : 0) + '&search=' + (pageKeyword ? pageKeyword : '')
+      url: useUrl
     })
       .then(function (response) {
         return Promise.resolve(response.data);

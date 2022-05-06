@@ -107,10 +107,10 @@ namespace CJG.Web.External.Helpers
 						"/GrantAgreement/AgreementReviewView",
 						"/GrantAgreement/AgreementOverviewView",
 						"/Reporting/GrantFileView",
-						"/Claim/ClaimReportView",
 						"/GrantAgreement/CoverLetterView",
 						"/GrantAgreement/ScheduleAView",
 						"/GrantAgreement/ScheduleBView",
+						"/Claim/ClaimReportView",
 						"/Claim/DetailsView",
 						"/Claim/AssessmentView",
 						"/CompletionReporting/CompletionReportView",
@@ -149,10 +149,10 @@ namespace CJG.Web.External.Helpers
 					AllowedPaths = new[]
 					{
 						"/Reporting/GrantFileView",
-						"/Claim/ClaimReportView",
 						"/Application/ApplicationOverviewView",
 						"/ApplicationView/ApplicationDetailsView",
 						"/Claim/Index",
+						"/Claim/ClaimReportView",
 						"/Claim/DetailsView",
 						"/Claim/AssessmentView",
 						"/CompletionReporting/CompletionReportView",
@@ -175,8 +175,8 @@ namespace CJG.Web.External.Helpers
 					{
 						"/GrantAgreement/AgreementOverviewView",
 						"/Reporting/GrantFileView",
-						"/Claim/ClaimReportView",
 						"/ApplicationView/ApplicationDetailsView",
+						"/Claim/ClaimReportView",
 						"/Claim/DetailsView",
 						"/CompletionReporting/CompletionReportView"
 					}
@@ -297,18 +297,35 @@ namespace CJG.Web.External.Helpers
 			};
 		}
 
+		public bool ShowClaimInformation(string path)
+		{
+			var claimPaths = new[]
+			{
+				"/Reporting/GrantFileView",
+				"/Claim/ClaimReportView",
+				"/Claim/DetailsView",
+				"/Claim/AssessmentView",
+				"/Claim/Index",
+			};
+
+			return claimPaths.Any(c => c.ToLower().Contains(path.ToLower()));
+		}
+
 		public SidebarViewModel Build(GrantApplication grantApplication, string path)
 		{
-			return new SidebarViewModel(grantApplication,
+			var model = new SidebarViewModel(grantApplication,
 				_links.Where(x =>
-					x.AllowedPaths != null && x.AllowedPaths.Contains(path, StringComparer.InvariantCultureIgnoreCase) &&
-					(
-						x.AllowedExternalStates.Contains(grantApplication.ApplicationStateExternal)
-						? x.AndConditionFunc == null || x.AndConditionFunc(grantApplication)
-						: x.OrConditionFunc != null && x.OrConditionFunc(grantApplication)
+						x.AllowedPaths != null && x.AllowedPaths.Contains(path, StringComparer.InvariantCultureIgnoreCase) &&
+						(
+							x.AllowedExternalStates.Contains(grantApplication.ApplicationStateExternal)
+								? x.AndConditionFunc == null || x.AndConditionFunc(grantApplication)
+								: x.OrConditionFunc != null && x.OrConditionFunc(grantApplication)
+						)
 					)
-				)
-				.ToDictionary(x => x.LinkType, x => SetHighlighted(x.ViewModel, x.ContainerPath, path)));
+					.ToDictionary(x => x.LinkType, x => SetHighlighted(x.ViewModel, x.ContainerPath, path)));
+			model.CurrentPath = path; // Temp debug - remove later
+			model.ShowClaimInformation = ShowClaimInformation(path);
+			return model;
 		}
 
 		private SidebarLinkViewModel SetHighlighted(SidebarLinkViewModel sidebarLinkViewModel, string containerPath, string currentPath)

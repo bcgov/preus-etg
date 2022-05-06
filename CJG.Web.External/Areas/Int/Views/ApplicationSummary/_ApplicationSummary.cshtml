@@ -213,11 +213,12 @@
                     </div>
                 </div>
             </div>
+
             <div ng-if="model.TerminalReason" class="block--row-group">
                 <div class="form__group last-item">
                     <div class="form__label">Reason:</div>
                     <div class="form__control">
-                        <div class="control-wrapper input--full" ng-bind-html="model.TerminalReason | unsafe"></div>
+                        <div class="control-wrapper collapsed__html" ng-bind-html="model.TerminalReason | unsafe" ng-click="previewDenialReason()" title="Click to view full text"></div>
                     </div>
                 </div>
             </div>

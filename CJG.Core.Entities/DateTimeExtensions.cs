@@ -64,6 +64,16 @@ namespace CJG.Core.Entities
 			return value.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
 		}
 
+		public static string FormatMorning(this DateTime? value)
+		{
+			return value?.ToLocalMorning().ToString("yyyy-MM-dd");
+		}
+
+		public static string FormatMorning(this DateTime value)
+		{
+			return value.ToLocalMorning().ToString("yyyy-MM-dd");
+		}
+
 		/// <summary>
 		/// A quick way to compare two dates to see if they are equal to the second.
 		/// </summary>

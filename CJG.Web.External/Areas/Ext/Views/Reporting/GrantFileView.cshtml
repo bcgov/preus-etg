@@ -28,7 +28,10 @@
                     <h2>Participant <span class="text--lowercase">and</span> Claim Reporting</h2>
                 </div>
 
-                <div ng-if="model.AllowReviewAndSubmit && model.EnableSubmit">
+                <div ng-if="!model.ReportingPeriodIsOpen" class="notice">
+                    <p><em>The Reimbursement Claim Report will become available once training has started.</em></p>
+                </div>
+                <div ng-if="model.AllowReviewAndSubmit && model.EnableSubmit">                    
                     <p class="alert alert--warning"><em>Press review and submit claim button to submit your reimbursement claim!</em></p>
                 </div>                
 
@@ -73,12 +76,12 @@
                         </span>
                     </div>
                     <div class="step-flow__status" ng-if="model.ClaimType == @((int)ClaimTypes.SingleAmendableClaim)">
-                        <span class="label {{model.ParticipantCount == 0 ? 'label--default' : (model.ParticipantsWithCostCount != model.MaxParticipants ? 'label--warning' : 'label--success')}}">
+                        <span style="visibility: hidden" class="label {{model.ParticipantCount == 0 ? 'label--default' : (model.ParticipantsWithCostCount != model.MaxParticipants ? 'label--warning' : 'label--success')}}">
                             {{model.ParticipantsWithCostCount > 0 ? (model.ParticipantsWithCostCount == model.MaxParticipants && model.CurrentClaimState == @((int)ClaimState.Complete) ? 'Complete' : 'Incomplete') :  'Not Started'}}
                         </span>
                     </div>
                     <div class="step-flow__status" ng-if="model.ClaimType == @((int)ClaimTypes.MultipleClaimsWithoutAmendments)">
-                        <span class="label {{model.CurrentClaimState == @((int)ClaimState.Complete)? 'label--success': (model.CurrentClaimState == @((int)ClaimState.Incomplete) ? 'label--warning' : 'label--default') }}">
+                        <span style="visibility: hidden" class="label {{model.CurrentClaimState == @((int)ClaimState.Complete)? 'label--success': (model.CurrentClaimState == @((int)ClaimState.Incomplete) ? 'label--warning' : 'label--default') }}">
                             {{model.CurrentClaimState == @((int)ClaimState.Complete)? 'Complete': (model.CurrentClaimState == @((int)ClaimState.Incomplete) ? 'InComplete' : 'Not Started') }}
                         </span>
                     </div>

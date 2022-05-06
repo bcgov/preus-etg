@@ -1,19 +1,19 @@
-﻿using CJG.Core.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using CJG.Application.Business.Models;
+using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
 using CJG.Web.External.Areas.Int.Models;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
-using CJG.Application.Business.Models;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	[RouteArea("Int")]
+    [RouteArea("Int")]
 	public class ApplicantContactController : BaseController
 	{
 		#region Variables

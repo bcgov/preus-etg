@@ -3,6 +3,7 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
 
   $scope.section = {
     grantApplicationId: $attrs.ngGrantApplicationId,
+    showPifWarning: false
   }
 
   angular.extend(this, $controller('Base', { $scope: $scope, $attrs: $attrs }));
@@ -34,16 +35,25 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
     OPTIONAL: "Optional"
   }
 
- function loadApplication() {
-   return $scope.load({
-     url: '/Ext/Application/Overview/' + $scope.section.grantApplicationId,
-     set: 'model'
-   });
+  function loadApplication() {
+    return $scope.load({
+      url: '/Ext/Application/Overview/' + $scope.section.grantApplicationId,
+      set: 'model'
+    });
   }
 
+ // function loadAlternateUsers() {
+ //   return $scope.load({
+ //    url: '/Ext/Application/AlternateUsers/' + $scope.section.grantApplicationId,
+ //    set: 'alternateUsers'
+ //  });
+ //}
+
   function init() {
-    return loadApplication()
-      .catch(angular.noop);
+    return Promise.all([
+      loadApplication()
+      //loadAlternateUsers()
+    ]).catch(angular.noop);
   }
 
   $scope.Populate = function (type, populateTypes) {
@@ -95,20 +105,21 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
       }
     } else if (type === types.PIF) {
       // Grey No participants yet, Yellow some participants, Green all participants have signed up
-      if (!$scope.model.Participants || $scope.model.Participants.length === 0) {
-        if ($scope.model.ProgramType === 2) {  // CWRG
-          return populateTypes.OPTIONAL;
-        } else {
-          return populateTypes.NOTSTART;
-        }
-      }
-      else if ($scope.model.Participants.length < $scope.model.MaxParticipantsAllowed) {
+      var participantsRequired = $scope.model.MaxParticipantsAllowed;
+      var currentParticipants = !$scope.model.Participants || $scope.model.Participants.length === 0 ? 0 : $scope.model.Participants.length;
+
+      if (currentParticipants === 0)
+        return populateTypes.NOTSTART;
+
+      const totalNoOutcome = $scope.model.Participants.filter(p => p.ExpectedOutcome === 0).length;
+      if (currentParticipants < participantsRequired)
         return populateTypes.INPROGRESS;
-      }
-      else {
-        const totalNoOutcome = $scope.model.Participants.filter(p => p.ExpectedOutcome === 0).length;
-        if (totalNoOutcome > 0)
-          return populateTypes.INPROGRESS;
+
+      if (currentParticipants === participantsRequired) {
+        if (totalNoOutcome > 0) {
+          $scope.section.showPifWarning = true;
+          return populateTypes.INCOMPLETE;
+        }
 
         return populateTypes.COMPLETE;
       }
@@ -287,6 +298,7 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
     if ($event.currentTarget.parentElement.dataset.state == "disabled") {
       return;
     }
+
     var section = $event.currentTarget.nextElementSibling;
     var icon = $event.currentTarget.lastElementChild;
     if (section.classList.contains('ng-hide')) {
@@ -329,6 +341,32 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
 
     return false;
   }
+
+  //$scope.changeApplicationContact = function () {
+  //  const selectedNewUserId = $scope.model.SelectedNewUser;
+  //  const selectedUser = $scope.alternateUsers.filter(a => a.Key === selectedNewUserId).pop().Value;
+
+  //  if (selectedNewUserId === 0)
+  //    return angular.noop;
+
+  //  return $scope.confirmDialog('Change Application Contact', '<p>Please confirm that you\'d like to assign this application to <strong>' + selectedUser + '</strong>.</p>')
+  //    .then(function () {
+  //      return $scope.ajax({
+  //        url: '/Ext/Application/AlternateUsers/ChangeUser/',
+  //        method: 'PUT',
+  //        data: {
+  //          Id: $scope.section.grantApplicationId,
+  //          RowVersion: $scope.model.RowVersion,
+  //          ApplicantContactId: selectedNewUserId
+  //        }
+  //      });
+  //    })
+  //    .then(function (response) {
+  //      if (response.data.RedirectURL)
+  //        window.location = response.data.RedirectURL;
+  //    })
+  //    .catch(angular.noop);
+  //}
 
   init();
 });
