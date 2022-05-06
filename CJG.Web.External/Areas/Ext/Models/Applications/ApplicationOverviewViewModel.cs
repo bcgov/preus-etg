@@ -13,7 +13,6 @@ namespace CJG.Web.External.Areas.Ext.Models.Applications
 		public bool CanSubmit { get; set; }
 		public bool OrganizationCreated { get; set; }
 		public int MaxParticipantsAllowed { get; set; }
-		public bool AllOutcomesAreReported { get; set; }
 
 		public ApplicationOverviewViewModel()
 		{
@@ -32,11 +31,6 @@ namespace CJG.Web.External.Areas.Ext.Models.Applications
 			CanReportParticipants = grantApplication.CanReportParticipants;
 
 			MaxParticipantsAllowed = grantApplication.GetMaxParticipants();
-
-			// Do we have any PIFs with a training outcome that hasn't been set to a valid state?
-			var totalParticipants = grantApplication.ParticipantForms.Count;
-			var outcomesReported = grantApplication.ParticipantForms.Count(p => p.ExpectedParticipantOutcome != null && p.ExpectedParticipantOutcome > 0);
-			AllOutcomesAreReported = totalParticipants == outcomesReported;
 		}
 	}
 }
