@@ -21,9 +21,7 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
 
     onSave: function (event, data) {
       $scope.IsValid = false;
-
       $scope.EligibleCostSuccessMessage = "Claimed costs saved successfully.";
-
       angular.element("html, body").animate({ scrollTop: $('h2').offset().top }, 300);
     },
     grantApplicationId: $attrs.ngGrantApplicationId,
@@ -199,6 +197,8 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
   $scope.displayErrors = function () {
     $scope.EligibleCostSuccessMessage = '';
     $scope.EligibleCostSummaryMessage = '';
+
+    console.log(errors);
     if (errors.length > 0) {
       var errorSummary;
       for (var i = 0; i < errors.length; i++) {

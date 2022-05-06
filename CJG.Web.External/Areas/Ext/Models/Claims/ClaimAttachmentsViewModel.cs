@@ -14,6 +14,10 @@ namespace CJG.Web.External.Areas.Ext.Models.Attachments
 		public string Title { get; set; }
 		public int MaxUploadSize { get; set; }
 		public int MaximumNumberOfAttachmentsAllowed { get; set; }
+
+		public bool? ParticipantsPaidForExpenses { get; set; }
+		public bool? ParticipantsFullyReimbursed { get; set; }
+
 		public string RowVersion { get; set; }
 
 		public IEnumerable<AttachmentViewModel> Attachments { get; set; }
@@ -33,6 +37,9 @@ namespace CJG.Web.External.Areas.Ext.Models.Attachments
 			MaxUploadSize = maxUploadSize / 1024 / 1024;
 			MaximumNumberOfAttachmentsAllowed = Constants.MaximumNumberOfAttachmentsPerClaim;
 			RowVersion = Convert.ToBase64String(claim.RowVersion);
+
+			ParticipantsPaidForExpenses = claim.ParticipantsPaidForExpenses;
+			ParticipantsFullyReimbursed = claim.ParticipantsFullyReimbursed;
 
 			Attachments = claim.Receipts.Select(a => new AttachmentViewModel(a));
 		}

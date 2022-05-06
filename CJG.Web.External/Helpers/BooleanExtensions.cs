@@ -7,7 +7,15 @@
 	{
 		public static string ToStringValue(this bool value, string trueValue = "Yes", string falseValue = "No")
 		{
-			return (value) ? trueValue : falseValue;
+			return value ? trueValue : falseValue;
+		}
+
+		public static string ToStringValue(this bool? value, string trueValue = "Yes", string falseValue = "No", string nullString = "--")
+		{
+			if (!value.HasValue)
+				return nullString;
+
+			return value.Value ? trueValue : falseValue;
 		}
 	}
 }

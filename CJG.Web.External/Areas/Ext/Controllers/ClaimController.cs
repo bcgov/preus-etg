@@ -209,7 +209,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		[PreventSpam]
 		[ValidateRequestHeader]
 		[Route("Claim/Attachments/{claimId}/{claimVersion}")]
-		public JsonResult UpdateAttachments(int claimId, int claimVersion, HttpPostedFileBase[] files, string attachments)
+		public JsonResult UpdateAttachments(int claimId, int claimVersion, HttpPostedFileBase[] files, string attachments, bool? participantsPaidForExpenses, bool? participantsFullyReimbursed)
 		{
 			var model = new ClaimAttachmentsViewModel();
 			try
@@ -250,6 +250,10 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 						_attachmentService.Update(existing, true);
 					}
 				}
+
+				claim.ParticipantsPaidForExpenses = participantsPaidForExpenses;
+				claim.ParticipantsFullyReimbursed = participantsFullyReimbursed;
+				_claimService.Update(claim);
 
 				model = new ClaimAttachmentsViewModel(claim);
 			}

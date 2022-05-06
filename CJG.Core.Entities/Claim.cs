@@ -108,6 +108,16 @@ namespace CJG.Core.Entities
 		public bool IsFinalClaim { get; set; }
 
 		/// <summary>
+		/// get/set - Did any participant pay out of pocket for their own expenses?
+		/// </summary>
+		public bool? ParticipantsPaidForExpenses { get; set; }
+
+		/// <summary>
+		/// get/set Were the participants that paid for expense Reimbursed for those expenses?
+		/// </summary>
+		public bool? ParticipantsFullyReimbursed { get; set; }
+
+		/// <summary>
 		/// get/set - The date the claim was submitted.
 		/// </summary>
 		[DateTimeKind(DateTimeKind.Utc)]
@@ -152,7 +162,7 @@ namespace CJG.Core.Entities
 		/// get - All of the claim participants associated with this claim.
 		/// </summary>
 		public virtual ICollection<ClaimParticipant> ClaimParticipants { get; set; } = new List<ClaimParticipant>();
-
+		
 		#endregion
 
 		#region Constructors

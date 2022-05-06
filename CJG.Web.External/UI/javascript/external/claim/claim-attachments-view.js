@@ -3,10 +3,10 @@ app.controller('ClaimAttachmentsView', function ($scope, $attrs, $controller, $t
   $scope.section = {
     name: 'ClaimAttachmentsView',
     displayName: 'Claim Attachments',
-    loaded: function () {
+    loaded: function() {
       return $scope.model && $scope.model.RowVersion;
     },
-    preSave: function () {
+    preSave: function() {
       // Only save if there are new attachments.
       return $scope.section.attachments.length;
     },
@@ -14,31 +14,33 @@ app.controller('ClaimAttachmentsView', function ($scope, $attrs, $controller, $t
       url: '/Ext/Claim/Attachments/' + $scope.section.claimId + '/' + $scope.section.claimVersion,
       method: 'PUT',
       dataType: 'file',
-      data: function () {
+      data: function() {
         var model = {
-          files: $scope.section.attachments.filter(function (attachment) {
+          files: $scope.section.attachments.filter(function(attachment) {
             return !attachment.Delete && typeof (attachment.File) !== 'undefined';
-          }).map(function (attachment, index) {
+          }).map(function(attachment, index) {
             attachment.Index = index; // Map object to file array.
             var file = attachment.File; // Add file to array.
             return file;
           }),
-          attachments: JSON.stringify($scope.section.attachments)
+          attachments: JSON.stringify($scope.section.attachments),
+          participantsPaidForExpenses: $scope.model.ParticipantsPaidForExpenses,
+          participantsFullyReimbursed: $scope.model.ParticipantsFullyReimbursed
         };
 
         return model;
       },
       backup: true
     },
-    onSave: function () {
+    onSave: function() {
       $scope.section.attachments = [];
       return $scope.resyncClaim($scope.model.RowVersion);
     },
-    onRefresh: function () {
+    onRefresh: function() {
       $scope.section.attachments = [];
       return loadAttachments().catch(angular.noop);
     },
-    onCancel: function () {
+    onCancel: function() {
       $scope.section.attachments = [];
     },
     claimId: $attrs.ngClaimId,
@@ -70,6 +72,33 @@ app.controller('ClaimAttachmentsView', function ($scope, $attrs, $controller, $t
       loadAttachments()
     ]).catch(angular.noop);
   }
+
+  $scope.resetReimbursedState = function() {
+    $scope.model.ParticipantsFullyReimbursed = null;
+    $scope.validateParticipantSelection();
+  }
+
+  $scope.checkPaidState = function() {
+    $scope.validateParticipantSelection();
+  }
+
+  $scope.validateParticipantSelection = function () {
+    console.log('validation participants');
+    var errors = [];
+
+    console.log($scope.model.ParticipantsPaidForExpenses);
+    console.log($scope.model.ParticipantsFullyReimbursed);
+
+    // ParticipantsFullyReimbursed
+    if ($scope.model.ParticipantsPaidForExpenses === null)
+      errors.push('Please indicate if the participants paid for any expenses.');
+
+    if ($scope.model.ParticipantsFullyReimbursed === null)
+      errors.push('Please indicate if the participants were fully reimbursed for expenses.');
+
+    $scope.displayErrors();
+  }
+
 
   /**
    * Mark the attachment for deletion.

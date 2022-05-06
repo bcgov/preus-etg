@@ -1,7 +1,7 @@
-﻿using CJG.Application.Business.Models;
+﻿using System.Linq;
+using CJG.Application.Business.Models;
 using CJG.Core.Entities;
 using CJG.Web.External.Areas.Ext.Models.Attachments;
-using System.Linq;
 
 namespace CJG.Web.External.Areas.Ext.Models.Claims
 {
@@ -22,9 +22,9 @@ namespace CJG.Web.External.Areas.Ext.Models.Claims
 
 		public ClaimReviewViewModel(Claim claim) : base(claim)
 		{
-			this.ClaimType = claim.GrantApplication.GetClaimType();
-			this.IsWDAService = claim.GrantApplication.GetProgramType() == ProgramTypes.WDAService;
-			this.Claim = new ClaimModel(claim)
+			ClaimType = claim.GrantApplication.GetClaimType();
+			IsWDAService = false;
+			Claim = new ClaimModel(claim)
 			{
 				IsEditable = false
 			};
@@ -33,16 +33,16 @@ namespace CJG.Web.External.Areas.Ext.Models.Claims
 			{
 				if (claim.ClaimState.In(ClaimState.Incomplete, ClaimState.Complete))
 				{
-					this.Claim.Participants = claim.GrantApplication.ParticipantForms.Where(pf => !pf.IsExcludedFromClaim).Select(pf => new ParticipantFormModel(pf)).ToList();
+					Claim.Participants = claim.GrantApplication.ParticipantForms.Where(pf => !pf.IsExcludedFromClaim).Select(pf => new ParticipantFormModel(pf)).ToList();
 				}
 				else
 				{
-					this.Claim.Participants = claim.ParticipantForms.Select(pf => new ParticipantFormModel(pf)).ToList();
+					Claim.Participants = claim.ParticipantForms.Select(pf => new ParticipantFormModel(pf)).ToList();
 				}
 			}
 
-			this.Attachments = new ClaimAttachmentsViewModel(claim);
-			this.ProgramTitleLable = new ProgramTitleLabelViewModel(claim.GrantApplication, false);
+			Attachments = new ClaimAttachmentsViewModel(claim);
+			ProgramTitleLable = new ProgramTitleLabelViewModel(claim.GrantApplication, false);
 		}
 		#endregion
 	}
