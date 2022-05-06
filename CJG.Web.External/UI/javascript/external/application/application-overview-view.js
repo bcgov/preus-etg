@@ -3,6 +3,7 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
 
   $scope.section = {
     grantApplicationId: $attrs.ngGrantApplicationId,
+    showPifWarning: false
   }
 
   angular.extend(this, $controller('Base', { $scope: $scope, $attrs: $attrs }));
@@ -115,8 +116,10 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
         return populateTypes.INPROGRESS;
 
       if (currentParticipants === participantsRequired) {
-        if (totalNoOutcome > 0)
+        if (totalNoOutcome > 0) {
+          $scope.section.showPifWarning = true;
           return populateTypes.INCOMPLETE;
+        }
 
         return populateTypes.COMPLETE;
       }
