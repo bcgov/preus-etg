@@ -104,18 +104,17 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
       }
     } else if (type === types.PIF) {
       // Grey No participants yet, Yellow some participants, Green all participants have signed up
-      if (!$scope.model.Participants || $scope.model.Participants.length === 0) {
-        if ($scope.model.ProgramType === 2) {  // CWRG
-          return populateTypes.OPTIONAL;
-        } else {
-          return populateTypes.NOTSTART;
-        }
-      }
-      else if ($scope.model.Participants.length < $scope.model.MaxParticipantsAllowed) {
+      var participantsRequired = $scope.model.MaxParticipantsAllowed;
+      var currentParticipants = !$scope.model.Participants || $scope.model.Participants.length === 0 ? 0 : $scope.model.Participants.length;
+
+      if (currentParticipants === 0)
+        return populateTypes.NOTSTART;
+
+      const totalNoOutcome = $scope.model.Participants.filter(p => p.ExpectedOutcome === 0).length;
+      if (currentParticipants < participantsRequired)
         return populateTypes.INPROGRESS;
-      }
-      else {
-        const totalNoOutcome = $scope.model.Participants.filter(p => p.ExpectedOutcome === 0).length;
+
+      if (currentParticipants === participantsRequired) {
         if (totalNoOutcome > 0)
           return populateTypes.INCOMPLETE;
 
@@ -296,6 +295,7 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
     if ($event.currentTarget.parentElement.dataset.state == "disabled") {
       return;
     }
+
     var section = $event.currentTarget.nextElementSibling;
     var icon = $event.currentTarget.lastElementChild;
     if (section.classList.contains('ng-hide')) {
