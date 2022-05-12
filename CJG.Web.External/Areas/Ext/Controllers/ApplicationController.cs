@@ -614,7 +614,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			if (_organizationService.RequiresBusinessLicenseDocuments(currentUser.Organization.Id))
 			{
 				_logger.Info($"The Organization is missing up-to-date Business License Documents - {_siteMinderService.CurrentUserGuid}");
-				this.SetAlerts("Your organization’s Business Information Documents (e.g. business licence) are currently out of date.", AlertType.Warning);
+				this.SetAlerts("Your organization’s Business Information Documents (e.g. business licence) are currently out of date. Please click on your Organization Profile to update.", AlertType.Warning);
 			}
 
 			return View(SidebarViewModelFactory.Create(grantApplication, ControllerContext));
