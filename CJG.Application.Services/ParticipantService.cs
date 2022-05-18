@@ -120,7 +120,7 @@ namespace CJG.Application.Services
 			foreach (var participant in participantsApproved)
 			{
 				var pf = _dbContext.ParticipantForms.FirstOrDefault(w => w.Id == participant.Key.Value);
-				if(pf != null)
+				if (pf != null)
 				{
 					pf.Approved = participant.Value;
 					_dbContext.Update(pf);
@@ -147,22 +147,30 @@ namespace CJG.Application.Services
 						ec.AgreedMaxParticipantCost = ec.AgreedMaxParticipantCost;
 
 						ec.AgreedMaxCost = ec.AgreedMaxParticipants * ec.AgreedMaxParticipantCost;
-						
+
 						ec.AgreedMaxReimbursement = ec.AgreedMaxCost * reimbursementRate;
 						ec.AgreedEmployerContribution = ec.AgreedMaxCost - ec.AgreedMaxReimbursement;
+
+						ec.RecalculateEstimatedCost();
+						ec.RecalculateAgreedCosts(ec.AgreedMaxParticipantCost);
+
 						_dbContext.Update(ec);
-					}					
+					}
 
 					grantApplication.TrainingCost.AgreedParticipants = totalApproved;
-					grantApplication.TrainingCost.TotalAgreedMaxCost = grantApplication.TrainingCost.EligibleCosts.Sum(s=>s.AgreedMaxCost);
+					grantApplication.TrainingCost.TotalAgreedMaxCost = grantApplication.TrainingCost.EligibleCosts.Sum(s => s.AgreedMaxCost);
 					grantApplication.TrainingCost.AgreedCommitment = grantApplication.TrainingCost.EligibleCosts.Sum(s => s.AgreedMaxReimbursement);
+
+					grantApplication.TrainingCost.RecalculateEstimatedCosts();
+					grantApplication.TrainingCost.RecalculateAgreedCosts();
+
 					_dbContext.Update(grantApplication.TrainingCost);
+
 				}
 			}
-			
+
 			_dbContext.Commit();
 		}
-
 
 		public void ReportAttendance(Dictionary<int, bool?> participantAttended)
 		{
