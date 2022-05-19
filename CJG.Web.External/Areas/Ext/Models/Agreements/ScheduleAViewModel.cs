@@ -101,7 +101,8 @@ namespace CJG.Web.External.Areas.Ext.Models.Agreements
 			{
 				this.EligibleCosts = grantApplication.TrainingCost.EligibleCosts.Select(x => new EligibleCostModel(x)).ToArray();
 			}
-			this.ShowContributionColumn = grantApplication.ReimbursementRate != 1;
+			//this.ShowContributionColumn = grantApplication.ReimbursementRate != 1;
+			this.ShowContributionColumn = true;
 			this.GrantOpeningTrainingPeriodStartDate = grantApplication.GrantOpening.TrainingPeriod.StartDate.ToLocalTime();
 			this.GrantOpeningTrainingPeriodEndDate = grantApplication.GrantOpening.TrainingPeriod.EndDate.ToLocalTime();
 			this.FiscalYearDisplay = $"{grantApplication.GrantOpening.TrainingPeriod.FiscalYear.StartDate.ToLocalTime().ToString("yyyy-MM-dd")} to {grantApplication.GrantOpening.TrainingPeriod.FiscalYear.EndDate.ToLocalTime().ToString("yyyy-MM-dd")}";
