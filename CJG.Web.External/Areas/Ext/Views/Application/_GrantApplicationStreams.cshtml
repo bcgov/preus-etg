@@ -81,7 +81,7 @@
                 <div ng-if="question.EligibilityRequirements == null || question.EligibilityRequirements.length == 0">
                     <div ng-if="$first"></div>
                 </div>
-                <div style="padding-left:2em;">
+                <div>
                     <label class="form__label" ng-validation="errors.EligibilityQuestion{{question.Id}}">{{question.EligibilityQuestion}}<abbr title="Required">*</abbr></label>
                     <div class="form__control">
                         <div class="form-item">
