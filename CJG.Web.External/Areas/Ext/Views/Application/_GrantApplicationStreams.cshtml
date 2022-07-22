@@ -70,17 +70,7 @@
 
         <div class="form__group form__group--radio-inline" ng-if="model.GrantStream.StreamEligibilityQuestions.length != 0">
             <div ng-repeat="question in model.GrantStream.StreamEligibilityQuestions">
-                <div ng-if="$first" class="form__label" ng-validation="errors.EligibilityQuestion">
-                    {{model.GrantStream.Name}} Stream Eligibility Requirements:
-                </div>
-                <div style="padding-bottom:5px;" ng-if="question.EligibilityRequirements != null && question.EligibilityRequirements.length != 0">
-                    <div ng-if="!$first"></div>
-                    <div class="form-item" ng-if="question.EligibilityRequirements.length != 0" ng-bind-html="question.EligibilityRequirements"></div>
-                    <br />
-                </div>
-                <div ng-if="question.EligibilityRequirements == null || question.EligibilityRequirements.length == 0">
-                    <div ng-if="$first"></div>
-                </div>
+                <div ng-if="$first"></div>
                 <div>
                     <label class="form__label" ng-validation="errors.EligibilityQuestion{{question.Id}}">{{question.EligibilityQuestion}}<abbr title="Required">*</abbr></label>
                     <div class="form__control">
