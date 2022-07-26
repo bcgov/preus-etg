@@ -1,4 +1,4 @@
-﻿using CJG.Application.Business.Models;
+using CJG.Application.Business.Models;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Areas.Ext.Models.TrainingPrograms;
@@ -116,7 +116,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <summary>
 		/// Add the specified training program to the datasource.
 		/// </summary>
-		/// <param name="viewModel"></param>
+		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPost]
 		[PreventSpam]
@@ -142,7 +142,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					ModelState.Remove("TitleOfQualification");
 				}
 
-				if ((!model.HasRequestedAdditionalFunding) ?? true)
+				if (!model.HasRequestedAdditionalFunding ?? true)
 				{
 					ModelState.Remove("DescriptionOfFundingRequested");
 				}
