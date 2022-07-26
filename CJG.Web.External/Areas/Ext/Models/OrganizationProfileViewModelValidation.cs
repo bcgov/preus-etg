@@ -41,10 +41,10 @@ namespace CJG.Web.External.Areas.Ext.Models
 	            throw new ArgumentNullException();
 
             if (BusinessLicenseDocumentAttachments == null)
-	            return new ValidationResult("Please upload a business information document");
+	            return new ValidationResult("Business information document is required");
 
 			if (!BusinessLicenseDocumentAttachments.Any())
-				return new ValidationResult("Please upload a business information document");
+				return new ValidationResult("Business information document is required");
 
 			// Do we have a new document being uploaded? Assume it's current.
 			if (BusinessLicenseDocumentAttachments.Any(b => b.Id == 0))
