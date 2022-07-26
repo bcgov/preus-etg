@@ -231,6 +231,14 @@
                     <label class="form__label">Business Website (if applicable)</label>
                     <div class="form__control">
                         <input type="text" class="input--full" ng-model="model.BusinessWebsite" maxlength="2000" ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                        <div ng-if="model.BusinessWebsite !== null && model.BusinessWebsite !== '' " class="control-wrapper form-control">
+                            <span ng-if="model.BusinessWebsite.indexOf('http') > -1  || model.BusinessWebsite.indexOf('https') > -1">
+                                <a href="{{model.BusinessWebsite}}" target="_blank" ng-model="model.BusinessWebsite">{{model.BusinessWebsite}}</a>
+                            </span>
+                            <span ng-if="!(model.BusinessWebsite.indexOf('http') > -1  || model.BusinessWebsite.indexOf('https') > -1)">
+                                <a href="http://{{model.BusinessWebsite}}" target="_blank" ng-model="model.BusinessWebsite">http://{{model.BusinessWebsite}}</a>
+                            </span>
+                        </div>
                     </div>
                 </div>
 

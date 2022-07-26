@@ -1,7 +1,5 @@
-﻿using CJG.Core.Entities;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Newtonsoft.Json;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Areas.Ext.Models;
 using CJG.Web.External.Areas.Ext.Models.Attachments;
@@ -12,6 +11,8 @@ using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
+using DataAnnotationsExtensions;
+using Newtonsoft.Json;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
@@ -145,7 +146,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			var address = JsonConvert.DeserializeObject<AddressViewModel>(model.HeadOfficeAddressBlob);
 			model.HeadOfficeAddress = address;
 			model.BusinessLicenseDocumentAttachments = GetBusinessAttachmentsToValidate(attachments);
-
+			model.BusinessWebsite = PrefixBusinessWebsite(model);
 			// Have to validate the sub-model since we cleared the original errors
 			TryValidateModel(model.HeadOfficeAddress, "HeadOfficeAddress");
 			TryValidateModel(model);
@@ -178,6 +179,23 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			//model.RedirectURL = Url.Action("OrganizationProfileView");
 
 			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		private string PrefixBusinessWebsite(OrganizationProfileViewNewModel model)
+		{
+			if (string.IsNullOrWhiteSpace(model.BusinessWebsite))
+				return string.Empty;
+
+			var urlAttribute = new UrlAttribute();
+			if (urlAttribute.IsValid(model.BusinessWebsite))
+				return model.BusinessWebsite;
+
+			var url = model.BusinessWebsite.ToLower();
+
+			if (!url.StartsWith("http://") || !url.StartsWith("https://"))
+				return $"http://{model.BusinessWebsite}";
+
+			return model.BusinessWebsite;
 		}
 
 		private List<AttachmentViewModel> GetBusinessAttachmentsToValidate(string attachments)
