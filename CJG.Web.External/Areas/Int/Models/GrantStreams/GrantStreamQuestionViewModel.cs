@@ -8,9 +8,7 @@ namespace CJG.Web.External.Areas.Int.Models.GrantStreams
 {
 	public class GrantStreamQuestionViewModel : BaseViewModel
 	{
-		#region Properties
 		public int GrantStreamId { get; set; }
-
 		public string EligibilityRequirements { get; set; }
 
 		[Required(ErrorMessage = "Eligibility question is required."), Display(Name = "Eligibility Question")]
@@ -20,26 +18,27 @@ namespace CJG.Web.External.Areas.Int.Models.GrantStreams
 
 		public bool EligibilityPositiveAnswerRequired { get; set; }
 
-		public int RowSequence { get; set; }
+		public bool EligibilityRationaleAnswerAllowed { get; set; }
+		public string EligibilityRationaleAnswerLabel { get; set; }
 
 		// Answer- returned when asking user when creating Grant Application
 		public bool? EligibilityAnswer { get; set; }
+		// Rationale - returned when asking user when creating Grant Application
+		public bool? RationaleAnswer { get; set; }
 
+		public int RowSequence { get; set; }
 		public string RowVersion { get; set; }
-		#endregion
 
-
-		#region Constructors
 		public GrantStreamQuestionViewModel() { }
 
 		public GrantStreamQuestionViewModel(GrantStreamEligibilityQuestion grantQuestion)
 		{
-			if (grantQuestion == null) throw new ArgumentNullException(nameof(grantQuestion));
+			if (grantQuestion == null)
+				throw new ArgumentNullException(nameof(grantQuestion));
 
 			Utilities.MapProperties(grantQuestion, this);
 
-			this.RowVersion = Convert.ToBase64String(grantQuestion.RowVersion);
+			RowVersion = Convert.ToBase64String(grantQuestion.RowVersion);
 		}
-		#endregion
 	}
 }
