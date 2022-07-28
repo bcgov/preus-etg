@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Web.External.Models.Shared;
@@ -23,8 +24,10 @@ namespace CJG.Web.External.Areas.Int.Models.GrantStreams
 
 		// Answer- returned when asking user when creating Grant Application
 		public bool? EligibilityAnswer { get; set; }
+
 		// Rationale - returned when asking user when creating Grant Application
-		public bool? RationaleAnswer { get; set; }
+		[AllowHtml]
+		public string RationaleAnswer { get; set; }
 
 		public int RowSequence { get; set; }
 		public string RowVersion { get; set; }

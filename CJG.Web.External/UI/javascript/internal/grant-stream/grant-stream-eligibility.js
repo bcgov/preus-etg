@@ -71,6 +71,8 @@ app.controller('GrantStreamEligibility', function ($scope, $attrs, $controller, 
       EligibilityQuestion: "",
       IsActive: true,
       EligibilityPositiveAnswerRequired: true,
+      EligibilityRationaleAnswerAllowed: false,
+      EligibilityRationaleAnswerLabel: '',
       RowSequence: 0,
     });
     $scope.renumberStreamQuestions(1);

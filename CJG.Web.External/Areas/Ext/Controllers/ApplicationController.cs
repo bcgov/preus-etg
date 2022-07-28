@@ -208,13 +208,10 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				}
 
 				if (model.ProgramType == ProgramTypes.WDAService && !model.HasRequestedAdditionalFunding.HasValue)
-				{
 					ModelState.AddModelError("AdditionalFundingQuestion", "You must select whether you have previously received or are requesting additional funding.");
-				}
-				if ((!model.HasRequestedAdditionalFunding) ?? true)
-				{
+
+				if (!model.HasRequestedAdditionalFunding ?? true)
 					ModelState.Remove("DescriptionOfFundingRequested");
-				}
 
 				ModelState.Remove("AlternatePhoneViewModel.PhoneNumber");
 				ModelState.Remove("AlternatePhoneViewModel.Phone");
@@ -279,7 +276,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 										GrantApplication = grantApplication,
 										GrantApplicationId = grantApplication.Id,
 										GrantStreamEligibilityQuestionId = question.Id,
-										EligibilityAnswer = clientQuestion.EligibilityAnswer.GetValueOrDefault(false)
+										EligibilityAnswer = clientQuestion.EligibilityAnswer.GetValueOrDefault(false),
+										RationaleAnswer = clientQuestion.RationaleAnswer
 									});
 								}
 							}
@@ -287,18 +285,16 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					}
 					_grantApplicationService.Add(grantApplication);
 
-
-					if(model.SeedGrantApplicationId > 0)
+					if (model.SeedGrantApplicationId > 0)
                     {
 						//update grant app based on seed grant app
 						var newId = _grantApplicationService.DuplicateApplication(grantApplication, model.SeedGrantApplicationId);
 						grantApplication = _grantApplicationService.Get(newId);
 					}
 
-
 					model = new ApplicationStartViewModel(grantApplication, _grantOpeningService, _grantProgramService, _staticDataService, _grantStreamService)
 					{
-						RedirectURL = Url.Action(nameof(ApplicationOverviewView), new { grantApplicationId = grantApplication.Id })
+						RedirectURL = Url.Action("ApplicationOverviewView", new { grantApplicationId = grantApplication.Id })
 					};
 				}
 				else

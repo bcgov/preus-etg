@@ -101,4 +101,18 @@ app.controller('GrantSelectionView', function ($scope, $attrs, $controller, $sce
     })
       .catch(angular.noop);
   }
+
+  $scope.tinymceOptions = {
+    plugins: 'link code autoresize preview fullscreen lists advlist anchor paste',
+    toolbar: 'undo redo | bold italic | formatselect | alignleft aligncenter alignright | outdent indent | numlist bullist | anchor | preview | fullscreen | code ',
+    forced_root_block: 'p',
+    browser_spellcheck: true,
+    contextmenu: false,
+    setup: function (ed) {
+      ed.on('init', function (ed) {
+        $('div.tox-tinymce-aux').css('z-index', '999999');
+        $('.tox.tox-tinymce').css('min-height', '250px');
+      });
+    }
+  };
 });

@@ -1,4 +1,4 @@
-using CJG.Application.Business.Models;
+﻿using CJG.Application.Business.Models;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Areas.Ext.Models.TrainingPrograms;
@@ -22,7 +22,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 	{
 		#region Variables
 		private readonly IStaticDataService _staticDataService;
-		private readonly IUserService _userService;
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly ITrainingProgramService _trainingProgramService;
 		private readonly ITrainingProviderService _trainingProviderService;
@@ -41,7 +40,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 										 ITrainingProgramService trainingProgramService,
 										 ITrainingProviderService trainingProviderService) : base(controllerService.Logger)
 		{
-			_userService = controllerService.UserService;
 			_staticDataService = controllerService.StaticDataService;
 			_grantApplicationService = grantApplicationService;
 			_trainingProgramService = trainingProgramService;

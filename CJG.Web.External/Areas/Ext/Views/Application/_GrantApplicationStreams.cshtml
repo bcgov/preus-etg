@@ -1,4 +1,4 @@
-﻿<div>
+<div>
 	<input class="js-training-program-start-date" type="hidden" ng-model="model.TrainingStartDate">
 
 	<div class="js-training-date-warning alert alert--warning is-hidden" role="alert">
@@ -81,6 +81,15 @@
                         <div class="form-item">
                             <input type="radio" id="eligibilityConfirmed-no-{{question.Id}}" ng-value="false" ng-model="question.EligibilityAnswer" name="model.EligibilityConfirmed-{{question.Id}}">
                             <label for="eligibilityConfirmed-no-{{question.Id}}">No</label>
+                        </div>
+                    </div>
+                    <div class="form__group" ng-show="question.EligibilityRationaleAnswerAllowed === true && question.EligibilityAnswer === true">
+                        <br/>
+                        <label class="form__label" ng-if="question.EligibilityRationaleAnswerLabel">{{ question.EligibilityRationaleAnswerLabel }}</label>
+                        <div class="form__control">
+                            <textarea ng-model="question.RationaleAnswer" class="input--full textarea--medium"
+                                ng-validation="errors.RationaleAnswer{{question.Id}}"
+                                ui-tinymce="tinymceOptions"></textarea>
                         </div>
                     </div>
                 </div>
