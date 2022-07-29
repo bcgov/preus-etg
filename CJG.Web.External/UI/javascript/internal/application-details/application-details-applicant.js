@@ -1,4 +1,4 @@
-app.controller('Applicant', function ($scope, $attrs, $controller, $timeout, Utils) {
+app.controller('Applicant', function ($scope, $attrs, $controller, $timeout, ngDialog) {
   $scope.section = {
     name: 'Applicant',
     displayName: 'Applicant',
@@ -92,6 +92,11 @@ app.controller('Applicant', function ($scope, $attrs, $controller, $timeout, Uti
       set: 'model'
     }).then(function () {
       return Promise.all([
+        //$scope.load({
+        //  url: '/Int/Application/Applicant/EligibilityQuestions/' + $scope.parent.grantApplicationId,
+        //  set: 'eligibilityQuestions',
+        //  backup: true
+        //}),
         $scope.load({
           url: '/Int/Application/Applicant/Naics/1',
           set: 'applicantNAICS1',
@@ -156,32 +161,60 @@ app.controller('Applicant', function ($scope, $attrs, $controller, $timeout, Uti
    * @function naics
    * @returns {void}
    **/
-  $scope.naics = function () {
+  $scope.naics = function() {
     if ($scope.model.NAICSLevel5Id) {
-      var result = $scope.applicantNAICS5.find(function (item) {
+      var result = $scope.applicantNAICS5.find(function(item) {
         return item.Key === $scope.model.NAICSLevel5Id;
       });
       return result ? result.Code + ' | ' + result.Value : '';
     } else if ($scope.model.NAICSLevel4Id) {
-      var result = $scope.applicantNAICS4.find(function (item) {
+      var result = $scope.applicantNAICS4.find(function(item) {
         return item.Key === $scope.model.NAICSLevel4Id;
       });
       return result ? result.Code + ' | ' + result.Value : '';
     } else if ($scope.model.NAICSLevel3Id) {
-      var result = $scope.applicantNAICS3.find(function (item) {
+      var result = $scope.applicantNAICS3.find(function(item) {
         return item.Key === $scope.model.NAICSLevel3Id;
       });
       return result ? result.Code + ' | ' + result.Value : '';
     } else if ($scope.model.NAICSLevel2Id) {
-      var result = $scope.applicantNAICS2.find(function (item) {
+      var result = $scope.applicantNAICS2.find(function(item) {
         return item.Key === $scope.model.NAICSLevel2Id;
       });
       return result ? result.Code + ' | ' + result.Value : '';
     } else if ($scope.model.NAICSLevel1Id) {
-      var result = $scope.applicantNAICS1.find(function (item) {
+      var result = $scope.applicantNAICS1.find(function(item) {
         return item.Key === $scope.model.NAICSLevel1Id;
       });
       return result ? result.Code + ' | ' + result.Value : '';
     }
   }
+  
+  $scope.previewEligibiltyAnswer = function (questionId) {
+    var question = $scope.model.StreamEligibilityQuestions.find(q => q.Id === questionId);
+    return ngDialog.open({
+        template: '/content/dialogs/_FullContent.html',
+        closeByDocument: true,
+        cache: false,
+        data: {
+          title: 'Eligibility Rationale',
+          content: question.RationaleAnswer
+        }
+      }
+    );
+  }
+
+  $scope.tinymceOptions = {
+    plugins: 'link code autoresize preview fullscreen lists advlist anchor paste',
+    toolbar: 'undo redo | bold italic | formatselect | alignleft aligncenter alignright | outdent indent | numlist bullist | anchor | preview | fullscreen | code ',
+    forced_root_block: 'p',
+    browser_spellcheck: true,
+    contextmenu: false,
+    setup: function (ed) {
+      ed.on('init', function (ed) {
+        $('div.tox-tinymce-aux').css('z-index', '999999');
+        $('.tox.tox-tinymce').css('min-height', '250px');
+      });
+    }
+  };
 });

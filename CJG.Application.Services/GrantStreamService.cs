@@ -226,7 +226,7 @@ namespace CJG.Application.Services
 		/// <summary>
 		/// Update a list of grant stream questions to the datasource.
 		/// </summary>
-		/// <param name="question"></param>
+		/// <param name="questions"></param>
 		/// <returns></returns>
 		public IEnumerable<GrantStreamEligibilityQuestion> UpdateGrantStreamQuestions(IEnumerable<GrantStreamEligibilityQuestion> questions)
 		{
@@ -277,23 +277,23 @@ namespace CJG.Application.Services
 		/// <summary>
 		/// Get a list of grant stream answers.
 		/// </summary>
-		/// <param name="grantId"></param>
+		/// <param name="grantApplicationId"></param>
 		/// <returns></returns>
-		public IEnumerable<GrantStreamEligibilityAnswer> GetGrantStreamAnswers(int grantId)
+		public IEnumerable<GrantStreamEligibilityAnswer> GetGrantStreamAnswers(int grantApplicationId)
 		{
-			return _dbContext.GrantStreamEligibilityAnswers.Where(x => x.GrantApplicationId == grantId);
+			return _dbContext.GrantStreamEligibilityAnswers.Where(x => x.GrantApplicationId == grantApplicationId);
 		}
 
 		/// <summary>
 		/// Remove existing grant stream answers if the grant is altered.
 		/// </summary>
-		/// <param name="grantId"></param>
+		/// <param name="grantApplicationId"></param>
 		/// <returns></returns>
-		public void RemoveGrantStreamAnswers(int grantId)
+		public void RemoveGrantStreamAnswers(int grantApplicationId)
 		{
-			if (grantId == 0)
-				throw new ArgumentNullException(nameof(grantId));
-			var answers = GetGrantStreamAnswers(grantId);
+			if (grantApplicationId == 0)
+				throw new ArgumentNullException(nameof(grantApplicationId));
+			var answers = GetGrantStreamAnswers(grantApplicationId);
 			if (answers.Count() != 0)
 			{
 				_dbContext.GrantStreamEligibilityAnswers.RemoveRange(answers);

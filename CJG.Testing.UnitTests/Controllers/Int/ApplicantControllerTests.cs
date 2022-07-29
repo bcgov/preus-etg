@@ -31,7 +31,7 @@ namespace CJG.Testing.UnitTests.Controllers.Int
 
 			var naIndustryClassificationSystems = new [] { EntityHelper.CreateNaIndustryClassificationSystem() };
 			helper.GetMock<INaIndustryClassificationSystemService>().Setup(m => m.GetNaIndustryClassificationSystems(It.IsAny<int?>())).Returns(naIndustryClassificationSystems);
-
+			
 			// Act
 			var result = controller.GetApplicant(grantApplication.Id);
 
@@ -164,7 +164,9 @@ namespace CJG.Testing.UnitTests.Controllers.Int
 			helper.GetMock<IStaticDataService>().Setup(m => m.GetCountry(It.IsAny<string>())).Returns(EntityHelper.CreateCountry("CA"));
 			helper.GetMock<IStaticDataService>().Setup(m => m.GetRegion(It.IsAny<string>(), It.IsAny<string>())).Returns(EntityHelper.CreateRegion("Victoria"));
 			var mockNaIndustryClassificationSystemService = helper.GetMock<INaIndustryClassificationSystemService>();
-			var viewModel = new ApplicantViewModel(grantApplication, mockNaIndustryClassificationSystemService.Object)
+			var mockGrantStreamService = helper.GetMock<IGrantStreamService>();
+			mockGrantStreamService.Setup(m => m.GetGrantStreamQuestions(It.IsAny<int>())).Returns(new List<GrantStreamEligibilityQuestion>());
+			var viewModel = new ApplicantViewModel(grantApplication, mockNaIndustryClassificationSystemService.Object, mockGrantStreamService.Object)
 			{
 				NAICSLevel1Id = grantApplication.NAICSId
 			};
@@ -239,7 +241,9 @@ namespace CJG.Testing.UnitTests.Controllers.Int
 				.Throws<NotAuthorizedException>();
 
 			var mockNaIndustryClassificationSystemService = helper.GetMock<INaIndustryClassificationSystemService>();
-			var viewModel = new ApplicantViewModel(grantApplication, mockNaIndustryClassificationSystemService.Object);
+			var mockGrantStreamService = helper.GetMock<IGrantStreamService>();
+			mockGrantStreamService.Setup(m => m.GetGrantStreamQuestions(It.IsAny<int>())).Returns(new List<GrantStreamEligibilityQuestion>());
+			var viewModel = new ApplicantViewModel(grantApplication, mockNaIndustryClassificationSystemService.Object, mockGrantStreamService.Object);
 			var controller = helper.Create();
 
 			// Act

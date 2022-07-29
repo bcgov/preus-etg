@@ -155,8 +155,9 @@ app.controller('OrganizationHistory', function ($scope, $attrs, $controller, $ti
       sort.descending = false;
     }
     if (sort.descending) {
-      newSortImage = sortDesc
+      newSortImage = sortDesc;
     }
+
     if (column == 'FileNumber') { $scope.imgSrcFileNumber = newSortImage; }
     if (column == 'CurrentStatus') { $scope.imgSrcCurrentStatus = newSortImage; }
     if (column == 'ApplicationStream') { $scope.imgSrcApplicationStream = newSortImage; }

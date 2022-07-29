@@ -435,7 +435,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 										GrantApplication = grantApplication,
 										GrantApplicationId = grantApplication.Id,
 										GrantStreamEligibilityQuestionId = question.Id,
-										EligibilityAnswer = clientQuestion.EligibilityAnswer.GetValueOrDefault(false)
+										EligibilityAnswer = clientQuestion.EligibilityAnswer.GetValueOrDefault(false),
+										RationaleAnswer = clientQuestion.RationaleAnswer
 									});
 								}
 							}

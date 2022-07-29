@@ -24,8 +24,8 @@ namespace CJG.Core.Interfaces.Service
 		IEnumerable<GrantStreamEligibilityQuestion> UpdateGrantStreamQuestions(IEnumerable<GrantStreamEligibilityQuestion> questions);
 		GrantStreamEligibilityQuestion AddGrantStreamQuestion(GrantStreamEligibilityQuestion question);
 		void AddGrantStreamAnswers(IEnumerable<GrantStreamEligibilityAnswer> answers);
-		IEnumerable<GrantStreamEligibilityAnswer> GetGrantStreamAnswers(int grantId);
-		void RemoveGrantStreamAnswers(int grantId);
+		IEnumerable<GrantStreamEligibilityAnswer> GetGrantStreamAnswers(int grantApplicationId);
+		void RemoveGrantStreamAnswers(int grantApplicationId);
 		bool HasApplications(int grantStreamId);
 	}
 }
