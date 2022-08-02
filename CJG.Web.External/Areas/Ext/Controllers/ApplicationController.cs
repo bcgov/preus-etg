@@ -606,15 +606,13 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					_organizationService.ClearOrganizationOldNaicsCode(currentUser.Organization.Id);
 				}
 
-				this.SetAlerts("Your organization’s Canada North American Industry Classification System (NAICS) codes are currently out of date. " +
-					"The Profile Administrator (individual responsible for your Organization Profile) " +
-					"will need to update the NAICS codes on your Organization Profile before submitting an application.", AlertType.Warning);
+				this.SetAlerts("Your organization’s Canada North American Industry Classification System (NAICS) codes are currently out of date. The Profile Administrator (individual responsible for your Organization Profile) will need to update the NAICS codes on your Organization Profile before submitting an application.", AlertType.Warning);
 			}
 
 			if (_organizationService.RequiresBusinessLicenseDocuments(currentUser.Organization.Id))
 			{
 				_logger.Info($"The Organization is missing up-to-date Business License Documents - {_siteMinderService.CurrentUserGuid}");
-				this.SetAlerts("Your organization’s Business Information Documents (e.g. business licence) are currently out of date. Please click on your Organization Profile to update.", AlertType.Warning);
+				this.SetAlerts("Your organization’s Business Information Documents are currently out of date. The Profile Administrator (individual responsible for your Organization Profile) will need to update these on your Organization Profile before submitting an application.", AlertType.Warning);
 			}
 
 			return View(SidebarViewModelFactory.Create(grantApplication, ControllerContext));
