@@ -10,11 +10,11 @@ namespace CJG.Core.Entities
     public enum ProgramTypes
     {
         /// <summary>
-        /// EmployerGrant - This program type is the original and only allows a single training program and training provider.
+        /// EmployerGrant (ETG) - This program type is the original and only allows a single training program and training provider.
         /// </summary>
         EmployerGrant = 1,
         /// <summary>
-        /// WDAService - This program type allows for a configurable application process through service categories and service lines.  This allows for multiple training providers and training programs.
+        /// WDAService (CWRG) - This program type allows for a configurable application process through service categories and service lines.  This allows for multiple training providers and training programs.
         /// </summary>
         WDAService = 2
     }
@@ -24,8 +24,7 @@ namespace CJG.Core.Entities
     /// </summary>
     public class ProgramType : LookupTable<int>
     {
-        #region Properties
-        /// <summary>
+	    /// <summary>
         /// get/set - The primary key does not use IDENTITY.
         /// </summary>
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
@@ -41,9 +40,7 @@ namespace CJG.Core.Entities
         /// get - The grant programs that use this program type.
         /// </summary>
         public virtual ICollection<GrantProgram> GrantPrograms { get; set; } = new List<GrantProgram>();
-        #endregion
 
-        #region Constructors
         /// <summary>
         /// Creates a new instance of a ProgramType object.
         /// </summary>
@@ -59,8 +56,7 @@ namespace CJG.Core.Entities
         /// <param name="isActive"></param>
         public ProgramType(ProgramTypes type, bool isActive = true) : base(type.GetDescription())
         {
-            this.IsActive = isActive;
+            IsActive = isActive;
         }
-        #endregion
     }
 }

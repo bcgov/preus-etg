@@ -1,22 +1,22 @@
-﻿using CJG.Application.Services;
-using CJG.Core.Entities;
-using CJG.Core.Interfaces.Service;
-using CJG.Web.External.Controllers;
-using CJG.Web.External.Helpers;
-using CJG.Web.External.Helpers.Filters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.ServiceModel;
 using System.Web.Mvc;
+using CJG.Application.Services;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces.Service;
+using CJG.Web.External.Controllers;
+using CJG.Web.External.Helpers;
+using CJG.Web.External.Helpers.Filters;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
-	/// <summary>
-	/// ApplicationReviewController class, provides a controller endpoints for managing external user grant applications.
-	/// </summary>
-	[RouteArea("Ext")]
+    /// <summary>
+    /// ApplicationReviewController class, provides a controller endpoints for managing external user grant applications.
+    /// </summary>
+    [RouteArea("Ext")]
 	[ExternalFilter]
 	public class ApplicationReviewController : BaseController
 	{
@@ -47,7 +47,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			IGrantApplicationService grantApplicationService,
 			IGrantStreamService grantStreamService,
 			IOrganizationService organizationService,
-			IGrantOpeningManageScheduledService grantOpeningManageScheduledService,
 			INaIndustryClassificationSystemService naIndustryClassificationSystemService,
 			IGrantProgramService grantProgramService,
 			IEligibleExpenseTypeService eligibleExpenseTypeService) : base(controllerService.Logger)
@@ -66,7 +65,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		#region Endpoints
 		/// <summary>
 		/// Display the Grant Application Review View.
-		/// This View is used when Reviewing an application before submiting.
+		/// This View is used when Reviewing an application before submitting.
 		/// </summary>
 		/// <param name="grantApplicationId"></param>
 		/// <returns></returns>
@@ -103,9 +102,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			try
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
-				int? UserId = null;
-				UserId = grantApplication.BusinessContactRoles.FirstOrDefault()?.UserId;
-				model = new Models.Applications.ApplicationReviewViewModel(grantApplication, UserId == null ? null : _userService.GetUser((int)UserId));
+				int? userId = grantApplication.BusinessContactRoles.FirstOrDefault()?.UserId;
+				model = new Models.Applications.ApplicationReviewViewModel(grantApplication, userId == null ? null : _userService.GetUser((int)userId));
 			}
 			catch (Exception ex)
 			{
@@ -373,7 +371,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		}
 
 		/// <summary>
-		/// Return a View to Review and submit the application applicant declartion.
+		/// Return a View to Review and submit the application applicant declaration.
 		/// </summary>
 		/// <param name="grantApplicationId"></param>
 		/// <returns></returns>

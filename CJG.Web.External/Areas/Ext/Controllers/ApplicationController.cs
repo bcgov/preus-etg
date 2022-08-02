@@ -140,16 +140,38 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// Get the stream eligibility requirements data.
 		/// </summary>
 		/// <param name="grantOpeningId"></param>
+		/// <param name="grantApplicationId">Optional. If provided, will return answers to Eligibility Questions on application.</param>
 		/// <returns></returns>
 		[HttpGet]
-		[Route("Application/Grant/Stream/Eligibility/Requirements/{grantOpeningId}")]
-		public JsonResult GetStreamEligibilityRequirements(int grantOpeningId)
+		[Route("Application/Grant/Stream/Eligibility/Requirements/{grantOpeningId}/{grantApplicationId?}")]
+		public JsonResult GetStreamEligibilityRequirements(int grantOpeningId, int? grantApplicationId = 0)
 		{
 			var model = new GrantStreamEligibilityViewModel();
+
 			try
 			{
 				var grantOpening = _grantOpeningService.Get(grantOpeningId);
 				model = new GrantStreamEligibilityViewModel(grantOpening.GrantStream, _grantStreamService);
+
+				if (grantApplicationId.HasValue && grantApplicationId.Value > 0)
+				{
+					var grantApplication = _grantApplicationService.Get(grantApplicationId.Value);
+					if (grantApplication != null)
+					{
+						var answers = _grantStreamService.GetGrantStreamAnswers(grantApplication.Id).ToList();
+
+						foreach (var quest in model.StreamEligibilityQuestions)
+						{
+							var answer = answers.FirstOrDefault(a => a.GrantStreamEligibilityQuestionId == quest.Id);
+
+							if (answer == null)
+								continue;
+
+							quest.EligibilityAnswer = answer.EligibilityAnswer;
+							quest.RationaleAnswer = answer.RationaleAnswer;
+						}
+					}
+				}
 			}
 			catch (Exception ex)
 			{

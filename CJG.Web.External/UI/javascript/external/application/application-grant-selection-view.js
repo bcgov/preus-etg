@@ -96,7 +96,7 @@ app.controller('GrantSelectionView', function ($scope, $attrs, $controller, $sce
     $scope.currentTrainingPeriod = getCurrentTrainingPeriod();
     $scope.model.GrantStream = null;  // Required: If model not cleared, the <validation> element for eligibility questions keeps the old ng-model ID and the errors do not display
     return $scope.load({
-      url: '/Ext/Application/Grant/Stream/Eligibility/Requirements/' + $scope.model.GrantOpeningId,
+      url: '/Ext/Application/Grant/Stream/Eligibility/Requirements/' + $scope.model.GrantOpeningId + '/' + $scope.model.GrantApplicationId,
       set: 'model.GrantStream'
     })
       .catch(angular.noop);
