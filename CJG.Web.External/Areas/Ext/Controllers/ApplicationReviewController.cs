@@ -549,17 +549,13 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 			//Check if an Organization NAICS code is updated to 2017
 			if (!(_organizationService.IsOrganizationNaicsStatusUpdated(currentUser.Organization.Id))) {
-				this.SetAlert("Your organization’s Canada North American Industry Classification System (NAICS) codes are currently out of date. " +
-					"The Profile Administrator (individual responsible for your Organization Profile) will need to update the NAICS codes on your " +
-					"Organization Profile before submitting an application.", AlertType.Warning, true);
-
+				this.SetAlert("Your organization’s Canada North American Industry Classification System (NAICS) codes are currently out of date. The Profile Administrator (individual responsible for your Organization Profile) will need to update the NAICS codes on your Organization Profile before submitting an application.", AlertType.Warning, true);
 				return RedirectToAction("Index", "Home");
 			}
 
 			// Check if an Organization is required to update their uploaded business license documents
 			if (_organizationService.RequiresBusinessLicenseDocuments(currentUser.Organization.Id)) {
-				this.SetAlert("Your organization’s Business Information Documents (e.g. business licence) are currently out of date.", AlertType.Warning, true);
-
+				this.SetAlert("Your organization’s Business Information Documents are currently out of date. The Profile Administrator (individual responsible for your Organization Profile) will need to update these on your Organization Profile before submitting an application.", AlertType.Warning, true);
 				return RedirectToAction("Index", "Home");
 			}
 
