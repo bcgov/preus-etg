@@ -31,15 +31,15 @@
 	<div class="panel-section-content" ng-if="section.show">
         <table class="participant-form-table">
             <tr class="participant-form-tr__header">
-                <td ng-click="changeSorting('LastName')"><img src="{{imgSrcLastName || '../../../../images/icons/icon--sort.svg'}}" /> Name</td>
+                <td ng-click="changeSorting('LastName')"><img ng-src="{{imgSrcLastName}}" /> Name</td>
                 <td>Email</td>
                 <td>Phone</td>
                 <td ng-if="grantFile.CanManageParticipantEligibilty" >Eligibility</td>
                 <td>YTD Funded</td>
                 <td>Reported By</td>
-                <td ng-click="changeSorting('ReportedOn')"><img src="{{imgSrcReportedOn || '../../../../images/icons/icon--sort.svg'}}" /> Reported On</td>
+                <td ng-click="changeSorting('ReportedOn')"><img ng-src="{{imgSrcReportedOn}}" /> Reported On</td>
             </tr>
-            <tr ng-repeat="participant in model.ParticipantInfo|orderBy:sort.column:sort.descending" ">
+            <tr ng-repeat="participant in model.ParticipantInfo | orderBy:sort.column:sort.descending">
                 <td><a href="/Int/Application/Participant/Info/View/{{participant.ParticipantId}}" target="_blank">{{participant.LastName}}, {{participant.FirstName}}</a></td>
                 <td><a href="mailto:{{participant.EmailAddress}}">{{participant.EmailAddress}}</a></td>
                 <td>{{participant.PhoneNumber}}</td>
@@ -53,8 +53,6 @@
                 <td ng-if="grantFile.CanManageParticipantEligibilty && !section.editing && participant.Approved == null">not set</td>
                 <td ng-if="grantFile.CanManageParticipantEligibilty && !section.editing && participant.Approved == true">Eligible</td>
                 <td ng-if="grantFile.CanManageParticipantEligibilty && !section.editing && participant.Approved == false">Ineligible</td>
-
-
                 <td>{{participant.YTDFunded | currency : '$' : 2}}</td>
                 <td ng-if="participant.ReportedBy == 'Applicant'"><a href="/Int/Application/Participant/Consent/{{participant.ParticipantId}}">{{participant.ReportedBy}}</a></td>
                 <td ng-if="participant.ReportedBy == 'Participant'">{{participant.ReportedBy}}</td>

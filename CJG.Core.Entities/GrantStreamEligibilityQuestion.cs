@@ -1,11 +1,6 @@
-﻿using CJG.Core.Entities.Attributes;
-using DataAnnotationsExtensions;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 
 namespace CJG.Core.Entities
 {
@@ -14,7 +9,6 @@ namespace CJG.Core.Entities
 	/// </summary>
 	public class GrantStreamEligibilityQuestion : EntityBase
 	{
-		#region Properties
 		/// <summary>
 		/// get/set - Primary key uses IDENTITY.
 		/// </summary>
@@ -58,42 +52,17 @@ namespace CJG.Core.Entities
 		[Required]
 		public bool EligibilityPositiveAnswerRequired { get; set; }
 
+		[Required]
+		public bool EligibilityRationaleAnswerAllowed { get; set; }
+
+		public string EligibilityRationaleAnswerLabel { get; set; }
+
 		/// <summary>
 		/// get/set - The order questions will be presented.
 		/// </summary>
 		[Required]
 		public int RowSequence { get; set; }
 
-		#endregion
-
-		#region Constructors
-		/// <summary>
-		/// Creates a new instance of a <typeparamref name="GrantStream"/> object.
-		/// </summary>
-		public GrantStreamEligibilityQuestion()
-		{
-		}
-
-		/// <summary>
-		/// Creates a new instance of a <typeparamref name="GrantStreamEligibilityQuestions"/> object.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="objective"></param>
-		/// <param name="program"></param>
-		/// <param name="payment"></param>
-		public GrantStreamEligibilityQuestion(string EligibilityRequirements, string EligibilityQuestion, bool IsActive,
-			bool EligibilityPositiveAnswerRequired, int RowSequence, GrantStream GrantStream)
-		{
-			this.EligibilityRequirements = EligibilityRequirements;
-			this.EligibilityQuestion = EligibilityQuestion ?? throw new ArgumentNullException(nameof(EligibilityQuestion));
-			this.IsActive = IsActive;
-			this.EligibilityPositiveAnswerRequired = EligibilityPositiveAnswerRequired;
-			this.RowSequence = RowSequence;
-			this.GrantStreamId = GrantStream.Id;
-		}
-		#endregion
-
-		#region Methods
 		/// <summary>
 		/// Validate this grant stream before making changes to the datasource.
 		/// </summary>
@@ -108,22 +77,25 @@ namespace CJG.Core.Entities
 			if (entry == null || context == null)
 				yield break;
 
-			if (this.GrantStreamId > 0 && this.GrantStream == null)
-				this.GrantStream = context.Set<GrantStream>().Find(this.GrantStreamId);
+			if (GrantStreamId > 0 && GrantStream == null)
+				GrantStream = context.Set<GrantStream>().Find(GrantStreamId);
 
 			// Must be linked to an existing grant program.
-			if (this.GrantStreamId == 0)
-				yield return new ValidationResult("The eligibiility question must be associated to an existing grant stream.", new[] { nameof(this.GrantStreamId) });
+			if (GrantStreamId == 0)
+				yield return new ValidationResult("The eligibility question must be associated to an existing grant stream.", new[] { nameof(GrantStreamId) });
 
 			// EligibilityQuestion must have a value.
 			if (string.IsNullOrEmpty(EligibilityQuestion))
-				yield return new ValidationResult("The Eligibility Question must be defined.", new[] { nameof(this.EligibilityQuestion) });
+				yield return new ValidationResult("The Eligibility Question must be defined.", new[] { nameof(EligibilityQuestion) });
+
+			// EligibilityQuestion must have a value.
+			//if (EligibilityRationaleAnswerAllowed && !string.IsNullOrWhiteSpace(EligibilityRationaleAnswerLabel))
+			//	yield return new ValidationResult("The Eligibility Question rationale label must be defined.", new[] { nameof(EligibilityRationaleAnswerLabel) });
 
 			foreach (var validation in base.Validate(validationContext))
 			{
 				yield return validation;
 			}
 		}
-		#endregion
 	}
 }

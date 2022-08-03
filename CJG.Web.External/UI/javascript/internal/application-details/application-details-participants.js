@@ -47,8 +47,11 @@ app.controller('Participants', function ($scope, $attrs, $controller, $timeout, 
     ]).catch(angular.noop);
   }
 
-  $scope.imgSrcLastName = "../../../../images/icons/icon--sort.svg";
-  $scope.imgSrcReportedOn = "../../../../images/icons/icon--sort.svg";
+  const noSort = '../../../../../images/icons/icon--sort.svg';
+  const sortAsc = '../../../../../images/icons/icon--sort-asc.svg';
+  const sortDesc = '../../../../../images/icons/icon--sort-desc.svg';
+
+  resetSortImage();
 
   $scope.sort = {
     column: '',
@@ -56,48 +59,33 @@ app.controller('Participants', function ($scope, $attrs, $controller, $timeout, 
   };
 
   $scope.changeSorting = function (column) {
+    resetSortImage();
+
     var sort = $scope.sort;
+    var newSortImage = sortAsc;
+
     if (sort.column == column) {
       sort.descending = !sort.descending;
-      if (column == 'LastName') {
-        $scope.imgSrcReportedOn = '../../../../images/icons/icon--sort.svg';
-        if (sort.descending) {
-          $scope.imgSrcLastName = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcLastName = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'ReportedOn') {
-        $scope.imgSrcLastName = '../../../../images/icons/icon--sort.svg';
-        if (sort.descending) {
-          $scope.imgSrcReportedOn = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcReportedOn = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-  } else {
+    }
+    else {
       sort.column = column;
       sort.descending = false;
-      if (column == 'LastName') {
-        $scope.imgSrcReportedOn = '../../../../images/icons/icon--sort.svg';
-        if (sort.descending) {
-          $scope.imgSrcLastName = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcLastName = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
-
-      if (column == 'ReportedOn') {
-        $scope.imgSrcLastName = '../../../../images/icons/icon--sort.svg';
-        if (sort.descending) {
-          $scope.imgSrcReportedOn = '../../../../images/icons/icon--sort-desc.svg';
-        } else {
-          $scope.imgSrcReportedOn = '../../../../images/icons/icon--sort-asc.svg';
-        }
-      }
     }
+    if (sort.descending) {
+      newSortImage = sortDesc;
+    }
+
+    if (column === 'LastName')
+      $scope.imgSrcLastName = newSortImage;
+
+    if (column === 'ReportedOn')
+      $scope.imgSrcReportedOn = newSortImage;
   };
+
+  function resetSortImage() {
+    $scope.imgSrcLastName = noSort;
+    $scope.imgSrcReportedOn = noSort;
+  }
 
   /**
    * Open a popup window to view the participant information.

@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Areas.Int.Models;
+using CJG.Web.External.Areas.Int.Models.GrantStreams;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
@@ -19,37 +20,36 @@ namespace CJG.Web.External.Areas.Int.Controllers
 	[Authorize(Roles = "Assessor, System Administrator, Director, Financial Clerk")]
 	public class ApplicantController : BaseController
 	{
-		#region Variables
 		private readonly IGrantApplicationService _grantApplicationService;
-		private readonly IUserService _userService;
+		private readonly IGrantStreamService _grantStreamService;
 		private readonly IStaticDataService _staticDataService;
 		private readonly INaIndustryClassificationSystemService _naIndustryClassificationSystemService;
 		private readonly IApplicationAddressService _applicationAddressService;
 		private readonly ICommunityService _communityService;
-		#endregion
 
 		#region Constructors
+
 		/// <summary>
 		/// Creates a new instance of the ApplicantController object.
 		/// </summary>
 		/// <param name="controllerService"></param>
-		/// <param name="userService"></param>
 		/// <param name="grantApplicationService"></param>
+		/// <param name="grantStreamService"></param>
 		/// <param name="staticDataService"></param>
 		/// <param name="naIndustryClassificationSystemService"></param>
 		/// <param name="applicationAddressService"></param>
 		/// <param name="communityService"></param>
 		public ApplicantController(
 			IControllerService controllerService,
-			IUserService userService,
 			IGrantApplicationService grantApplicationService,
+			IGrantStreamService grantStreamService, 
 			IStaticDataService staticDataService,
 			INaIndustryClassificationSystemService naIndustryClassificationSystemService,
 			IApplicationAddressService applicationAddressService,
 			ICommunityService communityService) : base(controllerService.Logger)
 		{
 			_grantApplicationService = grantApplicationService;
-			_userService = userService;
+			_grantStreamService = grantStreamService;
 			_staticDataService = staticDataService;
 			_naIndustryClassificationSystemService = naIndustryClassificationSystemService;
 			_applicationAddressService = applicationAddressService;
@@ -72,7 +72,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			try
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
-				model = new ApplicantViewModel(grantApplication, _naIndustryClassificationSystemService);
+				model = new ApplicantViewModel(grantApplication, _naIndustryClassificationSystemService, _grantStreamService);
 			} catch (Exception ex) {
 				HandleAngularException(ex, model);
 			}
@@ -126,6 +126,35 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		}
 
 		/// <summary>
+		/// Get an array of Eligibility Questions and their Answers for an application.
+		/// </summary>
+		/// <param name="grantApplicationId"></param>
+		/// <returns>JsonResult</returns>
+		[Route("EligibilityQuestions/{grantApplicationId:int}")]
+		public JsonResult GetApplicationEligibilityQuestions(int grantApplicationId)
+		{
+			IEnumerable<dynamic> questionList = null;
+			var streamEligibilityQuestions = new List<GrantStreamQuestionViewModel>();
+			try {
+				var grantApplication = _grantApplicationService.Get(grantApplicationId);
+				streamEligibilityQuestions = _grantStreamService.GetGrantStreamQuestions(grantApplication.GrantOpening.GrantStreamId)
+					.Where(l => l.IsActive)
+					.Select(n => new GrantStreamQuestionViewModel(n))
+					.ToList();
+
+				questionList = streamEligibilityQuestions.Select(n => new {
+					Key = n.Id,
+					Value = n.EligibilityAnswer.HasValue ? n.EligibilityAnswer.Value : false,
+					Code = n.EligibilityQuestion
+				}).ToArray();
+			} catch (Exception ex) {
+				HandleAngularException(ex);
+			}
+
+			return Json(streamEligibilityQuestions.ToList(), JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
 		/// Updates the specified grant application applicant information in the datasource.
 		/// </summary>
 		/// <param name="model"></param>
@@ -145,7 +174,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 					_grantApplicationService.Update(grantApplication, ApplicationWorkflowTrigger.EditApplicant);
 
-					model = new ApplicantViewModel(grantApplication, _naIndustryClassificationSystemService);
+					model = new ApplicantViewModel(grantApplication, _naIndustryClassificationSystemService, _grantStreamService);
 				}
 				else
 				{

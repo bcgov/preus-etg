@@ -1,16 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
+using CJG.Web.External.Areas.Int.Models.GrantStreams;
 using CJG.Web.External.Models.Shared;
-using Constants = CJG.Core.Entities.Constants;
 
 namespace CJG.Web.External.Areas.Int.Models
 {
 	public class ApplicantViewModel : BaseViewModel
 	{
-		#region Properties
 		[Required(ErrorMessage = "Organization Legal Name is required", AllowEmptyStrings = false)]
 		public string OrganizationLegalName { get; set; }
 
@@ -92,86 +92,121 @@ namespace CJG.Web.External.Areas.Int.Models
 
 		public string GrantProgramName { get; set; }
 
-		public string RowVersion { get; set; }
-		#endregion
+		public List<GrantStreamQuestionViewModel> StreamEligibilityQuestions { get; set; }
 
-		#region Constructors
+		public string RowVersion { get; set; }
+
 		public ApplicantViewModel() { }
 
-		public ApplicantViewModel(GrantApplication grantApplication, INaIndustryClassificationSystemService naIndustryClassificationSystemService)
+		public ApplicantViewModel(GrantApplication grantApplication, INaIndustryClassificationSystemService naIndustryClassificationSystemService, IGrantStreamService grantStreamService)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
-			if (naIndustryClassificationSystemService == null) throw new ArgumentNullException(nameof(naIndustryClassificationSystemService));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
 
-			this.Id = grantApplication.Id;
-			this.RowVersion = Convert.ToBase64String(grantApplication.RowVersion);
-			this.GrantProgramName = grantApplication.GrantOpening.GrantStream.GrantProgram.Name;
-			this.OrganizationLegalName = grantApplication.OrganizationLegalName;
-			this.OrganizationTypeId = grantApplication.OrganizationTypeId.Value;
-			this.LegalStructureId = grantApplication.OrganizationLegalStructureId.Value;
-			this.OrganizationYearEstablished = grantApplication.OrganizationYearEstablished;
-			this.OrganizationNumberOfEmployeesWorldwide = grantApplication.OrganizationNumberOfEmployeesWorldwide;
-			this.OrganizationNumberOfEmployeesBC = grantApplication.OrganizationNumberOfEmployeesInBC;
-			this.OrganizationAnnualTrainingBudget = grantApplication.OrganizationAnnualTrainingBudget.Value;
-			this.OrganizationAnnualEmployeesTrained = grantApplication.OrganizationAnnualEmployeesTrained;
-			this.BusinessNumber = grantApplication.Organization.BusinessNumber;
-			this.BusinessNumberVerified = grantApplication.Organization.BusinessNumberVerified;
-			this.StatementOfRegistrationNumber = grantApplication.Organization.StatementOfRegistrationNumber;
-			this.JurisdictionOfIncorporation = grantApplication.Organization.JurisdictionOfIncorporation;
-			this.IncorporationNumber = grantApplication.Organization.IncorporationNumber;
-			this.AddressLine1 = grantApplication.OrganizationAddress.AddressLine1;
-			this.AddressLine2 = grantApplication.OrganizationAddress.AddressLine2;
-			this.City = grantApplication.OrganizationAddress.City;
-			this.RegionId = grantApplication.OrganizationAddress.Region == null ? "BC" : grantApplication.OrganizationAddress.Region.Id;
-			this.Region = grantApplication.OrganizationAddress.Region.Name;
-			this.PostalCode = grantApplication.OrganizationAddress.PostalCode;
-			this.CountryId = grantApplication.OrganizationAddress.CountryId;
-			this.Country = grantApplication.OrganizationAddress.Country.Name;
-			this.HasAppliedForGrantBefore = grantApplication.HasAppliedForGrantBefore;
-			this.WouldTrainEmployeesWithoutGrant = grantApplication.WouldTrainEmployeesWithoutGrant;
-			var naics = grantApplication.NAICSId.HasValue ? naIndustryClassificationSystemService.GetNaIndustryClassificationSystems(grantApplication.NAICSId.Value) : null;
-			this.NAICSLevel1Id = naics.FirstOrDefault(n => n.Level == 1)?.Id;
-			this.NAICSLevel2Id = naics.FirstOrDefault(n => n.Level == 2)?.Id;
-			this.NAICSLevel3Id = naics.FirstOrDefault(n => n.Level == 3)?.Id;
-			this.NAICSLevel4Id = naics.FirstOrDefault(n => n.Level == 4)?.Id;
-			this.NAICSLevel5Id = naics.FirstOrDefault(n => n.Level == 5)?.Id;
-			this.BusinessLicenseNumber = grantApplication.OrganizationBusinessLicenseNumber;
+			if (naIndustryClassificationSystemService == null)
+				throw new ArgumentNullException(nameof(naIndustryClassificationSystemService));
+
+			Id = grantApplication.Id;
+			RowVersion = Convert.ToBase64String(grantApplication.RowVersion);
+			GrantProgramName = grantApplication.GrantOpening.GrantStream.GrantProgram.Name;
+			OrganizationLegalName = grantApplication.OrganizationLegalName;
+			OrganizationTypeId = grantApplication.OrganizationTypeId.Value;
+			LegalStructureId = grantApplication.OrganizationLegalStructureId.Value;
+			OrganizationYearEstablished = grantApplication.OrganizationYearEstablished;
+			OrganizationNumberOfEmployeesWorldwide = grantApplication.OrganizationNumberOfEmployeesWorldwide;
+			OrganizationNumberOfEmployeesBC = grantApplication.OrganizationNumberOfEmployeesInBC;
+			OrganizationAnnualTrainingBudget = grantApplication.OrganizationAnnualTrainingBudget.Value;
+			OrganizationAnnualEmployeesTrained = grantApplication.OrganizationAnnualEmployeesTrained;
+			BusinessNumber = grantApplication.Organization.BusinessNumber;
+			BusinessNumberVerified = grantApplication.Organization.BusinessNumberVerified;
+			StatementOfRegistrationNumber = grantApplication.Organization.StatementOfRegistrationNumber;
+			JurisdictionOfIncorporation = grantApplication.Organization.JurisdictionOfIncorporation;
+			IncorporationNumber = grantApplication.Organization.IncorporationNumber;
+			AddressLine1 = grantApplication.OrganizationAddress.AddressLine1;
+			AddressLine2 = grantApplication.OrganizationAddress.AddressLine2;
+			City = grantApplication.OrganizationAddress.City;
+			RegionId = grantApplication.OrganizationAddress.Region == null ? "BC" : grantApplication.OrganizationAddress.Region.Id;
+			Region = grantApplication.OrganizationAddress.Region.Name;
+			PostalCode = grantApplication.OrganizationAddress.PostalCode;
+			CountryId = grantApplication.OrganizationAddress.CountryId;
+			Country = grantApplication.OrganizationAddress.Country.Name;
+			HasAppliedForGrantBefore = grantApplication.HasAppliedForGrantBefore;
+			WouldTrainEmployeesWithoutGrant = grantApplication.WouldTrainEmployeesWithoutGrant;
+			var naics = grantApplication.NAICSId.HasValue ? naIndustryClassificationSystemService.GetNaIndustryClassificationSystems(grantApplication.NAICSId.Value).ToList() : null;
+			if (naics != null)
+			{
+				NAICSLevel1Id = naics.FirstOrDefault(n => n.Level == 1)?.Id;
+				NAICSLevel2Id = naics.FirstOrDefault(n => n.Level == 2)?.Id;
+				NAICSLevel3Id = naics.FirstOrDefault(n => n.Level == 3)?.Id;
+				NAICSLevel4Id = naics.FirstOrDefault(n => n.Level == 4)?.Id;
+				NAICSLevel5Id = naics.FirstOrDefault(n => n.Level == 5)?.Id;
+			}
+			BusinessLicenseNumber = grantApplication.OrganizationBusinessLicenseNumber;
+
+			var streamEligibilityQuestions = grantStreamService.GetGrantStreamQuestions(grantApplication.GrantOpening.GrantStreamId)
+				.Where(l => l.IsActive)
+				.Select(n => new GrantStreamQuestionViewModel(n))
+				.ToList();
+
+			var grantApplicationAnswers = grantStreamService.GetGrantStreamAnswers(grantApplication.Id).ToList();
+			foreach (var quest in streamEligibilityQuestions)
+			{
+				var answer = grantApplicationAnswers.FirstOrDefault(a => a.GrantStreamEligibilityQuestionId == quest.Id);
+				if (answer == null)
+					continue;
+
+				quest.EligibilityAnswer = answer.EligibilityAnswer;
+				quest.RationaleAnswer = answer.RationaleAnswer;
+			}
+			StreamEligibilityQuestions = streamEligibilityQuestions;
 		}
-		#endregion
 
-		#region Methods
 		public void MapTo(GrantApplication grantApplication, IStaticDataService staticDataService, IApplicationAddressService applicationAddressService)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
-			if (staticDataService == null) throw new ArgumentNullException(nameof(staticDataService));
-			if (applicationAddressService == null) throw new ArgumentNullException(nameof(applicationAddressService));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
 
-			var country = staticDataService.GetCountry(this.CountryId);
-			var region = (country.Id == Constants.CanadaCountryId) ? staticDataService.GetRegion(this.CountryId, this.RegionId) : applicationAddressService.VerifyOrCreateRegion(this.Region, this.CountryId);
+			if (staticDataService == null)
+				throw new ArgumentNullException(nameof(staticDataService));
 
-			grantApplication.RowVersion = Convert.FromBase64String(this.RowVersion);
-			grantApplication.OrganizationLegalName = this.OrganizationLegalName;
-			grantApplication.OrganizationTypeId = this.OrganizationTypeId;
-			grantApplication.OrganizationLegalStructureId = this.LegalStructureId;
-			grantApplication.OrganizationYearEstablished = this.OrganizationYearEstablished;
-			grantApplication.OrganizationNumberOfEmployeesWorldwide = this.OrganizationNumberOfEmployeesWorldwide;
-			grantApplication.OrganizationNumberOfEmployeesInBC = this.OrganizationNumberOfEmployeesBC;
-			grantApplication.OrganizationAnnualTrainingBudget = this.OrganizationAnnualTrainingBudget;
-			grantApplication.OrganizationAnnualEmployeesTrained = this.OrganizationAnnualEmployeesTrained;
-			grantApplication.OrganizationBusinessLicenseNumber = this.BusinessLicenseNumber;
-			grantApplication.Organization.BusinessNumber = this.BusinessNumber;
-			grantApplication.OrganizationAddress.AddressLine1 = this.AddressLine1;
-			grantApplication.OrganizationAddress.AddressLine2 = this.AddressLine2;
-			grantApplication.OrganizationAddress.City = this.City;
+			if (applicationAddressService == null)
+				throw new ArgumentNullException(nameof(applicationAddressService));
+			
+			var country = staticDataService.GetCountry(CountryId);
+			var region = country.Id == Constants.CanadaCountryId ? staticDataService.GetRegion(CountryId, RegionId) : applicationAddressService.VerifyOrCreateRegion(Region, CountryId);
+
+			grantApplication.RowVersion = Convert.FromBase64String(RowVersion);
+			grantApplication.OrganizationLegalName = OrganizationLegalName;
+			grantApplication.OrganizationTypeId = OrganizationTypeId;
+			grantApplication.OrganizationLegalStructureId = LegalStructureId;
+			grantApplication.OrganizationYearEstablished = OrganizationYearEstablished;
+			grantApplication.OrganizationNumberOfEmployeesWorldwide = OrganizationNumberOfEmployeesWorldwide;
+			grantApplication.OrganizationNumberOfEmployeesInBC = OrganizationNumberOfEmployeesBC;
+			grantApplication.OrganizationAnnualTrainingBudget = OrganizationAnnualTrainingBudget;
+			grantApplication.OrganizationAnnualEmployeesTrained = OrganizationAnnualEmployeesTrained;
+			grantApplication.OrganizationBusinessLicenseNumber = BusinessLicenseNumber;
+			grantApplication.Organization.BusinessNumber = BusinessNumber;
+			grantApplication.OrganizationAddress.AddressLine1 = AddressLine1;
+			grantApplication.OrganizationAddress.AddressLine2 = AddressLine2;
+			grantApplication.OrganizationAddress.City = City;
 			grantApplication.OrganizationAddress.RegionId = region.Id;
 			grantApplication.OrganizationAddress.Region = region;
-			grantApplication.OrganizationAddress.PostalCode = this.PostalCode;
+			grantApplication.OrganizationAddress.PostalCode = PostalCode;
 			grantApplication.OrganizationAddress.CountryId = country.Id;
 			grantApplication.OrganizationAddress.Country = country;
-			grantApplication.HasAppliedForGrantBefore = this.HasAppliedForGrantBefore;
-			grantApplication.WouldTrainEmployeesWithoutGrant = this.WouldTrainEmployeesWithoutGrant;
-			grantApplication.NAICSId = this.NAICSLevel5Id ?? this.NAICSLevel4Id ?? this.NAICSLevel3Id ?? this.NAICSLevel2Id ?? this.NAICSLevel1Id;
+			grantApplication.HasAppliedForGrantBefore = HasAppliedForGrantBefore;
+			grantApplication.WouldTrainEmployeesWithoutGrant = WouldTrainEmployeesWithoutGrant;
+			grantApplication.NAICSId = NAICSLevel5Id ?? NAICSLevel4Id ?? NAICSLevel3Id ?? NAICSLevel2Id ?? NAICSLevel1Id;
+
+			foreach(var questionModel in StreamEligibilityQuestions)
+			{
+				var answer = grantApplication.GrantStreamEligibilityAnswers.FirstOrDefault(q => q.GrantStreamEligibilityQuestionId == questionModel.Id);
+				if (answer != null)
+				{
+					answer.EligibilityAnswer = questionModel.EligibilityAnswer ?? false;
+					answer.RationaleAnswer = questionModel.RationaleAnswer;
+				}
+			}
 		}
-		#endregion
 	}
 }

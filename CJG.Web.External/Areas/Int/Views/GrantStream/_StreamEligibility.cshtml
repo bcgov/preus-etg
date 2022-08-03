@@ -70,6 +70,25 @@
                 </div>
                 <div class="form__group">
                     <div class="label-wrapper">
+                        <label class="form__label">Allow applicant to supply rationale for "Yes" answer:</label>
+                    </div>
+                    <div class="control-wrapper">
+                        <input type="radio" id="eligibility-rationale-active-{{question.Id}}" ng-model="question.EligibilityRationaleAnswerAllowed" ng-value="true" ng-disabled="!section.editing" /> <label for="eligibility-rationale-active-{{question.Id}}">Yes</label>
+                        <input type="radio" id="eligibility-rationale-not-active-{{question.Id}}" ng-model="question.EligibilityRationaleAnswerAllowed" ng-value="false" ng-disabled="!section.editing" /> <label for="eligibility-rationale-not-active-{{question.Id}}">No</label>
+                    </div>
+                </div>
+                <div class="form__group" ng-show="question.EligibilityRationaleAnswerAllowed">
+                    <div class="label-wrapper">
+                        <label class="form__label">Label for Rationale question (if needed):</label>
+                    </div>
+                    <div class="control-wrapper">
+                        <input ng-model="question.EligibilityRationaleAnswerLabel" class="input--full"
+                               ng-validation="errors.StreamQuestions_{{$index}}_.EligibilityRationaleAnswerLabel"
+                               ng-editing />
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="label-wrapper">
                         <label class="form__label">Eligibility question enabled:</label>
                     </div>
                     <div>

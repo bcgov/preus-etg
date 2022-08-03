@@ -190,33 +190,59 @@
 						</div>
 					</div>
 				</div>
-				<div class="form__group">
-					<label class="form__label">
-						North American Industry Classification System (<b>NAICS</b>) code for your primary sector:
-					</label>
-					<div class="form__control" ng-if="section.editing">
-						<div class="control-wrapper selectmenu input--medium">
-							<select ng-model="model.NAICSLevel1Id" ng-options="item.Key as item.Code + ' | ' + item.Value for item in applicantNAICS1" class="input--medium" ng-change="getNAICS(2)" ng-validation></select>
-						</div>
-						<div class="control-wrapper selectmenu input--medium" ng-if="model.NAICSLevel1Id">
-							<select ng-model="model.NAICSLevel2Id" ng-options="item.Key as item.Code + ' | ' + item.Value for item in applicantNAICS2" class="input--medium" ng-change="getNAICS(3)" ng-validation></select>
-						</div>
-						<div class="control-wrapper selectmenu input--medium" ng-if="model.NAICSLevel2Id">
-							<select ng-model="model.NAICSLevel3Id" ng-options="item.Key as item.Code + ' | ' + item.Value for item in applicantNAICS3" class="input--medium" ng-change="getNAICS(4)" ng-validation></select>
-						</div>
-						<div class="control-wrapper selectmenu input--medium" ng-if="model.NAICSLevel3Id">
-							<select ng-model="model.NAICSLevel4Id" ng-options="item.Key as item.Code + ' | ' + item.Value for item in applicantNAICS4" class="input--medium" ng-change="getNAICS(5)" ng-validation></select>
-						</div>
-						<div class="control-wrapper selectmenu input--medium" ng-if="model.NAICSLevel4Id">
-							<select ng-model="model.NAICSLevel5Id" ng-options="item.Key as item.Code + ' | ' + item.Value for item in applicantNAICS5" class="input--medium" ng-validation></select>
-						</div>
-					</div>
-					<div class="form__control" ng-if="!section.editing">
-						<div class="control-wrapper">
-							<text>{{ naics() }}</text>
-						</div>
-					</div>
-				</div>
+                <div class="form__group">
+                    <label class="form__label">
+                        North American Industry Classification System (<b>NAICS</b>) code for your primary sector:
+                    </label>
+                    <div class="form__control" ng-if="section.editing">
+                        <div class="control-wrapper selectmenu input--medium">
+                            <select ng-model="model.NAICSLevel1Id" ng-options="item.Key as item.Code + ' | ' + item.Value for item in applicantNAICS1" class="input--medium" ng-change="getNAICS(2)" ng-validation></select>
+                        </div>
+                        <div class="control-wrapper selectmenu input--medium" ng-if="model.NAICSLevel1Id">
+                            <select ng-model="model.NAICSLevel2Id" ng-options="item.Key as item.Code + ' | ' + item.Value for item in applicantNAICS2" class="input--medium" ng-change="getNAICS(3)" ng-validation></select>
+                        </div>
+                        <div class="control-wrapper selectmenu input--medium" ng-if="model.NAICSLevel2Id">
+                            <select ng-model="model.NAICSLevel3Id" ng-options="item.Key as item.Code + ' | ' + item.Value for item in applicantNAICS3" class="input--medium" ng-change="getNAICS(4)" ng-validation></select>
+                        </div>
+                        <div class="control-wrapper selectmenu input--medium" ng-if="model.NAICSLevel3Id">
+                            <select ng-model="model.NAICSLevel4Id" ng-options="item.Key as item.Code + ' | ' + item.Value for item in applicantNAICS4" class="input--medium" ng-change="getNAICS(5)" ng-validation></select>
+                        </div>
+                        <div class="control-wrapper selectmenu input--medium" ng-if="model.NAICSLevel4Id">
+                            <select ng-model="model.NAICSLevel5Id" ng-options="item.Key as item.Code + ' | ' + item.Value for item in applicantNAICS5" class="input--medium" ng-validation></select>
+                        </div>
+                    </div>
+                    <div class="form__control" ng-if="!section.editing">
+                        <div class="control-wrapper">
+                            <text>{{ naics() }}</text>
+                        </div>
+                    </div>
+                </div>
+                <div ng-repeat="question in model.StreamEligibilityQuestions">
+                    <div class="form__group">
+                        <div class="form__label">{{question.EligibilityQuestion}}</div>
+                        <div class="form__control">
+                            <div class="form__control">
+                                <div class="form-item">
+                                    <input type="radio" id="eligibilityConfirmed-yes-{{question.Id}}" ng-value="true" ng-model="question.EligibilityAnswer" name="model.EligibilityConfirmed-{{question.Id}}" ng-editing>
+                                    <label for="eligibilityConfirmed-yes-{{question.Id}}">Yes</label>
+                                </div>
+                                <div class="form-item">
+                                    <input type="radio" id="eligibilityConfirmed-no-{{question.Id}}" ng-value="false" ng-model="question.EligibilityAnswer" name="model.EligibilityConfirmed-{{question.Id}}" ng-editing>
+                                    <label for="eligibilityConfirmed-no-{{question.Id}}">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form__group" ng-if="question.EligibilityRationaleAnswerAllowed">
+                        <div class="form__label" style="font-weight: normal; font-style: italic;">{{question.EligibilityRationaleAnswerLabel.length > 0 ? question.EligibilityRationaleAnswerLabel : '[No label]'}}</div>
+                        <div class="form__control collapsed__html" ng-click="previewEligibiltyAnswer(question.Id)" title="Click to view full text" ng-show="!section.editing">
+                            <div ng-bind-html="question.RationaleAnswer | unsafe"></div>
+                        </div>
+                        <div ng-show="section.editing">
+                            <textarea ng-model="question.RationaleAnswer" class="input--full textarea--short" ui-tinymce="tinymceOptions"></textarea>
+                        </div>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>

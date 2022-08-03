@@ -23,9 +23,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 	[RoutePrefix("Admin/Grant")]
 	public class GrantStreamController : BaseController
 	{
-		#region Variables
 		private readonly IStaticDataService _staticDataService;
-		private readonly IUserService _userService;
 		private readonly IGrantProgramService _grantProgramService;
 		private readonly IGrantStreamService _grantStreamService;
 		private readonly IAccountCodeService _accountCodeService;
@@ -33,9 +31,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		private readonly IEligibleExpenseBreakdownService _eligibleExpenseBreakdownService;
 		private readonly IServiceCategoryService _serviceCategoryService;
 		private readonly IServiceLineService _serviceLineService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a <paramtyperef name="GrantStreamController"/> object.
 		/// </summary>
@@ -57,7 +53,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			IServiceCategoryService serviceCategoryService,
 			IServiceLineService serviceLineService) : base(controllerService.Logger)
 		{
-			_userService = controllerService.UserService;
 			_staticDataService = controllerService.StaticDataService;
 			_grantProgramService = grantProgramService;
 			_grantStreamService = grantStreamService;
@@ -67,9 +62,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_serviceCategoryService = serviceCategoryService;
 			_serviceLineService = serviceLineService;
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
 		/// Grant Stream Management Dashboard endpoint.
 		/// </summary>
@@ -187,15 +180,14 @@ namespace CJG.Web.External.Areas.Int.Controllers
 					model.EligibilityRequirements = string.Empty;
 				objective.LoadHtml(model.EligibilityRequirements);
 
-				if (objective.ParseErrors.Count() > 0)
-				{
+				if (objective.ParseErrors.Any())
 					model.AddError(nameof(model.EligibilityRequirements), "Invalid HTML");
-				}
 
 				if (ModelState.IsValid)
 				{
 					var grantProgram = _grantProgramService.Get(model.GrantProgramId);
 					var grantStream = new GrantStream(model.Name, model.Objective, grantProgram);
+
 					Utilities.MapProperties(model, grantStream);
 
 					_grantStreamService.Add(grantStream);
@@ -340,6 +332,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 							dbQuestion.EligibilityQuestion = clientQuestion.EligibilityQuestion;
 							dbQuestion.IsActive = clientQuestion.IsActive;
 							dbQuestion.EligibilityPositiveAnswerRequired = clientQuestion.EligibilityPositiveAnswerRequired;
+							dbQuestion.EligibilityRationaleAnswerAllowed = clientQuestion.EligibilityRationaleAnswerAllowed;
+							dbQuestion.EligibilityRationaleAnswerLabel = clientQuestion.EligibilityRationaleAnswerLabel;
 							dbQuestion.RowSequence = clientQuestion.RowSequence;
 							dbQuestion.RowVersion = Convert.FromBase64String(clientQuestion.RowVersion);
 						}
@@ -350,6 +344,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 							newQuestion.EligibilityQuestion = clientQuestion.EligibilityQuestion;
 							newQuestion.IsActive = clientQuestion.IsActive;
 							newQuestion.EligibilityPositiveAnswerRequired = clientQuestion.EligibilityPositiveAnswerRequired;
+							newQuestion.EligibilityRationaleAnswerAllowed = clientQuestion.EligibilityRationaleAnswerAllowed;
+							newQuestion.EligibilityRationaleAnswerLabel = clientQuestion.EligibilityRationaleAnswerLabel;
 							newQuestion.RowSequence = clientQuestion.RowSequence;
 							newQuestion.GrantStreamId = clientQuestion.GrantStreamId;
 							list.Add(newQuestion);
@@ -363,6 +359,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				HandleAngularException(ex);
 			}
+			
 			// Fix up validation errors.
 			// An array returns validation errors in the text form of "StreamQuestions[0].EligibilityQuestion"
 			// and then the error text.
@@ -822,7 +819,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 			return Json(model);
 		}
-		#endregion
 		#endregion
 	}
 }
