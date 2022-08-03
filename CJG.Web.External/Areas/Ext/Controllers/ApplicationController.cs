@@ -160,15 +160,15 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					{
 						var answers = _grantStreamService.GetGrantStreamAnswers(grantApplication.Id).ToList();
 
-						foreach (var quest in model.StreamEligibilityQuestions)
+						foreach (var questionModel in model.StreamEligibilityQuestions)
 						{
-							var answer = answers.FirstOrDefault(a => a.GrantStreamEligibilityQuestionId == quest.Id);
+							var answer = answers.FirstOrDefault(a => a.GrantStreamEligibilityQuestionId == questionModel.Id);
 
 							if (answer == null)
 								continue;
 
-							quest.EligibilityAnswer = answer.EligibilityAnswer;
-							quest.RationaleAnswer = answer.RationaleAnswer;
+							questionModel.EligibilityAnswer = answer.EligibilityAnswer;
+							questionModel.RationaleAnswer = answer.RationaleAnswer;
 						}
 					}
 				}

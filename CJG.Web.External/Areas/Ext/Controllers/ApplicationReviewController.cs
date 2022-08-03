@@ -7,6 +7,8 @@ using System.Web.Mvc;
 using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
+using CJG.Web.External.Areas.Ext.Models.Applications;
+using CJG.Web.External.Areas.Int.Models.GrantStreams;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
@@ -20,7 +22,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 	[ExternalFilter]
 	public class ApplicationReviewController : BaseController
 	{
-		#region Variables
 		private readonly ISiteMinderService _siteMinderService;
 		private readonly IUserService _userService;
 		private readonly IGrantApplicationService _grantApplicationService;
@@ -29,9 +30,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		private readonly INaIndustryClassificationSystemService _naIndustryClassificationSystemService;
 		private readonly IGrantProgramService _grantProgramService;
 		private readonly IEligibleExpenseTypeService _eligibleExpenseTypeService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a ApplicationReviewController object.
 		/// </summary>
@@ -60,9 +59,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			_grantProgramService = grantProgramService;
 			_eligibleExpenseTypeService = eligibleExpenseTypeService;
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
 		/// Display the Grant Application Review View.
 		/// This View is used when Reviewing an application before submitting.
@@ -98,18 +95,42 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		[Route("Application/Review/{grantApplicationId:int}")]
 		public JsonResult GetApplicationReview(int grantApplicationId)
 		{
-			var model = new Models.Applications.ApplicationReviewViewModel();
+			var model = new ApplicationReviewViewModel();
 			try
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
 				int? userId = grantApplication.BusinessContactRoles.FirstOrDefault()?.UserId;
-				model = new Models.Applications.ApplicationReviewViewModel(grantApplication, userId == null ? null : _userService.GetUser((int)userId));
+				model = new ApplicationReviewViewModel(grantApplication, userId == null ? null : _userService.GetUser((int)userId));
+
+				PopulateStreamQuestionsAndAnswers(grantApplication, model);
 			}
 			catch (Exception ex)
 			{
 				HandleAngularException(ex, model);
 			}
 			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		private void PopulateStreamQuestionsAndAnswers(GrantApplication grantApplication, ApplicationReviewViewModel model)
+		{
+			var streamEligibilityQuestions = _grantStreamService.GetGrantStreamQuestions(grantApplication.GrantOpening.GrantStreamId)
+				.Where(l => l.IsActive)
+				.Select(n => new GrantStreamQuestionViewModel(n)).ToList();
+
+			var answers = _grantStreamService.GetGrantStreamAnswers(grantApplication.Id).ToList();
+
+			foreach (var questionModel in streamEligibilityQuestions)
+			{
+				var answer = answers.FirstOrDefault(a => a.GrantStreamEligibilityQuestionId == questionModel.Id);
+
+				if (answer == null)
+					continue;
+
+				questionModel.EligibilityAnswer = answer.EligibilityAnswer;
+				questionModel.RationaleAnswer = answer.RationaleAnswer;
+			}
+
+			model.StreamEligibilityQuestions = streamEligibilityQuestions;
 		}
 
 		/// <summary>
@@ -134,11 +155,11 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		[Route("Application/Review/Program/{grantApplicationId:int}")]
 		public JsonResult GetApplicationReviewGrantProgram(int grantApplicationId)
 		{
-			var model = new Models.Applications.ApplicationGrantProgramReviewViewModel();
+			var model = new ApplicationGrantProgramReviewViewModel();
 			try
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
-				model = new Models.Applications.ApplicationGrantProgramReviewViewModel(grantApplication);
+				model = new ApplicationGrantProgramReviewViewModel(grantApplication);
 			}
 			catch (Exception ex)
 			{
@@ -168,7 +189,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			var eligibleExpenseType = _eligibleExpenseTypeService.Get(eligibleExpenseTypeId);
 
 			if (!grantApplication.TrainingCost.EligibleCosts.Any(ec => ec.EligibleExpenseTypeId == eligibleExpenseType.Id))
-				throw new NoContentException($"The skills training component specified does not exist.");
+				throw new NoContentException("The skills training component specified does not exist.");
 
 
 			return ReviewValidation(grantApplicationId);
@@ -184,12 +205,12 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		[Route("Application/Review/Skills/Training/{grantApplicationId:int}/{eligibleExpenseTypeId:int}")]
 		public JsonResult GetApplicationReviewSkillsTraining(int grantApplicationId, int eligibleExpenseTypeId)
 		{
-			var model = new Models.Applications.ApplicationSkillsReviewViewModel();
+			var model = new ApplicationSkillsReviewViewModel();
 			try
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
 				var eligibleExpenseType = _eligibleExpenseTypeService.Get(eligibleExpenseTypeId);
-				model = new Models.Applications.ApplicationSkillsReviewViewModel(grantApplication, eligibleExpenseType);
+				model = new ApplicationSkillsReviewViewModel(grantApplication, eligibleExpenseType);
 			}
 			catch (Exception ex)
 			{
@@ -226,11 +247,11 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		[Route("Application/Review/ESS/{grantApplicationId:int}")]
 		public JsonResult GetApplicationReviewESS(int grantApplicationId)
 		{
-			var model = new Models.Applications.ApplicationESSReviewViewModel();
+			var model = new ApplicationESSReviewViewModel();
 			try
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
-				model = new Models.Applications.ApplicationESSReviewViewModel(grantApplication);
+				model = new ApplicationESSReviewViewModel(grantApplication);
 			}
 			catch (Exception ex)
 			{
@@ -267,11 +288,11 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		[Route("Application/Review/Training/Cost/{grantApplicationId:int}")]
 		public JsonResult GetApplicationReviewTrainingCost(int grantApplicationId)
 		{
-			var model = new Models.Applications.ApplicationTrainingCostReviewViewModel();
+			var model = new ApplicationTrainingCostReviewViewModel();
 			try
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
-				model = new Models.Applications.ApplicationTrainingCostReviewViewModel(grantApplication);
+				model = new ApplicationTrainingCostReviewViewModel(grantApplication);
 			}
 			catch (Exception ex)
 			{
@@ -281,7 +302,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		}
 
 		/// <summary>
-		/// Returns a View for the application submital process when a Delivery Partner is required.
+		/// Returns a View for the application submit process when a Delivery Partner is required.
 		/// </summary>
 		/// <param name="grantApplicationId"></param>
 		/// <returns></returns>
@@ -301,18 +322,18 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		}
 
 		/// <summary>
-		/// Get the data for the application submital process when a Delivery Partner is required.
+		/// Get the data for the application submit process when a Delivery Partner is required.
 		/// </summary>
 		/// <param name="grantApplicationId"></param>
 		/// <returns></returns>
 		[HttpGet, Route("Application/Review/Delivery/Partner/{grantApplicationId:int}")]
 		public JsonResult GetApplicationDeliveryPartner(int grantApplicationId)
 		{
-			var model = new Models.Applications.ApplicationDeliveryViewModel();
+			var model = new ApplicationDeliveryViewModel();
 			try
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
-				model = new Models.Applications.ApplicationDeliveryViewModel(grantApplication);
+				model = new ApplicationDeliveryViewModel(grantApplication);
 			}
 			catch (Exception ex)
 			{
@@ -328,7 +349,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <returns></returns>
 		[HttpPut]
 		[Route("Application/Review/Delivery/Partner")]
-		public JsonResult UpdateApplicationDeliveryPartner(Models.Applications.ApplicationDeliveryViewModel model)
+		public JsonResult UpdateApplicationDeliveryPartner(ApplicationDeliveryViewModel model)
 		{
 			try
 			{
@@ -345,7 +366,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				{
 					ModelState.AddModelError("DeliveryPartnerId", "Please select a Delivery Partner from the list");
 				}
-				else if (model.SelectedDeliveryPartnerServices.Count() == 0)
+				else if (!model.SelectedDeliveryPartnerServices.Any())
 				{
 					ModelState.AddModelError("SelectedDeliveryPartnerServices", "Please select Delivery Partner services from the list");
 				}
@@ -356,7 +377,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					_grantApplicationService.UpdateDeliveryPartner(grantApplication, model.DeliveryPartnerId, model.SelectedDeliveryPartnerServices);
 					_grantApplicationService.Update(grantApplication);
 
-					model = new Models.Applications.ApplicationDeliveryViewModel(grantApplication);
+					model = new ApplicationDeliveryViewModel(grantApplication);
 				}
 				else
 				{
@@ -405,12 +426,12 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		[HttpGet, Route("Application/Review/Applicant/Declaration/{grantApplicationId:int}")]
 		public JsonResult GetApplicantDeclaration(int grantApplicationId)
 		{
-			var model = new Models.Applications.ApplicantDeclarationViewModel();
+			var model = new ApplicantDeclarationViewModel();
 			try
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
 				var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
-				model = new Models.Applications.ApplicantDeclarationViewModel(grantApplication, currentUser, _grantProgramService);
+				model = new ApplicantDeclarationViewModel(grantApplication, currentUser, _grantProgramService);
 			}
 			catch (Exception ex)
 			{
@@ -418,19 +439,17 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			}
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
-		#endregion
 
-		#region Workflow Endpoints
 		/// <summary>
 		/// Submit the application and update the datasource.
 		/// </summary>
-		/// <param name="ViewModel"></param>
+		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[PreventSpam]
 		[ValidateRequestHeader]
 		[Route("Application/Review/Submit")]
-		public JsonResult SubmitApplication(Models.Applications.ApplicantDeclarationViewModel model)
+		public JsonResult SubmitApplication(ApplicantDeclarationViewModel model)
 		{
 			try
 			{
@@ -454,7 +473,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					if (grantApplication.GrantOpening.GrantStream.IncludeDeliveryPartner && !grantApplication.UsedDeliveryPartner.HasValue)
 					{
 						this.SetAlert("You must confirm Delivery Partner selection", AlertType.Warning, true);
-						model.RedirectURL = "/Ext/application/Review/Delivery/Partner/View/" + model.Id.ToString();
+						model.RedirectURL = "/Ext/application/Review/Delivery/Partner/View/" + model.Id;
 					}
 
 					_grantApplicationService.Submit(grantApplication);
@@ -495,9 +514,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			}
 			return Json(model);
 		}
-		#endregion
 
-		#region Helpers
 		/// <summary>
 		/// Generates a View for the Review and submit process.
 		/// </summary>
@@ -527,14 +544,12 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				this.SetAlert("The application Review page is not available when in current state.", AlertType.Warning, true);
 				return RedirectToAction("Index", "Home");
 			}
-			else
+
+			var grantStream = _grantStreamService.Get(grantApplication.GrantOpening.GrantStreamId);
+			if (grantStream == null || grantStream.IsActive != true)
 			{
-				var grantStream = _grantStreamService.Get(grantApplication.GrantOpening.GrantStreamId);
-				if (grantStream == null || grantStream.IsActive != true)
-				{
-					this.SetAlert("The GrantStream is inactive.", AlertType.Warning, true);
-					return RedirectToAction("Index", "Home");
-				}
+				this.SetAlert("The GrantStream is inactive.", AlertType.Warning, true);
+				return RedirectToAction("Index", "Home");
 			}
 
 			//Check if an OrganizationProfileAdmin has been created
@@ -570,6 +585,5 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			_grantApplicationService.Update(grantApplication);
 			return View();
 		}
-		#endregion
 	}
 }
