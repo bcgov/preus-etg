@@ -40,7 +40,7 @@ app.controller('GrantSelectionView', function ($scope, $attrs, $controller, $sce
   $scope.init = function () {
     return loadGrantSelections()
       .then(function (response) {
-        return $timeout(function () {
+        return $timeout(function() {
           for (var i = 0; i < $scope.model.TrainingPeriods.length; i++) {
             var period = $scope.model.TrainingPeriods[i];
             for (var j = 0; j < period.GrantOpenings.length; j++) {
@@ -48,10 +48,15 @@ app.controller('GrantSelectionView', function ($scope, $attrs, $controller, $sce
               item.GrantStream.ObjectiveHTML = $sce.trustAsHtml(item.GrantStream.Objective);
             }
           }
+
           $scope.showApplicationForm = $scope.model.TrainingPeriods && $scope.model.TrainingPeriods.length > 0;
-          $scope.isNewApplication = ($scope.model.GrantApplicationId === 0);
-          $scope.isDuplication = ($scope.model.SeedGrantApplicationId > 0);
-        })
+          $scope.isNewApplication = $scope.model.GrantApplicationId === 0;
+          $scope.isDuplication = $scope.model.SeedGrantApplicationId > 0;
+
+          if ($scope.model.GrantOpeningId !== 0 && !$scope.isNewApplication) {
+            $scope.getRequirements($scope.model.GrantOpeningId);
+          }
+        });
       })
       .catch(angular.noop);
   }
