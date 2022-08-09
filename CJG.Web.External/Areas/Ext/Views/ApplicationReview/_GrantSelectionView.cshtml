@@ -28,7 +28,7 @@
                 {{ question.EligibilityAnswer ? 'Yes' : 'No' }}
             </div>
         </div>
-        <div class="form__group" ng-if="question.EligibilityRationaleAnswerAllowed === true && question.EligibilityAnswer === true">
+        <div class="form__group" ng-if="question.EligibilityRationaleAnswerAllowed === true && question.EligibilityAnswer === true && question.RationaleAnswer">
             <div class="form__label" style="font-weight: normal; font-style: italic; padding-left: 1em;">{{ question.EligibilityRationaleAnswerLabel }}</div>
             <div class="form__control form__control__with_embedded_html">
                 <div class="form__group__with_embedded_html" ng-bind-html="question.RationaleAnswer"></div>
