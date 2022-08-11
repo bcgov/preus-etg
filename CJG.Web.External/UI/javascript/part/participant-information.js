@@ -148,7 +148,7 @@ app.controller('ParticipantInformationView', function ($scope, $controller, $att
     return new Date(year + "/" + month + "/" + day);
   }
 
-  $scope.resetIndegineous = function () {
+  $scope.resetIndigenous = function () {
     if ($scope.model.ParticipantInfoStep3ViewModel.CanadianStatus != 1 && $scope.model.ParticipantInfoStep3ViewModel.CanadianStatus != null) {
       $scope.model.ParticipantInfoStep3ViewModel.PersonAboriginal = 2;
       $scope.model.ParticipantInfoStep3ViewModel.CanadaImmigrant = null;
