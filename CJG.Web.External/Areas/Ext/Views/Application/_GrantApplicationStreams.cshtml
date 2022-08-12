@@ -70,18 +70,8 @@
 
         <div class="form__group form__group--radio-inline" ng-if="model.GrantStream.StreamEligibilityQuestions.length != 0">
             <div ng-repeat="question in model.GrantStream.StreamEligibilityQuestions">
-                <div ng-if="$first" class="form__label" ng-validation="errors.EligibilityQuestion">
-                    {{model.GrantStream.Name}} Stream Eligibility Requirements:
-                </div>
-                <div style="padding-bottom:5px;" ng-if="question.EligibilityRequirements != null && question.EligibilityRequirements.length != 0">
-                    <div ng-if="!$first"></div>
-                    <div class="form-item" ng-if="question.EligibilityRequirements.length != 0" ng-bind-html="question.EligibilityRequirements"></div>
-                    <br />
-                </div>
-                <div ng-if="question.EligibilityRequirements == null || question.EligibilityRequirements.length == 0">
-                    <div ng-if="$first"></div>
-                </div>
-                <div style="padding-left:2em;">
+                <div ng-if="$first"></div>
+                <div>
                     <label class="form__label" ng-validation="errors.EligibilityQuestion{{question.Id}}">{{question.EligibilityQuestion}}<abbr title="Required">*</abbr></label>
                     <div class="form__control">
                         <div class="form-item">
@@ -91,6 +81,15 @@
                         <div class="form-item">
                             <input type="radio" id="eligibilityConfirmed-no-{{question.Id}}" ng-value="false" ng-model="question.EligibilityAnswer" name="model.EligibilityConfirmed-{{question.Id}}">
                             <label for="eligibilityConfirmed-no-{{question.Id}}">No</label>
+                        </div>
+                    </div>
+                    <div class="form__group" ng-show="question.EligibilityRationaleAnswerAllowed === true && question.EligibilityAnswer === true">
+                        <br/>
+                        <label class="form__label" ng-if="question.EligibilityRationaleAnswerLabel">{{ question.EligibilityRationaleAnswerLabel }}</label>
+                        <div class="form__control">
+                            <textarea ng-model="question.RationaleAnswer" class="input--full textarea--medium"
+                                ng-validation="errors.RationaleAnswer{{question.Id}}"
+                                ui-tinymce="tinymceOptions"></textarea>
                         </div>
                     </div>
                 </div>

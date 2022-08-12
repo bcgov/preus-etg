@@ -15,7 +15,6 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 {
 	public class OrganizationProfileViewNewModel : BaseViewModel
 	{
-		#region Properties
 		public bool IsOrganizationProfileAdministrator { get; set; }
 		public bool CreateOrganizationProfile { get; set; }
 		public string BackURL { get; set; }
@@ -92,7 +91,7 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 		public bool RequiresBusinessLicenseDocuments { get; set; }
 
 		[MaxLength(2000, ErrorMessage = "Business website cannot exceed 2000 characters.")]
-		[Url(ErrorMessage = "Business website must be a valid, fully-qualified http or https URL.")]
+		[CustomValidation(typeof(OrganizationProfileViewModelValidation), "ValidateBusinessUrl")]
 		public string BusinessWebsite { get; set; }
 
 		[AllowHtml]
@@ -105,17 +104,17 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 
 		public string RowVersion { get; set; }
 
-		#endregion
-
-		#region Constructors
 		public OrganizationProfileViewNewModel()
 		{
 		}
 
 		public OrganizationProfileViewNewModel(Organization organization, INaIndustryClassificationSystemService naIndustryClassificationSystemService)
 		{
-			if (organization == null) throw new ArgumentNullException(nameof(organization));
-			if (naIndustryClassificationSystemService == null) throw new ArgumentNullException(nameof(naIndustryClassificationSystemService));
+			if (organization == null)
+				throw new ArgumentNullException(nameof(organization));
+
+			if (naIndustryClassificationSystemService == null)
+				throw new ArgumentNullException(nameof(naIndustryClassificationSystemService));
 
 			Utilities.MapProperties(organization, this);
 
@@ -140,9 +139,14 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 
 		public void UpdateOrganization(IUserService userService, ISiteMinderService siteMinderService, IOrganizationService organizationService)
 		{
-			if (userService == null) throw new ArgumentNullException(nameof(userService));
-			if (siteMinderService == null) throw new ArgumentNullException(nameof(siteMinderService));
-			if (organizationService == null) throw new ArgumentNullException(nameof(organizationService));
+			if (userService == null) throw
+				new ArgumentNullException(nameof(userService));
+
+			if (siteMinderService == null)
+				throw new ArgumentNullException(nameof(siteMinderService));
+
+			if (organizationService == null)
+				throw new ArgumentNullException(nameof(organizationService));
 
 			var currentUser = userService.GetUser(siteMinderService.CurrentUserGuid);
 			var organization = currentUser.Organization;
@@ -168,9 +172,7 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 			organization.NumberOfEmployeesInBC = NumberOfEmployeesInBC.Value;
 
 			if (organization.HeadOfficeAddress == null)
-			{
 				organization.HeadOfficeAddress = new Address();
-			}
 
 			organization.HeadOfficeAddress.AddressLine1 = HeadOfficeAddress.AddressLine1;
 			organization.HeadOfficeAddress.AddressLine2 = HeadOfficeAddress.AddressLine2;
@@ -255,6 +257,5 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 				}
 			}
 		}
-		#endregion
 	}
 }

@@ -13,7 +13,6 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 {
 	public class TrainingProgramViewModel : BaseViewModel
 	{
-		#region Properties
 		public string RowVersion { get; set; }
 		public int GrantApplicationId { get; set; }
 		public string GrantApplicationRowVersion { get; set; }
@@ -84,9 +83,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 
 		[CustomValidation(typeof(CourseLinkValidation), "ValidateCourseLink")]
 		public string CourseLink { get; set; }
-		#endregion
 
-		#region Constructors
 		public TrainingProgramViewModel()
 		{
 		}
@@ -116,7 +113,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 			DescriptionOfFundingRequested = trainingProgram.DescriptionOfFundingRequested;
 			MemberOfUnderRepresentedGroup = trainingProgram.MemberOfUnderRepresentedGroup;
 			CourseLink = string.IsNullOrEmpty(trainingProgram.CourseLink) ? null :
-				(trainingProgram.CourseLink.Contains("http://") || trainingProgram.CourseLink.Contains("https://") ? trainingProgram.CourseLink : "http://" + trainingProgram.CourseLink);
+				trainingProgram.CourseLink.Contains("http://") || trainingProgram.CourseLink.Contains("https://") ? trainingProgram.CourseLink : "http://" + trainingProgram.CourseLink;
 
 			if (trainingProgram.GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.EmployerGrant)
 			{
@@ -148,9 +145,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 			DeliveryEndDate = trainingProgram.GrantApplication.EndDate.ToLocalTime();
 			BusinessTrainingRelevance = trainingProgram.BusinessTrainingRelevance;
 		}
-		#endregion
 
-		#region Methods
 		/// <summary>
 		/// Add/Update the specified training program in the datasource.
 		/// </summary>
@@ -185,9 +180,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 			trainingProgram.StartDate = ((DateTime)StartDate).ToLocalMorning().ToUtcMorning();
 			trainingProgram.EndDate = ((DateTime)EndDate).ToLocalMidnight().ToUtcMidnight();
 			trainingProgram.CourseTitle = CourseTitle;
-			trainingProgram.CourseLink = !string.IsNullOrWhiteSpace(CourseLink)
-				? CourseLink.Contains("http://") || CourseLink.Contains("https://") ? CourseLink : "http://" + CourseLink
-				: null;
+			trainingProgram.CourseLink = !string.IsNullOrWhiteSpace(CourseLink) ? CourseLink.Contains("http://") || CourseLink.Contains("https://") ? CourseLink : "http://" + CourseLink : null;
 
 			// Only add/remove the specified delivery methods.
 			if (SelectedDeliveryMethodIds != null && SelectedDeliveryMethodIds.Any())
@@ -329,7 +322,5 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 
 			return trainingProgram;
 		}
-		#endregion
 	}
-
 }

@@ -140,16 +140,38 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// Get the stream eligibility requirements data.
 		/// </summary>
 		/// <param name="grantOpeningId"></param>
+		/// <param name="grantApplicationId">Optional. If provided, will return answers to Eligibility Questions on application.</param>
 		/// <returns></returns>
 		[HttpGet]
-		[Route("Application/Grant/Stream/Eligibility/Requirements/{grantOpeningId}")]
-		public JsonResult GetStreamEligibilityRequirements(int grantOpeningId)
+		[Route("Application/Grant/Stream/Eligibility/Requirements/{grantOpeningId}/{grantApplicationId?}")]
+		public JsonResult GetStreamEligibilityRequirements(int grantOpeningId, int? grantApplicationId = 0)
 		{
 			var model = new GrantStreamEligibilityViewModel();
+
 			try
 			{
 				var grantOpening = _grantOpeningService.Get(grantOpeningId);
 				model = new GrantStreamEligibilityViewModel(grantOpening.GrantStream, _grantStreamService);
+
+				if (grantApplicationId.HasValue && grantApplicationId.Value > 0)
+				{
+					var grantApplication = _grantApplicationService.Get(grantApplicationId.Value);
+					if (grantApplication != null)
+					{
+						var answers = _grantStreamService.GetGrantStreamAnswers(grantApplication.Id).ToList();
+
+						foreach (var questionModel in model.StreamEligibilityQuestions)
+						{
+							var answer = answers.FirstOrDefault(a => a.GrantStreamEligibilityQuestionId == questionModel.Id);
+
+							if (answer == null)
+								continue;
+
+							questionModel.EligibilityAnswer = answer.EligibilityAnswer;
+							questionModel.RationaleAnswer = answer.RationaleAnswer;
+						}
+					}
+				}
 			}
 			catch (Exception ex)
 			{
@@ -208,13 +230,10 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				}
 
 				if (model.ProgramType == ProgramTypes.WDAService && !model.HasRequestedAdditionalFunding.HasValue)
-				{
 					ModelState.AddModelError("AdditionalFundingQuestion", "You must select whether you have previously received or are requesting additional funding.");
-				}
-				if ((!model.HasRequestedAdditionalFunding) ?? true)
-				{
+
+				if (!model.HasRequestedAdditionalFunding ?? true)
 					ModelState.Remove("DescriptionOfFundingRequested");
-				}
 
 				ModelState.Remove("AlternatePhoneViewModel.PhoneNumber");
 				ModelState.Remove("AlternatePhoneViewModel.Phone");
@@ -279,7 +298,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 										GrantApplication = grantApplication,
 										GrantApplicationId = grantApplication.Id,
 										GrantStreamEligibilityQuestionId = question.Id,
-										EligibilityAnswer = clientQuestion.EligibilityAnswer.GetValueOrDefault(false)
+										EligibilityAnswer = clientQuestion.EligibilityAnswer.GetValueOrDefault(false),
+										RationaleAnswer = clientQuestion.RationaleAnswer
 									});
 								}
 							}
@@ -287,18 +307,16 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					}
 					_grantApplicationService.Add(grantApplication);
 
-
-					if(model.SeedGrantApplicationId > 0)
+					if (model.SeedGrantApplicationId > 0)
                     {
 						//update grant app based on seed grant app
 						var newId = _grantApplicationService.DuplicateApplication(grantApplication, model.SeedGrantApplicationId);
 						grantApplication = _grantApplicationService.Get(newId);
 					}
 
-
 					model = new ApplicationStartViewModel(grantApplication, _grantOpeningService, _grantProgramService, _staticDataService, _grantStreamService)
 					{
-						RedirectURL = Url.Action(nameof(ApplicationOverviewView), new { grantApplicationId = grantApplication.Id })
+						RedirectURL = Url.Action("ApplicationOverviewView", new { grantApplicationId = grantApplication.Id })
 					};
 				}
 				else
@@ -439,7 +457,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 										GrantApplication = grantApplication,
 										GrantApplicationId = grantApplication.Id,
 										GrantStreamEligibilityQuestionId = question.Id,
-										EligibilityAnswer = clientQuestion.EligibilityAnswer.GetValueOrDefault(false)
+										EligibilityAnswer = clientQuestion.EligibilityAnswer.GetValueOrDefault(false),
+										RationaleAnswer = clientQuestion.RationaleAnswer
 									});
 								}
 							}
@@ -606,15 +625,13 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					_organizationService.ClearOrganizationOldNaicsCode(currentUser.Organization.Id);
 				}
 
-				this.SetAlerts("Your organization’s Canada North American Industry Classification System (NAICS) codes are currently out of date. " +
-					"The Profile Administrator (individual responsible for your Organization Profile) " +
-					"will need to update the NAICS codes on your Organization Profile before submitting an application.", AlertType.Warning);
+				this.SetAlerts("Your organization’s Canada North American Industry Classification System (NAICS) codes are currently out of date. The Profile Administrator (individual responsible for your Organization Profile) will need to update the NAICS codes on your Organization Profile before submitting an application.", AlertType.Warning);
 			}
 
 			if (_organizationService.RequiresBusinessLicenseDocuments(currentUser.Organization.Id))
 			{
 				_logger.Info($"The Organization is missing up-to-date Business License Documents - {_siteMinderService.CurrentUserGuid}");
-				this.SetAlerts("Your organization’s Business Information Documents (e.g. business licence) are currently out of date. Please click on your Organization Profile to update.", AlertType.Warning);
+				this.SetAlerts("Your organization’s Business Information Documents are currently out of date. The Profile Administrator (individual responsible for your Organization Profile) will need to update these on your Organization Profile before submitting an application.", AlertType.Warning);
 			}
 
 			return View(SidebarViewModelFactory.Create(grantApplication, ControllerContext));

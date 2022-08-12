@@ -496,6 +496,7 @@ namespace CJG.Core.Entities
 		[Obsolete]
 		public bool? InsuranceConfirmed { get; set; }
 
+		// This is a CWRG-only question - not used in ETG
 		public bool? HasRequestedAdditionalFunding { get; set; }
 
 		public string DescriptionOfFundingRequested { get; set; }

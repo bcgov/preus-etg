@@ -12,7 +12,7 @@ namespace CJG.Web.External.Areas.Ext.Models
 {
 	public class ApplicationStartViewModel : BaseViewModel
 	{
-		#region Properties		
+		#region Properties
 
 		public int GrantApplicationId { get { return Id; } set { Id = value; } }
 
@@ -136,7 +136,8 @@ namespace CJG.Web.External.Areas.Ext.Models
 					.Where(l => l.IsActive)
 					.Select(n => new GrantStreamQuestionViewModel(n)).ToList()
 			};
-			// Add answers to the questions. Note that the actual questions  could change (add new, or Inactive an old one).
+
+			// Add answers to the questions. Note that the actual questions could change (add new, or Inactive an old one).
 			foreach (var answer in grantApplication.GrantStreamEligibilityAnswers)
 			{
 				foreach (var streamQ in GrantStream.StreamEligibilityQuestions)

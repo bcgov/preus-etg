@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Web.Mvc;
-using CJG.Core.Entities;
 
 namespace CJG.Web.External.Areas.Part.Models
 {
@@ -45,7 +43,7 @@ namespace CJG.Web.External.Areas.Part.Models
 		[CustomValidation(typeof(ParticipantInfoStep3VmValidation), "ValidateFromCountry")]
 		public string FromCountry { get; set; }
 
-		[Range(1, 3, ErrorMessage = "Gender field is required")]
+		[Range(1, 4, ErrorMessage = "Gender field is required")]
 		public int Gender { get; set; }
 
 		[CustomValidation(typeof(ParticipantInfoStep3VmValidation), "ValidateYouthInCare")]

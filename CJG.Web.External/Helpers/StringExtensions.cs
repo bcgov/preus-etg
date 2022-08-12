@@ -191,8 +191,6 @@ namespace CJG.Web.External.Helpers
 			return number.ToString("C", nfi);
 		}
 
-		
-
 		/// <summary>
 		/// Custom percentage formating that doesn't round values but truncate for given number of decimal points. 
 		/// Supports only culture invariant predefined format "0.0%;(0.0)%"

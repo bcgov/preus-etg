@@ -27,12 +27,6 @@
                     <h1 class="header--large">Start <span class="text--lowercase">a</span> new application</h1>
                 </div>                
                 <div class="notice notice--icon">
-                    <div ng-if="model.ProgramType === @((int) ProgramTypes.WDAService)">
-                        <p><strong>Before you start:</strong> As a creator of a grant application, you must have the authority in your organization to enter into a grant agreement with the Ministry.</p>
-                        <p>You will be required to make such a declaration when submitting an application.</p>
-                        <p><strong>Note:</strong> A business BCeID cannot be shared with another party. Another party cannot apply on your behalf, even if they are a service provider you are engaging to provide training. If you require support to complete an application, please send an email to <a href="mailto:CWRG@gov.bc.ca">CWRG@gov.bc.ca</a>.</p>
-                        <p>If you are a grant writer, please send an email to <a href="mailto:CWRG@gov.bc.ca">CWRG@gov.bc.ca</a> with your contact information and the name of the organization on whose behalf you are completing this application.</p>
-                    </div>
                     <div ng-if="model.ProgramType === @((int) ProgramTypes.EmployerGrant)">
                         <p><strong>Before you start:</strong> Employers or authorized employees of the applicant employer must submit their application on their own behalf, using their Business BCeID.</p>
                         <p>Employers are not permitted to share their BCeID user login ID and third parties (e.g. training providers, fee-based service providers) cannot apply on an employer’s behalf.</p>

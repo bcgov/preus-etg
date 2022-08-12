@@ -1,7 +1,10 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
-using CJG.Core.Interfaces.Service.Settings;
 using CJG.Web.External.Areas.Ext.Models;
 using CJG.Web.External.Areas.Ext.Models.Reports;
 using CJG.Web.External.Areas.Int.Models;
@@ -10,17 +13,13 @@ using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
 using CJG.Web.External.Models.Shared.Reports;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
-	/// <summary>
-	/// CompletionReportingController class, provides endpoints for completion reporting.
-	/// </summary>
-	[RouteArea("Ext")]
+    /// <summary>
+    /// CompletionReportingController class, provides endpoints for completion reporting.
+    /// </summary>
+    [RouteArea("Ext")]
 	[ExternalFilter]
 	public class CompletionReportingController : BaseController
 	{

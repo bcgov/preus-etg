@@ -192,43 +192,53 @@
                         </div>
                     </div>
                 </div>
-            <div class="form__group">
-                <div ng-class="(model.RequiresBusinessLicenseDocuments || errors.BusinessLicenseDocumentAttachments) ? 'has-error padded-error' : '' ">
-                    <h4>Business Information Documents</h4>
-                    <div class="notice notice--icon" ng-if="model.IsOrganizationProfileAdministrator">
-                        <p>To be eligible, employers must have been fully operational for at least one year at the time of application. Please provide a copy of your business licence. If your current licence does not demonstrate one full year of operation at the time of application, please provide your business licence for both the current and previous years. Employers operating without a business licence are still eligible to apply but must provide alternative documentation that clearly demonstrates that they have been fully operational for at least one year at the time of application. If you have questions about please contact <a href="mailto: ETG@gov.bc.ca">ETG@gov.bc.ca</a>.</p>
-                    </div>
-                    <p ng-if="model.IsOrganizationProfileAdministrator">Accepted file types: PDF, JPG, JPEG, PNG, GIF.</p>
 
-                    <div ng-if="model.BusinessLicenseDocumentAttachments">
-                        <table style="width: 100%;">
-                            <tr ng-repeat="attachment in model.BusinessLicenseDocumentAttachments">
-                                <td style="width: 60%; vertical-align: top; word-wrap: break-word; word-break: break-all;">
-                                    <a ng-if="attachment.Id" target="_blank" href="/Ext/Organization/BusinessLicense/Download/{{attachment.Id}}">{{attachment.FileName}}</a>
-                                    <span ng-if="!attachment.Id">{{attachment.FileName}}</span>
-                                    <br/>
-                                    {{attachment.Description}}
-                                </td>
-                                <td style="width: 40%; vertical-align: top">
-                                    <button class="btn btn--secondary pull-right margin-left-10" ng-if="model.IsOrganizationProfileAdministrator" ng-click="removeAttachment($index)">Remove</button>
-                                    @*<button class="btn btn--secondary pull-right margin-left-10" ng-if="model.IsOrganizationProfileAdministrator" ng-click="changeAttachment(attachment)">Change</button>*@
-                                </td>
-                            </tr>
-                        </table>
+                <div class="form__group">
+                    <div ng-class="errors.BusinessLicenseDocumentAttachments ? 'has-error padded-error' : '' ">
+                        <h4>Business Information Documents *</h4>
+                        <div class="notice notice--icon" ng-if="model.IsOrganizationProfileAdministrator">
+                            <p>To be eligible, employers must have been fully operational for at least one year at the time of application. Please provide a copy of your business licence. If your current licence does not demonstrate one full year of operation at the time of application, please provide your business licence for both the current and previous years. Employers operating without a business licence are still eligible to apply but must provide alternative documentation that clearly demonstrates that they have been fully operational for at least one year at the time of application. If you have questions about please contact <a href="mailto: ETG@gov.bc.ca">ETG@gov.bc.ca</a>.</p>
+                        </div>
+                        <p ng-if="model.IsOrganizationProfileAdministrator">Accepted file types: PDF, JPG, JPEG, PNG, GIF.</p>
+
+                        <div ng-if="model.BusinessLicenseDocumentAttachments">
+                            <table style="width: 100%;">
+                                <tr ng-repeat="attachment in model.BusinessLicenseDocumentAttachments">
+                                    <td style="width: 60%; vertical-align: top; word-wrap: break-word; word-break: break-all;">
+                                        <a ng-if="attachment.Id" target="_blank" href="/Ext/Organization/BusinessLicense/Download/{{attachment.Id}}">{{attachment.FileName}}</a>
+                                        <span ng-if="!attachment.Id">{{attachment.FileName}}</span>
+                                        <br/>
+                                        {{attachment.Description}}
+                                    </td>
+                                    <td style="width: 40%; vertical-align: top">
+                                        <button class="btn btn--secondary pull-right margin-left-10" ng-if="model.IsOrganizationProfileAdministrator" ng-click="removeAttachment($index)">Remove</button>
+                                        @*<button class="btn btn--secondary pull-right margin-left-10" ng-if="model.IsOrganizationProfileAdministrator" ng-click="changeAttachment(attachment)">Change</button>*@
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div ng-if="model.BusinessLicenseDocumentAttachments == null || model.BusinessLicenseDocumentAttachments.length === 0">
+                            <p>No business information documents have been provided.</p>
+                        </div>
+                        <div >
+                            <button class="btn btn--secondary" ng-click="addAttachment()" data-disableonsubmit="false" ng-if="model.IsOrganizationProfileAdministrator">Add Document</button>
+                        </div>
                     </div>
-                    <div ng-if="model.BusinessLicenseDocumentAttachments == null || model.BusinessLicenseDocumentAttachments.length === 0">
-                        <p>No business information documents have been provided.</p>
-                    </div>
-                    <div >
-                        <button class="btn btn--secondary" ng-click="addAttachment()" data-disableonsubmit="false" ng-if="model.IsOrganizationProfileAdministrator">Add Document</button>
-                    </div>
+                    <span ng-if="errors.BusinessLicenseDocumentAttachments" class="field-validation-error" ng-bind-html="errors.BusinessLicenseDocumentAttachments"></span>
                 </div>
-            </div>
 
                 <div class="form__group">
                     <label class="form__label">Business Website (if applicable)</label>
                     <div class="form__control">
                         <input type="text" class="input--full" ng-model="model.BusinessWebsite" maxlength="2000" ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                        <div ng-if="model.BusinessWebsite !== null && model.BusinessWebsite !== '' " class="control-wrapper form-control">
+                            <span ng-if="model.BusinessWebsite.indexOf('http') > -1  || model.BusinessWebsite.indexOf('https') > -1">
+                                <a href="{{model.BusinessWebsite}}" target="_blank" ng-model="model.BusinessWebsite">{{model.BusinessWebsite}}</a>
+                            </span>
+                            <span ng-if="!(model.BusinessWebsite.indexOf('http') > -1  || model.BusinessWebsite.indexOf('https') > -1)">
+                                <a href="http://{{model.BusinessWebsite}}" target="_blank" ng-model="model.BusinessWebsite">http://{{model.BusinessWebsite}}</a>
+                            </span>
+                        </div>
                     </div>
                 </div>
 

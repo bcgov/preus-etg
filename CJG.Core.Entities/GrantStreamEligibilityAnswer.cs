@@ -51,6 +51,11 @@ namespace CJG.Core.Entities
 		[Required]
 		public bool EligibilityAnswer { get; set; }
 
+		/// <summary>
+		/// get/set - Optional Rationale when EligibilityAnswer is 'yes'. Will contain HTML.
+		/// </summary>
+		public string RationaleAnswer { get; set; }
+
 		#endregion
 
 		#region Constructors

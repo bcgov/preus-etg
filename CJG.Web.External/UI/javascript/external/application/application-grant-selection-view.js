@@ -40,7 +40,7 @@ app.controller('GrantSelectionView', function ($scope, $attrs, $controller, $sce
   $scope.init = function () {
     return loadGrantSelections()
       .then(function (response) {
-        return $timeout(function () {
+        return $timeout(function() {
           for (var i = 0; i < $scope.model.TrainingPeriods.length; i++) {
             var period = $scope.model.TrainingPeriods[i];
             for (var j = 0; j < period.GrantOpenings.length; j++) {
@@ -48,10 +48,15 @@ app.controller('GrantSelectionView', function ($scope, $attrs, $controller, $sce
               item.GrantStream.ObjectiveHTML = $sce.trustAsHtml(item.GrantStream.Objective);
             }
           }
+
           $scope.showApplicationForm = $scope.model.TrainingPeriods && $scope.model.TrainingPeriods.length > 0;
-          $scope.isNewApplication = ($scope.model.GrantApplicationId === 0);
-          $scope.isDuplication = ($scope.model.SeedGrantApplicationId > 0);
-        })
+          $scope.isNewApplication = $scope.model.GrantApplicationId === 0;
+          $scope.isDuplication = $scope.model.SeedGrantApplicationId > 0;
+
+          if ($scope.model.GrantOpeningId !== 0 && !$scope.isNewApplication) {
+            $scope.getRequirements($scope.model.GrantOpeningId);
+          }
+        });
       })
       .catch(angular.noop);
   }
@@ -96,9 +101,23 @@ app.controller('GrantSelectionView', function ($scope, $attrs, $controller, $sce
     $scope.currentTrainingPeriod = getCurrentTrainingPeriod();
     $scope.model.GrantStream = null;  // Required: If model not cleared, the <validation> element for eligibility questions keeps the old ng-model ID and the errors do not display
     return $scope.load({
-      url: '/Ext/Application/Grant/Stream/Eligibility/Requirements/' + $scope.model.GrantOpeningId,
+      url: '/Ext/Application/Grant/Stream/Eligibility/Requirements/' + $scope.model.GrantOpeningId + '/' + $scope.model.GrantApplicationId,
       set: 'model.GrantStream'
     })
       .catch(angular.noop);
   }
+
+  $scope.tinymceOptions = {
+    plugins: 'link code autoresize preview fullscreen lists advlist anchor paste',
+    toolbar: 'undo redo | bold italic | formatselect | alignleft aligncenter alignright | outdent indent | numlist bullist | anchor | preview | fullscreen | code ',
+    forced_root_block: 'p',
+    browser_spellcheck: true,
+    contextmenu: false,
+    setup: function (ed) {
+      ed.on('init', function (ed) {
+        $('div.tox-tinymce-aux').css('z-index', '999999');
+        $('.tox.tox-tinymce').css('min-height', '250px');
+      });
+    }
+  };
 });

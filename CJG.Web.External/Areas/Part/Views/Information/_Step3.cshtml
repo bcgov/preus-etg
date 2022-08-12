@@ -3,7 +3,7 @@
     <p class="subheader--step">Step 3 of {{model.ParticipantInfoStep0ViewModel.TotalSteps}}</p>
     <h2 class="subheader">Demographic information</h2>
 
-    @Html.DropDownList(new FormControl()
+    @Html.DropDownList(new FormControl
     {
         Label = "Canadian residency status <abbr title='Required'>*</abbr>",
         Model = "model.ParticipantInfoStep3ViewModel.CanadianStatus",
@@ -11,16 +11,16 @@
         CssClass = "input--medium",
         IsInnerModel = true,
         DefaultOverride = true,
-        OnChange = "resetIndegineous()"
+        OnChange = "resetIndigenous()"
     })
     <div ng-if="model.ParticipantInfoStep3ViewModel.CanadianStatus == 1" class="form__group form__group--radio-inline">
         <div class="form__label">
             Do you consider yourself as an Indigenous person <abbr title="Required">*</abbr>
         </div>
-
+        
         <div>
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
+                @Html.RadioButton(new FormControl
            {
                Label = "Yes",
                Id = "PersonAboriginalYes",
@@ -31,7 +31,7 @@
             </div>
 
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
+                @Html.RadioButton(new FormControl
            {
                Label = "No",
                Id = "PersonAboriginalNo",
@@ -42,7 +42,7 @@
             </div>
 
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
+                @Html.RadioButton(new FormControl
            {
                Label = "Prefer not to answer",
                Id = "PersonAboriginalPreferNot",
@@ -58,7 +58,7 @@
     </div>
 
     <div ng-show="model.ParticipantInfoStep3ViewModel.PersonAboriginal == 1">
-        @Html.DropDownList(new FormControl()
+        @Html.DropDownList(new FormControl
    {
        Label = "Are you First Nations, Métis, or Inuit <abbr title='Required'>*</abbr>",
        Model = "model.ParticipantInfoStep3ViewModel.AboriginalBand",
@@ -77,7 +77,7 @@
 
                 <div>
                     <div class="form-item">
-                        @Html.RadioButton(new FormControl()
+                        @Html.RadioButton(new FormControl
                         {
                             Label = "On Reserve",
                             Id = "LiveOnReserveOn",
@@ -87,7 +87,7 @@
                     </div>
 
                     <div class="form-item">
-                        @Html.RadioButton(new FormControl()
+                        @Html.RadioButton(new FormControl
                         {
                             Label = "Off Reserve",
                             Id = "LiveOnReserveOff",
@@ -102,8 +102,7 @@
         </div>
     </div>
 
-    <div ng-if="model.ParticipantInfoStep3ViewModel.PersonAboriginal == 2 ||
-         model.ParticipantInfoStep3ViewModel.PersonAboriginal == 3"
+    <div ng-if="model.ParticipantInfoStep3ViewModel.PersonAboriginal == 2 || model.ParticipantInfoStep3ViewModel.PersonAboriginal == 3"
          class="form__group form__group--radio-inline">
         <div class="form__label">
             Did you immigrate to Canada <abbr title="Required">*</abbr>
@@ -111,25 +110,25 @@
 
         <div>
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
-           {
-               Label = "Yes",
-               Id = "CanadaImmigrantYes",
-               Model = "model.ParticipantInfoStep3ViewModel.CanadaImmigrant",
-               Value = "true",
-               OnChange = "resetHiddenControlsforCanadaImmigrant()"
-           })
+                @Html.RadioButton(new FormControl
+                {
+                    Label = "Yes",
+                    Id = "CanadaImmigrantYes",
+                    Model = "model.ParticipantInfoStep3ViewModel.CanadaImmigrant",
+                    Value = "true",
+                    OnChange = "resetHiddenControlsforCanadaImmigrant()"
+                })
             </div>
 
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
-           {
-               Label = "No",
-               Id = "CanadaImmigrantNo",
-               Model = "model.ParticipantInfoStep3ViewModel.CanadaImmigrant",
-               Value = "false",
-               OnChange = "resetHiddenControlsforCanadaImmigrant()"
-           })
+                @Html.RadioButton(new FormControl
+                {
+                    Label = "No",
+                    Id = "CanadaImmigrantNo",
+                    Model = "model.ParticipantInfoStep3ViewModel.CanadaImmigrant",
+                    Value = "false",
+                    OnChange = "resetHiddenControlsforCanadaImmigrant()"
+                })
             </div>
 
             @Html.ValidationError("model.ParticipantInfoStep3ViewModel.CanadaImmigrant", true)
@@ -137,7 +136,7 @@
 
 
         <div ng-show="model.ParticipantInfoStep3ViewModel.CanadaImmigrant">
-            @Html.TextBoxBlock(new FormControl()
+            @Html.TextBoxBlock(new FormControl
             {
                 Label = "What year did you come to Canada <abbr title='Required'>*</abbr>",
                 Model = "model.ParticipantInfoStep3ViewModel.YearToCanada",
@@ -148,35 +147,32 @@
         </div>
     </div>
 
-    <div ng-if="model.ParticipantInfoStep3ViewModel.PersonAboriginal == 2 || 
-         model.ParticipantInfoStep3ViewModel.PersonAboriginal == 3" 
-         class="form__group form__group--radio-inline">
+    <div ng-if="model.ParticipantInfoStep3ViewModel.PersonAboriginal == 2 || model.ParticipantInfoStep3ViewModel.PersonAboriginal == 3" class="form__group form__group--radio-inline">
         <div class="form__label">
             Did you come to Canada as a refugee <abbr title="Required">*</abbr>
         </div>
-
         <div>
             <div class="form-item">
               
-                @Html.RadioButton(new FormControl()
-           {
-               Label = "Yes",
-               Id = "CanadaRefugeeYes",
-               Model = "model.ParticipantInfoStep3ViewModel.CanadaRefugee",
-               Value = "true",
-               OnChange = "resetHiddenControlsforCanadaRefugee()"
-           })
+                @Html.RadioButton(new FormControl
+                {
+                    Label = "Yes",
+                    Id = "CanadaRefugeeYes",
+                    Model = "model.ParticipantInfoStep3ViewModel.CanadaRefugee",
+                    Value = "true",
+                    OnChange = "resetHiddenControlsforCanadaRefugee()"
+                })
             </div>
 
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
-           {
-               Label = "No",
-               Id = "CanadaRefugeeNo",
-               Model = "model.ParticipantInfoStep3ViewModel.CanadaRefugee",
-               Value = "false",
-               OnChange = "resetHiddenControlsforCanadaRefugee()"
-           })
+                @Html.RadioButton(new FormControl
+                {
+                    Label = "No",
+                    Id = "CanadaRefugeeNo",
+                    Model = "model.ParticipantInfoStep3ViewModel.CanadaRefugee",
+                    Value = "false",
+                    OnChange = "resetHiddenControlsforCanadaRefugee()"
+                })
             </div>
 
             @Html.ValidationError("model.ParticipantInfoStep3ViewModel.CanadaRefugee", true)
@@ -184,7 +180,7 @@
     </div>
 
     <div ng-show="model.ParticipantInfoStep3ViewModel.CanadaRefugee">
-        @Html.DropDownList(new FormControl()
+        @Html.DropDownList(new FormControl
         {
             Label = "From what country did you immigrate <abbr title='Required'>*</abbr>",
             Model = "model.ParticipantInfoStep3ViewModel.FromCountry",
@@ -195,16 +191,13 @@
         })
     </div>
 
-    <div ng-if="model.ParticipantInfoStep3ViewModel.PersonAboriginal == 2 || 
-         model.ParticipantInfoStep3ViewModel.PersonAboriginal == 3" 
-         class="form__group form__group--radio-inline">
+    <div ng-if="model.ParticipantInfoStep3ViewModel.PersonAboriginal == 2 || model.ParticipantInfoStep3ViewModel.PersonAboriginal == 3" class="form__group form__group--radio-inline">
         <div class="form__label">
             Do you identify yourself as a visible minority <abbr title="Required">*</abbr>
         </div>
-
         <div>
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
+                @Html.RadioButton(new FormControl
                 {
                     Label = "Yes",
                     Id = "VisibleMinorityYes",
@@ -214,7 +207,7 @@
             </div>
 
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
+                @Html.RadioButton(new FormControl
                 {
                     Label = "No",
                     Id = "VisibleMinorityNo",
@@ -224,7 +217,7 @@
             </div>
 
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
+                @Html.RadioButton(new FormControl
                 {
                     Label = "Prefer not to answer",
                     Id = "VisibleMinorityPreferNot",
@@ -249,10 +242,9 @@
         <div class="form__label">
             Gender <abbr title="Required">*</abbr>
         </div>
-
         <div>
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
+                @Html.RadioButton(new FormControl
                 {
                     Label = "Male",
                     Id = "GenderMale",
@@ -262,7 +254,7 @@
             </div>
 
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
+                @Html.RadioButton(new FormControl
                 {
                     Label = "Female",
                     Id = "GenderFemale",
@@ -270,9 +262,19 @@
                     Value = "2"
                 })
             </div>
+            
+            <div class="form-item">
+                @Html.RadioButton(new FormControl
+                {
+                    Label = "Unspecified",
+                    Id = "GenderPreferUnspecified",
+                    Model = "model.ParticipantInfoStep3ViewModel.Gender",
+                    Value = "4"
+                })
+            </div>
 
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
+                @Html.RadioButton(new FormControl
                 {
                     Label = "Prefer not to answer",
                     Id = "GenderPreferNot",
@@ -293,7 +295,7 @@
 
             <div>
                 <div class="form-item">
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "Yes",
                         Id = "YouthInCareYes",
@@ -303,7 +305,7 @@
                 </div>
 
                 <div class="form-item">
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "No",
                         Id = "YouthInCareNo",
@@ -324,7 +326,7 @@
 
         <div>
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
+                @Html.RadioButton(new FormControl
                 {
                     Label = "Yes",
                     Id = "PersonDisabilityYes",
@@ -334,7 +336,7 @@
             </div>
 
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
+                @Html.RadioButton(new FormControl
                 {
                     Label = "No",
                     Id = "PersonDisabilityNo",
@@ -357,7 +359,7 @@
         </div>
     </div>
     
-    @Html.DropDownList(new FormControl()
+    @Html.DropDownList(new FormControl
     {
         Label = "Marital Status",
         Model = "model.ParticipantInfoStep3ViewModel.MaritalStatusId",
@@ -367,7 +369,7 @@
         DefaultOverride = true
     })
 
-    @Html.TextBoxBlock(new FormControl()
+    @Html.TextBoxBlock(new FormControl
     {
         Label = "Number of Dependents",
         Model = "model.ParticipantInfoStep3ViewModel.NumberOfDependents",
@@ -375,7 +377,7 @@
         Size = "input--small"
     })
 
-    @Html.DropDownList(new FormControl()
+    @Html.DropDownList(new FormControl
     {
         Label = "Official Language <abbr title='Required'>*</abbr>",
         Model = "model.ParticipantInfoStep3ViewModel.FederalOfficialLanguageId",
@@ -385,7 +387,7 @@
         DefaultOverride = true
     })
 
-    @Html.DropDownList(new FormControl()
+    @Html.DropDownList(new FormControl
     {
         Label = "Highest level of education achieved <abbr title='Required'>*</abbr>",
         Model = "model.ParticipantInfoStep3ViewModel.EducationLevel",
@@ -396,7 +398,7 @@
     })
 
     <div ng-show="model.ParticipantInfoStep3ViewModel.EducationLevel > 1">
-        @Html.TextBoxBlock(new FormControl()
+        @Html.TextBoxBlock(new FormControl
         {
             Label = "What is the name of the last high school you attended <abbr title='Required'>*</abbr>",
             Model = "model.ParticipantInfoStep3ViewModel.LastHighSchoolName",
