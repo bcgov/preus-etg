@@ -21,13 +21,10 @@ namespace CJG.Web.External.Areas.Int.Controllers
 	[AuthorizeAction(Privilege.AM1, Privilege.AM2, Privilege.AM3, Privilege.AM4, Privilege.AM5)]
 	public class TrainingProviderHistoryController : BaseController
 	{
-		#region Variables
 		private readonly ITrainingProviderInventoryService _trainingProviderInventoryService;
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IGrantApplicationService _grantApplicationService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="TrainingProviderHistoryController"/> object.
 		/// </summary>
@@ -45,7 +42,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_authorizationService = authorizationService;
 			_grantApplicationService = grantApplicationService;
 		}
-		#endregion
 
 		#region Endpoints
 		/// <summary>
@@ -75,9 +71,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 				model = new TrainingProviderGrantFileHistoryViewModel(trainingProviderInventory)
 				{
-					AllowDeleteTrainingProvider = User.HasPrivilege(Privilege.TP2) && (_grantApplicationService.GetTotalGrantApplications(trainingProviderId) == 0),
-					UrlReferrer = Request.UrlReferrer?.AbsolutePath ??
-					   new UrlHelper(this.ControllerContext.RequestContext).Action(nameof(TrainingProviderInventoryController.TrainingProvidersView), nameof(TrainingProviderInventoryController).Replace("Controller", ""))
+					AllowDeleteTrainingProvider = User.HasPrivilege(Privilege.TP2)
+					                              && _grantApplicationService.GetTotalGrantApplications(trainingProviderId) == 0,
+					UrlReferrer = Request.UrlReferrer?.AbsolutePath ?? new UrlHelper(ControllerContext.RequestContext).Action("TrainingProvidersView", "TrainingProviderInventory")
 				};
 			}
 			catch (Exception ex)
@@ -90,6 +86,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Get grant file histories for training provider inventory.
 		/// </summary>
+		/// <param name="trainingProviderInventoryId"></param>
 		/// <param name="page"></param>
 		/// <param name="quantity"></param>
 		/// <param name="search"></param>
@@ -103,17 +100,17 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			try
 			{
 				var grantApplications = _grantApplicationService.GetGrantApplications(trainingProviderInventoryId, search);
-				var orderby = "FileNumber desc";
+				var orderBy = "FileNumber desc";
 
 				if (string.IsNullOrEmpty(sortby) == false)
-				{
-					orderby = sortDesc ? sortby + " desc" : sortby + " asc";
-				}
+					orderBy = sortDesc ? sortby + " desc" : sortby + " asc";
 
-				var trainingProviderGrants = grantApplications.ToList().Select(o => new TrainingProviderGrantFileHistoryDataTableModel(o)).AsQueryable();
+				var trainingProviderGrants = grantApplications.ToList()
+					.Select(o => new TrainingProviderGrantFileHistoryDataTableModel(o))
+					.AsQueryable();
 
 				var filtered = trainingProviderGrants
-					.OrderByProperty(orderby)
+					.OrderByProperty(orderBy)
 					.Skip((page - 1) * quantity)
 					.Take(quantity)
 					.ToArray();
