@@ -809,21 +809,77 @@ namespace CJG.Application.Services
 		public IOrderedQueryable<GrantApplication> GetGrantApplications(int trainingProviderInventoryId, string search)
 		{
 			var defaultGrantProgramId = GetDefaultGrantProgramId();
+
+			// Get all providers that are directly tied to this 'official' Training Provider
+			var firstPartyProviders = _dbContext.TrainingProviders
+				.Where(t => t.TrainingProviderInventoryId == trainingProviderInventoryId);
+
+			var providerIds = firstPartyProviders
+				.Select(p => p.Id)
+				.ToList();
+
+			var invalidRequestStates = new List<TrainingProviderStates>
+			{
+				TrainingProviderStates.Denied,
+				TrainingProviderStates.Incomplete,
+				TrainingProviderStates.RequestDenied
+			};
+
+			// Get all Training Providers that have a change request flagged on them, and are in a valid state
+			var providersWithChanges = _dbContext.TrainingProviders
+				.Where(p => p.OriginalTrainingProviderId != null)
+				.Where(p => !invalidRequestStates.Contains(p.TrainingProviderState));
+
+			// For each 'change requested' provider, remove that provider from the list first party providers
+			foreach (var changeProvider in providersWithChanges)
+			{
+				if (!changeProvider.OriginalTrainingProviderId.HasValue)
+					continue;
+
+				// Remove provider that has been replaced in a Change Request
+				providerIds.Remove(changeProvider.OriginalTrainingProviderId.Value);
+				providerIds.Add(changeProvider.Id);
+			}
+
+			// For all Training Providers that are flagged as changes, and are in a valid state, collect their original GrantApplication Id
+			var changeRequestedProviders = _dbContext.TrainingProviders
+				.Where(p => p.OriginalTrainingProviderId != null)
+				.Where(p => p.TrainingProviderInventoryId == trainingProviderInventoryId)
+				.Where(p => !invalidRequestStates.Contains(p.TrainingProviderState));
+
+			var grantApplicationIds = new List<int>();
+			foreach (var changeRequestedProvider in changeRequestedProviders)
+			{
+				if (changeRequestedProvider.OriginalTrainingProvider == null)
+					continue;
+			
+				var originalProviderGrantApplicationId = changeRequestedProvider.OriginalTrainingProvider.TrainingProgram.GrantApplicationId;
+				grantApplicationIds.Add(originalProviderGrantApplicationId);
+			}
+
 			var grantApplicationWithTrainingProviders = _dbContext.GrantApplications
 				.Where(ga => ga.GrantOpening.GrantStream.GrantProgram.Id == defaultGrantProgramId)
-				.Where(ga => ga.TrainingProviders.Any(tp => tp.TrainingProviderInventoryId == trainingProviderInventoryId)
-				);
+				.Where(ga => ga.TrainingProviders.Any(tp => providerIds.Contains(tp.Id)));
 
 			var grantApplicationWithTrainingProgramProviders = _dbContext.GrantApplications
-					 .Where(ga => ga.GrantOpening.GrantStream.GrantProgram.Id == defaultGrantProgramId)
-					 .Where(ga => ga.TrainingPrograms
-						 .Any(tp => tp.TrainingProviders
-						 .Any(tpp => tpp.TrainingProviderInventoryId == trainingProviderInventoryId)
-					 )
-				 );
+				.Where(ga => ga.GrantOpening.GrantStream.GrantProgram.Id == defaultGrantProgramId)
+				.Where(ga => ga.TrainingPrograms
+					.Any(tp => tp.TrainingProviders
+						.Any(tpp => providerIds.Contains(tpp.Id))
+					)
+				);
 
-			var filtered = grantApplicationWithTrainingProviders.Union(grantApplicationWithTrainingProgramProviders).Distinct()
-				.Where(x => string.IsNullOrEmpty(search) || x.FileNumber.Contains(search) || x.OrganizationLegalName != null && x.OrganizationLegalName.Contains(search))
+			var grantApplicationWithChangedProviders = _dbContext.GrantApplications
+				.Where(ga => ga.GrantOpening.GrantStream.GrantProgram.Id == defaultGrantProgramId)
+				.Where(ga => grantApplicationIds.Contains(ga.Id));
+
+			var filtered = grantApplicationWithTrainingProviders
+				.Union(grantApplicationWithTrainingProgramProviders)
+				.Union(grantApplicationWithChangedProviders)
+				.Distinct()
+				.Where(x => string.IsNullOrEmpty(search)
+				            || x.FileNumber.Contains(search)
+				            || x.OrganizationLegalName != null && x.OrganizationLegalName.Contains(search))
 				.OrderBy(o => o.FileNumber);
 
 			return filtered;
