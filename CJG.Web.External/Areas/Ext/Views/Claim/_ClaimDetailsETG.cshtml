@@ -44,7 +44,7 @@
                 <span><br />Please report attendance for all participants before starting a claim</span>
             </span>
             <div class="panel-bar panel-bar__content" id="participantAttendance" style="padding-left:inherit;padding-right:inherit;">
-                <span class="pull-left">
+                <span class="pull-left" style="padding-top: 10px;">
                     <strong>I certify the following participants received this training</strong>
                 </span>
                 <table class="participant-form-table">
@@ -56,7 +56,7 @@
                         <td>{{participant.Name}}</td>
                         <td ng-if="model.Claim.IsEditable">
                             <input type="radio" ng-model="participant.Attended" id="approved-yes-{{participant.Id}}" name="approved-{{participant.Id}}" ng-value="true" class="form__group--radio-inline" />
-                            <label for="approved-yes-{{participant.Id}}">Yes</label>
+                            <label for="approved-yes-{{participant.Id}}" style="padding-right: 1em;">Yes</label>
                             <input type="radio" ng-model="participant.Attended" id="approved-no-{{participant.Id}}" name="approved-{{participant.Id}}" ng-value="false" class="form__group--radio-inline" />
                             <label for="approved-no-{{participant.Id}}">No</label>
                         </td>
@@ -67,7 +67,7 @@
                         </td>
                     </tr>
                 </table>
-                <div class="margin-bottom pull-right" ng-if="model.RequireAllParticipantsBeforeSubmission && model.Claim.IsEditable">
+                <div class="margin-bottom pull-right" style="margin-top: 0.5em;" ng-if="model.RequireAllParticipantsBeforeSubmission && model.Claim.IsEditable">
                     <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-click="saveAttendance()">Save Attendance</a>
                 </div>
             </div>
