@@ -1,19 +1,19 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
+using CJG.Web.External.Areas.Ext.Models.Reporting;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
-using System;
-using System.Web.Mvc;
-using CJG.Web.External.Areas.Ext.Models.Reporting;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
-	/// <summary>
-	/// ReportingController class, provides a controller to manage grant file reporting.
-	/// </summary>
-	[RouteArea("Ext")]
+    /// <summary>
+    /// ReportingController class, provides a controller to manage grant file reporting.
+    /// </summary>
+    [RouteArea("Ext")]
 	[ExternalFilter]
 	public class ReportingController : BaseController
 	{

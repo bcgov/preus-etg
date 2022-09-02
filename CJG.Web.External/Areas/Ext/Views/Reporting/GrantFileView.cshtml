@@ -19,7 +19,6 @@
         <div class="main">
 
             <program-title-label ng-model="model.ProgramTitleLabel"></program-title-label>
-
             <div ng-if="model.AllowParticipantReport || model.AllowClaimReport">
                 <div ng-if="model.RequireAllParticipantsBeforeSubmission">
                     <h2>Claim Reporting</h2>
@@ -114,6 +113,7 @@
                     </div>
                 </li>
             </ul>
+            
             <div class="button-group" ng-if="model.AllowReviewAndSubmit">
                 <div ng-if="model.EnableSubmit">
                     @Html.ActionLink("Review and submit claim", nameof(ClaimController.ClaimReviewView), nameof(ClaimController).Replace("Controller", ""), new { claimId = ViewBag.ClaimId, claimVersion = ViewBag.ClaimVersion }, new { @class = "btn btn--primary pull-right" })
