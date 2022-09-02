@@ -6,9 +6,7 @@
 }
 
 <div class="row">
-    @Html.ActionLink("Return", nameof(CJG.Web.External.Areas.Ext.Controllers.ReportingController.GrantFileView),
-                               nameof(CJG.Web.External.Areas.Ext.Controllers.ReportingController).Replace("Controller", ""),
-                               new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
+    @Html.ActionLink("Return", "GrantFileView", "Reporting", new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
 </div>
 <div id="claim-report-container" ng-controller="ClaimReportingView" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-claim-id="@ViewBag.ClaimId" ng-claim-version="@ViewBag.ClaimVersion">
     <div class="row">
@@ -33,9 +31,16 @@
                     <div class="margin-bottom pull-right" ng-if="model.Claim.IsEditable && model.Claim.EligibleCosts.length > 0">
                         <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-click="save()" ng-disabled="!IsValid">Save Claim</a>
                     </div>
+                    <div class="clearfix"></div>
+                    @*<div class="margin-bottom pull-right" ng-if="model.Claim.IsEditable && model.Claim.EligibleCosts.length > 0">
+                            <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-click="saveAndReview(); save();" ng-disabled="!IsValid">Review and submit claim</a>
+                        </div>*@
+                    <div class="margin-bottom pull-right" ng-if="grantFile.AllowReviewAndSubmit && grantFile.EnableSubmit">
+                        @Html.ActionLink("Review and submit claim", "ClaimReviewView", "Claim", new { claimId = ViewBag.ClaimId, claimVersion = ViewBag.ClaimVersion }, new { @class = "btn btn--primary" })
+                    </div>
                 }
             </div>
+            @Html.Partial("_GrantApplicationSidebar", Model)
         </div>
-        @Html.Partial("_GrantApplicationSidebar", Model)
     </div>
 </div>
