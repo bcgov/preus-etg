@@ -1,4 +1,11 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
@@ -11,20 +18,13 @@ using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
 using Microsoft.AspNet.Identity;
-using System;
-using System.Data.Entity.Infrastructure;
-using System.Data.Entity.Validation;
-using System.Linq;
-using System.Net;
-using System.Web;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	/// <summary>
-	/// <paramtyperef name="ClaimController"/> class, provides endpoints to manage the assessment of claims.
-	/// </summary>
-	[Authorize(Roles = "Assessor, Director, Financial Clerk, System Administrator")]
+    /// <summary>
+    /// <paramtyperef name="ClaimController"/> class, provides endpoints to manage the assessment of claims.
+    /// </summary>
+    [Authorize(Roles = "Assessor, Director, Financial Clerk, System Administrator")]
 	[RouteArea("Int")]
 	public class ClaimAssessmentController : BaseController
 	{

@@ -1,9 +1,9 @@
+using System.ComponentModel;
+
 namespace CJG.Infrastructure.EF.Migrations
 {
-    using System;
-    using System.Data.Entity.Migrations;
-    
-    public partial class v020601 : DbMigration
+	[Description("v02.06.01")]
+	public partial class v020601 : ExtendedDbMigration
     {
         public override void Up()
         {
