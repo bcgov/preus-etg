@@ -148,6 +148,10 @@ namespace CJG.Application.Services
 
 			_dbContext.TrainingPrograms.Add(trainingProgram);
 
+			// Keep the Training Program and Application dates the same
+			trainingProgram.GrantApplication.StartDate = trainingProgram.StartDate;
+			trainingProgram.GrantApplication.EndDate = trainingProgram.EndDate;
+
 			var accountType = _httpContext.User.GetAccountType();
 			if (accountType == AccountTypes.Internal && _grantAgreementService.AgreementUpdateRequired(trainingProgram.GrantApplication))
 			{
@@ -224,6 +228,10 @@ namespace CJG.Application.Services
 					}
 				}
 			}
+
+			// Keep the Training Program and Application dates the same
+			trainingProgram.GrantApplication.StartDate = trainingProgram.StartDate;
+			trainingProgram.GrantApplication.EndDate = trainingProgram.EndDate;
 
 			_dbContext.Update(trainingProgram);
 

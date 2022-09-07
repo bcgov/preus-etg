@@ -1,12 +1,12 @@
-﻿using CJG.Core.Entities.Attributes;
-using DataAnnotationsExtensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
+using CJG.Core.Entities.Attributes;
+using DataAnnotationsExtensions;
 
 namespace CJG.Core.Entities
 {
@@ -601,14 +601,15 @@ namespace CJG.Core.Entities
 			if (applicationAdministrator == null)
 				throw new ArgumentNullException(nameof(applicationAdministrator));
 
-			this.ApplicationType = applicationType ?? throw new ArgumentNullException(nameof(applicationType)); ;
-			this.ApplicationTypeId = applicationType.Id;
-			this.GrantOpening = grantOpening ?? throw new ArgumentNullException(nameof(grantOpening)); ;
-			this.GrantOpeningId = grantOpening.Id;
-			this.MaxReimbursementAmt = grantOpening.GrantStream.MaxReimbursementAmt;
-			this.ReimbursementRate = grantOpening.GrantStream.ReimbursementRate;
-			this.ApplicationStateExternal = ApplicationStateExternal.Incomplete;
-			this.ApplicationStateInternal = ApplicationStateInternal.Draft;
+			ApplicationType = applicationType ?? throw new ArgumentNullException(nameof(applicationType)); ;
+			ApplicationTypeId = applicationType.Id;
+			GrantOpening = grantOpening ?? throw new ArgumentNullException(nameof(grantOpening)); ;
+			GrantOpeningId = grantOpening.Id;
+			MaxReimbursementAmt = grantOpening.GrantStream.MaxReimbursementAmt;
+			ReimbursementRate = grantOpening.GrantStream.ReimbursementRate;
+			ApplicationStateExternal = ApplicationStateExternal.Incomplete;
+			ApplicationStateInternal = ApplicationStateInternal.Draft;
+
 			this.CopyApplicant(applicationAdministrator);
 			this.CopyOrganization(applicationAdministrator.Organization);
 			this.AddApplicationAdministrator(applicationAdministrator);
@@ -632,15 +633,15 @@ namespace CJG.Core.Entities
 				yield break;
 
 			// Must be associated with a GrantOpening.
-			if (this.GrantOpeningId == 0)
-				yield return new ValidationResult("The grant application must be associated with a grant opening.", new[] { nameof(this.GrantOpening) });
+			if (GrantOpeningId == 0)
+				yield return new ValidationResult("The grant application must be associated with a grant opening.", new[] { nameof(GrantOpening) });
 
-			if (this.GrantOpening == null || this.GrantOpening.GrantStream == null || this.GrantOpening.TrainingPeriod == null)
-				this.GrantOpening = context.Set<GrantOpening>()
+			if (GrantOpening?.GrantStream == null || GrantOpening.TrainingPeriod == null)
+				GrantOpening = context.Set<GrantOpening>()
 					.Include(x => x.GrantStream)
 					.Include(x => x.GrantStream.GrantProgram)
 					.Include(x => x.TrainingPeriod)
-					.SingleOrDefault(x => x.Id == this.GrantOpeningId);
+					.SingleOrDefault(x => x.Id == GrantOpeningId);
 
 			// If there is a DeliveryPartner there must be DeliveryPartnerServices.
 			if (DeliveryPartner != null && (DeliveryPartnerServices == null || !DeliveryPartnerServices.Any()))
@@ -649,168 +650,168 @@ namespace CJG.Core.Entities
 			var trainingPrograms = context.Set<TrainingProgram>()
 					.Include(x => x.DeliveryMethods)
 					.Include(tp => tp.TrainingProviders)
-					.Where(x => x.GrantApplicationId == this.Id).ToArray();
-			var trainingProviders = context.Set<TrainingProvider>().Where(tp => tp.GrantApplicationId == this.Id).ToArray();
-			var grantAgreement = this.GrantAgreement ?? context.Set<GrantAgreement>().SingleOrDefault(x => x.GrantApplicationId == this.Id);
+					.Where(x => x.GrantApplicationId == Id).ToArray();
+			var trainingProviders = context.Set<TrainingProvider>().Where(tp => tp.GrantApplicationId == Id).ToArray();
+			var grantAgreement = GrantAgreement ?? context.Set<GrantAgreement>().SingleOrDefault(x => x.GrantApplicationId == Id);
 
 			// Must fall within TrainingPeriod.StartDate and TrainingPeriod.EndDate.
-			var trainingPeriodStartDate = this.GrantOpening.TrainingPeriod.StartDate;
-			var trainingPeriodEndDate = this.GrantOpening.TrainingPeriod.EndDate;
+			var trainingPeriodStartDate = GrantOpening.TrainingPeriod.StartDate;
+			var trainingPeriodEndDate = GrantOpening.TrainingPeriod.EndDate;
 			var hasValidStartDate = this.HasValidStartDate();
 
 			// StartDate must be before or on EndDate.
-			if (hasValidStartDate && this.StartDate.ToLocalTime().Date > this.EndDate.ToLocalTime().Date)
-				yield return new ValidationResult($"The end date must occur on or after the start date '{this.StartDate.ToLocalMorning():yyyy-MM-dd}'.", new[] { nameof(this.EndDate) });
+			if (hasValidStartDate && StartDate.ToLocalTime().Date > EndDate.ToLocalTime().Date)
+				yield return new ValidationResult($"The end date must occur on or after the start date '{StartDate.ToLocalMorning():yyyy-MM-dd}'.", new[] { nameof(EndDate) });
 
 			// EndDate cannot be greater than one year after the StartDate.
-			if (hasValidStartDate && this.EndDate > this.StartDate.AddYears(1).ToUtcMidnight())
-				yield return new ValidationResult($"The end date must occur within one year of the start date '{this.StartDate.ToLocalMorning():yyyy-MM-dd}'.", new[] { nameof(this.EndDate) });
+			if (hasValidStartDate && EndDate > StartDate.AddYears(1).ToUtcMidnight())
+				yield return new ValidationResult($"The end date must occur within one year of the start date '{StartDate.ToLocalMorning():yyyy-MM-dd}'.", new[] { nameof(EndDate) });
 
 			if (entry.State == EntityState.Added)
 			{
 				// Must begin with an external state of Incomplete.
-				if (this.ApplicationStateExternal != ApplicationStateExternal.Incomplete)
-					yield return new ValidationResult("A new grant application must have an external state of 'Incomplete'.", new[] { nameof(this.ApplicationStateExternal) });
+				if (ApplicationStateExternal != ApplicationStateExternal.Incomplete)
+					yield return new ValidationResult("A new grant application must have an external state of 'Incomplete'.", new[] { nameof(ApplicationStateExternal) });
 
 				// Must begin with an internal state of Draft
-				if (this.ApplicationStateInternal != ApplicationStateInternal.Draft)
-					yield return new ValidationResult("A new grant application must have an internal state of 'Draft'.", new[] { nameof(this.ApplicationStateInternal) });
+				if (ApplicationStateInternal != ApplicationStateInternal.Draft)
+					yield return new ValidationResult("A new grant application must have an internal state of 'Draft'.", new[] { nameof(ApplicationStateInternal) });
 
-				//// Must be associated with a BusinessContactRole that identifies the Application Administrator.
-				if (this.BusinessContactRoles == null || this.BusinessContactRoles.Count() == 0)
-					yield return new ValidationResult("Grant application requires an Application Administrator to be associated with it.", new[] { nameof(this.BusinessContactRoles) });
+				// Must be associated with a BusinessContactRole that identifies the Application Administrator.
+				if (BusinessContactRoles == null || !BusinessContactRoles.Any())
+					yield return new ValidationResult("Grant application requires an Application Administrator to be associated with it.", new[] { nameof(BusinessContactRoles) });
 
 				// Can't add a Grant Application to a Grant Opening in the wrong state.
-				if (this.GrantOpening.State.In(GrantOpeningStates.Closed, GrantOpeningStates.Scheduled, GrantOpeningStates.Unscheduled))
-					yield return new ValidationResult("Grant applications cannot be added to a grant opening that isn't published, or open.", new[] { nameof(this.GrantOpening) });
+				if (GrantOpening.State.In(GrantOpeningStates.Closed, GrantOpeningStates.Scheduled, GrantOpeningStates.Unscheduled))
+					yield return new ValidationResult("Grant applications cannot be added to a grant opening that isn't published, or open.", new[] { nameof(GrantOpening) });
 
 				// Must have valid dates.
 				if (!hasValidStartDate)
 					yield return new ValidationResult($"Your program start date must fall in the period '{trainingPeriodStartDate.ToLocalMorning():yyyy-MM-dd}' to '{trainingPeriodEndDate.ToLocalMidnight():yyyy-MM-dd}' " +
-						"for the grant you have selected and it may not be before your application submission date.", new[] { nameof(this.StartDate) });
+						"for the grant you have selected and it may not be before your application submission date.", new[] { nameof(StartDate) });
 			}
 			else if (entry.State == EntityState.Modified)
 			{
-				var originalApplicationStateExternal = (ApplicationStateExternal)entry.OriginalValues[nameof(this.ApplicationStateExternal)];
-				var originalApplicationStateInternal = (ApplicationStateInternal)entry.OriginalValues[nameof(this.ApplicationStateInternal)];
+				var originalApplicationStateExternal = (ApplicationStateExternal)entry.OriginalValues[nameof(ApplicationStateExternal)];
+				var originalApplicationStateInternal = (ApplicationStateInternal)entry.OriginalValues[nameof(ApplicationStateInternal)];
 
 				// Must have valid dates.
 				if (!hasValidStartDate
-					&& ((originalApplicationStateExternal == ApplicationStateExternal.Complete && this.ApplicationStateExternal != ApplicationStateExternal.Incomplete) // Must allow for transition from Complete to Incomplete.
+					&& ((originalApplicationStateExternal == ApplicationStateExternal.Complete && ApplicationStateExternal != ApplicationStateExternal.Incomplete) // Must allow for transition from Complete to Incomplete.
 						|| originalApplicationStateExternal == ApplicationStateExternal.Incomplete // Must not allow Applicant to enter invalid dates.
-						|| this.ApplicationStateExternal > ApplicationStateExternal.Complete)) // Must not allow Assessors to enter invalid dates.
-					yield return new ValidationResult($"Your program start date must fall in the period '{trainingPeriodStartDate.ToLocalMorning():yyyy-MM-dd}' to '{trainingPeriodEndDate.ToLocalMidnight():yyyy-MM-dd}' for the grant you have selected and it may not be before your application submission date.", new[] { nameof(this.StartDate) });
+						|| ApplicationStateExternal > ApplicationStateExternal.Complete)) // Must not allow Assessors to enter invalid dates.
+					yield return new ValidationResult($"Your program start date must fall in the period '{trainingPeriodStartDate.ToLocalMorning():yyyy-MM-dd}' to '{trainingPeriodEndDate.ToLocalMidnight():yyyy-MM-dd}' for the grant you have selected and it may not be before your application submission date.", new[] { nameof(StartDate) });
 
 				// When an application is withdrawn it becomes possible to lock in a past date, this makes sure all start dates are today or the future.
 				if (originalApplicationStateInternal == ApplicationStateInternal.ApplicationWithdrawn
-					&& this.ApplicationStateInternal == ApplicationStateInternal.New
-					&& this.StartDate < AppDateTime.UtcMorning)
-					yield return new ValidationResult($"Your program start date must not start before today.", new[] { nameof(this.StartDate) });
+					&& ApplicationStateInternal == ApplicationStateInternal.New
+					&& StartDate < AppDateTime.UtcMorning)
+					yield return new ValidationResult("Your program start date must not start before today.", new[] { nameof(StartDate) });
 
-				var originalStartDate = (DateTime)entry.OriginalValues[nameof(this.StartDate)];
-				var originalEndDate = (DateTime)entry.OriginalValues[nameof(this.EndDate)];
+				var originalStartDate = (DateTime)entry.OriginalValues[nameof(StartDate)];
+				var originalEndDate = (DateTime)entry.OriginalValues[nameof(EndDate)];
 
 				// The Program dates must fall within the Delivery dates.
-				if (trainingPrograms.Any(tp => tp.StartDate < this.StartDate) && originalStartDate != this.StartDate)
-					yield return new ValidationResult($"Skills training dates do not fall within your delivery period and will need to be rescheduled.  Make sure all your skills training dates are accurate to your plan.", new[] { nameof(this.StartDate) });
+				if (trainingPrograms.Any(tp => tp.StartDate < StartDate) && originalStartDate != StartDate)
+					yield return new ValidationResult("Skills training dates do not fall within your delivery period and will need to be rescheduled.  Make sure all your skills training dates are accurate to your plan.", new[] { nameof(StartDate) });
 
-				if (trainingPrograms.Any(tp => tp.EndDate > this.EndDate) && originalEndDate != this.EndDate)
-					yield return new ValidationResult($"Skills training dates do not fall within your delivery period and will need to be rescheduled.  Make sure all your skills training dates are accurate to your plan.", new[] { nameof(this.EndDate) });
+				if (trainingPrograms.Any(tp => tp.EndDate > EndDate) && originalEndDate != EndDate)
+					yield return new ValidationResult("Skills training dates do not fall within your delivery period and will need to be rescheduled.  Make sure all your skills training dates are accurate to your plan.", new[] { nameof(EndDate) });
 
 				// Before state can be OfferIssued it must have a GrantAgreement.
-				if (this.ApplicationStateInternal == ApplicationStateInternal.OfferIssued && grantAgreement == null)
-					yield return new ValidationResult("Grant application requires a grant agreement before an offer can be issued.", new[] { nameof(this.GrantAgreement) });
+				if (ApplicationStateInternal == ApplicationStateInternal.OfferIssued && grantAgreement == null)
+					yield return new ValidationResult("Grant application requires a grant agreement before an offer can be issued.", new[] { nameof(GrantAgreement) });
 				// Before state can be New is must have a FileNumber.
-				else if (this.ApplicationStateInternal == ApplicationStateInternal.New && String.IsNullOrEmpty(this.FileNumber))
-					yield return new ValidationResult("Grant application must have a file number to identify it.", new[] { nameof(this.FileNumber) });
+				else if (ApplicationStateInternal == ApplicationStateInternal.New && String.IsNullOrEmpty(FileNumber))
+					yield return new ValidationResult("Grant application must have a file number to identify it.", new[] { nameof(FileNumber) });
 
 				// Validate the external state transitions.
-				var originalExternalState = (ApplicationStateExternal)entry.OriginalValues[nameof(this.ApplicationStateExternal)];
-				if (!originalExternalState.AllowStateTransition(this.ApplicationStateExternal))
-					yield return new ValidationResult($"Grant application external state cannot go from '{originalExternalState.GetDescription()}' to '{this.ApplicationStateExternal.GetDescription()}'.", new[] { nameof(this.ApplicationStateExternal) });
+				var originalExternalState = (ApplicationStateExternal)entry.OriginalValues[nameof(ApplicationStateExternal)];
+				if (!originalExternalState.AllowStateTransition(ApplicationStateExternal))
+					yield return new ValidationResult($"Grant application external state cannot go from '{originalExternalState.GetDescription()}' to '{ApplicationStateExternal.GetDescription()}'.", new[] { nameof(ApplicationStateExternal) });
 
 				// Validate the internal state transitions.
-				var originalInternalState = (ApplicationStateInternal)entry.OriginalValues[nameof(this.ApplicationStateInternal)];
-				if (!originalInternalState.AllowStateTransition(this.ApplicationStateInternal))
-					yield return new ValidationResult($"Grant application internal state cannot go from '{originalInternalState.GetDescription()}' to '{this.ApplicationStateInternal.GetDescription()}'.", new[] { nameof(this.ApplicationStateInternal) });
+				var originalInternalState = (ApplicationStateInternal)entry.OriginalValues[nameof(ApplicationStateInternal)];
+				if (!originalInternalState.AllowStateTransition(ApplicationStateInternal))
+					yield return new ValidationResult($"Grant application internal state cannot go from '{originalInternalState.GetDescription()}' to '{ApplicationStateInternal.GetDescription()}'.", new[] { nameof(ApplicationStateInternal) });
 
-				if (this.ApplicationStateInternal == ApplicationStateInternal.CancelledByAgreementHolder)
+				if (ApplicationStateInternal == ApplicationStateInternal.CancelledByAgreementHolder)
 				{
 					// When state is CancelledByAgreementHolder it must have a CancellationReason and DateCancelled.
 					context.Set<GrantApplicationStateChange>().Where(sc => sc.ToState == ApplicationStateInternal.CancelledByAgreementHolder).ToArray();
-					if (string.IsNullOrWhiteSpace(this.GetReason(ApplicationStateInternal.CancelledByAgreementHolder)) || !this.DateCancelled.HasValue)
-						yield return new ValidationResult($"Cancellation reason and date are required for {this.ApplicationStateInternal.GetDescription()}");
+					if (string.IsNullOrWhiteSpace(this.GetReason(ApplicationStateInternal.CancelledByAgreementHolder)) || !DateCancelled.HasValue)
+						yield return new ValidationResult($"Cancellation reason and date are required for {ApplicationStateInternal.GetDescription()}");
 				}
-				else if (this.ApplicationStateInternal == ApplicationStateInternal.CancelledByMinistry)
+				else if (ApplicationStateInternal == ApplicationStateInternal.CancelledByMinistry)
 				{
 					// When state is CancelledByMinistry, it must have a CancellationReason and DateCancelled.
 					context.Set<GrantApplicationStateChange>().Where(sc => sc.ToState == ApplicationStateInternal.CancelledByMinistry).ToArray();
-					if (string.IsNullOrWhiteSpace(this.GetReason(ApplicationStateInternal.CancelledByMinistry)) || !this.DateCancelled.HasValue)
-						yield return new ValidationResult($"Cancellation reason and date are required for {this.ApplicationStateInternal.GetDescription()}");
+					if (string.IsNullOrWhiteSpace(this.GetReason(ApplicationStateInternal.CancelledByMinistry)) || !DateCancelled.HasValue)
+						yield return new ValidationResult($"Cancellation reason and date are required for {ApplicationStateInternal.GetDescription()}");
 				}
-				else if (this.ApplicationStateExternal == ApplicationStateExternal.Submitted)
+				else if (ApplicationStateExternal == ApplicationStateExternal.Submitted)
 				{
 					if (originalExternalState != ApplicationStateExternal.Submitted)
 					{
-						if (this.Attachments.Count < 1)
-							context.Set<GrantApplication>().Where(o => o.Id == this.Id).Include(o => o.Attachments).ToArray();
+						if (Attachments.Count < 1)
+							context.Set<GrantApplication>().Where(o => o.Id == Id).Include(o => o.Attachments).ToArray();
 
 						// Cannot submit unless the application is complete in all aspects.
 						if (!this.SkillsTrainingConfirmed())
-							yield return new ValidationResult("Skills training components are not complete, the application cannot be submitted.", new[] { nameof(this.ApplicationStateExternal) });
+							yield return new ValidationResult("Skills training components are not complete, the application cannot be submitted.", new[] { nameof(ApplicationStateExternal) });
 						else if (!this.EmploymentServicesAndSupportsConfirmed())
-							yield return new ValidationResult("Employment services and supports components are not complete, the application cannot be submitted.", new[] { nameof(this.ApplicationStateExternal) });
+							yield return new ValidationResult("Employment services and supports components are not complete, the application cannot be submitted.", new[] { nameof(ApplicationStateExternal) });
 						else if (ApplicationStateInternal != ApplicationStateInternal.ReturnedToAssessment
 						         && ApplicationStateInternal != ApplicationStateInternal.UnderAssessment
 						         && ApplicationStateInternal != ApplicationStateInternal.New
 								 && !this.IsSubmittable())
-							yield return new ValidationResult("Grant application is not complete and cannot be submitted.", new[] { nameof(this.ApplicationStateExternal) });
+							yield return new ValidationResult("Grant application is not complete and cannot be submitted.", new[] { nameof(ApplicationStateExternal) });
 					}
 
 					// Although the user shouldn't get as far as being able to submit the application without an organization, throw a validation exception once the state has been changed in the state machine
-					if (this.OrganizationId == 0)
+					if (OrganizationId == 0)
 						yield return new ValidationResult("Organization is required before you can submit your application");
 
 					// A training program is required for applications.
 					if (trainingPrograms.FirstOrDefault() == null)
-						yield return new ValidationResult("This grant application is missing a training program.", new[] { nameof(this.TrainingPrograms) });
+						yield return new ValidationResult("This grant application is missing a training program.", new[] { nameof(TrainingPrograms) });
 
-					if (this.StartDate.ToLocalTime().Date < this.DateSubmitted.Value.ToLocalTime().Date)
-						yield return new ValidationResult($"Your training start date must fall in the period '{trainingPeriodStartDate.ToLocalMorning():yyyy-MM-dd}' to '{trainingPeriodEndDate.ToLocalMidnight():yyyy-MM-dd}' for the grant you have selected and it may not be before your application submission date.", new[] { nameof(this.StartDate) });
+					if (StartDate.ToLocalTime().Date < DateSubmitted.Value.ToLocalTime().Date)
+						yield return new ValidationResult($"Your training start date must fall in the period '{trainingPeriodStartDate.ToLocalMorning():yyyy-MM-dd}' to '{trainingPeriodEndDate.ToLocalMidnight():yyyy-MM-dd}' for the grant you have selected and it may not be before your application submission date.", new[] { nameof(StartDate) });
 				}
-				else if (this.ApplicationStateInternal == ApplicationStateInternal.AgreementAccepted)
+				else if (ApplicationStateInternal == ApplicationStateInternal.AgreementAccepted)
 				{
 					var agreement = context.Set<GrantAgreement>()
-							.SingleOrDefault(x => x.GrantApplicationId == this.Id) ?? this.GrantAgreement;
+							.SingleOrDefault(x => x.GrantApplicationId == Id) ?? GrantAgreement;
 
 					if (!agreement.DateAccepted.HasValue)
 					{
-						yield return new ValidationResult("Date Accepted is required when the agreement has been accepted", new[] { nameof(this.ApplicationStateInternal) });
+						yield return new ValidationResult("Date Accepted is required when the agreement has been accepted", new[] { nameof(ApplicationStateInternal) });
 					}
 				}
 
-				if (this.ApplicationStateInternal.In(ApplicationStateInternal.RecommendedForDenial, ApplicationStateInternal.ApplicationDenied, ApplicationStateInternal.ChangeForDenial, ApplicationStateInternal.ChangeRequestDenied, ApplicationStateInternal.ClaimDenied) || this.ApplicationStateExternal == ApplicationStateExternal.ApplicationWithdrawn)
+				if (ApplicationStateInternal.In(ApplicationStateInternal.RecommendedForDenial, ApplicationStateInternal.ApplicationDenied, ApplicationStateInternal.ChangeForDenial, ApplicationStateInternal.ChangeRequestDenied, ApplicationStateInternal.ClaimDenied) || ApplicationStateExternal == ApplicationStateExternal.ApplicationWithdrawn)
 				{
-					var applicationStateChange = this.GetReason(this.ApplicationStateInternal);
+					var applicationStateChange = this.GetReason(ApplicationStateInternal);
 
 					if (string.IsNullOrEmpty(applicationStateChange))
 					{
 						// need to pull the reason for the state change, since it's not available in the context
 						applicationStateChange = context.Set<GrantApplicationStateChange>()
-							.Where(x => x.GrantApplicationId == this.Id && x.ToState == this.ApplicationStateInternal).OrderByDescending(s => s.DateAdded).Select(s => s.Reason).FirstOrDefault();
+							.Where(x => x.GrantApplicationId == Id && x.ToState == ApplicationStateInternal).OrderByDescending(s => s.DateAdded).Select(s => s.Reason).FirstOrDefault();
 					}
 
 					if (string.IsNullOrEmpty(applicationStateChange))
 					{
-						if (this.ApplicationStateExternal == ApplicationStateExternal.ApplicationWithdrawn)
-							yield return new ValidationResult("Please provide a reason for withdrawing your application", new[] { nameof(this.ApplicationStateInternal) });
+						if (ApplicationStateExternal == ApplicationStateExternal.ApplicationWithdrawn)
+							yield return new ValidationResult("Please provide a reason for withdrawing your application", new[] { nameof(ApplicationStateInternal) });
 						else
 							yield return new ValidationResult("Please provide a reason for denial");
 					}
 				}
 
 				// Assessor must provide a reason for returning the application.
-				if (originalApplicationStateInternal != ApplicationStateInternal.ClaimReturnedToApplicant && this.ApplicationStateInternal == ApplicationStateInternal.ClaimReturnedToApplicant)
+				if (originalApplicationStateInternal != ApplicationStateInternal.ClaimReturnedToApplicant && ApplicationStateInternal == ApplicationStateInternal.ClaimReturnedToApplicant)
 				{
 					//get the latest state change
 					var lastStateChange = this.GetStateChange(ApplicationStateInternal.ClaimReturnedToApplicant);
@@ -821,22 +822,22 @@ namespace CJG.Core.Entities
 						var reason = lastStateChange.Reason ?? this.GetCurrentClaim()?.ClaimAssessmentNotes;
 
 						if (String.IsNullOrWhiteSpace(reason))
-							yield return new ValidationResult("Please provide a reason for returning the claim to the applicant.", new[] { nameof(this.ApplicationStateInternal) });
+							yield return new ValidationResult("Please provide a reason for returning the claim to the applicant.", new[] { nameof(ApplicationStateInternal) });
 					}
 				}
 
 				// When changing the assessor we don't want to validation the following conditions.
-				var isChangingAssessor = (int?)context.Entry(this).OriginalValues[nameof(this.AssessorId)] != this.AssessorId;
+				var isChangingAssessor = (int?)context.Entry(this).OriginalValues[nameof(AssessorId)] != AssessorId;
 				if (!isChangingAssessor
-					&& this.ApplicationStateInternal.In(ApplicationStateInternal.RecommendedForApproval, ApplicationStateInternal.OfferIssued, ApplicationStateInternal.AgreementAccepted)
-					|| this.ApplicationStateInternal > ApplicationStateInternal.AgreementAccepted
-					&& !this.ApplicationStateInternal.In(ApplicationStateInternal.ApplicationWithdrawn, ApplicationStateInternal.Unfunded, ApplicationStateInternal.ApplicationDenied))
+					&& ApplicationStateInternal.In(ApplicationStateInternal.RecommendedForApproval, ApplicationStateInternal.OfferIssued, ApplicationStateInternal.AgreementAccepted)
+					|| ApplicationStateInternal > ApplicationStateInternal.AgreementAccepted
+					&& !ApplicationStateInternal.In(ApplicationStateInternal.ApplicationWithdrawn, ApplicationStateInternal.Unfunded, ApplicationStateInternal.ApplicationDenied))
 				{
 					// Must validate training providers if internal state change except ReturnUnassessed
-					if (this.ApplicationStateInternal != ApplicationStateInternal.ReturnedUnassessed && originalApplicationStateInternal != this.ApplicationStateInternal && trainingPrograms.Any(tp => tp.TrainingProvider?.TrainingProviderInventoryId == null))
-						yield return new ValidationResult($"All training providers must be validated before you can '{this.ApplicationStateInternal.GetDescription()}'.");
+					if (ApplicationStateInternal != ApplicationStateInternal.ReturnedUnassessed && originalApplicationStateInternal != ApplicationStateInternal && trainingPrograms.Any(tp => tp.TrainingProvider?.TrainingProviderInventoryId == null))
+						yield return new ValidationResult($"All training providers must be validated before you can '{ApplicationStateInternal.GetDescription()}'.");
 
-					var ids = this.TrainingCost?.EligibleCosts.Select(ec => ec.Id).ToArray() ?? context.Set<EligibleCost>().Where(ec => ec.GrantApplicationId == this.Id).Select(ec => ec.Id).ToArray();
+					var ids = TrainingCost?.EligibleCosts.Select(ec => ec.Id).ToArray() ?? context.Set<EligibleCost>().Where(ec => ec.GrantApplicationId == Id).Select(ec => ec.Id).ToArray();
 					var eligibleCosts = context.Set<EligibleCost>().Include(m => m.EligibleExpenseType).Include(m => m.EligibleExpenseType.ServiceCategory).Include(m => m.Breakdowns).Include(m => m.TrainingProviders).Where(ec => ids.Any(y => y == ec.Id)).ToArray();
 					// Must include costs if services are selected, and vise-versa.
 					if (eligibleCosts.Any(ec =>
@@ -846,7 +847,7 @@ namespace CJG.Core.Entities
 							|| ((ec.EligibleExpenseType.MaxProviders > 0 && ec.TrainingProviders.Count == 0 && ec.AgreedMaxCost != 0) // There are no providers selected, but there is a cost.
 								|| (ec.EligibleExpenseType.MaxProviders > 0 && ec.TrainingProviders.Count != 0 && ec.AgreedMaxCost == 0))) // There are providers selected, but there is no cost.
 						)) // At least one eligible skills training must have a cost.
-						yield return new ValidationResult("Employment services and supports components are not complete.", new[] { "Summary" });
+							yield return new ValidationResult("Employment services and supports components are not complete.", new[] { "Summary" });
 
 					// Must include costs associated with skills training.
 					if (eligibleCosts.Any(ec =>
@@ -857,16 +858,17 @@ namespace CJG.Core.Entities
 			}
 
 			// The applicant can only report participants after a claim has been submitted if the stream supports it.
-			if (this.CanApplicantReportParticipants && !(this.GrantOpening?.GrantStream?.CanApplicantReportParticipants ?? false))
-				yield return new ValidationResult("The grant stream does not allow reporting participants", new[] { nameof(this.CanApplicantReportParticipants) });
+			if (CanApplicantReportParticipants && !(GrantOpening?.GrantStream?.CanApplicantReportParticipants ?? false))
+				yield return new ValidationResult("The grant stream does not allow reporting participants", new[] { nameof(CanApplicantReportParticipants) });
 
 			foreach (var validation in base.Validate(validationContext))
 			{
 				yield return validation;
 			}
+
 			// If HasRequestedAdditionalFunding then must have DescriptionOfFundingRequested.
-			if (this.HasRequestedAdditionalFunding == true && String.IsNullOrEmpty(this.DescriptionOfFundingRequested))
-				yield return new ValidationResult("If you have received or requested additional funding you must include a description of the funding request.", new[] { nameof(this.DescriptionOfFundingRequested) });
+			if (HasRequestedAdditionalFunding == true && String.IsNullOrEmpty(DescriptionOfFundingRequested))
+				yield return new ValidationResult("If you have received or requested additional funding you must include a description of the funding request.", new[] { nameof(DescriptionOfFundingRequested) });
 		}
 		#endregion
 	}

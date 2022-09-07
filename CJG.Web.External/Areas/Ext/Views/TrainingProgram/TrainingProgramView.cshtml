@@ -11,12 +11,7 @@
         <div class="main">
             <h1>Edit Training Program</h1>
 
-            <div ng-if="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
-                <p>Enter the information about your training program below. When you have completed the form, click Done to move to the next step.</p>
-            </div>
-
-            <p>Your training dates must fall within the application delivery period {{toPST(model.StartDate)}} to {{toPST(model.EndDate)}}.</p>
-            @*<p class="text--small text--uppercase">* Information must be provided</p>*@  @* Removed for CJG-519*@
+            <p>Your training dates must fall within the application delivery period {{toPST(model.IntakePeriodStartDate)}} to {{toPST(model.IntakePeriodEndDate)}}.</p>
 
             <div ng-if="alert.message" class="row row--alert">
                 <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
@@ -51,10 +46,9 @@
             </div>
 
                 <div class="form__group form__group--date">
-
                     <label class="form__label">Training Start Date:<abbr title="Required">*</abbr></label>
                     <div class="form__control--flexible">
-                        <div class="form__control" ng-validation="errors.StartDate">
+                        <div class="form__control">
                             <datedropdown ng-editing="true"
                                           ng-model="model.StartDate"
                                           ng-year="model.StartYear"
@@ -65,15 +59,14 @@
                                           ng-max-date="model.DeliveryEndDate"
                                           ng-default-month="'Month'"
                                           ng-default-day="'Day'"
-                                          ng-default-year="'Year'"
-                                          ng-disabled="true"></datedropdown>
+                                          ng-default-year="'Year'"></datedropdown>
                         </div>
                     </div>
                 </div>
                 <div class="form__group form__group--date">
                     <label class="form__label">Training End Date:<abbr title="Required">*</abbr></label>
                     <div class="form__control--flexible">
-                        <div class="form__control" ng-validation="errors.EndDate">
+                        <div class="form__control">
                             <datedropdown ng-editing="true"
                                           ng-model="model.EndDate"
                                           ng-year="model.EndYear"
@@ -84,10 +77,7 @@
                                           ng-max-date="model.EndDate"
                                           ng-default-month="'Month'"
                                           ng-default-day="'Day'"
-                                          ng-default-year="'Year'"
-                                          ng-disabled="true"></datedropdown>
-
-                            <br class="text--small">Training must end within 52 weeks of the start date. You can change training dates in the Grant Selection section of your application.
+                                          ng-default-year="'Year'"></datedropdown>
                         </div>
                     </div>
                 </div>
