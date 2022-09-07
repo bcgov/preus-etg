@@ -392,11 +392,13 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				grantApplication.StartDate = new DateTime(model.DeliveryStartYear, model.DeliveryStartMonth, model.DeliveryStartDay, 0, 0, 0, DateTimeKind.Local).ToUtcMorning();
 				grantApplication.EndDate = new DateTime(model.DeliveryEndYear, model.DeliveryEndMonth, model.DeliveryEndDay, 0, 0, 0, DateTimeKind.Local).ToUtcMidnight();
 
-				// If the training program dates fall outside of the delivery dates, make the training program dates equal to the delivery dates.
+				// Make the training program dates equal to the delivery dates.
 				if (grantApplication.ApplicationStateInternal == ApplicationStateInternal.Draft)
 				{
-					grantApplication.TrainingPrograms.Where(tp => tp.StartDate < grantApplication.StartDate || tp.StartDate > grantApplication.EndDate).ForEach(x => x.StartDate = grantApplication.StartDate);
-					grantApplication.TrainingPrograms.Where(tp => tp.EndDate > grantApplication.EndDate || tp.EndDate < grantApplication.StartDate).ForEach(x => x.EndDate = grantApplication.EndDate);
+					//grantApplication.TrainingPrograms.Where(tp => tp.StartDate < grantApplication.StartDate || tp.StartDate > grantApplication.EndDate).ForEach(x => x.StartDate = grantApplication.StartDate);
+					//grantApplication.TrainingPrograms.Where(tp => tp.EndDate > grantApplication.EndDate || tp.EndDate < grantApplication.StartDate).ForEach(x => x.EndDate = grantApplication.EndDate);
+					grantApplication.TrainingPrograms.ForEach(x => x.StartDate = grantApplication.StartDate);
+					grantApplication.TrainingPrograms.ForEach(x => x.EndDate = grantApplication.EndDate);
 				}
 
 				// update the original entry
@@ -470,9 +472,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 						_grantApplicationService.ChangeGrantOpening(grantApplication);
 
 						grantApplication.ParticipantForms.ForEach(x => x.ProgramStartDate = grantApplication.StartDate);
-
-						// mark TrainingProgram state as Incomplte if dates are out of range
-						grantApplication.TrainingPrograms.Where(tp => !tp.HasValidDates()).ForEach(x => x.TrainingProgramState = TrainingProgramStates.Incomplete);
 
 						var originalReimbursement = grantApplication.ReimbursementRate;
 						grantApplication.ReimbursementRate = grantApplication.GrantOpening.GrantStream.ReimbursementRate;
@@ -593,8 +592,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				return RedirectToAction(nameof(HomeController.Index), nameof(HomeController).Replace("Controller", ""));
 			}
 
-			if (grantApplication.TrainingPrograms.Any(x => x.TrainingProgramState == TrainingProgramStates.Incomplete && !x.HasValidDates()))
-				this.SetAlert("Skills training dates do not fall within your delivery period and will need to be rescheduled. Make sure all your skills training dates are accurate to your plan.", AlertType.Warning);
+			//if (grantApplication.TrainingPrograms.Any(x => x.TrainingProgramState == TrainingProgramStates.Incomplete && !x.HasValidDates()))
+			//	this.SetAlert("Skills training dates do not fall within your delivery period and will need to be rescheduled. Make sure all your skills training dates are accurate to your plan.", AlertType.Warning);
 
 			if (grantApplication.IsSubmittable())
 			{

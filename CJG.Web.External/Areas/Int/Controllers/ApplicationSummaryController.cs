@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using CJG.Core.Interfaces;
 using CJG.Web.External.Areas.Int.Models.Attachments;
 
 namespace CJG.Web.External.Areas.Int.Controllers
@@ -217,35 +218,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 						grantApplication.StartDate = model.DeliveryStartDate.ToUtcMorning();
 						grantApplication.EndDate = model.DeliveryEndDate.ToUtcMidnight();
 
-						if (grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId != ProgramTypes.EmployerGrant)
-						{
-							DateTime? latestStartTime = null;
-							DateTime? earliestEndTime = null;
-							foreach (TrainingProgram tp in grantApplication.TrainingPrograms)
-							{
-								if (latestStartTime == null)
-								{
-									latestStartTime = tp.StartDate;
-								}
-								if (earliestEndTime == null)
-								{
-									earliestEndTime = tp.EndDate;
-								}
-								if (latestStartTime > tp.StartDate)
-								{
-									latestStartTime = tp.StartDate;
-								}
-								if (earliestEndTime < tp.EndDate)
-								{
-									earliestEndTime = tp.EndDate;
-								}
-							}
-
-							if (grantApplication.StartDate > latestStartTime || grantApplication.EndDate < earliestEndTime)
-							{
-								throw new InvalidOperationException("Skills training dates do not fall within your delivery period and will need to be rescheduled. Make sure all your skills training dates are accurate to your plan.");
-							}
-						}
+						grantApplication.TrainingPrograms.ForEach(ga => ga.StartDate = grantApplication.StartDate);
+						grantApplication.TrainingPrograms.ForEach(ga => ga.EndDate = grantApplication.EndDate);
 					}
 
 					grantApplication.Organization.DoingBusinessAsMinistry = model.DoingBusinessAsMinistry;

@@ -20,7 +20,6 @@
 
 <div class="form__group form__group--date">
     <label class="form__label" for="@Html.IdFor(model => model.StartMonth)">Training start date <abbr title="Required">*</abbr></label>
-
     <p>
         Your training start date must fall in the period <text>@Model.TrainingPeriodStart.Value.ToLocalMorning().ToString("yyyy-MM-dd")</text>
         to <text>@(Model.TrainingPeriodEnd.Value.ToLocalMidnight().ToString("yyyy-MM-dd"))</text> for the grant you have selected and it may not be before your application submission date.

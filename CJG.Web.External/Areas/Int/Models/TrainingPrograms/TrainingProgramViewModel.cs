@@ -1,17 +1,17 @@
-﻿using CJG.Application.Services;
-using CJG.Core.Entities;
-using CJG.Core.Interfaces.Service;
-using CJG.Web.External.Models.Shared;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using CJG.Core.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using CJG.Application.Services;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces;
+using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Helpers;
+using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 {
-	public class TrainingProgramViewModel : BaseViewModel
+    public class TrainingProgramViewModel : BaseViewModel
 	{
 		#region Properties
 		public string RowVersion { get; set; }
@@ -58,16 +58,16 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 
 		public TrainingProgramViewModel(TrainingProgram trainingProgram, ICipsCodesService _cipsCodesService)
 		{
-			this.Id = trainingProgram?.Id ?? throw new ArgumentNullException(nameof(trainingProgram));
+			Id = trainingProgram?.Id ?? throw new ArgumentNullException(nameof(trainingProgram));
 			Utilities.MapProperties(trainingProgram, this);
-			this.StartDate = trainingProgram.StartDate.ToLocalMorning();
-			this.EndDate = trainingProgram.EndDate.ToLocalMidnight();
-			this.MaxEndDate = trainingProgram.GrantApplication.GrantOpening.TrainingPeriod.EndDate.AddYears(1);
-			this.SelectedDeliveryMethodIds = trainingProgram.DeliveryMethods.Select(dm => dm.Id).ToArray();
-			this.SelectedUnderRepresentedGroupIds = trainingProgram.UnderRepresentedGroups.Select(dm => dm.Id).ToArray();
-			this.CanEdit = true;
-			this.CourseLink = trainingProgram.CourseLink;
-			this.RequiresCIPSValidation = trainingProgram.CipsCode == null;
+			StartDate = trainingProgram.StartDate.ToLocalMorning();
+			EndDate = trainingProgram.EndDate.ToLocalMidnight();
+			MaxEndDate = trainingProgram.GrantApplication.GrantOpening.TrainingPeriod.EndDate.AddYears(1);
+			SelectedDeliveryMethodIds = trainingProgram.DeliveryMethods.Select(dm => dm.Id).ToArray();
+			SelectedUnderRepresentedGroupIds = trainingProgram.UnderRepresentedGroups.Select(dm => dm.Id).ToArray();
+			CanEdit = true;
+			CourseLink = trainingProgram.CourseLink;
+			RequiresCIPSValidation = trainingProgram.CipsCode == null;
 
 			#region CIPS Codes
 			var cipsCodes = _cipsCodesService.GetListOfCipsCodes(trainingProgram.CipsCode == null ? 0 : trainingProgram.CipsCode.Id);
@@ -88,13 +88,13 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 			if (staticDataService == null) throw new ArgumentNullException(nameof(staticDataService));
 
 			Utilities.MapProperties(this, trainingProgram);
-			trainingProgram.StartDate = this.StartDate.ToUtcMorning();
-			trainingProgram.EndDate = this.EndDate.ToUtcMidnight();
+			trainingProgram.StartDate = StartDate.ToUtcMorning();
+			trainingProgram.EndDate = EndDate.ToUtcMidnight();
 
 			// Only add/remove the specified delivery methods.
-			if (this.SelectedDeliveryMethodIds?.Any() ?? false)
+			if (SelectedDeliveryMethodIds?.Any() ?? false)
 			{
-				var modelIds = this.SelectedDeliveryMethodIds.ToArray();
+				var modelIds = SelectedDeliveryMethodIds.ToArray();
 				var currentIds = trainingProgram.DeliveryMethods.Select(dm => dm.Id).ToArray();
 				var removeIds = currentIds.Except(modelIds);
 				var addIds = modelIds.Except(currentIds).Except(removeIds);
@@ -118,9 +118,9 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 			}
 
 			// Only add/remove the specified underrepresented groups.
-			if ((this.MemberOfUnderRepresentedGroup.HasValue && this.MemberOfUnderRepresentedGroup.Value) && (this.SelectedUnderRepresentedGroupIds?.Any() ?? false))
+			if ((MemberOfUnderRepresentedGroup.HasValue && MemberOfUnderRepresentedGroup.Value) && (SelectedUnderRepresentedGroupIds?.Any() ?? false))
 			{
-				var modelIds = this.SelectedUnderRepresentedGroupIds.ToArray();
+				var modelIds = SelectedUnderRepresentedGroupIds.ToArray();
 				var currentIds = trainingProgram.UnderRepresentedGroups.Select(dm => dm.Id).ToArray();
 				var removeIds = currentIds.Except(modelIds);
 				var addIds = modelIds.Except(currentIds).Except(removeIds);
@@ -143,7 +143,7 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 				trainingProgram.UnderRepresentedGroups.Clear();
 			}
 
-			trainingProgram.TargetCipsCodeId = this.CipsCode3Id ?? this.CipsCode2Id ?? this.CipsCode1Id;
+			trainingProgram.TargetCipsCodeId = CipsCode3Id ?? CipsCode2Id ?? CipsCode1Id;
 		}
 		#endregion
 	}

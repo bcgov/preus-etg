@@ -1,13 +1,12 @@
-﻿using CJG.Core.Entities.Attributes;
-using DataAnnotationsExtensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
+using CJG.Core.Entities.Attributes;
+using DataAnnotationsExtensions;
 
 namespace CJG.Core.Entities
 {
@@ -241,14 +240,14 @@ namespace CJG.Core.Entities
 			get
 			{
 				// Get the currently validated training provider.
-				var validated = this.TrainingProviders.OrderByDescending(tp => tp.DateAdded).FirstOrDefault(tp => tp.TrainingProviderInventoryId != null && tp.TrainingProviderState == TrainingProviderStates.Complete);
+				var validated = TrainingProviders.OrderByDescending(tp => tp.DateAdded).FirstOrDefault(tp => tp.TrainingProviderInventoryId != null && tp.TrainingProviderState == TrainingProviderStates.Complete);
 
 				// If there is not a validated training provider, get the most recent requested one.
 				// Generally only original training providers are attached to a training program, if a change request is created then we want to get that one instead.
 				return validated?.ApprovedTrainingProvider
 					?? validated
-					?? this.TrainingProviders.OrderByDescending(tp => tp.DateAdded).FirstOrDefault(tp => tp.TrainingProviderInventoryId == null && tp.TrainingProviderState != TrainingProviderStates.Requested)
-					?? this.TrainingProviders.OrderByDescending(tp => tp.DateAdded).FirstOrDefault(tp => tp.TrainingProviderState == TrainingProviderStates.Incomplete);
+					?? TrainingProviders.OrderByDescending(tp => tp.DateAdded).FirstOrDefault(tp => tp.TrainingProviderInventoryId == null && tp.TrainingProviderState != TrainingProviderStates.Requested)
+					?? TrainingProviders.OrderByDescending(tp => tp.DateAdded).FirstOrDefault(tp => tp.TrainingProviderState == TrainingProviderStates.Incomplete);
 			}
 		}
 
@@ -261,11 +260,11 @@ namespace CJG.Core.Entities
 			get
 			{
 				// If the training program does not have a training provider look for one that is only linked to this training provider.
-				if (this.TrainingProvider == null)
+				if (TrainingProvider == null)
 					return null;
 
-				var requested = this.TrainingProviders.OrderByDescending(tp => tp.DateAdded).ThenByDescending(o => o.Id).FirstOrDefault(tp => tp.TrainingProviderState.In(TrainingProviderStates.Requested, TrainingProviderStates.RequestApproved, TrainingProviderStates.RequestDenied) && tp.DateAdded >= this.TrainingProvider.DateAdded);
-				return this.TrainingProvider.RequestedTrainingProvider ?? requested?.RequestedTrainingProvider ?? requested;
+				var requested = TrainingProviders.OrderByDescending(tp => tp.DateAdded).ThenByDescending(o => o.Id).FirstOrDefault(tp => tp.TrainingProviderState.In(TrainingProviderStates.Requested, TrainingProviderStates.RequestApproved, TrainingProviderStates.RequestDenied) && tp.DateAdded >= TrainingProvider.DateAdded);
+				return TrainingProvider.RequestedTrainingProvider ?? requested?.RequestedTrainingProvider ?? requested;
 			}
 		}
 		/// <summary>
@@ -292,8 +291,8 @@ namespace CJG.Core.Entities
 		public TrainingProgram(GrantApplication grantApplication)
 		{
 			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
-			this.GrantApplicationId = grantApplication.Id;
-			this.GrantApplication = grantApplication;
+			GrantApplicationId = grantApplication.Id;
+			GrantApplication = grantApplication;
 			grantApplication.TrainingPrograms.Add(this);
 		}
 
@@ -306,7 +305,7 @@ namespace CJG.Core.Entities
 			if (trainingProvider == null)
 				throw new ArgumentNullException(nameof(trainingProvider));
 
-			this.TrainingProviders.Add(trainingProvider);
+			TrainingProviders.Add(trainingProvider);
 		}
 		#endregion
 
@@ -326,43 +325,39 @@ namespace CJG.Core.Entities
 			if (entry == null || context == null)
 				yield break;
 
-			if (this.GrantApplication == null && this.GrantApplicationId == 0)
-				this.GrantApplication = context.Set<GrantApplication>().First(ga => ga.Id == this.GrantApplicationId);
-			else if (this.GrantApplication == null)
+			if (GrantApplication == null && GrantApplicationId == 0)
+				GrantApplication = context.Set<GrantApplication>().First(ga => ga.Id == GrantApplicationId);
+			else if (GrantApplication == null)
 			{
 				// Do this to force load the grant application for the current training program.
-				this.GrantApplication = context.Set<GrantApplication>().Find(this.GrantApplicationId);
+				GrantApplication = context.Set<GrantApplication>().Find(GrantApplicationId);
 			}
 
 			var deliveryMethods = context.Set<TrainingProgram>().Include(m => m.DeliveryMethods).FirstOrDefault(o => o.Id == Id);
 			// Must have DeliveryMethods.
-			if (!this.DeliveryMethods.Any())
-				yield return new ValidationResult("You must select at least one primary delivery method.", new[] { nameof(this.DeliveryMethods) });
+			if (!DeliveryMethods.Any())
+				yield return new ValidationResult("You must select at least one primary delivery method.", new[] { nameof(DeliveryMethods) });
 
+			// NOTE: Start/End Date validation now takes place against the GrantApplication Validate() method rather than against the Training Program
+
+			// Must fall within TrainingPeriod.StartDate and TrainingPeriod.EndDate.
+			//var trainingPeriodStartDate = GrantApplication.GrantOpening.TrainingPeriod.StartDate;
+			//var trainingPeriodEndDate = GrantApplication.GrantOpening.TrainingPeriod.EndDate;
+			//var hasValidStartDate = GrantApplication.HasValidStartDate();
+			
 			// StartDate must be within the Delivery dates (compares original values, as well).
-			if (!this.HasStartDateWithinDeliveryDates())
-				yield return new ValidationResult($"The training start date must fall within the program delivery dates {this.GrantApplication.StartDate.ToLocalMorning():yyyy-MM-dd} to {this.GrantApplication.EndDate.ToLocalMidnight():yyyy-MM-dd}", new[] { nameof(this.StartDate) });
+			//if (!this.HasStartDateWithinIntakeDates())
+			//	yield return new ValidationResult($"The training start date must fall within the program delivery dates {GrantApplication.StartDate.ToLocalMorning():yyyy-MM-dd} to {GrantApplication.EndDate.ToLocalMidnight():yyyy-MM-dd}", new[] { nameof(StartDate) });
 
-			// EndDate must be within the Delivery dates (compares original values, as well).
-			if (!this.HasEndDateWithinDeliveryDates())
-				yield return new ValidationResult($"The training end date must fall within the program delivery dates {this.GrantApplication.StartDate.ToLocalMorning():yyyy-MM-dd} to {this.GrantApplication.EndDate.ToLocalMidnight():yyyy-MM-dd}", new[] { nameof(this.EndDate) });
-
-			// StartDate must be within the Delivery dates (compares original values, as well).
-			if (false && this.GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.WDAService && !this.HasStartDateWithin30Days())
-				yield return new ValidationResult($"Training start date must be at least 30 days after the delivery start date.", new[] { nameof(this.StartDate) });
-
-			// EndDate must be within the Delivery dates (compares original values, as well).
-			if (false && this.GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.WDAService &&
-				 !this.HasEndDateWithin30Days())
-				yield return new ValidationResult($"Training end date must be at least 30 days before the delivery end date.", new[] { nameof(this.EndDate) });
-
-
+			//// EndDate must be within the Delivery dates (compares original values, as well).
+			//if (!this.HasEndDateWithinIntakeDates())
+			//	yield return new ValidationResult($"The training end date must fall within the program delivery dates {GrantApplication.StartDate.ToLocalMorning():yyyy-MM-dd} to {GrantApplication.EndDate.ToLocalMidnight():yyyy-MM-dd}", new[] { nameof(EndDate) });
 
 			// StartDate must be before or on EndDate.
-			if (this.StartDate.ToLocalTime().Date > this.EndDate.ToLocalTime().Date)
-				yield return new ValidationResult($"The end date must occur on or after the start date '{this.StartDate.ToLocalMorning():yyyy-MM-dd}'.", new[] { nameof(this.EndDate) });
+			//if (StartDate.ToLocalTime().Date > EndDate.ToLocalTime().Date)
+//				yield return new ValidationResult($"The end date must occur on or after the start date '{StartDate.ToLocalMorning():yyyy-MM-dd}'.", new[] { nameof(EndDate) });
 
-			if (this.ServiceLineId.HasValue)
+			if (ServiceLineId.HasValue)
 			{
 				// Need to force load any of the related entities.
 				context.Set<GrantOpening>()
@@ -370,87 +365,87 @@ namespace CJG.Core.Entities
 					.Include(m => m.GrantStream.ProgramConfiguration)
 					.Include(m => m.GrantStream.ProgramConfiguration.EligibleExpenseTypes)
 					.Include($"{nameof(GrantStream)}.{nameof(ProgramConfiguration)}.{nameof(ProgramConfiguration.EligibleExpenseTypes)}.{nameof(EligibleExpenseType.Breakdowns)}")
-					.FirstOrDefault(g => g.Id == this.GrantApplication.GrantOpeningId);
-				var eligibleExpenseTypeIds = this.GrantApplication.GrantOpening.GrantStream.ProgramConfiguration.EligibleExpenseTypes.Select(eet => eet.Id).ToArray();
+					.FirstOrDefault(g => g.Id == GrantApplication.GrantOpeningId);
+				var eligibleExpenseTypeIds = GrantApplication.GrantOpening.GrantStream.ProgramConfiguration.EligibleExpenseTypes.Select(eet => eet.Id).ToArray();
 				context.Set<EligibleExpenseBreakdown>().Where(eeb => eligibleExpenseTypeIds.Contains(eeb.EligibleExpenseTypeId));
-				context.Set<EligibleCostBreakdown>().Include(m => m.EligibleCost).Include(m => m.EligibleCost.EligibleExpenseType).FirstOrDefault(ecb => ecb.Id == this.EligibleCostBreakdownId);
-				context.Set<ServiceLine>().FirstOrDefault(sl => sl.Id == this.ServiceLineId);
+				context.Set<EligibleCostBreakdown>().Include(m => m.EligibleCost).Include(m => m.EligibleCost.EligibleExpenseType).FirstOrDefault(ecb => ecb.Id == EligibleCostBreakdownId);
+				context.Set<ServiceLine>().FirstOrDefault(sl => sl.Id == ServiceLineId);
 
 				// Ensure that the selected service line is valid for the selected grant opening.
-				if (!this.GrantApplication.GrantOpening.GrantStream.ProgramConfiguration.EligibleExpenseTypes.Any(eet => eet.Breakdowns.Any(b => b.ServiceLineId == this.ServiceLineId)))
-					yield return new ValidationResult($"The '{this.EligibleCostBreakdown.EligibleCost.EligibleExpenseType.Caption}' '{this.ServiceLine.Caption}' is not a valid service for this grant opening.", new[] { nameof(this.ServiceLineId) });
+				if (!GrantApplication.GrantOpening.GrantStream.ProgramConfiguration.EligibleExpenseTypes.Any(eet => eet.Breakdowns.Any(b => b.ServiceLineId == ServiceLineId)))
+					yield return new ValidationResult($"The '{EligibleCostBreakdown.EligibleCost.EligibleExpenseType.Caption}' '{ServiceLine.Caption}' is not a valid service for this grant opening.", new[] { nameof(ServiceLineId) });
 			}
 
 			// If certain SkillFocus then there must be other fields provided.
-			if (new[] { 5, 6 }.Contains(this.SkillFocus == null ? 0 : (int)this.SkillFocusId))
+			if (new[] { 5, 6 }.Contains(SkillFocus == null ? 0 : (int)SkillFocusId))
 			{
 				// Must contain MemberOfUnderRepresentedGroup.
-				if (this.MemberOfUnderRepresentedGroup == null)
-					yield return new ValidationResult("You must select whether you are a member of a under represented group.", new[] { nameof(this.MemberOfUnderRepresentedGroup) });
+				if (MemberOfUnderRepresentedGroup == null)
+					yield return new ValidationResult("You must select whether you are a member of a under represented group.", new[] { nameof(MemberOfUnderRepresentedGroup) });
 
 				// Must contain InDemandOccupation.
-				if (this.InDemandOccupation == null && this.InDemandOccupationId == null)
-					yield return new ValidationResult("You must select an in demand occupation.", new[] { nameof(this.InDemandOccupationId) });
+				if (InDemandOccupation == null && InDemandOccupationId == null)
+					yield return new ValidationResult("You must select an in demand occupation.", new[] { nameof(InDemandOccupationId) });
 
 				// Must contain TrainingLevel.
-				if (this.TrainingLevel == null && this.TrainingLevelId == null)
-					yield return new ValidationResult("You must select a training level.", new[] { nameof(this.TrainingLevelId) });
+				if (TrainingLevel == null && TrainingLevelId == null)
+					yield return new ValidationResult("You must select a training level.", new[] { nameof(TrainingLevelId) });
 			}
 
 			// If a MemberOfUnderRepresentedGroup then must have UnderRepresentedGroups.
-			var trainingProgram = context.Set<TrainingProgram>().Include(t => t.UnderRepresentedGroups).FirstOrDefault(x => x.Id == this.Id);
+			var trainingProgram = context.Set<TrainingProgram>().Include(t => t.UnderRepresentedGroups).FirstOrDefault(x => x.Id == Id);
 
-			if (this.MemberOfUnderRepresentedGroup.HasValue &&
-				this.MemberOfUnderRepresentedGroup.Value &&
-				new[] { 5, 6 }.Contains(this.SkillFocusId.Value) &&
-				(this.Id > 0 && !trainingProgram.UnderRepresentedGroups.Any())) // only if this is an existing training program
-				yield return new ValidationResult("You must select under represented groups that apply.", new[] { nameof(this.UnderRepresentedGroups) });
+			if (MemberOfUnderRepresentedGroup.HasValue &&
+				MemberOfUnderRepresentedGroup.Value &&
+				new[] { 5, 6 }.Contains(SkillFocusId.Value) &&
+				(Id > 0 && !trainingProgram.UnderRepresentedGroups.Any())) // only if this is an existing training program
+				yield return new ValidationResult("You must select under represented groups that apply.", new[] { nameof(UnderRepresentedGroups) });
 
 			// If ExpectedQualifications provided then must have TitleOfQualification.
-			if (!new[] { 1, 5 }.Contains((this.ExpectedQualification == null ? this.ExpectedQualificationId : this.ExpectedQualification.Id)) && String.IsNullOrEmpty(this.TitleOfQualification))
-				yield return new ValidationResult("If you a have expected qualifications you must include the title of the qualification.", new[] { nameof(this.TitleOfQualification) });
+			if (!new[] { 1, 5 }.Contains((ExpectedQualification == null ? ExpectedQualificationId : ExpectedQualification.Id)) && String.IsNullOrEmpty(TitleOfQualification))
+				yield return new ValidationResult("If you a have expected qualifications you must include the title of the qualification.", new[] { nameof(TitleOfQualification) });
 
 			// If HasRequestedAdditionalFunding then must have DescriptionOfFundingRequested.
-			if (this.HasRequestedAdditionalFunding && String.IsNullOrEmpty(this.DescriptionOfFundingRequested))
-				yield return new ValidationResult("If you have received or requested additional funding you must include a description of the funding request.", new[] { nameof(this.DescriptionOfFundingRequested) });
+			if (HasRequestedAdditionalFunding && String.IsNullOrEmpty(DescriptionOfFundingRequested))
+				yield return new ValidationResult("If you have received or requested additional funding you must include a description of the funding request.", new[] { nameof(DescriptionOfFundingRequested) });
 
-			if (this.EligibleCostBreakdownId.HasValue && this.EligibleCostBreakdownId.Value != 0 || this.Id == 0 && this.GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.WDAService)
+			if (EligibleCostBreakdownId.HasValue && EligibleCostBreakdownId.Value != 0 || Id == 0 && GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.WDAService)
 			{
-				if (this.EligibleCostBreakdown == null)
-					this.EligibleCostBreakdown = context.Set<EligibleCostBreakdown>().FirstOrDefault(ecb => ecb.Id == this.EligibleCostBreakdownId);
+				if (EligibleCostBreakdown == null)
+					EligibleCostBreakdown = context.Set<EligibleCostBreakdown>().FirstOrDefault(ecb => ecb.Id == EligibleCostBreakdownId);
 
 				// When the training program references an eligible cost breakdown, the service line must be selected.
-				if (!this.ServiceLineId.HasValue)
-					yield return new ValidationResult("You must select a skills training focus for this program.", new[] { nameof(this.ServiceLineId) });
+				if (!ServiceLineId.HasValue)
+					yield return new ValidationResult("You must select a skills training focus for this program.", new[] { nameof(ServiceLineId) });
 				else
 				{
 					// If a service line has breakdowns then one must be selected.
-					var breakdowns = context.Set<ServiceLineBreakdown>().Where(slb => slb.ServiceLineId == this.ServiceLineId);
-					if (!this.ServiceLineBreakdownId.HasValue && breakdowns.Any())
-						yield return new ValidationResult("You must select an essential skills training type for this program.", new[] { nameof(this.ServiceLineBreakdownId) });
+					var breakdowns = context.Set<ServiceLineBreakdown>().Where(slb => slb.ServiceLineId == ServiceLineId);
+					if (!ServiceLineBreakdownId.HasValue && breakdowns.Any())
+						yield return new ValidationResult("You must select an essential skills training type for this program.", new[] { nameof(ServiceLineBreakdownId) });
 				}
 
-				if (this.TrainingProgramState == TrainingProgramStates.Complete)
+				if (TrainingProgramState == TrainingProgramStates.Complete)
 				{
 					// Must include a cost for the training program.
-					if (this.GrantApplication.ApplicationStateInternal.In(ApplicationStateInternal.Draft) && this.EligibleCostBreakdown.EstimatedCost <= 0)
-						yield return new ValidationResult("Program total estimated cost is required.", new[] { nameof(this.EligibleCostBreakdown.EstimatedCost) });
-					else if (this.GrantApplication.ApplicationStateInternal.In(ApplicationStateInternal.RecommendedForApproval, ApplicationStateInternal.OfferIssued) && this.EligibleCostBreakdown.IsEligible && this.EligibleCostBreakdown.AssessedCost <= 0)
-						yield return new ValidationResult("Program total agreed cost is required.", new[] { nameof(this.EligibleCostBreakdown.AssessedCost) });
-					else if (this.GrantApplication.ApplicationStateInternal.In(ApplicationStateInternal.RecommendedForApproval, ApplicationStateInternal.OfferIssued) && !this.EligibleCostBreakdown.IsEligible && this.EligibleCostBreakdown.AssessedCost > 0)
-						yield return new ValidationResult("Program total agreed cost cannot be greater than $0 if it is not eligible.", new[] { nameof(this.EligibleCostBreakdown.AssessedCost) });
+					if (GrantApplication.ApplicationStateInternal.In(ApplicationStateInternal.Draft) && EligibleCostBreakdown.EstimatedCost <= 0)
+						yield return new ValidationResult("Program total estimated cost is required.", new[] { nameof(EligibleCostBreakdown.EstimatedCost) });
+					else if (GrantApplication.ApplicationStateInternal.In(ApplicationStateInternal.RecommendedForApproval, ApplicationStateInternal.OfferIssued) && EligibleCostBreakdown.IsEligible && EligibleCostBreakdown.AssessedCost <= 0)
+						yield return new ValidationResult("Program total agreed cost is required.", new[] { nameof(EligibleCostBreakdown.AssessedCost) });
+					else if (GrantApplication.ApplicationStateInternal.In(ApplicationStateInternal.RecommendedForApproval, ApplicationStateInternal.OfferIssued) && !EligibleCostBreakdown.IsEligible && EligibleCostBreakdown.AssessedCost > 0)
+						yield return new ValidationResult("Program total agreed cost cannot be greater than $0 if it is not eligible.", new[] { nameof(EligibleCostBreakdown.AssessedCost) });
 				}
 			}
 
 			if (entry.State == EntityState.Modified)
 			{
 				// If a service line becomes disabled, the training program must throw a validation error.
-				if (httpContext.User.IsExternalUser() && this.EligibleCostBreakdownId.HasValue && this.GrantApplication.ApplicationStateInternal.In(ApplicationStateInternal.Draft, ApplicationStateInternal.ApplicationWithdrawn))
+				if (httpContext.User.IsExternalUser() && EligibleCostBreakdownId.HasValue && GrantApplication.ApplicationStateInternal.In(ApplicationStateInternal.Draft, ApplicationStateInternal.ApplicationWithdrawn))
 				{
-					var eligibleCostBreakdown = context.Set<EligibleCostBreakdown>().Include(ecb => ecb.EligibleExpenseBreakdown).FirstOrDefault(ecb => ecb.Id == this.EligibleCostBreakdownId.Value);
+					var eligibleCostBreakdown = context.Set<EligibleCostBreakdown>().Include(ecb => ecb.EligibleExpenseBreakdown).FirstOrDefault(ecb => ecb.Id == EligibleCostBreakdownId.Value);
 					if (!eligibleCostBreakdown?.EligibleExpenseBreakdown?.IsActive ?? false)
 					{
-						yield return new ValidationResult($"The service line '{eligibleCostBreakdown.EligibleExpenseBreakdown.Caption}' is no longer available, please select another.", new[] { nameof(this.EligibleCostBreakdownId) });
+						yield return new ValidationResult($"The service line '{eligibleCostBreakdown.EligibleExpenseBreakdown.Caption}' is no longer available, please select another.", new[] { nameof(EligibleCostBreakdownId) });
 					}
 				}
 			}
