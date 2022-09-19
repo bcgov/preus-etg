@@ -12,7 +12,7 @@
         <div class="form-section">
             <div>
                 <h2 class="header__title">
-                    <span ng-if="model.IsOrganizationProfileAdministrator">{{(model.CreateOrganizationProfile ? "Enter" : "Edit")}}</span>
+                    <span ng-if="model.CanEditOrganizationProfile">{{(model.CreateOrganizationProfile ? "Enter" : "Edit")}}</span>
                     Organization Profile
                 </h2>
             </div>
@@ -23,24 +23,17 @@
             </div>
             <div>
                 <div class="notice notice--icon" ng-if="model.CreateOrganizationProfile">
-                    <p><strong>Only one person from your organization may create and maintain your organization profile.</strong></p>
-                    <p>If you are not authorized to do this for your organization then please skip this step and request the authorized person to login and do this.</p>
                     <p>Members of your organization will not be able to submit grant applications until your organization profile has been created.</p>
                 </div>
-                <div class="notice notice--icon" ng-if="!model.CreateOrganizationProfile && model.IsOrganizationProfileAdministrator">
+                <div class="notice notice--icon" ng-if="model.CanEditOrganizationProfile">
                     <p>Make sure you click Save organization profile at the bottom of this form to save your changes.</p>
                 </div>
-                <div class="notice notice--icon" ng-if="!model.IsOrganizationProfileAdministrator">
+                <div class="notice notice--icon" ng-if="!model.CanEditOrganizationProfile">
                     <p>The organization profile below will be included in grant applications submitted by you.</p>
-                    <p>Your organization is responsible for ensuring that your profile is accurate. Only one member of your organization may create and maintain it. Your organization profile is maintained by {{model.AdminUserName}} (<a href="mailto:{{model.AdminUserEmailAddress}}" data-email="maintainer">{{model.AdminUserEmailAddress}}</a>)</p>
+                    <p>Your organization is responsible for ensuring that your profile is accurate.</p>
                 </div>
-
-                <div class="alert alert--warning notice--icon" ng-show="!model.CreateOrganizationProfile && model.IsOrganizationProfileAdministrator && model.RequiresBusinessLicenseDocuments">
+                <div class="alert alert--warning notice--icon" ng-show="!model.CreateOrganizationProfile && model.CanEditOrganizationProfile && model.RequiresBusinessLicenseDocuments">
                     <p>The organization profile is missing information about your business.</p>
-                </div>
-
-                <div class="alert alert--warning notice--icon" ng-if="!model.CreateOrganizationProfile && !model.IsOrganizationProfileAdministrator && model.RequiresBusinessLicenseDocuments">
-                    <p>The organization profile is missing information about your business. Your organization profile is maintained by {{model.AdminUserName}} (<a href="mailto:{{model.AdminUserEmailAddress}}" data-email="maintainer">{{model.AdminUserEmailAddress}}</a>).</p>
                 </div>
 
                 <p>Your business legal and operating names are provided by BCeID and are shown below. Please check that this information is correct.</p>
@@ -56,7 +49,7 @@
                 </div>
 
                 <h3 class="subheader--body">Organization Profile</h3>
-                <p class="text--small text--uppercase" ng-if="model.IsOrganizationProfileAdministrator">* Information must be provided</p>
+                <p class="text--small text--uppercase" ng-if="model.CanEditOrganizationProfile">* Information must be provided</p>
 
                 @*<div class="form__group">
                     <label class="form__label">Doing Business As</label>
@@ -68,14 +61,14 @@
                 <div class="form__group form__group--radio-inline">
                     <label class="form__label">Organization type <abbr title="Required">*</abbr></label>
                     <div class="form__control">
-                        <div class="form-item" ng-repeat="type in organizationTypes" ng-if="model.IsOrganizationProfileAdministrator">
+                        <div class="form-item" ng-repeat="type in organizationTypes" ng-if="model.CanEditOrganizationProfile">
                             <input id="option-{{type.Key}}" type="radio" class="k-valid"
                                    name="OrganizationTypeId"
                                    ng-value="type.Key"
                                    ng-model="model.OrganizationTypeId" />
                             <label for="option-{{type.Key}}">{{type.Value}}</label>
                         </div>
-                        <text ng-if="!model.IsOrganizationProfileAdministrator">
+                        <text ng-if="!model.CanEditOrganizationProfile">
                             {{getOrganizationType()}}
                         </text>
                     </div>
@@ -86,7 +79,7 @@
                     <div class="form__control">
                         <div class="control-wrapper">
                             <div class="wrapper--dropdown selectmenu input--medium" ng-validation="errors.LegalStructureId">
-                                <select ng-model="model.LegalStructureId" ng-options="item.Key as item.Value for item in legalStructures" class="input--medium" ng-editing="model.IsOrganizationProfileAdministrator">
+                                <select ng-model="model.LegalStructureId" ng-options="item.Key as item.Value for item in legalStructures" class="input--medium" ng-editing="model.CanEditOrganizationProfile">
                                     <option value="">{{'&lt; Select Value &gt;'}}</option>
                                 </select>
                             </div>
@@ -97,35 +90,35 @@
                 <div class="form__group">
                     <label class="form__label">Year established <abbr title="Required">*</abbr></label>
                     <div class="form__control">
-                        <input type="text" class="input--small" ng-model="model.YearEstablished" maxlength="4" ng-number ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                        <input type="text" class="input--small" ng-model="model.YearEstablished" maxlength="4" ng-number ng-validation ng-editing="model.CanEditOrganizationProfile" />
                     </div>
                 </div>
 
                 <div class="form__group">
                     <label class="form__label">Number of employees worldwide (including BC) <abbr title="Required">*</abbr></label>
                     <div class="form__control">
-                        <input type="text" class="input--small" ng-model="model.NumberOfEmployeesWorldwide" ng-number ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                        <input type="text" class="input--small" ng-model="model.NumberOfEmployeesWorldwide" ng-number ng-validation ng-editing="model.CanEditOrganizationProfile" />
                     </div>
                 </div>
 
                 <div class="form__group">
                     <label class="form__label">Number of employees in BC <abbr title="Required">*</abbr></label>
                     <div class="form__control">
-                        <input type="text" class="input--small" ng-model="model.NumberOfEmployeesInBC" ng-number ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                        <input type="text" class="input--small" ng-model="model.NumberOfEmployeesInBC" ng-number ng-validation ng-editing="model.CanEditOrganizationProfile" />
                     </div>
                 </div>
 
                 <div class="form__group">
                     <label class="form__label">Money spent each year on average for training <abbr title="Required">*</abbr></label>
                     <div class="form__control">
-                        <input type="text" class="input--medium" ng-model="model.AnnualTrainingBudget" ng-currency ng-decimal='0' ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                        <input type="text" class="input--medium" ng-model="model.AnnualTrainingBudget" ng-currency ng-decimal='0' ng-validation ng-editing="model.CanEditOrganizationProfile" />
                     </div>
                 </div>
 
                 <div class="form__group">
                     <label class="form__label">Number of employees trained on average each year <abbr title="Required">*</abbr></label>
                     <div class="form__control">
-                        <input type="text" class="input--small" ng-model="model.AnnualEmployeesTrained" ng-number ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                        <input type="text" class="input--small" ng-model="model.AnnualEmployeesTrained" ng-number ng-validation ng-editing="model.CanEditOrganizationProfile" />
                     </div>
                 </div>
 
@@ -133,10 +126,10 @@
                     <label class="form__label">North American Industry Classification System (<b>NAICS</b>) code for your primary sector <abbr title="Required">*</abbr></label>
                     <div class="form__control">
                         <div class="control-wrapper input--full"
-                             ng-class="{'selectmenu selectmenu-multiline' : model.IsOrganizationProfileAdministrator}"
+                             ng-class="{'selectmenu selectmenu-multiline' : model.CanEditOrganizationProfile}"
                              ng-validation="errors.Naics1Id">
                             <select class="form-control input--full"
-                                    ng-editing="model.IsOrganizationProfileAdministrator"
+                                    ng-editing="model.CanEditOrganizationProfile"
                                     ng-model="model.Naics1Id"
                                     ng-options="item.Key as item.Value for item in naics1"
                                     ng-change="changeNAICS(2)">
@@ -144,11 +137,11 @@
                             </select>
                         </div>
                         <div class="control-wrapper margin-top-10 input--full"
-                             ng-class="{'selectmenu selectmenu-multiline' : model.IsOrganizationProfileAdministrator}"
+                             ng-class="{'selectmenu selectmenu-multiline' : model.CanEditOrganizationProfile}"
                              ng-validation="errors.Naics2Id"
                              ng-if="model.Naics1Id">
                             <select class="form-control input--full"
-                                    ng-editing="model.IsOrganizationProfileAdministrator"
+                                    ng-editing="model.CanEditOrganizationProfile"
                                     ng-model="model.Naics2Id"
                                     ng-options="item.Key as item.Value for item in naics2"
                                     ng-change="changeNAICS(3)">
@@ -156,11 +149,11 @@
                             </select>
                         </div>
                         <div class="control-wrapper margin-top-10 input--full"
-                             ng-class="{'selectmenu selectmenu-multiline' : model.IsOrganizationProfileAdministrator}"
+                             ng-class="{'selectmenu selectmenu-multiline' : model.CanEditOrganizationProfile}"
                              ng-validation="errors.Naics3Id"
                              ng-if="model.Naics2Id">
                             <select class="form-control input--full"
-                                    ng-editing="model.IsOrganizationProfileAdministrator"
+                                    ng-editing="model.CanEditOrganizationProfile"
                                     ng-model="model.Naics3Id"
                                     ng-options="item.Key as item.Value for item in naics3"
                                     ng-change="changeNAICS(4)">
@@ -168,11 +161,11 @@
                             </select>
                         </div>
                         <div class="control-wrapper margin-top-10 input--full"
-                             ng-class="{'selectmenu selectmenu-multiline' : model.IsOrganizationProfileAdministrator}"
+                             ng-class="{'selectmenu selectmenu-multiline' : model.CanEditOrganizationProfile}"
                              ng-validation="errors.Naics4Id"
                              ng-if="model.Naics3Id">
                             <select class="form-control input--full"
-                                    ng-editing="model.IsOrganizationProfileAdministrator"
+                                    ng-editing="model.CanEditOrganizationProfile"
                                     ng-model="model.Naics4Id"
                                     ng-options="item.Key as item.Value for item in naics4"
                                     ng-change="changeNAICS(5)">
@@ -180,11 +173,11 @@
                             </select>
                         </div>
                         <div class="control-wrapper margin-top-10 input--full"
-                             ng-class="{'selectmenu selectmenu-multiline' : model.IsOrganizationProfileAdministrator}"
+                             ng-class="{'selectmenu selectmenu-multiline' : model.CanEditOrganizationProfile}"
                              ng-validation="errors.Naics5Id"
                              ng-if="model.Naics4Id">
                             <select class="form-control input--full"
-                                    ng-editing="model.IsOrganizationProfileAdministrator"
+                                    ng-editing="model.CanEditOrganizationProfile"
                                     ng-model="model.Naics5Id"
                                     ng-options="item.Key as item.Value for item in naics5">
                                 <option value="">&lt; Select Value &gt;</option>
@@ -196,10 +189,10 @@
                 <div class="form__group">
                     <div ng-class="errors.BusinessLicenseDocumentAttachments ? 'has-error padded-error' : '' ">
                         <h4>Business Information Documents *</h4>
-                        <div class="notice notice--icon" ng-if="model.IsOrganizationProfileAdministrator">
+                        <div class="notice notice--icon" ng-if="model.CanEditOrganizationProfile">
                             <p>To be eligible, employers must have been fully operational for at least one year at the time of application. Please provide a copy of your business licence. If your current licence does not demonstrate one full year of operation at the time of application, please provide your business licence for both the current and previous years. Employers operating without a business licence are still eligible to apply but must provide alternative documentation that clearly demonstrates that they have been fully operational for at least one year at the time of application. If you have questions about please contact <a href="mailto: ETG@gov.bc.ca">ETG@gov.bc.ca</a>.</p>
                         </div>
-                        <p ng-if="model.IsOrganizationProfileAdministrator">Accepted file types: PDF, JPG, JPEG, PNG, GIF.</p>
+                        <p ng-if="model.CanEditOrganizationProfile">Accepted file types: PDF, JPG, JPEG, PNG, GIF.</p>
 
                         <div ng-if="model.BusinessLicenseDocumentAttachments">
                             <table style="width: 100%;">
@@ -211,7 +204,7 @@
                                         {{attachment.Description}}
                                     </td>
                                     <td style="width: 40%; vertical-align: top">
-                                        <button class="btn btn--secondary pull-right margin-left-10" ng-if="model.IsOrganizationProfileAdministrator" ng-click="removeAttachment($index)">Remove</button>
+                                        <button class="btn btn--secondary pull-right margin-left-10" ng-if="model.CanEditOrganizationProfile" ng-click="removeAttachment($index)">Remove</button>
                                         @*<button class="btn btn--secondary pull-right margin-left-10" ng-if="model.IsOrganizationProfileAdministrator" ng-click="changeAttachment(attachment)">Change</button>*@
                                     </td>
                                 </tr>
@@ -221,7 +214,7 @@
                             <p>No business information documents have been provided.</p>
                         </div>
                         <div >
-                            <button class="btn btn--secondary" ng-click="addAttachment()" data-disableonsubmit="false" ng-if="model.IsOrganizationProfileAdministrator">Add Document</button>
+                            <button class="btn btn--secondary" ng-click="addAttachment()" data-disableonsubmit="false" ng-if="model.CanEditOrganizationProfile">Add Document</button>
                         </div>
                     </div>
                     <span ng-if="errors.BusinessLicenseDocumentAttachments" class="field-validation-error" ng-bind-html="errors.BusinessLicenseDocumentAttachments"></span>
@@ -230,7 +223,7 @@
                 <div class="form__group">
                     <label class="form__label">Business Website (if applicable)</label>
                     <div class="form__control">
-                        <input type="text" class="input--full" ng-model="model.BusinessWebsite" maxlength="2000" ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                        <input type="text" class="input--full" ng-model="model.BusinessWebsite" maxlength="2000" ng-validation ng-editing="model.CanEditOrganizationProfile" />
                         <div ng-if="model.BusinessWebsite !== null && model.BusinessWebsite !== '' " class="control-wrapper form-control">
                             <span ng-if="model.BusinessWebsite.indexOf('http') > -1  || model.BusinessWebsite.indexOf('https') > -1">
                                 <a href="{{model.BusinessWebsite}}" target="_blank" ng-model="model.BusinessWebsite">{{model.BusinessWebsite}}</a>
@@ -244,11 +237,11 @@
 
                 <div class="form__group boxed__error" ng-validation="errors.BusinessDescription">
                     <label class="form__label">Business Description <abbr title="Required">*</abbr></label>
-                    <div class="form__control" ng-if="model.IsOrganizationProfileAdministrator">
+                    <div class="form__control" ng-if="model.CanEditOrganizationProfile">
                         <textarea ng-model="model.BusinessDescription" class="input--full textarea--medium"
                                 ui-tinymce="tinymceOptions"></textarea>
                     </div>
-                    <div class="form__control" ng-if="!model.IsOrganizationProfileAdministrator">
+                    <div class="form__control" ng-if="!model.CanEditOrganizationProfile">
                         <div class="control-wrapper input--full" ng-bind-html="model.BusinessDescription | unsafe"></div>
                     </div>
                 </div>
@@ -258,21 +251,21 @@
                 <div class="form__group">
                     <label class="form__label">Address line 1 <abbr title="Required">*</abbr></label>
                     <div class="form__control">
-                        <input type="text" class="input--medium" ng-model="model.HeadOfficeAddress.AddressLine1" ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                        <input type="text" class="input--medium" ng-model="model.HeadOfficeAddress.AddressLine1" ng-validation ng-editing="model.CanEditOrganizationProfile" />
                     </div>
                 </div>
 
                 <div class="form__group">
                     <label class="form__label">Address line 2</label>
                     <div class="form__control">
-                        <input type="text" class="input--medium" ng-model="model.HeadOfficeAddress.AddressLine2" ng-editing="model.IsOrganizationProfileAdministrator" />
+                        <input type="text" class="input--medium" ng-model="model.HeadOfficeAddress.AddressLine2" ng-editing="model.CanEditOrganizationProfile" />
                     </div>
                 </div>
 
                 <div class="form__group">
                     <label class="form__label">City <abbr title="Required">*</abbr></label>
                     <div class="form__control">
-                        <input type="text" class="input--medium" ng-model="model.HeadOfficeAddress.City" ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                        <input type="text" class="input--medium" ng-model="model.HeadOfficeAddress.City" ng-validation ng-editing="model.CanEditOrganizationProfile" />
                     </div>
                 </div>
 
@@ -284,7 +277,7 @@
                                 <select class="input--medium"
                                         ng-model="model.HeadOfficeAddress.RegionId"
                                         ng-options="item.Key as item.Value for item in provinces"
-                                        ng-editing="model.IsOrganizationProfileAdministrator"
+                                        ng-editing="model.CanEditOrganizationProfile"
                                         ng-validation></select>
                             </div>
                         </div>
@@ -294,23 +287,23 @@
                 <div class="form__group">
                     <label class="form__label">Postal Code <abbr title="Required">*</abbr></label>
                     <div class="form__control">
-                        <input type="text" class="input--small" ng-model="model.HeadOfficeAddress.PostalCode" maxlength="6" ng-postal ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                        <input type="text" class="input--small" ng-model="model.HeadOfficeAddress.PostalCode" maxlength="6" ng-postal ng-validation ng-editing="model.CanEditOrganizationProfile" />
                     </div>
                 </div>
 
                 <div>
                     <a class="btn btn--primary"
-                       ng-if="!model.IsOrganizationProfileAdministrator"
+                       ng-if="!model.CanEditOrganizationProfile"
                        ng-href="{{model.BackURL}}">
                         Back
                     </a>
                     <a class="btn btn--secondary"
-                       ng-if="model.IsOrganizationProfileAdministrator"
+                       ng-if="model.CanEditOrganizationProfile"
                        ng-href="{{model.BackURL}}">
                         {{(model.CreateOrganizationProfile ? "Skip this step" : "Cancel")}}
                     </a>
                     <button class="btn btn--primary pull-right"
-                            ng-if="model.IsOrganizationProfileAdministrator"
+                            ng-if="model.CanEditOrganizationProfile"
                             ng-click="save()">
                         {{(model.CreateOrganizationProfile ? "Create" : "Save")}} Organization Profile
                     </button>

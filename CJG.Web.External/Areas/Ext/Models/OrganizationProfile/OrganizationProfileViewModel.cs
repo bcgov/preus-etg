@@ -17,6 +17,8 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 	{
 		public bool IsOrganizationProfileAdministrator { get; set; }
 		public bool CreateOrganizationProfile { get; set; }
+		public bool CanEditOrganizationProfile { get; set; }
+
 		public string BackURL { get; set; }
 
 		[Required(ErrorMessage = "NAICS sector code is required")]
