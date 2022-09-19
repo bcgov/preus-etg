@@ -77,6 +77,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			{
 				var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
 				var createOrganizationProfile = currentUser.Organization == null || _organizationService.GetOrganizationProfileAdminUserId(currentUser.Organization.Id) == 0;
+				var userCanEditOrganizationProfile = currentUser.Organization != null || createOrganizationProfile;
 
 				if (_userService.SyncOrganizationFromBCeIDAccount(currentUser))
 					_authenticationService.Refresh(currentUser);
@@ -86,6 +87,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					BackURL = TempData["BackURL"]?.ToString() ?? "/Ext/Home/",
 					CreateOrganizationProfile = createOrganizationProfile,
 					IsOrganizationProfileAdministrator = currentUser.IsOrganizationProfileAdministrator || model.CreateOrganizationProfile,
+					CanEditOrganizationProfile = userCanEditOrganizationProfile,
 					RequiresBusinessLicenseDocuments = _organizationService.RequiresBusinessLicenseDocuments(currentUser.OrganizationId)
 				};
 			}
@@ -147,6 +149,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			model.HeadOfficeAddress = address;
 			model.BusinessLicenseDocumentAttachments = GetBusinessAttachmentsToValidate(attachments);
 			model.BusinessWebsite = PrefixBusinessWebsite(model);
+
 			// Have to validate the sub-model since we cleared the original errors
 			TryValidateModel(model.HeadOfficeAddress, "HeadOfficeAddress");
 			TryValidateModel(model);
@@ -175,8 +178,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			{
 				HandleAngularException(ex, model);
 			}
-
-			//model.RedirectURL = Url.Action("OrganizationProfileView");
 
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}

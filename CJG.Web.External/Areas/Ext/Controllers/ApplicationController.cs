@@ -618,19 +618,19 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 			if (!_organizationService.IsOrganizationNaicsStatusUpdated(currentUser.Organization.Id))
 			{
-				if (currentUser.IsOrganizationProfileAdministrator && _organizationService.NotSubmittedGrantApplications(currentUser.Organization.Id) > 0)
+				if (_organizationService.NotSubmittedGrantApplications(currentUser.Organization.Id) > 0)
 				{
-					//Clear NAICS
+					// Clear NAICS
 					_organizationService.ClearOrganizationOldNaicsCode(currentUser.Organization.Id);
 				}
 
-				this.SetAlerts("Your organization’s Canada North American Industry Classification System (NAICS) codes are currently out of date. The Profile Administrator (individual responsible for your Organization Profile) will need to update the NAICS codes on your Organization Profile before submitting an application.", AlertType.Warning);
+				this.SetAlerts("Your organization’s Canada North American Industry Classification System (NAICS) codes are currently out of date. You, or someone from your Organization will need to update the NAICS codes on your Organization Profile before submitting an application.", AlertType.Warning);
 			}
 
 			if (_organizationService.RequiresBusinessLicenseDocuments(currentUser.Organization.Id))
 			{
 				_logger.Info($"The Organization is missing up-to-date Business License Documents - {_siteMinderService.CurrentUserGuid}");
-				this.SetAlerts("Your organization’s Business Information Documents are currently out of date. The Profile Administrator (individual responsible for your Organization Profile) will need to update these on your Organization Profile before submitting an application.", AlertType.Warning);
+				this.SetAlerts("Your organization’s Business Information Documents are currently out of date. You, or someone from your Organization will need to update these on your Organization Profile before submitting an application.", AlertType.Warning);
 			}
 
 			return View(SidebarViewModelFactory.Create(grantApplication, ControllerContext));

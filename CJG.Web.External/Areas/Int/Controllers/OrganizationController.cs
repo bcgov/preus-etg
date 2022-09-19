@@ -1,64 +1,48 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
-using System.Web.Mvc;
 using CJG.Infrastructure.Identity;
+using CJG.Web.External.Areas.Int.Models.Organizations;
+using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
-using System.Text.RegularExpressions;
-using CJG.Application.Services;
-using CJG.Web.External.Controllers;
-using System.Linq;
 using CJG.Web.External.Models.Shared;
-using CJG.Web.External.Areas.Int.Models.Organizations;
-using System.Collections.Generic;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
 
-	[RouteArea("Int")]
+    [RouteArea("Int")]
 	[RoutePrefix("Organization")]
 	[AuthorizeAction(Privilege.TP1)]
 	public class OrganizationController : BaseController
 	{
-		#region Variables
 		public static class TextMessages
 		{
 			public const string NoPermissions = "You don't have permissions to change status of this organization";
 		}
 
 		private readonly IOrganizationService _organizationService;
-		private readonly IAuthorizationService _authorizationService;
-		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IStaticDataService _staticDataService;
 		private readonly INaIndustryClassificationSystemService _naIndustryClassificationSystemService;
 
-		#endregion
-
-		#region Constructors
 		public OrganizationController(
 			IControllerService controllerService,
 			IOrganizationService organizationService,
-			IAuthorizationService authorizationService,
-			IGrantApplicationService grantApplicationService,
 			IStaticDataService staticDataService,
 			INaIndustryClassificationSystemService naIndustryClassificationSystemService) : base(controllerService.Logger)
 		{
 			_organizationService = organizationService;
-			_authorizationService = authorizationService;
-			_grantApplicationService = grantApplicationService;
 			_staticDataService = staticDataService;
 			_naIndustryClassificationSystemService = naIndustryClassificationSystemService;
 		}
-		#endregion
 
-		#region Endpoints
 		[HttpGet, Route("View")]
 		public ActionResult OrganizationsView()
 		{
-			//
-			// Launched when the 'Organization' link on the DashBoard is clicked
-			//
 			return View();
 		}
 
@@ -205,27 +189,25 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		{
 			try
 			{
-				Organization organization = new Organization();
-
-				organization.BCeIDGuid = Guid.NewGuid();
-				organization.LegalName = model.LegalName;
-				organization.DoingBusinessAs = model.DoingBusinessAs;
-				organization.YearEstablished = model.YearEstablished;
-				organization.NumberOfEmployeesWorldwide = model.NumberOfEmployeesWorldwide;
-				organization.NumberOfEmployeesInBC = model.NumberOfEmployeesInBC;
-				organization.AnnualTrainingBudget = model.AnnualTrainingBudget;
-				organization.AnnualEmployeesTrained = model.AnnualEmployeesTrained;
-				organization.OrganizationTypeId = model.OrganizationTypeId;
-				organization.LegalStructureId = model.LegalStructureId;
-				organization.NaicsId = model.NaicsId;
-				organization.HeadOfficeAddressId = 0;
-
+				var organization = new Organization
+				{
+					BCeIDGuid = Guid.NewGuid(),
+					LegalName = model.LegalName,
+					DoingBusinessAs = model.DoingBusinessAs,
+					YearEstablished = model.YearEstablished,
+					NumberOfEmployeesWorldwide = model.NumberOfEmployeesWorldwide,
+					NumberOfEmployeesInBC = model.NumberOfEmployeesInBC,
+					AnnualTrainingBudget = model.AnnualTrainingBudget,
+					AnnualEmployeesTrained = model.AnnualEmployeesTrained,
+					OrganizationTypeId = model.OrganizationTypeId,
+					LegalStructureId = model.LegalStructureId,
+					NaicsId = model.NaicsId,
+					HeadOfficeAddressId = 0
+				};
 
 				if (organization.HeadOfficeAddress == null)
-				{
 					organization.HeadOfficeAddress = new Address();
-				}
-				
+
 				if (model.HeadOfficeAddress != null)
 				{					
 					organization.HeadOfficeAddress.AddressLine1 = model.HeadOfficeAddress.AddressLine1;
@@ -249,7 +231,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[AuthorizeAction(Privilege.TP1, Privilege.TP2)]
 		public JsonResult UpdateOrganization(OrganizationListViewModel model)
 		{
-
 			try
 			{
 				var organization = _organizationService.Get(model.Id);
@@ -271,16 +252,17 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				organization.LegalStructureId = model.LegalStructureId;
 				organization.NaicsId = model.NaicsId;
 				organization.HeadOfficeAddressId = model.HeadOfficeAddressId;
-				organization.HeadOfficeAddress = new Address();
-				organization.HeadOfficeAddress.AddressLine1 = model.HeadOfficeAddress.AddressLine1;
-				organization.HeadOfficeAddress.AddressLine2 = model.HeadOfficeAddress.AddressLine2;
-				organization.HeadOfficeAddress.City = model.HeadOfficeAddress.City;
-				organization.HeadOfficeAddress.RegionId = model.HeadOfficeAddress.RegionId;
-				organization.HeadOfficeAddress.PostalCode = model.HeadOfficeAddress.PostalCode;
+
+				organization.HeadOfficeAddress = new Address
+				{
+					AddressLine1 = model.HeadOfficeAddress.AddressLine1,
+					AddressLine2 = model.HeadOfficeAddress.AddressLine2,
+					City = model.HeadOfficeAddress.City,
+					RegionId = model.HeadOfficeAddress.RegionId,
+					PostalCode = model.HeadOfficeAddress.PostalCode
+				};
 
 				_organizationService.UpdateOrganization(organization);
-				
-
 			}
 			catch (Exception ex)
 			{
@@ -288,15 +270,5 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
-		#endregion
-
-		#region Methods
-		private static string CleanMultilineText(string text)
-		{
-			return string.IsNullOrWhiteSpace(text)
-				? null
-				: Regex.Replace(text.Trim(), "([^\r])\n", "$1\r\n");
-		}
-		#endregion
 	}
 }
