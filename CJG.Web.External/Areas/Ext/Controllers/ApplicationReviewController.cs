@@ -562,13 +562,13 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 			// Check if an Organization NAICS code is updated to 2017
 			if (!_organizationService.IsOrganizationNaicsStatusUpdated(currentUser.Organization.Id)) {
-				this.SetAlert("Your organization’s Canada North American Industry Classification System (NAICS) codes are currently out of date. You, or someone from your Organization, will need to update the NAICS codes on your Organization Profile before submitting an application.", AlertType.Warning, true);
+				this.SetAlert(MessageConstants.Message_BCeID_NAICS_Expired, AlertType.Warning, true);
 				return RedirectToAction("Index", "Home");
 			}
 
 			// Check if an Organization is required to update their uploaded business license documents
 			if (_organizationService.RequiresBusinessLicenseDocuments(currentUser.Organization.Id)) {
-				this.SetAlert("Your organization’s Business Information Documents are currently out of date. You, or someone from your Organization, will need to update these on your Organization Profile before submitting an application.", AlertType.Warning, true);
+				this.SetAlert(MessageConstants.Message_BCeID_BusinessDocuments_Required, AlertType.Warning, true);
 				return RedirectToAction("Index", "Home");
 			}
 
