@@ -1341,6 +1341,7 @@
     <Compile Include="Areas\Int\Models\WorkQueue\WorkQueueFilterViewModel.cs" />
     <Compile Include="Areas\Int\Models\WorkQueue\WorkQueueUserFilterViewModel.cs" />
     <Compile Include="Helpers\CanadaPostConfiguration.cs" />
+    <Compile Include="Helpers\MessageConstants.cs" />
     <Compile Include="Helpers\FileWrapper.cs" />
     <Compile Include="Helpers\Modules\LogResponseModule.cs" />
     <Compile Include="Helpers\ProgramDescriptionViewModelValidation.cs" />
