@@ -1,4 +1,6 @@
-app.controller('GrantStreamEligibility', function ($scope, $attrs, $controller, $timeout, Utils) {
+app.filter('unsafe', function ($sce) { return $sce.trustAsHtml; });
+
+app.controller('GrantStreamEligibility', function ($scope, $attrs, $controller) {
   $scope.section = {
     name: 'GrantStreamEligibility',
     save: {
@@ -20,6 +22,16 @@ app.controller('GrantStreamEligibility', function ($scope, $attrs, $controller, 
   };
 
   angular.extend(this, $controller('Section', { $scope: $scope, $attrs: $attrs }));
+
+  $scope.tinymceOptions = {
+    plugins: 'link image code autoresize preview fullscreen lists advlist anchor',
+    toolbar: 'undo redo | bold italic | formatselect | alignleft aligncenter alignright | outdent indent | numlist bullist | anchor | preview | fullscreen | code',
+    setup: function (ed) {
+      ed.on('init', function (ed) {
+        $('div.tox-tinymce-aux').css('z-index', '99999');
+      });
+    }
+  };
 
   $scope.$watch('$parent.model', function (newValue, oldValue) {
     $scope.model = newValue;
@@ -73,7 +85,7 @@ app.controller('GrantStreamEligibility', function ($scope, $attrs, $controller, 
       EligibilityPositiveAnswerRequired: true,
       EligibilityRationaleAnswerAllowed: false,
       EligibilityRationaleAnswerLabel: '',
-      RowSequence: 0,
+      RowSequence: 0
     });
     $scope.renumberStreamQuestions(1);
   }
@@ -113,8 +125,10 @@ app.controller('GrantStreamEligibility', function ($scope, $attrs, $controller, 
   $scope.filterQuestions = function (question) {
     if (!question)
       return false;
+
     if ($scope.model.EligibilityQuestionsShowDisabled || question.IsActive)
       return true;
+
     return false;
   }
 });
