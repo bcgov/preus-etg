@@ -13,7 +13,6 @@ app.controller('ReportingGrantFileView', function ($scope, $attrs, $controller, 
     });
   }
 
-
   loadGrantFile()
     .catch(angular.noop);
 });
