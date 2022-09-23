@@ -219,7 +219,7 @@
                 </div>
                 <div ng-repeat="question in model.StreamEligibilityQuestions">
                     <div class="form__group">
-                        <div class="form__label">{{question.EligibilityQuestion}}</div>
+                        <div class="form__label" ng-bind-html="question.EligibilityQuestion | unsafe"></div>
                         <div class="form__control">
                             <div class="form__control">
                                 <div class="form-item">
