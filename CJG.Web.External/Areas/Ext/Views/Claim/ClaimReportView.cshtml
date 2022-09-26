@@ -20,7 +20,7 @@
                     <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
                 </div>
 
-                <div ng-if="model.Claim.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                <div>
                     @Html.Partial("_ClaimDetailsETG")
                 </div>
 
@@ -40,7 +40,7 @@
                     </div>
                 }
             </div>
-            @Html.Partial("_GrantApplicationSidebar", Model)
         </div>
+        @Html.Partial("_GrantApplicationSidebar", Model)
     </div>
 </div>
