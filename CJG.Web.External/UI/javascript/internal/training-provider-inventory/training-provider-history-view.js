@@ -157,8 +157,9 @@ app.controller('TrainingProviderHistory', function ($scope, $attrs, $controller,
       sort.descending = false;
     }
     if (sort.descending) {
-      newSortImage = sortDesc
+      newSortImage = sortDesc;
     }
+
     if (column == 'FileNumber') { $scope.imgSrcFileNumber = newSortImage; }
     if (column == 'CurrentStatus') { $scope.imgSrcCurrentStatus = newSortImage; }
     if (column == 'ApplicantName') { $scope.imgSrcApplicant = newSortImage; }
