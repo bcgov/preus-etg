@@ -9,6 +9,7 @@ using CJG.Web.External.Helpers.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
@@ -129,9 +130,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			return View(model);
 		}
 
-
-
-
 		[HttpGet]
 		[Route("Participant/TrainingHistory/{participantId}")]
 		public JsonResult LoadTrainingHistory(int participantId)
@@ -209,33 +207,27 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			List<ParticipantTrainingHistory> trainingHistory;
 
 
-			//SORT
-			System.Reflection.PropertyInfo prop = typeof(ParticipantTrainingHistory).GetProperty(sortby);
-			if (sortDesc)
-            {
-				trainingHistory = model.TrainingHistory.OrderByDescending(o => prop.GetValue(o, null)).ToList();
-			}
-            else
-            {
-				trainingHistory = model.TrainingHistory.OrderBy(o => prop.GetValue(o, null)).ToList();
-			}
+			// Sort
+			var prop = typeof(ParticipantTrainingHistory).GetProperty(sortby);
+			trainingHistory = sortDesc
+				? model.TrainingHistory.OrderByDescending(o => prop.GetValue(o, null)).ToList()
+				: model.TrainingHistory.OrderBy(o => prop.GetValue(o, null)).ToList();
 
-			//FILTER
+			// Filter
 			var filtered = trainingHistory
 				.Skip((page - 1) * quantity)
 				.Take(quantity)
-				.ToArray();
+				.ToList();
 
 			var result = new
 			{
-				RecordsFiltered = filtered.Count(),
-				RecordsTotal = filtered.Count(),
+				RecordsFiltered = filtered.Count,
+				RecordsTotal = trainingHistory.Count,
 				Data = filtered.ToArray()
 			};
 
 			return Json(result, JsonRequestBehavior.AllowGet);
 		}
-
 
 		[HttpPut]
 		[PreventSpam]

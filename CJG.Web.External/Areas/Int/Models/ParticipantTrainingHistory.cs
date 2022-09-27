@@ -1,11 +1,9 @@
 ﻿using CJG.Core.Entities;
-using System;
 
 namespace CJG.Web.External.Areas.Int.Models
 {
 	public class ParticipantTrainingHistory
 	{
-		#region Properties
 		public int GrantId { get; set; }
 		public string FileNumber { get; set; }
 		public string TrainingStartDate { get; set; }
@@ -16,24 +14,22 @@ namespace CJG.Web.External.Areas.Int.Models
 		public string TrainingCourse { get; set; }
 		public string ApprovedGovtContribution { get; set; }
 		public string AmountPaid { get; set; }
-		#endregion
 
-		//ParticipantForm participant
-		public ParticipantTrainingHistory(TrainingProgram trainingProgram, decimal govContri, decimal paid)
+		public ParticipantTrainingHistory(TrainingProgram trainingProgram, decimal governmentContribution, decimal paid)
 		{
-			this.GrantId = trainingProgram.GrantApplication.Id;
-			this.FileNumber = trainingProgram.GrantApplication.FileNumber ?? "";
+			GrantId = trainingProgram.GrantApplication.Id;
+			FileNumber = trainingProgram.GrantApplication.FileNumber ?? "";
 
-			this.TrainingStartDate = trainingProgram.StartDate.ToString("yyyy-MM-dd");
-			this.TrainingEndDate = trainingProgram.EndDate.ToString("yyyy-MM-dd");
-			this.TrainingStream = trainingProgram.GrantApplication.GrantOpening.GrantStream.Name;
-			this.ApplicationStatus = trainingProgram.GrantApplication.ApplicationStateInternal.GetDescription();
+			TrainingStartDate = trainingProgram.StartDate.ToString("yyyy-MM-dd");
+			TrainingEndDate = trainingProgram.EndDate.ToString("yyyy-MM-dd");
+			TrainingStream = trainingProgram.GrantApplication.GrantOpening.GrantStream.Name;
+			ApplicationStatus = trainingProgram.GrantApplication.ApplicationStateInternal.GetDescription();
 
-			this.TrainingProvider = trainingProgram.TrainingProvider.Name;
-			this.TrainingCourse = trainingProgram.CourseTitle;
+			TrainingProvider = trainingProgram.TrainingProvider.Name;
+			TrainingCourse = trainingProgram.CourseTitle;
 
-			this.ApprovedGovtContribution = govContri.ToString("c");
-			this.AmountPaid = paid.ToString("c");
+			ApprovedGovtContribution = governmentContribution.ToString("c");
+			AmountPaid = paid.ToString("c");
 		}
 	}
 }
