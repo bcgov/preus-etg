@@ -29,15 +29,15 @@
                 @if (!ViewBag.ReviewAndSubmit)
                 {
                     <div class="margin-bottom pull-right" ng-if="model.Claim.IsEditable && model.Claim.EligibleCosts.length > 0">
-                        <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-click="save()" ng-disabled="!IsValid">Save Claim</a>
+                        <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-click="save()" ng-disabled="!IsValid">Save for later</a>
                     </div>
                     <div class="clearfix"></div>
-                    @*<div class="margin-bottom pull-right" ng-if="model.Claim.IsEditable && model.Claim.EligibleCosts.length > 0">
-                            <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-click="saveAndReview(); save();" ng-disabled="!IsValid">Review and submit claim</a>
-                        </div>*@
                     <div class="margin-bottom pull-right" ng-if="grantFile.AllowReviewAndSubmit && grantFile.EnableSubmit">
-                        @Html.ActionLink("Review and submit claim", "ClaimReviewView", "Claim", new { claimId = ViewBag.ClaimId, claimVersion = ViewBag.ClaimVersion }, new { @class = "btn btn--primary" })
+                        <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-click="saveAndReview();">Submit my claim now</a>
                     </div>
+                    @*<div class="margin-bottom pull-right" ng-if="grantFile.AllowReviewAndSubmit && grantFile.EnableSubmit">
+                        @Html.ActionLink("Submit my claim now", "ClaimReviewView", "Claim", new { claimId = ViewBag.ClaimId, claimVersion = ViewBag.ClaimVersion }, new { @class = "btn btn--primary" })
+                    </div>*@
                 }
             </div>
         </div>
