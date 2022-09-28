@@ -11,25 +11,13 @@ namespace CJG.Application.Services
 {
 	public class CompletionReportService : Service, ICompletionReportService
 	{
-		#region Variables
-		#endregion
-
-		#region Constructors
-
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="CompletionReportService"/> and initializes the specified properties.
 		/// </summary>
-		/// <param name="unitOfWork"></param>
-		public CompletionReportService(
-			IDataContext dbContext,
-			HttpContextBase httpContext,
-			ILogger logger) : base(dbContext, httpContext, logger)
+		public CompletionReportService(IDataContext dbContext ,HttpContextBase httpContext, ILogger logger) : base(dbContext, httpContext, logger)
 		{
 		}
 
-		#endregion
-
-		#region Methods
 		/// <summary>
 		/// Get the completion report by ID
 		/// </summary>
@@ -37,29 +25,40 @@ namespace CJG.Application.Services
 		public CompletionReport GetCurrentCompletionReport(int completionReportId)
 		{
 			// This returns all grant applications associated with the completion report record, which is probably not required anywhere.
-			return _dbContext.CompletionReports.AsNoTracking().Where(cr => cr.Id == completionReportId).FirstOrDefault();
+			return _dbContext.CompletionReports
+				.AsNoTracking().
+				FirstOrDefault(cr => cr.Id == completionReportId);
 		}
 
 		public IEnumerable<CompletionReportQuestion> GetCompletionReportQuestionsForStep(int completionReportId, int groupId)
 		{
-			return _dbContext.CompletionReportQuestions.AsNoTracking().Where(crq => crq.CompletionReportId == completionReportId && crq.GroupId == groupId && crq.IsActive).OrderBy(crq => crq.Sequence).ToArray();
+			return _dbContext.CompletionReportQuestions
+				.AsNoTracking()
+				.Where(crq => crq.CompletionReportId == completionReportId && crq.GroupId == groupId && crq.IsActive)
+				.OrderBy(crq => crq.Sequence)
+				.ToArray();
 		}
 
 		public ICollection<CompletionReportOption> GetCompletionReportOptionsForQuestions(int[] questions)
 		{
-			return _dbContext.CompletionReportOptions.AsNoTracking().Where(cro => questions.Contains(cro.QuestionId) && cro.IsActive).Distinct().ToList();
+			return _dbContext.CompletionReportOptions
+				.AsNoTracking()
+				.Where(cro => questions.Contains(cro.QuestionId) && cro.IsActive)
+				.Distinct()
+				.ToList();
 		}
 
 		public CompletionReportOption GetCompletionReportOption(int id)
 		{
-			return _dbContext.CompletionReportOptions.AsNoTracking().Where(cro => cro.Id == id).First();
+			return _dbContext.CompletionReportOptions
+				.AsNoTracking()
+				.First(cro => cro.Id == id);
 		}
 
 		public IEnumerable<CompletionReportOption> GetCompletionReportOptions()
 		{
 			return _dbContext.CompletionReportOptions.Where(cro => cro.IsActive);
 		}
-
 
 		/// <summary>
 		/// Delete all the answers for the specified participants (and questions).
@@ -380,10 +379,12 @@ namespace CJG.Application.Services
 			var grantApplication = Get<GrantApplication>(grantApplicationId);
 			var programTypeId = grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId;
 
-			return _dbContext.CompletionReportGroups.AsNoTracking().Where(o =>
-				o.CompletionReportId == grantApplication.CompletionReportId &&
-				(o.ProgramTypeId == null || o.ProgramTypeId == programTypeId))
-				.OrderBy(o => o.RowSequence).Select(select).ToArray();
+			return _dbContext.CompletionReportGroups
+				.AsNoTracking()
+				.Where(o => o.CompletionReportId == grantApplication.CompletionReportId && (o.ProgramTypeId == null || o.ProgramTypeId == programTypeId))
+				.OrderBy(o => o.RowSequence)
+				.Select(select)
+				.ToArray();
 		}
 
 		/// <summary>
@@ -399,13 +400,12 @@ namespace CJG.Application.Services
 			// Remove inactive options from the select dropdown.
 			if (completionReportGroup != null)
 			{
-				foreach (var question in completionReportGroup.Questions)
+				foreach (var question in completionReportGroup.Questions.Where(q => q.IsActive))
 				{
 					question.Options = question.Options.Where(x => x.IsActive == true).ToList();
 				}
 			}
 			return completionReportGroup;
 		}
-		#endregion
 	}
 }

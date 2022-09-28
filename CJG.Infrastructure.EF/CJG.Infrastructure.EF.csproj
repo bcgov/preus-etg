@@ -356,6 +356,10 @@
     <Compile Include="Migrations\202207281627003_v02.06.01.Designer.cs">
       <DependentUpon>202207281627003_v02.06.01.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202209282133119_v02.06.02.cs" />
+    <Compile Include="Migrations\202209282133119_v02.06.02.Designer.cs">
+      <DependentUpon>202209282133119_v02.06.02.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Content Include="Migrations\v02.02.03\PostDeploy\Seed\03 GrantOpenings.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -848,6 +852,9 @@
     <Content Include="Migrations\v02.02.03\PostDeploy\Seed\01 AddQuestions.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Migrations\v02.06.02\PostDeploy\Seed\AddCompletionReportQuestionRemoveEight.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Migrations\v02.04.00\PostDeploy\Seed\Update ETG Schedule A.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1134,6 +1141,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202207281627003_v02.06.01.resx">
       <DependentUpon>202207281627003_v02.06.01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202209282133119_v02.06.02.resx">
+      <DependentUpon>202209282133119_v02.06.02.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

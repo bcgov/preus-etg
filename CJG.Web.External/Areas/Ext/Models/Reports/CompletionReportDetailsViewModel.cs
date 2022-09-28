@@ -1,22 +1,14 @@
-﻿using CJG.Application.Services;
+﻿using System;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
-using CJG.Web.External.Models.Shared;
 using CJG.Web.External.Models.Shared.Reports;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace CJG.Web.External.Areas.Ext.Models.Reports
 {
-	public class CompletionReportDetailsViewModel : CompletionReportBaseViewModel
+    public class CompletionReportDetailsViewModel : CompletionReportBaseViewModel
 	{
-		#region Properties
 		public ProgramTitleLabelViewModel ProgramTitleLabel { get; set; }
-		#endregion
 
-		#region Constructors
 		public CompletionReportDetailsViewModel()
 		{
 		}
@@ -28,6 +20,5 @@ namespace CJG.Web.External.Areas.Ext.Models.Reports
 
 			this.ProgramTitleLabel = new ProgramTitleLabelViewModel(grantApplication);
 		}
-		#endregion
 	}
 }

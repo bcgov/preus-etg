@@ -189,7 +189,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div ng-switch-when="@((int)CompletionReportQuestionTypes.MultipleChoice)">
+                                <div ng-if="question.IsActive || (!question.IsActive && question.Level1Answers[0].SelectedAnswer != null)" ng-switch-when="@((int)CompletionReportQuestionTypes.MultipleChoice)">
                                     <div class="form__group">
                                         <label class="form__label">
                                             <span ng-bind-html="parseQuestionText(question.Question)"></span>
@@ -199,9 +199,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div ng-switch-when="@((int)CompletionReportQuestionTypes.Freeform)">
+                                <div ng-if="question.IsActive || (!question.IsActive && (question.Level1Answers[0].StringAnswer != null && question.Level1Answers[0].StringAnswer.length > 0))" ng-switch-when="@((int)CompletionReportQuestionTypes.Freeform)">
                                     <div class="form__group">
                                         <label class="form__label">
+                                            <span ng-if="question.DefaultText" ng-bind-html="question.DefaultText"></span>
                                             <span ng-bind-html="parseQuestionText(question.Question)"></span>
                                         </label>
                                         <div class="form__control">

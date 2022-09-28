@@ -1,26 +1,19 @@
-﻿using CJG.Application.Services;
-using CJG.Core.Entities;
-using CJG.Core.Interfaces.Service;
-using CJG.Web.External.Models.Shared;
-using CJG.Web.External.Models.Shared.Reports;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces.Service;
 
 namespace CJG.Web.External.Models.Shared.Reports
 {
 	public class CompletionReportBaseViewModel : BaseViewModel
 	{
-		#region Properties
 		public int GrantApplicationId { get; set; }
 		public string ProgramName { get; set; }
 		public IEnumerable<CompletionReportParticipantDetailsViewModel> Participants { get; set; }
 		public IEnumerable<CompletionReportParticipantDetailsViewModel> FilteredParticipants { get; set; }
 		public IEnumerable<CompletionReportGroupDetailsViewModel> CompletionReportGroups { get; set; }
-		#endregion
 
-		#region Constructors
 		public CompletionReportBaseViewModel()
 		{
 		}
@@ -30,8 +23,8 @@ namespace CJG.Web.External.Models.Shared.Reports
 			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
 			if (completionReportService == null) throw new ArgumentNullException(nameof(completionReportService));
 
-			this.GrantApplicationId = grantApplication.Id;
-			this.ProgramName = grantApplication.GrantOpening.GrantStream.GrantProgram.Name;
+			GrantApplicationId = grantApplication.Id;
+			ProgramName = grantApplication.GrantOpening.GrantStream.GrantProgram.Name;
 
 			var completionReportGroups = completionReportService.GetCompletionReportGroups(grantApplication.Id).ToArray();
 			var participants = grantApplication.ParticipantForms.OrderBy(o => o.LastName).ToArray();
@@ -46,9 +39,9 @@ namespace CJG.Web.External.Models.Shared.Reports
 				// Page 1 of both reports originally select, and here, shows all participants that did not complete the course.
 				switch (group.Id)
 				{
-					case Core.Entities.Constants.CompletionReportETGPage1:
-					case Core.Entities.Constants.CompletionReportETGPage5:
-					case Core.Entities.Constants.CompletionReportCWRGPage1:
+					case Constants.CompletionReportETGPage1:
+					case Constants.CompletionReportETGPage5:
+					case Constants.CompletionReportCWRGPage1:
 						item = new CompletionReportGroupDetailsViewModel(grantApplication, group, participants);
 						break;
 					default:
@@ -57,8 +50,8 @@ namespace CJG.Web.External.Models.Shared.Reports
 				}
 
 				// While iterating through page 1, create the filtered participants-- the ones that completed the course.
-				if (group.Id == Core.Entities.Constants.CompletionReportETGPage1 ||
-					group.Id == Core.Entities.Constants.CompletionReportCWRGPage1)
+				if (group.Id == Constants.CompletionReportETGPage1 ||
+					group.Id == Constants.CompletionReportCWRGPage1)
 				{
 					var question = item.Questions.First();
 					var answer = question.Level1Answers.First();
@@ -70,10 +63,9 @@ namespace CJG.Web.External.Models.Shared.Reports
 				list.Add(item);
 			}
 
-			this.Participants = participants.Select(o => new CompletionReportParticipantDetailsViewModel(o)).ToArray();
-			this.FilteredParticipants = filteredParticipants.Select(o => new CompletionReportParticipantDetailsViewModel(o)).ToArray();
-			this.CompletionReportGroups = list.ToArray();
+			Participants = participants.Select(o => new CompletionReportParticipantDetailsViewModel(o)).ToArray();
+			FilteredParticipants = filteredParticipants.Select(o => new CompletionReportParticipantDetailsViewModel(o)).ToArray();
+			CompletionReportGroups = list.ToArray();
 		}
-		#endregion
 	}
 }
