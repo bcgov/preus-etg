@@ -503,6 +503,7 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
 
   $scope.saveAndReview = function() {
     $scope.redirectToReview = true;
+    $scope.save();
   }
 
   $scope.saveAttendance = function () {
