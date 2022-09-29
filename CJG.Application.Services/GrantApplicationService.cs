@@ -1,3 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Web;
 using CJG.Application.Business.Models;
 using CJG.Core.Entities;
 using CJG.Core.Entities.Helpers;
@@ -6,12 +12,6 @@ using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Entities;
 using CJG.Infrastructure.Identity;
 using NLog;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Web;
 
 namespace CJG.Application.Services
 {
@@ -20,7 +20,6 @@ namespace CJG.Application.Services
 	/// </summary>
 	public class GrantApplicationService : Service, IGrantApplicationService
 	{
-		#region Variables
 		private readonly INotificationService _notificationService;
 		private readonly ISiteMinderService _siteMinderService;
 		private readonly IUserService _userService;
@@ -29,9 +28,7 @@ namespace CJG.Application.Services
 		private readonly INoteService _noteService;
 		private readonly IGrantStreamService _grantStreamService;
 		private readonly IUserManagerAdapter _userManager;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="GrantApplicationService"/> object.
 		/// </summary>
@@ -68,7 +65,6 @@ namespace CJG.Application.Services
 			_noteService = noteService;
 			_userManager = userManager;
 		}
-		#endregion
 
 		#region Methods
 
@@ -306,10 +302,13 @@ namespace CJG.Application.Services
 
 			var answers = _dbContext.GrantStreamEligibilityAnswers.Where(n => n.GrantApplicationId == grantApplication.Id);
 			foreach (var answer in answers)
-			{
 				_dbContext.GrantStreamEligibilityAnswers.Remove(answer);
-			}
 
+			var participantForms = _dbContext.ParticipantForms.Where(p => p.GrantApplicationId == grantApplication.Id);
+			foreach (var participantForm in participantForms)
+				_dbContext.ParticipantForms.Remove(participantForm);
+
+			
 			grantApplication.NotificationQueue.Clear();
 			grantApplication.DeliveryPartnerServices.Clear();
 
