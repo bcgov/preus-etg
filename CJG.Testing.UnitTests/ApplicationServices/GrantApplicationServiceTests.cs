@@ -1,4 +1,8 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Entities.Helpers;
 using CJG.Core.Interfaces.Service;
@@ -9,10 +13,6 @@ using FluentAssertions;
 using Microsoft.AspNet.Identity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
 
 namespace CJG.Testing.UnitTests.ApplicationServices
 {
