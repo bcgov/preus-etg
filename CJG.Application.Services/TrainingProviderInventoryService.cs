@@ -1,35 +1,26 @@
-﻿using CJG.Core.Entities;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using CJG.Core.Entities;
 using CJG.Core.Entities.Helpers;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Entities;
 using NLog;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace CJG.Application.Services
 {
 	public sealed class TrainingProviderInventoryService : Service, ITrainingProviderInventoryService
 	{
-		#region Variables
-		#endregion
-
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="TrainingService"/> class.
 		/// </summary>
 		/// <param name="context"></param>
 		/// <param name="httpContext"></param>
 		/// <param name="logger"></param>
-		public TrainingProviderInventoryService(
-							   IDataContext context,
-							   HttpContextBase httpContext,
-							   ILogger logger) : base(context, httpContext, logger)
+		public TrainingProviderInventoryService(IDataContext context, HttpContextBase httpContext, ILogger logger)
+			: base(context, httpContext, logger)
 		{
 		}
-		#endregion
-
-		#region Methods
 
 		public TrainingProviderInventory Get(int id)
 		{
@@ -46,7 +37,7 @@ namespace CJG.Application.Services
 
 		public TrainingProviderInventory Update(TrainingProviderInventory trainingProviderInventory)
 		{
-			_dbContext.Update<TrainingProviderInventory>(trainingProviderInventory);
+			_dbContext.Update(trainingProviderInventory);
 			_dbContext.CommitTransaction();
 
 			return trainingProviderInventory;
@@ -55,9 +46,11 @@ namespace CJG.Application.Services
 		public void Delete(int id, ref string strMsgType, ref string strMsgText)
 		{
 			var trainingProviderInventory = Get(id);
-			var trainingProviders = _dbContext.TrainingProviders.AsNoTracking().Where(x => x.TrainingProviderInventoryId == id);
+			var trainingProviders = _dbContext.TrainingProviders
+				.AsNoTracking()
+				.Where(x => x.TrainingProviderInventoryId == id);
 
-			if (trainingProviders.Count() == 0)
+			if (!trainingProviders.Any())
 			{
 				_dbContext.TrainingProviderInventory.Remove(trainingProviderInventory);
 				_dbContext.Commit();
@@ -94,7 +87,9 @@ namespace CJG.Application.Services
 
 		public bool IsTrainingProviderInventoryUsedInApplications(int trainingProviderInventoryId)
 		{
-			return _dbContext.TrainingProviders.AsNoTracking().Where(x => x.TrainingProviderInventoryId == trainingProviderInventoryId).Any();
+			return _dbContext.TrainingProviders
+				.AsNoTracking()
+				.Any(x => x.TrainingProviderInventoryId == trainingProviderInventoryId);
 		}
 
 		public IEnumerable<TrainingProviderInventory> GetAll(int page, int quantity)
@@ -106,6 +101,5 @@ namespace CJG.Application.Services
 		{
 			return _dbContext.TrainingProviderInventory.AsNoTracking().Where(x => x.Name.Contains(name)).OrderBy(x => x.Name).Skip(page).Take(quantity);
 		}
-		#endregion
 	}
 }

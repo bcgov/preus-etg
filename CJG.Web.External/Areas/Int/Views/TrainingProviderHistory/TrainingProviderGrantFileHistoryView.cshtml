@@ -24,6 +24,22 @@
                 {{model.TrainingProviderInventoryAcronym}}
             </div>
         </div>
+        <div class="form__group form__group--radio-inline">
+            <div class="form__label">
+                Flag Organization as a risk?
+            </div>
+            <div ng-validation="errors.TrainingProviderRiskFlag">
+                <div class="form-item">
+                    <input type="radio" id="risk-flag-yes" ng-value="true" ng-model="model.TrainingProviderRiskFlag" name="model.TrainingProviderRiskFlag">
+                    <label for="risk-flag-yes">Yes</label>
+                </div>
+                <div class="form-item">
+                    <input type="radio" id="risk-flag-no" ng-value="false" ng-model="model.TrainingProviderRiskFlag" name="model.TrainingProviderRiskFlag">
+                    <label for="risk-flag-no">No</label>
+                </div>
+            </div>
+        </div>
+
         <div class="form__group block--training-provider-history__note">
             <label class="form__label">
                 Notes:
@@ -35,7 +51,7 @@
                 <span class="char-count-status">{{(2000 - model.TrainingProviderNotes.length)}} chars left</span>
             </div>
             <button type="button" class="pull-left btn btn--secondary" ng-disabled="checkNotesDiff()" ng-click="resetNote()">Reset Notes</button>
-            <button type="button" class="pull-right btn btn--primary" ng-disabled="checkNotesDiff()" ng-click="updateNote()">Save Notes</button>
+            <button type="button" class="pull-right btn btn--primary" ng-disabled="checkNotesDiff()" ng-click="updateNote()">Save</button>
         </div>
     </div>
 
