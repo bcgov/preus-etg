@@ -19,6 +19,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 
 		public DateTime IntakePeriodStartDate { get; set; }
 		public DateTime IntakePeriodEndDate { get; set; }
+		public DateTime IntakePeriodMaxEndDate { get; set; }
 
 		public DateTime DeliveryStartDate { get; set; }
 		public DateTime DeliveryEndDate { get; set; }
@@ -134,6 +135,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 
 			IntakePeriodStartDate = trainingProgram.GrantApplication.GrantOpening.TrainingPeriod.StartDate.ToLocalTime();
 			IntakePeriodEndDate = trainingProgram.GrantApplication.GrantOpening.TrainingPeriod.EndDate.ToLocalTime();
+			IntakePeriodMaxEndDate = trainingProgram.GrantApplication.GrantOpening.TrainingPeriod.EndDate.AddYears(1).ToLocalTime();
 
 			DeliveryStartDate = trainingProgram.GrantApplication.StartDate.ToLocalTime();
 			DeliveryEndDate = trainingProgram.GrantApplication.EndDate.ToLocalTime();
