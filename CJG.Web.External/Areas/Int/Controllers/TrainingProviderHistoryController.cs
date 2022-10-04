@@ -136,11 +136,12 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// </summary>
 		/// <param name="id"></param>
 		/// <param name="notesText"></param>
+		/// <param name="riskFlag"></param>
 		/// <param name="rowVersion"></param>
 		/// <returns></returns>
 		[HttpPut, Route("History/Note/{id}")]
 		[AuthorizeAction(Privilege.TP1, Privilege.TP2)]
-		public JsonResult UpdateNote(int id, string notesText, string rowVersion)
+		public JsonResult UpdateNote(int id, string notesText, bool riskFlag, string rowVersion)
 		{
 			var model = new TrainingProviderGrantFileHistoryViewModel();
 			try
@@ -149,6 +150,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 				trainingProviderInventory.RowVersion = Convert.FromBase64String(rowVersion.Replace(" ", "+"));
 				trainingProviderInventory.Notes = notesText;
+				trainingProviderInventory.RiskFlag = riskFlag;
 
 				_trainingProviderInventoryService.Update(trainingProviderInventory);
 

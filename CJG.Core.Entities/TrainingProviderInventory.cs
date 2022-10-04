@@ -10,7 +10,6 @@ namespace CJG.Core.Entities
 	[Table(nameof(TrainingProviderInventory))]
 	public class TrainingProviderInventory : EntityBase
 	{
-		#region Properties
 		/// <summary>
 		/// get/set - The primary key uses IDENTITY.
 		/// </summary>
@@ -46,9 +45,12 @@ namespace CJG.Core.Entities
 		/// </summary>
 		[Index("IX_TrainingProviderInventory", 1)]
 		public bool IsActive { get; set; }
-		#endregion
 
-		#region Constructors
+		/// <summary>
+		/// get/set - whether a training provider is classified as risky or not
+		/// </summary>
+		public bool RiskFlag { get; set; }
+
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="TrainingProviderInventory"/> object.
 		/// </summary>
@@ -63,13 +65,12 @@ namespace CJG.Core.Entities
 		/// <param name="isActive"></param>
 		public TrainingProviderInventory(string name, bool isEligible = true, bool isActive = true)
 		{
-			if (String.IsNullOrEmpty(name))
+			if (string.IsNullOrEmpty(name))
 				throw new ArgumentNullException(nameof(name));
 
-			this.Name = name;
-			this.IsEligible = isEligible;
-			this.IsActive = isActive;
+			Name = name;
+			IsEligible = isEligible;
+			IsActive = isActive;
 		}
-		#endregion
 	}
 }

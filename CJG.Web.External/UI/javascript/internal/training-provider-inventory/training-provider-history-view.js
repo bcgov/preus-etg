@@ -21,6 +21,7 @@ app.controller('TrainingProviderHistory', function ($scope, $attrs, $controller,
       .then(function () {
         return $timeout(function () {
           $scope.originalNotes = $scope.model.TrainingProviderNotes;
+          $scope.originalRiskFlag = $scope.model.TrainingProviderRiskFlag;
         });
       })
       .catch(angular.noop);
@@ -49,6 +50,7 @@ app.controller('TrainingProviderHistory', function ($scope, $attrs, $controller,
       data: {
         id: $scope.model.TrainingProviderInventoryId,
         notesText: $scope.model.TrainingProviderNotes,
+        riskFlag: $scope.model.TrainingProviderRiskFlag,
         rowVersion: $scope.model.RowVersion
       }
     })
@@ -57,6 +59,7 @@ app.controller('TrainingProviderHistory', function ($scope, $attrs, $controller,
           $scope.setAlert({ response: { status: 200 }, message: 'Training Provider notes have been saved successfully' });
           $scope.model.RowVersion = response.data.RowVersion;
           $scope.originalNotes = $scope.model.TrainingProviderNotes;
+          $scope.originalRiskFlag = $scope.model.TrainingProviderRiskFlag;
         });
       })
       .catch(angular.noop);
@@ -68,7 +71,8 @@ app.controller('TrainingProviderHistory', function ($scope, $attrs, $controller,
    * @returns {boolean}
    **/
   $scope.checkNotesDiff = function () {
-    return $scope.originalNotes === $scope.model.TrainingProviderNotes;
+    return $scope.originalNotes === $scope.model.TrainingProviderNotes
+      && $scope.originalRiskFlag === $scope.model.TrainingProviderRiskFlag;
   };
 
   /**
