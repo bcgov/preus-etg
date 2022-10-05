@@ -1,16 +1,11 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using CJG.Application.Services;
 using CJG.Core.Entities;
-using CJG.Infrastructure.Identity;
-using CJG.Web.External.Areas.Ext.Models;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Security.Principal;
 
 namespace CJG.Web.External.Areas.Int.Models.TrainingProviders
 {
-	public class TrainingProviderInventoryViewModel : BaseViewModel
+    public class TrainingProviderInventoryViewModel : BaseViewModel
 	{
 		public int GrantApplicationId { get; set; }
 		public string Name { get; set; }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
-using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using CJG.Application.Services;
@@ -18,10 +17,10 @@ using Constants = CJG.Core.Entities.Constants;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
-	/// <summary>
-	/// TrainingProviderController class, controller provides a way CRUD API for training providers.
-	/// </summary>
-	[RouteArea("Ext")]
+    /// <summary>
+    /// TrainingProviderController class, controller provides a way CRUD API for training providers.
+    /// </summary>
+    [RouteArea("Ext")]
 	[ExternalFilter]
 	public class TrainingProviderController : BaseController
 	{

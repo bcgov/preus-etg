@@ -971,6 +971,11 @@ th.table--font-size-16 {
 .form-table {
   display: table;
   width: 100%;
+
+  .inline-risk-flag {
+    vertical-align: middle;
+    width: 16px;
+  }
 }
 
 .form-table-row,
