@@ -1,8 +1,4 @@
-﻿using CJG.Core.Entities;
-using CJG.Core.Interfaces.Service;
-using CJG.Infrastructure.Entities;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -10,6 +6,10 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading;
 using System.Web;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces.Service;
+using CJG.Infrastructure.Entities;
+using NLog;
 
 namespace CJG.Application.Services
 {
@@ -52,8 +52,14 @@ namespace CJG.Application.Services
 		/// <returns></returns>
 		public List<KeyValuePair<string, string>> GetLogInOptions(AccountTypes accountType)
 		{
-			var users = _dbContext.Users.Where(u => u.AccountType == accountType).ToList().OrderBy(u => u.Organization?.LegalName).ThenBy(u => u.LastName).ThenBy(u => u.FirstName).Select(x =>
-				new KeyValuePair<string, string>(x.BCeIDGuid.ToString(), $"{x.Organization?.LegalName}{(String.IsNullOrEmpty(x.Organization?.DoingBusinessAs) ? "" : "/" + x.Organization?.DoingBusinessAs)} - {x.LastName}, {x.FirstName}")).ToList();
+			var users = _dbContext.Users
+				.Where(u => u.AccountType == accountType)
+				.ToList()
+				.OrderBy(u => u.Organization?.LegalName)
+				.ThenBy(u => u.LastName)
+				.ThenBy(u => u.FirstName)
+				.Select(x => new KeyValuePair<string, string>(x.BCeIDGuid.ToString(), $"{x.Organization?.LegalName}{(String.IsNullOrEmpty(x.Organization?.DoingBusinessAs) ? "" : "/" + x.Organization?.DoingBusinessAs)} - {x.LastName}, {x.FirstName}"))
+				.ToList();
 
 			return users;
 		}

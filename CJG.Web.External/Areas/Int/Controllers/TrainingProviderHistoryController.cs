@@ -22,7 +22,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 	public class TrainingProviderHistoryController : BaseController
 	{
 		private readonly ITrainingProviderInventoryService _trainingProviderInventoryService;
-		private readonly IAuthorizationService _authorizationService;
 		private readonly IGrantApplicationService _grantApplicationService;
 
 		/// <summary>
@@ -30,16 +29,13 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// </summary>
 		/// <param name="controllerService"></param>
 		/// <param name="trainingProviderInventoryService"></param>
-		/// <param name="authorizationService"></param>
 		/// <param name="grantApplicationService"></param>
 		public TrainingProviderHistoryController(
 			IControllerService controllerService,
 			ITrainingProviderInventoryService trainingProviderInventoryService,
-			IAuthorizationService authorizationService,
 			IGrantApplicationService grantApplicationService) : base(controllerService.Logger)
 		{
 			_trainingProviderInventoryService = trainingProviderInventoryService;
-			_authorizationService = authorizationService;
 			_grantApplicationService = grantApplicationService;
 		}
 
