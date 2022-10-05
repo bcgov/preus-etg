@@ -32,7 +32,7 @@
                         <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-click="save()" ng-disabled="!IsValid">Save for later</a>
                     </div>
                     <div class="clearfix"></div>
-                    <div class="margin-bottom pull-right" ng-if="grantFile.AllowReviewAndSubmit && grantFile.EnableSubmit">
+                    <div class="margin-bottom pull-right" ng-if="model.Claim.IsEditable && grantFile.ReportingPeriodIsOpen">
                         <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-click="saveAndReview();">Submit my claim now</a>
                     </div>
                     @*<div class="margin-bottom pull-right" ng-if="grantFile.AllowReviewAndSubmit && grantFile.EnableSubmit">
