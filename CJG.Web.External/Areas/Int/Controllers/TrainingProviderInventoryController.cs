@@ -1,24 +1,23 @@
 ﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
-using System.Web.Mvc;
 using CJG.Infrastructure.Identity;
-using CJG.Web.External.Areas.Int.Models;
+using CJG.Web.External.Areas.Int.Models.TrainingProviders;
+using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
-using System.Text.RegularExpressions;
-using CJG.Application.Services;
-using CJG.Web.External.Controllers;
-using System.Linq;
-using CJG.Web.External.Areas.Int.Models.TrainingProviders;
 using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	/// <summary>
-	/// TrainingProviderInventoryController class, provides endpoints to manage TrainingProviders.
-	/// </summary>
-	[RouteArea("Int")]
+    /// <summary>
+    /// TrainingProviderInventoryController class, provides endpoints to manage TrainingProviders.
+    /// </summary>
+    [RouteArea("Int")]
 	[RoutePrefix("Training/Provider")]
 	[AuthorizeAction(Privilege.TP1)]
 	public class TrainingProviderInventoryController : BaseController

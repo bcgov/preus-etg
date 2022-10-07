@@ -54,9 +54,16 @@
                         </label>
                     </div>
                     <div class="control-wrapper form-control">
-                        <textarea ng-model="question.EligibilityQuestion" rows="4"
+                        <div class="form__control" ng-show="!section.editing">
+                            <div ng-bind-html="question.EligibilityQuestion | unsafe"></div>
+                        </div>
+                        
+                        <div ng-show="section.editing">
+                            <textarea ng-model="question.EligibilityQuestion" rows="4"
                                   ng-validation="errors.StreamQuestions_{{$index}}_.EligibilityQuestion"
-                                  ng-editing></textarea>
+                                  ng-editing
+                                  ui-tinymce="tinymceOptions"></textarea>
+                        </div>
                     </div>
                 </div>
                 <div class="form__group">

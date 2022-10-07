@@ -1,7 +1,8 @@
 ﻿
 <div class="form__group">
     <label class="form__label">
-        <span ng-bind-html="parseQuestionText(question.Question)"></span> <abbr title="Required" ng-if="question.IsRequired">*</abbr>
+        <span ng-if="question.DefaultText" ng-bind-html="question.DefaultText"></span>
+        <span ng-bind-html="parseQuestionText(question.Question)"></span><abbr title="Required" ng-if="question.IsRequired"> *</abbr>
     </label>
     <div class="form__control">
         <textarea ng-model="question.Level1Answers[0].StringAnswer"

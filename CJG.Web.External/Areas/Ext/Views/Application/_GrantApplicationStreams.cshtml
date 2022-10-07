@@ -9,44 +9,39 @@
 		<p>The reimbursement rate for the grant opening you selected will vary the government contribution in your training cost estimates.  If you keep this selection, you will need to edit your training cost estimates to review and confirm the changes.</p>
 	</div>
 
-	<div class="list-radio-toggle--container" ng-validation="errors.GrantOpeningId">
-		<ul class="list-radio-toggle" ng-repeat="period in model.TrainingPeriods">
-			<li>
-				<h4 class="list-radio-toggle--title">{{period.Title}}</h4>
-			</li>
-			<li class="list-radio-toggle--item" ng-repeat="item in period.GrantOpenings">
-				<div class="form-item">
-					<div class="half-width">
-						<input type="radio" id="grant-stream-{{item.Id}}" name="model.GrantOpeningId" ng-value="{{item.Id}}" ng-model="model.GrantOpeningId" data-start-date="{{item.StartDate}}" data-end-date="{{item.EndDate}}" data-reimbursement-rate="{{item.ReimbursementRate}}" ng-click="getRequirements(item.Id)">
-						<label for="grant-stream-{{item.Id}}">{{item.GrantStream.Name}}</label>
-					</div>
-					<div ng-if="model.ProgramType === @((int)CJG.Core.Entities.ProgramTypes.WDAService)" class="half-width is-hidden-on-mobile">
-						<label class="list-radio-toggle--label">Earliest submission:</label>
-					</div>
-				</div>
+    <div class="list-radio-toggle--container" ng-validation="errors.GrantOpeningId">
+        <ul class="list-radio-toggle" ng-repeat="period in model.TrainingPeriods">
+            <li>
+                <h4 class="list-radio-toggle--title">{{period.Title}}</h4>
+            </li>
+            <li class="list-radio-toggle--item" ng-repeat="item in period.GrantOpenings">
+                <div class="form-item">
+                    <div class="half-width">
+                        <input type="radio" id="grant-stream-{{item.Id}}" name="model.GrantOpeningId" ng-value="{{item.Id}}" ng-model="model.GrantOpeningId" data-start-date="{{item.StartDate}}" data-end-date="{{item.EndDate}}" data-reimbursement-rate="{{item.ReimbursementRate}}" ng-click="getRequirements(item.Id)">
+                        <label for="grant-stream-{{item.Id}}">{{item.GrantStream.Name}}</label>
+                    </div>
+                </div>
 
-				<div class="read-more">
-					<div class="half-width is-hidden-on-mobile">
-						<button class="list-radio-toggle--btn" ng-click="item.showDescription = true" ng-show="!item.showDescription">Show description</button>
-						<button class="list-radio-toggle--btn open" ng-click="item.showDescription = false" ng-show="item.showDescription">Hide description</button>
-					</div>
-					<div ng-if="model.ProgramType === @((int)CJG.Core.Entities.ProgramTypes.WDAService)" class="half-width is-hidden-on-mobile">{{item.OpeningDate}}</div>
-					<div class="half-width is-hidden-beyond-mobile">
-						<button class="list-radio-toggle--btn" ng-click="item.showDescription = true" ng-show="!item.showDescription">Show description</button>
-						<button class="list-radio-toggle--btn open" ng-click="item.showDescription = false" ng-show="item.showDescription">Hide description</button>
-					</div>
-					<div class="list-radio-toggle--content clear-both" ng-show="item.showDescription">
-						<span ng-bind-html="item.GrantStream.ObjectiveHTML"></span>
-					</div>
+                <div class="read-more">
+                    <div class="half-width is-hidden-on-mobile">
+                        <button class="list-radio-toggle--btn" ng-click="item.showDescription = true" ng-show="!item.showDescription">Show description</button>
+                        <button class="list-radio-toggle--btn open" ng-click="item.showDescription = false" ng-show="item.showDescription">Hide description</button>
+                    </div>
+                    <div class="half-width is-hidden-beyond-mobile">
+                        <button class="list-radio-toggle--btn" ng-click="item.showDescription = true" ng-show="!item.showDescription">Show description</button>
+                        <button class="list-radio-toggle--btn open" ng-click="item.showDescription = false" ng-show="item.showDescription">Hide description</button>
+                    </div>
+                    <div class="list-radio-toggle--content clear-both" ng-show="item.showDescription">
+                        <span ng-bind-html="item.GrantStream.ObjectiveHTML"></span>
+                    </div>
 
-					<div class="half-width is-hidden-beyond-mobile">
-						<label class="list-radio-toggle--label" ng-if="model.ProgramType === @((int)CJG.Core.Entities.ProgramTypes.WDAService)">Earliest submission:</label>
-					</div>
-					<div class="half-width is-hidden-beyond-mobile" ng-if="model.ProgramType === @((int)CJG.Core.Entities.ProgramTypes.WDAService)">{{item.OpeningDate}}</div>
-				</div>
-			</li>
-		</ul>
-	</div>
+                    <div class="half-width is-hidden-beyond-mobile">
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
     <div ng-show="model.GrantOpeningId && currentTrainingPeriod">
         <h2>Delivery Dates</h2>
         <div class="form__group form__group--date">
@@ -67,12 +62,11 @@
                 </div>
             </div>
         </div>
-
         <div class="form__group form__group--radio-inline" ng-if="model.GrantStream.StreamEligibilityQuestions.length != 0">
             <div ng-repeat="question in model.GrantStream.StreamEligibilityQuestions">
                 <div ng-if="$first"></div>
                 <div>
-                    <label class="form__label" ng-validation="errors.EligibilityQuestion{{question.Id}}">{{question.EligibilityQuestion}}<abbr title="Required">*</abbr></label>
+                    <label class="form__label with__html__content" ng-validation="errors.EligibilityQuestion{{question.Id}}"><span ng-bind-html="question.EligibilityQuestion"></span><abbr title="Required">*</abbr></label>
                     <div class="form__control">
                         <div class="form-item">
                             <input type="radio" id="eligibilityConfirmed-yes-{{question.Id}}" ng-value="true" ng-model="question.EligibilityAnswer" name="model.EligibilityConfirmed-{{question.Id}}">

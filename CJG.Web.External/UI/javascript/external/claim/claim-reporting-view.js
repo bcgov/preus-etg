@@ -18,18 +18,25 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
       },
       backup: true
     },
-
     onSave: function (event, data) {
+      if ($scope.redirectToReview) {
+        let claimReviewUrl = '/Ext/Claim/Reporting/Review/View/' + $scope.section.claimId + '/' + $scope.section.claimVersion;
+        window.location = claimReviewUrl;
+        return;
+      }
+
       $scope.IsValid = false;
 
       $scope.EligibleCostSuccessMessage = "Claimed costs saved successfully.";
-
       angular.element("html, body").animate({ scrollTop: $('h2').offset().top }, 300);
+
     },
     grantApplicationId: $attrs.ngGrantApplicationId,
     claimId: $attrs.ngClaimId,
     claimVersion: $attrs.ngClaimVersion
   };
+
+  $scope.redirectToReview = false;
 
   angular.extend(this, $controller('ParentSection', { $scope: $scope, $attrs: $attrs }));
 
@@ -52,7 +59,8 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
    **/
   function init() {
     return Promise.all([
-      loadClaim()
+      loadClaim(),
+      loadGrantFile()
     ])
       .catch(angular.noop);
   }
@@ -65,6 +73,13 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
   $scope.loadClaim = function () {
     return loadClaim()
       .catch(angular.noop);
+  }
+
+  function loadGrantFile() {
+    return $scope.load({
+      url: '/Ext/Reporting/Grant/File/' + $scope.section.grantApplicationId,
+      set: 'grantFile'
+    });
   }
 
   /**
@@ -83,16 +98,19 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
   }
 
   $scope.toggle = function (claimEligibleCost, attendanceCompleted) {
-    if (!attendanceCompleted) { return;}
+    if (!attendanceCompleted)
+      return;
 
     var el = angular.element("#claim-eligible-cost-" + claimEligibleCost.Id);
     if (el.is(":hidden")) {
       el.show();
+
       var t = angular.element("#panel-header-eligible-cost-" + claimEligibleCost.Id).find("span.k-icon");
       t.removeClass("k-i-arrow-s");
       t.removeClass("k-panelbar-expand");
       t.addClass("k-i-arrow-n");
       t.addClass("k-panelbar-collapse");
+
       var l = angular.element("#panel-header-toggle-eligible-cost-icon-" + claimEligibleCost.Id); //.find("span.k-icon");
       l.removeClass("down-arrow");
       l.addClass("up-arrow");
@@ -104,6 +122,7 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
       t.addClass("k-i-arrow-s");
       t.addClass("k-panelbar-expand");
       el.hide();
+
       var l = angular.element("#panel-header-toggle-eligible-cost-icon-" + claimEligibleCost.Id); //.find("span.k-icon");
       l.removeClass("up-arrow");
       l.addClass("down-arrow");
@@ -118,10 +137,8 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
       if (claimEligibleCost.ServiceType == utils.ServiceTypes.SkillsTraining ||
         claimEligibleCost.ServiceType == utils.ServiceTypes.EmploymentServicesAndSupports ||
         claimEligibleCost.ServiceType == utils.ServiceTypes.Administration) {
-        
-        if (claimEligibleCost.ServiceType == utils.ServiceTypes.SkillsTraining ||
-          claimEligibleCost.ServiceType == utils.ServiceTypes.EmploymentServicesAndSupports) {
 
+        if (claimEligibleCost.ServiceType == utils.ServiceTypes.SkillsTraining || claimEligibleCost.ServiceType == utils.ServiceTypes.EmploymentServicesAndSupports) {
           //claimParticipants = claimEligibleCost.CountAttended;
           claimParticipants = claimEligibleCost.EligibleCosts.AgreedMaxParticipants;
 
@@ -131,10 +148,13 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
               claimEligibleCost.ClaimCost = claimEligibleCost.ClaimCost + (claimEligibleCost.Breakdowns[i].ClaimCost / 1);
             }
           }
+
           claimCost = claimEligibleCost.ClaimCost == null ? 0 : claimEligibleCost.ClaimCost;
           claimEligibleCost.ClaimMaxParticipantCost = claimParticipants == 0 ? 0 : MathFunction.truncate(claimCost / claimParticipants * 100);
+
           if (claimEligibleCost.ClaimMaxParticipantCost > claimEligibleCost.AgreedMaxParticipantCost)
             claimEligibleCost.ClaimMaxParticipantCost = claimEligibleCost.AgreedMaxParticipantCost;
+
           claimEligibleCost.ClaimMaxParticipantReimbursementCost = MathFunction.truncate(claimEligibleCost.ClaimMaxParticipantCost * claimEligibleCost.AgreedReimbursementRate * 100);
           claimEligibleCost.ClaimParticipantEmployerContribution = claimEligibleCost.ClaimMaxParticipantCost - claimEligibleCost.ClaimMaxParticipantReimbursementCost;
           claimEligibleCost.ClaimMaxReimbursement = MathFunction.truncate(claimCost * claimEligibleCost.AgreedReimbursementRate * 100);
@@ -155,7 +175,10 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
         $scope.calculateGrantTotal();
         $scope.validateActualTraining(claimEligibleCost);
       }
-      else {
+      else
+      {
+        console.log(claimEligibleCost);
+
         if (!$.isNumeric(claimEligibleCost.ClaimCost)) {
           claimEligibleCost.ClaimCost = 0;
         }
@@ -177,15 +200,34 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
             claimCost === 0 ? 0 : MathFunction.truncate(claimCost / claimEligibleCost.AgreedMaxParticipants * claimEligibleCost.AgreedReimbursementRate * 100),
             claimEligibleCost.AgreedMaxParticipantCost);
 
-          claimEligibleCost.ClaimMaxParticipantReimbursementCost = result;
+
+
+          //console.log('A: ' + MathFunction.truncate($scope.model.Claim.TotalApprovedAmount / claimEligibleCost.AgreedMaxParticipants * 100));
+          //console.log('B: ' + MathFunction.truncate(claimCost / claimEligibleCost.AgreedMaxParticipants * claimEligibleCost.AgreedReimbursementRate * 100));
+
+          //console.log('Claim Participants: ' + claimEligibleCost.ClaimParticipants);
+
+          //console.log('Total Approved: ' + $scope.model.Claim.TotalApprovedAmount);
+          //console.log('Agreed Max: ' + claimEligibleCost.AgreedMaxParticipants);
+          //console.log('Agreed Rate: ' + claimEligibleCost.AgreedReimbursementRate);
+          //console.log('Agreed Max Claim Cost: ' + claimEligibleCost.AgreedMaxParticipantCost);
+          //console.log('Claim Cost: ' + claimCost);
+          //console.log('Max Part Cost: ' + claimEligibleCost.ClaimMaxParticipantCost);
+          //console.log('Max Part Reimb Cost: ' + claimEligibleCost.ClaimMaxParticipantReimbursementCost);
+
+
+
+          claimEligibleCost.ClaimMaxParticipantReimbursementCost = result;  // This is the "Maximum government contribution per participant"
           claimEligibleCost.ClaimParticipantEmployerContribution = claimEligibleCost.ClaimMaxParticipantCost - claimEligibleCost.ClaimMaxParticipantReimbursementCost;
 
           $scope.model.Claim.EligibleCosts.forEach($scope.recalculateParticipantCosts);
         }
         else {
           claimEligibleCost.ClaimMaxParticipantCost = claimParticipants == 0 ? 0 : MathFunction.truncate(claimCost / claimParticipants * 100);
+
           if (claimEligibleCost.ClaimMaxParticipantCost > claimEligibleCost.AgreedMaxParticipantCost)
             claimEligibleCost.ClaimMaxParticipantCost = claimEligibleCost.AgreedMaxParticipantCost;
+
           claimEligibleCost.ClaimMaxParticipantReimbursementCost = MathFunction.truncate(claimEligibleCost.ClaimMaxParticipantCost * claimEligibleCost.AgreedReimbursementRate * 100);
           claimEligibleCost.ClaimParticipantEmployerContribution = claimEligibleCost.ClaimMaxParticipantCost - claimEligibleCost.ClaimMaxParticipantReimbursementCost;
         }
@@ -457,6 +499,11 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
       l.removeClass("up-arrow");
       l.addClass("down-arrow");
     }
+  }
+
+  $scope.saveAndReview = function() {
+    $scope.redirectToReview = true;
+    $scope.save();
   }
 
   $scope.saveAttendance = function () {

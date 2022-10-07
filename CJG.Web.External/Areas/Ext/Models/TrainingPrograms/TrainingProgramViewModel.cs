@@ -17,6 +17,10 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 		public int GrantApplicationId { get; set; }
 		public string GrantApplicationRowVersion { get; set; }
 
+		public DateTime IntakePeriodStartDate { get; set; }
+		public DateTime IntakePeriodEndDate { get; set; }
+		public DateTime IntakePeriodMaxEndDate { get; set; }
+
 		public DateTime DeliveryStartDate { get; set; }
 		public DateTime DeliveryEndDate { get; set; }
 
@@ -115,34 +119,27 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 			CourseLink = string.IsNullOrEmpty(trainingProgram.CourseLink) ? null :
 				trainingProgram.CourseLink.Contains("http://") || trainingProgram.CourseLink.Contains("https://") ? trainingProgram.CourseLink : "http://" + trainingProgram.CourseLink;
 
-			if (trainingProgram.GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.EmployerGrant)
-			{
-				StartDate = trainingProgram.GrantApplication.StartDate.ToLocalTime();
-				StartYear = trainingProgram.GrantApplication.StartDate.ToLocalTime().Year;
-				StartMonth = trainingProgram.GrantApplication.StartDate.ToLocalTime().Month;
-				StartDay = trainingProgram.GrantApplication.StartDate.ToLocalTime().Day;
-				EndDate = trainingProgram.GrantApplication.EndDate.ToLocalTime();
-				EndYear = trainingProgram.GrantApplication.EndDate.ToLocalTime().Year;
-				EndMonth = trainingProgram.GrantApplication.EndDate.ToLocalTime().Month;
-				EndDay = trainingProgram.GrantApplication.EndDate.ToLocalTime().Day;
-			}
-			else
-			{
-				StartDate = trainingProgram.StartDate.ToLocalTime();
-				StartYear = trainingProgram.StartDate.ToLocalTime().Year;
-				StartMonth = trainingProgram.StartDate.ToLocalTime().Month;
-				StartDay = trainingProgram.StartDate.ToLocalTime().Day;
-				EndDate = trainingProgram.EndDate.ToLocalTime();
-				EndYear = trainingProgram.EndDate.ToLocalTime().Year;
-				EndMonth = trainingProgram.EndDate.ToLocalTime().Month;
-				EndDay = trainingProgram.EndDate.ToLocalTime().Day;
-			}
+			// Always default to the Grant Application Start and End dates. They need to be in Sync for ETG.
+            StartDate = trainingProgram.GrantApplication.StartDate.ToLocalTime();
+            StartYear = trainingProgram.GrantApplication.StartDate.ToLocalTime().Year;
+            StartMonth = trainingProgram.GrantApplication.StartDate.ToLocalTime().Month;
+            StartDay = trainingProgram.GrantApplication.StartDate.ToLocalTime().Day;
+            EndDate = trainingProgram.GrantApplication.EndDate.ToLocalTime();
+            EndYear = trainingProgram.GrantApplication.EndDate.ToLocalTime().Year;
+            EndMonth = trainingProgram.GrantApplication.EndDate.ToLocalTime().Month;
+            EndDay = trainingProgram.GrantApplication.EndDate.ToLocalTime().Day;
 
 			SelectedDeliveryMethodIds = trainingProgram.DeliveryMethods.Select(dm => dm.Id).ToArray();
 			SelectedUnderRepresentedGroupIds = trainingProgram.UnderRepresentedGroups.Select(dm => dm.Id).ToArray();
 			GrantApplicationId = trainingProgram.GrantApplicationId;
+
+			IntakePeriodStartDate = trainingProgram.GrantApplication.GrantOpening.TrainingPeriod.StartDate.ToLocalTime();
+			IntakePeriodEndDate = trainingProgram.GrantApplication.GrantOpening.TrainingPeriod.EndDate.ToLocalTime();
+			IntakePeriodMaxEndDate = trainingProgram.GrantApplication.GrantOpening.TrainingPeriod.EndDate.AddYears(1).ToLocalTime();
+
 			DeliveryStartDate = trainingProgram.GrantApplication.StartDate.ToLocalTime();
 			DeliveryEndDate = trainingProgram.GrantApplication.EndDate.ToLocalTime();
+
 			BusinessTrainingRelevance = trainingProgram.BusinessTrainingRelevance;
 		}
 
@@ -177,6 +174,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 			}
 
 			trainingProgram.TrainingProgramState = TrainingProgramStates.Complete;
+
 			trainingProgram.StartDate = ((DateTime)StartDate).ToLocalMorning().ToUtcMorning();
 			trainingProgram.EndDate = ((DateTime)EndDate).ToLocalMidnight().ToUtcMidnight();
 			trainingProgram.CourseTitle = CourseTitle;
@@ -204,23 +202,14 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 				if(SelectedDeliveryMethodIds.Contains(Constants.Delivery_Classroom) || SelectedDeliveryMethodIds.Contains(Constants.Delivery_Workplace))
                 {
 					if (trainingProgram.TrainingProvider != null)
-					{
 						if (trainingProgram.TrainingProvider.TrainingAddress == null)
-						{
 							trainingProgram.TrainingProvider.TrainingProviderState = TrainingProviderStates.Incomplete;
-						}
-					}
                 }
 
 				else if (!(SelectedDeliveryMethodIds.Contains(Constants.Delivery_Classroom) || SelectedDeliveryMethodIds.Contains(Constants.Delivery_Workplace)))
 				{
-					if (trainingProgram.TrainingProvider != null)
-					{
-						if (trainingProgram.TrainingProvider.TrainingAddress != null)
-						{
-							trainingProgram.TrainingProvider.TrainingAddress = null;
-						}
-					}
+					if (trainingProgram.TrainingProvider?.TrainingAddress != null)
+						trainingProgram.TrainingProvider.TrainingAddress = null;
 				}
 			}
 			else
@@ -236,24 +225,10 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 			trainingProgram.HasRequestedAdditionalFunding = HasRequestedAdditionalFunding.Value;
 			trainingProgram.BusinessTrainingRelevance = BusinessTrainingRelevance;
 
-			if (HasRequestedAdditionalFunding.Value)
-			{
-				trainingProgram.DescriptionOfFundingRequested = DescriptionOfFundingRequested;
-			}
-			else
-			{
-				trainingProgram.DescriptionOfFundingRequested = null;
-			}
+			trainingProgram.DescriptionOfFundingRequested = HasRequestedAdditionalFunding.Value ? DescriptionOfFundingRequested : null;
 
 			trainingProgram.ExpectedQualificationId = ExpectedQualificationId.Value;
-			if (new[] { 5 }.Contains(ExpectedQualificationId.GetValueOrDefault()))
-			{
-				trainingProgram.TitleOfQualification = null;
-			}
-			else
-			{
-				trainingProgram.TitleOfQualification = TitleOfQualification;
-			}
+			trainingProgram.TitleOfQualification = new[] { 5 }.Contains(ExpectedQualificationId.GetValueOrDefault()) ? null : TitleOfQualification;
 
 			if (new[] { 5 }.Contains(SkillFocusId.GetValueOrDefault()))
 			{

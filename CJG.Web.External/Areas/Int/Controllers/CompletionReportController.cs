@@ -1,18 +1,8 @@
-﻿using CJG.Web.External.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System;
 using System.Web.Mvc;
-using NLog;
 using CJG.Core.Interfaces.Service;
+using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
-using CJG.Core.Interfaces.Service.Settings;
-using CJG.Web.External.Areas.Int.Models;
-using CJG.Core.Entities;
-using CJG.Web.External.Helpers.Filters;
-using CJG.Infrastructure.Identity;
-using CJG.Application.Services;
 using CJG.Web.External.Models.Shared.Reports;
 
 namespace CJG.Web.External.Areas.Int.Controllers
@@ -20,55 +10,22 @@ namespace CJG.Web.External.Areas.Int.Controllers
 	[RouteArea("Int")]
 	public class CompletionReportController : BaseController
 	{
-		#region Variables
-		private readonly ITrainingProgramService _trainingProgramService;
 		private readonly IGrantApplicationService _grantApplicationService;
-		private readonly IAttachmentService _attachmentService;
-		private readonly IClaimService _claimService;
-		private readonly IParticipantService _participantService;
-		private readonly ITrainingProviderSettings _trainingProviderSettings;
-		private readonly ISettingService _settingService;
 		private readonly ICompletionReportService _completionReportService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
-		/// Creates a new instance of a <typeparamref name="ReportingController"/> object.
+		/// Creates a new instance of a <typeparamref name="CompletionReportController"/> object.
 		/// </summary>
 		/// <param name="controllerService"></param>
-		/// <param name="trainingProgramService"></param>
 		/// <param name="grantApplicationService"></param>
-		/// <param name="attachmentService"></param>
-		/// <param name="claimService"></param>
-		/// <param name="participantService"></param>
-		/// <param name="trainingProviderSettings"></param>
-		/// <param name="settingService"></param>
+		/// <param name="completionReportService"></param>
 		public CompletionReportController(
 			IControllerService controllerService,
-			ITrainingProgramService trainingProgramService,
 			IGrantApplicationService grantApplicationService,
-			IAttachmentService attachmentService,
-			IClaimService claimService,
-			IParticipantService participantService,
-			ITrainingProviderSettings trainingProviderSettings,
-			ISettingService settingService,
 			ICompletionReportService completionReportService) : base(controllerService.Logger)
 		{
-			_trainingProgramService = trainingProgramService;
 			_grantApplicationService = grantApplicationService;
-			_attachmentService = attachmentService;
-			_claimService = claimService;
-			_participantService = participantService;
-			_trainingProviderSettings = trainingProviderSettings;
-			_settingService = settingService;
 			_completionReportService = completionReportService;
-		}
-		#endregion
-
-		// GET: Int/CompletionReport
-		public ActionResult Index()
-		{
-			return View();
 		}
 
 		/// <summary>

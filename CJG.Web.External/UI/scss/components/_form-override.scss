@@ -103,6 +103,20 @@
   }
 }
 
+.with__html__content {
+  position: relative;
+
+  abbr {
+    position: absolute;
+    top: 0;
+    right: -0.6em;
+  }
+
+  p:last-child {
+      margin-bottom: 0;
+  }
+}
+
 .text-clickable {
   -moz-user-select: none;
   -webkit-user-select: none;
@@ -168,7 +182,6 @@ input.input-right-align {
 .form-section-container label {
   cursor: default;
 }
-
 
 .active-link {
   text-decoration: underline;

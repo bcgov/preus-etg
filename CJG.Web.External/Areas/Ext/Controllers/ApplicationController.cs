@@ -392,11 +392,13 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				grantApplication.StartDate = new DateTime(model.DeliveryStartYear, model.DeliveryStartMonth, model.DeliveryStartDay, 0, 0, 0, DateTimeKind.Local).ToUtcMorning();
 				grantApplication.EndDate = new DateTime(model.DeliveryEndYear, model.DeliveryEndMonth, model.DeliveryEndDay, 0, 0, 0, DateTimeKind.Local).ToUtcMidnight();
 
-				// If the training program dates fall outside of the delivery dates, make the training program dates equal to the delivery dates.
+				// Make the training program dates equal to the delivery dates.
 				if (grantApplication.ApplicationStateInternal == ApplicationStateInternal.Draft)
 				{
-					grantApplication.TrainingPrograms.Where(tp => tp.StartDate < grantApplication.StartDate || tp.StartDate > grantApplication.EndDate).ForEach(x => x.StartDate = grantApplication.StartDate);
-					grantApplication.TrainingPrograms.Where(tp => tp.EndDate > grantApplication.EndDate || tp.EndDate < grantApplication.StartDate).ForEach(x => x.EndDate = grantApplication.EndDate);
+					//grantApplication.TrainingPrograms.Where(tp => tp.StartDate < grantApplication.StartDate || tp.StartDate > grantApplication.EndDate).ForEach(x => x.StartDate = grantApplication.StartDate);
+					//grantApplication.TrainingPrograms.Where(tp => tp.EndDate > grantApplication.EndDate || tp.EndDate < grantApplication.StartDate).ForEach(x => x.EndDate = grantApplication.EndDate);
+					grantApplication.TrainingPrograms.ForEach(x => x.StartDate = grantApplication.StartDate);
+					grantApplication.TrainingPrograms.ForEach(x => x.EndDate = grantApplication.EndDate);
 				}
 
 				// update the original entry
@@ -470,9 +472,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 						_grantApplicationService.ChangeGrantOpening(grantApplication);
 
 						grantApplication.ParticipantForms.ForEach(x => x.ProgramStartDate = grantApplication.StartDate);
-
-						// mark TrainingProgram state as Incomplte if dates are out of range
-						grantApplication.TrainingPrograms.Where(tp => !tp.HasValidDates()).ForEach(x => x.TrainingProgramState = TrainingProgramStates.Incomplete);
 
 						var originalReimbursement = grantApplication.ReimbursementRate;
 						grantApplication.ReimbursementRate = grantApplication.GrantOpening.GrantStream.ReimbursementRate;
@@ -593,8 +592,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				return RedirectToAction(nameof(HomeController.Index), nameof(HomeController).Replace("Controller", ""));
 			}
 
-			if (grantApplication.TrainingPrograms.Any(x => x.TrainingProgramState == TrainingProgramStates.Incomplete && !x.HasValidDates()))
-				this.SetAlert("Skills training dates do not fall within your delivery period and will need to be rescheduled. Make sure all your skills training dates are accurate to your plan.", AlertType.Warning);
+			//if (grantApplication.TrainingPrograms.Any(x => x.TrainingProgramState == TrainingProgramStates.Incomplete && !x.HasValidDates()))
+			//	this.SetAlert("Skills training dates do not fall within your delivery period and will need to be rescheduled. Make sure all your skills training dates are accurate to your plan.", AlertType.Warning);
 
 			if (grantApplication.IsSubmittable())
 			{
@@ -619,19 +618,19 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 			if (!_organizationService.IsOrganizationNaicsStatusUpdated(currentUser.Organization.Id))
 			{
-				if (currentUser.IsOrganizationProfileAdministrator && _organizationService.NotSubmittedGrantApplications(currentUser.Organization.Id) > 0)
+				if (_organizationService.NotSubmittedGrantApplications(currentUser.Organization.Id) > 0)
 				{
-					//Clear NAICS
+					// Clear NAICS
 					_organizationService.ClearOrganizationOldNaicsCode(currentUser.Organization.Id);
 				}
 
-				this.SetAlerts("Your organization’s Canada North American Industry Classification System (NAICS) codes are currently out of date. The Profile Administrator (individual responsible for your Organization Profile) will need to update the NAICS codes on your Organization Profile before submitting an application.", AlertType.Warning);
+				this.SetAlerts(MessageConstants.Message_BCeID_NAICS_Expired, AlertType.Warning);
 			}
 
 			if (_organizationService.RequiresBusinessLicenseDocuments(currentUser.Organization.Id))
 			{
 				_logger.Info($"The Organization is missing up-to-date Business License Documents - {_siteMinderService.CurrentUserGuid}");
-				this.SetAlerts("Your organization’s Business Information Documents are currently out of date. The Profile Administrator (individual responsible for your Organization Profile) will need to update these on your Organization Profile before submitting an application.", AlertType.Warning);
+				this.SetAlerts(MessageConstants.Message_BCeID_BusinessDocuments_Required, AlertType.Warning);
 			}
 
 			return View(SidebarViewModelFactory.Create(grantApplication, ControllerContext));

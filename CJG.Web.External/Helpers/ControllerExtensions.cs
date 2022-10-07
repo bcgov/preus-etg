@@ -1,22 +1,22 @@
-﻿using System.IO;
-using System.Web.Mvc;
-using System.Data.Entity.Validation;
-using CJG.Application.Services;
-using System;
-using CJG.Core.Interfaces;
-using System.Web;
-using System.Globalization;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Net;
-using CJG.Infrastructure.BCeID.WebService;
+using System.Web;
+using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities;
+using CJG.Core.Interfaces;
+using CJG.Infrastructure.BCeID.WebService;
 
 namespace CJG.Web.External.Helpers
 {
-    /// <summary>
+	/// <summary>
     /// <typeparamref name="ControllerExtensions"/> static class, provides extension methods for controllers.
     /// </summary>
     public static class ControllerExtensions

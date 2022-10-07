@@ -71,10 +71,7 @@ namespace CJG.Application.Services
 
 				// CJG-549: MUST test for users list not being null
 				bool haveUsers = _dbContext?.Users != null;
-				newUser.IsOrganizationProfileAdministrator = true;  // Default to profile admin. If org exists and they have users, this can be reset below
-																	//_logger.Debug("organization is NULL: " + (organization == null).ToString()
-																	//				+ "  _dbContext is NULL: " + (_dbContext == null).ToString()
-																	//				+ " _dbContext is NULL: " + (_dbContext?.Users == null).ToString());
+				newUser.IsOrganizationProfileAdministrator = true;
 
 				if (haveUsers && organization != null)
 				{

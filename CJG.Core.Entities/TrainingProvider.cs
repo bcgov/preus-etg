@@ -223,7 +223,7 @@ namespace CJG.Core.Entities
 		}
 
 		/// <summary>
-		/// get - all the associated requestd service providers
+		/// get - all the associated requested service providers
 		/// </summary>
 		public virtual ICollection<TrainingProvider> RequestedTrainingProviders { get; set; } = new List<TrainingProvider>();
 

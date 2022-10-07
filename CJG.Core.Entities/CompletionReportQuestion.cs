@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CJG.Core.Entities
 {
-    /// <summary>
-    /// A CompletionReportQuestion class, provides a question for completion reports.
-    /// </summary>
-    public class CompletionReportQuestion : EntityBase
+	/// <summary>
+	/// A CompletionReportQuestion class, provides a question for completion reports.
+	/// </summary>
+	public class CompletionReportQuestion : EntityBase
     {
         #region Properties
         /// <summary>

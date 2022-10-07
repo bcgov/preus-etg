@@ -10,6 +10,7 @@ namespace CJG.Web.External.Models.Shared.Reports
 	{
 		#region Properties
 		public int CompletionReportId { get; set; }
+		public bool IsActive { get; set; }
 		public string Question { get; set; }
 		public string Description { get; set; }
 		public int Audience { get; set; }

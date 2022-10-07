@@ -1,10 +1,10 @@
-﻿using CJG.Application.Business.Models;
-using CJG.Core.Entities;
-using CJG.Core.Entities.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using CJG.Application.Business.Models;
+using CJG.Core.Entities;
+using CJG.Core.Entities.Helpers;
 
 namespace CJG.Core.Interfaces.Service
 {
