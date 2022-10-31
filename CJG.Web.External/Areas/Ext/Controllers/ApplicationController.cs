@@ -36,6 +36,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		#endregion
 
 		#region Constructors
+
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="ApplicationController"/> object.
 		/// </summary>
@@ -47,6 +48,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <param name="grantProgramService"></param>
 		/// <param name="fiscalYearService"></param>
 		/// <param name="settingService"></param>
+		/// <param name="organizationService"></param>
 		public ApplicationController(
 			IControllerService controllerService,
 			IGrantApplicationService grantApplicationService,
@@ -371,7 +373,16 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 								numFoundQuestions++;
 								if (clientQuestion.EligibilityAnswer == null || question.EligibilityPositiveAnswerRequired && clientQuestion.EligibilityAnswer != true)
 								{
-									ModelState.AddModelError("EligibilityQuestion" + question.Id.ToString(), "The stream eligibility requirements must be met for your application to be submitted and assessed.");
+									ModelState.AddModelError("EligibilityQuestion" + question.Id, "The stream eligibility requirements must be met for your application to be submitted and assessed.");
+									passedEligibilityQuestions = false;
+								}
+
+								if (question.EligibilityRationaleAnswerAllowed
+								    && clientQuestion.EligibilityAnswer.HasValue
+								    && clientQuestion.EligibilityAnswer.Value
+								    && string.IsNullOrWhiteSpace(clientQuestion.RationaleAnswer))
+								{
+									ModelState.AddModelError("RationaleAnswer" + question.Id, "You must provide a reason when selecting 'Yes' for this question.");
 									passedEligibilityQuestions = false;
 								}
 							}
