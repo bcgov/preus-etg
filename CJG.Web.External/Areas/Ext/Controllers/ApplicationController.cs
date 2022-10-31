@@ -218,7 +218,16 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 								numFoundQuestions++;
 								if (clientQuestion.EligibilityAnswer == null || question.EligibilityPositiveAnswerRequired && clientQuestion.EligibilityAnswer != true)
 								{
-									ModelState.AddModelError("EligibilityQuestion" + question.Id.ToString(), "The stream eligibility requirements must be met for your application to be submitted and assessed.");
+									ModelState.AddModelError("EligibilityQuestion" + question.Id, "The stream eligibility requirements must be met for your application to be submitted and assessed.");
+									passedEligibilityQuestions = false;
+								}
+
+								if (question.EligibilityRationaleAnswerAllowed
+								    && clientQuestion.EligibilityAnswer.HasValue
+								    && clientQuestion.EligibilityAnswer.Value
+								    && string.IsNullOrWhiteSpace(clientQuestion.RationaleAnswer))
+								{
+									ModelState.AddModelError("RationaleAnswer" + question.Id, "You must provide a reason when selecting 'Yes' for this question.");
 									passedEligibilityQuestions = false;
 								}
 							}
@@ -287,24 +296,26 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					var earliest = grantApplication.DateSubmitted ?? grantApplication.DateAdded;
 					grantApplication.StartDate = model.DeliveryStartDate.HasValue ? new DateTime(model.DeliveryStartYear, model.DeliveryStartMonth, model.DeliveryStartDay, 0, 0, 0, DateTimeKind.Local).ToUtcMorning() : earliest;
 					grantApplication.EndDate = model.DeliveryEndDate.HasValue ? new DateTime(model.DeliveryEndYear, model.DeliveryEndMonth, model.DeliveryEndDay, 0, 0, 0, DateTimeKind.Local).ToUtcMidnight() : earliest.AddMonths(1);
+
 					foreach (var question in dbModel.StreamEligibilityQuestions)
 					{
 						foreach (var clientQuestion in model.GrantStream.StreamEligibilityQuestions)
 						{
-							if (question.Id == clientQuestion.Id)
+							if (question.Id != clientQuestion.Id)
+								continue;
+
+							if (clientQuestion.EligibilityAnswer == null)
+								continue;
+
+							var clientQuestionEligibilityAnswer = clientQuestion.EligibilityAnswer.GetValueOrDefault(false);
+							grantApplication.GrantStreamEligibilityAnswers.Add(new GrantStreamEligibilityAnswer
 							{
-								if (clientQuestion.EligibilityAnswer != null)
-								{
-									grantApplication.GrantStreamEligibilityAnswers.Add(new GrantStreamEligibilityAnswer
-									{
-										GrantApplication = grantApplication,
-										GrantApplicationId = grantApplication.Id,
-										GrantStreamEligibilityQuestionId = question.Id,
-										EligibilityAnswer = clientQuestion.EligibilityAnswer.GetValueOrDefault(false),
-										RationaleAnswer = clientQuestion.RationaleAnswer
-									});
-								}
-							}
+								GrantApplication = grantApplication,
+								GrantApplicationId = grantApplication.Id,
+								GrantStreamEligibilityQuestionId = question.Id,
+								EligibilityAnswer = clientQuestionEligibilityAnswer,
+								RationaleAnswer = clientQuestionEligibilityAnswer ? clientQuestion.RationaleAnswer : null
+							});
 						}
 					}
 					_grantApplicationService.Add(grantApplication);
@@ -461,20 +472,22 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					{
 						foreach (var clientQuestion in model.GrantStream.StreamEligibilityQuestions)
 						{
-							if (question.Id == clientQuestion.Id)
+							if (question.Id != clientQuestion.Id)
+								continue;
+
+							if (clientQuestion.EligibilityAnswer == null)
+								continue;
+
+							var clientQuestionEligibilityAnswer = clientQuestion.EligibilityAnswer.GetValueOrDefault(false);
+
+							grantApplication.GrantStreamEligibilityAnswers.Add(new GrantStreamEligibilityAnswer
 							{
-								if (clientQuestion.EligibilityAnswer != null)
-								{
-									grantApplication.GrantStreamEligibilityAnswers.Add(new GrantStreamEligibilityAnswer
-									{
-										GrantApplication = grantApplication,
-										GrantApplicationId = grantApplication.Id,
-										GrantStreamEligibilityQuestionId = question.Id,
-										EligibilityAnswer = clientQuestion.EligibilityAnswer.GetValueOrDefault(false),
-										RationaleAnswer = clientQuestion.RationaleAnswer
-									});
-								}
-							}
+								GrantApplication = grantApplication,
+								GrantApplicationId = grantApplication.Id,
+								GrantStreamEligibilityQuestionId = question.Id,
+								EligibilityAnswer = clientQuestionEligibilityAnswer,
+								RationaleAnswer = clientQuestionEligibilityAnswer ? clientQuestion.RationaleAnswer : null
+							});
 						}
 					}
 
