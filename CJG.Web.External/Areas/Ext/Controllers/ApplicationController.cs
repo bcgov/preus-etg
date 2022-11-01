@@ -14,10 +14,10 @@ using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
-    /// <summary>
-    /// <typeparamref name="ApplicationController"/> class, provides a controller endpoints for managing external user grant applications.
-    /// </summary>
-    [RouteArea("Ext")]
+	/// <summary>
+	/// <typeparamref name="ApplicationController"/> class, provides a controller endpoints for managing external user grant applications.
+	/// </summary>
+	[RouteArea("Ext")]
 	[ExternalFilter]
 	public class ApplicationController : BaseController
 	{
