@@ -1,20 +1,17 @@
-﻿using CJG.Application.Business.Models;
+﻿using System;
+using System.Security.Principal;
+using CJG.Application.Business.Models;
 using CJG.Application.Services;
 using CJG.Core.Entities;
-using System;
-using System.Security.Principal;
 
 namespace CJG.Web.External.Areas.Ext.Models.Claims
 {
 	public class ClaimReportViewModel : BaseClaimViewModel
 	{
-		#region Properties
 		public ClaimTypes ClaimType { get; set; }
 		public ClaimModel Claim { get; set; }
 		public ProgramTitleLabelViewModel ProgramTitleLabel { get; set; }
-		#endregion
 
-		#region Constructors
 		public ClaimReportViewModel()
 		{
 
@@ -25,13 +22,12 @@ namespace CJG.Web.External.Areas.Ext.Models.Claims
 			if (claim == null) throw new ArgumentNullException(nameof(claim));
 
 			var grantApplication = claim.GrantApplication;
-			this.ClaimType = grantApplication.GrantOpening.GrantStream.ProgramConfiguration.ClaimTypeId;
-			this.Claim = new ClaimModel(claim)
+			ClaimType = grantApplication.GrantOpening.GrantStream.ProgramConfiguration.ClaimTypeId;
+			Claim = new ClaimModel(claim)
 			{
 				IsEditable = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditClaim)
 			};
-			this.ProgramTitleLabel = new ProgramTitleLabelViewModel(grantApplication, false);
+			ProgramTitleLabel = new ProgramTitleLabelViewModel(grantApplication, false);
 		}
-		#endregion
 	}
 }

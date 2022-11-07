@@ -1,6 +1,45 @@
 ﻿<div ng-controller="ClaimAttachmentsView" ng-claim-id="@ViewBag.ClaimId" ng-claim-version="@ViewBag.ClaimVersion">
     <h2 class="text--uppercase">{{model.Title}}</h2>
+    
     <div>
+        <div class="form__group form__group--radio-inline">
+            <label class="form__label">
+                Did any participant(s) pay for any expenses included in this claim? <abbr title="Required">*</abbr>
+            </label>
+            <div class="form__control" ng-validation="errors.ParticipantsPaidForExpenses">
+                <div class="form-item">
+                    <input type="radio" id="participant-expenses-yes" ng-value="true" ng-change="toggleUploadInstructionsPaid()" ng-model="model.ParticipantsPaidForExpenses" name="model.ParticipantsPaidForExpenses">
+                    <label for="participant-expenses-yes">Yes</label>
+                </div>
+                <div class="form-item">
+                    <input type="radio" id="participant-expenses-no" ng-value="false" ng-change="toggleUploadInstructionsPaid()" ng-model="model.ParticipantsPaidForExpenses" name="model.ParticipantsPaidForExpenses">
+                    <label for="participant-expenses-no">No</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form__group form__group--radio-inline" ng-show="model.ParticipantsPaidForExpenses">
+            <label class="form__label">
+                Have you fully reimbursed the participant(s)? <abbr title="Required">*</abbr>
+            </label>
+            <div class="form__control" ng-validation="errors.ParticipantsHaveBeenReimbursed">
+                <div class="form-item">
+                    <input type="radio" id="participant-reimbursed-yes" ng-value="true" ng-change="toggleUploadInstructionsReimbursed()" ng-model="model.ParticipantsHaveBeenReimbursed" name="model.ParticipantsHaveBeenReimbursed">
+                    <label for="participant-reimbursed-yes">Yes</label>
+                </div>
+                <div class="form-item">
+                    <input type="radio" id="participant-reimbursed-no" ng-value="false" ng-change="toggleUploadInstructionsReimbursed()" ng-model="model.ParticipantsHaveBeenReimbursed" name="model.ParticipantsHaveBeenReimbursed">
+                    <label for="participant-reimbursed-no">No</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notice notice--icon" ng-show="showReimbursementWarning">
+        <p>You must fully reimburse all participants before you can submit a claim.</p>
+    </div>
+
+    <div ng-show="showInstructions">
         <h3>Receipts</h3>
         <div>
             <p>To be reimbursed for pre-approved expenses, you must provide evidence that costs were both <u>incurred</u> and <u>paid</u>. When valid receipts are available, no other proofs of payment are required. A valid receipt is any document that contains the following <u>five</u> elements:</p>

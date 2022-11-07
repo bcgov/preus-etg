@@ -16,9 +16,9 @@ app.controller('ClaimAttachmentsView', function ($scope, $attrs, $controller, $t
       dataType: 'file',
       data: function () {
         var model = {
-          files: $scope.section.attachments.filter(function (attachment) {
+          files: $scope.section.attachments.filter(function(attachment) {
             return !attachment.Delete && typeof (attachment.File) !== 'undefined';
-          }).map(function (attachment, index) {
+          }).map(function(attachment, index) {
             attachment.Index = index; // Map object to file array.
             var file = attachment.File; // Add file to array.
             return file;
@@ -43,7 +43,9 @@ app.controller('ClaimAttachmentsView', function ($scope, $attrs, $controller, $t
     },
     claimId: $attrs.ngClaimId,
     claimVersion: $attrs.ngClaimVersion,
-    attachments: []
+    attachments: [],
+    showInstructions: false,
+    showReimbursementWarning: false
   };
   
   angular.extend(this, $controller('Section', { $scope: $scope, $attrs: $attrs }));
@@ -67,8 +69,87 @@ app.controller('ClaimAttachmentsView', function ($scope, $attrs, $controller, $t
    **/
   function init() {
     return Promise.all([
-      loadAttachments()
-    ]).catch(angular.noop);
+        loadAttachments(),
+      ])
+      .then(function() {
+        return $timeout(function() {
+          $scope.toggleInstructionsOnLoad();
+        });
+      }).catch(angular.noop);
+  }
+
+  $scope.toggleInstructionsOnLoad = function () {
+    var paid = $scope.model.ParticipantsPaidForExpenses;
+    var reimbursed = $scope.model.ParticipantsHaveBeenReimbursed;
+
+    if (paid === true) {
+      $scope.showInstructions = false;
+      $scope.showReimbursementWarning = false;
+
+      if (reimbursed === true) {
+        $scope.showInstructions = true;
+        $scope.showReimbursementWarning = false;
+        $scope.$parent.allowSubmitButton = true;
+      }
+
+      if (reimbursed === false) {
+        $scope.showInstructions = false;
+        $scope.showReimbursementWarning = true;
+      }
+    }
+
+    if (paid === false) {
+      $scope.showInstructions = true;
+      $scope.showReimbursementWarning = false;
+      $scope.$parent.allowSubmitButton = true;
+    }
+  }
+
+  // The Toggle Upload methods also talk to and set values in the parent controller since this is a partial controller.
+  // The different calls to $scope.$parent and $scope.model are deliberate.
+  $scope.toggleUploadInstructionsPaid = function (toggleErrors = true) {
+    var paid = $scope.model.ParticipantsPaidForExpenses;
+
+    $scope.$parent.participantsPaidForExpenses = paid;
+    $scope.$parent.participantsHaveBeenReimbursed = null;
+    $scope.showReimbursementWarning = false;
+
+    if (paid === true) {
+      $scope.$parent.allowSubmitButton = false;
+      $scope.model.ParticipantsHaveBeenReimbursed = null;
+      $scope.showInstructions = false;
+    }
+
+    if (paid === false) {
+      $scope.$parent.allowSubmitButton = true;
+      $scope.showInstructions = true;
+    }
+
+    if (toggleErrors)
+      $scope.$parent.displayErrors();
+  }
+
+  $scope.toggleUploadInstructionsReimbursed = function (toggleErrors = true) {
+    var paid = $scope.model.ParticipantsPaidForExpenses;
+    var reimbursed = $scope.model.ParticipantsHaveBeenReimbursed;
+
+    $scope.$parent.participantsPaidForExpenses = paid;
+    $scope.$parent.participantsHaveBeenReimbursed = reimbursed;
+
+    if (paid === true && reimbursed === false) {
+      $scope.showInstructions = false;
+      $scope.showReimbursementWarning = true;
+      $scope.$parent.allowSubmitButton = false;
+    }
+
+    if (paid === true && reimbursed === true) {
+      $scope.showInstructions = true;
+      $scope.showReimbursementWarning = false;
+      $scope.$parent.allowSubmitButton = true;
+    }
+
+    if (toggleErrors)
+      $scope.$parent.displayErrors();
   }
 
   /**

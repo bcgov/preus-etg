@@ -102,6 +102,16 @@ namespace CJG.Core.Entities
 		public string ReimbursementAssessmentNotes { get; set; }
 
 		/// <summary>
+		/// Have the Participants paid for any expenses related to training
+		/// </summary>
+		public bool? ParticipantsPaidForExpenses { get; set; }
+
+		/// <summary>
+		/// Have the Participants that paid for any expenses related to training been fully reimbursed
+		/// </summary>
+		public bool? ParticipantsHaveBeenReimbursed { get; set; }
+
+		/// <summary>
 		/// get/set - Whether the current claim is the final claim for the related grant application.
 		/// </summary>
 		[DefaultValue(false)]
