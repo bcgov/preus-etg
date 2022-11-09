@@ -1,6 +1,4 @@
-﻿@using CJG.Core.Entities
-
-@model CJG.Web.External.Areas.Ext.Models.SidebarViewModel
+﻿@model CJG.Web.External.Areas.Ext.Models.SidebarViewModel
 @{
     ViewBag.Title = "Reimbursement Claim";
 }
@@ -15,11 +13,9 @@
                 <program-title-label ng-model="model.ProgramTitleLabel"></program-title-label>
 
                 <h2>Reimbursement Claim</h2>
-
                 <div ng-if="alert.message" class="row row--alert">
                     <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
                 </div>
-
                 <div>
                     @Html.Partial("_ClaimDetailsETG")
                 </div>
@@ -32,7 +28,7 @@
                         <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-click="save()" ng-disabled="!IsValid">Save for later</a>
                     </div>
                     <div class="clearfix"></div>
-                    <div class="margin-bottom pull-right" ng-if="model.Claim.IsEditable && grantFile.ReportingPeriodIsOpen">
+                    <div class="margin-bottom pull-right" ng-if="model.Claim.IsEditable && grantFile.ReportingPeriodIsOpen && allowSubmitButton">
                         <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-click="saveAndReview();">Submit my claim now</a>
                     </div>
                     @*<div class="margin-bottom pull-right" ng-if="grantFile.AllowReviewAndSubmit && grantFile.EnableSubmit">

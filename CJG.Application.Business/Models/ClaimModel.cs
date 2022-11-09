@@ -7,7 +7,6 @@ namespace CJG.Application.Business.Models
 {
 	public class ClaimModel
 	{
-		#region Properties
 		public int Id { get; set; }
 		public int Version { get; set; }
 		public ClaimTypes ClaimType { get; set; }
@@ -34,9 +33,7 @@ namespace CJG.Application.Business.Models
 		public string ClaimStateText { get; set; }
 		public ClaimState ClaimState { get; set; }
 		public bool AttendanceCompleted { get; set; }
-		#endregion
 
-		#region Constructors
 		public ClaimModel()
 		{
 
@@ -46,51 +43,49 @@ namespace CJG.Application.Business.Models
 		{
 			if (claim == null) throw new ArgumentNullException(nameof(claim));
 
-			this.Id = claim.Id;
-			this.Version = claim.ClaimVersion;
-			this.ClaimType = claim.ClaimTypeId;
-			this.ProgramType = claim.GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId;
-			this.EligibleCosts = claim.EligibleCosts.OrderBy(ec => ec.EligibleExpenseType.RowSequence).Select(x => new ClaimEligibleCostModel(x)).ToList();
-			this.IsEditable = false;
-			this.TotalClaimReimbursement = this.EligibleCosts.Sum(x => x.TotalClaimedReimbursement);
-			this.TotalAssessedReimbursement = this.EligibleCosts.Sum(x => x.TotalAssessedReimbursement);
-			this.TotalApprovedAmount = claim.GrantApplication.TrainingCost.AgreedCommitment;
-
-			this.CountParticipantsWithCostsAssigned = claim.ParticipantsWithEligibleCosts();
+			Id = claim.Id;
+			Version = claim.ClaimVersion;
+			ClaimType = claim.ClaimTypeId;
+			ProgramType = claim.GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId;
+			EligibleCosts = claim.EligibleCosts.OrderBy(ec => ec.EligibleExpenseType.RowSequence).Select(x => new ClaimEligibleCostModel(x)).ToList();
+			IsEditable = false;
+			TotalClaimReimbursement = EligibleCosts.Sum(x => x.TotalClaimedReimbursement);
+			TotalAssessedReimbursement = EligibleCosts.Sum(x => x.TotalAssessedReimbursement);
+			TotalApprovedAmount = claim.GrantApplication.TrainingCost.AgreedCommitment;
+			CountParticipantsWithCostsAssigned = claim.ParticipantsWithEligibleCosts();
 
 			if (claim.GrantApplication.RequireAllParticipantsBeforeSubmission)
 			{
-				this.Participants = claim.GrantApplication.ParticipantForms
+				Participants = claim.GrantApplication.ParticipantForms
 					.Where(c => c.Approved.HasValue && c.Approved.Value)
-					.Select(s=> new ParticipantFormModel(s))
-					.OrderBy(o=>o.Name)
-					.ToList();
-				this.Attended = claim.GrantApplication.ParticipantForms.Where(c => c.Approved.HasValue && c.Approved.Value && c.Attended.HasValue && c.Attended.Value).Select(s => new ParticipantFormModel(s)).ToList();
-			}
-			else
-			{
-				this.Participants = claim.GrantApplication.ParticipantForms
 					.Select(s => new ParticipantFormModel(s))
 					.OrderBy(o => o.Name)
 					.ToList();
-				this.Attended = this.Participants;
+				Attended = claim.GrantApplication.ParticipantForms.Where(c => c.Approved.HasValue && c.Approved.Value && c.Attended.HasValue && c.Attended.Value).Select(s => new ParticipantFormModel(s)).ToList();
 			}
-			this.CountAttended = Attended.Count;
-			this.CountParticipants = Participants.Count();
+			else
+			{
+				Participants = claim.GrantApplication.ParticipantForms
+					.Select(s => new ParticipantFormModel(s))
+					.OrderBy(o => o.Name)
+					.ToList();
+				Attended = Participants;
+			}
+			CountAttended = Attended.Count;
+			CountParticipants = Participants.Count();
 
-			this.MaximumParticipants = claim.GrantApplication.TrainingCost.AgreedParticipants;
-			this.DateAssessed = claim.DateAssessed?.ToLocalMorning();
-			this.ClaimAssessmentNotes = claim.ClaimAssessmentNotes;
-			this.RowVersion = Convert.ToBase64String(claim.RowVersion);
-			this.EligibilityAssessmentNotes = claim.EligibilityAssessmentNotes;
-			this.ReimbursementAssessmentNotes = claim.ReimbursementAssessmentNotes;
-			this.ClaimState = claim.ClaimState;
-			this.ClaimStateText = claim.ClaimState.GetDescription();
-			this.DateSubmitted = claim.DateSubmitted;
+			MaximumParticipants = claim.GrantApplication.TrainingCost.AgreedParticipants;
+			DateAssessed = claim.DateAssessed?.ToLocalMorning();
+			ClaimAssessmentNotes = claim.ClaimAssessmentNotes;
+			RowVersion = Convert.ToBase64String(claim.RowVersion);
+			EligibilityAssessmentNotes = claim.EligibilityAssessmentNotes;
+			ReimbursementAssessmentNotes = claim.ReimbursementAssessmentNotes;
+			ClaimState = claim.ClaimState;
+			ClaimStateText = claim.ClaimState.GetDescription();
+			DateSubmitted = claim.DateSubmitted;
 
 			//attendance is complete when all participants have the Attended property set
-			this.AttendanceCompleted = this.Participants.All(a => a.Attended.HasValue) || !claim.GrantApplication.RequireAllParticipantsBeforeSubmission;
+			AttendanceCompleted = Participants.All(a => a.Attended.HasValue) || !claim.GrantApplication.RequireAllParticipantsBeforeSubmission;
 		}
-		#endregion
 	}
 }

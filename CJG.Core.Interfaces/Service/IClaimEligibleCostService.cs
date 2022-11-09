@@ -7,7 +7,7 @@ namespace CJG.Core.Interfaces.Service
 	public interface IClaimEligibleCostService : IService
     {
         ClaimEligibleCost Get(int id);
-        void Update(List<ClaimEligibleCostModel> claimEligibleCosts);
+        void Update(List<ClaimEligibleCostModel> claimEligibleCosts, bool? participantsPaidForExpenses, bool? participantsHaveBeenReimbursed);
 		void ResetClaimAmounts(Claim claim);
 	}
 }
