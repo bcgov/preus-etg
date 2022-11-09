@@ -119,7 +119,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			var service = helper.Create<ClaimEligibleCostService>();
 
 			// Act & Assert (handled by decorator)
-			service.Update(new List<ClaimEligibleCostModel>(new[] { claimEligibleCostModel }));
+			service.Update(new List<ClaimEligibleCostModel>(new[] { claimEligibleCostModel }), null, null);
 		}
 
 		/// <summary>
@@ -158,7 +158,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			var service = helper.Create<ClaimEligibleCostService>();
 
 			// Act
-			service.Update(new List<ClaimEligibleCostModel>(new[] { claimEligibleCostModel }));
+			service.Update(new List<ClaimEligibleCostModel>(new[] { claimEligibleCostModel }), null, null);
 
 			// Assert
 			claimEligibleCost.ParticipantCosts.Should().NotBeEmpty().And.HaveCount(1);
@@ -226,7 +226,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			var service = helper.Create<ClaimEligibleCostService>();
 
 			// Act
-			service.Update(new List<ClaimEligibleCostModel>(new[] { claimEligibleCostModel }));
+			service.Update(new List<ClaimEligibleCostModel>(new[] { claimEligibleCostModel }), null, null);
 
 			// Assert
 			claimEligibleCost.Breakdowns.Should().NotBeEmpty().And.HaveCount(1);
