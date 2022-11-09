@@ -620,7 +620,7 @@ namespace CJG.Testing.Core
 		{
 			var mockClaimEligibleCostService = new Mock<IClaimEligibleCostService>();
 			mockClaimEligibleCostService.Setup(x => x.Get(It.IsAny<int>())).Returns(claimEligibleCost);
-			mockClaimEligibleCostService.Setup(x => x.Update(It.IsAny<List<ClaimEligibleCostModel>>()));
+			mockClaimEligibleCostService.Setup(x => x.Update(It.IsAny<List<ClaimEligibleCostModel>>(), It.IsAny<bool?>(), It.IsAny<bool?>()));
 			return mockClaimEligibleCostService;
 		}
 
