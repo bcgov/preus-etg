@@ -134,8 +134,6 @@ namespace CJG.Application.Services
 				foreach (var viewModelClaimEligibleCost in eligibleCosts)
 				{
 					claim.RowVersion = System.Convert.FromBase64String(viewModelClaimEligibleCost.ClaimRowVersion);
-					claim.ParticipantsPaidForExpenses = participantsPaidForExpenses;
-					claim.ParticipantsHaveBeenReimbursed = participantsHaveBeenReimbursed;
 
 					var claimEligibleCost = Get<ClaimEligibleCost>(viewModelClaimEligibleCost.Id);
 
@@ -188,6 +186,9 @@ namespace CJG.Application.Services
 					claim.RecalculateClaimedCosts();
 					claim.RecalculateAssessedCosts(viewModelClaimEligibleCost.RemoveOverride);
 				}
+
+				claim.ParticipantsPaidForExpenses = participantsPaidForExpenses;
+				claim.ParticipantsHaveBeenReimbursed = participantsHaveBeenReimbursed;
 			}
 			_claimService.Update(claim);
 

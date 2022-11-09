@@ -9,9 +9,8 @@ using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Ext.Models.Reporting
 {
-	public class GrantFileViewModel : BaseViewModel
+    public class GrantFileViewModel : BaseViewModel
 	{
-		#region Properties
 		public int ClaimId { get; set; }
 		public int ClaimVersion { get; set; }
 		public ProgramTitleLabelViewModel ProgramTitleLabel { get; set; }
@@ -36,9 +35,8 @@ namespace CJG.Web.External.Areas.Ext.Models.Reporting
 		public bool IsFinalClaim { get; set; }
 		public ProgramTypes ProgramType { get; set; }
 		public bool RequireAllParticipantsBeforeSubmission { get; set; }
-		#endregion
+		public bool HasRequiredAttachments { get; set; }
 
-		#region Constructors
 		public GrantFileViewModel()
 		{
 		}
@@ -80,6 +78,7 @@ namespace CJG.Web.External.Areas.Ext.Models.Reporting
 				ClaimVersion = claim.ClaimVersion;
 				CurrentClaimState = claim.ClaimState;
 				IsFinalClaim = claim.IsFinalClaim;
+				HasRequiredAttachments = claim.Receipts.Any();
 			}
 			ClaimDueDate = grantApplication.StartDate.AddDays(30);
 			CompletionDueDate = grantApplication.StartDate.AddDays(30);
@@ -91,6 +90,5 @@ namespace CJG.Web.External.Areas.Ext.Models.Reporting
 				&& grantApplication.ApplicationStateInternal == ApplicationStateInternal.CompletionReporting;
 			ClaimAssessmentOutcome = new ClaimAssessmentOutcomeViewModel(grantApplication);
 		}
-		#endregion
 	}
 }

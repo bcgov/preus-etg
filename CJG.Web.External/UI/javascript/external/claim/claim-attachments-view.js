@@ -69,11 +69,12 @@ app.controller('ClaimAttachmentsView', function ($scope, $attrs, $controller, $t
    **/
   function init() {
     return Promise.all([
-        loadAttachments(),
+        loadAttachments()
       ])
       .then(function() {
         return $timeout(function() {
           $scope.toggleInstructionsOnLoad();
+          $scope.updateParentAttachmentsCount();
         });
       }).catch(angular.noop);
   }
@@ -81,6 +82,9 @@ app.controller('ClaimAttachmentsView', function ($scope, $attrs, $controller, $t
   $scope.toggleInstructionsOnLoad = function () {
     var paid = $scope.model.ParticipantsPaidForExpenses;
     var reimbursed = $scope.model.ParticipantsHaveBeenReimbursed;
+
+    $scope.$parent.participantsPaidForExpenses = paid;
+    $scope.$parent.participantsHaveBeenReimbursed = reimbursed;
 
     if (paid === true) {
       $scope.showInstructions = false;
@@ -171,6 +175,7 @@ app.controller('ClaimAttachmentsView', function ($scope, $attrs, $controller, $t
           } else if (attachment.Id === 0) {
             $scope.section.attachments.splice(i, 1);
           }
+          $scope.updateParentAttachmentsCount();
           $scope.displayErrors();
         }
       }).catch(angular.noop);
@@ -191,6 +196,8 @@ app.controller('ClaimAttachmentsView', function ($scope, $attrs, $controller, $t
       .then(function (attachment) {
         $scope.model.Attachments.push(attachment);
         $scope.section.attachments.push(attachment);
+
+        $scope.updateParentAttachmentsCount();
         $scope.displayErrors();
       })
       .catch(angular.noop);
@@ -209,9 +216,14 @@ app.controller('ClaimAttachmentsView', function ($scope, $attrs, $controller, $t
         if ($scope.section.attachments.indexOf(attachment) === -1) {
           $scope.section.attachments.push(attachment);
         }
+        $scope.updateParentAttachmentsCount();
         $scope.displayErrors();
       })
       .catch(angular.noop);
+  };
+
+  $scope.updateParentAttachmentsCount = function() {
+    $scope.$parent.totalAttachments = $scope.model.Attachments.length;
   };
   
   init();

@@ -91,7 +91,7 @@
 
         <div class="button-group">
             @Html.ActionLink("Cancel", nameof(ReportingController.GrantFileView), nameof(ReportingController).Replace("Controller", ""), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary btn--back" })
-            <a class="pull-right btn btn--primary btn--forward" ng-click="SubmitClaim()" ng-disabled="!model.ClaimConfirmed">Submit Claim</a>
+            <a class="pull-right btn btn--primary btn--forward" ng-click="SubmitClaim()" ng-disabled="!model.ClaimConfirmed || model.Attachments.Attachments.length == 0">Submit Claim</a>
         </div>
     </div>
 </div>

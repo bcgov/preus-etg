@@ -10,12 +10,6 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
     save: {
       url: '/Ext/Claim/Cost',
       method: 'PUT',
-      //data: function() {
-      //  $scope.EligibleCostSuccessMessage = '';
-      //  $scope.EligibleCostSummaryMessage = '';
-
-      //  return $scope.model.Claim.EligibleCosts;
-      //},
       data: function () {
         $scope.EligibleCostSuccessMessage = '';
         $scope.EligibleCostSummaryMessage = '';
@@ -47,11 +41,17 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
     claimVersion: $attrs.ngClaimVersion
 };
 
+  $scope.$on('updateAttachments', function(event, data) {
+    $scope.totalAttachments = data;
+  });
+
   $scope.redirectToReview = false;
   $scope.participantsPaidForExpenses = null;
   $scope.participantsHaveBeenReimbursed = null;
 
   $scope.allowSubmitButton = false;
+
+  $scope.totalAttachments = 0;
 
   angular.extend(this, $controller('ParentSection', { $scope: $scope, $attrs: $attrs }));
 
@@ -192,8 +192,6 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
       }
       else
       {
-        //console.log(claimEligibleCost);
-
         if (!$.isNumeric(claimEligibleCost.ClaimCost)) {
           claimEligibleCost.ClaimCost = 0;
         }
