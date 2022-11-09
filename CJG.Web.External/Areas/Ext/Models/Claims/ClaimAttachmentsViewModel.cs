@@ -38,7 +38,7 @@ namespace CJG.Web.External.Areas.Ext.Models.Claims
 			MaximumNumberOfAttachmentsAllowed = Constants.MaximumNumberOfAttachmentsPerClaim;
 			RowVersion = Convert.ToBase64String(claim.RowVersion);
 
-			ParticipantsPaidForExpenses = claim.ClaimState == ClaimState.Incomplete ? ParticipantsPaidForExpenses ?? false : ParticipantsPaidForExpenses;
+			ParticipantsPaidForExpenses = claim.ClaimState == ClaimState.Incomplete ? ParticipantsPaidForExpenses ?? false : claim.ParticipantsPaidForExpenses;
 			ParticipantsHaveBeenReimbursed = claim.ParticipantsHaveBeenReimbursed;
 
 			Attachments = claim.Receipts.Select(a => new AttachmentViewModel(a));

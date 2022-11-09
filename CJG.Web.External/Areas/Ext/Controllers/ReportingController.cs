@@ -94,7 +94,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					model.AllowClaimReport = (User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditClaim) || User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.CreateClaim)) && model.ReportingPeriodIsOpen;
 				}
 				model.AllowParticipantReport = User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditParticipants);
-				model.EnableSubmit = User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.SubmitClaim);
+				model.EnableSubmit = User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.SubmitClaim) && model.HasRequiredAttachments;
 			}
 			catch (Exception ex)
 			{
