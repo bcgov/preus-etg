@@ -23,7 +23,7 @@ namespace CJG.Core.Interfaces.Service
 		int NotSubmittedGrantApplicationsForUser(int orgId, Guid userBCeID);
 		bool RequiresBusinessLicenseDocuments(int orgId);
 		PageList<Organization> GetOrganizationList(int page, int quantity, string search, bool? isActive = null);
-		dynamic GetOrganizationYTD(int organizationId, int grantProgramId = 0);
+		dynamic GetOrganizationYTD(int organizationId);
 		bool ProfileSubjectToVerification(Organization organization);
 	}
 }
