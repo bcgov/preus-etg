@@ -148,8 +148,10 @@ namespace CJG.Application.Services
 			return new PageList<Organization>(page, quantity, total, result.ToArray());
 		}
 
-		public dynamic GetOrganizationYTD(int organizationId, int grantProgramId = 0)
+		public dynamic GetOrganizationYTD(int organizationId)
 		{
+			var defaultGrantProgramId = GetDefaultGrantProgramId();
+
 			var utcFiscalYearStart = AppDateTime.CurrentFYStartDateMorning.ToUniversalTime();
 			var utcFiscalYearEnd = AppDateTime.CurrentFYEndDateMidnight.ToUniversalTime();
 
@@ -159,7 +161,7 @@ namespace CJG.Application.Services
 					      && ga.ApplicationStateInternal != ApplicationStateInternal.Draft
 					      && ga.StartDate >= utcFiscalYearStart
 					      && ga.StartDate <= utcFiscalYearEnd
-					      && (grantProgramId == 0 || ga.GrantOpening.GrantStream.GrantProgramId == grantProgramId)
+					      && (ga.GrantOpening.GrantStream.GrantProgramId == defaultGrantProgramId)
 					select tc)
 				.ToList();
 
@@ -175,7 +177,7 @@ namespace CJG.Application.Services
 					      && ga1.ApplicationStateInternal != ApplicationStateInternal.Draft
 					      && ga1.StartDate >= utcFiscalYearStart
 					      && ga1.StartDate <= utcFiscalYearEnd
-					      && (grantProgramId == 0 || ga1.GrantOpening.GrantStream.GrantProgramId == grantProgramId)
+					      && (ga1.GrantOpening.GrantStream.GrantProgramId == defaultGrantProgramId)
 					select cl)
 				.ToList();
 
