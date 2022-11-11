@@ -1,7 +1,7 @@
-﻿using CJG.Core.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CJG.Core.Entities;
 
 namespace CJG.Application.Business.Models
 {
@@ -87,85 +87,85 @@ namespace CJG.Application.Business.Models
 		public ClaimEligibleCostModel(ClaimEligibleCost claimEligibleCost)
 		{
 			if (claimEligibleCost == null) throw new ArgumentNullException(nameof(claimEligibleCost));
-			this.Id = claimEligibleCost.Id;
-			this.EligibleExpenseTypeCaption = claimEligibleCost.EligibleExpenseType.Caption;
-			this.EligibleExpenseTypeDescription = claimEligibleCost.EligibleExpenseType.Description;
-			this.SourceId = claimEligibleCost.SourceId;
-			this.TotalClaimedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.ClaimReimbursement);
-			this.EligibleCostId = claimEligibleCost.EligibleCostId;
-			this.ExpenseType = claimEligibleCost.EligibleExpenseType.ExpenseType.Id;
+			Id = claimEligibleCost.Id;
+			EligibleExpenseTypeCaption = claimEligibleCost.EligibleExpenseType.Caption;
+			EligibleExpenseTypeDescription = claimEligibleCost.EligibleExpenseType.Description;
+			SourceId = claimEligibleCost.SourceId;
+			TotalClaimedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.ClaimReimbursement);
+			EligibleCostId = claimEligibleCost.EligibleCostId;
+			ExpenseType = claimEligibleCost.EligibleExpenseType.ExpenseType.Id;
 
-			this.AgreedReimbursementRate = claimEligibleCost.Claim.GrantApplication.ReimbursementRate;
-			this.AgreedMaxCost = claimEligibleCost.EligibleCost?.AgreedMaxCost ?? claimEligibleCost.Source?.AssessedCost ?? 0;
-			this.AgreedMaxParticipants = claimEligibleCost.EligibleCost?.AgreedMaxParticipants ?? claimEligibleCost.Source?.AssessedParticipants ?? 0;
-			this.AgreedMaxReimbursement = claimEligibleCost.EligibleCost?.AgreedMaxReimbursement ?? claimEligibleCost.Source?.AssessedReimbursementCost ?? 0;
-			this.AgreedEmployerContribution = claimEligibleCost.EligibleCost?.AgreedEmployerContribution ?? claimEligibleCost.Source?.AssessedParticipantEmployerContribution ?? 0;
-			this.AgreedMaxParticipantCost = claimEligibleCost.EligibleCost?.AgreedMaxParticipantCost ?? claimEligibleCost.Source?.AssessedMaxParticipantCost ?? 0;
-			this.AgreedMaxParticipantReimbursementCost = claimEligibleCost.EligibleCost?.CalculateAgreedPerParticipantReimbursement() ?? claimEligibleCost.Source?.AssessedMaxParticipantReimbursementCost ?? 0;
-			this.AgreedParticipantEmployerContribution = claimEligibleCost.EligibleCost?.CalculateAgreedPerParticipantEmployerContribution() ?? claimEligibleCost.Source?.AssessedParticipantEmployerContribution ?? 0;
+			AgreedReimbursementRate = claimEligibleCost.Claim.GrantApplication.ReimbursementRate;
+			AgreedMaxCost = claimEligibleCost.EligibleCost?.AgreedMaxCost ?? claimEligibleCost.Source?.AssessedCost ?? 0;
+			AgreedMaxParticipants = claimEligibleCost.EligibleCost?.AgreedMaxParticipants ?? claimEligibleCost.Source?.AssessedParticipants ?? 0;
+			AgreedMaxReimbursement = claimEligibleCost.EligibleCost?.AgreedMaxReimbursement ?? claimEligibleCost.Source?.AssessedReimbursementCost ?? 0;
+			AgreedEmployerContribution = claimEligibleCost.EligibleCost?.AgreedEmployerContribution ?? claimEligibleCost.Source?.AssessedParticipantEmployerContribution ?? 0;
+			AgreedMaxParticipantCost = claimEligibleCost.EligibleCost?.AgreedMaxParticipantCost ?? claimEligibleCost.Source?.AssessedMaxParticipantCost ?? 0;
+			AgreedMaxParticipantReimbursementCost = claimEligibleCost.EligibleCost?.CalculateAgreedPerParticipantReimbursement() ?? claimEligibleCost.Source?.AssessedMaxParticipantReimbursementCost ?? 0;
+			AgreedParticipantEmployerContribution = claimEligibleCost.EligibleCost?.CalculateAgreedPerParticipantEmployerContribution() ?? claimEligibleCost.Source?.AssessedParticipantEmployerContribution ?? 0;
 
-			this.EligibleExpenseTypeId = claimEligibleCost.EligibleExpenseType.Id;
-			this.ExpenseType = claimEligibleCost.EligibleExpenseType.ExpenseTypeId;
-			this.ServiceType = claimEligibleCost.EligibleExpenseType.ServiceCategory?.ServiceTypeId;
+			EligibleExpenseTypeId = claimEligibleCost.EligibleExpenseType.Id;
+			ExpenseType = claimEligibleCost.EligibleExpenseType.ExpenseTypeId;
+			ServiceType = claimEligibleCost.EligibleExpenseType.ServiceCategory?.ServiceTypeId;
 
-			this.ClaimId = claimEligibleCost.ClaimId;
-			this.ClaimVersion = claimEligibleCost.ClaimVersion;
+			ClaimId = claimEligibleCost.ClaimId;
+			ClaimVersion = claimEligibleCost.ClaimVersion;
 
-			if (this.ExpenseType == ExpenseTypes.ParticipantAssigned)
+			if (ExpenseType == ExpenseTypes.ParticipantAssigned)
 			{
 				if (claimEligibleCost.Claim.GrantApplication.RequireAllParticipantsBeforeSubmission)
 				{
-					this.ParticipantCosts = claimEligibleCost.ParticipantCosts.Where(w => w.ParticipantForm.Approved.HasValue && w.ParticipantForm.Approved.Value).Select(x => new ParticipantCostModel(x, this.AgreedReimbursementRate)).ToList();
+					ParticipantCosts = claimEligibleCost.ParticipantCosts.Where(w => w.ParticipantForm.Approved.HasValue && w.ParticipantForm.Approved.Value).Select(x => new ParticipantCostModel(x, AgreedReimbursementRate)).ToList();
 				}
 				else
 				{
-					this.ParticipantCosts = claimEligibleCost.ParticipantCosts.Select(x => new ParticipantCostModel(x, this.AgreedReimbursementRate)).ToList();
+					ParticipantCosts = claimEligibleCost.ParticipantCosts.Select(x => new ParticipantCostModel(x, AgreedReimbursementRate)).ToList();
 				}
 			}
-			else if (this.ExpenseType.In(ExpenseTypes.NotParticipantLimited, ExpenseTypes.ParticipantLimited) && this.ServiceType != ServiceTypes.EmploymentServicesAndSupports)
+			else if (ExpenseType.In(ExpenseTypes.NotParticipantLimited, ExpenseTypes.ParticipantLimited) && ServiceType != ServiceTypes.EmploymentServicesAndSupports)
 			{
-				this.Breakdowns = claimEligibleCost.Breakdowns.Where(x => x.EligibleCostBreakdown.IsEligible).Select(x => new ClaimEligibleCostBreakdownModel(x)).ToList();
+				Breakdowns = claimEligibleCost.Breakdowns.Where(x => x.EligibleCostBreakdown.IsEligible).Select(x => new ClaimEligibleCostBreakdownModel(x)).ToList();
 			}
 
-			this.ClaimCost = claimEligibleCost.ClaimCost;
-			this.ClaimParticipants = claimEligibleCost.ClaimParticipants;
-			this.ClaimMaxParticipantCost = claimEligibleCost.ClaimMaxParticipantCost;
-			this.ClaimMaxParticipantReimbursementCost = claimEligibleCost.ClaimMaxParticipantReimbursementCost;
-			this.ClaimParticipantEmployerContribution = claimEligibleCost.ClaimParticipantEmployerContribution;
-			this.ClaimEmployerContribution = claimEligibleCost.CalculateClaimEmployerContribution();
-			this.ClaimMaxReimbursement = claimEligibleCost.CalculateClaimReimbursement();
+			ClaimCost = claimEligibleCost.ClaimCost;
+			ClaimParticipants = claimEligibleCost.ClaimParticipants;
+			ClaimMaxParticipantCost = claimEligibleCost.ClaimMaxParticipantCost;
+			ClaimMaxParticipantReimbursementCost = claimEligibleCost.ClaimMaxParticipantReimbursementCost;
+			ClaimParticipantEmployerContribution = claimEligibleCost.ClaimParticipantEmployerContribution;
+			ClaimEmployerContribution = claimEligibleCost.CalculateClaimEmployerContribution();
+			ClaimMaxReimbursement = claimEligibleCost.CalculateClaimReimbursement();
 
 
 			if (claimEligibleCost.EligibleCost?.TrainingCost.GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.WDAService)
 			{
 				Calculate(claimEligibleCost.EligibleCost.TrainingCost.GrantApplication, claimEligibleCost.Claim, claimEligibleCost);
 
-				this.ClaimTotalPaid = claimEligibleCost.GetRemainingReimbursement();
-				this.TotalClaimedReimbursement = this.ClaimTotalPaid;
+				ClaimTotalPaid = claimEligibleCost.GetRemainingReimbursement();
+				TotalClaimedReimbursement = ClaimTotalPaid;
 
 			}
 			else
 			{
-				this.TotalClaimedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.ClaimReimbursement);
-				this.TotalAssessedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.AssessedReimbursement);
-				this.SumOfParticipantCostUnitsUnassigned = claimEligibleCost.ClaimCost - this.ParticipantCosts.Sum(pc => pc.ClaimParticipantCost);
+				TotalClaimedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.ClaimReimbursement);
+				TotalAssessedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.AssessedReimbursement);
+				SumOfParticipantCostUnitsUnassigned = claimEligibleCost.ClaimCost - ParticipantCosts.Sum(pc => pc.ClaimParticipantCost);
 			}
 
-			this.AssessedCost = claimEligibleCost.AssessedCost;
-			this.AssessedParticipants = claimEligibleCost.AssessedParticipants;
-			this.AssessedMaxParticipantCost = claimEligibleCost.AssessedMaxParticipantCost;
-			this.AssessedMaxParticipantReimbursementCost = claimEligibleCost.AssessedMaxParticipantReimbursementCost;
-			this.AssessedParticipantEmployerContribution = claimEligibleCost.AssessedParticipantEmployerContribution;
-			this.AssessedEmployerContribution = claimEligibleCost.CalculateAssessedEmployerContribution();
-			this.AssessedMaxReimbursement = claimEligibleCost.CalculateAssessedReimbursement();
-			this.AssessedReimbursementCost = claimEligibleCost.AssessedReimbursementCost;
-			this.AddedByAssessor = claimEligibleCost.AddedByAssessor;
-			this.TotalAssessedReimbursement = claimEligibleCost.AssessedReimbursementCost;
+			AssessedCost = claimEligibleCost.AssessedCost;
+			AssessedParticipants = claimEligibleCost.AssessedParticipants;
+			AssessedMaxParticipantCost = claimEligibleCost.AssessedMaxParticipantCost;
+			AssessedMaxParticipantReimbursementCost = claimEligibleCost.AssessedMaxParticipantReimbursementCost;
+			AssessedParticipantEmployerContribution = claimEligibleCost.AssessedParticipantEmployerContribution;
+			AssessedEmployerContribution = claimEligibleCost.CalculateAssessedEmployerContribution();
+			AssessedMaxReimbursement = claimEligibleCost.CalculateAssessedReimbursement();
+			AssessedReimbursementCost = claimEligibleCost.AssessedReimbursementCost;
+			AddedByAssessor = claimEligibleCost.AddedByAssessor;
+			TotalAssessedReimbursement = claimEligibleCost.AssessedReimbursementCost;
 			if (claimEligibleCost.Claim?.GrantApplication?.GetProgramType() == ProgramTypes.EmployerGrant) {
-				this.TotalAssessedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.AssessedReimbursement);
+				TotalAssessedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.AssessedReimbursement);
 			}
 
-			this.ClaimRowVersion = Convert.ToBase64String(claimEligibleCost.Claim.RowVersion);
+			ClaimRowVersion = Convert.ToBase64String(claimEligibleCost.Claim.RowVersion);
 		}
 		#endregion
 
@@ -178,18 +178,18 @@ namespace CJG.Application.Business.Models
 				ClaimVersion = x.Max(y => y.ClaimVersion)
 			}).ToList();
 
-			this.TotalClaimedToDate = claimEligibleCost.GetTotalAssessed();
+			TotalClaimedToDate = claimEligibleCost.GetTotalAssessed();
 
-			if (this.ServiceType.HasValue)
+			if (ServiceType.HasValue)
 			{
-				this.MaxReibursementTotalClaimedToDate = TrainingCostExtensions.CalculateRoundedReimbursementAmount(this.TotalClaimedToDate, this.AgreedReimbursementRate);
-				this.EmployerContributionTotalClaimedToDate = this.TotalClaimedToDate - this.MaxReibursementTotalClaimedToDate;
-				this.ParticipantCostTotalClaimedToDate = TrainingCostExtensions.CalculatePerParticipantCost(this.TotalClaimedToDate, claimEligibleCost.ClaimParticipants);
-				this.TotalPaidClaimedToDate = claimEligibleCost.AmountPaidOrOwing();
-				this.RemainingToClaimed = this.AgreedMaxCost - this.TotalClaimedToDate;
-				this.ParticipantCostRemainingToClaimed = TrainingCostExtensions.CalculatePerParticipantCost(this.RemainingToClaimed, claimEligibleCost.ClaimParticipants);
-				this.MaxReimbursementRemainingToClaimed = TrainingCostExtensions.CalculateRoundedReimbursementAmount(this.RemainingToClaimed, this.AgreedReimbursementRate);
-				this.EmployerContributionRemainingToClaimed = this.RemainingToClaimed - this.MaxReimbursementRemainingToClaimed;
+				MaxReibursementTotalClaimedToDate = TrainingCostExtensions.CalculateRoundedReimbursementAmount(TotalClaimedToDate, AgreedReimbursementRate);
+				EmployerContributionTotalClaimedToDate = TotalClaimedToDate - MaxReibursementTotalClaimedToDate;
+				ParticipantCostTotalClaimedToDate = TrainingCostExtensions.CalculatePerParticipantCost(TotalClaimedToDate, claimEligibleCost.ClaimParticipants);
+				TotalPaidClaimedToDate = claimEligibleCost.AmountPaidOrOwing();
+				RemainingToClaimed = AgreedMaxCost - TotalClaimedToDate;
+				ParticipantCostRemainingToClaimed = TrainingCostExtensions.CalculatePerParticipantCost(RemainingToClaimed, claimEligibleCost.ClaimParticipants);
+				MaxReimbursementRemainingToClaimed = TrainingCostExtensions.CalculateRoundedReimbursementAmount(RemainingToClaimed, AgreedReimbursementRate);
+				EmployerContributionRemainingToClaimed = RemainingToClaimed - MaxReimbursementRemainingToClaimed;
 			}
 
 		}
