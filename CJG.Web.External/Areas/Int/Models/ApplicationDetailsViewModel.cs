@@ -35,6 +35,7 @@ namespace CJG.Web.External.Areas.Int.Models
 		public bool RequiresTrainingProviderValidation { get; set; }
 		public bool RequiresCIPSValidation { get; set; }
 		public bool CanManageParticipantEligibilty { get; set; }
+		public bool EditParticipants { get; set; }
 		public bool RequiresNumParticipantsMatchNumApprovedParticipants { get; set; }
 		public bool RequiresReviewOfAllParticipants { get; set; }
 		public bool ShowESS { get; }
@@ -104,7 +105,7 @@ namespace CJG.Web.External.Areas.Int.Models
 			RequiresCIPSValidation = grantApplication.RequiresCIPSValidation();
 			RequiresTrainingProviderValidation = grantApplication.RequiresTrainingProviderValidation();
 
-			CanManageParticipantEligibilty =  ProgramType== ProgramTypes.EmployerGrant && grantApplication.RequireAllParticipantsBeforeSubmission;
+			CanManageParticipantEligibilty = ProgramType == ProgramTypes.EmployerGrant && grantApplication.RequireAllParticipantsBeforeSubmission;
 
 			RequiresNumParticipantsMatchNumApprovedParticipants = CanManageParticipantEligibilty && grantApplication.RequiresNumParticipantsMatchNumApprovedParticipants();
 			RequiresReviewOfAllParticipants = CanManageParticipantEligibilty && grantApplication.ParticipantForms.Any(a => !a.Approved.HasValue);
@@ -126,6 +127,7 @@ namespace CJG.Web.External.Areas.Int.Models
 			// This isn't technically correct
 			ShowESS = grantApplication.GetProgramType() == ProgramTypes.WDAService;
 
+			EditParticipants = CanManageParticipantEligibilty && user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.UpdateParticipants);
 			ShowParticipants = grantApplication.ParticipantForms.Count > 0
 				|| user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EnableApplicantReportingOfParticipants)
 				|| user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EnableParticipantReporting);

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using CJG.Core.Entities;
+using CJG.Web.External.Areas.Ext.Models.Attachments;
 using CJG.Web.External.Models.Shared;
 
-namespace CJG.Web.External.Areas.Ext.Models.Attachments
+namespace CJG.Web.External.Areas.Ext.Models.Claims
 {
-	public class ClaimAttachmentsViewModel : BaseViewModel
+    public class ClaimAttachmentsViewModel : BaseViewModel
 	{
 		public int ClaimVersion { get; set; }
 		public bool IsWDAService { get; set; }
@@ -15,6 +16,9 @@ namespace CJG.Web.External.Areas.Ext.Models.Attachments
 		public int MaxUploadSize { get; set; }
 		public int MaximumNumberOfAttachmentsAllowed { get; set; }
 		public string RowVersion { get; set; }
+
+		public bool? ParticipantsPaidForExpenses { get; set; }
+		public bool? ParticipantsHaveBeenReimbursed { get; set; }
 
 		public IEnumerable<AttachmentViewModel> Attachments { get; set; }
 
@@ -33,6 +37,9 @@ namespace CJG.Web.External.Areas.Ext.Models.Attachments
 			MaxUploadSize = maxUploadSize / 1024 / 1024;
 			MaximumNumberOfAttachmentsAllowed = Constants.MaximumNumberOfAttachmentsPerClaim;
 			RowVersion = Convert.ToBase64String(claim.RowVersion);
+
+			ParticipantsPaidForExpenses = claim.ClaimState == ClaimState.Incomplete ? ParticipantsPaidForExpenses ?? false : claim.ParticipantsPaidForExpenses;
+			ParticipantsHaveBeenReimbursed = claim.ParticipantsHaveBeenReimbursed;
 
 			Attachments = claim.Receipts.Select(a => new AttachmentViewModel(a));
 		}

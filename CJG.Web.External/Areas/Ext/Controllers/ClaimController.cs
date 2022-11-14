@@ -1,4 +1,10 @@
-﻿using CJG.Application.Business.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity.Validation;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using CJG.Application.Business.Models;
 using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
@@ -9,19 +15,13 @@ using CJG.Web.External.Areas.Ext.Models.Claims;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.Validation;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
-	/// <summary>
-	/// <paramtyperef name="ClaimController"/> class, provides endpoints to manage claims.
-	/// </summary>
-	[RouteArea("Ext")]
+    /// <summary>
+    /// <paramtyperef name="ClaimController"/> class, provides endpoints to manage claims.
+    /// </summary>
+    [RouteArea("Ext")]
 	public class ClaimController : BaseController
 	{
 		#region Variables
@@ -153,7 +153,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <summary>
 		/// Get the claim attachments view data.
 		/// </summary>
-		/// <param name="id"></param>
+		/// <param name="claimId"></param>
+		/// <param name="claimVersion"></param>
 		/// <returns></returns>
 		[HttpGet]
 		[Route("Claim/Attachments/{claimId}/{claimVersion}")]
@@ -285,24 +286,27 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 			this.SetAlert("This attachment has been removed or changed and cannot be accessed. Please return and select your claim again to view the current attachments.", AlertType.Warning, true);
 			return Redirect(Request.UrlReferrer.ToString());
-		}	
+		}
+
 		/// <summary>
 		/// Update the claim with the list of eligible claim costs.
 		/// </summary>
 		/// <param name="eligibleCosts"></param>
+		/// <param name="participantsPaidForExpenses"></param>
+		/// <param name="participantsHaveBeenReimbursed"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[PreventSpam]
 		[ValidateRequestHeader]
 		[Route("Claim/Cost")]
-		public JsonResult UpdateClaimEligibleCosts(List<ClaimEligibleCostModel> eligibleCosts)
+		public JsonResult UpdateClaimEligibleCosts(List<ClaimEligibleCostModel> eligibleCosts, bool? participantsPaidForExpenses, bool? participantsHaveBeenReimbursed)
 		{
 			var model = new ClaimReportViewModel();
 			try
 			{
 				var claimEligibleCost = _claimEligibleCostService.Get(eligibleCosts.FirstOrDefault().Id);
 
-				_claimEligibleCostService.Update(eligibleCosts);
+				_claimEligibleCostService.Update(eligibleCosts, participantsPaidForExpenses, participantsHaveBeenReimbursed);
 
 				model = new ClaimReportViewModel(claimEligibleCost.Claim, User);
 			}

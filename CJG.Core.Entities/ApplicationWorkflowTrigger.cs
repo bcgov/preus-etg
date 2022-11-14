@@ -268,6 +268,11 @@ namespace CJG.Core.Entities
 		[Description("View Participants")]
 		ViewParticipants = 53,
 		/// <summary>
+		/// UpdateParticipants - Directors and Assessors can edit participants.
+		/// </summary>
+		[Description("Update Participants")]
+		UpdateParticipants = 80,
+		/// <summary>
 		/// AddRemoveTrainingProvider - Add/Remove Training Provider
 		/// </summary>
 		[Description("Add/Remove Training Provider")]

@@ -14,11 +14,16 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
         $scope.EligibleCostSuccessMessage = '';
         $scope.EligibleCostSummaryMessage = '';
 
-        return $scope.model.Claim.EligibleCosts;
+        var model = {
+          participantsPaidForExpenses: $scope.participantsPaidForExpenses,
+          participantsHaveBeenReimbursed: $scope.participantsHaveBeenReimbursed,
+          EligibleCosts: $scope.model.Claim.EligibleCosts
+        };
+        return model;
       },
       backup: true
     },
-    onSave: function (event, data) {
+    onSave: function(event, data) {
       if ($scope.redirectToReview) {
         let claimReviewUrl = '/Ext/Claim/Reporting/Review/View/' + $scope.section.claimId + '/' + $scope.section.claimVersion;
         window.location = claimReviewUrl;
@@ -34,9 +39,19 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
     grantApplicationId: $attrs.ngGrantApplicationId,
     claimId: $attrs.ngClaimId,
     claimVersion: $attrs.ngClaimVersion
-  };
+};
+
+  $scope.$on('updateAttachments', function(event, data) {
+    $scope.totalAttachments = data;
+  });
 
   $scope.redirectToReview = false;
+  $scope.participantsPaidForExpenses = null;
+  $scope.participantsHaveBeenReimbursed = null;
+
+  $scope.allowSubmitButton = false;
+
+  $scope.totalAttachments = 0;
 
   angular.extend(this, $controller('ParentSection', { $scope: $scope, $attrs: $attrs }));
 
@@ -177,8 +192,6 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
       }
       else
       {
-        console.log(claimEligibleCost);
-
         if (!$.isNumeric(claimEligibleCost.ClaimCost)) {
           claimEligibleCost.ClaimCost = 0;
         }
@@ -200,8 +213,6 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
             claimCost === 0 ? 0 : MathFunction.truncate(claimCost / claimEligibleCost.AgreedMaxParticipants * claimEligibleCost.AgreedReimbursementRate * 100),
             claimEligibleCost.AgreedMaxParticipantCost);
 
-
-
           //console.log('A: ' + MathFunction.truncate($scope.model.Claim.TotalApprovedAmount / claimEligibleCost.AgreedMaxParticipants * 100));
           //console.log('B: ' + MathFunction.truncate(claimCost / claimEligibleCost.AgreedMaxParticipants * claimEligibleCost.AgreedReimbursementRate * 100));
 
@@ -214,8 +225,6 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
           //console.log('Claim Cost: ' + claimCost);
           //console.log('Max Part Cost: ' + claimEligibleCost.ClaimMaxParticipantCost);
           //console.log('Max Part Reimb Cost: ' + claimEligibleCost.ClaimMaxParticipantReimbursementCost);
-
-
 
           claimEligibleCost.ClaimMaxParticipantReimbursementCost = result;  // This is the "Maximum government contribution per participant"
           claimEligibleCost.ClaimParticipantEmployerContribution = claimEligibleCost.ClaimMaxParticipantCost - claimEligibleCost.ClaimMaxParticipantReimbursementCost;

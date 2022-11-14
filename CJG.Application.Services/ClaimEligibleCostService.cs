@@ -40,12 +40,13 @@ namespace CJG.Application.Services
 			return claimEligibleCost;
 		}
 
-		// TODO: Rip this out and replace it with a standard entity function.
 		/// <summary>
 		/// Update all eligible claim costs.
 		/// </summary>
 		/// <param name="eligibleCosts"></param>
-		public void Update(List<ClaimEligibleCostModel> eligibleCosts)
+		/// <param name="participantsPaidForExpenses"></param>
+		/// <param name="participantsHaveBeenReimbursed"></param>
+		public void Update(List<ClaimEligibleCostModel> eligibleCosts, bool? participantsPaidForExpenses, bool? participantsHaveBeenReimbursed)
 		{
 			var anyClaimEligibleCost = Get<ClaimEligibleCost>(eligibleCosts.FirstOrDefault().Id);
 
@@ -133,6 +134,7 @@ namespace CJG.Application.Services
 				foreach (var viewModelClaimEligibleCost in eligibleCosts)
 				{
 					claim.RowVersion = System.Convert.FromBase64String(viewModelClaimEligibleCost.ClaimRowVersion);
+
 					var claimEligibleCost = Get<ClaimEligibleCost>(viewModelClaimEligibleCost.Id);
 
 					// If RowVersion is different, update claim participants, update row version to match, and set error to true
@@ -184,6 +186,9 @@ namespace CJG.Application.Services
 					claim.RecalculateClaimedCosts();
 					claim.RecalculateAssessedCosts(viewModelClaimEligibleCost.RemoveOverride);
 				}
+
+				claim.ParticipantsPaidForExpenses = participantsPaidForExpenses;
+				claim.ParticipantsHaveBeenReimbursed = participantsHaveBeenReimbursed;
 			}
 			_claimService.Update(claim);
 

@@ -107,10 +107,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			var model = new OrganizationGrantFileYTDViewModel();
 			try
 			{
-				if (grantProgramId == 0)
-					grantProgramId = _grantProgramService.GetDefaultGrantProgramId();
-
-				var result = _organizationService.GetOrganizationYTD(organizationId, grantProgramId);
+				var result = _organizationService.GetOrganizationYTD(organizationId);
 				model.TotalRequested = result.TotalRequested;
 				model.TotalApproved = result.TotalApproved;
 				model.TotalPaid = result.TotalPaid;
