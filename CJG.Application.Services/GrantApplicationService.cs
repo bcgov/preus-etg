@@ -818,10 +818,12 @@ namespace CJG.Application.Services
 			};
 
 			var trainingProviders = _dbContext.TrainingProviders
+				.Include(ga => ga.OriginalTrainingProvider)
 				.AsNoTracking()
 				.Where(tp => !invalidRequestStates.Contains(tp.TrainingProviderState));
 
 			// Get all providers that are directly tied to this 'official' Training Provider
+
 			var primaryProvidersWithNoChanges = trainingProviders
 				.Where(t => t.TrainingProviderInventoryId == trainingProviderInventoryId)
 				.Where(t => t.TrainingProviderInventoryId != null)
@@ -834,6 +836,10 @@ namespace CJG.Application.Services
 				.Where(t => t.OriginalTrainingProviderId != null)
 				.Select(t => new { t.Id, t.OriginalTrainingProviderId.Value });
 
+			var changedProviders = trainingProviders
+				.Where(t => t.OriginalTrainingProvider.TrainingProviderInventoryId == trainingProviderInventoryId)
+				.Select(p => p.OriginalTrainingProvider.Id);
+
 			// Need to force load any of the related entities.
 			_dbContext.Set<GrantApplication>()
 				.Include(m => m.GrantOpening.GrantStream)
@@ -844,6 +850,9 @@ namespace CJG.Application.Services
 
 			foreach (var p in primaryProvidersWithNoChanges)
 			{
+				if (changedProviders.Contains(p))
+					continue;
+				
 				var provider = _dbContext.TrainingProviders.FirstOrDefault(t => t.Id == p);
 				var application = provider?.TrainingProgram?.GrantApplication;
 
@@ -860,8 +869,6 @@ namespace CJG.Application.Services
 
 				if (application != null && newProvider?.TrainingProviderInventoryId != null)
 					providerGrantApplicationList.Add(newProvider, application);
-				if (oldProvider != null)
-					providerGrantApplicationList.Add(oldProvider, application);
 			}
 
 			return providerGrantApplicationList
