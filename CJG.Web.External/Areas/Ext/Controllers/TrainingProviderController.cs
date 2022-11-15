@@ -183,6 +183,11 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					ModelState.Remove(nameof(TrainingProviderViewModel.PostalCodeTrainingProvider));
 					ModelState.Remove(nameof(TrainingProviderViewModel.RegionIdTrainingProvider));
 				}
+				if (model.RegionIdTrainingProvider.ToLower() == "bc")
+				{
+					ModelState.Remove(nameof(TrainingProviderViewModel.OutOfProvinceLocationRationale));
+				}
+
 				if (model.TrainingProviderTypeId.HasValue)
 				{
 					var trainingProviderType = _trainingProviderService.Get<TrainingProviderType>(model.TrainingProviderTypeId);
@@ -278,6 +283,10 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				{
 					ModelState.Remove(nameof(TrainingProviderViewModel.PostalCodeTrainingProvider));
 					ModelState.Remove(nameof(TrainingProviderViewModel.RegionIdTrainingProvider));
+				}
+				if (model.RegionIdTrainingProvider.ToLower() == "bc")
+				{
+					ModelState.Remove(nameof(TrainingProviderViewModel.OutOfProvinceLocationRationale));
 				}
 				if (model.TrainingProviderTypeId.HasValue)
 				{

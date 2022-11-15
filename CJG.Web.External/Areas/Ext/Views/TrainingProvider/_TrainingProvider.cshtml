@@ -1,4 +1,4 @@
-﻿<div class="form__group">
+<div class="form__group">
     <div class="label-wrapper"><label class="form__label">Training provider name <abbr title="Required">*</abbr></label></div>
     <div class="control-wrapper form-control"> <input type="text" class="input--medium" ng-model="model.Name" ng-validation></div>
 </div>
@@ -229,6 +229,12 @@
     <div class="form__group">
         <div class="label-wrapper"><label class="form__label">Postal / Zip Code <abbr title="Required">*</abbr></label></div>
         <div class="control-wrapper form-control"><input id="OtherZipCodeTrainingProvider" type="text" class="input--medium" ng-model="model.OtherZipCodeTrainingProvider" ng-validation></div>
+    </div>
+</div>
+<div ng-show="model.RegionIdTrainingProvider !== 'BC'">
+    <div class="form__group">
+        <div class="label-wrapper"><label class="form__label">The ETG may consider training delivered by training providers not based in B.C. under exceptional circumstances only. Please explain why you have selected a training provider not based in B.C. <abbr title="Required">*</abbr></label></div>
+        <div class="control-wrapper form-control"><textarea id="OutOfProvinceLocationRationale" type="text" class="input--full textarea--short" ng-model="model.OutOfProvinceLocationRationale" ng-validation></textarea></div>
     </div>
 </div>
 
