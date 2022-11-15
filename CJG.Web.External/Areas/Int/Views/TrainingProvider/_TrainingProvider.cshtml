@@ -1,4 +1,4 @@
-﻿<div ng-controller="TrainingProvider" name="TrainingProvider{{provider.IsChangeRequest ? 'ChangeRequest' : ''}}">
+<div ng-controller="TrainingProvider" name="TrainingProvider{{provider.IsChangeRequest ? 'ChangeRequest' : ''}}">
 	<span class="panel-section-item">
 		<span class="panel-section-title" ng-click="toggle($event)" ng-class="{ 'label--red': provider.IsChangeRequest }">
 			<span class="notice--icon" ng-if="!provider.IsValidated" title="Training Provider requires validation."></span>
@@ -224,8 +224,8 @@
                 </div>
             </div>
         </div>
-                
-        <div ng-if="model.ProgramType !== @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+
+        <div ng-if="model.ProgramType !== @((int) CJG.Core.Entities.ProgramTypes.EmployerGrant)">
             <div class="form__group">
                 <div class="form__label">Training outside BC:</div>
                 <div class="form__control">
@@ -245,15 +245,23 @@
                 </div>
             </div>
         </div>
-        
-                
+
+        <div class="form__group">
+            <div class="form__label">Non-BC Training Location Rationale:</div>
+            <div class="form__control">
+                <div class="control-wrapper">
+                    <span ng-show="!section.editing" style="white-space: pre-wrap;" ng-bind-html="model.OutOfProvinceLocationRationale"></span>
+                    <textarea ng-show="section.editing" ng-model="model.OutOfProvinceLocationRationale" class="input--full textarea--short" ng-validation></textarea>
+                </div>
+            </div>
+        </div>
+
         <div class="form__group">
             <div class="form__label">Alternative Training Options:</div>
             <div class="form__control">
                 <div class="control-wrapper collapsed__html" ng-bind-html="extraInfo.AlternativeTrainingOptions | unsafe" ng-click="previewTrainingOptions()" title="Click to view full text"></div>
             </div>
         </div>
-
 
         <div class="form__group">
             <div class="form__label">Choice of Trainer/Program:</div>

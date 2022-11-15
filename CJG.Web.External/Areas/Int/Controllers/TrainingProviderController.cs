@@ -120,11 +120,13 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				var model = Newtonsoft.Json.JsonConvert.DeserializeObject<UpdateTrainingProviderViewModel>(provider);
 				var trainingProvider = _trainingProviderService.Get(model.Id);
+
 				if (model.TrainingLocationListViewModel != null)
 				{
 					model.TrainingLocationListViewModel.IsCanadianAddress = model.TrainingLocationListViewModel.CountryId == Core.Entities.Constants.CanadaCountryId;
 					TryValidateModel(model.TrainingLocationListViewModel, "TrainingLocationListViewModel");
 				}
+
 				if (model.TrainingProviderLocationListViewModel != null)
 				{
 					model.TrainingProviderLocationListViewModel.IsCanadianAddress = model.TrainingProviderLocationListViewModel.CountryId == Core.Entities.Constants.CanadaCountryId;
@@ -243,7 +245,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		}
 
 		/// <summary>
-		/// Download the specified attachemnt.
+		/// Download the specified attachment.
 		/// </summary>
 		/// <param name="trainingProviderId"></param>
 		/// <param name="attachmentId"></param>

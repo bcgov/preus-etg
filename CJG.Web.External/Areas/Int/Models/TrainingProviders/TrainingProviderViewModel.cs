@@ -27,6 +27,8 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingProviders
 
 		public AddressViewModel TrainingProviderLocationListViewModel { get; set; }
 		public TrainingOutsideBCListViewModel TrainingOutsideBcListViewModel { get; set; }
+
+		public string OutOfProvinceLocationRationale { get; set; }
 		public bool RequiresTrainingProviderValidation { get; set; }
 
 		public bool CanValidateTrainingProvider { get; set; }
@@ -78,6 +80,8 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingProviders
 				TrainingProviderLocationListViewModel = new AddressViewModel(trainingProvider.TrainingProviderAddress);
 
 			TrainingOutsideBcListViewModel = new TrainingOutsideBCListViewModel(trainingProvider);
+
+			OutOfProvinceLocationRationale = trainingProvider.OutOfProvinceLocationRationale;
 
 			ProgramType = grantApplication.GetProgramType();
 

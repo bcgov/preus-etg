@@ -218,6 +218,7 @@ app.controller('ApplicationTrainingProviderView', function ($scope, $attrs, $con
       $scope.model.CountryTrainingProvider = 'Canada';
       $scope.model.RegionIdTrainingProvider = null;
     } else {
+      $scope.model.RegionIdTrainingProvider = null;
       $scope.model.CountryIdTrainingProvider = null;
     }
   }

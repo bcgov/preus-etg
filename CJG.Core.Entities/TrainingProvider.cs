@@ -10,7 +10,7 @@ using CJG.Core.Entities.Attributes;
 namespace CJG.Core.Entities
 {
 	/// <summary>
-	/// TrainingProvider class, provides the ORM a way to manage training providers that are reqeusted by the Application Administrators.
+	/// TrainingProvider class, provides the ORM a way to manage training providers that are requested by the Application Administrators.
 	/// </summary>
 	public class TrainingProvider : EntityBase
 	{
@@ -202,6 +202,11 @@ namespace CJG.Core.Entities
 		/// Applicant-supplied HTML content about Alternative Training Options
 		/// </summary>
 		public string ChoiceOfTrainerOrProgram { get; set; }
+
+		/// <summary>
+		/// Justification for supplying a Training Provider that isn't in B.C.
+		/// </summary>
+		public string OutOfProvinceLocationRationale { get; set; }
 
 		/// <summary>
 		/// get - All the associated training programs.
