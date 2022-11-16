@@ -194,10 +194,12 @@ app.controller('ApplicationTrainingProviderView', function ($scope, $attrs, $con
     if ($scope.model.IsCanadianAddressTrainingProvider) {
       trainingProviderControl.listen("populate", function (address) {
         document.getElementById("RegionIdTrainingProvider").value = "string:" + address.ProvinceCode;
+        $scope.model.RegionIdTrainingProvider = address.ProvinceCode;
+        $scope.$apply();
       });
     }
   }
-  
+
   $scope.filterItems = function (item) {
     return item.Key !== 'CA';
   }

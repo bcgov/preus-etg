@@ -207,7 +207,7 @@
     <label class="form__label">Province <abbr title="Required">*</abbr></label>
     <div class="form__control">
         <div class="control-wrapper selectmenu input--medium" ng-validation="errors.RegionIdTrainingProvider">
-            <select Id="RegionIdTrainingProvider" class="input--medium form-control" ng-model="model.RegionIdTrainingProvider" ng-options="item.Key as item.Caption for item in Provinces">
+            <select Id="RegionIdTrainingProvider" class="input--medium form-control" ng-model="model.RegionIdTrainingProvider" ng-options="item.Key as item.Caption for item in Provinces" ng-change="TrainingProviderRegionChanged()">
                 <option value="" selected="selected">&lt; Select value &gt;</option>
             </select>
         </div>
@@ -231,6 +231,7 @@
         <div class="control-wrapper form-control"><input id="OtherZipCodeTrainingProvider" type="text" class="input--medium" ng-model="model.OtherZipCodeTrainingProvider" ng-validation></div>
     </div>
 </div>
+
 <div ng-show="model.RegionIdTrainingProvider !== 'BC'">
     <div class="form__group">
         <div class="label-wrapper"><label class="form__label">The ETG may consider training delivered by training providers not based in B.C. under exceptional circumstances only. Please explain why you have selected a training provider not based in B.C. <abbr title="Required">*</abbr></label></div>
