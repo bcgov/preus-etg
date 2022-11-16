@@ -1,3 +1,5 @@
+app.filter('unsafe', function ($sce) { return $sce.trustAsHtml; });
+
 app.controller('ApplicationReviewView', function ($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
   $scope.section = {
     grantApplicationId: $attrs.ngGrantApplicationId

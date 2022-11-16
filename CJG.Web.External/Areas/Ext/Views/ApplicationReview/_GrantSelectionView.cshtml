@@ -23,7 +23,7 @@
     
     <div ng-repeat="question in model.StreamEligibilityQuestions">
         <div class="form__group">
-            <div class="form__label">{{ question.EligibilityQuestion }}</div>
+            <div class="form__label" ng-bind-html="question.EligibilityQuestion | unsafe"></div>
             <div class="form__control">
                 {{ question.EligibilityAnswer ? 'Yes' : 'No' }}
             </div>
@@ -31,7 +31,7 @@
         <div class="form__group" ng-if="question.EligibilityRationaleAnswerAllowed === true && question.EligibilityAnswer === true && question.RationaleAnswer">
             <div class="form__label" style="font-weight: normal; font-style: italic; padding-left: 1em;">{{ question.EligibilityRationaleAnswerLabel }}</div>
             <div class="form__control form__control__with_embedded_html">
-                <div class="form__group__with_embedded_html" ng-bind-html="question.RationaleAnswer"></div>
+                <div class="form__group__with_embedded_html" ng-bind-html="question.RationaleAnswer | unsafe"></div>
             </div>
         </div>
     </div>
