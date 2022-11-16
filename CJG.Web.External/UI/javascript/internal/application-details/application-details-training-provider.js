@@ -126,11 +126,10 @@ app.controller('TrainingProvider', function ($scope, $attrs, $controller, $timeo
       template: '/content/dialogs/_FullContent.html',
       closeByDocument: true,
         data: {
-          title: 'Choice of Trainer/Program',
+          title: 'Choice of Training Provider',
           content: $scope.extraInfo.ChoiceOfTrainerOrProgram
         }
       }
     );
   }
-
 });
