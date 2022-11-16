@@ -26,7 +26,8 @@ namespace CJG.Web.External.Areas.Ext.Models.Claims
 
 		public ClaimAttachmentsViewModel(Claim claim)
 		{
-			if (claim == null) throw new ArgumentNullException(nameof(claim));
+			if (claim == null)
+				throw new ArgumentNullException(nameof(claim));
 
 			int maxUploadSize = int.Parse(ConfigurationManager.AppSettings["MaxUploadSizeInBytes"]);
 
@@ -38,8 +39,12 @@ namespace CJG.Web.External.Areas.Ext.Models.Claims
 			MaximumNumberOfAttachmentsAllowed = Constants.MaximumNumberOfAttachmentsPerClaim;
 			RowVersion = Convert.ToBase64String(claim.RowVersion);
 
-			ParticipantsPaidForExpenses = claim.ClaimState == ClaimState.Incomplete ? ParticipantsPaidForExpenses ?? false : claim.ParticipantsPaidForExpenses;
+			ParticipantsPaidForExpenses = claim.ParticipantsPaidForExpenses;
 			ParticipantsHaveBeenReimbursed = claim.ParticipantsHaveBeenReimbursed;
+
+			// When a claim has been updated before (ie: a fresh new Claim) but is still incomplete, default the Paid Question to false if it's null.
+			if (claim.DateUpdated.HasValue && claim.ClaimState == ClaimState.Incomplete)
+				ParticipantsPaidForExpenses = claim.ParticipantsPaidForExpenses ?? false;
 
 			Attachments = claim.Receipts.Select(a => new AttachmentViewModel(a));
 		}
