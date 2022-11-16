@@ -85,6 +85,11 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 		[MaxLength(150000, ErrorMessage = "Business training relevance cannot exceed 150000 characters.")]
 		public string BusinessTrainingRelevance { get; set; }
 
+		[AllowHtml]
+		[Required(ErrorMessage = "Participant training relevance is required")]
+		[MaxLength(150000, ErrorMessage = "Participant training relevance cannot exceed 150000 characters.")]
+		public string ParticipantTrainingRelevance { get; set; }
+
 		[CustomValidation(typeof(CourseLinkValidation), "ValidateCourseLink")]
 		public string CourseLink { get; set; }
 
@@ -141,6 +146,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 			DeliveryEndDate = trainingProgram.GrantApplication.EndDate.ToLocalTime();
 
 			BusinessTrainingRelevance = trainingProgram.BusinessTrainingRelevance;
+			ParticipantTrainingRelevance = trainingProgram.ParticipantTrainingRelevance;
 		}
 
 		/// <summary>
@@ -224,6 +230,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 			trainingProgram.HasOfferedThisTypeOfTrainingBefore = HasOfferedThisTypeOfTrainingBefore.Value;
 			trainingProgram.HasRequestedAdditionalFunding = HasRequestedAdditionalFunding.Value;
 			trainingProgram.BusinessTrainingRelevance = BusinessTrainingRelevance;
+			trainingProgram.ParticipantTrainingRelevance = ParticipantTrainingRelevance;
 
 			trainingProgram.DescriptionOfFundingRequested = HasRequestedAdditionalFunding.Value ? DescriptionOfFundingRequested : null;
 

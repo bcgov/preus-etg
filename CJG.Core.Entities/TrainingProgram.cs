@@ -157,9 +157,14 @@ namespace CJG.Core.Entities
 		public bool? MemberOfUnderRepresentedGroup { get; set; }
 
 		/// <summary>
-		/// A description of the Immediate Needs of the Business and the relevance of training to it's business
+		/// A description of the relevance of training to the business needs
 		/// </summary>
 		public string BusinessTrainingRelevance { get; set; }
+
+		/// <summary>
+		/// A description of how the training will be relevant to the participants
+		/// </summary>
+		public string ParticipantTrainingRelevance { get; set; }
 
 		/// <summary>
 		/// get/set - The current state of this training program information collection.
