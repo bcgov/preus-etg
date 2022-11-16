@@ -36,7 +36,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 		public int EndMonth { get; set; }
 		public int EndDay { get; set; }
 
-		[Required(ErrorMessage = "You must enter a training course title."), MaxLength(500)]
+		[Required(ErrorMessage = "You must enter a course, program or certificate name."), MaxLength(500)]
 		public string CourseTitle { get; set; }
 
 		[Required(ErrorMessage = "Total training hours is required.")]
