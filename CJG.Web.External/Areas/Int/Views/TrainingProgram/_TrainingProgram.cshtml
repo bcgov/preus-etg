@@ -204,6 +204,13 @@
                         <div ng-bind-html="extraInfo.BusinessTrainingRelevance | unsafe"></div>
                     </div>
                 </div>
+
+                <div class="form__group form__group__with_html">
+                    <div class="form__label">Participant Training Relevance:</div>
+                    <div class="form__control collapsed__html" ng-click="previewParticipantTrainingRelevance()" title="Click to view full text">
+                        <div ng-bind-html="extraInfo.ParticipantTrainingRelevance | unsafe"></div>
+                    </div>
+                </div>
             </div>
 		</div>
 	</div>

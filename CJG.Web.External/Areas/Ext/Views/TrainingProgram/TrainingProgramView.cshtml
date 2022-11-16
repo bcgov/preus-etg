@@ -24,10 +24,19 @@
             </div>
             
             <div class="form__group">
-                <label class="form__label">How is this training relevant to your business and to the available job(s)? <abbr title="Required">*</abbr></label>
+                <label class="form__label">Describe how this training is relevant to your business needs <abbr title="Required">*</abbr></label>
                 <div class="form__control">
                     <textarea ng-model="model.BusinessTrainingRelevance" class="input--full textarea--medium"
                                 ng-validation="errors.BusinessTrainingRelevance"
+                                ui-tinymce="tinymceOptions"></textarea>
+                </div>
+            </div>
+
+            <div class="form__group">
+                <label class="form__label">Describe how this training is relevant to the available job for the participant(s) <abbr title="Required">*</abbr></label>
+                <div class="form__control">
+                    <textarea ng-model="model.ParticipantTrainingRelevance" class="input--full textarea--medium"
+                                ng-validation="errors.ParticipantTrainingRelevance"
                                 ui-tinymce="tinymceOptions"></textarea>
                 </div>
             </div>

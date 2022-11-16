@@ -7,6 +7,7 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
     public class TrainingProgramExtraInfoViewModel : BaseViewModel
 	{
 		public string BusinessTrainingRelevance { get; set; }
+		public string ParticipantTrainingRelevance { get; set; }
 
 		public TrainingProgramExtraInfoViewModel() { }
 
@@ -14,6 +15,7 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 		{
 			Id = trainingProgram?.Id ?? throw new ArgumentNullException(nameof(trainingProgram));
 			BusinessTrainingRelevance = trainingProgram.BusinessTrainingRelevance;
+			ParticipantTrainingRelevance = trainingProgram.ParticipantTrainingRelevance;
 		}
 	}
 }
