@@ -173,11 +173,12 @@ app.component('datedropdown', {
         $ctrl.ngModel = null;
         return; // If any part of the date isn't selected return undefined.
       }
-      var date = new Date($ctrl.year, $ctrl.month, $ctrl.day);
-      var value = moment( [$ctrl.year, $ctrl.month, $ctrl.day, 12]);
-      if (Utils.isDate(date)) {
+
+      var value = moment([$ctrl.year, $ctrl.month, $ctrl.day, 12]);
+      if (value.isValid()) {
         $ctrl.date = value;
         $ctrl.ngModel = value;
+
         if (typeof ($ctrl.ngYear) !== 'undefined') $ctrl.ngYear = $ctrl.year;
         if (typeof ($ctrl.ngMonth) !== 'undefined') $ctrl.ngMonth = $ctrl.month + 1; // javascript uses zero-indexed months.
         if (typeof ($ctrl.ngDay) !== 'undefined') $ctrl.ngDay = $ctrl.day;
@@ -186,10 +187,7 @@ app.component('datedropdown', {
 
     this.changeMonth = function () {
       // update the number of days.
-      var days = genDays($ctrl.year, $ctrl.month);
-      if (days.length !== $ctrl.days.length) {
-        $ctrl.days = days;
-      }
+      $ctrl.days = genDays($ctrl.year, $ctrl.month);
       setDate();
     }
 
@@ -198,10 +196,7 @@ app.component('datedropdown', {
     }
 
     this.changeYear = function () {
-      // update the number of days if February.
-      if ($ctrl.month === 1) {
-        $ctrl.days = genDays($ctrl.year, $ctrl.month);
-      }
+      $ctrl.days = genDays($ctrl.year, $ctrl.month);
       setDate();
     }
   }
