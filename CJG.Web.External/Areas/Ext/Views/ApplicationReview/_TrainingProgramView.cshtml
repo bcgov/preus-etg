@@ -5,6 +5,22 @@
             {{model.TrainingProgram.CourseTitle}}
         </div>
     </div>
+    
+    
+    <div class="form__group">
+        <div class="form__label">Describe how this training is relevant to your business needs</div>
+        <div class="form__control">
+            <div class="form__group__with_embedded_html" ng-bind-html="model.TrainingProgram.BusinessTrainingRelevance | unsafe"></div>
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Describe how this training is relevant to the available job for the participant(s)</div>
+        <div class="form__control">
+            <div class="form__group__with_embedded_html" ng-bind-html="model.TrainingProgram.ParticipantTrainingRelevance | unsafe"></div>
+        </div>
+    </div>
+
     <div class="form__group">
         <div class="form__label">Training course link:</div>
         <div class="form__control">
