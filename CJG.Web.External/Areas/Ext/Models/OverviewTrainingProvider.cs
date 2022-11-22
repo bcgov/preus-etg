@@ -5,7 +5,6 @@ namespace CJG.Web.External.Areas.Ext.Models
 {
 	public class OverviewTrainingProvider
 	{
-		#region Properties
 		public int Id { get; set; }
 		public TrainingProviderStates TrainingProviderState { get; set; }
 		public string Name { get; set; }
@@ -31,45 +30,45 @@ namespace CJG.Web.External.Areas.Ext.Models
 		public string ContactEmail { get; set; }
 		public string ContactPhoneNumber { get; set; }
 		public string ContactPhoneExtension { get; set; }
+		public string AlternativeTrainingOptions { get; set; }
+		public string ChoiceOfTrainerOrProgram { get; set; }
 		public string RowVersion { get; set; }
-		#endregion
 
-		#region Constructors
 		public OverviewTrainingProvider()
 		{
-
 		}
 
 		public OverviewTrainingProvider(TrainingProvider trainingProvider)
 		{
 			Utilities.MapProperties(trainingProvider, this);
 
-			this.TrainingProviderState = trainingProvider.TrainingProviderState;
+			TrainingProviderState = trainingProvider.TrainingProviderState;
 
-			this.TrainingProviderType = trainingProvider.TrainingProviderType;
+			TrainingProviderType = trainingProvider.TrainingProviderType;
 
-			this.CourseOutlineDocument = trainingProvider.CourseOutlineDocument;
-			this.BusinessCaseDocument = trainingProvider.BusinessCaseDocument;
-			this.ProofOfQualificationsDocument = trainingProvider.ProofOfQualificationsDocument;
+			CourseOutlineDocument = trainingProvider.CourseOutlineDocument;
+			BusinessCaseDocument = trainingProvider.BusinessCaseDocument;
+			ProofOfQualificationsDocument = trainingProvider.ProofOfQualificationsDocument;
+
 			if (trainingProvider.TrainingAddress != null)
 			{
-				this.AddressLine1 = trainingProvider.TrainingAddress.AddressLine1;
-				this.AddressLine2 = trainingProvider.TrainingAddress.AddressLine2;
-				this.City = trainingProvider.TrainingAddress.City;
-				this.Region = trainingProvider.TrainingAddress.Region.Name;
-				this.PostalCode = trainingProvider.TrainingAddress.PostalCode;
-				this.Country = trainingProvider.TrainingAddress.Country.Name;
+				AddressLine1 = trainingProvider.TrainingAddress.AddressLine1;
+				AddressLine2 = trainingProvider.TrainingAddress.AddressLine2;
+				City = trainingProvider.TrainingAddress.City;
+				Region = trainingProvider.TrainingAddress.Region.Name;
+				PostalCode = trainingProvider.TrainingAddress.PostalCode;
+				Country = trainingProvider.TrainingAddress.Country.Name;
 			}
+
 			if (trainingProvider.TrainingProviderAddress != null)
 			{
-				this.AddressLine1TrainingProvider = trainingProvider.TrainingProviderAddress.AddressLine1;
-				this.AddressLine2TrainingProvider = trainingProvider.TrainingProviderAddress.AddressLine2;
-				this.CityTrainingProvider = trainingProvider.TrainingProviderAddress.City;
-				this.RegionTrainingProvider = trainingProvider.TrainingProviderAddress.Region.Name;
-				this.PostalCodeTrainingProvider = trainingProvider.TrainingProviderAddress.PostalCode;
-				this.CountryTrainingProvider = trainingProvider.TrainingProviderAddress.Country.Name;
+				AddressLine1TrainingProvider = trainingProvider.TrainingProviderAddress.AddressLine1;
+				AddressLine2TrainingProvider = trainingProvider.TrainingProviderAddress.AddressLine2;
+				CityTrainingProvider = trainingProvider.TrainingProviderAddress.City;
+				RegionTrainingProvider = trainingProvider.TrainingProviderAddress.Region.Name;
+				PostalCodeTrainingProvider = trainingProvider.TrainingProviderAddress.PostalCode;
+				CountryTrainingProvider = trainingProvider.TrainingProviderAddress.Country.Name;
 			}
 		}
-		#endregion
 	}
 }
