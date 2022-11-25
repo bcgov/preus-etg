@@ -119,7 +119,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				viewModel.ChoiceOfTrainerOrProgram = trainingProvider.ChoiceOfTrainerOrProgram;
 
 				// Convert existing Training Provider Types that have been deactivated back to null to make the user reselect.
-				if (!trainingProvider.TrainingProviderType.IsActive)
+				if (trainingProvider.TrainingProviderType != null && !trainingProvider.TrainingProviderType.IsActive)
 					viewModel.TrainingProviderTypeId = null;
 			}
 			catch (Exception ex)
