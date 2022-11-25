@@ -230,6 +230,10 @@ namespace CJG.Application.Services
 
 					_dbContext.TrainingProviders.Remove(trainingProvider);
 				}
+
+				if (trainingProgram.CourseOutlineDocument != null)
+					_dbContext.Attachments.Remove(trainingProgram.CourseOutlineDocument);
+
 				trainingProgram.UnderRepresentedGroups.Clear();
 				trainingProgram.DeliveryMethods.Clear();
 				_dbContext.TrainingPrograms.Remove(trainingProgram);
@@ -407,6 +411,8 @@ namespace CJG.Application.Services
 									_dbContext.ApplicationAddresses.Remove(trainingProvider.TrainingAddress);
 									_dbContext.TrainingProviders.Remove(trainingProvider);
 								}
+								if (trainingProgram.CourseOutlineDocumentId.HasValue)
+									_dbContext.Attachments.Remove(trainingProgram.CourseOutlineDocument);
 								trainingProgram.DeliveryMethods.Clear();
 								trainingProgram.UnderRepresentedGroups.Clear();
 								_dbContext.TrainingPrograms.Remove(trainingProgram);
@@ -445,6 +451,8 @@ namespace CJG.Application.Services
 								_dbContext.ApplicationAddresses.Remove(trainingProvider.TrainingAddress);
 								_dbContext.TrainingProviders.Remove(trainingProvider);
 							}
+							if (trainingProgram.CourseOutlineDocumentId.HasValue)
+								_dbContext.Attachments.Remove(trainingProgram.CourseOutlineDocument);
 							trainingProgram.DeliveryMethods.Clear();
 							trainingProgram.UnderRepresentedGroups.Clear();
 							_dbContext.TrainingPrograms.Remove(trainingProgram);
@@ -1196,11 +1204,20 @@ namespace CJG.Application.Services
 			foreach (var trainingProgram in withdrawnApp.TrainingPrograms)
 			{
 				//clone training program
-				var tp = new TrainingProgram(grantApp);
-				tp.Clone(trainingProgram);
-				tp.EligibleCostBreakdownId = firstEligibleCostBreakdowns;
-				//add trainingprogram to the database
-				trainingProgramService.Add(tp);
+				var newTrainingProgram = new TrainingProgram(grantApp);
+				newTrainingProgram.Clone(trainingProgram);
+				newTrainingProgram.EligibleCostBreakdownId = firstEligibleCostBreakdowns;
+
+				if (trainingProgram.CourseOutlineDocument != null)
+				{
+					Attachment doc = new Attachment(trainingProgram.CourseOutlineDocument);
+					attachmentService.Add(doc);
+					newTrainingProgram.CourseOutlineDocument = doc;
+					newTrainingProgram.CourseOutlineDocumentId = doc.Id;
+				}
+
+				//add TrainingProgram to the database
+				trainingProgramService.Add(newTrainingProgram);
 			}
 
 			// Attachments			
@@ -1350,6 +1367,14 @@ namespace CJG.Application.Services
 				newTrainingProgram.TrainingProgramState = TrainingProgramStates.Incomplete;
 				newTrainingProgram.StartDate = grantApp.StartDate;
 				newTrainingProgram.EndDate = grantApp.EndDate;
+
+				if (trainingProgram.CourseOutlineDocument != null)
+				{
+					Attachment doc = new Attachment(trainingProgram.CourseOutlineDocument);
+					attachmentService.Add(doc);
+					newTrainingProgram.CourseOutlineDocument = doc;
+					newTrainingProgram.CourseOutlineDocumentId = doc.Id;
+				}
 
 				trainingProgramService.Add(newTrainingProgram);
 
@@ -1757,6 +1782,9 @@ namespace CJG.Application.Services
 						_dbContext.ApplicationAddresses.Remove(trainingProvider.TrainingAddress);
 						_dbContext.TrainingProviders.Remove(trainingProvider);
 					}
+
+					if (program.CourseOutlineDocumentId.HasValue)
+						_dbContext.Attachments.Remove(program.CourseOutlineDocument);
 
 					_dbContext.TrainingPrograms.Remove(program);
 				}

@@ -6,7 +6,30 @@
         </div>
     </div>
     
-    
+    <div class="form__group">
+        <div class="form__label">Training course link:</div>
+        <div class="form__control">
+            <a href="{{model.TrainingProgram.CourseLink}}" target="_blank">{{model.TrainingProgram.CourseLink}}</a>
+        </div>
+    </div>
+    <div class="form--readonly">
+        <div id="providerTypePanel">
+            <div ng-show="model.TrainingProgram && model.TrainingProgram.CourseOutlineDocument">
+                <div class="form__group">
+                    <div class="form__label">Course outline:</div>
+                    <div class="form__control">
+                        <div ng-if="model.TrainingProgram.CourseOutlineDocument != null">
+                            <a href="/Ext/Application/Attachment/Download/{{model.Id}}/{{model.TrainingProgram.CourseOutlineDocument.Id}}">{{model.TrainingProgram.CourseOutlineDocument.FileName}}</a>
+                        </div>
+                        <div ng-if="model.TrainingProgram.CourseOutlineDocument == null">
+                            <span>None</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="form__group">
         <div class="form__label">Describe how this training is relevant to your business needs</div>
         <div class="form__control">
@@ -21,12 +44,6 @@
         </div>
     </div>
 
-    <div class="form__group">
-        <div class="form__label">Training course link:</div>
-        <div class="form__control">
-            <a href="{{model.TrainingProgram.CourseLink}}" target="_blank">{{model.TrainingProgram.CourseLink}}</a>
-        </div>
-    </div>
     <div class="form__group">
         <div class="form__label">Training start date:</div>
         <div class="form__control">

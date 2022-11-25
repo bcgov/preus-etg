@@ -142,7 +142,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 					case (ExpenseTypes.ParticipantLimited):
 					case (ExpenseTypes.NotParticipantLimited):
 					case (ExpenseTypes.AutoLimitEstimatedCosts):
-						eligibleCost.EstimatedParticipants = this.EstimatedParticipants.Value;
+						eligibleCost.EstimatedParticipants = EstimatedParticipants.Value;
 						break;
 					default:
 						eligibleCost.EstimatedParticipants = cost.EstimatedParticipants;

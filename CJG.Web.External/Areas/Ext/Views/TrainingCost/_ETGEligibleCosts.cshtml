@@ -17,19 +17,19 @@
             <tr>
                 <td>{{cost.EligibleExpenseType.Caption}}</td>
                 <td class="num-col">
-                    <span ng-if="cost.EligibleExpenseType.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)">
+                    <span ng-if="cost.EligibleExpenseType.ServiceType != @((int)ServiceTypes.Administration)">
                         {{cost.EstimatedParticipants}}
                     </span>
                 </td>
                 <td class="num-col">
-                    <span ng-if="cost.EligibleExpenseType.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)">
+                    <span ng-if="cost.EligibleExpenseType.ServiceType != @((int)ServiceTypes.Administration)">
                         {{cost.EstimatedParticipantCost | currency}}
                     </span>
                 </td>
                 <td class="num-col">{{cost.EstimatedCost | currency}}</td>
                 <td></td>
                 <td class="col-small">
-                    <button ng-if="model.IsEditable && cost.EligibleExpenseType.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.SkillsTraining)" ng-disabled="EnableEdit || EnableEditBreakdown" class="btn--secondary" ng-click="editEligibleCost($index)">Edit</button>
+                    <button ng-if="model.IsEditable && cost.EligibleExpenseType.ServiceType != @((int)ServiceTypes.SkillsTraining)" ng-disabled="EnableEdit || EnableEditBreakdown" class="btn--secondary" ng-click="editEligibleCost($index)">Edit</button>
 
                     <button ng-if="model.IsEditable && !cost.EligibleExpenseType.AutoInclude" ng-disabled="EnableEdit" class="js-confirm btn--secondary" ng-click="deleteEligibleCost($index)">Delete</button>
                 </td>
@@ -53,7 +53,7 @@
                 <td class="col-small" style="text-align: center">
                     <button ng-disabled="EnableEditBreakdown || EnableEdit"
                             class="js-confirm btn--secondary"
-                            ng-if="cost.EligibleExpenseType.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.SkillsTraining)"
+                            ng-if="cost.EligibleExpenseType.ServiceType == @((int)ServiceTypes.SkillsTraining)"
                             ng-click="deleteEligibleCostBreakdown($index, cost.Breakdowns,  $parent.$parent.$parent.$index)">
                         Delete
                     </button>

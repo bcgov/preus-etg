@@ -1739,6 +1739,8 @@ namespace CJG.Application.Services
 									if (trainingProvider.BusinessCaseDocument != null) _dbContext.Attachments.Remove(trainingProvider.BusinessCaseDocument);
 									_dbContext.TrainingProviders.Remove(trainingProvider);
 								}
+								if (trainingProgram.CourseOutlineDocument != null)
+									_dbContext.Attachments.Remove(trainingProgram.CourseOutlineDocument);
 								trainingProgram.DeliveryMethods.Clear();
 								trainingProgram.UnderRepresentedGroups.Clear();
 								_dbContext.TrainingPrograms.Remove(trainingProgram);
@@ -1764,6 +1766,8 @@ namespace CJG.Application.Services
 									if (trainingProvider.BusinessCaseDocument != null) _dbContext.Attachments.Remove(trainingProvider.BusinessCaseDocument);
 									_dbContext.TrainingProviders.Remove(trainingProvider);
 								}
+								if (trainingProgram.CourseOutlineDocument != null)
+									_dbContext.Attachments.Remove(trainingProgram.CourseOutlineDocument);
 								trainingProgram.DeliveryMethods.Clear();
 								trainingProgram.UnderRepresentedGroups.Clear();
 								_dbContext.TrainingPrograms.Remove(trainingProgram);

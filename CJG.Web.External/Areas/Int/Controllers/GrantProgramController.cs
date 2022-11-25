@@ -994,14 +994,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			return PartialView("_NotificationType");
 		}
 
-		[HttpGet]
-		[Route("Program/Denial/Reason/View/{id}")]
-		public PartialViewResult DenialReasonView(int id)
-		{
-			ViewBag.GrantProgramDenialReasonId = id;
-			return PartialView("_DenialReason");
-		}
-
 		/// <summary>
 		/// Return a partial view to manage the notification queue.
 		/// </summary>
@@ -1015,7 +1007,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		}
 
 		/// <summary>
-		/// Returns an arary of notification trigger types.
+		/// Returns an array of notification trigger types.
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet]
@@ -1061,7 +1053,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Returns an array of all the notification types associated to the specified grant program.
 		/// </summary>
-		/// <param name="id"></param>
+		/// <param name="grantProgramId"></param>
 		/// <returns></returns>
 		[HttpGet]
 		[Route("Program/Notification/Types/{grantProgramId}")]
@@ -1124,22 +1116,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 
 			return Json(grantProgramNotificationType, JsonRequestBehavior.AllowGet);
-		}
-		[HttpGet]
-		[Route("Program/Denial/Reason/load")]
-		public JsonResult GetDenialReason()
-		{
-			var denialReason = new GrantProgramDenialReasonViewModel();
-			try
-			{
-				denialReason = new GrantProgramDenialReasonViewModel();
-			}
-			catch (Exception ex)
-			{
-				HandleAngularException(ex);
-			}
-
-			return Json(denialReason, JsonRequestBehavior.AllowGet);
 		}
 
 		/// <summary>

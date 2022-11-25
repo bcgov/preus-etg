@@ -9,7 +9,13 @@ using CJG.Web.External.Models.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
+using System.Web;
+using System.Web.Http.Validation;
 using System.Web.Mvc;
+using CJG.Application.Services;
+using CJG.Web.External.Areas.Ext.Models.TrainingProviders;
+using Newtonsoft.Json;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
@@ -22,6 +28,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 	{
 		#region Variables
 		private readonly IStaticDataService _staticDataService;
+		private readonly IAttachmentService _attachmentService;
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly ITrainingProgramService _trainingProgramService;
 		private readonly ITrainingProviderService _trainingProviderService;
@@ -38,12 +45,14 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		public TrainingProgramController(IControllerService controllerService,
 										 IGrantApplicationService grantApplicationService,
 										 ITrainingProgramService trainingProgramService,
-										 ITrainingProviderService trainingProviderService) : base(controllerService.Logger)
+										 ITrainingProviderService trainingProviderService,
+										 IAttachmentService attachmentService) : base(controllerService.Logger)
 		{
 			_staticDataService = controllerService.StaticDataService;
 			_grantApplicationService = grantApplicationService;
 			_trainingProgramService = trainingProgramService;
 			_trainingProviderService = trainingProviderService;
+			_attachmentService = attachmentService;
 		}
 		#endregion
 
@@ -114,18 +123,29 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <summary>
 		/// Add the specified training program to the datasource.
 		/// </summary>
-		/// <param name="model"></param>
+		/// <param name="files"></param>
+		/// <param name="component"></param>
 		/// <returns></returns>
 		[HttpPost]
 		[PreventSpam]
 		[ValidateRequestHeader]
 		[Route("Training/Program")]
-		public JsonResult AddTrainingProgram(TrainingProgramViewModel model)
+		[ValidateInput(false)]   // We're expecting HTML, so this needs to be here.
+		public JsonResult AddTrainingProgram(HttpPostedFileBase[] files, string component)
 		{
+			var model = new TrainingProgramViewModel();
 			try
 			{
-				model.StartDate = new DateTime(model.StartYear, model.StartMonth, model.StartDay, 0, 0, 0, DateTimeKind.Local).ToUtcMorning();
-				model.EndDate = new DateTime(model.EndYear, model.EndMonth, model.EndDay, 0, 0, 0, DateTimeKind.Local).ToUtcMidnight();
+				model = JsonConvert.DeserializeObject<TrainingProgramViewModel>(component);
+
+				model.StartDate = model.StartDate.Value.ToUtcMorning();
+				model.EndDate = model.EndDate.Value.ToUtcMidnight();
+
+				ModelState.Clear();
+				TryUpdateModel(model);
+
+				//model.StartDate = new DateTime(model.StartYear, model.StartMonth, model.StartDay, 0, 0, 0, DateTimeKind.Local).ToUtcMorning();
+				//model.EndDate = new DateTime(model.EndYear, model.EndMonth, model.EndDay, 0, 0, 0, DateTimeKind.Local).ToUtcMidnight();
 
 				if (!(new int[] { 5 }.Contains(model.SkillFocusId.GetValueOrDefault())))
 				{
@@ -152,7 +172,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 				if (ModelState.IsValid)
 				{
-					var trainingProgram = model.UpdateTrainingProgram(_grantApplicationService, _trainingProgramService, _trainingProviderService, _staticDataService, User);
+					var trainingProgram = model.UpdateTrainingProgram(_grantApplicationService, _trainingProgramService, _trainingProviderService, _staticDataService, _attachmentService, User, files);
 					model = new TrainingProgramViewModel(trainingProgram);
 				}
 				else
@@ -171,18 +191,27 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <summary>
 		/// Update the specified training program in the datasource.
 		/// </summary>
-		/// <param name="viewModel"></param>
+		/// <param name="files"></param>
+		/// <param name="component"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[PreventSpam]
 		[ValidateRequestHeader]
 		[Route("Training/Program")]
-		public JsonResult UpdateTrainingProgram(TrainingProgramViewModel model)
+		[ValidateInput(false)]   // We're expecting HTML, so this needs to be here.
+		public JsonResult UpdateTrainingProgram(HttpPostedFileBase[] files, string component)
 		{
+			var model = new TrainingProgramViewModel();
+
 			try
 			{
-				model.StartDate = new DateTime(model.StartYear, model.StartMonth, model.StartDay, 0, 0, 0, DateTimeKind.Local).ToUtcMorning();
-				model.EndDate = new DateTime(model.EndYear, model.EndMonth, model.EndDay, 0, 0, 0, DateTimeKind.Local).ToUtcMidnight();
+				model = JsonConvert.DeserializeObject<TrainingProgramViewModel>(component);
+
+				model.StartDate = model.StartDate.Value.ToUtcMorning();
+				model.EndDate = model.EndDate.Value.ToUtcMidnight();
+
+				ModelState.Clear();
+				TryUpdateModel(model);
 
 				if (!(new int[] { 5 }.Contains(model.SkillFocusId.GetValueOrDefault())))
 				{
@@ -209,7 +238,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 				if (ModelState.IsValid)
 				{
-					var trainingProgram = model.UpdateTrainingProgram(_grantApplicationService, _trainingProgramService, _trainingProviderService, _staticDataService, User);
+					var trainingProgram = model.UpdateTrainingProgram(_grantApplicationService, _trainingProgramService, _trainingProviderService, _staticDataService, _attachmentService, User, files);
 					model = new TrainingProgramViewModel(trainingProgram);
 				}
 				else
@@ -227,7 +256,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <summary>
 		/// Delete the training program from the datasource.
 		/// </summary>
-		/// <param name="trainingProgramId"></param>
+		/// <param name="id"></param>
 		/// <param name="rowVersion"></param>
 		/// <returns></returns>
 		[HttpPut]
@@ -387,7 +416,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		}
 
 		/// <summary>
-		/// Get an array of under-represted groups.
+		/// Get an array of under-represented groups.
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet]
@@ -441,5 +470,24 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		}
 		#endregion
 		#endregion
+
+		/// <summary>
+		/// Download the specified document.
+		/// </summary>
+		/// <param name="trainingProgramId"></param>
+		/// <param name="attachmentId"></param>
+		/// <returns></returns>
+		[HttpGet]
+		[PreventSpam]
+		[Route("Training/Program/{trainingProgramId:int}/Attachment/Download/{attachmentId:int}")]
+		public ActionResult DownloadAttachment(int trainingProgramId, int attachmentId)
+		{
+			var trainingProgram = _trainingProgramService.Get(trainingProgramId);
+			var attachment = _attachmentService.Get(attachmentId);
+			if (trainingProgram.CourseOutlineDocumentId != attachmentId)
+				throw new NotAuthorizedException("User does not have access to document.");
+
+			return File(attachment.AttachmentData, MediaTypeNames.Application.Octet, $"{attachment.FileName}{attachment.FileExtension}");
+		}
 	}
 }

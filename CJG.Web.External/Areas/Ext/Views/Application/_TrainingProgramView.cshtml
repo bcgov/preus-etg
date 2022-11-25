@@ -5,6 +5,19 @@
             {{model.TrainingProgram.CourseTitle}}
         </div>
     </div>
+    <div ng-show="model.TrainingProgram && model.TrainingProgram.CourseOutlineDocument">
+        <div class="form__group">
+            <div class="form__label">Course outline:</div>
+            <div class="form__control">
+                <div ng-if="model.TrainingProgram.CourseOutlineDocument != null">
+                    <a href="/Ext/Application/Attachment/Download/{{model.Id}}/{{model.TrainingProgram.CourseOutlineDocument.Id}}">{{model.TrainingProgram.CourseOutlineDocument.FileName}}</a>
+                </div>
+                <div ng-if="model.TrainingProgram.CourseOutlineDocument == null">
+                    <span>None</span>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="form__group">
         <div class="form__label">Training start date:</div>
         <div class="form__control">

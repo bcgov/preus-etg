@@ -1602,6 +1602,7 @@
     <Compile Include="Models\Shared\SkillsTrainings\SkillTrainingProviderDetailsViewModel.cs" />
     <Compile Include="Models\Shared\SkillsTrainings\SkillTrainingProviderViewModel.cs" />
     <Compile Include="Models\Shared\SkillsTrainings\SkillTrainingViewModel.cs" />
+    <Compile Include="Models\Shared\TrainingProviders\TrainingProgramAttachmentViewModel.cs" />
     <Compile Include="Models\Shared\TrainingProviders\TrainingProviderAttachmentViewModel.cs" />
     <Compile Include="Models\Shared\SkillsTrainings\TrainingProviderDetailsViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

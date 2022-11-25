@@ -372,7 +372,23 @@ namespace CJG.Core.Entities.Helpers
 				}
 				else if (this.Type == typeof(TrainingProgram))
 				{
-					description = $" - {((TrainingProgram)entry.Entity).CourseTitle}";
+					var program = entry.Entity as TrainingProgram;
+
+					if (child != null)
+					{
+						var childType = child.Entity.GetType().GetProxyType();
+
+						if (childType != typeof(Attachment))
+							return $"{SplitCamelCase(GetDisplayName(entry.Entity) ?? this.Type.Name)}{description}";
+
+						var attachment = child.Entity as Attachment;
+						if (program.CourseOutlineDocumentId == attachment.Id)
+							description = $" - {SplitCamelCase(nameof(program.CourseOutlineDocument))}";
+					}
+					else
+					{
+						description = $" - {((TrainingProgram)entry.Entity).CourseTitle}";
+					}
 				}
 				else if (this.Type == typeof(Document))
 				{

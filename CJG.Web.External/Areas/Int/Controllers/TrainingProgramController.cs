@@ -1,15 +1,16 @@
-﻿using CJG.Core.Interfaces.Service;
-using CJG.Web.External.Areas.Int.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Mime;
+using System.Web;
+using System.Web.Mvc;
+using CJG.Application.Services;
+using CJG.Core.Interfaces.Service;
+using CJG.Web.External.Areas.Int.Models.TrainingPrograms;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
-using CJG.Web.External.Areas.Int.Models.TrainingPrograms;
-using CJG.Web.External.Areas.Int.Models.TrainingProviders;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
@@ -20,33 +21,34 @@ namespace CJG.Web.External.Areas.Int.Controllers
 	[Authorize(Roles = "Assessor, System Administrator, Director, Financial Clerk")]
 	public class TrainingProgramController : BaseController
 	{
-		#region Variables
 		private readonly IStaticDataService _staticDataService;
 		private readonly ITrainingProgramService _trainingProgramService;
 		private readonly ICipsCodesService _cipsCodesService;
-		#endregion
+		private readonly IAttachmentService _attachmentService;
 
-		#region Constructors
 		/// <summary>
 		/// Create a new instance of a TrainingProgramController object.
 		/// </summary>
 		/// <param name="controllerService"></param>
 		/// <param name="trainingProgramService"></param>
+		/// <param name="cipsCodesService"></param>
+		/// <param name="attachmentService"></param>
 		public TrainingProgramController(
 			IControllerService controllerService,
-			ITrainingProgramService trainingProgramService, ICipsCodesService cipsCodesService
+			ITrainingProgramService trainingProgramService,
+			ICipsCodesService cipsCodesService,
+			IAttachmentService attachmentService
 		   ) : base(controllerService.Logger)
 		{
 			_staticDataService = controllerService.StaticDataService;
 			_trainingProgramService = trainingProgramService;
 			_cipsCodesService = cipsCodesService;
+			_attachmentService = attachmentService;
 
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
-		/// Get the training program detail for the specified 'id'.
+		/// Get the training program detail for the specified 'trainingProgramId'.
 		/// </summary>
 		/// <param name="trainingProgramId"></param>
 		/// <returns></returns>
@@ -54,12 +56,12 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[Route("Application/Training/Program/{trainingProgramId}")]
 		public JsonResult GetTrainingProgram(int trainingProgramId)
 		{
-			var model = new Models.TrainingPrograms.TrainingProgramViewModel();
+			var model = new TrainingProgramViewModel();
 
 			try
 			{
 				var trainingProgram = _trainingProgramService.Get(trainingProgramId);
-				model = new Models.TrainingPrograms.TrainingProgramViewModel(trainingProgram, _cipsCodesService);
+				model = new TrainingProgramViewModel(trainingProgram, _cipsCodesService);
 			}
 			catch (Exception ex)
 			{
@@ -116,23 +118,52 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Update the specified training program in the datasource.
 		/// </summary>
-		/// <param name="model"></param>
+		/// <param name="program"></param>
+		/// <param name="files"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[PreventSpam]
 		[ValidateRequestHeader]
 		[Route("Application/Training/Program")]
-		public JsonResult UpdateTrainingProgram(Models.TrainingPrograms.TrainingProgramViewModel model)
+		public JsonResult UpdateTrainingProgram(string program, HttpPostedFileBase[] files)
 		{
+			var model = new TrainingProgramViewModel();
+
 			try
 			{
+				model = Newtonsoft.Json.JsonConvert.DeserializeObject<TrainingProgramViewModel>(program);
+				TryValidateModel(model);
+
 				if (ModelState.IsValid)
 				{
 					var trainingProgram = _trainingProgramService.Get(model.Id);
 					model.MapTo(trainingProgram, _staticDataService);
+
+
+					if (files != null && files.Any())
+					{
+						if (model.CourseOutlineDocument != null && files.Any())
+						{
+							var attachment = files.First().UploadFile(model.CourseOutlineDocument.Description, model.CourseOutlineDocument.FileName);
+							attachment.Id = model.CourseOutlineDocument.Id;
+							if (model.CourseOutlineDocument.Id == 0)
+							{
+								trainingProgram.CourseOutlineDocument = attachment;
+								_attachmentService.Add(attachment);
+							}
+							else
+							{
+								attachment.RowVersion = Convert.FromBase64String(model.CourseOutlineDocument.RowVersion);
+								_attachmentService.Update(attachment);
+							}
+						}
+					}
+
+
+
 					_trainingProgramService.Update(trainingProgram);
 
-					model = new Models.TrainingPrograms.TrainingProgramViewModel(trainingProgram, _cipsCodesService);
+					model = new TrainingProgramViewModel(trainingProgram, _cipsCodesService);
 				}
 				else
 				{
@@ -147,6 +178,35 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
 
-		#endregion
+		/// <summary>
+		/// Download the specified attachment.
+		/// </summary>
+		/// <param name="trainingProgramId"></param>
+		/// <param name="attachmentId"></param>
+		/// <returns></returns>
+		[HttpGet, Route("Application/Training/Program/{trainingProgramId}/Download/Attachment/{attachmentId}")]
+		public ActionResult DownloadAttachment(int trainingProgramId, int attachmentId)
+		{
+			var model = new BaseViewModel();
+			try
+			{
+				var trainingProgram = _trainingProgramService.Get(trainingProgramId);
+				var attachment = _attachmentService.Get(attachmentId);
+
+				var files = new List<int>();
+				if (trainingProgram.CourseOutlineDocumentId.HasValue)
+					files.Add(trainingProgram.CourseOutlineDocumentId.Value);
+
+				if (!files.Contains(attachment.Id))
+					throw new InvalidOperationException($"AttachmentId {attachmentId} is not valid for Training Program {trainingProgramId}");
+
+				return File(attachment.AttachmentData, MediaTypeNames.Application.Octet, $"{attachment.FileName}{attachment.FileExtension}");
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
 	}
 }

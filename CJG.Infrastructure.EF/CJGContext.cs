@@ -509,7 +509,9 @@ namespace CJG.Infrastructure.EF
 					m.MapRightKey("TrainingProviderId");
 				});
 
-			modelBuilder.Entity<TrainingProgram>().Property(tp => tp.DateAdded).HasColumnAnnotation("Index", new IndexAnnotation(new IndexAttribute("IX_TrainingPrograms") { Order = 3 }));
+			modelBuilder.Entity<TrainingProgram>()
+				.Property(tp => tp.DateAdded)
+				.HasColumnAnnotation("Index", new IndexAnnotation(new IndexAttribute("IX_TrainingPrograms") { Order = 3 }));
 			#endregion
 
 			#region TrainingProvider
@@ -525,7 +527,9 @@ namespace CJG.Infrastructure.EF
 				.HasForeignKey(m => m.OriginalTrainingProviderId)
 				.WillCascadeOnDelete(false);
 
-			modelBuilder.Entity<TrainingProvider>().Property(tp => tp.DateAdded).HasColumnAnnotation("Index", new IndexAnnotation(new IndexAttribute("IX_TrainingProviders") { Order = 7 }));
+			modelBuilder.Entity<TrainingProvider>()
+				.Property(tp => tp.DateAdded)
+				.HasColumnAnnotation("Index", new IndexAnnotation(new IndexAttribute("IX_TrainingProviders") { Order = 7 }));
 			#endregion
 
 			#region TrainingCosts

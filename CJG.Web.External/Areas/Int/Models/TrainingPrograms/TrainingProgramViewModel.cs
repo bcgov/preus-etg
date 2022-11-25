@@ -6,6 +6,7 @@ using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
+using CJG.Web.External.Areas.Int.Models.Attachments;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Models.Shared;
 
@@ -13,7 +14,6 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 {
     public class TrainingProgramViewModel : BaseViewModel
 	{
-		#region Properties
 		public string RowVersion { get; set; }
 		public string CourseTitle { get; set; }
 		public DateTime StartDate { get; set; }
@@ -37,26 +37,25 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 		public int? ServiceLineBreakdownId { get; set; }
 		public int? EligibleCostBreakdownId { get; set; }
 
+		public AttachmentViewModel CourseOutlineDocument { get; set; }
+		public string CourseLink { get; set; }
+
 		public IEnumerable<int> SelectedDeliveryMethodIds { get; set; }
 		public IEnumerable<int> SelectedUnderRepresentedGroupIds { get; set; }
-		public bool CanEdit { get; set; }
+
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateCIPS")]
 		public int? CipsCode1Id { get; set; }
-
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateCIPS")]
 		public int? CipsCode2Id { get; set; }
-
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateCIPS")]
 		public int? CipsCode3Id { get; set; }
-		#endregion
 
-		public string CourseLink { get; set; }
 		public bool RequiresCIPSValidation { get; set; }
+		public bool CanEdit { get; set; }
 
-		#region Constructors
 		public TrainingProgramViewModel() { }
 
-		public TrainingProgramViewModel(TrainingProgram trainingProgram, ICipsCodesService _cipsCodesService)
+		public TrainingProgramViewModel(TrainingProgram trainingProgram, ICipsCodesService cipsCodesService)
 		{
 			Id = trainingProgram?.Id ?? throw new ArgumentNullException(nameof(trainingProgram));
 			Utilities.MapProperties(trainingProgram, this);
@@ -69,19 +68,22 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 			CourseLink = trainingProgram.CourseLink;
 			RequiresCIPSValidation = trainingProgram.CipsCode == null;
 
-			#region CIPS Codes
-			var cipsCodes = _cipsCodesService.GetListOfCipsCodes(trainingProgram.CipsCode == null ? 0 : trainingProgram.CipsCode.Id);
+			if (trainingProgram.CourseOutlineDocument != null)
+				CourseOutlineDocument = new AttachmentViewModel(trainingProgram.CourseOutlineDocument);
 
+			MapCipsCodes(trainingProgram, cipsCodesService);
+		}
+
+		private void MapCipsCodes(TrainingProgram trainingProgram, ICipsCodesService cipsCodesService)
+		{
+			var cipsCodes = cipsCodesService.GetListOfCipsCodes(trainingProgram.CipsCode == null ? 0 : trainingProgram.CipsCode.Id);
 			cipsCodes.ForEach(item =>
 			{
 				var property = GetType().GetProperty($"CipsCode{item.Level}Id");
 				property?.SetValue(this, item.Id);
 			});
-			#endregion
 		}
-		#endregion
 
-		#region Methods
 		public void MapTo(TrainingProgram trainingProgram, IStaticDataService staticDataService)
 		{
 			if (trainingProgram == null) throw new ArgumentNullException(nameof(trainingProgram));
@@ -145,6 +147,5 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 
 			trainingProgram.TargetCipsCodeId = CipsCode3Id ?? CipsCode2Id ?? CipsCode1Id;
 		}
-		#endregion
 	}
 }
