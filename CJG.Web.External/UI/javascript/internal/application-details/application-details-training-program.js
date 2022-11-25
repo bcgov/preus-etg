@@ -309,11 +309,7 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
       item.isChecked = $scope.model.SelectedUnderRepresentedGroupIds.some(function (id) { return id === item.Key });
     });
   }
-
-
-
-
-
+  
   /**
    * Download the specified attachment.
    * @function downloadAttachment
@@ -321,7 +317,6 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
    * @returns {void}
    */
   $scope.downloadAttachment = function (attachmentId) {
-    console.log($scope.model);
     window.open('/Int/Application/Training/Program/' + $scope.model.Id + '/Download/Attachment/' + attachmentId);
   }
 

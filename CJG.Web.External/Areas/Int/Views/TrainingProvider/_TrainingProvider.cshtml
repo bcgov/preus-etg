@@ -44,6 +44,9 @@
                             class="input--full" ng-validation ng-editing
                             ng-change="setTrainingProviderTypeDetails()"></select>
                 </div>
+                <div ng-show="section.editing && model.TrainingProviderType.Id == 1"> @* If the training type is public institution *@
+                    <a href="https://www2.gov.bc.ca/gov/content/education-training/post-secondary-education/find-a-program-or-institution/find-an-institution" target="_blank">Find an Institution</a>
+                </div>
             </div>
         </div>
         <div id="training-provider-attachments">

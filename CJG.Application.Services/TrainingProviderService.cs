@@ -3,6 +3,7 @@ using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Entities;
 using NLog;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
@@ -22,12 +23,14 @@ namespace CJG.Application.Services
 		#endregion
 
 		#region Constructors
+
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="TrainingProviderService"/> class.
 		/// </summary>
 		/// <param name="grantApplicationService"></param>
 		/// <param name="grantAgreementService"></param>
 		/// <param name="trainingProviderInventoryService"></param>
+		/// <param name="applicationAddressService"></param>
 		/// <param name="noteService"></param>
 		/// <param name="dbContext"></param>
 		/// <param name="httpContext"></param>
@@ -339,6 +342,16 @@ namespace CJG.Application.Services
 			}
 			CommitTransaction();
 		}
+
+		public IEnumerable<TrainingProviderType> GetTrainingProviderTypes()
+		{
+			return _dbContext.TrainingProviderTypes
+				.AsNoTracking()
+				.OrderBy(t => t.RowSequence)
+				.ThenBy(t => t.Caption)
+				.ThenBy(t => t.IsActive);
+		}
+
 		#endregion
 	}
 }

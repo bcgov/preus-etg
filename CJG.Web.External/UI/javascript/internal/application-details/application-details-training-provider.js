@@ -1,4 +1,4 @@
-app.controller('TrainingProvider', function ($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
+app.controller('TrainingProvider', function($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
   $scope.section = {
     name: $attrs.name || 'TrainingProvider',
     displayName: 'Training Provider',
@@ -6,20 +6,21 @@ app.controller('TrainingProvider', function ($scope, $attrs, $controller, $timeo
       url: '/Int/Application/Training/Provider',
       method: 'PUT',
       dataType: 'file',
-      data: function () {
+      data: function() {
         var files = [];
         //if ($scope.model.TrainingProviderType.PrivateSectorValidationType) {
-          if ($scope.model.CourseOutlineDocument && $scope.model.CourseOutlineDocument.File) {
-            files.push($scope.model.CourseOutlineDocument.File);
-            $scope.model.CourseOutlineDocument.Index = files.length - 1;
-          }
-          if ($scope.model.ProofOfQualificationsDocument && $scope.model.ProofOfQualificationsDocument.File) {
-            files.push($scope.model.ProofOfQualificationsDocument.File);
-            $scope.model.ProofOfQualificationsDocument.Index = files.length - 1;
-          }
+        if ($scope.model.CourseOutlineDocument && $scope.model.CourseOutlineDocument.File) {
+          files.push($scope.model.CourseOutlineDocument.File);
+          $scope.model.CourseOutlineDocument.Index = files.length - 1;
+        }
+        if ($scope.model.ProofOfQualificationsDocument && $scope.model.ProofOfQualificationsDocument.File) {
+          files.push($scope.model.ProofOfQualificationsDocument.File);
+          $scope.model.ProofOfQualificationsDocument.Index = files.length - 1;
+        }
         //}
-        if ($scope.model.TrainingOutsideBcListViewModel.TrainingOutsideBC
-          && $scope.model.BusinessCaseDocument && $scope.model.BusinessCaseDocument.File) {
+        if ($scope.model.TrainingOutsideBcListViewModel.TrainingOutsideBC &&
+          $scope.model.BusinessCaseDocument &&
+          $scope.model.BusinessCaseDocument.File) {
           files.push($scope.model.BusinessCaseDocument.File);
           $scope.model.BusinessCaseDocument.Index = files.length - 1;
         }
@@ -31,23 +32,25 @@ app.controller('TrainingProvider', function ($scope, $attrs, $controller, $timeo
       },
       backup: true
     },
-    loaded: function () {
+    loaded: function() {
       return $scope.model && $scope.model.RowVersion && $scope.model.RowVersion === $scope.provider.RowVersion;
     },
-    onSave: function () {
+    onSave: function() {
       $scope.resyncApplicationDetails();
       $scope.emit('refresh', { target: 'ApplicationNotes', force: true });
     },
-    onValidate: function (response) {
-      return $timeout(function () {
+    onValidate: function(response) {
+      return $timeout(function() {
         $scope.model = response.data;
         $scope.section.onSave();
       });
     },
-    onRefresh: function () {
+    onRefresh: function() {
       return loadTrainingProvider().catch(angular.noop);
-    }
-  };
+    },
+
+    trainingProviderTypePublic: utils.TrainingProviderTypes.PublicInstitution
+};
 
   angular.extend(this, $controller('TrainingProviderBase', { $scope: $scope, $attrs: $attrs }));
 
@@ -75,6 +78,26 @@ app.controller('TrainingProvider', function ($scope, $attrs, $controller, $timeo
     });
   }
 
+  function loadTrainingProviderTypesWithInactive() {
+    return $scope.load({
+      url: '/Int/Application/Training/Provider/TypesAll/' + $scope.provider.Id,
+      set: 'trainingProviderTypes',
+      condition: !$scope.trainingProviderTypes || !$scope.trainingProviderTypes.length,
+      overwrite: true,
+      localCache: false
+    });
+  }
+
+  function loadProviderTypeDetailsWithInactiveOptions() {
+    return $scope.load({
+      url: '/Int/Application/Training/Provider/Types/Details/' + $scope.provider.Id,
+      set: 'ProviderTypesDetails',
+      condition: !$scope.trainingProviderTypes || !$scope.trainingProviderTypes.length,
+      overwrite: true,
+      localCache: false
+    });
+  }
+
   /**
    * Initialize the form data
    * @function init
@@ -84,8 +107,9 @@ app.controller('TrainingProvider', function ($scope, $attrs, $controller, $timeo
     return Promise.all([
       $scope.loadCountries(),
       $scope.loadProvinces(),
-      $scope.loadProviderTypesDetails(),
-      $scope.loadTrainingProviderTypes(),
+      //$scope.loadProviderTypesDetails(),
+      loadTrainingProviderTypesWithInactive(),
+      loadProviderTypeDetailsWithInactiveOptions(),
       loadTrainingProviderExtraInfo(),
       loadTrainingProvider()
     ]).catch(angular.noop);

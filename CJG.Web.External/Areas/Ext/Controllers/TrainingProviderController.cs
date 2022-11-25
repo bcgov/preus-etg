@@ -117,6 +117,10 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				viewModel = new TrainingProviderViewModel(trainingProvider);
 				viewModel.AlternativeTrainingOptions = trainingProvider.AlternativeTrainingOptions;
 				viewModel.ChoiceOfTrainerOrProgram = trainingProvider.ChoiceOfTrainerOrProgram;
+
+				// Convert existing Training Provider Types that have been deactivated back to null to make the user reselect.
+				if (!trainingProvider.TrainingProviderType.IsActive)
+					viewModel.TrainingProviderTypeId = null;
 			}
 			catch (Exception ex)
 			{
@@ -147,66 +151,27 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				ModelState.Clear();
 				TryUpdateModel(model);
 
-				if (model.SelectedDeliveryMethodIds == null)
-				{
-					ModelState.Remove(nameof(TrainingProviderViewModel.AddressLine1));
-					ModelState.Remove(nameof(TrainingProviderViewModel.City));
-					ModelState.Remove(nameof(TrainingProviderViewModel.PostalCode));
-				}
+				AdjustModelStateErrors(model);
 
-				else if (model.SelectedDeliveryMethodIds.Contains(Constants.Delivery_Online)
-					&& !model.SelectedDeliveryMethodIds.Contains(Constants.Delivery_Classroom)
-					&& !model.SelectedDeliveryMethodIds.Contains(Constants.Delivery_Workplace))
-				{
-					ModelState.Remove(nameof(TrainingProviderViewModel.AddressLine1));
-					ModelState.Remove(nameof(TrainingProviderViewModel.City));
-					ModelState.Remove(nameof(TrainingProviderViewModel.PostalCode));
-				}
+				//if (model.TrainingProviderTypeId.HasValue)
+				//{
+				//	var trainingProviderType = _trainingProviderService.Get<TrainingProviderType>(model.TrainingProviderTypeId);
 
-				if (model.IsCanadianAddress)
-				{
-					ModelState.Remove(nameof(TrainingProviderViewModel.OtherZipCode));
-					ModelState.Remove(nameof(TrainingProviderViewModel.OtherRegion));
-				}
-				else
-				{
-					ModelState.Remove(nameof(TrainingProviderViewModel.PostalCode));
-					ModelState.Remove(nameof(TrainingProviderViewModel.RegionId));
-				}
-				if (model.IsCanadianAddressTrainingProvider)
-				{
-					ModelState.Remove(nameof(TrainingProviderViewModel.OtherZipCodeTrainingProvider));
-					ModelState.Remove(nameof(TrainingProviderViewModel.OtherRegionTrainingProvider));
-				}
-				else
-				{
-					ModelState.Remove(nameof(TrainingProviderViewModel.PostalCodeTrainingProvider));
-					ModelState.Remove(nameof(TrainingProviderViewModel.RegionIdTrainingProvider));
-				}
-				if (model.RegionIdTrainingProvider.ToLower() == "bc")
-				{
-					ModelState.Remove(nameof(TrainingProviderViewModel.OutOfProvinceLocationRationale));
-				}
-
-				if (model.TrainingProviderTypeId.HasValue)
-				{
-					var trainingProviderType = _trainingProviderService.Get<TrainingProviderType>(model.TrainingProviderTypeId);
-
-					if (trainingProviderType.ProofOfInstructorQualifications == 1)
-					{
-						if (String.IsNullOrWhiteSpace(model.ProofOfQualificationsDocument.FileName))
-						{
-							ModelState.AddModelError("ProofOfQualificationsDocument", "Proof of qualifications document required.");
-						}
-					}
-					if (trainingProviderType.CourseOutline == 1)
-					{
-						if (String.IsNullOrWhiteSpace(model.CourseOutlineDocument.FileName))
-						{
-							ModelState.AddModelError("CourseOutlineDocument", "Course outline document required.");
-						}
-					}
-				}
+				//	if (trainingProviderType.ProofOfInstructorQualifications == 1)
+				//	{
+				//		if (String.IsNullOrWhiteSpace(model.ProofOfQualificationsDocument.FileName))
+				//		{
+				//			ModelState.AddModelError("ProofOfQualificationsDocument", "Proof of qualifications document required.");
+				//		}
+				//	}
+				//	if (trainingProviderType.CourseOutline == 1)
+				//	{
+				//		if (String.IsNullOrWhiteSpace(model.CourseOutlineDocument.FileName))
+				//		{
+				//			ModelState.AddModelError("CourseOutlineDocument", "Course outline document required.");
+				//		}
+				//	}
+				//}
 
 				if (ModelState.IsValid)
 				{
@@ -226,6 +191,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
+
 
 		/// <summary>
 		/// Update the training provider on the datasource.
@@ -249,64 +215,27 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				ModelState.Clear();
 				TryUpdateModel(model);
 
-				if (model.SelectedDeliveryMethodIds == null)
-				{
-					ModelState.Remove(nameof(TrainingProviderViewModel.AddressLine1));
-					ModelState.Remove(nameof(TrainingProviderViewModel.City));
-					ModelState.Remove(nameof(TrainingProviderViewModel.PostalCode));
-				}
+				AdjustModelStateErrors(model);
 
-				else if (model.SelectedDeliveryMethodIds.Contains(Constants.Delivery_Online)
-					&& !model.SelectedDeliveryMethodIds.Contains(Constants.Delivery_Classroom)
-					&& !model.SelectedDeliveryMethodIds.Contains(Constants.Delivery_Workplace))
-				{
-					ModelState.Remove(nameof(TrainingProviderViewModel.AddressLine1));
-					ModelState.Remove(nameof(TrainingProviderViewModel.City));
-					ModelState.Remove(nameof(TrainingProviderViewModel.PostalCode));
-				}
-				if (model.IsCanadianAddress)
-				{
-					ModelState.Remove(nameof(TrainingProviderViewModel.OtherZipCode));
-					ModelState.Remove(nameof(TrainingProviderViewModel.OtherRegion));
-				}
-				else
-				{
-					ModelState.Remove(nameof(TrainingProviderViewModel.PostalCode));
-					ModelState.Remove(nameof(TrainingProviderViewModel.RegionId));
-				}
-				if (model.IsCanadianAddressTrainingProvider)
-				{
-					ModelState.Remove(nameof(TrainingProviderViewModel.OtherZipCodeTrainingProvider));
-					ModelState.Remove(nameof(TrainingProviderViewModel.OtherRegionTrainingProvider));
-				}
-				else
-				{
-					ModelState.Remove(nameof(TrainingProviderViewModel.PostalCodeTrainingProvider));
-					ModelState.Remove(nameof(TrainingProviderViewModel.RegionIdTrainingProvider));
-				}
-				if (model.RegionIdTrainingProvider.ToLower() == "bc")
-				{
-					ModelState.Remove(nameof(TrainingProviderViewModel.OutOfProvinceLocationRationale));
-				}
-				if (model.TrainingProviderTypeId.HasValue)
-				{
-					var trainingProviderType = _trainingProviderService.Get<TrainingProviderType>(model.TrainingProviderTypeId);
+				//if (model.TrainingProviderTypeId.HasValue)
+				//{
+				//	var trainingProviderType = _trainingProviderService.Get<TrainingProviderType>(model.TrainingProviderTypeId);
                     
-                    if (trainingProviderType.ProofOfInstructorQualifications == 1)
-                    {
-                        if (String.IsNullOrWhiteSpace(model.ProofOfQualificationsDocument.FileName))
-                        {
-                            ModelState.AddModelError("ProofOfQualificationsDocument", "Proof of qualifications document required.");
-                        }
-                    }
-                    if (trainingProviderType.CourseOutline == 1)
-                    {
-                        if (String.IsNullOrWhiteSpace(model.CourseOutlineDocument.FileName))
-                        {
-                            ModelState.AddModelError("CourseOutlineDocument", "Course outline document required.");
-                        }
-                    }
-                }
+    //                if (trainingProviderType.ProofOfInstructorQualifications == 1)
+    //                {
+    //                    if (String.IsNullOrWhiteSpace(model.ProofOfQualificationsDocument.FileName))
+    //                    {
+    //                        ModelState.AddModelError("ProofOfQualificationsDocument", "Proof of qualifications document required.");
+    //                    }
+    //                }
+    //                if (trainingProviderType.CourseOutline == 1)
+    //                {
+    //                    if (String.IsNullOrWhiteSpace(model.CourseOutlineDocument.FileName))
+    //                    {
+    //                        ModelState.AddModelError("CourseOutlineDocument", "Course outline document required.");
+    //                    }
+    //                }
+    //            }
 
 				if (ModelState.IsValid)
 				{
@@ -325,6 +254,52 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			}
 
 			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		private void AdjustModelStateErrors(TrainingProviderViewModel model)
+		{
+			if (model.SelectedDeliveryMethodIds == null)
+			{
+				ModelState.Remove(nameof(TrainingProviderViewModel.AddressLine1));
+				ModelState.Remove(nameof(TrainingProviderViewModel.City));
+				ModelState.Remove(nameof(TrainingProviderViewModel.PostalCode));
+			}
+
+			else if (model.SelectedDeliveryMethodIds.Contains(Constants.Delivery_Online)
+			         && !model.SelectedDeliveryMethodIds.Contains(Constants.Delivery_Classroom)
+			         && !model.SelectedDeliveryMethodIds.Contains(Constants.Delivery_Workplace))
+			{
+				ModelState.Remove(nameof(TrainingProviderViewModel.AddressLine1));
+				ModelState.Remove(nameof(TrainingProviderViewModel.City));
+				ModelState.Remove(nameof(TrainingProviderViewModel.PostalCode));
+			}
+
+			if (model.IsCanadianAddress)
+			{
+				ModelState.Remove(nameof(TrainingProviderViewModel.OtherZipCode));
+				ModelState.Remove(nameof(TrainingProviderViewModel.OtherRegion));
+			}
+			else
+			{
+				ModelState.Remove(nameof(TrainingProviderViewModel.PostalCode));
+				ModelState.Remove(nameof(TrainingProviderViewModel.RegionId));
+			}
+
+			if (model.IsCanadianAddressTrainingProvider)
+			{
+				ModelState.Remove(nameof(TrainingProviderViewModel.OtherZipCodeTrainingProvider));
+				ModelState.Remove(nameof(TrainingProviderViewModel.OtherRegionTrainingProvider));
+			}
+			else
+			{
+				ModelState.Remove(nameof(TrainingProviderViewModel.PostalCodeTrainingProvider));
+				ModelState.Remove(nameof(TrainingProviderViewModel.RegionIdTrainingProvider));
+			}
+
+			if (model.RegionIdTrainingProvider.ToLower() == "bc")
+			{
+				ModelState.Remove(nameof(TrainingProviderViewModel.OutOfProvinceLocationRationale));
+			}
 		}
 
 		/// <summary>

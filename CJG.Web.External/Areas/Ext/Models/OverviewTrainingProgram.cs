@@ -33,6 +33,7 @@ namespace CJG.Web.External.Areas.Ext.Models
 		public decimal? TotalCost { get; set; }
 		public string RowVersion { get; set; }
 		public string CourseLink { get; set; }
+		public Attachment CourseOutlineDocument { get; set; }
 		public string BusinessTrainingRelevance { get; set; }
 		public string ParticipantTrainingRelevance { get; set; }
 
@@ -56,6 +57,7 @@ namespace CJG.Web.External.Areas.Ext.Models
 			StartDate = trainingProgram.StartDate.ToLocalTime();
 			EndDate = trainingProgram.EndDate.ToLocalTime();
 			CourseLink = trainingProgram.CourseLink;
+			CourseOutlineDocument = trainingProgram.CourseOutlineDocument;
 
 			TotalCost = trainingProgram.EligibleCostBreakdown?.EstimatedCost;
 			if (trainingProgram.TrainingProviders.Any())
