@@ -373,7 +373,7 @@ namespace CJG.Application.Services
 		}
 
 		/// <summary>
-		/// Get all the training provider types that are ctive.
+		/// Get all the training provider types that are active.
 		/// </summary>
 		/// <returns></returns>
 		public IEnumerable<TrainingProviderType> GetTrainingProviderTypes()

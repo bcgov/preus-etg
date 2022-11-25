@@ -19,6 +19,17 @@
                     </div>
                 </div>
                 <div class="form__group">
+                    <div class="form__label">Course outline:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper" ng-validation="errors.CourseOutlineDocument">
+                            <a class="link" ng-if="model.CourseOutlineDocument" ng-click="!model.CourseOutlineDocument.Id || downloadAttachment(model.CourseOutlineDocument.Id)">{{model.CourseOutlineDocument.FileName}}</a>
+                            <button ng-if="model.CourseOutlineDocument && section.editing" class="btn btn--primary pull-right" ng-click="changeAttachment('CourseOutlineDocument')">Change</button>
+                            <span ng-if="!model.CourseOutlineDocument">None</span>
+                            <button ng-if="!model.CourseOutlineDocument && section.editing" class="btn btn--primary pull-right" ng-click="addAttachment('CourseOutlineDocument')">Upload</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
                     <div class="form__label">Link to Course Description:</div>
                     <div class="form__control">
                         <div class="control-wrapper form-control">

@@ -225,10 +225,21 @@ namespace CJG.Core.Entities
 		/// </summary>
 		public int? TargetCipsCodeId { get; set; }
 
-		// <summary>
+		/// <summary>
 		/// get/set - the optional course link URL
 		/// </summary>
 		public string CourseLink { get; set; }
+
+		/// <summary>
+		/// get/set - The foreign key to the course outline document.
+		/// </summary>
+		public int? CourseOutlineDocumentId { get; set; }
+
+		/// <summary>
+		/// get/set - The course outline document.
+		/// </summary>
+		[ForeignKey(nameof(CourseOutlineDocumentId))]
+		public virtual Attachment CourseOutlineDocument { get; set; }
 
 		/// <summary>
 		/// get/set - The CIPS Code
@@ -304,6 +315,7 @@ namespace CJG.Core.Entities
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="TrainingProgram"/> object and initializes it with the specified property values.
 		/// </summary>
+		/// <param name="grantApplication"></param>
 		/// <param name="trainingProvider"></param>
 		public TrainingProgram(GrantApplication grantApplication, TrainingProvider trainingProvider) : this(grantApplication)
 		{
@@ -326,6 +338,8 @@ namespace CJG.Core.Entities
 			var entry = validationContext.GetDbEntityEntry();
 			var httpContext = validationContext.GetHttpContext();
 
+			var isExternalUser = httpContext.User.IsExternalUser();
+
 			// This is done to stop errors from being thrown when developers use EF entities in ViewModels.
 			if (entry == null || context == null)
 				yield break;
@@ -337,6 +351,9 @@ namespace CJG.Core.Entities
 				// Do this to force load the grant application for the current training program.
 				GrantApplication = context.Set<GrantApplication>().Find(GrantApplicationId);
 			}
+
+			if (isExternalUser && (CourseOutlineDocument == null && CourseOutlineDocumentId == null))
+				yield return new ValidationResult("You must provide a course outline document.", new[] { nameof(CourseOutlineDocument) });
 
 			var deliveryMethods = context.Set<TrainingProgram>().Include(m => m.DeliveryMethods).FirstOrDefault(o => o.Id == Id);
 			// Must have DeliveryMethods.
@@ -445,7 +462,7 @@ namespace CJG.Core.Entities
 			if (entry.State == EntityState.Modified)
 			{
 				// If a service line becomes disabled, the training program must throw a validation error.
-				if (httpContext.User.IsExternalUser() && EligibleCostBreakdownId.HasValue && GrantApplication.ApplicationStateInternal.In(ApplicationStateInternal.Draft, ApplicationStateInternal.ApplicationWithdrawn))
+				if (isExternalUser && EligibleCostBreakdownId.HasValue && GrantApplication.ApplicationStateInternal.In(ApplicationStateInternal.Draft, ApplicationStateInternal.ApplicationWithdrawn))
 				{
 					var eligibleCostBreakdown = context.Set<EligibleCostBreakdown>().Include(ecb => ecb.EligibleExpenseBreakdown).FirstOrDefault(ecb => ecb.Id == EligibleCostBreakdownId.Value);
 					if (!eligibleCostBreakdown?.EligibleExpenseBreakdown?.IsActive ?? false)
@@ -460,7 +477,6 @@ namespace CJG.Core.Entities
 				yield return validation;
 			}
 		}
-
 
 		public void Clone(TrainingProgram tp,  bool cloneTrainingProviders = true)
 		{

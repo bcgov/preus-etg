@@ -13,6 +13,8 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using static CJG.Testing.Core.ServiceHelper;
 
@@ -94,8 +96,10 @@ namespace CJG.Testing.UnitTests.Controllers.Int
 				EndDate = DateTime.UtcNow.AddMonths(3),
 				CourseTitle = "CourseTitle"
 			};
+			var jsonModel = Json.Encode(trainingProgramViewModel);
+
 			// Act
-			var result = controller.UpdateTrainingProgram(trainingProgramViewModel);
+			var result = controller.UpdateTrainingProgram(jsonModel, new HttpPostedFileBase[] { });
 
 			// Assert
 			result.Should().NotBeNull().And.BeOfType<JsonResult>();
@@ -119,8 +123,10 @@ namespace CJG.Testing.UnitTests.Controllers.Int
 			{
 				Id = trainingProgram.Id,
 			};
+			var jsonModel = Json.Encode(trainingProgramViewModel);
+
 			// Act
-			var result = controller.UpdateTrainingProgram(trainingProgramViewModel);
+			var result = controller.UpdateTrainingProgram(jsonModel, new HttpPostedFileBase[] { });
 
 			// Assert
 			result.Should().NotBeNull().And.BeOfType<JsonResult>();

@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 
 namespace CJG.Testing.UnitTests.Controllers.Ext
@@ -197,8 +198,9 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 			};
 			var controller = helper.Create();
 
+			var jsonModel = Json.Encode(trainingProgramViewModel);
 			// Act
-			var result = controller.AddTrainingProgram(trainingProgramViewModel);
+			var result = controller.AddTrainingProgram(new HttpPostedFileBase[]{}, jsonModel);
 
 			// Assert
 			result.Should().NotBeNull().And.BeOfType<JsonResult>();
@@ -228,8 +230,9 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 			};
 			var controller = helper.Create();
 
+			var jsonModel = Json.Encode(trainingProgramViewModel);
 			// Act
-			var result = controller.AddTrainingProgram(trainingProgramViewModel);
+			var result = controller.AddTrainingProgram(new HttpPostedFileBase[] { }, jsonModel);
 
 			// Assert
 			result.Should().NotBeNull().And.BeOfType<JsonResult>();
@@ -282,8 +285,9 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 			};
 			var controller = helper.Create();
 
+			var jsonModel = Json.Encode(trainingProgramViewModel);
 			// Act
-			var result = controller.AddTrainingProgram(trainingProgramViewModel);
+			var result = controller.AddTrainingProgram(new HttpPostedFileBase[] { }, jsonModel);
 
 			// Assert
 			result.Should().NotBeNull().And.BeOfType<JsonResult>();
@@ -344,8 +348,10 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 			};
 			var controller = helper.Create();
 
+			var jsonModel = Json.Encode(trainingProgramViewModel);
+
 			// Act
-			var result = controller.UpdateTrainingProgram(trainingProgramViewModel);
+			var result = controller.UpdateTrainingProgram(new HttpPostedFileBase[] { }, jsonModel);
 
 			// Assert
 			result.Should().NotBeNull().And.BeOfType<JsonResult>();
@@ -375,8 +381,10 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 			};
 			var controller = helper.Create();
 
+			var jsonModel = Json.Encode(trainingProgramViewModel);
+
 			// Act
-			var result = controller.UpdateTrainingProgram(trainingProgramViewModel);
+			var result = controller.UpdateTrainingProgram(new HttpPostedFileBase[] { }, jsonModel);
 
 			// Assert
 			result.Should().NotBeNull().And.BeOfType<JsonResult>();
@@ -429,8 +437,10 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 			};
 			var controller = helper.Create();
 
+			var jsonModel = Json.Encode(trainingProgramViewModel);
+
 			// Act
-			var result = controller.UpdateTrainingProgram(trainingProgramViewModel);
+			var result = controller.UpdateTrainingProgram(new HttpPostedFileBase[] { }, jsonModel);
 
 			// Assert
 			result.Should().NotBeNull().And.BeOfType<JsonResult>();

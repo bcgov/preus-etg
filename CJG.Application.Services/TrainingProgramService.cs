@@ -370,6 +370,9 @@ namespace CJG.Application.Services
 
 			trainingProgram.DeliveryMethods.Clear();
 			trainingProgram.UnderRepresentedGroups.Clear();
+			if (trainingProgram.CourseOutlineDocumentId.HasValue)
+				_dbContext.Attachments.Remove(trainingProgram.CourseOutlineDocument);
+
 			var ids = trainingProgram.TrainingProviders.Select(x => x.Id).ToArray();
 			trainingProgram.TrainingProviders.Clear();
 			foreach (var id in ids)
