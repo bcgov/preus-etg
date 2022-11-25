@@ -1,4 +1,11 @@
-﻿using CJG.Application.Business.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Mime;
+using System.Web;
+using System.Web.Mvc;
+using CJG.Application.Business.Models;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Areas.Ext.Models.TrainingPrograms;
@@ -6,23 +13,14 @@ using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mime;
-using System.Web;
-using System.Web.Http.Validation;
-using System.Web.Mvc;
-using CJG.Application.Services;
-using CJG.Web.External.Areas.Ext.Models.TrainingProviders;
 using Newtonsoft.Json;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
-	/// <summary>
-	/// TrainingProgramController class, provides endpoints to manage training programs.
-	/// </summary>
-	[RouteArea("Ext")]
+    /// <summary>
+    /// TrainingProgramController class, provides endpoints to manage training programs.
+    /// </summary>
+    [RouteArea("Ext")]
 	[ExternalFilter]
 	public class TrainingProgramController : BaseController
 	{
