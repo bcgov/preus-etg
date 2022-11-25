@@ -217,7 +217,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 					var deliveryMethod = staticDataService.GetDeliveryMethod(addId);
 					trainingProgram.DeliveryMethods.Add(deliveryMethod);
 				}
-				if(SelectedDeliveryMethodIds.Contains(Constants.Delivery_Classroom) || SelectedDeliveryMethodIds.Contains(Constants.Delivery_Workplace))
+				if (SelectedDeliveryMethodIds.Contains(Constants.Delivery_Classroom) || SelectedDeliveryMethodIds.Contains(Constants.Delivery_Workplace))
                 {
 					if (trainingProgram.TrainingProvider != null)
 						if (trainingProgram.TrainingProvider.TrainingAddress == null)

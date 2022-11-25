@@ -47,9 +47,7 @@ app.controller('TrainingProvider', function($scope, $attrs, $controller, $timeou
     },
     onRefresh: function() {
       return loadTrainingProvider().catch(angular.noop);
-    },
-
-    trainingProviderTypePublic: utils.TrainingProviderTypes.PublicInstitution
+    }
 };
 
   angular.extend(this, $controller('TrainingProviderBase', { $scope: $scope, $attrs: $attrs }));
