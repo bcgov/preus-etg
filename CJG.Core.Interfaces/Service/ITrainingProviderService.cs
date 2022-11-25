@@ -1,4 +1,4 @@
-﻿using CJG.Application.Business.Models;
+﻿using System.Collections.Generic;
 using CJG.Core.Entities;
 
 namespace CJG.Core.Interfaces.Service
@@ -15,5 +15,7 @@ namespace CJG.Core.Interfaces.Service
 		void Delete(TrainingProvider trainingProvider);
 		void DeleteRequestedTrainingProvider(TrainingProvider trainingProvider);
 		void AddAttachment(TrainingProvider trainingProvider, Attachment attachment, TrainingProviderAttachmentTypes type);
+
+		IEnumerable<TrainingProviderType> GetTrainingProviderTypes();
 	}
 }

@@ -8,7 +8,7 @@ app.controller('TrainingProviderBase', function ($scope, $attrs, $controller, $t
     loadTrainingProviderTypes: loadTrainingProviderTypes,
     loadCountries: loadCountries,
     loadProvinces: loadProvinces,
-   loadProviderTypesDetails: loadProviderTypesDetails,
+    loadProviderTypesDetails: loadProviderTypesDetails,
     trainingProviderTypes: [],
     countries: [],
     provinces: [],
@@ -47,7 +47,7 @@ app.controller('TrainingProviderBase', function ($scope, $attrs, $controller, $t
 
   function loadProviderTypesDetails() {
     return $scope.load({
-      url: '/Int/Application/Training/Provider/Types/Details',
+      url: '/Int/Application/Training/Provider/Types/Details/',
       set: 'ProviderTypesDetails',
       condition: !$scope.ProviderTypesDetails || !$scope.ProviderTypesDetails.length
       //overwrite: false,
@@ -66,7 +66,7 @@ app.controller('TrainingProviderBase', function ($scope, $attrs, $controller, $t
       set: 'trainingProviderTypes',
       condition: !$scope.trainingProviderTypes || !$scope.trainingProviderTypes.length,
       overwrite: false,
-      localCache: true
+      localCache: false
     });
   }
 
@@ -162,7 +162,7 @@ app.controller('TrainingProviderBase', function ($scope, $attrs, $controller, $t
   }
 
   /**
-   * Open modal file uploader popup and allow user to updte the attachment and/or file.
+   * Open modal file uploader popup and allow user to update the attachment and/or file.
    * @function changeAttachment
    * @param {string} prop - The name of the property for this attachment.
    * @returns {void}

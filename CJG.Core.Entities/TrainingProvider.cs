@@ -383,25 +383,25 @@ namespace CJG.Core.Entities
 			if (this.TrainingProviderState != TrainingProviderStates.Incomplete && this.TrainingOutsideBC && String.IsNullOrEmpty(this.BusinessCase) && (this.BusinessCaseDocumentId == null && this.BusinessCaseDocument == null))
 				yield return new ValidationResult("If training is outside of BC you must provide a business case and/or document.", new[] { nameof(BusinessCaseDocument) });
 
-			var checkPrivateSectorsOn = context.Set<Setting>().FirstOrDefault(o => o.Key.Equals("CheckPrivateSectorsOn"))?.GetValue() as DateTime?;
-			var trainingProviderType = this.TrainingProviderType ?? context.Set<TrainingProviderType>().FirstOrDefault(x => x.Id == this.TrainingProviderTypeId);
+			//var checkPrivateSectorsOn = context.Set<Setting>().FirstOrDefault(o => o.Key.Equals("CheckPrivateSectorsOn"))?.GetValue() as DateTime?;
+			//var trainingProviderType = this.TrainingProviderType ?? context.Set<TrainingProviderType>().FirstOrDefault(x => x.Id == this.TrainingProviderTypeId);
 
 			// for certain TrainingProviderTypes, there must be a proof of qualifications document and course outline
-			var validatingTrainingProvider = entry.State == EntityState.Modified && (int?)entry.OriginalValues[nameof(TrainingProviderInventoryId)] != this.TrainingProviderInventoryId;
-			if (!validatingTrainingProvider
-				&& this.TrainingProviderState != TrainingProviderStates.Incomplete
-				&& (
-					trainingProviderType.PrivateSectorValidationType == TrainingProviderPrivateSectorValidationTypes.Always
-					|| trainingProviderType.PrivateSectorValidationType == TrainingProviderPrivateSectorValidationTypes.ByDateSetting
-					&& (grantApplication.DateSubmitted == null || grantApplication.DateSubmitted.Value.ToLocalTime().Date >= checkPrivateSectorsOn?.ToLocalTime().Date)
-				))
-			{
-				if (this.ProofOfQualificationsDocument == null && this.ProofOfQualificationsDocumentId == null && trainingProviderType.ProofOfInstructorQualifications == 1)
-					yield return new ValidationResult("You must provide proof of qualifications.", new[] { nameof(ProofOfQualificationsDocument) });
+			//var validatingTrainingProvider = entry.State == EntityState.Modified && (int?)entry.OriginalValues[nameof(TrainingProviderInventoryId)] != this.TrainingProviderInventoryId;
+			//if (!validatingTrainingProvider
+			//	&& this.TrainingProviderState != TrainingProviderStates.Incomplete
+			//	&& (
+			//		trainingProviderType.PrivateSectorValidationType == TrainingProviderPrivateSectorValidationTypes.Always
+			//		|| trainingProviderType.PrivateSectorValidationType == TrainingProviderPrivateSectorValidationTypes.ByDateSetting
+			//		&& (grantApplication.DateSubmitted == null || grantApplication.DateSubmitted.Value.ToLocalTime().Date >= checkPrivateSectorsOn?.ToLocalTime().Date)
+			//	))
+			//{
+			//	if (this.ProofOfQualificationsDocument == null && this.ProofOfQualificationsDocumentId == null && trainingProviderType.ProofOfInstructorQualifications == 1)
+			//		yield return new ValidationResult("You must provide proof of qualifications.", new[] { nameof(ProofOfQualificationsDocument) });
 
-				if (this.CourseOutlineDocument == null && this.CourseOutlineDocumentId == null && trainingProviderType.CourseOutline == 1)
-					yield return new ValidationResult("You must provide a course outline document.", new[] { nameof(CourseOutlineDocument) });
-			}
+			//	if (this.CourseOutlineDocument == null && this.CourseOutlineDocumentId == null && trainingProviderType.CourseOutline == 1)
+			//		yield return new ValidationResult("You must provide a course outline document.", new[] { nameof(CourseOutlineDocument) });
+			//}
 			
 			int[] selectedDeliveryMethodIds = TrainingProgram?.DeliveryMethods.Select(dm => dm.Id).ToArray();
 			if (selectedDeliveryMethodIds != null
