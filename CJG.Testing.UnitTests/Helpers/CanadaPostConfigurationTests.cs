@@ -26,7 +26,7 @@ namespace CJG.Testing.UnitTests.Helpers
 			var postConfig = new CanadaPostConfiguration(httpContextMock.Object);
 
 			var path = postConfig.GetJsPath();
-			path.Should().Be($"http://ws1.postescanada-canadapost.ca/js/addresscomplete-2.30.min.js?key={CanadaPostConfiguration.DevelopmentKey}");
+			path.Should().Be($"https://ws1.postescanada-canadapost.ca/js/addresscomplete-2.30.min.js?key={CanadaPostConfiguration.DevelopmentKey}");
 
 			httpContextMock = _identity.MockHttpContext("https://test.cjg.com");
 			postConfig = new CanadaPostConfiguration(httpContextMock.Object);
@@ -42,7 +42,7 @@ namespace CJG.Testing.UnitTests.Helpers
 			var postConfig = new CanadaPostConfiguration(httpContextMock.Object);
 
 			var path = postConfig.GetCssPath();
-			path.Should().Be($"http://ws1.postescanada-canadapost.ca/css/addresscomplete-2.30.min.css?key={CanadaPostConfiguration.DevelopmentKey}");
+			path.Should().Be($"https://ws1.postescanada-canadapost.ca/css/addresscomplete-2.30.min.css?key={CanadaPostConfiguration.DevelopmentKey}");
 
 			httpContextMock = _identity.MockHttpContext("https://test.cjg.com");
 			postConfig = new CanadaPostConfiguration(httpContextMock.Object);

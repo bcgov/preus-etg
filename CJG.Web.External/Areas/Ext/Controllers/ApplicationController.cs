@@ -558,7 +558,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <param name="dbQuestions"></param>
 		/// <param name="clientQuestions"></param>
 		/// <returns></returns>
-		void AddStreamAnswers(int grantApplicationId, IEnumerable<GrantStreamQuestionViewModel> dbQuestions, IEnumerable<GrantStreamQuestionViewModel> clientQuestions)
+		private void AddStreamAnswers(int grantApplicationId, IEnumerable<GrantStreamQuestionViewModel> dbQuestions, IEnumerable<GrantStreamQuestionViewModel> clientQuestions)
 		{
 			List<GrantStreamEligibilityAnswer> answers = new List<GrantStreamEligibilityAnswer>();
 			if (dbQuestions.Count() != 0)

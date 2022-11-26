@@ -149,7 +149,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingProviders
 
 		[Required(ErrorMessage = "Province of the Training Provider is required")]
 		public string RegionIdTrainingProvider { get; set; } = "BC";
-
+		
 		public string RegionTrainingProvider { get; set; } = "British Columbia";
 
 		[StringLength(250, ErrorMessage = "The field must be a string with a maximum length of 250")]
@@ -176,6 +176,9 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingProviders
 		public string CountryIdTrainingProvider { get; set; } = Constants.CanadaCountryId;
 		public string CountryTrainingProvider { get; set; } = "Canada";
 
+		[Required(ErrorMessage = "Non B.C. based provider rationale is required")]
+		public string OutOfProvinceLocationRationale { get; set; }
+
 		public bool IsCanadianAddress { get; set; } = true;
 		public bool IsCanadianAddressTrainingProvider { get; set; } = true;
 
@@ -183,7 +186,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingProviders
 		public bool IsServiceProvider { get; set; }
 
 		[AllowHtml]
-		[StringLength(150000, ErrorMessage = "Choice of Trainer/Program must be 150000 characters or less.")]
+		[StringLength(150000, ErrorMessage = "Choice of Training Provider must be 150000 characters or less.")]
 		public string ChoiceOfTrainerOrProgram { get; set; }
 
 		[AllowHtml]
@@ -272,11 +275,11 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingProviders
 					OtherZipCodeTrainingProvider = PostalCodeTrainingProvider;
 				}
 			}
-
+			OutOfProvinceLocationRationale = trainingProvider.OutOfProvinceLocationRationale;
 
 			ParentProviderId = trainingProvider.OriginalTrainingProviderId;
 			BusinessCase = trainingProvider.BusinessCase;
-			PrivateSectorValidationType = trainingProvider.TrainingProviderType != null ? trainingProvider.TrainingProviderType.PrivateSectorValidationType : TrainingProviderPrivateSectorValidationTypes.Never;
+			PrivateSectorValidationType = trainingProvider.TrainingProviderType?.PrivateSectorValidationType ?? TrainingProviderPrivateSectorValidationTypes.Never;
 			if (trainingProvider.TrainingProviderType != null)
 			{
 				ProofOfInstructorQualifications = trainingProvider.TrainingProviderType.ProofOfInstructorQualifications;
@@ -398,6 +401,8 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingProviders
 
 			trainingProvider.TrainingProviderAddress.PostalCode = IsCanadianAddressTrainingProvider ? PostalCodeTrainingProvider : OtherZipCodeTrainingProvider;
 			trainingProvider.TrainingProviderAddress.CountryId = CountryIdTrainingProvider;
+
+			trainingProvider.OutOfProvinceLocationRationale = trainingProvider.TrainingProviderAddress.RegionId == "BC" ? null : OutOfProvinceLocationRationale;
 
 			if (SelectedDeliveryMethodIds != null
 			    && (SelectedDeliveryMethodIds.Contains(Constants.Delivery_Classroom) || SelectedDeliveryMethodIds.Contains(Constants.Delivery_Workplace)))

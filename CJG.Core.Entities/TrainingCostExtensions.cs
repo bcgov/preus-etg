@@ -40,7 +40,7 @@ namespace CJG.Core.Entities
 		}
 
 		/// <summary>
-		/// Calcualte the reimbursement amount (cost * rate).
+		/// Calculate the reimbursement amount (cost * rate).
 		/// </summary>
 		/// <param name="cost"></param>
 		/// <param name="rate"></param>
@@ -51,7 +51,7 @@ namespace CJG.Core.Entities
 		}
 
 		/// <summary>
-		/// Calcualte the reimbursement amount (cost * rate).
+		/// Calculate the reimbursement amount (cost * rate).
 		/// </summary>
 		/// <param name="cost"></param>
 		/// <param name="rate"></param>

@@ -194,10 +194,12 @@ app.controller('ApplicationTrainingProviderView', function ($scope, $attrs, $con
     if ($scope.model.IsCanadianAddressTrainingProvider) {
       trainingProviderControl.listen("populate", function (address) {
         document.getElementById("RegionIdTrainingProvider").value = "string:" + address.ProvinceCode;
+        $scope.model.RegionIdTrainingProvider = address.ProvinceCode;
+        $scope.$apply();
       });
     }
   }
-  
+
   $scope.filterItems = function (item) {
     return item.Key !== 'CA';
   }
@@ -218,6 +220,7 @@ app.controller('ApplicationTrainingProviderView', function ($scope, $attrs, $con
       $scope.model.CountryTrainingProvider = 'Canada';
       $scope.model.RegionIdTrainingProvider = null;
     } else {
+      $scope.model.RegionIdTrainingProvider = null;
       $scope.model.CountryIdTrainingProvider = null;
     }
   }
@@ -228,6 +231,7 @@ app.controller('ApplicationTrainingProviderView', function ($scope, $attrs, $con
    * @returns {void}
    **/
   $scope.setTrainingProviderTypeName = function () {
+    return false;
     $scope.model.TrainingProviderTypeName = $scope.ProviderTypes.find(function (element) {
       return element.Id == $scope.model.TrainingProviderTypeId;
     }).Caption;
@@ -246,6 +250,7 @@ app.controller('ApplicationTrainingProviderView', function ($scope, $attrs, $con
    * @returns {boolean}
    */
   $scope.isPrivateSector = function (trainingProviderTypeId) {
+    return false;
     if ($scope.ProviderTypes)
       for (let i = 0; i < $scope.ProviderTypes.length; i++) {
         let trainingProviderType = $scope.ProviderTypes[i];

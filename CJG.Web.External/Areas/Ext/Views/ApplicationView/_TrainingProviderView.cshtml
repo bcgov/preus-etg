@@ -107,4 +107,16 @@
                 </span>
             </div>
         </div>
+        <div class="form__group">
+            <div class="form__label">Alternative Training Options:</div>
+            <div class="form__control">
+                <div class="form__group__with_embedded_html" ng-bind-html="model.TrainingProvider.AlternativeTrainingOptions | unsafe"></div>
+            </div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Choice of Training Provider:</div>
+            <div class="form__control">
+                <div class="form__group__with_embedded_html" ng-bind-html="model.TrainingProvider.ChoiceOfTrainerOrProgram | unsafe"></div>
+            </div>
+        </div>
     </div>

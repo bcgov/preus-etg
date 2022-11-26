@@ -14,6 +14,7 @@ using System.Net.Mime;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
+using CJG.Application.Business.Models;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
@@ -120,11 +121,13 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				var model = Newtonsoft.Json.JsonConvert.DeserializeObject<UpdateTrainingProviderViewModel>(provider);
 				var trainingProvider = _trainingProviderService.Get(model.Id);
+
 				if (model.TrainingLocationListViewModel != null)
 				{
 					model.TrainingLocationListViewModel.IsCanadianAddress = model.TrainingLocationListViewModel.CountryId == Core.Entities.Constants.CanadaCountryId;
 					TryValidateModel(model.TrainingLocationListViewModel, "TrainingLocationListViewModel");
 				}
+
 				if (model.TrainingProviderLocationListViewModel != null)
 				{
 					model.TrainingProviderLocationListViewModel.IsCanadianAddress = model.TrainingProviderLocationListViewModel.CountryId == Core.Entities.Constants.CanadaCountryId;
@@ -243,7 +246,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		}
 
 		/// <summary>
-		/// Download the specified attachemnt.
+		/// Download the specified attachment.
 		/// </summary>
 		/// <param name="trainingProviderId"></param>
 		/// <param name="attachmentId"></param>
@@ -391,26 +394,80 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		#endregion
 
 		#region Dropdowns
+
 		/// <summary>
 		/// Get an array of training provider types.
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet]
 		[PreventSpam]
-		[ValidateRequestHeader]
-		[Route("Application/Training/Provider/Types/Details")]
-		public JsonResult GetTrainingProviderTypes()
+		[Route("Application/Training/Provider/TypesAll/{trainingProviderId}")]
+		public JsonResult GetTrainingProviderTypes(int trainingProviderId)
+		{
+			KeyValueParent<int, string, TrainingProviderPrivateSectorValidationTypes>[] model = null;
+			try
+			{
+				var showTrainingTypes = GetTrainingProviderTypesOptions(trainingProviderId);
+
+				model = showTrainingTypes
+					.Select(o => new KeyValueParent<int, string, TrainingProviderPrivateSectorValidationTypes>(o.Id, o.Caption, o.PrivateSectorValidationType))
+					.ToArray();
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex);
+			}
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
+		/// Get an array of training provider types.
+		/// </summary>
+		/// <returns></returns>
+		[HttpGet]
+		[PreventSpam]
+		[Route("Application/Training/Provider/Types/Details/{trainingProviderId}")]
+		public JsonResult GetTrainingProviderTypeDetails(int trainingProviderId)
 		{
 			var types = new List<TrainingProviderTypeViewModel>();
 			try
 			{
-				types = _staticDataService.GetTrainingProviderTypes().Select(x => new TrainingProviderTypeViewModel(x)).ToList();
+				var showTrainingTypes = GetTrainingProviderTypesOptions(trainingProviderId);
+				types = showTrainingTypes
+					.Select(x => new TrainingProviderTypeViewModel(x))
+					.ToList();
 			}
 			catch (Exception ex)
 			{
 				HandleAngularException(ex);
 			}
 			return Json(types, JsonRequestBehavior.AllowGet);
+		}
+
+		private IEnumerable<TrainingProviderType> GetTrainingProviderTypesOptions(int trainingProviderId)
+		{
+			var allTrainingTypes = _trainingProviderService.GetTrainingProviderTypes()
+				.ToList();
+
+			var showTrainingTypes = allTrainingTypes
+				.Where(t => t.IsActive)
+				.ToList();
+
+			var provider = _trainingProviderService.Get(trainingProviderId);
+			var currentType = provider.TrainingProviderType;
+
+			if (!currentType.IsActive)
+			{
+				var inactiveType = allTrainingTypes.FirstOrDefault(i => i.Id == currentType.Id);
+
+				if (inactiveType != null)
+				{
+					inactiveType.Caption = $"{inactiveType.Caption} (Inactive)";
+					showTrainingTypes.Add(inactiveType);
+				}
+			}
+
+			return showTrainingTypes;
 		}
 		#endregion
 	}

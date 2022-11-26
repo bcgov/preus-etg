@@ -1,5 +1,4 @@
 ﻿@using CJG.Web.External.Areas.Ext.Controllers
-@using CJG.Core.Entities
 
 @model CJG.Web.External.Areas.Ext.Models.ApplicationStartViewModel
 
@@ -12,10 +11,7 @@
         @Html.ActionLink("Return", "Index", "Home", null, new { @class = "link--back" })
     </div>
     <div class="row" ng-if="!isNewApplication">
-        @Html.ActionLink("Return",
-            nameof(ApplicationController.ApplicationOverviewView),
-            nameof(ApplicationController).Replace("Controller", ""),
-            new { grantApplicationId = @ViewBag.GrantApplicationId }, new { @class = "link--back" })
+        @Html.ActionLink("Return", "ApplicationOverviewView", "Application", new { grantApplicationId = @ViewBag.GrantApplicationId }, new { @class = "link--back" })
     </div>
     <div class="row" ng-if="showApplicationForm">
         <div class="main" role="main">
@@ -27,7 +23,7 @@
                     <h1 class="header--large">Start <span class="text--lowercase">a</span> new application</h1>
                 </div>                
                 <div class="notice notice--icon">
-                    <div ng-if="model.ProgramType === @((int) ProgramTypes.EmployerGrant)">
+                    <div>
                         <p><strong>Before you start:</strong> Employers or authorized employees of the applicant employer must submit their application on their own behalf, using their Business BCeID.</p>
                         <p>Employers are not permitted to share their BCeID user login ID and third parties (e.g. training providers, fee-based service providers) cannot apply on an employer’s behalf.</p>
                     </div>
@@ -47,23 +43,11 @@
             <b/>
 			<p>
 				<div ng-show="isNewApplication" class="button-group">
-					@Html.Button("Cancel",
-								new
-									 {
-										@class = "btn btn--secondary",
-									    onclick = "window.location='" +
-										Url.Action(nameof(HomeController.Index), nameof(HomeController).Replace("Controller", ""), null) + "'"
-									 })
+					@Html.Button("Cancel", new { @class = "btn btn--secondary", onclick="window.location='" + Url.Action("Index", "Home", null) + "'" })
 					<button type="button" class="btn btn--primary btn--forward" ng-click="save()">Continue</button>
 				</div>
 				<div ng-show="!isNewApplication" class="button-group">
-					@Html.Button("Cancel",
-								new
-									 {
-									     @class = "btn btn--secondary",
-									     onclick = "window.location='" +
-									     Url.Action(nameof(ApplicationController.ApplicationOverviewView), nameof(ApplicationController).Replace("Controller", ""), new { grantApplicationId = ViewBag.GrantApplicationId }) + "'"
-									 })
+					@Html.Button("Cancel", new { @class = "btn btn--secondary", onclick="window.location='" + Url.Action("ApplicationOverviewView", "Application", new { grantApplicationId = ViewBag.GrantApplicationId }) + "'" })
 					<button type="button" class="btn btn--primary btn--forward" ng-click="save()">Done</button>
 				</div>
 			</p>

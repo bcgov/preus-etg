@@ -1,4 +1,4 @@
-﻿<div ng-controller="TrainingProvider" name="TrainingProvider{{provider.IsChangeRequest ? 'ChangeRequest' : ''}}">
+<div ng-controller="TrainingProvider" name="TrainingProvider{{provider.IsChangeRequest ? 'ChangeRequest' : ''}}">
 	<span class="panel-section-item">
 		<span class="panel-section-title" ng-click="toggle($event)" ng-class="{ 'label--red': provider.IsChangeRequest }">
 			<span class="notice--icon" ng-if="!provider.IsValidated" title="Training Provider requires validation."></span>
@@ -43,6 +43,9 @@
                             ng-options="item.Key as item.Value for item in trainingProviderTypes"
                             class="input--full" ng-validation ng-editing
                             ng-change="setTrainingProviderTypeDetails()"></select>
+                </div>
+                <div ng-show="section.editing && model.TrainingProviderType.Id == 1"> @* If the training type is public institution *@
+                    <a href="https://www2.gov.bc.ca/gov/content/education-training/post-secondary-education/find-a-program-or-institution/find-an-institution" target="_blank">Find an Institution</a>
                 </div>
             </div>
         </div>
@@ -224,8 +227,8 @@
                 </div>
             </div>
         </div>
-                
-        <div ng-if="model.ProgramType !== @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+
+        <div ng-if="model.ProgramType !== @((int) CJG.Core.Entities.ProgramTypes.EmployerGrant)">
             <div class="form__group">
                 <div class="form__label">Training outside BC:</div>
                 <div class="form__control">
@@ -245,8 +248,17 @@
                 </div>
             </div>
         </div>
-        
-                
+
+        <div class="form__group">
+            <div class="form__label">Non-BC Training Location Rationale:</div>
+            <div class="form__control">
+                <div class="control-wrapper">
+                    <span ng-show="!section.editing" style="white-space: pre-wrap;" ng-bind-html="model.OutOfProvinceLocationRationale"></span>
+                    <textarea ng-show="section.editing" ng-model="model.OutOfProvinceLocationRationale" class="input--full textarea--short" ng-validation></textarea>
+                </div>
+            </div>
+        </div>
+
         <div class="form__group">
             <div class="form__label">Alternative Training Options:</div>
             <div class="form__control">
@@ -254,9 +266,8 @@
             </div>
         </div>
 
-
         <div class="form__group">
-            <div class="form__label">Choice of Trainer/Program:</div>
+            <div class="form__label">Choice of Training Provider:</div>
             <div class="form__control">
                 <div class="control-wrapper collapsed__html" ng-bind-html="extraInfo.ChoiceOfTrainerOrProgram | unsafe" ng-click="previewChoiceOfTrainer()" title="Click to view full text"></div>
             </div>

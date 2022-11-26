@@ -18,16 +18,27 @@
             </div>
 
             <h2 class="subheader--body">Training Program</h2>
+            <p>Do not apply for an entire program or certificate that cannot be paid for, in full, at once. Many training providers require separate payments for individual courses. If this is the case, you will need to submit a separate application for each course. Please note that diploma and degree programs, in full or in part, are ineligible for ETG funding and no single application can contain training that exceeds 52 weeks.</p>
+
             <div class="form__group">
-                <div class="label-wrapper"><label class="form__label">Training course title <abbr title="Required">*</abbr></label></div>
+                <div class="label-wrapper"><label class="form__label">Course, program or certificate name <abbr title="Required">*</abbr></label></div>
                 <div class="control-wrapper form-control"><input type="text" class="input--medium" ng-model="model.CourseTitle" ng-validation></div>
             </div>
             
             <div class="form__group">
-                <label class="form__label">How is this training relevant to your business and to the available job(s)? <abbr title="Required">*</abbr></label>
+                <label class="form__label">Describe how this training is relevant to your business needs <abbr title="Required">*</abbr></label>
                 <div class="form__control">
                     <textarea ng-model="model.BusinessTrainingRelevance" class="input--full textarea--medium"
                                 ng-validation="errors.BusinessTrainingRelevance"
+                                ui-tinymce="tinymceOptions"></textarea>
+                </div>
+            </div>
+
+            <div class="form__group">
+                <label class="form__label">Describe how this training is relevant to the available job for the participant(s) <abbr title="Required">*</abbr></label>
+                <div class="form__control">
+                    <textarea ng-model="model.ParticipantTrainingRelevance" class="input--full textarea--medium"
+                                ng-validation="errors.ParticipantTrainingRelevance"
                                 ui-tinymce="tinymceOptions"></textarea>
                 </div>
             </div>
@@ -44,211 +55,234 @@
                     </span>
                 </div>
             </div>
+                
+            <div class="form__group">
+                <label class="form__label">Course outline including defined instructional objectives, delivery method and assessment methods <abbr title="Required">*</abbr></label>
+                <p>One file of the following type may be attached: PDF, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}} MB.</p>
 
-                <div class="form__group form__group--date">
-                    <label class="form__label">Training Start Date:<abbr title="Required">*</abbr></label>
-                    <div class="form__control--flexible">
-                        <div class="form__control">
-                            <datedropdown ng-editing="true"
-                                          ng-model="model.StartDate"
-                                          ng-year="model.StartYear"
-                                          ng-month="model.StartMonth"
-                                          ng-day="model.StartDay"
-                                          ng-text="model.StartDate"
-                                          ng-min-date="model.IntakePeriodStartDate"
-                                          ng-max-date="model.IntakePeriodEndDate"
-                                          ng-default-month="'Month'"
-                                          ng-default-day="'Day'"
-                                          ng-default-year="'Year'"></datedropdown>
-                        </div>
+                <div ng-validation="errors.CourseOutlineDocument">
+                    <div class="form__control" ng-if="model.CourseOutlineDocument.FileName">
+                        <a class="link"
+                           ng-if="model.CourseOutlineDocument.Id"
+                           ng-click="downloadAttachment(model.CourseOutlineDocument.Id)">
+                            {{model.CourseOutlineDocument.FileName}}
+                        </a>
+                        <span ng-if="!model.CourseOutlineDocument.Id">
+                            {{model.CourseOutlineDocument.FileName}}
+                        </span>
+                        <button class="btn btn--primary pull-right" ng-click="changeAttachment('CourseOutlineDocument')">Change</button>
+                    </div>
+                    <div class="form__control" ng-if="!model.CourseOutlineDocument.FileName">
+                        <span>None</span>
+                        <button class="btn btn--primary pull-right" ng-click="addAttachment('CourseOutlineDocument')">Upload</button>
                     </div>
                 </div>
-                <div class="form__group form__group--date">
-                    <label class="form__label">Training End Date:<abbr title="Required">*</abbr></label>
-                    <div class="form__control--flexible">
-                        <div class="form__control">
-                            <datedropdown ng-editing="true"
-                                          ng-model="model.EndDate"
-                                          ng-year="model.EndYear"
-                                          ng-month="model.EndMonth"
-                                          ng-day="model.EndDay"
-                                          ng-text="model.EndDate"
-                                          ng-min-date="model.IntakePeriodStartDate"
-                                          ng-max-date="model.IntakePeriodMaxEndDate"
-                                          ng-default-month="'Month'"
-                                          ng-default-day="'Day'"
-                                          ng-default-year="'Year'"></datedropdown>
-                        </div>
+            </div>
+
+            <div class="form__group form__group--date">
+                <label class="form__label">Training Start Date:<abbr title="Required">*</abbr></label>
+                <div class="form__control--flexible">
+                    <div class="form__control">
+                        <datedropdown ng-editing="true"
+                                      ng-model="model.StartDate"
+                                      ng-year="model.StartYear"
+                                      ng-month="model.StartMonth"
+                                      ng-day="model.StartDay"
+                                      ng-text="model.StartDate"
+                                      ng-min-date="model.IntakePeriodStartDate"
+                                      ng-max-date="model.IntakePeriodEndDate"
+                                      ng-default-month="'Month'"
+                                      ng-default-day="'Day'"
+                                      ng-default-year="'Year'"></datedropdown>
                     </div>
                 </div>
+            </div>
+            <div class="form__group form__group--date">
+                <label class="form__label">Training End Date:<abbr title="Required">*</abbr></label>
+                <div class="form__control--flexible">
+                    <div class="form__control">
+                        <datedropdown ng-editing="true"
+                                      ng-model="model.EndDate"
+                                      ng-year="model.EndYear"
+                                      ng-month="model.EndMonth"
+                                      ng-day="model.EndDay"
+                                      ng-text="model.EndDate"
+                                      ng-min-date="model.IntakePeriodStartDate"
+                                      ng-max-date="model.IntakePeriodMaxEndDate"
+                                      ng-default-month="'Month'"
+                                      ng-default-day="'Day'"
+                                      ng-default-year="'Year'"></datedropdown>
+                    </div>
+                </div>
+            </div>
 
-                <div class="form__group form__group--checkbox-list">
-                    <label class="form__label">Primary Delivery Method <abbr title="Required">*</abbr></label>
-                    <div class="form__control" ng-validation="errors.SelectedDeliveryMethodIds">
-                        <ul>
-                            <li ng-repeat="method in DeliveryMethods">
-                                <input type="checkbox"
-                                       id="deliver-methods-{{method.Id}}"
-                                       ng-model="method.IsSelected" />
-                                <label for="deliver-methods-{{method.Id}}">{{method.Caption}}</label>
-                            </li>
-                        </ul>
+            <div class="form__group form__group--checkbox-list">
+                <label class="form__label">Primary Delivery Method <abbr title="Required">*</abbr></label>
+                <div class="form__control" ng-validation="errors.SelectedDeliveryMethodIds">
+                    <ul>
+                        <li ng-repeat="method in DeliveryMethods">
+                            <input type="checkbox"
+                                   id="deliver-methods-{{method.Id}}"
+                                   ng-model="method.IsSelected" />
+                            <label for="deliver-methods-{{method.Id}}">{{method.Caption}}</label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form__group">
+                <div class="label-wrapper"><label class="form__label">Total training hours <abbr title="Required">*</abbr></label></div>
+                <div class="control-wrapper form-control"><input type="text" class="input--small" ng-model="model.TotalTrainingHours" maxlength="5" ng-number ng-validation></div>
+            </div>
+
+            <div class="form__group input--medium">
+                <div class="label-wrapper"><label class="form__label">Skill level <abbr title="Required">*</abbr></label></div>
+                <div class="control-wrapper">
+                    <div class="selectmenu input--medium" ng-validation="errors.SkillLevelId">
+                        <select class="input--medium form-control ng-pristine ng-untouched ng-valid ng-empty" ng-model="model.SkillLevelId" ng-options="item.Id as item.Caption for item in SkillLevels">
+                            <option value="" selected="selected">&lt; Select value &gt;</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form__group input--medium">
+                <div class="label-wrapper"><label class="form__label">Training skills focus <abbr title='Required'>*</abbr></label></div>
+                <div class="control-wrapper">
+                    <div class="selectmenu input--medium" ng-validation="errors.SkillFocusId">
+                        <select class="input--medium form-control ng-pristine ng-untouched ng-valid ng-empty" ng-model="model.SkillFocusId" ng-options="item.Id as item.Caption for item in SkillFocus">
+                            <option value="" selected="selected">&lt; Select value &gt;</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="model.SkillFocusId === 5">
+                <div class="form__group">
+                    <div class="form__label">Apprenticeship training is for <abbr title='Required'>*</abbr></div>
+                    <div class="form__control">
+                        <div class="control-wrapper selectmenu input--full" ng-validation="errors.InDemandOccupationId">
+                            <select ng-model="model.InDemandOccupationId" ng-options="item.Id as item.Caption for item in InDemandOccupations" class="input--full">
+                                <option value="" selected="selected">&lt; Select value &gt;</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
                 <div class="form__group">
-                    <div class="label-wrapper"><label class="form__label">Total training hours <abbr title="Required">*</abbr></label></div>
-                    <div class="control-wrapper form-control"><input type="text" class="input--small" ng-model="model.TotalTrainingHours" maxlength="5" ng-number ng-validation></div>
-                </div>
-
-                <div class="form__group input--medium">
-                    <div class="label-wrapper"><label class="form__label">Skill level <abbr title="Required">*</abbr></label></div>
-                    <div class="control-wrapper">
-                        <div class="selectmenu input--medium" ng-validation="errors.SkillLevelId">
-                            <select class="input--medium form-control ng-pristine ng-untouched ng-valid ng-empty" ng-model="model.SkillLevelId" ng-options="item.Id as item.Caption for item in SkillLevels">
+                    <div class="form__label">Which level is the training <abbr title='Required'>*</abbr></div>
+                    <div class="form__control">
+                        <div class="control-wrapper selectmenu input--full" ng-validation="errors.TrainingLevelId">
+                            <select ng-model="model.TrainingLevelId" ng-options="item.Id as item.Caption for item in TrainingLevels" class="input--full">
                                 <option value="" selected="selected">&lt; Select value &gt;</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
-                <div class="form__group input--medium">
-                    <div class="label-wrapper"><label class="form__label">Training skills focus <abbr title='Required'>*</abbr></label></div>
-                    <div class="control-wrapper">
-                        <div class="selectmenu input--medium" ng-validation="errors.SkillFocusId">
-                            <select class="input--medium form-control ng-pristine ng-untouched ng-valid ng-empty" ng-model="model.SkillFocusId" ng-options="item.Id as item.Caption for item in SkillFocus">
-                                <option value="" selected="selected">&lt; Select value &gt;</option>
-                            </select>
+                <div ng-if="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
+
+                    <div class="form__group form__group--radio-inline">
+                        <div class="form__label">
+                            Are all participants taking apprenticeship or foundation programs members from the underrepresented groups in the labour force <abbr title="Required">*</abbr>
                         </div>
-                    </div>
-                </div>
-
-                <div ng-if="model.SkillFocusId === 5">
-                    <div class="form__group">
-                        <div class="form__label">Apprenticeship training is for <abbr title='Required'>*</abbr></div>
-                        <div class="form__control">
-                            <div class="control-wrapper selectmenu input--full" ng-validation="errors.InDemandOccupationId">
-                                <select ng-model="model.InDemandOccupationId" ng-options="item.Id as item.Caption for item in InDemandOccupations" class="input--full">
-                                    <option value="" selected="selected">&lt; Select value &gt;</option>
-                                </select>
+                        <div ng-validation="errors.MemberOfUnderRepresentedGroup">
+                            <div class="form-item">
+                                <input type="radio" id="member-under-represented-group-yes" ng-value="true" ng-model="model.MemberOfUnderRepresentedGroup" name="model.MemberOfUnderRepresentedGroup">
+                                <label for="member-under-represented-group-yes">Yes</label>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="form__group">
-                        <div class="form__label">Which level is the training <abbr title='Required'>*</abbr></div>
-                        <div class="form__control">
-                            <div class="control-wrapper selectmenu input--full" ng-validation="errors.TrainingLevelId">
-                                <select ng-model="model.TrainingLevelId" ng-options="item.Id as item.Caption for item in TrainingLevels" class="input--full">
-                                    <option value="" selected="selected">&lt; Select value &gt;</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div ng-if="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
-
-                        <div class="form__group form__group--radio-inline">
-                            <div class="form__label">
-                                Are all participants taking apprenticeship or foundation programs members from the underrepresented groups in the labour force <abbr title="Required">*</abbr>
-                            </div>
-                            <div ng-validation="errors.MemberOfUnderRepresentedGroup">
-                                <div class="form-item">
-                                    <input type="radio" id="member-under-represented-group-yes" ng-value="true" ng-model="model.MemberOfUnderRepresentedGroup" name="model.MemberOfUnderRepresentedGroup">
-                                    <label for="member-under-represented-group-yes">Yes</label>
-                                </div>
-                                <div class="form-item">
-                                    <input type="radio" id="member-under-represented-group-no" ng-value="false" ng-model="model.MemberOfUnderRepresentedGroup" name="model.MemberOfUnderRepresentedGroup">
-                                    <label for="member-under-represented-group-no">No</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div ng-if="model.MemberOfUnderRepresentedGroup">
-                        <div class="form__group form__group--checkbox-list">
-                            <label class="form__label">Select all that apply <abbr title="Required">*</abbr></label>
-                            <div class="form__control" ng-validation="errors.SelectedUnderRepresentedGroupIds">
-                                <ul>
-                                    <li ng-repeat="group in UnderRepresentedGroups">
-                                        <input type="checkbox" id="represented-group-{{group.Id}}" ng-model="group.IsSelected" />
-                                        <label for="represented-group-{{group.Id}}">{{group.Caption}}</label>
-                                    </li>
-                                </ul>
+                            <div class="form-item">
+                                <input type="radio" id="member-under-represented-group-no" ng-value="false" ng-model="model.MemberOfUnderRepresentedGroup" name="model.MemberOfUnderRepresentedGroup">
+                                <label for="member-under-represented-group-no">No</label>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="form__group input--medium">
-                    <div class="label-wrapper"><label class="form__label">Expected certificates, qualifications or credentials <abbr title="Required">*</abbr>
-                         <span class="inline-help tooltip">
-                            <span class="tooltiptext edit-training-provider">
-                                <b>Definitions</b>
-                                <br /><b>Trade Certification</b> - Trades training must be certified by the Industry Training Authority (ITA).
-                                <br /><b>Occupational Certification</b> - Occupational Certifications must be granted by an organization with the authority to set standards required to practice an occupation. Example certificates include the Residential Care Worker Certificate and Early Childhood Education Certificate.
-                                <br /><b>Industry-recognized credential</b> - Industry-recognized training results in credentials that are transferable and recognized by employers across an industry. Examples include health and safety training (e.g. WHMIS, first aid), hospitality training (e.g. FoodSafe Level 1, Serving it Right) and computer or software training (e.g. Microsoft, Cisco).
-                                <br /><b>Proprietary credential (firm-issued)</b> - Proprietary credential includes other certificates of completion provided by a company or its trainer.
-                            </span>
-                        </span></label>
-                    </div>
-                    <div class="control-wrapper">
-                        <div class="selectmenu input--medium" ng-validation="errors.ExpectedQualificationId">
-                            <select class="input--medium form-control" ng-model="model.ExpectedQualificationId" ng-options="item.Id as item.Caption for item in ExpectedQualifications">
-                                <option value="" class="" selected="selected">&lt; Select value &gt;</option>
-                            </select>
+                <div ng-if="model.MemberOfUnderRepresentedGroup">
+                    <div class="form__group form__group--checkbox-list">
+                        <label class="form__label">Select all that apply <abbr title="Required">*</abbr></label>
+                        <div class="form__control" ng-validation="errors.SelectedUnderRepresentedGroupIds">
+                            <ul>
+                                <li ng-repeat="group in UnderRepresentedGroups">
+                                    <input type="checkbox" id="represented-group-{{group.Id}}" ng-model="group.IsSelected" />
+                                    <label for="represented-group-{{group.Id}}">{{group.Caption}}</label>
+                                </li>
+                            </ul>
                         </div>
                     </div>
-                </div>
-
-                <div ng-if="model.ExpectedQualificationId != 5 && model.ExpectedQualificationId != 0 && model.ExpectedQualificationId != null">
-                    <div class="form__group">
-                        <div class="label-wrapper"><label class="form__label">Title of certificates, qualifications or credentials <abbr title="Required">*</abbr></label></div>
-                        <div class="control-wrapper form-control"><input type="text" class="input--medium" ng-model="model.TitleOfQualification" ng-validation></div>
-                    </div>
-                </div>
-
-                <div class="form__group form__group--radio-inline">
-                    <div class="form__label">
-                        Have you offered this type of training to employees in the past? <abbr title="Required">*</abbr>
-                    </div>
-                    <div ng-validation="errors.HasOfferedThisTypeOfTrainingBefore">
-                        <div class="form-item">
-                            <input type="radio" id="offered-before-yes" ng-value="true" ng-model="model.HasOfferedThisTypeOfTrainingBefore" name="model.HasOfferedThisTypeOfTrainingBefore">
-                            <label for="offered-before-yes">Yes</label>
-                        </div>
-                        <div class="form-item">
-                            <input type="radio" id="offered-before-no" ng-value="false" ng-model="model.HasOfferedThisTypeOfTrainingBefore" name="model.HasOfferedThisTypeOfTrainingBefore">
-                            <label for="offered-before-no">No</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="form__group form__group--radio-inline">
-                    <div class="form__label">
-                        Have you received or requested any other government or third-party funding for this training? <abbr title="Required">*</abbr>
-                    </div>
-                    <div ng-validation="errors.HasRequestedAdditionalFunding">
-                        <div class="form-item">
-                            <input type="radio" id="additional-funding-yes" ng-value="true" ng-model="model.HasRequestedAdditionalFunding" name="model.HasRequestedAdditionalFunding">
-                            <label for="additional-funding-yes">Yes</label>
-                        </div>
-                        <div class="form-item">
-                            <input type="radio" id="additional-funding-no" ng-value="false" ng-model="model.HasRequestedAdditionalFunding" name="model.HasRequestedAdditionalFunding">
-                            <label for="additional-funding-no">No</label>
-                        </div>
-                    </div>
-                </div>
-                <div ng-if="model.HasRequestedAdditionalFunding === true">
-                    <div class="form__group">
-                        <div class="label-wrapper"><label class="form__label">Please describe funding received or requested<abbr title="Required">*</abbr></label></div>
-                        <div class="control-wrapper form-control"><textarea class="input--full textarea--short" ng-model="model.DescriptionOfFundingRequested" ng-validation></textarea></div>
-                    </div>
-                </div>
-                <div class="button-group">
-                    @Html.Button("Cancel", new { @class = "btn btn--secondary", @onclick = "window.location='" + @Url.Action(nameof(ApplicationController.ApplicationOverviewView), typeof(ApplicationController).Name.Replace("Controller", ""), new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'" })
-                    <button class="btn btn--primary btn--forward" ng-click="save()">Done</button>
                 </div>
             </div>
+
+            <div class="form__group input--medium">
+                <div class="label-wrapper"><label class="form__label">Expected certificates, qualifications or credentials <abbr title="Required">*</abbr>
+                     <span class="inline-help tooltip">
+                        <span class="tooltiptext edit-training-provider">
+                            <b>Definitions</b>
+                            <br /><b>Trade Certification</b> - Trades training must be certified by the Industry Training Authority (ITA).
+                            <br /><b>Occupational Certification</b> - Occupational Certifications must be granted by an organization with the authority to set standards required to practice an occupation. Example certificates include the Residential Care Worker Certificate and Early Childhood Education Certificate.
+                            <br /><b>Industry-recognized credential</b> - Industry-recognized training results in credentials that are transferable and recognized by employers across an industry. Examples include health and safety training (e.g. WHMIS, first aid), hospitality training (e.g. FoodSafe Level 1, Serving it Right) and computer or software training (e.g. Microsoft, Cisco).
+                            <br /><b>Proprietary credential (firm-issued)</b> - Proprietary credential includes other certificates of completion provided by a company or its trainer.
+                        </span>
+                    </span></label>
+                </div>
+                <div class="control-wrapper">
+                    <div class="selectmenu input--medium" ng-validation="errors.ExpectedQualificationId">
+                        <select class="input--medium form-control" ng-model="model.ExpectedQualificationId" ng-options="item.Id as item.Caption for item in ExpectedQualifications">
+                            <option value="" class="" selected="selected">&lt; Select value &gt;</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="model.ExpectedQualificationId != 5 && model.ExpectedQualificationId != 0 && model.ExpectedQualificationId != null">
+                <div class="form__group">
+                    <div class="label-wrapper"><label class="form__label">Title of certificates, qualifications or credentials <abbr title="Required">*</abbr></label></div>
+                    <div class="control-wrapper form-control"><input type="text" class="input--medium" ng-model="model.TitleOfQualification" ng-validation></div>
+                </div>
+            </div>
+
+            <div class="form__group form__group--radio-inline">
+                <div class="form__label">
+                    Have you offered this type of training to employees in the past? <abbr title="Required">*</abbr>
+                </div>
+                <div ng-validation="errors.HasOfferedThisTypeOfTrainingBefore">
+                    <div class="form-item">
+                        <input type="radio" id="offered-before-yes" ng-value="true" ng-model="model.HasOfferedThisTypeOfTrainingBefore" name="model.HasOfferedThisTypeOfTrainingBefore">
+                        <label for="offered-before-yes">Yes</label>
+                    </div>
+                    <div class="form-item">
+                        <input type="radio" id="offered-before-no" ng-value="false" ng-model="model.HasOfferedThisTypeOfTrainingBefore" name="model.HasOfferedThisTypeOfTrainingBefore">
+                        <label for="offered-before-no">No</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form__group form__group--radio-inline">
+                <div class="form__label">
+                    Have you received or requested any other government or third-party funding for this training? <abbr title="Required">*</abbr>
+                </div>
+                <div ng-validation="errors.HasRequestedAdditionalFunding">
+                    <div class="form-item">
+                        <input type="radio" id="additional-funding-yes" ng-value="true" ng-model="model.HasRequestedAdditionalFunding" name="model.HasRequestedAdditionalFunding">
+                        <label for="additional-funding-yes">Yes</label>
+                    </div>
+                    <div class="form-item">
+                        <input type="radio" id="additional-funding-no" ng-value="false" ng-model="model.HasRequestedAdditionalFunding" name="model.HasRequestedAdditionalFunding">
+                        <label for="additional-funding-no">No</label>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="model.HasRequestedAdditionalFunding === true">
+                <div class="form__group">
+                    <div class="label-wrapper"><label class="form__label">Please describe funding received or requested<abbr title="Required">*</abbr></label></div>
+                    <div class="control-wrapper form-control"><textarea class="input--full textarea--short" ng-model="model.DescriptionOfFundingRequested" ng-validation></textarea></div>
+                </div>
+            </div>
+            <div class="button-group">
+                @Html.Button("Cancel", new { @class = "btn btn--secondary", @onclick = "window.location='" + @Url.Action(nameof(ApplicationController.ApplicationOverviewView), typeof(ApplicationController).Name.Replace("Controller", ""), new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'" })
+                <button class="btn btn--primary btn--forward" ng-click="save()">Done</button>
+            </div>
+        </div>
         <div class="sidebar">
         </div>
     </div>

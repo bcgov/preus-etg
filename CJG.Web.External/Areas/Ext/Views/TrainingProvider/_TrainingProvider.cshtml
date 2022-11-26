@@ -1,4 +1,4 @@
-﻿<div class="form__group">
+<div class="form__group">
     <div class="label-wrapper"><label class="form__label">Training provider name <abbr title="Required">*</abbr></label></div>
     <div class="control-wrapper form-control"> <input type="text" class="input--medium" ng-model="model.Name" ng-validation></div>
 </div>
@@ -30,7 +30,7 @@
         </div>
     </div>
 </div>
-<div ng-show="model.ProofOfInstructorQualifications">
+<div ng-show="false"> @*model.ProofOfInstructorQualifications*@
     <div class="form__group">
         <label class="form__label">Proof of instructors qualifications from Training Provider <abbr title="Required">*</abbr></label>
         <p>
@@ -55,7 +55,7 @@
         </div>
     </div>
 </div>
-<div ng-show="model.CourseOutline">
+<div ng-show="false"> @*model.CourseOutline*@
     <div class="form__group">
         <label class="form__label">Course outline including defined instructional objectives, delivery method and assessment methods <abbr title="Required">*</abbr></label>
         <p>One file of the following type may be attached: PDF, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}} MB.</p>
@@ -207,7 +207,7 @@
     <label class="form__label">Province <abbr title="Required">*</abbr></label>
     <div class="form__control">
         <div class="control-wrapper selectmenu input--medium" ng-validation="errors.RegionIdTrainingProvider">
-            <select Id="RegionIdTrainingProvider" class="input--medium form-control" ng-model="model.RegionIdTrainingProvider" ng-options="item.Key as item.Caption for item in Provinces">
+            <select Id="RegionIdTrainingProvider" class="input--medium form-control" ng-model="model.RegionIdTrainingProvider" ng-options="item.Key as item.Caption for item in Provinces" ng-change="TrainingProviderRegionChanged()">
                 <option value="" selected="selected">&lt; Select value &gt;</option>
             </select>
         </div>
@@ -229,6 +229,13 @@
     <div class="form__group">
         <div class="label-wrapper"><label class="form__label">Postal / Zip Code <abbr title="Required">*</abbr></label></div>
         <div class="control-wrapper form-control"><input id="OtherZipCodeTrainingProvider" type="text" class="input--medium" ng-model="model.OtherZipCodeTrainingProvider" ng-validation></div>
+    </div>
+</div>
+
+<div ng-show="model.RegionIdTrainingProvider !== 'BC'">
+    <div class="form__group">
+        <div class="label-wrapper"><label class="form__label">The ETG may consider training delivered by training providers not based in B.C. under exceptional circumstances only. Please explain why you have selected a training provider not based in B.C. <abbr title="Required">*</abbr></label></div>
+        <div class="control-wrapper form-control"><textarea id="OutOfProvinceLocationRationale" type="text" class="input--full textarea--short" ng-model="model.OutOfProvinceLocationRationale" ng-validation></textarea></div>
     </div>
 </div>
 
@@ -299,10 +306,9 @@
 </div>
 
 <div class="form__group">
-    <h3 class="subheader--body">Choice of Trainer/Program</h3>
+    <h3 class="subheader--body">Choice of Training Provider</h3>
     <div class="notice notice--icon">
-        <p>Please describe why the chosen training provider is best positioned to meet the needs of your business and deliver improved job-related skills for participants. In other words, why did you choose this trainer and not one of the alternatives listed above?</p>
-        <p>Note: Training delivered by a training provider located outside of B.C. may be considered only when no similar training is available from a B.C.-based training provider.</p>
+        <p>Please describe why the chosen training provider is best positioned to meet the needs of your business and deliver improved job-related skills for participants. In other words, why did you choose this trainer and not one of your alternatives listed above?</p>
     </div>
     <div class="form__control">
         <textarea class="input--full textarea--medium"

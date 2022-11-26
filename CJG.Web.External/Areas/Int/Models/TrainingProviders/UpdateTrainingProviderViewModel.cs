@@ -24,6 +24,7 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingProviders
 		public TrainingOutsideBCListViewModel TrainingOutsideBcListViewModel { get; set; }
 
 		public int[] SelectedDeliveryMethodIds { get; set; }
+		public string OutOfProvinceLocationRationale { get; set; }
 
 		#endregion
 

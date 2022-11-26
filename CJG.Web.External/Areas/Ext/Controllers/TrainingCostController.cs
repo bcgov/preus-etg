@@ -21,13 +21,10 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 	public class TrainingCostController : BaseController
 	{
 		#region Variables
-		private readonly IEligibleExpenseTypeService _eligibleExpenseTypeService;
-		private readonly ITrainingProgramService _trainingProgramService;
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IGrantStreamService _grantStreamService;
 		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a TrainingCostController object.
 		/// </summary>
@@ -36,19 +33,13 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <param name="grantStreamService"></param>
 		public TrainingCostController(
 			IControllerService controllerService,
-			IEligibleExpenseTypeService eligibleExpenseTypeService,
-			ITrainingProgramService trainingProgramService,
 			IGrantApplicationService grantApplicationService,
 			IGrantStreamService grantStreamService) : base(controllerService.Logger)
 		{
-			_eligibleExpenseTypeService = eligibleExpenseTypeService;
-			_trainingProgramService = trainingProgramService;
 			_grantApplicationService = grantApplicationService;
 			_grantStreamService = grantStreamService;
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
 		/// Returns a view to edit the training costs.
 		/// </summary>
@@ -58,9 +49,9 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		[Route("Application/Training/Cost/View/{id}")]
 		public ActionResult TrainingCostView(int id)
 		{
-			var grantAppliation = _grantApplicationService.Get(id);
-			if (!User.CanPerformAction(grantAppliation, ApplicationWorkflowTrigger.EditTrainingCosts))
-				throw new NotAuthorizedException($"User does not have permission to edit training costs.");
+			var grantApplication = _grantApplicationService.Get(id);
+			if (!User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCosts))
+				throw new NotAuthorizedException("User does not have permission to edit training costs.");
 
 			ViewBag.GrantApplicationId = id;
 			return View();
@@ -78,8 +69,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			var model = new Models.TrainingCosts.TrainingCostViewModel();
 			try
 			{
-				var grantAppliation = _grantApplicationService.Get(id);
-				model = new Models.TrainingCosts.TrainingCostViewModel(grantAppliation, User, _grantStreamService);
+				var grantApplication = _grantApplicationService.Get(id);
+				model = new Models.TrainingCosts.TrainingCostViewModel(grantApplication, User, _grantStreamService);
 			}
 			catch (Exception ex)
 			{
@@ -91,7 +82,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <summary>
 		/// Update the training costs in the datasource.
 		/// </summary>
-		/// <param name="viewModel"></param>
+		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[ValidateRequestHeader]
@@ -161,6 +152,5 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			}
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
-		#endregion
 	}
 }

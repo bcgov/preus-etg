@@ -2,16 +2,20 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Principal;
+using System.Web;
 using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Validation;
 using CJG.Web.External.Models.Shared;
+using CJG.Web.External.Models.Shared.TrainingProviders;
+using Constants = CJG.Core.Entities.Constants;
 
 namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 {
-	public class TrainingProgramViewModel : BaseViewModel
+    public class TrainingProgramViewModel : BaseViewModel
 	{
 		public string RowVersion { get; set; }
 		public int GrantApplicationId { get; set; }
@@ -36,7 +40,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 		public int EndMonth { get; set; }
 		public int EndDay { get; set; }
 
-		[Required(ErrorMessage = "You must enter a training course title."), MaxLength(500)]
+		[Required(ErrorMessage = "You must enter a course, program or certificate name."), MaxLength(500)]
 		public string CourseTitle { get; set; }
 
 		[Required(ErrorMessage = "Total training hours is required.")]
@@ -85,8 +89,15 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 		[MaxLength(150000, ErrorMessage = "Business training relevance cannot exceed 150000 characters.")]
 		public string BusinessTrainingRelevance { get; set; }
 
+		[AllowHtml]
+		[Required(ErrorMessage = "Participant training relevance is required")]
+		[MaxLength(150000, ErrorMessage = "Participant training relevance cannot exceed 150000 characters.")]
+		public string ParticipantTrainingRelevance { get; set; }
+
 		[CustomValidation(typeof(CourseLinkValidation), "ValidateCourseLink")]
 		public string CourseLink { get; set; }
+
+		public TrainingProgramAttachmentViewModel CourseOutlineDocument { get; set; } = new TrainingProgramAttachmentViewModel();
 
 		public TrainingProgramViewModel()
 		{
@@ -141,6 +152,9 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 			DeliveryEndDate = trainingProgram.GrantApplication.EndDate.ToLocalTime();
 
 			BusinessTrainingRelevance = trainingProgram.BusinessTrainingRelevance;
+			ParticipantTrainingRelevance = trainingProgram.ParticipantTrainingRelevance;
+
+			CourseOutlineDocument = new TrainingProgramAttachmentViewModel(trainingProgram.CourseOutlineDocument, Id, RowVersion);
 		}
 
 		/// <summary>
@@ -150,13 +164,17 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 		/// <param name="trainingProgramService"></param>
 		/// <param name="trainingProviderService"></param>
 		/// <param name="staticDataService"></param>
+		/// <param name="attachmentService"></param>
 		/// <param name="user"></param>
+		/// <param name="files"></param>
 		/// <returns></returns>
 		public TrainingProgram UpdateTrainingProgram(IGrantApplicationService grantApplicationService,
 													 ITrainingProgramService trainingProgramService,
 													 ITrainingProviderService trainingProviderService,
 													 IStaticDataService staticDataService,
-													 IPrincipal user)
+													 IAttachmentService attachmentService,
+													 IPrincipal user,
+													 HttpPostedFileBase[] files = null)
 		{
 			if (grantApplicationService == null) throw new ArgumentNullException(nameof(grantApplicationService));
 			if (trainingProgramService == null) throw new ArgumentNullException(nameof(trainingProgramService));
@@ -199,7 +217,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 					var deliveryMethod = staticDataService.GetDeliveryMethod(addId);
 					trainingProgram.DeliveryMethods.Add(deliveryMethod);
 				}
-				if(SelectedDeliveryMethodIds.Contains(Constants.Delivery_Classroom) || SelectedDeliveryMethodIds.Contains(Constants.Delivery_Workplace))
+				if (SelectedDeliveryMethodIds.Contains(Constants.Delivery_Classroom) || SelectedDeliveryMethodIds.Contains(Constants.Delivery_Workplace))
                 {
 					if (trainingProgram.TrainingProvider != null)
 						if (trainingProgram.TrainingProvider.TrainingAddress == null)
@@ -224,6 +242,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 			trainingProgram.HasOfferedThisTypeOfTrainingBefore = HasOfferedThisTypeOfTrainingBefore.Value;
 			trainingProgram.HasRequestedAdditionalFunding = HasRequestedAdditionalFunding.Value;
 			trainingProgram.BusinessTrainingRelevance = BusinessTrainingRelevance;
+			trainingProgram.ParticipantTrainingRelevance = ParticipantTrainingRelevance;
 
 			trainingProgram.DescriptionOfFundingRequested = HasRequestedAdditionalFunding.Value ? DescriptionOfFundingRequested : null;
 
@@ -290,12 +309,62 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 				grantApplication.EndDate = grantApplication.StartDate < trainingProgram.EndDate ? trainingProgram.EndDate : grantApplication.StartDate;
 			}
 
+			UpdateAttachments(trainingProgram, attachmentService, files);
+
 			if (create)
 				trainingProgramService.Add(trainingProgram);
 			else
 				trainingProgramService.Update(trainingProgram);
 
 			return trainingProgram;
+		}
+
+
+		/// <summary>
+		/// Add/update/remove attachments associated with the specific properties of the training provider.
+		/// </summary>
+		/// <param name="trainingProgram"></param>
+		/// <param name="attachmentService"></param>
+		/// <param name="files"></param>
+		private void UpdateAttachments(TrainingProgram trainingProgram, IAttachmentService attachmentService, HttpPostedFileBase[] files = null)
+		{
+			if (trainingProgram == null)
+				throw new ArgumentNullException(nameof(trainingProgram));
+
+			if (attachmentService == null)
+				throw new ArgumentNullException(nameof(attachmentService));
+
+			// If files were provided add/update the attachments for the specified properties.
+			if (files == null || !files.Any())
+				return;
+
+			if (CourseOutlineDocument?.Index != null && files.Count() > CourseOutlineDocument.Index)
+			{
+				var attachment = files[CourseOutlineDocument.Index.Value].UploadFile(CourseOutlineDocument.Description, CourseOutlineDocument.FileName);
+				attachment.Id = CourseOutlineDocument.Id;
+
+				if (CourseOutlineDocument.Id == 0)
+				{
+					trainingProgram.CourseOutlineDocument = attachment;
+					attachmentService.Add(attachment);
+					CourseOutlineDocument.Id = attachment.Id;
+				}
+				else
+				{
+					attachment.RowVersion = Convert.FromBase64String(CourseOutlineDocument.RowVersion);
+					attachmentService.Update(attachment);
+				}
+			}
+
+			if (trainingProgram.CourseOutlineDocumentId.HasValue && trainingProgram.CourseOutlineDocumentId != CourseOutlineDocument?.Id)
+			{
+				// Remove the prior attachment because it has been replaced.
+				var attachment = attachmentService.Get(trainingProgram.CourseOutlineDocumentId.Value);
+				trainingProgram.CourseOutlineDocumentId = null;
+				attachmentService.Remove(attachment);
+			}
+
+			trainingProgram.CourseOutlineDocumentId = trainingProgram.CourseOutlineDocument?.Id;
 		}
 	}
 }

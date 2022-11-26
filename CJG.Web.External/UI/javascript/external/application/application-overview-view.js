@@ -75,12 +75,14 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
     } else if (type === types.ASSOCIATEDPROVIDER || type === types.PROVIDER) {
       if (!$scope.model.TrainingProvider) {
         return populateTypes.NOTSTART;
-      } else if (($scope.model.TrainingProvider.TrainingProviderType.PrivateSectorValidationType === 1
-        || ($scope.model.TrainingProvider.TrainingProviderType.PrivateSectorValidationType === 2
-          && $scope.model.CheckPrivateSectorsOn && $scope.model.CheckPrivateSectorsOn <= $scope.model.DateSubmitted)
-      ) && ($scope.IsInvalidTrainingProvider($scope.model.TrainingProvider))) {
-        return populateTypes.INCOMPLETE;
-      } else if ($scope.model.TrainingProvider.TrainingProviderState === utils.TrainingProviderStates.Incomplete) {
+      }
+      //} else if (($scope.model.TrainingProvider.TrainingProviderType.PrivateSectorValidationType === 1
+      //  || ($scope.model.TrainingProvider.TrainingProviderType.PrivateSectorValidationType === 2
+      //    && $scope.model.CheckPrivateSectorsOn && $scope.model.CheckPrivateSectorsOn <= $scope.model.DateSubmitted)
+      //) && ($scope.IsInvalidTrainingProvider($scope.model.TrainingProvider))) {
+      //  return populateTypes.INCOMPLETE;
+      else if ($scope.model.TrainingProvider.TrainingProviderState === utils.TrainingProviderStates.Incomplete
+        || $scope.model.TrainingProvider.TrainingProviderType.IsActive === false) {
         return populateTypes.INCOMPLETE;
       }
     } else if (type === types.PROGRAM) {
@@ -228,8 +230,8 @@ app.controller('ApplicationOverviewView', function ($scope, $attrs, $controller,
   }
 
   $scope.IsInvalidTrainingProvider = function(trainingProvider) {
-    let requireCourseOutline = trainingProvider.TrainingProviderType.CourseOutline;
-    let requireProofOfQualificationsDocument = trainingProvider.TrainingProviderType.ProofOfQualificationsDocument;
+    let requireCourseOutline = false; //trainingProvider.TrainingProviderType.CourseOutline;
+    let requireProofOfQualificationsDocument = false;//trainingProvider.TrainingProviderType.ProofOfQualificationsDocument;
     let missingCourseOutline = requireCourseOutline && trainingProvider.CourseOutlineDocument === null;
     let missingProofOfQualifications = requireProofOfQualificationsDocument && trainingProvider.ProofOfQualificationsDocument === null;
 

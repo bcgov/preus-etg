@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 
