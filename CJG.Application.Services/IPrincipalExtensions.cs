@@ -346,7 +346,7 @@ namespace CJG.Application.Services
 						case ApplicationStateInternal.ReturnedUnassessed:
 							return false;
 						default:
-							return user.HasPrivilege(Privilege.AM4);
+							return user.HasPrivilege(Privilege.AM4) || (user.HasPrivilege(Privilege.AM2) && isAssessor);
 					}
 				case (ApplicationWorkflowTrigger.EditApplication): // TODO: This needs to be removed and replaced by the specific workflow triggers.
 					switch (grantApplication.ApplicationStateInternal)
