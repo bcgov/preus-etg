@@ -257,8 +257,20 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
         template: '/content/dialogs/_FullContent.html',
         closeByDocument: true,
         data: {
-          title: 'Business Training Relevance',
+          title: 'Describe how this training is relevant to your business needs',
           content: $scope.extraInfo.BusinessTrainingRelevance
+        }
+      }
+    );
+  }
+
+  $scope.previewParticipantTrainingRelevance = function () {
+    return ngDialog.open({
+        template: '/content/dialogs/_FullContent.html',
+        closeByDocument: true,
+        data: {
+          title: 'Describe how this training is relevant to the available job for the participant(s)',
+          content: $scope.extraInfo.ParticipantTrainingRelevance
         }
       }
     );
@@ -273,9 +285,8 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
     if ($scope.model.CipsCode3Id) return getCaption($scope.programCipsCode3, $scope.model.CipsCode3Id);
     if ($scope.model.CipsCode2Id) return getCaption($scope.programCipsCode2, $scope.model.CipsCode2Id);
     if ($scope.model.CipsCode1Id) return getCaption($scope.CipsCode1, $scope.model.CipsCode1Id);
-  }
-
-
+  };
+  
   /**
    * Find the item in the array and return the caption.
    * @param {Array} items - An array of items.
@@ -402,9 +413,4 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
       })
       .catch(angular.noop);
   }
-
-
-
-
-
 });
