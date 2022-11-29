@@ -145,6 +145,12 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				//model.StartDate = new DateTime(model.StartYear, model.StartMonth, model.StartDay, 0, 0, 0, DateTimeKind.Local).ToUtcMorning();
 				//model.EndDate = new DateTime(model.EndYear, model.EndMonth, model.EndDay, 0, 0, 0, DateTimeKind.Local).ToUtcMidnight();
 
+				var anyFilesUploaded = files != null && files.Length > 0;
+				var existingFileUploaded = model.CourseOutlineDocument.Id > 0;
+
+				if (!existingFileUploaded && !anyFilesUploaded)
+					ModelState.AddModelError("CourseOutlineDocument", "You must provide a course outline document.");
+
 				if (!(new int[] { 5 }.Contains(model.SkillFocusId.GetValueOrDefault())))
 				{
 					ModelState.Remove("InDemandOccupationId");
@@ -210,6 +216,12 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 				ModelState.Clear();
 				TryUpdateModel(model);
+
+				var anyFilesUploaded = files != null && files.Length > 0;
+				var existingFileUploaded = model.CourseOutlineDocument.Id > 0;
+
+				if (!existingFileUploaded && !anyFilesUploaded)
+					ModelState.AddModelError("CourseOutlineDocument", "You must provide a course outline document.");
 
 				if (!(new int[] { 5 }.Contains(model.SkillFocusId.GetValueOrDefault())))
 				{

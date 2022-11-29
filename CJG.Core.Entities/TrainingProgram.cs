@@ -352,9 +352,6 @@ namespace CJG.Core.Entities
 				GrantApplication = context.Set<GrantApplication>().Find(GrantApplicationId);
 			}
 
-			if (isExternalUser && (CourseOutlineDocument == null && CourseOutlineDocumentId == null))
-				yield return new ValidationResult("You must provide a course outline document.", new[] { nameof(CourseOutlineDocument) });
-
 			var deliveryMethods = context.Set<TrainingProgram>().Include(m => m.DeliveryMethods).FirstOrDefault(o => o.Id == Id);
 			// Must have DeliveryMethods.
 			if (!DeliveryMethods.Any())

@@ -250,11 +250,11 @@
         </div>
 
         <div class="form__group">
-            <div class="form__label">Non-BC Training Location Rationale:</div>
+            <div class="form__label">Out of province rationale:</div>
             <div class="form__control">
                 <div class="control-wrapper">
-                    <span ng-show="!section.editing" style="white-space: pre-wrap;" ng-bind-html="model.OutOfProvinceLocationRationale"></span>
-                    <textarea ng-show="section.editing" ng-model="model.OutOfProvinceLocationRationale" class="input--full textarea--short" ng-validation></textarea>
+                    <span ng-show="true" style="white-space: pre-wrap;" ng-bind-html="model.OutOfProvinceLocationRationale"></span>
+                    @*<textarea ng-show="section.editing" ng-model="model.OutOfProvinceLocationRationale" class="input--full textarea--short" ng-validation ng-editing="false"></textarea>*@
                 </div>
             </div>
         </div>
