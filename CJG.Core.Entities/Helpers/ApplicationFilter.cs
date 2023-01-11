@@ -15,6 +15,7 @@ namespace CJG.Core.Entities.Helpers
 		public string FileNumber { get; }
 		public string Applicant { get; }
 		public string[] OrderBy { get; }
+		public bool OnlyShowPriorityRegionExceptions { get; }
 
 		public StateFilter<ApplicationStateInternal>[] States { get; }
 
@@ -30,9 +31,10 @@ namespace CJG.Core.Entities.Helpers
 			IsAssigned = null;
 			FileNumber = null;
 			Applicant = null;
+			OnlyShowPriorityRegionExceptions = false;
 		}
 
-		public ApplicationFilter(StateFilter<ApplicationStateInternal>[] states, int? assessorId, int? fiscalYearId, string trainingPeriodCaption, int? grantProgramId, int? grantStreamId, string[] orderBy = null)
+		public ApplicationFilter(StateFilter<ApplicationStateInternal>[] states, int? assessorId, int? fiscalYearId, string trainingPeriodCaption, int? grantProgramId, int? grantStreamId, bool onlyShowPriorityRegionExceptions = false,string[] orderBy = null)
 		{
 			States = states;
 			AssessorId = assessorId;
@@ -44,6 +46,7 @@ namespace CJG.Core.Entities.Helpers
 			IsAssigned = null;
 			FileNumber = null;
 			Applicant = null;
+			OnlyShowPriorityRegionExceptions = onlyShowPriorityRegionExceptions;
 		}
 
 		public ApplicationFilter(StateFilter<ApplicationStateInternal>[] states, string fileNumber, string applicant, int? assessorId, int? fiscalYearId, string trainingPeriodCaption, int? grantProgramId, int? grantStreamId, bool? isAssigned, string[] orderBy = null)
@@ -58,6 +61,7 @@ namespace CJG.Core.Entities.Helpers
 			IsAssigned = isAssigned;
 			FileNumber = fileNumber;
 			Applicant = applicant;
+			OnlyShowPriorityRegionExceptions = false;
 		}
 	}
 }

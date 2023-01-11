@@ -476,7 +476,7 @@ namespace CJG.Core.Entities
 		public int CompletionReportId { get; set; }
 
 		/// <summary>
-		/// get/set - The applicantion completion report.
+		/// get/set - The application completion report.
 		/// </summary>
 		[ForeignKey(nameof(CompletionReportId))]
 		public virtual CompletionReport CompletionReport { get; set; }
@@ -572,13 +572,19 @@ namespace CJG.Core.Entities
 		public virtual ICollection<DenialReason> GrantApplicationDenialReasons { get; set; } = new List<DenialReason>();
 
 		/// <summary>
+		/// A summary field of the Priority Queue score. A breakdown of this score is kept in Pr
+		/// </summary>
+		public int PrioritizationScore { get; set; }
+
+		public virtual PrioritizationScoreBreakdown PrioritizationScoreBreakdown { get; set; }
+
+		/// <summary>
 		/// get/set - Does the GrantApplication require all of the participants to be entered before allowing submission
 		/// this property is inherited from the parent (GrantStream) so as to capture the state of the property when the app was created
 		/// </summary>
 		[Required]
 		[DefaultValue(false)]
 		public bool RequireAllParticipantsBeforeSubmission { get; set; }
-
 		#endregion
 
 		#region Constructors

@@ -22,11 +22,13 @@ namespace CJG.Application.Services
 		private readonly IUserService _userService;
 		private readonly INotificationService _notificationService;
 		private readonly IGrantOpeningService _grantOpeningService;
+		private readonly IPrioritizationService _prioritizationService;
 		private readonly INoteService _noteService;
 		private readonly IFiscalYearService _fiscalYearService;
 		#endregion
 
 		#region Constructors
+
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="ClaimService"/> and initializes the specified properties.
 		/// </summary>
@@ -35,6 +37,7 @@ namespace CJG.Application.Services
 		/// <param name="grantOpeningService"></param>
 		/// <param name="noteService"></param>
 		/// <param name="grantAgreementService"></param>
+		/// <param name="prioritizationService"></param>
 		/// <param name="fiscalYearService"></param>
 		/// <param name="context"></param>
 		/// <param name="httpContext"></param>
@@ -45,6 +48,7 @@ namespace CJG.Application.Services
 			IGrantOpeningService grantOpeningService,
 			INoteService noteService,
 			IGrantAgreementService grantAgreementService,
+			IPrioritizationService prioritizationService,
 			IFiscalYearService fiscalYearService,
 			IDataContext context,
 			HttpContextBase httpContext,
@@ -53,6 +57,7 @@ namespace CJG.Application.Services
 			_userService = userService;
 			_notificationService = notificationService;
 			_grantOpeningService = grantOpeningService;
+			_prioritizationService = prioritizationService;
 			_noteService = noteService;
 			_grantAgreementService = grantAgreementService;
 			_fiscalYearService = fiscalYearService;
@@ -1162,6 +1167,7 @@ namespace CJG.Application.Services
 													   _notificationService, 
 													   _grantAgreementService, 
 													   _grantOpeningService,
+													   _prioritizationService,
 													   _noteService,
 													   _userService,
 													   _httpContext,

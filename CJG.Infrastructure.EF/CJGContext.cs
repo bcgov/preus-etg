@@ -200,6 +200,9 @@ namespace CJG.Infrastructure.EF
 		public virtual DbSet<ApplicationClaim> ApplicationClaims { get; set; }
 		public virtual DbSet<ApplicationRole> ApplicationRoles { get; set; }
 		public virtual DbSet<RateFormat> RateFormats { get; set; }
+		public virtual DbSet<PrioritizationThreshold> PrioritizationThresholds { get; set; }
+		public virtual DbSet<PrioritizationIndustryScore> PrioritizationIndustryScores { get; set; }
+		public virtual DbSet<PrioritizationRegion> PrioritizationRegions { get; set; }
 		#endregion
 
 		#region Completion Report
@@ -436,6 +439,24 @@ namespace CJG.Infrastructure.EF
 				.HasOptional(ga => ga.Assessor)
 				.WithMany(ui => ui.AssessorApplications)
 				.Map(m => m.MapKey("AssessorId"));
+
+			modelBuilder.Entity<PrioritizationScoreBreakdown>()
+				.HasMany(bd => bd.EligibilityAnswerScores)
+				.WithRequired()
+				.Map(x => x.MapKey("PrioritizationScoreBreakdownId"))
+				.WillCascadeOnDelete(false);
+
+			modelBuilder.Entity<PrioritizationScoreBreakdownAnswer>()
+				.HasRequired(bd => bd.QuestionedAnswered)
+				.WithMany()
+				.Map(x => x.MapKey("GrantStreamEligibilityQuestionId"))
+				.WillCascadeOnDelete(false);
+
+			modelBuilder.Entity<GrantApplication>()
+				.HasOptional(ga => ga.PrioritizationScoreBreakdown)
+				.WithMany()
+				.Map(x => x.MapKey("PrioritizationScoreBreakdownId"))
+				.WillCascadeOnDelete(false);
 
 			modelBuilder.Entity<ApplicationAddress>()
 				.HasRequired(aa => aa.Region)

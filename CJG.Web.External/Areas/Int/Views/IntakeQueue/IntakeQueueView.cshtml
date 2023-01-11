@@ -74,6 +74,9 @@
 					<div class="form-table-cell">
 						<label class="action {{sortDirection('StartDate')}}" ng-click="sort('StartDate')">Training Start</label>
 					</div>
+					<div class="form-table-cell width-125px">
+						<label class="action {{sortDirection('PrioritizationScore')}}" ng-click="sort('PrioritizationScore')">Priority Score</label>
+					</div>
 					<div class="form-table-cell">
 						<label class="action {{sortDirection('ApplicationStateInternal')}}" ng-click="sort('ApplicationStateInternal')">Status</label>
 					</div>
@@ -93,6 +96,9 @@
 					</div>
 					<div class="form-table-cell">
 						{{toPST(application.StartDate)}}
+					</div>
+					<div class="form-table-cell width-125px text-center">
+						{{application.PrioritizationScore}}
 					</div>
 					<div class="form-table-cell">
 						{{application.ApplicationStateInternalCaption}}

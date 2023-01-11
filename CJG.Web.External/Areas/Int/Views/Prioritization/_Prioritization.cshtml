@@ -1,0 +1,69 @@
+﻿@using CJG.Core.Entities
+<div ng-controller="Prioritization">
+    <span class="panel-section-item">
+        <span class="panel-section-title" ng-click="toggle($event)">Prioritization</span>
+        <span class="panel-section-buttons">
+            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            <span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+        </span>
+    </span>
+    <div class="panel-section-content" ng-if="section.show">
+        <div class="form form--2-col">
+            <div class="col-50p">
+                <div class="form__group" style="padding-bottom: 0">
+                    <div class="form__label">Industry:</div>
+                    <div class="form__control">
+                        {{model.IndustryName}} ({{ model.IndustryCode }})
+                    </div>
+                </div>
+                <div class="form__group" style="padding-top: 0">
+                    <div class="form__label">Industry Priority:</div>
+                    <div class="form__control">
+                        {{model.IndustryScore}} points
+                    </div>
+                </div>
+                <div class="form__group" style="padding-bottom: 0">
+                    <div class="form__label">Region:</div>
+                    <div class="form__control">
+                        {{model.RegionalName}}
+                    </div>
+                </div>
+                <div class="form__group" style="padding-top: 0">
+                    <div class="form__label">Regional Priority:</div>
+                    <div class="form__control">
+                        {{model.RegionalScore}} points
+                    </div>
+                </div>
+                
+                <div class="form__group">
+                    <div class="form__label">Small Business:</div>
+                    <div class="form__control">
+                        {{model.SmallBusinessScore}} points
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">First time application:</div>
+                    <div class="form__control">
+                        {{model.FirstTimeApplicantScore}} points
+                    </div>
+                </div>
+            </div>
+            <div class="col-50p">
+                <div class="form__group" ng-repeat="question in model.QuestionScores">
+                    <div class="form__label" ng-bind-html="question.Item1"></div>
+                    <div class="form__control">
+                        {{question.Item2}} points
+                    </div>
+                </div>
+                
+                <div class="form__group">
+                    <div class="form__label">Total Score:</div>
+                    <div class="form__control">
+                        {{model.TotalScore}} points
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

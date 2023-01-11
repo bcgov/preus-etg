@@ -99,6 +99,7 @@
     <Compile Include="Service\IParticipantEmploymentStatusService.cs" />
     <Compile Include="Service\IPaymentReconciliationService.cs" />
     <Compile Include="Service\IDeliveryPartnerService.cs" />
+    <Compile Include="Service\IPrioritizationService.cs" />
     <Compile Include="Service\IProgramNotificationService.cs" />
     <Compile Include="Service\INotificationTypeService .cs" />
     <Compile Include="Service\IProgramConfigurationService.cs" />

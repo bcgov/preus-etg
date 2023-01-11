@@ -22,7 +22,7 @@ namespace CJG.Web.External.Areas.Int.Models.IntakeQueue
 				new StateFilter<ApplicationStateInternal>(ApplicationStateInternal.PendingAssessment)
 			};
 
-			return new ApplicationFilter(states, AssessorId, FiscalYearId, TrainingPeriodCaption, GrantProgramId, GrantStreamId, OrderBy);
+			return new ApplicationFilter(states, AssessorId, FiscalYearId, TrainingPeriodCaption, GrantProgramId, GrantStreamId, orderBy: OrderBy);
 		}
 	}
 }

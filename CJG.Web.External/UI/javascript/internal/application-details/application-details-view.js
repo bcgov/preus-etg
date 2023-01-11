@@ -1,6 +1,7 @@
 var utils = require('../../shared/utils.js');
 require('../training-provider');
 require('./application-details-summary');
+require('./application-details-prioritization');
 require('./application-details-applicant-contact');
 require('./application-details-applicant');
 require('./application-details-program-description');

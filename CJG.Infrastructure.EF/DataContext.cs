@@ -171,6 +171,9 @@ namespace CJG.Infrastructure.EF
 		public DbSet<TempData> TempData => _context.TempData;
 		public DbSet<Setting> Settings => _context.Settings;
 		public DbSet<RateFormat> RateFormats => _context.RateFormats;
+		public DbSet<PrioritizationThreshold> PrioritizationThresholds => _context.PrioritizationThresholds;
+		public DbSet<PrioritizationIndustryScore> PrioritizationIndustryScores => _context.PrioritizationIndustryScores;
+		public DbSet<PrioritizationRegion> PrioritizationRegions => _context.PrioritizationRegions;
 		#endregion
 
 		#region Completion Report

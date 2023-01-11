@@ -1,12 +1,11 @@
-﻿using CJG.Core.Entities;
+﻿using System;
+using CJG.Core.Entities;
 using CJG.Web.External.Models.Shared;
-using System;
 
 namespace CJG.Web.External.Areas.Int.Models.IntakeQueue
 {
 	public class GrantApplicationViewModel : BaseViewModel
 	{
-		#region Properties
 		public string RowVersion { get; set; }
 		public string FileNumber { get; set; }
 		public int? AssessorId { get; set; }
@@ -14,27 +13,27 @@ namespace CJG.Web.External.Areas.Int.Models.IntakeQueue
 		public string Applicant { get; set; }
 		public DateTime DateSubmitted { get; set; }
 		public DateTime StartDate { get; set; }
+		public int PrioritizationScore { get; set; }
 		public ApplicationStateInternal ApplicationStateInternal { get; set; }
-		public string ApplicationStateInternalCaption { get { return this.ApplicationStateInternal.GetDescription(); } }
-		#endregion
+		public string ApplicationStateInternalCaption => ApplicationStateInternal.GetDescription();
 
-		#region Constructors
 		public GrantApplicationViewModel() { }
 
 		public GrantApplicationViewModel(GrantApplication grantApplication)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
 
-			this.Id = grantApplication.Id;
-			this.RowVersion = Convert.ToBase64String(grantApplication.RowVersion);
-			this.FileNumber = grantApplication.FileNumber;
-			this.AssessorId = grantApplication.AssessorId;
-			this.Assessor = $"{grantApplication.Assessor?.FirstName} {grantApplication.Assessor?.LastName}";
-			this.Applicant = grantApplication.OrganizationLegalName;
-			this.DateSubmitted = grantApplication.DateSubmitted.Value;
-			this.StartDate = grantApplication.StartDate;
-			this.ApplicationStateInternal = grantApplication.ApplicationStateInternal;
+			Id = grantApplication.Id;
+			RowVersion = Convert.ToBase64String(grantApplication.RowVersion);
+			FileNumber = grantApplication.FileNumber;
+			AssessorId = grantApplication.AssessorId;
+			Assessor = $"{grantApplication.Assessor?.FirstName} {grantApplication.Assessor?.LastName}";
+			Applicant = grantApplication.OrganizationLegalName;
+			DateSubmitted = grantApplication.DateSubmitted.Value;
+			StartDate = grantApplication.StartDate;
+			PrioritizationScore = grantApplication.PrioritizationScore;
+			ApplicationStateInternal = grantApplication.ApplicationStateInternal;
 		}
-		#endregion
 	}
 }

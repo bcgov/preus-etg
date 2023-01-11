@@ -500,6 +500,7 @@
     <Content Include="UI\javascript\external\user-profile\user-profile-confirm-details-view.js" />
     <Content Include="UI\javascript\external\user-profile\user-profile-create-view.js" />
     <Content Include="UI\javascript\external\user-profile\user-profile-update-view.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-prioritization.js" />
     <Content Include="UI\javascript\internal\application-details\application-details-notifications.js" />
     <Content Include="UI\javascript\internal\application-details\index.js" />
     <Content Include="UI\javascript\internal\application-notes\index.js" />
@@ -521,6 +522,8 @@
     <Content Include="UI\javascript\internal\intake-periods\intake-period-view.js" />
     <Content Include="UI\javascript\internal\intake-periods\index.js" />
     <Content Include="UI\javascript\internal\intake-periods\intake-periods-view.js" />
+    <Content Include="UI\javascript\internal\regional-exceptions\index.js" />
+    <Content Include="UI\javascript\internal\regional-exceptions\regional-exceptions.js" />
     <Content Include="UI\javascript\internal\intake-queue\index.js" />
     <Content Include="UI\javascript\internal\notification\index.js" />
     <Content Include="UI\javascript\internal\notification\notification-type-preview.js" />
@@ -532,6 +535,8 @@
     <Content Include="UI\javascript\internal\participant\index.js" />
     <Content Include="UI\javascript\internal\participant\participant-history.js" />
     <Content Include="UI\javascript\internal\payment-request\index.js" />
+    <Content Include="UI\javascript\internal\prioritization\index.js" />
+    <Content Include="UI\javascript\internal\prioritization\prioritization-management.js" />
     <Content Include="UI\javascript\internal\program-notification\index.js" />
     <Content Include="UI\javascript\internal\program-notification\program-notification-modal.js" />
     <Content Include="UI\javascript\internal\program-notification\program-notifications-view.js" />
@@ -861,6 +866,10 @@
     <Content Include="Areas\Ext\Views\ApplicationReview\_ParticipantList.cshtml" />
     <Content Include="Areas\Ext\Views\ApplicationView\_ParticipantList.cshtml" />
     <Content Include="Areas\Int\Views\Participant\ParticipantHistory.cshtml" />
+    <Content Include="Areas\Int\Views\Prioritization\_Prioritization.cshtml" />
+    <Content Include="Areas\Int\Views\Prioritization\Thresholds.cshtml" />
+    <Content Include="Areas\Int\Views\RegionalException\RegionalExceptionsView.cshtml" />
+    <Content Include="Areas\Int\Views\RegionalException\SelectRegionView.cshtml" />
     <None Include="NLog.Training.config">
       <DependentUpon>NLog.config</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1183,8 +1192,10 @@
     <Compile Include="Areas\Int\Controllers\ClaimAssessmentController.cs" />
     <Compile Include="Areas\Int\Controllers\GrantAgreementController.cs" />
     <Compile Include="Areas\Int\Controllers\IntakePeriodsController.cs" />
+    <Compile Include="Areas\Int\Controllers\RegionalExceptionController.cs" />
     <Compile Include="Areas\Int\Controllers\OrganizationController.cs" />
     <Compile Include="Areas\Int\Controllers\OrganizationHistoryController.cs" />
+    <Compile Include="Areas\Int\Controllers\PrioritizationController.cs" />
     <Compile Include="Areas\Int\Controllers\ProgramNotificationController.cs" />
     <Compile Include="Areas\Int\Controllers\OrganizationProfileController.cs" />
     <Compile Include="Areas\Int\Controllers\DirectorDashboardController.cs" />
@@ -1230,6 +1241,7 @@
     <Compile Include="Areas\Ext\Models\Services\EmploymentServiceViewModel.cs" />
     <Compile Include="Areas\Ext\Models\ProgramDescriptions\ProgramDescriptionExtViewModel.cs" />
     <Compile Include="Areas\Ext\Models\Reports\CompletionReportViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ApplicationPrioritizationInfoViewModel.cs" />
     <Compile Include="Areas\Int\Models\Applications\ApplicationBusinessViewModel.cs" />
     <Compile Include="Areas\Int\Models\Applications\InternalStateListViewModel.cs" />
     <Compile Include="Areas\Int\Models\Admin\UserRoleViewModel.cs" />
@@ -1311,6 +1323,9 @@
     <Compile Include="Areas\Int\Models\Organizations\OrganizationListViewModel.cs" />
     <Compile Include="Areas\Int\Models\Organizations\OrganizationsViewModel.cs" />
     <Compile Include="Areas\Int\Models\ParticipantTrainingHistory.cs" />
+    <Compile Include="Areas\Int\Models\Prioritization\GrantApplicationViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Prioritization\PrioritizationFilterViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Prioritization\PrioritizationThresholdsViewModel.cs" />
     <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationPreviewModel.cs" />
     <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationListViewModel.cs" />
     <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationRecipientViewModel.cs" />

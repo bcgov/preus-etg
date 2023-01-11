@@ -21,6 +21,7 @@
         </li>
         if (ia1)
         {
+            <li>@Html.ActionLink("RD Exceptions", nameof(RegionalExceptionController.RegionalExceptionsView), typeof(RegionalExceptionController), new { Area = "Int" })</li>
             <li>@Html.ActionLink("Intake", nameof(IntakeQueueController.IntakeQueueView), typeof(IntakeQueueController), new { Area = "Int" })</li>
             <li>@Html.ActionLink("Grant Files", nameof(WorkQueueController.WorkQueueView), typeof(WorkQueueController), new { Area = "Int" })</li>
             <li>@Html.ActionLink("Organizations", nameof(OrganizationController.OrganizationsView), typeof(OrganizationController), new { Area = "Int" })</li>
@@ -71,6 +72,10 @@
                             <li>@Html.ActionLink("Notification Types", nameof(NotificationController.NotificationTypesView), typeof(NotificationController), new { Area = "Int" })</li>
                             <li>@Html.ActionLink("Program Notifications", nameof(ProgramNotificationController.ProgramNotificationsView), typeof(ProgramNotificationController), new { Area = "Int" })</li>
                         }
+                    }
+                    @if (dir || sym)
+                    {
+                        <li>@Html.ActionLink("Prioritization", nameof(PrioritizationController.PrioritizationView), typeof(PrioritizationController), new { Area = "Int" })</li>
                     }
                     @if (pm1)
                     {

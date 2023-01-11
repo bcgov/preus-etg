@@ -163,6 +163,9 @@ namespace CJG.Infrastructure.Entities
 		DbSet<TempData> TempData { get; }
 		DbSet<Setting> Settings { get; }
 		DbSet<RateFormat> RateFormats { get; }
+		DbSet<PrioritizationThreshold> PrioritizationThresholds { get; }
+		DbSet<PrioritizationIndustryScore> PrioritizationIndustryScores { get; }
+		DbSet<PrioritizationRegion> PrioritizationRegions { get; }
 		#endregion
 
 		#region Completion Report
