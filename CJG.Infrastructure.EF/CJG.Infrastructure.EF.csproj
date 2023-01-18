@@ -388,6 +388,10 @@
     <Compile Include="Migrations\202301132342472_v02.08.00.Designer.cs">
       <DependentUpon>202301132342472_v02.08.00.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202301182004002_v02.08.01.cs" />
+    <Compile Include="Migrations\202301182004002_v02.08.01.Designer.cs">
+      <DependentUpon>202301182004002_v02.08.01.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Content Include="Migrations\v02.02.03\PostDeploy\Seed\03 GrantOpenings.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -880,6 +884,12 @@
     <Content Include="Migrations\v02.02.03\PostDeploy\Seed\01 AddQuestions.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Migrations\v02.08.01\PostDeploy\Seed\02_AddIndustries.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v02.08.01\PostDeploy\Seed\01_AddRegionsAndPostalCodes.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Migrations\v02.08.00\PostDeploy\Seed\01_AddThresholds.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1199,6 +1209,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202301132342472_v02.08.00.resx">
       <DependentUpon>202301132342472_v02.08.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202301182004002_v02.08.01.resx">
+      <DependentUpon>202301182004002_v02.08.01.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -398,7 +398,10 @@ namespace CJG.Application.Services
 					_grantApplication.ApplicationStateExternal = ApplicationStateExternal.Submitted;
 					_grantApplication.DateSubmitted = AppDateTime.UtcNow;
 					_grantApplication.TrainingCost.CopyEstimatedIntoAgreed();
-					_grantApplication.PrioritizationScoreBreakdown = _prioritizationService.GetBreakdown(_grantApplication);
+
+					var breakdown = _prioritizationService.GetBreakdown(_grantApplication);
+					_grantApplication.PrioritizationScoreBreakdown = breakdown;
+					_grantApplication.PrioritizationScore = breakdown.GetTotalScore();
 
 					LogStateChanges();
 

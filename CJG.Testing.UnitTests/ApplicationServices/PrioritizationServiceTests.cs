@@ -16,6 +16,8 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 		private PrioritizationService _service;
 		private GrantApplication _grantApplication;
 		private ServiceHelper _helper;
+		private static PrioritizationRegion _regionInDemand;
+		private static PrioritizationRegion _regionNoDemand;
 
 		[TestInitialize]
 		public void Setup()
@@ -35,6 +37,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 
 			_helper.MockDbSet(GetPrioritizationIndustryScores());
 			_helper.MockDbSet(GetPrioritizationRegions());
+			_helper.MockDbSet(GetPrioritizationPostalCodes());
 			_helper.MockDbSet(applicationAdministrator);
 			_helper.MockDbSet(user);
 			_helper.MockDbSet(threshold);
@@ -59,13 +62,13 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 
 		private static List<PrioritizationRegion> GetPrioritizationRegions()
 		{
-			var regionInDemand = new PrioritizationRegion
+			_regionInDemand = new PrioritizationRegion
 			{
 				Id = 12,
 				Name = "In-Demand Region",
 				RegionalScore = 3.8m
 			};
-			var regionNoDemand = new PrioritizationRegion
+			_regionNoDemand = new PrioritizationRegion
 			{
 				Id = 24,
 				Name = "No Demand Region",
@@ -74,8 +77,32 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 
 			return new List<PrioritizationRegion>
 			{
-				regionInDemand,
-				regionNoDemand
+				_regionInDemand,
+				_regionNoDemand
+			};
+		}
+
+		private static List<PrioritizationPostalCode> GetPrioritizationPostalCodes()
+		{
+			var postal1 = new PrioritizationPostalCode
+			{
+				Id = 15,
+				Region = _regionInDemand,
+				RegionId = _regionInDemand.Id,
+				PostalCode = "V8T4G2"
+			};
+			var postal2 = new PrioritizationPostalCode
+			{
+				Id = 16,
+				Region = _regionNoDemand,
+				RegionId = _regionNoDemand.Id,
+				PostalCode = "V912A3"
+			};
+
+			return new List<PrioritizationPostalCode>
+			{
+				postal1,
+				postal2
 			};
 		}
 
@@ -296,6 +323,15 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 		public void GetBreakdown_SetsRegion_HighNeed_On()
 		{
 			_grantApplication.ApplicantPhysicalAddress.PostalCode = "V8T4G2";
+			var result = _service.GetBreakdown(_grantApplication);
+
+			Assert.AreEqual(1, result.RegionalScore);
+		}
+
+		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Regional Score")]
+		public void GetBreakdown_SetsRegion_WithCasesAndSpaces()
+		{
+			_grantApplication.ApplicantPhysicalAddress.PostalCode = "v8t 4g2";
 			var result = _service.GetBreakdown(_grantApplication);
 
 			Assert.AreEqual(1, result.RegionalScore);
