@@ -131,6 +131,8 @@ namespace CJG.Infrastructure.EF
 		public virtual DbSet<EligibleCost> EligibleCosts { get; set; }
 		public virtual DbSet<EligibleCostBreakdown> EligibleCostBreakdowns { get; set; }
 		public virtual DbSet<DenialReason> DenialReasons { get; set; }
+		public virtual DbSet<PrioritizationScoreBreakdown> PrioritizationScoreBreakdowns { get; set; }
+		public virtual DbSet<PrioritizationScoreBreakdownAnswer> PrioritizationScoreBreakdownAnswers { get; set; }
 		#endregion
 
 		#region Grant Program
@@ -203,6 +205,7 @@ namespace CJG.Infrastructure.EF
 		public virtual DbSet<PrioritizationThreshold> PrioritizationThresholds { get; set; }
 		public virtual DbSet<PrioritizationIndustryScore> PrioritizationIndustryScores { get; set; }
 		public virtual DbSet<PrioritizationRegion> PrioritizationRegions { get; set; }
+		public virtual DbSet<PrioritizationPostalCode> PrioritizationPostalCodes { get; set; }
 		#endregion
 
 		#region Completion Report

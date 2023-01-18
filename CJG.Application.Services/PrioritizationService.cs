@@ -69,19 +69,22 @@ namespace CJG.Application.Services
 			var smallBusinessScore = grantApplication.OrganizationNumberOfEmployeesInBC <= threshold.EmployeeCountThreshold ? 1 : 0;
 			var firstTimeApplicantScore = GetFirstTimeApplicantScore(grantApplication);
 
-			var breakdown = new PrioritizationScoreBreakdown
-			{
-				RegionalScore = regionalResult.Score,
-				RegionalName = regionalResult.Name,
+			var breakdown = grantApplication.PrioritizationScoreBreakdown ?? new PrioritizationScoreBreakdown();
 
-				IndustryScore = industryResult.Score,
-				IndustryName = industryResult.Name,
-				IndustryCode = industryResult.Code,
+			breakdown.RegionalScore = regionalResult.Score;
+			breakdown.RegionalName = regionalResult.Name;
 
-				SmallBusinessScore = smallBusinessScore,
-				FirstTimeApplicantScore = firstTimeApplicantScore,
-				EligibilityAnswerScores = GetEligibilityQuestionAnswers(grantApplication)
-			};
+			breakdown.IndustryScore = industryResult.Score;
+			breakdown.IndustryName = industryResult.Name;
+			breakdown.IndustryCode = industryResult.Code;
+
+			breakdown.SmallBusinessScore = smallBusinessScore;
+			breakdown.FirstTimeApplicantScore = firstTimeApplicantScore;
+
+			foreach (var answer in breakdown.EligibilityAnswerScores.ToList())
+				_dbContext.PrioritizationScoreBreakdownAnswers.Remove(answer);
+
+			breakdown.EligibilityAnswerScores = GetEligibilityQuestionAnswers(grantApplication);
 
 			return breakdown;
 		}
@@ -114,24 +117,30 @@ namespace CJG.Application.Services
 			};
 		}
 
-		// TODO: Replace this with real PostalCode lookup code - this is placeholder
 		private PrioritizationRegion GetPriorityRegion(string postalCode)
 		{
-			var regionsPlaceHolder = _dbContext.PrioritizationRegions
-				.OrderByDescending(r => r.RegionalScore)
-				.ToList();
+			if (string.IsNullOrWhiteSpace(postalCode) || postalCode.Length < 6 || postalCode.Length > 7) // Have to allow for "X0X X0X"
+				return new PrioritizationRegion
+				{
+					Name = string.Empty,
+					RegionalScore = 0
+				};
 
-			// Simulate the test region as being the most important - can't stay for production code
-			if (postalCode == "V8T4G2")
-				return regionsPlaceHolder.First();
+			var postalCodeLookup = postalCode.ToUpper().Replace(" ", string.Empty);
+			var postalCodeFound = _dbContext.PrioritizationPostalCodes
+				.FirstOrDefault(a => a.PostalCode == postalCodeLookup);
 
-			if (postalCode == "V91 2A3")
-				return regionsPlaceHolder.Last();
+			if (postalCodeFound?.Region == null)
+				return new PrioritizationRegion
+				{
+					Name = string.Empty,
+					RegionalScore = 0
+				};
 
 			return new PrioritizationRegion
 			{
-				Name = string.Empty,
-				RegionalScore = 0
+				Name = postalCodeFound.Region.Name,
+				RegionalScore = postalCodeFound.Region.RegionalScore
 			};
 		}
 

@@ -120,6 +120,9 @@ namespace CJG.Infrastructure.EF
 		public DbSet<EligibleExpenseType> EligibleExpenseTypes => _context.EligibleExpenseTypes;
 		public DbSet<EligibleExpenseBreakdown> EligibleExpenseBreakdowns => _context.EligibleExpenseBreakdowns;
 		public DbSet<DenialReason> DenialReasons => _context.DenialReasons;
+		public DbSet<PrioritizationScoreBreakdown> PrioritizationScoreBreakdowns => _context.PrioritizationScoreBreakdowns;
+		public DbSet<PrioritizationScoreBreakdownAnswer> PrioritizationScoreBreakdownAnswers => _context.PrioritizationScoreBreakdownAnswers;
+
 		#endregion
 
 		#region Training Providers
@@ -174,6 +177,7 @@ namespace CJG.Infrastructure.EF
 		public DbSet<PrioritizationThreshold> PrioritizationThresholds => _context.PrioritizationThresholds;
 		public DbSet<PrioritizationIndustryScore> PrioritizationIndustryScores => _context.PrioritizationIndustryScores;
 		public DbSet<PrioritizationRegion> PrioritizationRegions => _context.PrioritizationRegions;
+		public DbSet<PrioritizationPostalCode> PrioritizationPostalCodes => _context.PrioritizationPostalCodes;
 		#endregion
 
 		#region Completion Report

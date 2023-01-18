@@ -91,37 +91,7 @@ namespace CJG.Infrastructure.EF.Migrations
             AddForeignKey("dbo.GrantApplications", "PrioritizationScoreBreakdownId", "dbo.PrioritizationScoreBreakdowns", "Id");
 
             PostDeployment();
-
-            // Temporary Data Insert till we have the proper import data
-            Sql(@"INSERT INTO PrioritizationIndustryScores (NaicsCode, IndustryScore, Name, DateAdded)
-			SELECT Code, ABS(CHECKSUM(NEWID()) % 4) + 1 AS IndustryScore, Description, DateAdded
-			FROM NaIndustryClassificationSystems
-			WHERE [level] IN (1, 2, 3)
-			AND NAICSVersion = 2017
-			ORDER BY Code");
-
-            var regionSql = @"INSERT INTO PrioritizationRegions (Name, RegionalScore, DateAdded)
-  VALUES 
-  ('East Kootenays', 1.666667, GETDATE()),
-  ('Central Kootenay', 2.6666, GETDATE()),
-  ('Kootenay Boundary', 3.0, GETDATE()),
-  ('Okanagan-Similkameen', 2.3333, GETDATE()),
-  ('Fraser Valley', 2.5, GETDATE()),
-  ('Greater Vancouver', 1.8333, GETDATE()),
-  ('Capital', 1.8333, GETDATE()),
-  ('Cowichan Valley', 2.5, GETDATE()),
-  ('Nanaimo', 3.0, GETDATE()),
-  ('Alberni-Clayoquot', 3.166667, GETDATE()),
-  ('Strathcona', 2.66666, GETDATE()),
-  ('Comox Valley', 2.166666, GETDATE()),
-  ('Powell River', 3.66667, GETDATE()),
-  ('Sunshine Coast', 2.66666, GETDATE()),
-  ('Squamish-Lillooet', 1.3333, GETDATE()),
-  ('Thompson-Nicola', 2.3333, GETDATE())";
-
-			// Temporary Data Insert till we have the proper import data
-			Sql(regionSql);
-		}
+        }
         
         public override void Down()
         {

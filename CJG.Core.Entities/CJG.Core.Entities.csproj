@@ -131,6 +131,7 @@
     <Compile Include="Helpers\NotificationFilter.cs" />
     <Compile Include="PaymentRequestExtensions.cs" />
     <Compile Include="PrioritizationIndustryScore.cs" />
+    <Compile Include="PrioritizationPostalCode.cs" />
     <Compile Include="PrioritizationRegion.cs" />
     <Compile Include="PrioritizationScoreBreakdown.cs" />
     <Compile Include="PrioritizationScoreBreakdownAnswer.cs" />
