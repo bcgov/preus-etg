@@ -489,3 +489,11 @@ $int-header-height: 32px;
 .action {
   cursor: pointer;
 }
+
+ul.two-col-list {
+  column-count: 2;
+
+  li {
+    margin-bottom: 5px;
+  }
+}

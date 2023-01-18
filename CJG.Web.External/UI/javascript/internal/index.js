@@ -45,16 +45,22 @@ require('./intake-periods');
 // Work Queue
 require('./work-queue');
 
+// Regional Exceptions
+require('./regional-exceptions');
+
 // User Management
 require('./user');
 
 // Community Management
 require('./community');
 
+// Prioritization Management
+require('./prioritization');
+
 // Payment Requests
 require('./payment-request');
 
-// Payment Reconcilation
+// Payment Reconciliation
 require('./reconciliation');
 
 // Claim Management Dashboard
@@ -75,8 +81,9 @@ require('./participant');
 // Training Provider Inventory
 require('./training-provider-inventory');
 
+// Change Requests
+require('./change-request');
+
 // Debug
 require('./debug');
 
-// Change Requests
-require('./change-request');

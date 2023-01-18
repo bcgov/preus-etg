@@ -25,6 +25,7 @@ namespace CJG.Application.Services
 		private readonly ISiteMinderService _siteMinderService;
 		private readonly IUserService _userService;
 		private readonly IGrantOpeningService _grantOpeningService;
+		private readonly IPrioritizationService _prioritizationService;
 		private readonly IGrantAgreementService _grantAgreementService;
 		private readonly INoteService _noteService;
 		private readonly IGrantStreamService _grantStreamService;
@@ -39,6 +40,7 @@ namespace CJG.Application.Services
 		/// <param name="grantStreamService"></param>
 		/// <param name="grantAgreementService"></param>
 		/// <param name="grantOpeningService"></param>
+		/// <param name="prioritizationService"></param>
 		/// <param name="noteService"></param>
 		/// <param name="userManager"></param>
 		/// <param name="dbContext"></param>
@@ -51,6 +53,7 @@ namespace CJG.Application.Services
 			IGrantStreamService grantStreamService,
 			IGrantAgreementService grantAgreementService,
 			IGrantOpeningService grantOpeningService,
+			IPrioritizationService prioritizationService,
 			INoteService noteService,
 			IUserManagerAdapter userManager,
 			IDataContext dbContext,
@@ -63,6 +66,7 @@ namespace CJG.Application.Services
 			_grantStreamService = grantStreamService;
 			_grantAgreementService = grantAgreementService;
 			_grantOpeningService = grantOpeningService;
+			_prioritizationService = prioritizationService;
 			_noteService = noteService;
 			_userManager = userManager;
 		}
@@ -788,6 +792,10 @@ namespace CJG.Application.Services
 				if (!filter.IsAssigned.Value)
 					query = query.Where(ga => ga.AssessorId == null);
 			}
+
+			if (filter.OnlyShowPriorityRegionExceptions)
+				query = query.Where(ga => ga.PrioritizationScoreBreakdown != null && ga.PrioritizationScoreBreakdown.RegionalName == "");
+
 
 			var total = query.Count();
 			if (filter.OrderBy?.Any(x => x.Contains(nameof(GrantApplication.StateChanges))) ?? false)
@@ -2191,7 +2199,7 @@ namespace CJG.Application.Services
 			if (grantApplication == null)
 				throw new ArgumentNullException(nameof(grantApplication));
 
-			return new ApplicationWorkflowStateMachine(grantApplication, _dbContext, _notificationService, _grantAgreementService, _grantOpeningService, _noteService, _userService, _httpContext, _logger);
+			return new ApplicationWorkflowStateMachine(grantApplication, _dbContext, _notificationService, _grantAgreementService, _grantOpeningService, _prioritizationService, _noteService, _userService, _httpContext, _logger);
 		}
 
 		/// <summary>

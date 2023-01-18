@@ -84,6 +84,7 @@ app.controller('GrantStreamEligibility', function ($scope, $attrs, $controller) 
       IsActive: true,
       EligibilityPositiveAnswerRequired: true,
       EligibilityRationaleAnswerAllowed: false,
+      EligibilityPositiveAnswerPriorityScore: 0,
       EligibilityRationaleAnswerLabel: '',
       RowSequence: 0
     });

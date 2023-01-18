@@ -58,6 +58,11 @@ namespace CJG.Core.Entities
 		public string EligibilityRationaleAnswerLabel { get; set; }
 
 		/// <summary>
+		/// If 'Yes' is provided as the answer to this question, what score is applied to the Prioritization queue.
+		/// </summary>
+		public int EligibilityPositiveAnswerPriorityScore { get; set; }
+
+		/// <summary>
 		/// get/set - The order questions will be presented.
 		/// </summary>
 		[Required]

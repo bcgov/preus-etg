@@ -326,13 +326,14 @@ namespace CJG.Web.External.Areas.Int.Controllers
 						var clientQuestion = model[aIdx];
 						if (clientQuestion.Id != 0)
 						{
-							var dbQuestion = list.Where(x => x.Id == clientQuestion.Id).First();
+							var dbQuestion = list.First(x => x.Id == clientQuestion.Id);
 
 							dbQuestion.EligibilityRequirements = clientQuestion.EligibilityRequirements ?? "";
 							dbQuestion.EligibilityQuestion = clientQuestion.EligibilityQuestion;
 							dbQuestion.IsActive = clientQuestion.IsActive;
 							dbQuestion.EligibilityPositiveAnswerRequired = clientQuestion.EligibilityPositiveAnswerRequired;
 							dbQuestion.EligibilityRationaleAnswerAllowed = clientQuestion.EligibilityRationaleAnswerAllowed;
+							dbQuestion.EligibilityPositiveAnswerPriorityScore = clientQuestion.EligibilityPositiveAnswerPriorityScore;
 							dbQuestion.EligibilityRationaleAnswerLabel = clientQuestion.EligibilityRationaleAnswerLabel;
 							dbQuestion.RowSequence = clientQuestion.RowSequence;
 							dbQuestion.RowVersion = Convert.FromBase64String(clientQuestion.RowVersion);
@@ -345,6 +346,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 							newQuestion.IsActive = clientQuestion.IsActive;
 							newQuestion.EligibilityPositiveAnswerRequired = clientQuestion.EligibilityPositiveAnswerRequired;
 							newQuestion.EligibilityRationaleAnswerAllowed = clientQuestion.EligibilityRationaleAnswerAllowed;
+							newQuestion.EligibilityPositiveAnswerPriorityScore = clientQuestion.EligibilityPositiveAnswerPriorityScore;
 							newQuestion.EligibilityRationaleAnswerLabel = clientQuestion.EligibilityRationaleAnswerLabel;
 							newQuestion.RowSequence = clientQuestion.RowSequence;
 							newQuestion.GrantStreamId = clientQuestion.GrantStreamId;

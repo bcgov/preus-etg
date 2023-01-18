@@ -102,29 +102,29 @@ namespace CJG.Core.Entities
 			if (bceId == Guid.NewGuid())
 				throw new ArgumentNullException(nameof(bceId));
 
-			if (String.IsNullOrEmpty(firstName))
+			if (string.IsNullOrEmpty(firstName))
 				throw new ArgumentNullException(nameof(firstName));
 
-			if (String.IsNullOrEmpty(lastName))
+			if (string.IsNullOrEmpty(lastName))
 				throw new ArgumentNullException(nameof(lastName));
 
-			if (String.IsNullOrEmpty(email))
+			if (string.IsNullOrEmpty(email))
 				throw new ArgumentNullException(nameof(email));
 
 			if (physicalAddress == null)
 				throw new ArgumentNullException(nameof(physicalAddress));
 
-			this.AccountType = AccountTypes.External;
-			this.BCeIDGuid = bceId;
-			this.FirstName = firstName;
-			this.LastName = lastName;
-			this.EmailAddress = email;
-			this.PhysicalAddress = physicalAddress;
-			this.PhysicalAddressId = physicalAddress.Id;
-			this.MailingAddress = mailingAddress;
-			this.MailingAddressId = mailingAddress?.Id;
-			this.Organization = organization;
-			this.OrganizationId = organization.Id;
+			AccountType = AccountTypes.External;
+			BCeIDGuid = bceId;
+			FirstName = firstName;
+			LastName = lastName;
+			EmailAddress = email;
+			PhysicalAddress = physicalAddress;
+			PhysicalAddressId = physicalAddress.Id;
+			MailingAddress = mailingAddress;
+			MailingAddressId = mailingAddress?.Id;
+			Organization = organization;
+			OrganizationId = organization.Id;
 		}
 		#endregion
 	}

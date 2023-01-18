@@ -14,6 +14,7 @@ namespace CJG.Application.Services
 		private readonly IGrantProgramService _grantProgramService;
 		private readonly INotificationService _notificationService;
 		private readonly IGrantOpeningService _grantOpeningService;
+		private readonly IPrioritizationService _prioritizationService;
 		private readonly INoteService _noteService;
 		private readonly IUserService _userService;
 
@@ -23,6 +24,7 @@ namespace CJG.Application.Services
 		/// <param name="grantProgramService"></param>
 		/// <param name="notificationService"></param>
 		/// <param name="grantOpeningService"></param>
+		/// <param name="prioritizationService"></param>
 		/// <param name="noteService"></param>
 		/// <param name="userService"></param>
 		/// <param name="dbContext"></param>
@@ -32,6 +34,7 @@ namespace CJG.Application.Services
 			IGrantProgramService grantProgramService,
 			INotificationService notificationService,
 			IGrantOpeningService grantOpeningService,
+			IPrioritizationService prioritizationService,
 			INoteService noteService,
 			IUserService userService,
 			IDataContext dbContext,
@@ -41,6 +44,7 @@ namespace CJG.Application.Services
 			_grantProgramService = grantProgramService;
 			_notificationService = notificationService;
 			_grantOpeningService = grantOpeningService;
+			_prioritizationService = prioritizationService;
 			_noteService = noteService;
 			_userService = userService;
 		}
@@ -90,7 +94,7 @@ namespace CJG.Application.Services
 			if (grantApplication == null)
 				throw new ArgumentNullException(nameof(grantApplication));
 
-			return new ApplicationWorkflowStateMachine(grantApplication, _dbContext, _notificationService, this, _grantOpeningService, _noteService, _userService, _httpContext, _logger);
+			return new ApplicationWorkflowStateMachine(grantApplication, _dbContext, _notificationService, this, _grantOpeningService, _prioritizationService, _noteService, _userService, _httpContext, _logger);
 		}
 
 		/// <summary>
