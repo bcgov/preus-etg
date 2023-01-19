@@ -1,0 +1,31 @@
+﻿<div class="form-section" ng-controller="PrioritizationManagementIndustries">
+    <div class="panel-section-item">
+        <div class="panel-section-title" ng-click="toggle($event)">
+            <h3 class="display-inline-block">Prioritization Industries ({{ scores.Industries.length }})</h3>
+        </div>
+        <div class="panel-section-buttons">
+            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            <span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+        </div>
+    </div>
+    <div class="panel-section-content" ng-show="section.show">
+        <table class="form-table">
+            <thead>
+            <tr class="form-table-heading display--table-row">
+                <th>Industry</th>
+                <th>NAICS 2017 Code</th>
+                <th>Priority Score</th>
+                <th>Is Priority</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="form-table-row-with-hover" ng-repeat="industry in scores.Industries">
+                <td class="form-table-cell">{{ industry.Name }}</td>
+                <td class="form-table-cell">{{ industry.Code }}</td>
+                <td class="form-table-cell">{{ industry.Score }}</td>
+                <td class="form-table-cell">{{ industry.IsPriority ? "Priority" : "Non-priority" }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

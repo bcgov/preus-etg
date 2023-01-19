@@ -183,15 +183,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
 
-
 				_prioritizationService.SetRegionException(grantApplication, selectedRegionId);
 				_grantApplicationService.Update(grantApplication);
-
-				//if (String.IsNullOrWhiteSpace(rowVersion)) throw new InvalidOperationException($"The parameter '{nameof(rowVersion)}' cannot be null, empty or whitespace.");
-				//grantApplication.RowVersion = Convert.FromBase64String(rowVersion.Replace(" ", "+"));
-				//_grantApplicationService.SelectForAssessment(grantApplication);
-
-				//model = new Models.IntakeQueue.GrantApplicationViewModel(grantApplication);
 			}
 			catch (Exception ex)
 			{

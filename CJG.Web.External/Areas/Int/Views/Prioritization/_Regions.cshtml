@@ -1,0 +1,29 @@
+﻿<div class="form-section" ng-controller="PrioritizationManagementRegions">
+    <div class="panel-section-item">
+        <div class="panel-section-title" ng-click="toggle($event)">
+            <h3 class="display-inline-block">Prioritization Regions ({{ scores.Regions.length }})</h3>
+        </div>
+        <div class="panel-section-buttons">
+            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            <span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+        </div>
+    </div>
+    <div class="panel-section-content" ng-show="section.show">
+        <table class="form-table">
+            <thead>
+            <tr class="form-table-heading display--table-row">
+                <th>Region</th>
+                <th>Priority Score</th>
+                <th>Is Priority</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="form-table-row-with-hover" ng-repeat="region in scores.Regions">
+                <td class="form-table-cell">{{ region.Name }}</td>
+                <td class="form-table-cell">{{ region.Score }}</td>
+                <td class="form-table-cell">{{ region.IsPriority ? "Priority" : "Non-priority" }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

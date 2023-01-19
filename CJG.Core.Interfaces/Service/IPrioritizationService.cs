@@ -11,5 +11,6 @@ namespace CJG.Core.Interfaces.Service
 
 		PrioritizationScoreBreakdown GetBreakdown(GrantApplication grantApplication);
 		IEnumerable<PrioritizationRegion> GetPrioritizationRegions();
+		IEnumerable<PrioritizationIndustryScore> GetPrioritizationIndustryScores();
 	}
 }

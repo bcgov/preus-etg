@@ -23,6 +23,13 @@ namespace CJG.Application.Services
 				.ToList();
 		}
 
+		public IEnumerable<PrioritizationIndustryScore> GetPrioritizationIndustryScores()
+		{
+			return _dbContext.PrioritizationIndustryScores
+				.OrderBy(r => r.NaicsCode)
+				.ToList();
+		}
+
 		public PrioritizationThreshold GetThresholds()
 		{
 			return _dbContext.PrioritizationThresholds.SingleOrDefault() ?? new PrioritizationThreshold();

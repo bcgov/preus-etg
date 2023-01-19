@@ -522,6 +522,8 @@
     <Content Include="UI\javascript\internal\intake-periods\intake-period-view.js" />
     <Content Include="UI\javascript\internal\intake-periods\index.js" />
     <Content Include="UI\javascript\internal\intake-periods\intake-periods-view.js" />
+    <Content Include="UI\javascript\internal\prioritization\prioritization-management-regions.js" />
+    <Content Include="UI\javascript\internal\prioritization\prioritization-management-industries.js" />
     <Content Include="UI\javascript\internal\regional-exceptions\index.js" />
     <Content Include="UI\javascript\internal\regional-exceptions\regional-exceptions.js" />
     <Content Include="UI\javascript\internal\intake-queue\index.js" />
@@ -870,6 +872,8 @@
     <Content Include="Areas\Int\Views\Prioritization\Thresholds.cshtml" />
     <Content Include="Areas\Int\Views\RegionalException\RegionalExceptionsView.cshtml" />
     <Content Include="Areas\Int\Views\RegionalException\SelectRegionView.cshtml" />
+    <Content Include="Areas\Int\Views\Prioritization\_Regions.cshtml" />
+    <Content Include="Areas\Int\Views\Prioritization\_Industries.cshtml" />
     <None Include="NLog.Training.config">
       <DependentUpon>NLog.config</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1325,6 +1329,7 @@
     <Compile Include="Areas\Int\Models\ParticipantTrainingHistory.cs" />
     <Compile Include="Areas\Int\Models\Prioritization\GrantApplicationViewModel.cs" />
     <Compile Include="Areas\Int\Models\Prioritization\PrioritizationFilterViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Prioritization\PrioritizationScoresViewModel.cs" />
     <Compile Include="Areas\Int\Models\Prioritization\PrioritizationThresholdsViewModel.cs" />
     <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationPreviewModel.cs" />
     <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationListViewModel.cs" />
