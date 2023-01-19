@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
@@ -62,6 +64,43 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
 
+		[HttpGet, Route("Scores")]
+		[ValidateRequestHeader]
+		public JsonResult GetScores()
+		{
+			var model = new PrioritizationScoresViewModel();
+			try
+			{
+				var thresholds = _prioritizationService.GetThresholds();
+				var regions = _prioritizationService.GetPrioritizationRegions();
+				var industries = _prioritizationService.GetPrioritizationIndustryScores();
+
+				model = new PrioritizationScoresViewModel
+				{
+					Regions = regions.Select(r => new ScoreViewModel
+					{
+						Name = r.Name,
+						Score = r.RegionalScore,
+						IsPriority = r.RegionalScore >= thresholds.RegionalThreshold
+					}),
+					Industries = industries.Select(r => new ScoreViewModel
+					{
+						Name = r.Name,
+						Code = r.NaicsCode,
+						Score = r.IndustryScore,
+						IsPriority = r.IndustryScore <= thresholds.IndustryThreshold
+					}),
+
+				};
+				return Json(model, JsonRequestBehavior.AllowGet);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
 		/// <summary>
 		/// Updates the Prioritization thresholds in the datasource.
 		/// </summary>
@@ -94,6 +133,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				HandleAngularException(ex, model);
 			}
 
+			model.RedirectURL = "/Int/Admin/Prioritization/Thresholds/View";
 			return Json(model);
 		}
 	}

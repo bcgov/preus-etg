@@ -8,6 +8,9 @@ app.controller('PrioritizationManagement', function ($scope, $attrs, $controller
         return $scope.model;
       },
       backup: true
+    },
+    onSave: function () {
+      window.location = '/Int/Admin/Prioritization/Thresholds/View';
     }
   };
 
@@ -32,34 +35,11 @@ app.controller('PrioritizationManagement', function ($scope, $attrs, $controller
    **/
   function init() {
     return Promise.all([
-        loadThresholds()
+        loadThresholds(),
       ])
       .catch(angular.noop);
   }
   
-  /**
-   * The Program Notification Modal
-   * @function update
-   * @param {int} programNotificationId - The Program Notification Id.
-   * @returns {Promise}
-   **/
-  $scope.update = function (programNotificationId) {
-    return ngDialog.openConfirm({
-      template: '/Int/Admin/Program/Modal/View',
-      data: {
-        programNotificationId: programNotificationId,
-        applicants: $scope.applicants,
-        user: $scope.user
-      }
-    })
-      .then(function (response) {
-        return $timeout(function () {
-          if (response)
-            $scope.setAlert({ response: { status: 200 }, message: response });
-        });
-      }).catch(angular.noop);
-  };
-
   $scope.$on('ngDialog.closing', function () {
     $scope.broadcast('refreshPager');
   });
