@@ -21,6 +21,7 @@ namespace CJG.Web.External.Areas.Int.Models.GrantStreams
 
 		public bool EligibilityRationaleAnswerAllowed { get; set; }
 		public string EligibilityRationaleAnswerLabel { get; set; }
+		public int EligibilityPositiveAnswerPriorityScore { get; set; }
 
 		// Answer- returned when asking user when creating Grant Application
 		public bool? EligibilityAnswer { get; set; }

@@ -130,6 +130,12 @@
     <Compile Include="Helpers\NotificationTypeFilter.cs" />
     <Compile Include="Helpers\NotificationFilter.cs" />
     <Compile Include="PaymentRequestExtensions.cs" />
+    <Compile Include="PrioritizationIndustryScore.cs" />
+    <Compile Include="PrioritizationPostalCode.cs" />
+    <Compile Include="PrioritizationRegion.cs" />
+    <Compile Include="PrioritizationScoreBreakdown.cs" />
+    <Compile Include="PrioritizationScoreBreakdownAnswer.cs" />
+    <Compile Include="PrioritizationThreshold.cs" />
     <Compile Include="ReconciliationPayment.cs" />
     <Compile Include="ReconciliationReport.cs" />
     <Compile Include="GrantProgramNotificationType.cs" />

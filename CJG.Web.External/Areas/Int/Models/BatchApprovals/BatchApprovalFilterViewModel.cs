@@ -16,7 +16,7 @@ namespace CJG.Web.External.Areas.Int.Models.BatchApprovals
 		public ApplicationFilter GetFilter()
 		{
 			var states = new[] { new StateFilter<ApplicationStateInternal>(ApplicationStateInternal.RecommendedForApproval) };
-			return new ApplicationFilter(states, AssessorId, FiscalYearId, TrainingPeriodCaption, GrantProgramId, GrantStreamId, OrderBy);
+			return new ApplicationFilter(states, AssessorId, FiscalYearId, TrainingPeriodCaption, GrantProgramId, GrantStreamId, orderBy: OrderBy);
 		}
 	}
 }

@@ -204,6 +204,7 @@
     <Compile Include="ApplicationServices\GrantOpeningServiceTests.cs" />
     <Compile Include="ApplicationServices\GrantProgramServiceTests.cs" />
     <Compile Include="ApplicationServices\GrantStreamServiceTests.cs" />
+    <Compile Include="ApplicationServices\PrioritizationServiceTests.cs" />
     <Compile Include="ApplicationServices\IntakeManagementBuilderTests.cs" />
     <Compile Include="ApplicationServices\NaIndustryClassificationSystemServiceTest.cs" />
     <Compile Include="ApplicationServices\NationalOccupationalClassificationServiceTest.cs" />

@@ -25,6 +25,7 @@ namespace CJG.Application.Services
 		private readonly INotificationService _notificationService;
 		private readonly IGrantOpeningService _grantOpeningService;
 		private readonly IGrantAgreementService _grantAgreementService;
+		private readonly IPrioritizationService _prioritizationService;
 		private readonly INoteService _noteService;
 		private readonly IUserService _userService;
 
@@ -111,6 +112,7 @@ namespace CJG.Application.Services
 			INotificationService notificationService,
 			IGrantAgreementService grantAgreementService,
 			IGrantOpeningService grantOpeningService,
+			IPrioritizationService prioritizationService,
 			INoteService noteService,
 			IUserService userService,
 			HttpContextBase httpContext,
@@ -120,6 +122,7 @@ namespace CJG.Application.Services
 			_notificationService = notificationService;
 			_grantAgreementService = grantAgreementService;
 			_grantOpeningService = grantOpeningService;
+			_prioritizationService = prioritizationService;
 			_noteService = noteService;
 			_userService = userService;
 
@@ -396,7 +399,14 @@ namespace CJG.Application.Services
 					_grantApplication.DateSubmitted = AppDateTime.UtcNow;
 					_grantApplication.TrainingCost.CopyEstimatedIntoAgreed();
 
+					var breakdown = _prioritizationService.GetBreakdown(_grantApplication);
+					_grantApplication.PrioritizationScoreBreakdown = breakdown;
+					_grantApplication.PrioritizationScore = breakdown.GetTotalScore();
+
 					LogStateChanges();
+
+					if (_grantApplication.PrioritizationScoreBreakdown.HasRegionalException())
+						_noteService.AddWorkflowNote(_grantApplication, "Priority list region lookup Exception. Postal Code not found in region list.");
 
 					UpdateGrantApplication();
 

@@ -405,5 +405,29 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			ViewBag.NotificationId = id;
 			return PartialView("_ApplicationNotification");
 		}
+
+		/// <summary>
+		/// Get the application prioritization view data.
+		/// </summary>
+		/// <param name="grantApplicationId"></param>
+		/// <returns></returns>
+		[HttpGet]
+		[Route("Application/Prioritization/{grantApplicationId}")]
+		public JsonResult GetPrioritizationInfo(int grantApplicationId)
+		{
+			var model = new ApplicationPrioritizationInfoViewModel();
+			try
+			{
+				var grantApplication = _grantApplicationService.Get(grantApplicationId);
+				model = new ApplicationPrioritizationInfoViewModel(grantApplication);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
 	}
 }

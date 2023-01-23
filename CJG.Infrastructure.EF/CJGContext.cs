@@ -131,6 +131,8 @@ namespace CJG.Infrastructure.EF
 		public virtual DbSet<EligibleCost> EligibleCosts { get; set; }
 		public virtual DbSet<EligibleCostBreakdown> EligibleCostBreakdowns { get; set; }
 		public virtual DbSet<DenialReason> DenialReasons { get; set; }
+		public virtual DbSet<PrioritizationScoreBreakdown> PrioritizationScoreBreakdowns { get; set; }
+		public virtual DbSet<PrioritizationScoreBreakdownAnswer> PrioritizationScoreBreakdownAnswers { get; set; }
 		#endregion
 
 		#region Grant Program
@@ -200,6 +202,10 @@ namespace CJG.Infrastructure.EF
 		public virtual DbSet<ApplicationClaim> ApplicationClaims { get; set; }
 		public virtual DbSet<ApplicationRole> ApplicationRoles { get; set; }
 		public virtual DbSet<RateFormat> RateFormats { get; set; }
+		public virtual DbSet<PrioritizationThreshold> PrioritizationThresholds { get; set; }
+		public virtual DbSet<PrioritizationIndustryScore> PrioritizationIndustryScores { get; set; }
+		public virtual DbSet<PrioritizationRegion> PrioritizationRegions { get; set; }
+		public virtual DbSet<PrioritizationPostalCode> PrioritizationPostalCodes { get; set; }
 		#endregion
 
 		#region Completion Report
@@ -436,6 +442,24 @@ namespace CJG.Infrastructure.EF
 				.HasOptional(ga => ga.Assessor)
 				.WithMany(ui => ui.AssessorApplications)
 				.Map(m => m.MapKey("AssessorId"));
+
+			modelBuilder.Entity<PrioritizationScoreBreakdown>()
+				.HasMany(bd => bd.EligibilityAnswerScores)
+				.WithRequired()
+				.Map(x => x.MapKey("PrioritizationScoreBreakdownId"))
+				.WillCascadeOnDelete(false);
+
+			modelBuilder.Entity<PrioritizationScoreBreakdownAnswer>()
+				.HasRequired(bd => bd.QuestionedAnswered)
+				.WithMany()
+				.Map(x => x.MapKey("GrantStreamEligibilityQuestionId"))
+				.WillCascadeOnDelete(false);
+
+			modelBuilder.Entity<GrantApplication>()
+				.HasOptional(ga => ga.PrioritizationScoreBreakdown)
+				.WithMany()
+				.Map(x => x.MapKey("PrioritizationScoreBreakdownId"))
+				.WillCascadeOnDelete(false);
 
 			modelBuilder.Entity<ApplicationAddress>()
 				.HasRequired(aa => aa.Region)

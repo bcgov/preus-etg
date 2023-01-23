@@ -4,8 +4,10 @@ using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using CJG.Core.Entities;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
@@ -19,6 +21,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		#region Variables
 		private readonly IUserService _userService;
 		private readonly IGrantApplicationService _grantApplicationService;
+		private readonly IPrioritizationService _prioritizationService;
+
 		#endregion
 
 		#region Constructors
@@ -29,10 +33,12 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <param name="grantApplicationService"></param>
 		public ApplicationViewController(
 			IControllerService controllerService,
-			IGrantApplicationService grantApplicationService) : base(controllerService.Logger)
+			IGrantApplicationService grantApplicationService,
+			IPrioritizationService prioritizationService) : base(controllerService.Logger)
 		{
 			_userService = controllerService.UserService;
 			_grantApplicationService = grantApplicationService;
+			_prioritizationService = prioritizationService;
 		}
 		#endregion
 
@@ -50,6 +56,24 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			var grantApplication = _grantApplicationService.Get(grantApplicationId);
 			return View(SidebarViewModelFactory.Create(grantApplication, ControllerContext));
 		}
+
+		//[HttpGet]
+		//[Route("Application/Details/Breakdown/{grantApplicationId}")]
+		//public ActionResult CreateBreakdown(int grantApplicationId)
+		//{
+		//	ViewBag.GrantApplicationId = grantApplicationId;
+		//	var grantApplication = _grantApplicationService.Get(grantApplicationId);
+
+		//	var priorityBreakdown = _prioritizationService.GetBreakdown(grantApplication);
+
+		//	// Clear up Breakdown + Answers here before assigning in case we need to recalculate it.
+		//	grantApplication.PrioritizationScoreBreakdown = priorityBreakdown;
+		//	grantApplication.PrioritizationScore = priorityBreakdown.GetTotalScore();
+
+		//	_grantApplicationService.Update(grantApplication);
+
+		//	return RedirectToAction("ApplicationDetailsView", new { grantApplicationId });
+		//}
 
 		/// <summary>
 		/// Get the data for the ApplicationDetailsView.

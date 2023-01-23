@@ -40,17 +40,22 @@ namespace CJG.Web.External.Areas.Int.Models.GrantStreams
 		{
 			Utilities.MapProperties(programConfiguration, this);
 
-			this.EligibleExpenseTypes = programConfiguration.EligibleExpenseTypes.OrderBy(eet => eet.RowSequence).ThenBy(eet => eet.Caption).Select(eet => new EligibleExpenseTypeViewModel(eet)).ToArray();
+			EligibleExpenseTypes = programConfiguration.EligibleExpenseTypes
+				.OrderBy(eet => eet.RowSequence)
+				.ThenBy(eet => eet.Caption)
+				.Select(eet => new EligibleExpenseTypeViewModel(eet))
+				.ToArray();
 		}
 		#endregion
 
 		#region Methods
+
 		/// <summary>
 		/// Copy the values from this model into the specified grant stream configuration.
 		/// </summary>
 		/// <param name="grantStream"></param>
-		/// <param name="_serviceCategoryService"></param>
-		/// <param name="_serviceLineService"></param>
+		/// <param name="serviceCategoryService"></param>
+		/// <param name="serviceLineService"></param>
 		public void MapTo(GrantStream grantStream, IServiceCategoryService serviceCategoryService, IServiceLineService serviceLineService)
 		{
 			if (grantStream == null) throw new ArgumentNullException(nameof(grantStream));

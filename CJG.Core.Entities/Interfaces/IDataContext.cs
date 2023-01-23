@@ -111,6 +111,8 @@ namespace CJG.Infrastructure.Entities
 		DbSet<EligibleExpenseType> EligibleExpenseTypes { get; }
 		DbSet<EligibleExpenseBreakdown> EligibleExpenseBreakdowns { get; }
 		DbSet<DenialReason> DenialReasons { get; }
+		DbSet<PrioritizationScoreBreakdown> PrioritizationScoreBreakdowns { get; }
+		DbSet<PrioritizationScoreBreakdownAnswer> PrioritizationScoreBreakdownAnswers { get; }
 		#endregion
 
 		#region Training Providers
@@ -163,6 +165,10 @@ namespace CJG.Infrastructure.Entities
 		DbSet<TempData> TempData { get; }
 		DbSet<Setting> Settings { get; }
 		DbSet<RateFormat> RateFormats { get; }
+		DbSet<PrioritizationThreshold> PrioritizationThresholds { get; }
+		DbSet<PrioritizationIndustryScore> PrioritizationIndustryScores { get; }
+		DbSet<PrioritizationRegion> PrioritizationRegions { get; }
+		DbSet<PrioritizationPostalCode> PrioritizationPostalCodes { get; }
 		#endregion
 
 		#region Completion Report
