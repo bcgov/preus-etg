@@ -3,7 +3,7 @@ using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Int.Models.Prioritization
 {
-    public class PrioritizationScoresViewModel : BaseViewModel
+	public class PrioritizationScoresViewModel : BaseViewModel
 	{
 		public IEnumerable<ScoreViewModel> Regions { get; set; } = new List<ScoreViewModel>();
 		public IEnumerable<ScoreViewModel> Industries { get; set; } = new List<ScoreViewModel>();

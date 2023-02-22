@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
 using CJG.Web.External.Areas.Int.Models.Prioritization;
@@ -64,16 +67,15 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
 
-		[HttpGet, Route("Scores")]
+		[HttpGet, Route("Regions")]
 		[ValidateRequestHeader]
-		public JsonResult GetScores()
+		public JsonResult GetRegions()
 		{
 			var model = new PrioritizationScoresViewModel();
 			try
 			{
 				var thresholds = _prioritizationService.GetThresholds();
 				var regions = _prioritizationService.GetPrioritizationRegions();
-				var industries = _prioritizationService.GetPrioritizationIndustryScores();
 
 				model = new PrioritizationScoresViewModel
 				{
@@ -82,7 +84,29 @@ namespace CJG.Web.External.Areas.Int.Controllers
 						Name = r.Name,
 						Score = r.RegionalScore,
 						IsPriority = r.RegionalScore >= thresholds.RegionalThreshold
-					}),
+					})
+				};
+				return Json(model, JsonRequestBehavior.AllowGet);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		[HttpGet, Route("Industries")]
+		[ValidateRequestHeader]
+		public JsonResult GetIndustries()
+		{
+			var model = new PrioritizationScoresViewModel();
+			try
+			{
+				var thresholds = _prioritizationService.GetThresholds();
+				var industries = _prioritizationService.GetPrioritizationIndustryScores();
+
+				model = new PrioritizationScoresViewModel
+				{
 					Industries = industries.Select(r => new ScoreViewModel
 					{
 						Name = r.Name,
@@ -134,6 +158,44 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 
 			model.RedirectURL = "/Int/Admin/Prioritization/Thresholds/View";
+			return Json(model);
+		}
+
+		[HttpPost]
+		[ValidateRequestHeader]
+		[Route("Industries")]
+		public JsonResult UpdateIndustries(HttpPostedFileBase file)
+		{
+			var model = new PrioritizationUpdateScoresFileViewModel();
+			int maxUploadSize = int.Parse(ConfigurationManager.AppSettings["MaxUploadSizeInBytes"]);
+			string[] permittedAttachmentTypes = ConfigurationManager.AppSettings["ReconciliationPermittedAttachmentTypes"].Split('|');
+			try
+			{
+				var report = _prioritizationService.UpdateIndustryScores(file.Validate(maxUploadSize, permittedAttachmentTypes).InputStream);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model);
+		}
+
+		[HttpPost]
+		[ValidateRequestHeader]
+		[Route("Regions")]
+		public JsonResult UpdateRegions(HttpPostedFileBase file)
+		{
+			var model = new PrioritizationUpdateScoresFileViewModel();
+			int maxUploadSize = int.Parse(ConfigurationManager.AppSettings["MaxUploadSizeInBytes"]);
+			string[] permittedAttachmentTypes = ConfigurationManager.AppSettings["ReconciliationPermittedAttachmentTypes"].Split('|');
+			try
+			{
+				var report = _prioritizationService.UpdateRegionScores(file.Validate(maxUploadSize, permittedAttachmentTypes).InputStream);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
 			return Json(model);
 		}
 	}

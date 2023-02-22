@@ -5,10 +5,30 @@
         </div>
         <div class="panel-section-buttons">
             <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            <section-edit-buttons ng-model="section.editing" ng-removeSave="true"></section-edit-buttons>
             <span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
         </div>
     </div>
     <div class="panel-section-content" ng-show="section.show">
+
+        <div class="row row--alert" ng-if="alert.message">
+            <div class="alert alert--default" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+        </div>
+        
+        <div class="form__section" ng-if="section.editing">
+            <div class="form__group">
+                <div class="form__label">Region Scores File:</div>
+                <div class="form__control">
+                    <div class="control-wrapper">
+                        <input type="file" name="AsyncDocumentsFiles" id="regions-import-file" accept=".xls,.xlsx" autocomplete="off" ng-file-selected="upload.file" class="display-none" />
+                        <input type="text" ng-model="upload.file.name" disabled class="input-half-width" />
+                        <button class="btn btn--secondary" ng-click="selectRegionFile()">Select</button>
+                        <button class="btn btn--primary" style="margin-left: 0" ng-click="updateRegions($event)" ng-disabled="!upload.file">Update Regions</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <table class="form-table">
             <thead>
             <tr class="form-table-heading display--table-row">

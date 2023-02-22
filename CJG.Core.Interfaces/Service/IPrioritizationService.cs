@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using CJG.Core.Entities;
 
 namespace CJG.Core.Interfaces.Service
@@ -12,5 +13,8 @@ namespace CJG.Core.Interfaces.Service
 		PrioritizationScoreBreakdown GetBreakdown(GrantApplication grantApplication);
 		IEnumerable<PrioritizationRegion> GetPrioritizationRegions();
 		IEnumerable<PrioritizationIndustryScore> GetPrioritizationIndustryScores();
+
+		bool UpdateIndustryScores(Stream stream);
+		bool UpdateRegionScores(Stream stream);
 	}
 }
