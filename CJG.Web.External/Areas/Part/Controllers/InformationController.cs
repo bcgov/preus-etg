@@ -1,4 +1,12 @@
-﻿using CJG.Application.Business.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Entity.Validation;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.Mvc;
+using CJG.Application.Business.Models;
 using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
@@ -7,27 +15,19 @@ using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data.Entity.Validation;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Web;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Part.Controllers
 {
-	/// <summary>
-	/// InformationController class, provides the controller for external participant enrollment.
-	/// </summary>
-	[ParticipantFilter]
+    /// <summary>
+    /// InformationController class, provides the controller for external participant enrollment.
+    /// </summary>
+    [ParticipantFilter]
 	[RouteArea("Part")]
 	[RoutePrefix("Information")]
 	public class InformationController : BaseController
 	{
-		#region Variables
 		private const int EI_BENEFIT_NONE_OF_THE_ABOVE = 6;
+
 		private readonly IStaticDataService _staticDataService;
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IParticipantService _participantService;
@@ -35,9 +35,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		private readonly IReCaptchaService _reCaptchaService;
 		private readonly IGrantProgramService _grantProgramService;
 		private readonly IAttachmentService _attachmentService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a InformationController object, and initializes it with the specified arguments.
 		/// </summary>
@@ -65,9 +63,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			_grantProgramService = grantProgramService;
 			_attachmentService = attachmentService;
 		}
-		#endregion
 
-		#region Methods
 		/// <summary>
 		/// Return participant information form view.
 		/// </summary>
@@ -937,17 +933,27 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		{
 			#region Current NOC
 			model.ParticipantInfoStep4ViewModel.CurrentNoc1Codes = _nationalOccupationalClassificationService.GetNationalOccupationalClassificationLevel(1).Select(n => new KeyValuePair<int, string>(n.Id, $"{n.Code} | {n.Description}")).ToList();
-			model.ParticipantInfoStep4ViewModel.CurrentNoc2Codes = _nationalOccupationalClassificationService.GetNationalOccupationalClassificationLevel(2).Select(n => new KeyValueParent<int, string, int>(n.Id, $"{n.Code} | {n.Description}", n.ParentId ?? 0)).ToList();
-			model.ParticipantInfoStep4ViewModel.CurrentNoc3Codes = _nationalOccupationalClassificationService.GetNationalOccupationalClassificationLevel(3).Select(n => new KeyValueParent<int, string, int>(n.Id, $"{n.Code} | {n.Description}", n.ParentId ?? 0)).ToList();
-			model.ParticipantInfoStep4ViewModel.CurrentNoc4Codes = _nationalOccupationalClassificationService.GetNationalOccupationalClassificationLevel(4).Select(n => new KeyValueParent<int, string, int>(n.Id, $"{n.Code} | {n.Description}", n.ParentId ?? 0)).ToList();
+			model.ParticipantInfoStep4ViewModel.CurrentNoc2Codes = GetNocCodes(2);
+			model.ParticipantInfoStep4ViewModel.CurrentNoc3Codes = GetNocCodes(3);
+			model.ParticipantInfoStep4ViewModel.CurrentNoc4Codes = GetNocCodes(4);
+			model.ParticipantInfoStep4ViewModel.CurrentNoc5Codes = GetNocCodes(5);
 			#endregion
 
 			#region Future NOC
 			model.ParticipantInfoStep4ViewModel.FutureNoc1Codes = _nationalOccupationalClassificationService.GetNationalOccupationalClassificationLevel(1).Select(n => new KeyValuePair<int, string>(n.Id, $"{n.Code} | {n.Description}")).ToList();
-			model.ParticipantInfoStep4ViewModel.FutureNoc2Codes = _nationalOccupationalClassificationService.GetNationalOccupationalClassificationLevel(2).Select(n => new KeyValueParent<int, string, int>(n.Id, $"{n.Code} | {n.Description}", n.ParentId ?? 0)).ToList();
-			model.ParticipantInfoStep4ViewModel.FutureNoc3Codes = _nationalOccupationalClassificationService.GetNationalOccupationalClassificationLevel(3).Select(n => new KeyValueParent<int, string, int>(n.Id, $"{n.Code} | {n.Description}", n.ParentId ?? 0)).ToList();
-			model.ParticipantInfoStep4ViewModel.FutureNoc4Codes = _nationalOccupationalClassificationService.GetNationalOccupationalClassificationLevel(4).Select(n => new KeyValueParent<int, string, int>(n.Id, $"{n.Code} | {n.Description}", n.ParentId ?? 0)).ToList();
+			model.ParticipantInfoStep4ViewModel.FutureNoc2Codes = GetNocCodes(2);
+			model.ParticipantInfoStep4ViewModel.FutureNoc3Codes = GetNocCodes(3);
+			model.ParticipantInfoStep4ViewModel.FutureNoc4Codes = GetNocCodes(4);
+			model.ParticipantInfoStep4ViewModel.FutureNoc5Codes = GetNocCodes(5);
 			#endregion
+		}
+
+		private List<KeyValueParent<int, string, int>> GetNocCodes(int level)
+		{
+			return _nationalOccupationalClassificationService
+				.GetNationalOccupationalClassificationLevel(level)
+				.Select(n => new KeyValueParent<int, string, int>(n.Id, $"{n.Code} | {n.Description}", n.ParentId ?? 0))
+				.ToList();
 		}
 
 		private void SaveParticipantInfo(ParticipantInfoViewModel model)
@@ -1059,41 +1065,29 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				};
 
 				#region Current NOC
-				if (model.ParticipantInfoStep4ViewModel.CurrentNoc4Id.HasValue)
-				{
+				if (model.ParticipantInfoStep4ViewModel.CurrentNoc5Id.HasValue)
+					newParticipantForm.CurrentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.CurrentNoc5Id.Value);
+				else if (model.ParticipantInfoStep4ViewModel.CurrentNoc4Id.HasValue)
 					newParticipantForm.CurrentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.CurrentNoc4Id.Value);
-				}
 				else if (model.ParticipantInfoStep4ViewModel.CurrentNoc3Id.HasValue)
-				{
 					newParticipantForm.CurrentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.CurrentNoc3Id.Value);
-				}
 				else if (model.ParticipantInfoStep4ViewModel.CurrentNoc2Id.HasValue)
-				{
 					newParticipantForm.CurrentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.CurrentNoc2Id.Value);
-				}
 				else if (model.ParticipantInfoStep4ViewModel.CurrentNoc1Id.HasValue)
-				{
 					newParticipantForm.CurrentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.CurrentNoc1Id.Value);
-				}
 				#endregion
 
 				#region Future NOC
-				if (model.ParticipantInfoStep4ViewModel.FutureNoc4Id.HasValue)
-				{
+				if (model.ParticipantInfoStep4ViewModel.FutureNoc5Id.HasValue)
+					newParticipantForm.FutureNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.FutureNoc5Id.Value);
+				else if (model.ParticipantInfoStep4ViewModel.FutureNoc4Id.HasValue)
 					newParticipantForm.FutureNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.FutureNoc4Id.Value);
-				}
 				else if (model.ParticipantInfoStep4ViewModel.FutureNoc3Id.HasValue)
-				{
 					newParticipantForm.FutureNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.FutureNoc3Id.Value);
-				}
 				else if (model.ParticipantInfoStep4ViewModel.FutureNoc2Id.HasValue)
-				{
 					newParticipantForm.FutureNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.FutureNoc2Id.Value);
-				}
 				else if (model.ParticipantInfoStep4ViewModel.FutureNoc1Id.HasValue)
-				{
 					newParticipantForm.FutureNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.FutureNoc1Id.Value);
-				}
 				#endregion
 
 				if (HasConsentForm())
@@ -1135,8 +1129,6 @@ namespace CJG.Web.External.Areas.Part.Controllers
 
 			return 0;
 		}
-
-		#endregion
 
 		#endregion
 	}

@@ -45,19 +45,11 @@ namespace CJG.Web.External.Areas.Int.Models
 			if (participantForm?.GrantApplication?.GrantOpening?.GrantStream?.GrantProgram?.ProgramTypeId == ProgramTypes.WDAService)
 				ReceivingEIValue = participantForm.ReceivingEIBenefit.ToStringValue();
 
-			if (participantForm.CurrentNoc.Id != 0)
-			{
-				var nocIDs = nationalOccupationalClassificationService.GetNationalOccupationalClassificationIds(participantForm.CurrentNoc.Id);
-				var level4CurrentNoc = nationalOccupationalClassificationService.GetNationalOccupationalClassification(nocIDs.Item4);
-				CurrentNocLevel4 = !string.IsNullOrWhiteSpace(level4CurrentNoc?.Code) ? $"{level4CurrentNoc.Code + " | " + level4CurrentNoc.Description}" : null;
-			}
+			if (participantForm.CurrentNoc != null && participantForm.CurrentNoc.Id != 0 && !string.IsNullOrWhiteSpace(participantForm.CurrentNoc.Code))
+				CurrentNocLevel4 = participantForm.CurrentNoc.ToString();
 
-			if (participantForm.FutureNoc.Id != 0)
-			{
-				var nocIDs = nationalOccupationalClassificationService.GetNationalOccupationalClassificationIds(participantForm.FutureNoc.Id);
-				var level4FutureNoc = nationalOccupationalClassificationService.GetNationalOccupationalClassification(nocIDs.Item4);
-				FutureNocLevel4 = !string.IsNullOrWhiteSpace(level4FutureNoc?.Code) ? $"{level4FutureNoc.Code + " | " + level4FutureNoc.Description}" : null;
-			}
+			if (participantForm.FutureNoc != null && participantForm.FutureNoc.Id != 0 && !string.IsNullOrWhiteSpace(participantForm.FutureNoc.Code))
+				FutureNocLevel4 = participantForm.FutureNoc.ToString();
 
 			JobTitleBeforeTraining = participantForm.JobTitleBefore;
 			JobTitleAfterTraining = participantForm.JobTitleFuture;

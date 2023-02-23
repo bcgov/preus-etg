@@ -1,4 +1,7 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Areas.Int.Models.ProgramDescriptions;
@@ -6,17 +9,12 @@ using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	[RouteArea("Int")]
+    [RouteArea("Int")]
 	public class ProgramDescriptionController : BaseController
 	{
-		#region Variables
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IStaticDataService _staticDataService;
 		private readonly INaIndustryClassificationSystemService _naIndustryClassificationSystemService;
@@ -25,9 +23,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		private readonly IUnderRepresentedPopulationService _underRepresentedPopulationService;
 		private readonly ICommunityService _communityService;
 		private readonly IParticipantEmploymentStatusService _participantEmploymentStatusService;
-		#endregion
 
-		#region Constructors
 		public ProgramDescriptionController(
 			IControllerService controllerService,
 			IGrantApplicationService grantApplicationService,
@@ -48,9 +44,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_communityService = communityService;
 			_participantEmploymentStatusService = participantEmploymentStatusService;
 		}
-		#endregion
 
-		#region Endpoints
 		[HttpGet]
 		[Route("Application/Program/Description/{grantApplicationId}")]
 		public JsonResult GetProgramDescription(int grantApplicationId)
@@ -72,7 +66,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[ValidateRequestHeader]
 		[PreventSpam]
 		[Route("Application/Program/Description/")]
-		public JsonResult UpdateProgramDescription(Models.ProgramDescriptions.ProgramDescriptionViewModel model)
+		public JsonResult UpdateProgramDescription(ProgramDescriptionViewModel model)
 		{
 			try
 			{
@@ -189,7 +183,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		{
 			try
 			{
-				var model = _nationalOccupationalClassificationService.GetNationalOccupationalClassificationChildren(parentId ?? 0, level).Select(n => new KeyValuePair<int, string>(n.Id, $"{n.Code} | {n.Description}")).ToArray();
+				var model = _nationalOccupationalClassificationService.GetNationalOccupationalClassificationChildren(parentId ?? 0, level)
+					.Select(n => new KeyValuePair<int, string>(n.Id, $"{n.Code} | {n.Description} ({n.NOCVersion})"))
+					.ToArray();
 				return Json(model, JsonRequestBehavior.AllowGet);
 			}
 			catch (Exception ex)
@@ -199,6 +195,5 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				return Json(model, JsonRequestBehavior.AllowGet);
 			}
 		}
-		#endregion
 	}
 }

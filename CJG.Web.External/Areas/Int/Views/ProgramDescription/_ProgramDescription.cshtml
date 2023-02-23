@@ -116,26 +116,30 @@
 						<text>{{section.selectedNAICS}}</text>
 					</div>
 				</div>
-				<div class="form__group">
-					<div class="form__label">NOC for participant occupation target:</div>
-					<div class="form__control" ng-if="section.editing">
-						<div class="control-wrapper selectmenu input--full">
-							<select ng-model="model.Noc1Id" ng-options="item.Key as item.Value for item in nocs1" class="input--full" ng-change="changeNOC(2, model.Noc1Id)" ng-validation></select>
-						</div>
-						<div class="control-wrapper selectmenu input--full" ng-if="model.Noc1Id">
-							<select ng-model="model.Noc2Id" ng-options="item.Key as item.Value for item in programNOCs2" class="input--full" ng-change="changeNOC(3, model.Noc2Id)" ng-validation></select>
-						</div>
-						<div class="control-wrapper selectmenu input--full" ng-if="model.Noc2Id">
-							<select ng-model="model.Noc3Id" ng-options="item.Key as item.Value for item in programNOCs3" class="input--full" ng-change="changeNOC(4, model.Noc3Id)" ng-validation></select>
-						</div>
-						<div class="control-wrapper selectmenu input--full" ng-if="model.Noc3Id">
-							<select ng-model="model.Noc4Id" ng-options="item.Key as item.Value for item in programNOCs4" class="input--full" ng-validation></select>
-						</div>
-					</div>
-					<div class="form__control" ng-if="!section.editing">
-						<text>{{section.selectedNOC}}</text>
-					</div>
-				</div>
+                <div class="form__group">
+                    <div class="form__label">NOC for participant occupation target:</div>
+                    <div class="form__control" ng-if="section.editing">
+                        <div class="control-wrapper selectmenu input--full">
+                            <select ng-model="model.Noc1Id" ng-options="item.Key as item.Value for item in nocs1" class="input--full" ng-change="changeNOC(2, model.Noc1Id)" ng-validation></select>
+                        </div>
+                        <div class="control-wrapper selectmenu input--full" ng-if="model.Noc1Id">
+                            <select ng-model="model.Noc2Id" ng-options="item.Key as item.Value for item in programNOCs2" class="input--full" ng-change="changeNOC(3, model.Noc2Id)" ng-validation></select>
+                        </div>
+                        <div class="control-wrapper selectmenu input--full" ng-if="model.Noc2Id">
+                            <select ng-model="model.Noc3Id" ng-options="item.Key as item.Value for item in programNOCs3" class="input--full" ng-change="changeNOC(4, model.Noc3Id)" ng-validation></select>
+                        </div>
+                        <div class="control-wrapper selectmenu input--full" ng-if="model.Noc3Id">
+                            <select ng-model="model.Noc4Id" ng-options="item.Key as item.Value for item in programNOCs4" class="input--full" ng-change="changeNOC(5, model.Noc4Id)"  ng-validation></select>
+                        </div>
+                        <div class="control-wrapper selectmenu input--full" ng-if="model.Noc4Id">
+                            <select ng-model="model.Noc5Id" ng-options="item.Key as item.Value for item in programNOCs5" class="input--full" ng-validation></select>
+                        </div>
+                    </div>
+                    <div class="form__control" ng-if="!section.editing">
+                        <text>{{section.selectedNOC}}</text>
+                        <text ng-if="!section.selectedNOC">{{model.ExistingNOC}}</text>
+                    </div>
+                </div>
 				<div class="form__group">
 					<div class="form__label">Community Names:</div>
 					<div class="form__control" ng-if="section.editing">
