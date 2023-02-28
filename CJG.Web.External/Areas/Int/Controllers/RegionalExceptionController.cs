@@ -12,7 +12,7 @@ using System.Web.Mvc;
 namespace CJG.Web.External.Areas.Int.Controllers
 {
 	/// <summary>
-	/// IntakeController class, provides endpoints to select and search for grant applications.
+	/// RegionalExceptionControl class, provides endpoints to select and search for regional exceptions.
 	/// </summary>
 	[RouteArea("Int")]
 	[Authorize(Roles = "Assessor, System Administrator, Director, Financial Clerk")]

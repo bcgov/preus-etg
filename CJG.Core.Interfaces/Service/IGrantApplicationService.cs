@@ -150,5 +150,7 @@ namespace CJG.Core.Interfaces.Service
 
 		void UpdateDeliveryPartner(GrantApplication grantApplication, int? deliveryPartnerId, IEnumerable<int> selectedServices);
 		#endregion
+
+		int CurrentPrioritizationRegionalExceptions();
 	}
 }

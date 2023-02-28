@@ -20,6 +20,22 @@ app.controller('Prioritization', function ($scope, $attrs, $controller, $element
       set: 'model'
     });
   }
+  
+  $scope.recalculatePrioritization = function () {
+    return $scope.confirmDialog('Recalculate Application Prioritization Score', 'Are you sure you wish to recalculate the Prioritization score for this application?')
+      .then(function () {
+        return $scope.ajax({
+          url: '/Int/Application/Prioritization/Recalculate/' + $scope.parent.grantApplicationId,
+          method: 'PUT'
+        });
+      })
+      .then(function (response) {
+        window.location.reload();
+      //  if (response.data.RedirectUrl)
+      //    window.location = response.data.RedirectUrl;
+      })
+      .catch(angular.noop);
+  }
 
   /**
    * Initialize the section and load the data.

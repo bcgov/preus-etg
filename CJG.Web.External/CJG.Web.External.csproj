@@ -1331,6 +1331,7 @@
     <Compile Include="Areas\Int\Models\Prioritization\PrioritizationFilterViewModel.cs" />
     <Compile Include="Areas\Int\Models\Prioritization\PrioritizationScoresViewModel.cs" />
     <Compile Include="Areas\Int\Models\Prioritization\PrioritizationThresholdsViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Prioritization\PrioritizationUpdateScoresFileViewModel.cs" />
     <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationPreviewModel.cs" />
     <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationListViewModel.cs" />
     <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationRecipientViewModel.cs" />

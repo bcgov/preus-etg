@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Threading;
 using System.Web;
 using CJG.Application.Business.Models;
 using CJG.Core.Entities;
@@ -796,6 +795,8 @@ namespace CJG.Application.Services
 			if (filter.OnlyShowPriorityRegionExceptions)
 				query = query.Where(ga => ga.PrioritizationScoreBreakdown != null && ga.PrioritizationScoreBreakdown.RegionalName == "");
 
+			if (!filter.OnlyShowPriorityRegionExceptions)
+				query = query.Where(ga => ga.PrioritizationScoreBreakdown == null || (ga.PrioritizationScoreBreakdown != null && ga.PrioritizationScoreBreakdown.RegionalName != ""));
 
 			var total = query.Count();
 			if (filter.OrderBy?.Any(x => x.Contains(nameof(GrantApplication.StateChanges))) ?? false)
@@ -2155,6 +2156,20 @@ namespace CJG.Application.Services
 				grantApplication.DeliveryPartnerServices.Clear();
 			}
 		}
+
+		public int CurrentPrioritizationRegionalExceptions()
+		{
+			var validExceptionStates = new List<ApplicationStateInternal>
+			{
+				ApplicationStateInternal.New,
+				ApplicationStateInternal.PendingAssessment
+			};
+
+			return _dbContext.GrantApplications
+				.Where(ga => validExceptionStates.Contains(ga.ApplicationStateInternal))
+				.Count(ga => ga.PrioritizationScoreBreakdown != null && ga.PrioritizationScoreBreakdown.RegionalName == "");
+		}
+
 		#endregion
 
 		#region Helpers

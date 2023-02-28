@@ -3,7 +3,7 @@ using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Int.Models.Prioritization
 {
-	public class PrioritizationThresholdsViewModel : BaseViewModel
+    public class PrioritizationThresholdsViewModel : BaseViewModel
 	{
 		[Required(ErrorMessage = "You must enter a numeric Industry Threshold.")]
 		public int IndustryThreshold { get; set; }
@@ -14,5 +14,17 @@ namespace CJG.Web.External.Areas.Int.Models.Prioritization
 		[Required(ErrorMessage = "You must enter an Employee Count Threshold.")]
 		[Range(1, 999999, ErrorMessage = "The Employee Count Threshold must be between 1 and 999,999")]
 		public int EmployeeCountThreshold { get; set; }
+
+		[Required(ErrorMessage = "You must enter a numeric Industry Score.")]
+		public int IndustryAssignedScore { get; set; }
+
+		[Required(ErrorMessage = "You must enter a numeric Regional Score.")]
+		public int RegionalThresholdAssignedScore { get; set; }
+
+		[Required(ErrorMessage = "You must enter a numeric Employee Count Score.")]
+		public int EmployeeCountAssignedScore { get; set; }
+
+		[Required(ErrorMessage = "You must enter a numeric First Time Applicant Score.")]
+		public int FirstTimeApplicantAssignedScore { get; set; }
 	}
 }

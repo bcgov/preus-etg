@@ -1,19 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core;
+using System.IO;
 using System.Linq;
 using System.Web;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Entities;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 using NLog;
 
 namespace CJG.Application.Services
 {
 	public class PrioritizationService : Service, IPrioritizationService
 	{
-		public PrioritizationService(IDataContext context, HttpContextBase httpContext, ILogger logger) : base(context, httpContext, logger)
+		private readonly INoteService _noteService;
+
+		public PrioritizationService(IDataContext context, HttpContextBase httpContext, INoteService noteService, ILogger logger)
+			: base(context, httpContext, logger)
 		{
+			_noteService = noteService;
 		}
 
 		public IEnumerable<PrioritizationRegion> GetPrioritizationRegions()
@@ -57,7 +64,7 @@ namespace CJG.Application.Services
 			if (region == null || applicationScoreBreakdown == null)
 				return;
 
-			var regionalResult = GetRegionalResult(region, threshold.RegionalThreshold);
+			var regionalResult = GetRegionalResult(region, threshold);
 
 			applicationScoreBreakdown.RegionalScore = regionalResult.Score;
 			applicationScoreBreakdown.RegionalName = regionalResult.Name;
@@ -73,8 +80,10 @@ namespace CJG.Application.Services
 
 			var regionalResult = GetRegionalScore(grantApplication, threshold);
 			var industryResult = GetIndustryScore(grantApplication, threshold);
-			var smallBusinessScore = grantApplication.OrganizationNumberOfEmployeesInBC <= threshold.EmployeeCountThreshold ? 1 : 0;
-			var firstTimeApplicantScore = GetFirstTimeApplicantScore(grantApplication);
+			var smallBusinessScore = grantApplication.OrganizationNumberOfEmployeesInBC <= threshold.EmployeeCountThreshold
+				? threshold.EmployeeCountAssignedScore
+				: 0;
+			var firstTimeApplicantScore = GetFirstTimeApplicantScore(grantApplication, threshold);
 
 			var breakdown = grantApplication.PrioritizationScoreBreakdown ?? new PrioritizationScoreBreakdown();
 
@@ -96,6 +105,241 @@ namespace CJG.Application.Services
 			return breakdown;
 		}
 
+		private static T GetCellValue<T>(WorkbookPart workbookPart, Cell cell, int? position = null)
+		{
+			if (cell == null)
+				return default;
+
+			try
+			{
+				var value = cell.InnerText;
+				if (cell?.DataType?.Value == CellValues.SharedString)
+				{
+					var stringTable = workbookPart.GetPartsOfType<SharedStringTablePart>().FirstOrDefault();
+
+					if (stringTable != null)
+					{
+						return TruncateOrRound((T)System.Convert.ChangeType(stringTable.SharedStringTable.ElementAt(int.Parse(value)).InnerText, typeof(T)), position);
+					}
+				}
+
+				if (typeof(T) == typeof(DateTime))
+					return (T)System.Convert.ChangeType(DateTime.FromOADate(double.Parse(value)).ToLocalTime().ToUniversalTime(), typeof(T));
+
+				if (typeof(T) == typeof(DateTime?))
+				{
+					if (value == null)
+						return default;
+					return (T)System.Convert.ChangeType(DateTime.FromOADate(double.Parse(value)).ToLocalTime().ToUniversalTime(), typeof(T));
+				}
+
+				return TruncateOrRound((T)System.Convert.ChangeType(value, typeof(T)), position);
+			}
+			catch
+			{
+				throw new InvalidOperationException($"The data in cell '{cell.CellReference}' was not valid.");
+			}
+		}
+		/// <summary>
+		/// Truncate the value to the specified position if it's a string, or round if it's a decimal.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="value"></param>
+		/// <param name="position">When it's a string it will truncate to this many characters.  If it is a decimal it will truncate to this many decimal points.</param>
+		/// <returns></returns>
+		private static T TruncateOrRound<T>(T value, int? position = null)
+		{
+			if (position != null && value != null)
+			{
+				if (position < 0)
+					throw new InvalidOperationException($"The argument '{position}' must be equal to or greater than 0.");
+
+				if (typeof(T) == typeof(string))
+					return (T)System.Convert.ChangeType(((string)(object)value).Substring(0, position.Value), typeof(T));
+
+				var decimals = (decimal)Math.Pow(10, position.Value); // Should convert 2 to 100.
+				if (typeof(T) == typeof(decimal)
+				    || typeof(T) == typeof(float)
+				    || typeof(T) == typeof(double))
+					return (T)System.Convert.ChangeType(Math.Round((decimal)(object)value, position.Value), typeof(T));
+				//return (T)System.Convert.ChangeType(Math.Truncate((decimal)(object)value * decimals) / decimals, typeof(T));
+			}
+
+			return value;
+		}
+
+		public bool UpdateIndustryScores(Stream stream)
+		{
+			// Open a SpreadsheetDocument based on a stream.
+			SpreadsheetDocument document = null;
+
+			var importRows = new List<Tuple<string, string, int>>();
+			try
+			{
+				using (document = SpreadsheetDocument.Open(stream, false))
+				{
+					var workbookPart = document.WorkbookPart;
+					var sheet = workbookPart.WorksheetParts.FirstOrDefault() ?? throw new InvalidOperationException("Excel contains no sheets.");
+					var rows = sheet.Worksheet.Descendants<Row>();
+
+					var nameColumn = "A";
+					var codeColumn = "B";
+					var scoreColumn = "C";
+
+					var firstRowSkipped = false;
+
+					foreach (var row in rows)
+					{
+						if (!firstRowSkipped)
+						{
+							firstRowSkipped = true;
+
+							continue;
+						}
+
+						var cells = row.Descendants<Cell>().ToList();
+						var rowIndex = row.RowIndex;
+
+						var name = GetCellValue<string>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{nameColumn}{rowIndex}"));
+						var code = GetCellValue<string>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{codeColumn}{rowIndex}"));
+						var score = GetCellValue<int>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{scoreColumn}{rowIndex}"));
+
+						importRows.Add(new Tuple<string, string, int>(name, code, score));
+					}
+				}
+
+				if (!importRows.Any())
+					return false;
+
+				var industries = _dbContext.PrioritizationIndustryScores.ToList();
+				_dbContext.PrioritizationIndustryScores.RemoveRange(industries);
+
+				var newIndustries = importRows.Select(i => new PrioritizationIndustryScore
+				{
+					Name = i.Item1,
+					NaicsCode = i.Item2,
+					IndustryScore = i.Item3,
+					DateAdded = AppDateTime.UtcNow
+				});
+				_dbContext.PrioritizationIndustryScores.AddRange(newIndustries);
+
+				_dbContext.CommitTransaction();
+				return true;
+			}
+			catch
+			{
+				// Caller must close the stream.
+				throw;
+			}
+
+			return false;
+		}
+
+		public bool UpdateRegionScores(Stream stream)
+		{
+			// Open a SpreadsheetDocument based on a stream.
+			SpreadsheetDocument document = null;
+
+			var importRows = new List<Tuple<int, string, decimal>>();
+			try
+			{
+				using (document = SpreadsheetDocument.Open(stream, false))
+				{
+					var workbookPart = document.WorkbookPart;
+					var sheet = workbookPart.WorksheetParts.FirstOrDefault() ?? throw new InvalidOperationException("Excel contains no sheets.");
+					var rows = sheet.Worksheet.Descendants<Row>();
+
+					var nameColumn = "A";
+					var codeColumn = "B";
+					var scoreColumn = "C";
+
+					var firstRowSkipped = false;
+
+					var totalRows = rows.Count();
+					foreach (var row in rows)
+					{
+						if (!firstRowSkipped)
+						{
+							firstRowSkipped = true;
+
+							continue;
+						}
+
+						var cells = row.Descendants<Cell>().ToList();
+						var rowIndex = row.RowIndex;
+
+						var firstCellText = cells.FirstOrDefault(c => c.CellReference == $"{nameColumn}{rowIndex}")?.CellValue.Text;
+
+						if (string.IsNullOrWhiteSpace(firstCellText))
+							break;
+
+						var regionId = GetCellValue<int>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{nameColumn}{rowIndex}"));
+						var name = GetCellValue<string>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{codeColumn}{rowIndex}"));
+						var score = GetCellValue<decimal>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{scoreColumn}{rowIndex}"));
+
+						importRows.Add(new Tuple<int, string, decimal>(regionId, name, score));
+					}
+				}
+
+				if (!importRows.Any())
+					return false;
+
+				var industries = _dbContext.PrioritizationRegions.ToList();
+				_dbContext.PrioritizationRegions.RemoveRange(industries);
+
+				var newRegions = importRows.Select(i => new PrioritizationRegion
+				{
+					Id = i.Item1,
+					Name = i.Item2,
+					RegionalScore = i.Item3,
+					DateAdded = AppDateTime.UtcNow
+				});
+
+				_dbContext.PrioritizationRegions.AddRange(newRegions);
+				_dbContext.CommitTransaction();
+
+				return true;
+			}
+			catch
+			{
+				// Caller must close the stream.
+				throw;
+			}
+
+			return false;
+		}
+
+		public void RecalculatePriorityScores(int? grantApplicationId = null)
+		{
+			var validExceptionStates = new List<ApplicationStateInternal>
+			{
+				ApplicationStateInternal.New,
+				ApplicationStateInternal.PendingAssessment
+			};
+
+			var openApplications = _dbContext.GrantApplications
+				.Where(ga => validExceptionStates.Contains(ga.ApplicationStateInternal));
+
+			if (grantApplicationId.HasValue)
+				openApplications = openApplications.Where(ga => ga.Id == grantApplicationId.Value);
+
+			foreach (var grantApplication in openApplications)
+			{
+				var originalScore = grantApplication.PrioritizationScore;
+
+				var breakdown = GetBreakdown(grantApplication);
+				grantApplication.PrioritizationScoreBreakdown = breakdown;
+				grantApplication.PrioritizationScore = breakdown.GetTotalScore();
+
+				_noteService.AddWorkflowNote(grantApplication, $"Grant Application Priority Score recalculated. Previous Score: {originalScore}. New Score: {grantApplication.PrioritizationScore}.");
+
+				if (grantApplication.PrioritizationScoreBreakdown.HasRegionalException())
+					_noteService.AddWorkflowNote(grantApplication, "Priority list region lookup Exception. Postal Code not found in region list.");
+			}
+
+			_dbContext.CommitTransaction();
+		}
+
 		private RegionalResult GetRegionalScore(GrantApplication grantApplication, PrioritizationThreshold threshold)
 		{
 			var result = new RegionalResult();
@@ -110,12 +354,12 @@ namespace CJG.Application.Services
 			if (foundRegion == null)
 				return result;
 
-			return GetRegionalResult(foundRegion, threshold.RegionalThreshold);
+			return GetRegionalResult(foundRegion, threshold);
 		}
 
-		private static RegionalResult GetRegionalResult(PrioritizationRegion region, decimal regionalThreshold)
+		private static RegionalResult GetRegionalResult(PrioritizationRegion region, PrioritizationThreshold threshold)
 		{
-			var regionalScore = region.RegionalScore >= regionalThreshold ? 1 : 0;
+			var regionalScore = region.RegionalScore >= threshold.RegionalThreshold ? threshold.RegionalThresholdAssignedScore : 0;
 
 			return new RegionalResult
 			{
@@ -166,7 +410,7 @@ namespace CJG.Application.Services
 				return result;
 
 
-			var industryScore = matchingIndustryScore.IndustryScore <= industryThreshold ? 1 : 0;
+			var industryScore = matchingIndustryScore.IndustryScore <= industryThreshold ? threshold.IndustryAssignedScore : 0;
 			result.Score = industryScore;
 			result.Name = matchingIndustryScore.Name;
 			result.Code = matchingIndustryScore.NaicsCode;
@@ -209,7 +453,7 @@ namespace CJG.Application.Services
 			return matchingIndustryScore;
 		}
 
-		private int GetFirstTimeApplicantScore(GrantApplication grantApplication)
+		private int GetFirstTimeApplicantScore(GrantApplication grantApplication, PrioritizationThreshold threshold)
 		{
 			var existingApplications = _dbContext.GrantApplications
 				.Where(ga => ga.OrganizationId == grantApplication.OrganizationId)
@@ -241,7 +485,7 @@ namespace CJG.Application.Services
 			if (existingApplications.Any(ia => existingStatus.Contains(ia.ApplicationStateInternal)))
 				return 0;
 
-			return 1;
+			return threshold.FirstTimeApplicantAssignedScore;
 		}
 
 		private static List<PrioritizationScoreBreakdownAnswer> GetEligibilityQuestionAnswers(GrantApplication grantApplication)

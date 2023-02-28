@@ -8,6 +8,7 @@
             <h2 class="header__title">Prioritization Management</h2>
         </div>
     </div>
+
     <div class="details-block">
         <div class="panel-section-list">
             <div class="form-section" ng-controller="PrioritizationManagement">
@@ -24,6 +25,9 @@
                     <div class="row row--alert" ng-if="alert.message">
                         <div class="alert alert--default" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
                     </div>
+                    <div class="pull-right">
+                        <button class="btn btn--primary btn--forward" ng-show="!section.editing" ng-click="recalculatePrioritization()">Recalculate Prioritization List</button>
+                    </div>
                     <p>Prioritization thresholds provide a way to control prioritization point assignments for Grant Applications.</p>
     
                     <div class="form form--2-col">
@@ -32,7 +36,7 @@
                                 <div class="form__label">Industry threshold:</div>
                                 <div class="form__control">
                                     <div class="control-wrapper">
-                                        <input ng-model="model.IndustryThreshold" class="input--small" maxlength="5" ng-validation ng-editing/>
+                                        <input ng-model="model.IndustryThreshold" class="input--small" maxlength="5" ng-validation ng-editing />
                                     </div>
                                     <p>A threshold value, equal to or below which a contributing score point is received for industry</p>
                                 </div>
@@ -56,10 +60,51 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="col-50p">
+                            <div class="form__group">
+                                <div class="form__label">Industry score:</div>
+                                <div class="form__control">
+                                    <div class="control-wrapper">
+                                        <input ng-model="model.IndustryAssignedScore" class="input--small" maxlength="5" ng-validation ng-editing/>
+                                    </div>
+                                    <p>The score assigned when the associated Industry threshold is met.</p>
+                                </div>
+                            </div>
+                           
+                            <div class="form__group">
+                                <div class="form__label">Regional score:</div>
+                                <div class="form__control">
+                                    <div class="control-wrapper">
+                                        <input ng-model="model.RegionalThresholdAssignedScore" class="input--small" maxlength="5" ng-validation ng-editing/>
+                                    </div>
+                                    <p>The score assigned when the associated Regional threshold is met.</p>
+                                </div>
+                            </div>
+                           
+                            <div class="form__group">
+                                <div class="form__label">Employee count score:</div>
+                                <div class="form__control">
+                                    <div class="control-wrapper">
+                                        <input ng-model="model.EmployeeCountAssignedScore" class="input--small" maxlength="5" ng-validation ng-editing/>
+                                    </div>
+                                    <p>The score assigned when the associated Employee Count threshold is met.</p>
+                                </div>
+                            </div>
+                           
+                            <div class="form__group">
+                                <div class="form__label">First-time Applicant score:</div>
+                                <div class="form__control">
+                                    <div class="control-wrapper">
+                                        <input ng-model="model.FirstTimeApplicantAssignedScore" class="input--small" maxlength="5" ng-validation ng-editing/>
+                                    </div>
+                                    <p>The score assigned when the applicant is a First-time Applicant.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
             @Html.Partial("_Regions")
             @Html.Partial("_Industries")
         </div>

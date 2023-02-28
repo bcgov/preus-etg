@@ -35,14 +35,29 @@ app.controller('PrioritizationManagement', function ($scope, $attrs, $controller
    **/
   function init() {
     return Promise.all([
-        loadThresholds(),
+        loadThresholds()
       ])
       .catch(angular.noop);
   }
-  
-  $scope.$on('ngDialog.closing', function () {
-    $scope.broadcast('refreshPager');
-  });
+
+  $scope.recalculatePrioritization = function () {
+    return $scope.confirmDialog('Recalculate Intake Queue Prioritization', 'Are you sure you wish to recalculate the Intake Queue Prioritization scores?')
+      .then(function () {
+        return $scope.ajax({
+          url: '/Int/Admin/Prioritization/Recalculate',
+          method: 'PUT'
+        });
+      })
+      .then(function (response) {
+        if (response.data.RedirectUrl)
+          window.location = response.data.RedirectUrl;
+      })
+      .catch(angular.noop);
+  }
+
+  //$scope.$on('ngDialog.closing', function () {
+  //  $scope.broadcast('refreshPager');
+  //});
 
   init();
 });

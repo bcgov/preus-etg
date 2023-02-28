@@ -32,7 +32,12 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			{
 				IndustryThreshold = 2,
 				RegionalThreshold = 2.5m,
-				EmployeeCountThreshold = 50
+				EmployeeCountThreshold = 50,
+
+				IndustryAssignedScore = 2,
+				RegionalThresholdAssignedScore = 3,
+				EmployeeCountAssignedScore = 4,
+				FirstTimeApplicantAssignedScore = 5
 			};
 
 			_helper.MockDbSet(GetPrioritizationIndustryScores());
@@ -138,7 +143,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			_grantApplication.OrganizationNumberOfEmployeesInBC = 25;
 			var result = _service.GetBreakdown(_grantApplication);
 
-			Assert.AreEqual(1, result.SmallBusinessScore);
+			Assert.AreEqual(4, result.SmallBusinessScore);
 		}
 
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Small Business Score")]
@@ -147,7 +152,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			_grantApplication.OrganizationNumberOfEmployeesInBC = 50;
 			var result = _service.GetBreakdown(_grantApplication);
 
-			Assert.AreEqual(1, result.SmallBusinessScore);
+			Assert.AreEqual(4, result.SmallBusinessScore);
 		}
 
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Small Business Score")]
@@ -179,7 +184,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			_helper.MockDbSet(_grantApplication);
 			var result = _service.GetBreakdown(_grantApplication);
 
-			Assert.AreEqual(1, result.FirstTimeApplicantScore);
+			Assert.AreEqual(5, result.FirstTimeApplicantScore);
 		}
 
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("First-time Score")]
@@ -187,7 +192,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 		{
 			var result = _service.GetBreakdown(_grantApplication);
 
-			Assert.AreEqual(1, result.FirstTimeApplicantScore);
+			Assert.AreEqual(5, result.FirstTimeApplicantScore);
 		}
 
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("First-time Score")]
@@ -219,7 +224,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 
 			var result = _service.GetBreakdown(_grantApplication);
 
-			Assert.AreEqual(1, result.IndustryScore);
+			Assert.AreEqual(2, result.IndustryScore);
 		}
 
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Industry Score")]
@@ -235,7 +240,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 
 			var result = _service.GetBreakdown(_grantApplication);
 
-			Assert.AreEqual(1, result.IndustryScore);
+			Assert.AreEqual(2, result.IndustryScore);
 		}
 
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Industry Score")]
@@ -251,7 +256,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 
 			var result = _service.GetBreakdown(_grantApplication);
 
-			Assert.AreEqual(1, result.IndustryScore);
+			Assert.AreEqual(2, result.IndustryScore);
 		}
 
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Industry Score")]
@@ -267,7 +272,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 
 			var result = _service.GetBreakdown(_grantApplication);
 
-			Assert.AreEqual(1, result.IndustryScore);
+			Assert.AreEqual(2, result.IndustryScore);
 		}
 
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Industry Score")]
@@ -283,7 +288,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 
 			var result = _service.GetBreakdown(_grantApplication);
 
-			Assert.AreEqual(1, result.IndustryScore);
+			Assert.AreEqual(2, result.IndustryScore);
 		}
 
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Industry Score")]
@@ -325,7 +330,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			_grantApplication.ApplicantPhysicalAddress.PostalCode = "V8T4G2";
 			var result = _service.GetBreakdown(_grantApplication);
 
-			Assert.AreEqual(1, result.RegionalScore);
+			Assert.AreEqual(3, result.RegionalScore);
 		}
 
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Regional Score")]
@@ -334,7 +339,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			_grantApplication.ApplicantPhysicalAddress.PostalCode = "v8t 4g2";
 			var result = _service.GetBreakdown(_grantApplication);
 
-			Assert.AreEqual(1, result.RegionalScore);
+			Assert.AreEqual(3, result.RegionalScore);
 		}
 
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Regional Score")]
@@ -381,8 +386,8 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			_service.SetRegionException(_grantApplication, 12);
 
 			Assert.AreEqual("In-Demand Region", _grantApplication.PrioritizationScoreBreakdown.RegionalName);
-			Assert.AreEqual(1, _grantApplication.PrioritizationScoreBreakdown.RegionalScore);
-			Assert.AreEqual(1, _grantApplication.PrioritizationScore);
+			Assert.AreEqual(3, _grantApplication.PrioritizationScoreBreakdown.RegionalScore);
+			Assert.AreEqual(3, _grantApplication.PrioritizationScore);
 		}
 
 		private static GrantApplication GetFilledGrantApplication()
