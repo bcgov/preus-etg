@@ -8,6 +8,7 @@ app.controller('IntakeQueue', function ($scope, $attrs, $controller, $timeout, U
 
   $scope.quantities = [10, 25, 50, 100];
   $scope.assessors = [];
+  $scope.prioritizationExceptions = [];
   $scope.fiscalYears = [];
   $scope.trainingPeriods = [];
   $scope.grantPrograms = [];
@@ -35,6 +36,14 @@ app.controller('IntakeQueue', function ($scope, $attrs, $controller, $timeout, U
       url: '/Int/Intake/Queue/Assessors',
       set: 'assessors',
       condition: !$scope.assessors || !$scope.assessors.length
+    });
+  }
+
+  function loadRegionalExceptions() {
+    return $scope.load({
+      url: '/Int/Intake/Queue/PrioritizationExceptions',
+      set: 'prioritizationExceptions',
+      //condition: !$scope.prioritizationExceptions || !$scope.prioritizationExceptions.length
     });
   }
 
@@ -144,6 +153,7 @@ app.controller('IntakeQueue', function ($scope, $attrs, $controller, $timeout, U
    **/
   function init() {
     return Promise.all([
+      loadRegionalExceptions(),
       loadAssessors(),
       loadFiscalYears(),
       loadGrantPrograms(),

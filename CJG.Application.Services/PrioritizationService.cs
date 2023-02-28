@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Data.Entity.Core;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Web;
 using CJG.Core.Entities;
-using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Entities;
 using DocumentFormat.OpenXml.Packaging;
@@ -17,8 +15,12 @@ namespace CJG.Application.Services
 {
 	public class PrioritizationService : Service, IPrioritizationService
 	{
-		public PrioritizationService(IDataContext context, HttpContextBase httpContext, ILogger logger) : base(context, httpContext, logger)
+		private readonly INoteService _noteService;
+
+		public PrioritizationService(IDataContext context, HttpContextBase httpContext, INoteService noteService, ILogger logger)
+			: base(context, httpContext, logger)
 		{
+			_noteService = noteService;
 		}
 
 		public IEnumerable<PrioritizationRegion> GetPrioritizationRegions()
@@ -62,7 +64,7 @@ namespace CJG.Application.Services
 			if (region == null || applicationScoreBreakdown == null)
 				return;
 
-			var regionalResult = GetRegionalResult(region, threshold.RegionalThreshold);
+			var regionalResult = GetRegionalResult(region, threshold);
 
 			applicationScoreBreakdown.RegionalScore = regionalResult.Score;
 			applicationScoreBreakdown.RegionalName = regionalResult.Name;
@@ -78,8 +80,10 @@ namespace CJG.Application.Services
 
 			var regionalResult = GetRegionalScore(grantApplication, threshold);
 			var industryResult = GetIndustryScore(grantApplication, threshold);
-			var smallBusinessScore = grantApplication.OrganizationNumberOfEmployeesInBC <= threshold.EmployeeCountThreshold ? 1 : 0;
-			var firstTimeApplicantScore = GetFirstTimeApplicantScore(grantApplication);
+			var smallBusinessScore = grantApplication.OrganizationNumberOfEmployeesInBC <= threshold.EmployeeCountThreshold
+				? threshold.EmployeeCountAssignedScore
+				: 0;
+			var firstTimeApplicantScore = GetFirstTimeApplicantScore(grantApplication, threshold);
 
 			var breakdown = grantApplication.PrioritizationScoreBreakdown ?? new PrioritizationScoreBreakdown();
 
@@ -305,6 +309,37 @@ namespace CJG.Application.Services
 			return false;
 		}
 
+		public void RecalculatePriorityScores(int? grantApplicationId = null)
+		{
+			var validExceptionStates = new List<ApplicationStateInternal>
+			{
+				ApplicationStateInternal.New,
+				ApplicationStateInternal.PendingAssessment
+			};
+
+			var openApplications = _dbContext.GrantApplications
+				.Where(ga => validExceptionStates.Contains(ga.ApplicationStateInternal));
+
+			if (grantApplicationId.HasValue)
+				openApplications = openApplications.Where(ga => ga.Id == grantApplicationId.Value);
+
+			foreach (var grantApplication in openApplications)
+			{
+				var originalScore = grantApplication.PrioritizationScore;
+
+				var breakdown = GetBreakdown(grantApplication);
+				grantApplication.PrioritizationScoreBreakdown = breakdown;
+				grantApplication.PrioritizationScore = breakdown.GetTotalScore();
+
+				_noteService.AddWorkflowNote(grantApplication, $"Grant Application Priority Score recalculated. Previous Score: {originalScore}. New Score: {grantApplication.PrioritizationScore}.");
+
+				if (grantApplication.PrioritizationScoreBreakdown.HasRegionalException())
+					_noteService.AddWorkflowNote(grantApplication, "Priority list region lookup Exception. Postal Code not found in region list.");
+			}
+
+			_dbContext.CommitTransaction();
+		}
+
 		private RegionalResult GetRegionalScore(GrantApplication grantApplication, PrioritizationThreshold threshold)
 		{
 			var result = new RegionalResult();
@@ -319,12 +354,12 @@ namespace CJG.Application.Services
 			if (foundRegion == null)
 				return result;
 
-			return GetRegionalResult(foundRegion, threshold.RegionalThreshold);
+			return GetRegionalResult(foundRegion, threshold);
 		}
 
-		private static RegionalResult GetRegionalResult(PrioritizationRegion region, decimal regionalThreshold)
+		private static RegionalResult GetRegionalResult(PrioritizationRegion region, PrioritizationThreshold threshold)
 		{
-			var regionalScore = region.RegionalScore >= regionalThreshold ? 1 : 0;
+			var regionalScore = region.RegionalScore >= threshold.RegionalThreshold ? threshold.RegionalThresholdAssignedScore : 0;
 
 			return new RegionalResult
 			{
@@ -375,7 +410,7 @@ namespace CJG.Application.Services
 				return result;
 
 
-			var industryScore = matchingIndustryScore.IndustryScore <= industryThreshold ? 1 : 0;
+			var industryScore = matchingIndustryScore.IndustryScore <= industryThreshold ? threshold.IndustryAssignedScore : 0;
 			result.Score = industryScore;
 			result.Name = matchingIndustryScore.Name;
 			result.Code = matchingIndustryScore.NaicsCode;
@@ -418,7 +453,7 @@ namespace CJG.Application.Services
 			return matchingIndustryScore;
 		}
 
-		private int GetFirstTimeApplicantScore(GrantApplication grantApplication)
+		private int GetFirstTimeApplicantScore(GrantApplication grantApplication, PrioritizationThreshold threshold)
 		{
 			var existingApplications = _dbContext.GrantApplications
 				.Where(ga => ga.OrganizationId == grantApplication.OrganizationId)
@@ -450,7 +485,7 @@ namespace CJG.Application.Services
 			if (existingApplications.Any(ia => existingStatus.Contains(ia.ApplicationStateInternal)))
 				return 0;
 
-			return 1;
+			return threshold.FirstTimeApplicantAssignedScore;
 		}
 
 		private static List<PrioritizationScoreBreakdownAnswer> GetEligibilityQuestionAnswers(GrantApplication grantApplication)

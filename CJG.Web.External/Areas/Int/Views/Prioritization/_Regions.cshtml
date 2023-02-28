@@ -1,7 +1,7 @@
 ﻿<div class="form-section" ng-controller="PrioritizationManagementRegions">
     <div class="panel-section-item">
         <div class="panel-section-title" ng-click="toggle($event)">
-            <h3 class="display-inline-block">Prioritization Regions ({{ scores.Regions.length }})</h3>
+            <h3 class="display-inline-block">Prioritization Regions ({{ totalScores }})</h3>
         </div>
         <div class="panel-section-buttons">
             <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
@@ -28,22 +28,24 @@
                 </div>
             </div>
         </div>
-
-        <table class="form-table">
-            <thead>
-            <tr class="form-table-heading display--table-row">
-                <th>Region</th>
-                <th>Priority Score</th>
-                <th>Is Priority</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr class="form-table-row-with-hover" ng-repeat="region in scores.Regions">
-                <td class="form-table-cell">{{ region.Name }}</td>
-                <td class="form-table-cell">{{ region.Score }}</td>
-                <td class="form-table-cell">{{ region.IsPriority ? "Priority" : "Non-priority" }}</td>
-            </tr>
-            </tbody>
-        </table>
+        
+        <pager ng-if="scores" ng-filter="getScores" ng-page-size="[250]" ng-page-header="false" ng-Page-Search="false">
+            <table class="form-table">
+                <thead>
+                    <tr class="form-table-heading display--table-row">
+                        <th ng-click="changeSorting('Name')"><img ng-src="{{imgSrcName}}" /> Region</th>
+                        <th ng-click="changeSorting('Score')"><img ng-src="{{imgSrcScore}}" /> Regional Score</th>
+                        <th ng-click="changeSorting('IsPriority')"><img ng-src="{{imgSrcPriority}}" /> Is Priority</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="form-table-row-with-hover" ng-repeat="region in $parent.$ctrl.ngItems | orderBy: sort.column:sort.descending">
+                        <td class="form-table-cell">{{ region.Name }}</td>
+                        <td class="form-table-cell">{{ region.Score }}</td>
+                        <td class="form-table-cell">{{ region.IsPriority ? "Priority" : "Non-priority" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </pager>
     </div>
 </div>

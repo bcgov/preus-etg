@@ -1,20 +1,20 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
 using CJG.Core.Entities.Helpers;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	/// <summary>
-	/// IntakeController class, provides endpoints to select and search for grant applications.
-	/// </summary>
-	[RouteArea("Int")]
+    /// <summary>
+    /// IntakeController class, provides endpoints to select and search for grant applications.
+    /// </summary>
+    [RouteArea("Int")]
 	[Authorize(Roles = "Assessor, System Administrator, Director, Financial Clerk")]
 	public class IntakeQueueController : BaseController
 	{
@@ -117,6 +117,22 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				HandleAngularException(ex);
 			}
 			return Json(results, JsonRequestBehavior.AllowGet);
+		}
+
+		[HttpGet]
+		[Route("Intake/Queue/PrioritizationExceptions")]
+		public JsonResult GetTotalExceptions()
+		{
+			var totalExceptions = 0;
+			try
+			{
+				totalExceptions = _grantApplicationService.CurrentPrioritizationRegionalExceptions();
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex);
+			}
+			return Json(new { RegionalExceptions = totalExceptions }, JsonRequestBehavior.AllowGet);
 		}
 
 		[HttpGet]

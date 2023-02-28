@@ -49,7 +49,6 @@ namespace CJG.Web.External.Areas.Int.Models
 			FirstTimeApplicantScore = breakdown.FirstTimeApplicantScore;
 
 			QuestionScores = breakdown.EligibilityAnswerScores
-				.Where(a => a.QuestionScore > 0)
 				.Select(q => new Tuple<string, int>(q.QuestionedAnswered.EligibilityQuestion, q.QuestionScore))
 				.ToList();
 

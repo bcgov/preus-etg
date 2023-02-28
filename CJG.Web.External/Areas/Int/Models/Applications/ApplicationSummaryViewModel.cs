@@ -57,6 +57,8 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 		public AttachmentViewModel BusinessCaseDocument { get; set; }
 		public ProgramTypes ProgramType { get; private set; }
 
+		public int? PrioritizationScore { get; set; }
+
 		public ApplicationSummaryViewModel() { }
 
 		public ApplicationSummaryViewModel(GrantApplication grantApplication,
@@ -140,6 +142,8 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 				BusinessCaseDocument = new AttachmentViewModel(grantApplication.BusinessCaseDocument);
 			ProgramType = grantApplication.GetProgramType();
 			BusinessCaseHeader = grantApplication.GrantOpening.GrantStream.BusinessCaseInternalHeader;
+
+			PrioritizationScore = grantApplication.PrioritizationScoreBreakdown != null ? grantApplication.PrioritizationScore : (int?)null;
 		}
 
 		public GrantApplication MapToGrantApplication(ApplicationSummaryViewModel model, GrantApplication grantApplication)

@@ -1,20 +1,20 @@
-﻿using CJG.Application.Services;
-using CJG.Core.Entities;
-using CJG.Core.Interfaces.Service;
-using CJG.Web.External.Areas.Int.Models.Applications;
-using CJG.Web.External.Controllers;
-using CJG.Web.External.Helpers;
-using CJG.Web.External.Helpers.Filters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using CJG.Application.Services;
+using CJG.Core.Entities;
 using CJG.Core.Interfaces;
+using CJG.Core.Interfaces.Service;
+using CJG.Web.External.Areas.Int.Models.Applications;
 using CJG.Web.External.Areas.Int.Models.Attachments;
+using CJG.Web.External.Controllers;
+using CJG.Web.External.Helpers;
+using CJG.Web.External.Helpers.Filters;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	[RouteArea("Int")]
+    [RouteArea("Int")]
 	public class ApplicationSummaryController : BaseController
 	{
 		#region Variables
