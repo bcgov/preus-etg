@@ -1,20 +1,20 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Configuration;
+using System.Linq;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Validation;
 using CJG.Web.External.Models.Shared;
 using DataAnnotationsExtensions;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace CJG.Web.External.Areas.Ext.Models.ProgramDescriptions
 {
-	public class ProgramDescriptionViewModel : BaseViewModel
+    public class ProgramDescriptionViewModel : BaseViewModel
 	{
-		#region Properties
 		public string RowVersion { get; set; }
 
 		[MaxLength(300, ErrorMessage = "Program Description cannot be longer than 300 characters.")]
@@ -37,28 +37,23 @@ namespace CJG.Web.External.Areas.Ext.Models.ProgramDescriptions
 
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateNAICS")]
 		public int? Naics1Id { get; set; }
-
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateNAICS")]
 		public int? Naics2Id { get; set; }
-
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateNAICS")]
 		public int? Naics3Id { get; set; }
-
 		public int? Naics4Id { get; set; }
-
 		public int? Naics5Id { get; set; }
 
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateNOC")]
 		public int? Noc1Id { get; set; }
-
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateNOC")]
 		public int? Noc2Id { get; set; }
-
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateNOC")]
 		public int? Noc3Id { get; set; }
-
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateNOC")]
 		public int? Noc4Id { get; set; }
+		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateNOC")]
+		public int? Noc5Id { get; set; }
 
 		public IEnumerable<int> SelectedVulnerableGroupIds { get; set; }
 
@@ -72,9 +67,6 @@ namespace CJG.Web.External.Areas.Ext.Models.ProgramDescriptions
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateParticipantEmploymentStatuses")]
 		public IEnumerable<int> SelectedParticipantEmploymentStatusIds { get; set; }
 
-		#endregion
-
-		#region Constructors
 		public ProgramDescriptionViewModel()
 		{ }
 
@@ -82,19 +74,22 @@ namespace CJG.Web.External.Areas.Ext.Models.ProgramDescriptions
 			INaIndustryClassificationSystemService naIndustryClassificationSystemService,
 			INationalOccupationalClassificationService nationalOccupationalClassificationService)
 		{
-			if (programDescription == null) throw new ArgumentNullException(nameof(programDescription));
-			if (naIndustryClassificationSystemService == null) throw new ArgumentNullException(nameof(naIndustryClassificationSystemService));
-			if (nationalOccupationalClassificationService == null) throw new ArgumentNullException(nameof(nationalOccupationalClassificationService));
+			if (programDescription == null)
+				throw new ArgumentNullException(nameof(programDescription));
+			if (naIndustryClassificationSystemService == null)
+				throw new ArgumentNullException(nameof(naIndustryClassificationSystemService));
+			if (nationalOccupationalClassificationService == null)
+				throw new ArgumentNullException(nameof(nationalOccupationalClassificationService));
 
 			Utilities.MapProperties(programDescription, this);
-			this.Id = programDescription.GrantApplicationId;
-			this.RowVersion = programDescription.RowVersion != null ? Convert.ToBase64String(programDescription.RowVersion) : null;
-			this.NumberOfParticipants = programDescription.RowVersion == null ? (int?)null : programDescription.GrantApplication.TrainingCost.EstimatedParticipants;
-			this.SupportingEmployers = programDescription.RowVersion == null ? (int?)null : programDescription.SupportingEmployers;
-			this.SelectedUnderRepresentedPopulationIds = programDescription.UnderRepresentedPopulations.Select(o => o.Id).ToArray();
-			this.SelectedVulnerableGroupIds = programDescription.VulnerableGroups.Select(o => o.Id).ToArray();
-			this.SelectedCommunityIds = programDescription.Communities.Select(c => c.Id).ToArray();
-			this.SelectedParticipantEmploymentStatusIds = programDescription.ParticipantEmploymentStatuses.Select(o => o.Id).ToArray();
+			Id = programDescription.GrantApplicationId;
+			RowVersion = programDescription.RowVersion != null ? Convert.ToBase64String(programDescription.RowVersion) : null;
+			NumberOfParticipants = programDescription.RowVersion == null ? (int?)null : programDescription.GrantApplication.TrainingCost.EstimatedParticipants;
+			SupportingEmployers = programDescription.RowVersion == null ? (int?)null : programDescription.SupportingEmployers;
+			SelectedUnderRepresentedPopulationIds = programDescription.UnderRepresentedPopulations.Select(o => o.Id).ToArray();
+			SelectedVulnerableGroupIds = programDescription.VulnerableGroups.Select(o => o.Id).ToArray();
+			SelectedCommunityIds = programDescription.Communities.Select(c => c.Id).ToArray();
+			SelectedParticipantEmploymentStatusIds = programDescription.ParticipantEmploymentStatuses.Select(o => o.Id).ToArray();
 
 			#region NAICS and NOC
 			var naics = programDescription.TargetNAICS;
@@ -104,8 +99,8 @@ namespace CJG.Web.External.Areas.Ext.Models.ProgramDescriptions
 			var nocIds = new List<int>();
 
 			//New NAICS codes to be used from the cutoffdate
-			DateTime cutOffDate = System.Convert.ToDateTime(System.Configuration.ConfigurationManager.AppSettings["CutOffDate"].ToString());
-			DateTime currentDate = System.DateTime.Now;
+			DateTime cutOffDate = Convert.ToDateTime(ConfigurationManager.AppSettings["CutOffDate"]);
+			DateTime currentDate = DateTime.Now;
 			int naicsVersion = 2012; //old naics codes
 			int rootParentId = 0;
 
@@ -129,7 +124,7 @@ namespace CJG.Web.External.Areas.Ext.Models.ProgramDescriptions
 				property?.SetValue(this, naicsIds[i]);
 			}
 
-			while ((noc?.Id ?? 0) > 0)
+			while ((noc?.Level ?? 0) > 0)
 			{
 				nocIds.Add(noc.Id);
 				noc = nationalOccupationalClassificationService.GetNationalOccupationalClassification(noc.ParentId);
@@ -142,7 +137,6 @@ namespace CJG.Web.External.Areas.Ext.Models.ProgramDescriptions
 			}
 			#endregion
 		}
-		#endregion
 
 		#region Methods
 		/// <summary>
@@ -172,33 +166,33 @@ namespace CJG.Web.External.Areas.Ext.Models.ProgramDescriptions
 			programDescription.Communities.Clear();
 			programDescription.ParticipantEmploymentStatuses.Clear();
 
-			if (this.SelectedVulnerableGroupIds != null)
+			if (SelectedVulnerableGroupIds != null)
 			{
-				var vulnerableGroups = vulnerableGroupService.GetVulnerableGroups(this.SelectedVulnerableGroupIds.ToArray());
+				var vulnerableGroups = vulnerableGroupService.GetVulnerableGroups(SelectedVulnerableGroupIds.ToArray());
 				foreach (var vulnerableGroup in vulnerableGroups)
 					programDescription.VulnerableGroups.Add(vulnerableGroup);
 			}
-			if (this.SelectedUnderRepresentedPopulationIds != null)
+			if (SelectedUnderRepresentedPopulationIds != null)
 			{
-				var underRepresentedPopulations = underRepresentedPopulationService.GetUnderRepresentedPopulations(this.SelectedUnderRepresentedPopulationIds.ToArray());
+				var underRepresentedPopulations = underRepresentedPopulationService.GetUnderRepresentedPopulations(SelectedUnderRepresentedPopulationIds.ToArray());
 				foreach (var underRepresentedPopulation in underRepresentedPopulations)
 					programDescription.UnderRepresentedPopulations.Add(underRepresentedPopulation);
 			}
-			if (this.SelectedCommunityIds != null)
+			if (SelectedCommunityIds != null)
 			{
-				var communities = communityService.GetCommunities(this.SelectedCommunityIds.ToArray());
+				var communities = communityService.GetCommunities(SelectedCommunityIds.ToArray());
 				foreach (var community in communities)
 					programDescription.Communities.Add(community);
 			}
 
-			if (this.SelectedParticipantEmploymentStatusIds != null)
+			if (SelectedParticipantEmploymentStatusIds != null)
 			{
-				var selectedStatuses = partEmploymentStatusService.GetParticipantEmploymentStatuses(this.SelectedParticipantEmploymentStatusIds.ToArray());
+				var selectedStatuses = partEmploymentStatusService.GetParticipantEmploymentStatuses(SelectedParticipantEmploymentStatusIds.ToArray());
 				foreach (var status in selectedStatuses)
 					programDescription.ParticipantEmploymentStatuses.Add(status);
 			}
-			programDescription.TargetNAICSId = this.Naics5Id ?? this.Naics4Id ?? this.Naics3Id ?? this.Naics2Id ?? this.Naics1Id;
-			programDescription.TargetNOCId = this.Noc4Id ?? this.Noc3Id ?? this.Noc2Id ?? this.Noc1Id;
+			programDescription.TargetNAICSId = Naics5Id ?? Naics4Id ?? Naics3Id ?? Naics2Id ?? Naics1Id;
+			programDescription.TargetNOCId = Noc5Id ?? Noc4Id ?? Noc3Id ?? Noc2Id ?? Noc1Id;
 		}
 		#endregion
 	}

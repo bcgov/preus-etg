@@ -1,4 +1,8 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
@@ -6,16 +10,11 @@ using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Validation;
 using CJG.Web.External.Models.Shared;
 using DataAnnotationsExtensions;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace CJG.Web.External.Areas.Int.Models.ProgramDescriptions
 {
-	public class ProgramDescriptionViewModel : BaseViewModel
+    public class ProgramDescriptionViewModel : BaseViewModel
 	{
-		#region Properties
 		public string RowVersion { get; set; }
 
 		[MaxLength(300, ErrorMessage = "Program Description cannot be longer than 300 characters.")]
@@ -39,28 +38,25 @@ namespace CJG.Web.External.Areas.Int.Models.ProgramDescriptions
 
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateNAICS")]
 		public int? Naics1Id { get; set; }
-
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateNAICS")]
 		public int? Naics2Id { get; set; }
-
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateNAICS")]
 		public int? Naics3Id { get; set; }
-
 		public int? Naics4Id { get; set; }
-
 		public int? Naics5Id { get; set; }
 
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateNOC")]
 		public int? Noc1Id { get; set; }
-
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateNOC")]
 		public int? Noc2Id { get; set; }
-
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateNOC")]
 		public int? Noc3Id { get; set; }
-
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateNOC")]
 		public int? Noc4Id { get; set; }
+		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateNOC")]
+		public int? Noc5Id { get; set; }
+
+		public string ExistingNOC { get; set; }
 
 		public IEnumerable<int> SelectedVulnerableGroupIds { get; set; }
 
@@ -73,9 +69,7 @@ namespace CJG.Web.External.Areas.Int.Models.ProgramDescriptions
 		[RequiredEnumerable(ErrorMessage = "You must select at least one participant employment status.")]
 		[CustomValidation(typeof(ProgramDescriptionViewModelValidation), "ValidateParticipantEmploymentStatuses")]
 		public IEnumerable<int> SelectedParticipantEmploymentStatusIds { get; set; }
-		#endregion
 
-		#region Constructors
 		public ProgramDescriptionViewModel()
 		{ }
 
@@ -83,18 +77,25 @@ namespace CJG.Web.External.Areas.Int.Models.ProgramDescriptions
 			INaIndustryClassificationSystemService naIndustryClassificationSystemService,
 			INationalOccupationalClassificationService nationalOccupationalClassificationService)
 		{
-			if (programDescription == null) throw new ArgumentNullException(nameof(programDescription));
-			if (naIndustryClassificationSystemService == null) throw new ArgumentNullException(nameof(naIndustryClassificationSystemService));
-			if (nationalOccupationalClassificationService == null) throw new ArgumentNullException(nameof(nationalOccupationalClassificationService));
+			if (programDescription == null)
+				throw new ArgumentNullException(nameof(programDescription));
+
+			if (naIndustryClassificationSystemService == null)
+				throw new ArgumentNullException(nameof(naIndustryClassificationSystemService));
+
+			if (nationalOccupationalClassificationService == null)
+				throw new ArgumentNullException(nameof(nationalOccupationalClassificationService));
 
 			Utilities.MapProperties(programDescription, this);
-			this.Id = programDescription.GrantApplicationId;
-			this.NumberOfParticipants = programDescription.RowVersion == null ? (int?)null : programDescription.GrantApplication.TrainingCost.EstimatedParticipants;
-			this.SupportingEmployers = programDescription.RowVersion == null ? (int?)null : programDescription.SupportingEmployers;
-			this.SelectedUnderRepresentedPopulationIds = programDescription.UnderRepresentedPopulations.Select(o => o.Id).ToArray();
-			this.SelectedVulnerableGroupIds = programDescription.VulnerableGroups.Select(o => o.Id).ToArray();
-			this.SelectedCommunityIds = programDescription.Communities.Select(c => c.Id).ToArray();
-			this.SelectedParticipantEmploymentStatusIds = programDescription.ParticipantEmploymentStatuses.Select(c => c.Id).ToArray();
+			Id = programDescription.GrantApplicationId;
+			NumberOfParticipants = programDescription.RowVersion == null ? (int?)null : programDescription.GrantApplication.TrainingCost.EstimatedParticipants;
+			SupportingEmployers = programDescription.RowVersion == null ? (int?)null : programDescription.SupportingEmployers;
+			SelectedUnderRepresentedPopulationIds = programDescription.UnderRepresentedPopulations.Select(o => o.Id).ToArray();
+			SelectedVulnerableGroupIds = programDescription.VulnerableGroups.Select(o => o.Id).ToArray();
+			SelectedCommunityIds = programDescription.Communities.Select(c => c.Id).ToArray();
+			SelectedParticipantEmploymentStatusIds = programDescription.ParticipantEmploymentStatuses.Select(c => c.Id).ToArray();
+
+			ExistingNOC = $"{programDescription.NationalOccupationalClassification.Code} | {programDescription.NationalOccupationalClassification.Description} ({programDescription.NationalOccupationalClassification.NOCVersion})";
 
 			#region NAICS and NOC
 			var naics = naIndustryClassificationSystemService.GetNaIndustryClassificationSystems(programDescription.TargetNAICS.Id);
@@ -106,16 +107,19 @@ namespace CJG.Web.External.Areas.Int.Models.ProgramDescriptions
 				property?.SetValue(this, item.Id);
 			});
 
-			nocs.ForEach(item =>
+			// If we're using a matching NOC Coding, populate the dropdowns with the information to select from
+			var useNocCoding = nationalOccupationalClassificationService.UseNocVersion;
+			if (useNocCoding == programDescription.NationalOccupationalClassification.NOCVersion)
 			{
-				var property = GetType().GetProperty($"Noc{item.Level}Id");
-				property?.SetValue(this, item.Id);
-			});
+				nocs.ForEach(item =>
+				{
+					var property = GetType().GetProperty($"Noc{item.Level}Id");
+					property?.SetValue(this, item.Id);
+				});
+			}
 			#endregion
 		}
-		#endregion
 
-		#region Methods
 		/// <summary>
 		/// Copy the view model information into the specified program description.
 		/// </summary>
@@ -140,27 +144,26 @@ namespace CJG.Web.External.Areas.Int.Models.ProgramDescriptions
 			programDescription.UnderRepresentedPopulations.Clear();
 			programDescription.Communities.Clear();
 
-			if (this.SelectedVulnerableGroupIds != null) {
-				var vulnerableGroups = vulnerableGroupService.GetVulnerableGroups(this.SelectedVulnerableGroupIds.ToArray());
+			if (SelectedVulnerableGroupIds != null) {
+				var vulnerableGroups = vulnerableGroupService.GetVulnerableGroups(SelectedVulnerableGroupIds.ToArray());
 				foreach (var vulnerableGroup in vulnerableGroups)
 					programDescription.VulnerableGroups.Add(vulnerableGroup);
 			}
 
-			if (this.SelectedUnderRepresentedPopulationIds != null) {
-				var underRepresentedPopulations = underRepresentedPopulationService.GetUnderRepresentedPopulations(this.SelectedUnderRepresentedPopulationIds.ToArray());
+			if (SelectedUnderRepresentedPopulationIds != null) {
+				var underRepresentedPopulations = underRepresentedPopulationService.GetUnderRepresentedPopulations(SelectedUnderRepresentedPopulationIds.ToArray());
 				foreach (var underRepresentedPopulation in underRepresentedPopulations)
 					programDescription.UnderRepresentedPopulations.Add(underRepresentedPopulation);
 			}
 
-			if (this.SelectedCommunityIds != null) {
-				var communities = this.SelectedCommunityIds == null ? communityService.GetCommunities(new int[] { }) : communityService.GetCommunities(this.SelectedCommunityIds.ToArray());
+			if (SelectedCommunityIds != null) {
+				var communities = SelectedCommunityIds == null ? communityService.GetCommunities(new int[] { }) : communityService.GetCommunities(SelectedCommunityIds.ToArray());
 				foreach (var community in communities)
 					programDescription.Communities.Add(community);
 			}
 
-			programDescription.TargetNAICSId = this.Naics5Id ?? this.Naics4Id ?? this.Naics3Id ?? this.Naics2Id ?? this.Naics1Id;
-			programDescription.TargetNOCId = this.Noc4Id ?? this.Noc3Id ?? this.Noc2Id ?? this.Noc1Id;
+			programDescription.TargetNAICSId = Naics5Id ?? Naics4Id ?? Naics3Id ?? Naics2Id ?? Naics1Id;
+			programDescription.TargetNOCId = Noc5Id ?? Noc4Id ?? Noc3Id ?? Noc2Id ?? Noc1Id;
 		}
-		#endregion
 	}
 }
