@@ -17,5 +17,6 @@ namespace CJG.Core.Interfaces.Service
 		bool UpdateIndustryScores(Stream stream);
 		bool UpdateRegionScores(Stream stream);
 		void RecalculatePriorityScores(int? grantApplicationId = null, bool allowUnderAssessment = false);
+		void AddPostalCodeToRegion(GrantApplication grantApplication, int regionId);
 	}
 }

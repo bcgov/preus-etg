@@ -27,6 +27,7 @@ namespace CJG.Application.Services
 		{
 			return _dbContext.PrioritizationRegions
 				.OrderBy(r => r.Name)
+				.Take(2000)  // Results aren't paginated, artificially page to stop long loads
 				.ToList();
 		}
 
@@ -34,6 +35,7 @@ namespace CJG.Application.Services
 		{
 			return _dbContext.PrioritizationIndustryScores
 				.OrderBy(r => r.NaicsCode)
+				.Take(2000)  // Results aren't paginated, artificially page to stop long loads
 				.ToList();
 		}
 
@@ -104,6 +106,162 @@ namespace CJG.Application.Services
 
 			return breakdown;
 		}
+		
+		public bool UpdateIndustryScores(Stream stream)
+		{
+			var importRows = new List<Tuple<string, string, int>>();
+			try
+			{
+				using (var document = SpreadsheetDocument.Open(stream, false))
+				{
+					var workbookPart = document.WorkbookPart;
+					var sheet = workbookPart.WorksheetParts.FirstOrDefault() ?? throw new InvalidOperationException("Excel file contains no worksheets.");
+					var rows = sheet.Worksheet.Descendants<Row>().ToList();
+
+					const string nameColumn = "A";
+					const string codeColumn = "B";
+					const string scoreColumn = "C";
+
+					var firstRowSkipped = false;
+
+					foreach (var row in rows)
+					{
+						if (!firstRowSkipped)
+						{
+							firstRowSkipped = true;
+							continue;
+						}
+
+						var cells = row.Descendants<Cell>().ToList();
+						var rowIndex = row.RowIndex;
+
+						var name = GetCellValue<string>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{nameColumn}{rowIndex}"));
+						var code = GetCellValue<string>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{codeColumn}{rowIndex}"));
+						var score = GetCellValue<int>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{scoreColumn}{rowIndex}"));
+
+						importRows.Add(new Tuple<string, string, int>(name, code, score));
+					}
+
+					document.Close();
+				}
+
+				if (!importRows.Any())
+					return false;
+
+				var industries = _dbContext.PrioritizationIndustryScores.ToList();
+				_dbContext.PrioritizationIndustryScores.RemoveRange(industries);
+
+				var newIndustries = importRows.Select(i => new PrioritizationIndustryScore
+				{
+					Name = i.Item1,
+					NaicsCode = i.Item2,
+					IndustryScore = i.Item3,
+					DateAdded = AppDateTime.UtcNow
+				});
+				_dbContext.PrioritizationIndustryScores.AddRange(newIndustries);
+
+				_dbContext.CommitTransaction();
+				return true;
+			}
+			catch
+			{
+				throw;
+			}
+		}
+
+		public bool UpdateRegionScores(Stream stream)
+		{
+			var importRows = new List<Tuple<int, string, decimal>>();
+			try
+			{
+				using (var document = SpreadsheetDocument.Open(stream, false))
+				{
+					var workbookPart = document.WorkbookPart;
+					var sheet = workbookPart.WorksheetParts.FirstOrDefault() ?? throw new InvalidOperationException("Excel file contains no worksheets.");
+					var rows = sheet.Worksheet.Descendants<Row>().ToList();
+
+					const string nameColumn = "A";
+					const string codeColumn = "B";
+					const string scoreColumn = "C";
+
+					var firstRowSkipped = false;
+
+					foreach (var row in rows)
+					{
+						if (!firstRowSkipped)
+						{
+							firstRowSkipped = true;
+							continue;
+						}
+
+						var cells = row.Descendants<Cell>().ToList();
+						var rowIndex = row.RowIndex;
+
+						var firstCellText = cells.FirstOrDefault(c => c.CellReference == $"{nameColumn}{rowIndex}")?.CellValue.Text;
+
+						if (string.IsNullOrWhiteSpace(firstCellText))
+							break;
+
+						var regionId = GetCellValue<int>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{nameColumn}{rowIndex}"));
+						var name = GetCellValue<string>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{codeColumn}{rowIndex}"));
+						var score = GetCellValue<decimal>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{scoreColumn}{rowIndex}"));
+
+						importRows.Add(new Tuple<int, string, decimal>(regionId, name, score));
+					}
+
+					document.Close();
+				}
+
+				if (!importRows.Any())
+					return false;
+
+				var regions = _dbContext.PrioritizationRegions.ToList();
+
+				var newRegions = importRows.Select(i => new PrioritizationRegion
+				{
+					Id = i.Item1,
+					Name = i.Item2,
+					RegionalScore = i.Item3,
+					DateAdded = AppDateTime.UtcNow
+				})
+					.ToList();
+
+				var newRegionsIds = newRegions
+					.Select(r => r.Id)
+					.ToList();
+
+				var regionsToDelete = regions.Where(r => !newRegionsIds.Contains(r.Id))
+					.ToList();
+
+				foreach (var newRegion in newRegions)
+				{
+					var existingRegion = regions.FirstOrDefault(r => r.Id == newRegion.Id);
+					if (existingRegion == null)
+					{
+						existingRegion = new PrioritizationRegion
+						{
+							Id = newRegion.Id,
+							DateAdded = DateTime.UtcNow
+						};
+						_dbContext.PrioritizationRegions.Add(existingRegion);
+					}
+
+					existingRegion.Name = newRegion.Name;
+					existingRegion.RegionalScore = newRegion.RegionalScore;
+				}
+
+				if (regionsToDelete.Any())
+					_dbContext.PrioritizationRegions.RemoveRange(regionsToDelete);
+
+				_dbContext.CommitTransaction();
+
+				return true;
+			}
+			catch
+			{
+				throw;
+			}
+		}
 
 		private static T GetCellValue<T>(WorkbookPart workbookPart, Cell cell, int? position = null)
 		{
@@ -140,6 +298,7 @@ namespace CJG.Application.Services
 				throw new InvalidOperationException($"The data in cell '{cell.CellReference}' was not valid.");
 			}
 		}
+
 		/// <summary>
 		/// Truncate the value to the specified position if it's a string, or round if it's a decimal.
 		/// </summary>
@@ -159,154 +318,13 @@ namespace CJG.Application.Services
 
 				var decimals = (decimal)Math.Pow(10, position.Value); // Should convert 2 to 100.
 				if (typeof(T) == typeof(decimal)
-				    || typeof(T) == typeof(float)
-				    || typeof(T) == typeof(double))
+					|| typeof(T) == typeof(float)
+					|| typeof(T) == typeof(double))
 					return (T)System.Convert.ChangeType(Math.Round((decimal)(object)value, position.Value), typeof(T));
 				//return (T)System.Convert.ChangeType(Math.Truncate((decimal)(object)value * decimals) / decimals, typeof(T));
 			}
 
 			return value;
-		}
-
-		public bool UpdateIndustryScores(Stream stream)
-		{
-			// Open a SpreadsheetDocument based on a stream.
-			SpreadsheetDocument document = null;
-
-			var importRows = new List<Tuple<string, string, int>>();
-			try
-			{
-				using (document = SpreadsheetDocument.Open(stream, false))
-				{
-					var workbookPart = document.WorkbookPart;
-					var sheet = workbookPart.WorksheetParts.FirstOrDefault() ?? throw new InvalidOperationException("Excel contains no sheets.");
-					var rows = sheet.Worksheet.Descendants<Row>();
-
-					var nameColumn = "A";
-					var codeColumn = "B";
-					var scoreColumn = "C";
-
-					var firstRowSkipped = false;
-
-					foreach (var row in rows)
-					{
-						if (!firstRowSkipped)
-						{
-							firstRowSkipped = true;
-
-							continue;
-						}
-
-						var cells = row.Descendants<Cell>().ToList();
-						var rowIndex = row.RowIndex;
-
-						var name = GetCellValue<string>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{nameColumn}{rowIndex}"));
-						var code = GetCellValue<string>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{codeColumn}{rowIndex}"));
-						var score = GetCellValue<int>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{scoreColumn}{rowIndex}"));
-
-						importRows.Add(new Tuple<string, string, int>(name, code, score));
-					}
-				}
-
-				if (!importRows.Any())
-					return false;
-
-				var industries = _dbContext.PrioritizationIndustryScores.ToList();
-				_dbContext.PrioritizationIndustryScores.RemoveRange(industries);
-
-				var newIndustries = importRows.Select(i => new PrioritizationIndustryScore
-				{
-					Name = i.Item1,
-					NaicsCode = i.Item2,
-					IndustryScore = i.Item3,
-					DateAdded = AppDateTime.UtcNow
-				});
-				_dbContext.PrioritizationIndustryScores.AddRange(newIndustries);
-
-				_dbContext.CommitTransaction();
-				return true;
-			}
-			catch
-			{
-				// Caller must close the stream.
-				throw;
-			}
-
-			return false;
-		}
-
-		public bool UpdateRegionScores(Stream stream)
-		{
-			// Open a SpreadsheetDocument based on a stream.
-			SpreadsheetDocument document = null;
-
-			var importRows = new List<Tuple<int, string, decimal>>();
-			try
-			{
-				using (document = SpreadsheetDocument.Open(stream, false))
-				{
-					var workbookPart = document.WorkbookPart;
-					var sheet = workbookPart.WorksheetParts.FirstOrDefault() ?? throw new InvalidOperationException("Excel contains no sheets.");
-					var rows = sheet.Worksheet.Descendants<Row>();
-
-					var nameColumn = "A";
-					var codeColumn = "B";
-					var scoreColumn = "C";
-
-					var firstRowSkipped = false;
-
-					var totalRows = rows.Count();
-					foreach (var row in rows)
-					{
-						if (!firstRowSkipped)
-						{
-							firstRowSkipped = true;
-
-							continue;
-						}
-
-						var cells = row.Descendants<Cell>().ToList();
-						var rowIndex = row.RowIndex;
-
-						var firstCellText = cells.FirstOrDefault(c => c.CellReference == $"{nameColumn}{rowIndex}")?.CellValue.Text;
-
-						if (string.IsNullOrWhiteSpace(firstCellText))
-							break;
-
-						var regionId = GetCellValue<int>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{nameColumn}{rowIndex}"));
-						var name = GetCellValue<string>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{codeColumn}{rowIndex}"));
-						var score = GetCellValue<decimal>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{scoreColumn}{rowIndex}"));
-
-						importRows.Add(new Tuple<int, string, decimal>(regionId, name, score));
-					}
-				}
-
-				if (!importRows.Any())
-					return false;
-
-				var industries = _dbContext.PrioritizationRegions.ToList();
-				_dbContext.PrioritizationRegions.RemoveRange(industries);
-
-				var newRegions = importRows.Select(i => new PrioritizationRegion
-				{
-					Id = i.Item1,
-					Name = i.Item2,
-					RegionalScore = i.Item3,
-					DateAdded = AppDateTime.UtcNow
-				});
-
-				_dbContext.PrioritizationRegions.AddRange(newRegions);
-				_dbContext.CommitTransaction();
-
-				return true;
-			}
-			catch
-			{
-				// Caller must close the stream.
-				throw;
-			}
-
-			return false;
 		}
 
 		public void RecalculatePriorityScores(int? grantApplicationId = null, bool allowUnderAssessment = false)
@@ -343,13 +361,36 @@ namespace CJG.Application.Services
 			_dbContext.CommitTransaction();
 		}
 
+		public void AddPostalCodeToRegion(GrantApplication grantApplication, int regionId)
+		{
+			var postalCode = GetPriorityPostalCode(grantApplication);
+			postalCode = postalCode.ToUpper().Replace(" ", string.Empty);
+
+			var existingPostalCode = _dbContext.PrioritizationPostalCodes.FirstOrDefault(p => p.PostalCode == postalCode);
+
+			if (existingPostalCode != null)
+				return;
+
+			var region = _dbContext.PrioritizationRegions.Find(regionId);
+
+			var newPostalCode = new PrioritizationPostalCode
+			{
+				PostalCode = postalCode,
+				Region = region,
+				DateAdded = AppDateTime.UtcNow,
+			};
+
+			_dbContext.PrioritizationPostalCodes.Add(newPostalCode);
+			_dbContext.Commit();
+		}
+
 		private RegionalResult GetRegionalScore(GrantApplication grantApplication, PrioritizationThreshold threshold)
 		{
 			var result = new RegionalResult();
 			if (grantApplication.ApplicantPhysicalAddress == null)
 				return result;
 
-			var postalCode = grantApplication.ApplicantPhysicalAddress.PostalCode;
+			var postalCode = GetPriorityPostalCode(grantApplication);
 			if (string.IsNullOrWhiteSpace(postalCode))
 				return result;
 
@@ -358,6 +399,11 @@ namespace CJG.Application.Services
 				return result;
 
 			return GetRegionalResult(foundRegion, threshold);
+		}
+
+		private static string GetPriorityPostalCode(GrantApplication grantApplication)
+		{
+			return grantApplication.ApplicantPhysicalAddress.PostalCode;
 		}
 
 		private static RegionalResult GetRegionalResult(PrioritizationRegion region, PrioritizationThreshold threshold)

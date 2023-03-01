@@ -18,7 +18,7 @@ app.controller('PrioritizationManagementIndustries', function ($scope, $attrs, $
   $scope.updateIndustries = function ($event) {
     if ($scope.upload.file) {
       return $scope.ajax({
-        url: '/Int/Admin/Prioritization/Industries',
+        url: '/Int/Admin/Prioritization/UpdateIndustries',
           method: 'POST',
           dataType: 'file',
           data: {

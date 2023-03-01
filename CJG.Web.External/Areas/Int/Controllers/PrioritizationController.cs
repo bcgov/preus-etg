@@ -217,7 +217,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		{
 			var model = new PrioritizationUpdateScoresFileViewModel();
 			int maxUploadSize = int.Parse(ConfigurationManager.AppSettings["MaxUploadSizeInBytes"]);
-			string[] permittedAttachmentTypes = ConfigurationManager.AppSettings["ReconciliationPermittedAttachmentTypes"].Split('|');
+			string[] permittedAttachmentTypes = ConfigurationManager.AppSettings["PrioritizationPermittedAttachmentTypes"].Split('|');
 			try
 			{
 				_prioritizationService.UpdateIndustryScores(file.Validate(maxUploadSize, permittedAttachmentTypes).InputStream);
@@ -236,7 +236,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		{
 			var model = new PrioritizationUpdateScoresFileViewModel();
 			int maxUploadSize = int.Parse(ConfigurationManager.AppSettings["MaxUploadSizeInBytes"]);
-			string[] permittedAttachmentTypes = ConfigurationManager.AppSettings["ReconciliationPermittedAttachmentTypes"].Split('|');
+			string[] permittedAttachmentTypes = ConfigurationManager.AppSettings["PrioritizationPermittedAttachmentTypes"].Split('|');
 			try
 			{
 				_prioritizationService.UpdateRegionScores(file.Validate(maxUploadSize, permittedAttachmentTypes).InputStream);

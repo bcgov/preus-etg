@@ -18,7 +18,7 @@ app.controller('PrioritizationManagementRegions', function ($scope, $attrs, $con
   $scope.updateRegions = function ($event) {
     if ($scope.upload.file) {
       return $scope.ajax({
-          url: '/Int/Admin/Prioritization/Regions',
+          url: '/Int/Admin/Prioritization/UpdateRegions',
           method: 'POST',
           dataType: 'file',
           data: {

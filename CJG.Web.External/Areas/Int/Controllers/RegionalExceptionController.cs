@@ -176,7 +176,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[ValidateRequestHeader]
 		[AuthorizeAction(Privilege.IA1)]
 		[Route("RegionalExceptions/SelectRegion")]
-		public JsonResult SelectRegion(int grantApplicationId, int selectedRegionId/*, string rowVersion*/)
+		public JsonResult SelectRegion(int grantApplicationId, int selectedRegionId)
 		{
 			var model = new Models.Prioritization.GrantApplicationViewModel();
 			try
@@ -184,6 +184,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
 
 				_prioritizationService.SetRegionException(grantApplication, selectedRegionId);
+				_prioritizationService.AddPostalCodeToRegion(grantApplication, selectedRegionId);
+
 				_grantApplicationService.Update(grantApplication);
 			}
 			catch (Exception ex)
