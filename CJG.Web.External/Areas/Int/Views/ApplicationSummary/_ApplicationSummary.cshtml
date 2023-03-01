@@ -95,7 +95,9 @@
                 <div class="form__group">
                     <div class="form__label">Business Website:</div>
                     <div class="form__control">
-                        {{businessInfo.BusinessWebsite}}
+                        <span ng-if="businessInfo.BusinessWebsite">
+                            <a class="link" href="{{businessInfo.BusinessWebsite}}" target="_blank">{{businessInfo.BusinessWebsite}}</a>
+                        </span>
                     </div>
                 </div>
                 <div class="form__group form__group__with_html">
