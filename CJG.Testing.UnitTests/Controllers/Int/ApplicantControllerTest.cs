@@ -11,6 +11,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using CJG.Web.External.Areas.Int.Models.GrantStreams;
 using static CJG.Testing.Core.ServiceHelper;
 
 namespace CJG.Testing.UnitTests.Controllers.Int
@@ -84,7 +85,7 @@ namespace CJG.Testing.UnitTests.Controllers.Int
 			helper.GetMock<IStaticDataService>().Setup(m => m.GetCountry(It.IsAny<string>())).Returns(country);
 			helper.GetMock<INaIndustryClassificationSystemService>().Setup(m => m.GetNaIndustryClassificationSystems(It.IsAny<int>())).Returns(new List<NaIndustryClassificationSystem> { naics });
 
-			var applicantViewModel = new ApplicantViewModel()
+			var applicantViewModel = new ApplicantViewModel
 			{
 				Id = grantApplication.Id,
 				OrganizationLegalName = grantApplication.OrganizationLegalName,
@@ -117,6 +118,7 @@ namespace CJG.Testing.UnitTests.Controllers.Int
 				NAICSLevel4Id = 0,
 				NAICSLevel5Id = 0,
 				GrantProgramName = "",
+				StreamEligibilityQuestions = new List<GrantStreamQuestionViewModel>(),
 				RowVersion = "AgQGCAoMDhASFA=="
 			};
 			var controller = helper.Create();

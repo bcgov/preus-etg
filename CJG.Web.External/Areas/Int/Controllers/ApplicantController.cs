@@ -26,6 +26,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		private readonly INaIndustryClassificationSystemService _naIndustryClassificationSystemService;
 		private readonly IApplicationAddressService _applicationAddressService;
 		private readonly ICommunityService _communityService;
+		private readonly IPrioritizationService _prioritizationService;
 
 		#region Constructors
 
@@ -39,6 +40,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <param name="naIndustryClassificationSystemService"></param>
 		/// <param name="applicationAddressService"></param>
 		/// <param name="communityService"></param>
+		/// <param name="prioritizationService"></param>
 		public ApplicantController(
 			IControllerService controllerService,
 			IGrantApplicationService grantApplicationService,
@@ -46,7 +48,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			IStaticDataService staticDataService,
 			INaIndustryClassificationSystemService naIndustryClassificationSystemService,
 			IApplicationAddressService applicationAddressService,
-			ICommunityService communityService) : base(controllerService.Logger)
+			ICommunityService communityService,
+			IPrioritizationService prioritizationService) : base(controllerService.Logger)
 		{
 			_grantApplicationService = grantApplicationService;
 			_grantStreamService = grantStreamService;
@@ -54,6 +57,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_naIndustryClassificationSystemService = naIndustryClassificationSystemService;
 			_applicationAddressService = applicationAddressService;
 			_communityService = communityService;
+			_prioritizationService = prioritizationService;
 		}
 		#endregion
 
@@ -170,7 +174,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				if (ModelState.IsValid)
 				{
 					var grantApplication = _grantApplicationService.Get(model.Id);
-					model.MapTo(grantApplication, _staticDataService, _applicationAddressService);
+
+					if (AnswersWereModified(model, grantApplication))
+						_prioritizationService.RecalculatePriorityScores(grantApplication.Id, allowUnderAssessment: true);
 
 					_grantApplicationService.Update(grantApplication, ApplicationWorkflowTrigger.EditApplicant);
 
@@ -187,6 +193,36 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
+
+		private bool AnswersWereModified(ApplicantViewModel model, GrantApplication grantApplication)
+		{
+			var oldAnswers = grantApplication.GrantStreamEligibilityAnswers
+				.Select(a => new { QuestionId = a.GrantStreamEligibilityQuestionId, Answer = a.EligibilityAnswer })
+				.ToList();
+
+			var newAnswers = model.StreamEligibilityQuestions
+				.Select(q => new { QuestionId = q.Id, Answer = q.EligibilityAnswer.Value })
+				.ToList();
+
+			model.MapTo(grantApplication, _staticDataService, _applicationAddressService);
+
+			var answersChanged = false;
+
+			foreach (var answer in newAnswers)
+			{
+				var oldAnswer = oldAnswers.FirstOrDefault(oa => oa.QuestionId == answer.QuestionId);
+
+				if (oldAnswer == null || answer.Answer == oldAnswer.Answer)
+					continue;
+
+				answersChanged = true;
+
+				break;
+			}
+
+			return answersChanged;
+		}
+
 		#endregion
 	}
 }

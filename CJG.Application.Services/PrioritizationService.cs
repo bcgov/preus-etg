@@ -309,13 +309,16 @@ namespace CJG.Application.Services
 			return false;
 		}
 
-		public void RecalculatePriorityScores(int? grantApplicationId = null)
+		public void RecalculatePriorityScores(int? grantApplicationId = null, bool allowUnderAssessment = false)
 		{
 			var validExceptionStates = new List<ApplicationStateInternal>
 			{
 				ApplicationStateInternal.New,
 				ApplicationStateInternal.PendingAssessment
 			};
+
+			if (allowUnderAssessment)
+				validExceptionStates.Add(ApplicationStateInternal.UnderAssessment);
 
 			var openApplications = _dbContext.GrantApplications
 				.Where(ga => validExceptionStates.Contains(ga.ApplicationStateInternal));
