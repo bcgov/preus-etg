@@ -34,9 +34,6 @@
                     <p class="alert alert--warning"><em>Press review and submit claim button to submit your reimbursement claim!</em></p>
                 </div>                
 
-                <div class="notice notice--icon" ng-if="!model.RequireAllParticipantsBeforeSubmission" ng-show="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
-                    <p>Once you have reported participants and they have submitted their Personal Information Forms, you will be able to submit your Reimbursement Claim.</p>
-                </div>
                 <div ng-if="!model.RequireAllParticipantsBeforeSubmission && model.ParticipantCount < model.MaxParticipants" class="notice notice--icon">
                     <p>
                         {{model.ParticipantCount}} out of {{model.MaxParticipants}} participants have submitted their Participant Information Form.
