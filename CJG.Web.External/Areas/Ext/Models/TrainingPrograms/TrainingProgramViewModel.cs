@@ -43,8 +43,8 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 		[Required(ErrorMessage = "You must enter a course, program or certificate name."), MaxLength(500)]
 		public string CourseTitle { get; set; }
 
-		[Required(ErrorMessage = "Total training hours is required.")]
-		[ValidateNullableInt(ErrorMessage = "Please enter total training hours to the nearest hour.")]
+		[Required(ErrorMessage = "Total training hours per participant is required.")]
+		[ValidateNullableInt(ErrorMessage = "Please enter total training hours per participant to the nearest hour.")]
 		public int? TotalTrainingHours { get; set; }
 
 		[Required(ErrorMessage = "If you have expected qualifications you must include the title of the qualification."), MaxLength(500)]
