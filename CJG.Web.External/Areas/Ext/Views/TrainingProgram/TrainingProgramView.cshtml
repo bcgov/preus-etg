@@ -11,8 +11,6 @@
         <div class="main">
             <h1>Edit Training Program</h1>
 
-            <p>Your training dates must fall within the application delivery period {{toPST(model.IntakePeriodStartDate)}} to {{toPST(model.IntakePeriodEndDate)}}.</p>
-
             <div ng-if="alert.message" class="row row--alert">
                 <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
             </div>
