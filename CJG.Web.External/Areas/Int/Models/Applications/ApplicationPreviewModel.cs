@@ -1,11 +1,11 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Linq;
+using System.Security.Principal;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.Linq;
-using System.Security.Principal;
 using DeliveryPartnerService = CJG.Core.Entities.DeliveryPartnerService;
 
 namespace CJG.Web.External.Areas.Int.Models.Applications
@@ -30,39 +30,46 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 		#endregion
 
 		#region Constructors
-		public ApplicationPreviewModel() { }
+
 		#endregion
 
 		#region Methods
-		public TestEntities GenerateTestEntities(IPrincipal _user, IUserService _userService, IGrantProgramService _grantProgramService, IFiscalYearService _fiscalYearService)
+		public TestEntities GenerateTestEntities(IPrincipal user, IUserService userService, IGrantProgramService grantProgramService, IFiscalYearService fiscalYearService)
 		{
 			var now = AppDateTime.UtcNow;
-			var user = _userService.GetInternalUser(_user.GetUserId().Value);
-			var grantProgram = _grantProgramService.Get(this.GrantProgramId);
-			var fiscalYear = _fiscalYearService.GetFiscalYear(now);
+			var internalUser = userService.GetInternalUser(user.GetUserId().Value);
+			var grantProgram = grantProgramService.Get(GrantProgramId);
+			var fiscalYear = fiscalYearService.GetFiscalYear(now);
 			var applicantOrganization = new Organization(new OrganizationType("Business"), Guid.NewGuid(), "Organization Name", new LegalStructure("Legal Structure"), 2000, 50, 25, 5000, 5)
 			{
 				HeadOfficeAddress = new Address("1234 Street", "", "Vancouver", "V9V9V9", new Region("BC", "British Columbia", new Country("CA", "Canada")))
 			};
-			var applicant = new User(Guid.NewGuid(), user.FirstName, user.LastName, user.Email, applicantOrganization, applicantOrganization.HeadOfficeAddress);
 
+			var applicant = new User(Guid.NewGuid(), internalUser.FirstName, internalUser.LastName, internalUser.Email, applicantOrganization, applicantOrganization.HeadOfficeAddress);
 			var grantOpening = new GrantOpening(new GrantStream("Test Grant Stream", "Test Objective", grantProgram), new TrainingPeriod(fiscalYear, "Test Training Period", now, now.AddMonths(6), now, now), 1000);
 			var applicationType = new ApplicationType("Test Application Type");
 
 			var grantApplication = new GrantApplication(grantOpening, applicant, applicationType)
 			{
 				Id = 1,
-				ApplicationStateInternal = this.ApplicationStateInternal,
-				ApplicationStateExternal = this.ApplicationStateInternal.GetExternalState(),
+				ApplicationStateInternal = ApplicationStateInternal,
+				ApplicationStateExternal = ApplicationStateInternal.GetExternalState(),
 				FileNumber = $"{fiscalYear.EndDate:yy}{++fiscalYear.NextAgreementNumber:d5}",
 				StartDate = now,
 				EndDate = now.AddDays(10),
 				MaxReimbursementAmt = 10000,
-				ReimbursementRate = 2 / 3,
+				ReimbursementRate = 2D / 3D,
 				PrioritySector = new PrioritySector("Priority Sector"),
 				UsedDeliveryPartner = true,
 				DeliveryPartner = new DeliveryPartner(grantProgram, "Delivery Partner"),
-				DeliveryPartnerServices = new[] { new DeliveryPartnerService(grantProgram, "Delivery Partner Service") }
+				DeliveryPartnerServices = new[] { new DeliveryPartnerService(grantProgram, "Delivery Partner Service") },
+				PrioritizationScoreBreakdown = new PrioritizationScoreBreakdown
+				{
+					FirstTimeApplicantScore = 1,
+					SmallBusinessScore = 1,
+					IndustryScore = 0,
+					RegionalScore = 3
+				}
 			};
 
 			grantApplication.TrainingCost = new TrainingCost(grantApplication, 10);
@@ -133,7 +140,7 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 					break;
 			}
 
-			switch (this.ApplicationStateInternal)
+			switch (ApplicationStateInternal)
 			{
 				case (ApplicationStateInternal.Draft):
 				case (ApplicationStateInternal.New):
@@ -192,11 +199,9 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 					AddParticipants(grantApplication);
 					AddPaymentRequest(grantApplication);
 					break;
-				default:
-					break;
 			}
 
-			return new TestEntities()
+			return new TestEntities
 			{
 				GrantApplication = grantApplication,
 				GrantOpening = grantOpening,
