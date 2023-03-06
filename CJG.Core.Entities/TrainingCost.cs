@@ -150,7 +150,7 @@ namespace CJG.Core.Entities
 			{
 				// EstimatedParticipants must be equal to or greater than EligibleCosts.Participants.
 				if (this.EligibleCosts.Any(ec => ec.AddedByAssessor ? ec.AgreedMaxParticipants > this.AgreedParticipants : ec.EstimatedParticipants > this.EstimatedParticipants))
-					yield return new ValidationResult($"The number of participants for one expense type cannot exceed the number of participants you entered in part 1, which was {this.EstimatedParticipants}.", new[] { nameof(this.EstimatedParticipants) });
+					yield return new ValidationResult($"The number of participants for one expense type cannot exceed the number of participants you entered above, which was {this.EstimatedParticipants}.", new[] { nameof(this.EstimatedParticipants) });
 
 				// AgreedParticipants must be greater 0.
 				if (!this.GrantApplication.ApplicationStateInternal.In(ApplicationStateInternal.Draft, ApplicationStateInternal.ApplicationDenied, ApplicationStateInternal.ApplicationWithdrawn, ApplicationStateInternal.Unfunded)
