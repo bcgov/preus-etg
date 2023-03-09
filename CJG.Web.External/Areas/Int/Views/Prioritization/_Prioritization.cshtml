@@ -1,5 +1,4 @@
-﻿@using CJG.Core.Entities
-<div ng-controller="Prioritization">
+﻿<div ng-controller="Prioritization">
     <span class="panel-section-item">
         <span class="panel-section-title" ng-click="toggle($event)">Prioritization</span>
         <span class="panel-section-buttons">
@@ -9,7 +8,7 @@
     </span>
     <div class="panel-section-content" ng-if="section.show">
         <div class="pull-right">
-            <button class="btn btn--primary btn--forward" ng-show="!section.editing" ng-click="recalculatePrioritization()">Recalculate Prioritization Score</button>
+            <button class="btn btn--primary btn--forward" ng-show="!section.editing" ng-if="grantFile.AllowReprioritization" ng-click="recalculatePrioritization()">Recalculate Prioritization Score</button>
         </div>
 
         <div class="form form--2-col">

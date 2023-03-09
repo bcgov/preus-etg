@@ -1,7 +1,7 @@
-﻿using CJG.Core.Entities.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CJG.Core.Entities.Helpers;
 
 namespace CJG.Core.Entities
 {
@@ -28,7 +28,6 @@ namespace CJG.Core.Entities
 				return false;
 
 			return services.Any(ec => ec.Breakdowns.Count(b => b.IsEligible) < (ec.EligibleExpenseType.ServiceCategory?.ServiceTypeId == ServiceTypes.SkillsTraining ? ec.EligibleExpenseType.ServiceCategory?.MinPrograms : ec.EligibleExpenseType.MinProviders));
-
 		}
 
 		/// <summary>
@@ -61,6 +60,17 @@ namespace CJG.Core.Entities
 		public static bool RequiresCIPSValidation(this GrantApplication grantApplication)
 		{
 			return grantApplication.TrainingPrograms.Any(p => p.CipsCode == null);
+		}
+
+		public static bool AllowReprioritization(this GrantApplication grantApplication)
+		{
+			var validStates = new List<ApplicationStateInternal>
+			{
+				ApplicationStateInternal.New,
+				ApplicationStateInternal.PendingAssessment
+			};
+
+			return validStates.Contains(grantApplication.ApplicationStateInternal);
 		}
 
 		/// <summary>
