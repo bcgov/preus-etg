@@ -47,12 +47,10 @@
                 </div>
                 
                 <div class="notice notice--icon" ng-repeat="warning in model.ParticipantWarnings | filter: { ParticipantIsNearingLimit: true }">
-                    The participant {{ warning.ParticipantName }} is nearing the maximum allowable amount that can be claimed per person per fiscal year.<br/>
-                    Please review the <a href="https://www.workbc.ca/Employer-Resources/B-C-Employer-Training-Grant.aspx" target="_blank">ETG eligibility criteria for details.</a>
-                    @*({{ warning.CurrentClaims | currency : '$' : 2 }} of {{ warning.FiscalYearLimit | currency : '$' : 2 }})*@
+                    {{ warning.ParticipantName }} is nearing the maximum allowable amount that can be claimed per person per fiscal year ({{ warning.CurrentClaims | currency : '$' : 2 }} of {{ warning.FiscalYearLimit | currency : '$' : 2 }}). Please review the <a href="https://www.workbc.ca/Employer-Resources/B-C-Employer-Training-Grant.aspx" target="_blank">ETG eligibility criteria for details.</a> 
                 </div>
                 <div class="notice notice--icon" ng-repeat="warning in model.ParticipantWarnings | filter: { ParticipantIsOverLimit: true }">
-                    {{ warning.ParticipantName }} has gone over the fiscal year maximum and may not be fully reimbursed.
+                    {{ warning.ParticipantName }} has reached the maximum allowable amount that can be claimed per person per fiscal year. You cannot claim any more costs for this participant.
                 </div>
             </div>
 

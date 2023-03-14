@@ -9,7 +9,7 @@ using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 {
-	public class ReportingViewModel : BaseViewModel
+    public class ReportingViewModel : BaseViewModel
 	{
 		public int GrantApplicationId { get; set; }
 		public string ClaimRowVersion { get; set; }
@@ -36,6 +36,7 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 		public List<KeyValuePair<int, string>> ExpectedOutcomes { get; set; } = new List<KeyValuePair<int, string>>();
 
 		public IEnumerable<ParticipantViewModel> Participants { get; set; } = new List<ParticipantViewModel>();
+		public List<ParticipantWarningModel> ParticipantWarnings { get; set; }
 
 		public ProgramTitleLabelViewModel ProgramTitleLabel { get; set; }
 
@@ -90,44 +91,7 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 				.Select(pf => new ParticipantViewModel(pf, ShowEligibility, currentClaim))
 				.ToArray();
 
-			ParticipantWarnings = new List<ParticipantWarningModel>();
-
-			var maxReimbursementAmount = grantApplication.MaxReimbursementAmt;
-			var grantApplicationFiscal = grantApplication.GrantOpening.TrainingPeriod.FiscalYearId;
-
-			var applicationClaimStatuses = new List<ApplicationStateInternal>
-			{
-				ApplicationStateInternal.Closed,
-				ApplicationStateInternal.CompletionReporting
-			};
-
-			foreach (var participant in grantApplication.ParticipantForms)
-			{
-				var otherParticipantForms = participantService.GetParticipantFormsBySIN(participant.SIN);
-
-				var participantPayments = 0M;
-				foreach (var form in otherParticipantForms.Where(opf => opf.GrantApplicationId != GrantApplicationId)
-					.Where(opf => opf.GrantApplication.GrantOpening.TrainingPeriod.FiscalYearId == grantApplicationFiscal)
-					.Where(opf => applicationClaimStatuses.Contains(opf.GrantApplication.ApplicationStateInternal)))
-				{
-					var totalPastCosts = form.ParticipantCosts.Sum(c => c.AssessedReimbursement);
-					participantPayments += totalPastCosts;
-				}
-
-				ParticipantWarnings.Add(new ParticipantWarningModel
-				{
-					ParticipantName = $"{participant.FirstName} {participant.LastName}",
-					CurrentClaims = participantPayments,
-					FiscalYearLimit = maxReimbursementAmount
-				});
-			}
-
-			// If nearing limit ($2000 from $10k limit?)
-			//   This participant is nearing the maximum allowable amount that can be claimed per person per fiscal year. Please review the ETG eligibility criteria https://www.workbc.ca/Employer-Resources/B-C-Employer-Training-Grant.aspx for details.
-
-			// If limit reached
-			//   This person has reached their maximum allowable amount for the fiscal year
-
+			ParticipantWarnings = GetParticipantWarnings(grantApplication, participantService);
 			ParticipantsEditable = context.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditParticipants);
 
 			AllowIncludeAll = Participants.Any(pf => pf.ClaimReported) && ApplicationStateExternal.In(ApplicationStateExternal.ClaimReturned, ApplicationStateExternal.Approved, ApplicationStateExternal.AmendClaim, ApplicationStateExternal.ClaimApproved, ApplicationStateExternal.ClaimDenied);
@@ -150,7 +114,43 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 				"If you do not complete this form, you may not be able to participate in the training.";
 		}
 
-		public List<ParticipantWarningModel> ParticipantWarnings { get; set; }
+		private List<ParticipantWarningModel> GetParticipantWarnings(GrantApplication grantApplication, IParticipantService participantService)
+		{
+			var warnings = new List<ParticipantWarningModel>();
+
+			var maxReimbursementAmount = grantApplication.MaxReimbursementAmt;
+			var grantApplicationFiscal = grantApplication.GrantOpening.TrainingPeriod.FiscalYearId;
+
+			var applicationClaimStatuses = new List<ApplicationStateInternal>
+			{
+				ApplicationStateInternal.Closed,
+				ApplicationStateInternal.CompletionReporting
+			};
+
+			foreach (var participant in grantApplication.ParticipantForms)
+			{
+				var otherParticipantForms = participantService.GetParticipantFormsBySIN(participant.SIN);
+
+				var participantPayments = 0M;
+
+				foreach (var form in otherParticipantForms.Where(opf => opf.GrantApplicationId != GrantApplicationId)
+					.Where(opf => opf.GrantApplication.GrantOpening.TrainingPeriod.FiscalYearId == grantApplicationFiscal)
+					.Where(opf => applicationClaimStatuses.Contains(opf.GrantApplication.ApplicationStateInternal)))
+				{
+					var totalPastCosts = form.ParticipantCosts.Sum(c => c.AssessedReimbursement);
+					participantPayments += totalPastCosts;
+				}
+
+				warnings.Add(new ParticipantWarningModel
+				{
+					ParticipantName = $"{participant.FirstName} {participant.LastName}",
+					CurrentClaims = participantPayments,
+					FiscalYearLimit = maxReimbursementAmount
+				});
+			}
+
+			return warnings;
+		}
 
 		private static KeyValuePair<int, string> GetExpectedItem(ExpectedParticipantOutcome item)
 		{
