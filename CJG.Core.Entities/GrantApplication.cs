@@ -258,7 +258,7 @@ namespace CJG.Core.Entities
 		public int? RiskClassificationId { get; set; }
 
 		/// <summary>
-		/// get/set - The risk classifiction for this grant application.
+		/// get/set - The risk classification for this grant application.
 		/// </summary>
 		[ForeignKey(nameof(RiskClassificationId))]
 		public virtual RiskClassification RiskClassification { get; set; }

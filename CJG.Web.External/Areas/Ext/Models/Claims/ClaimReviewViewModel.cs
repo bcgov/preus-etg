@@ -1,11 +1,10 @@
-﻿using CJG.Application.Business.Models;
+﻿using System.Linq;
+using CJG.Application.Business.Models;
 using CJG.Core.Entities;
-using CJG.Web.External.Areas.Ext.Models.Attachments;
-using System.Linq;
 
 namespace CJG.Web.External.Areas.Ext.Models.Claims
 {
-	public class ClaimReviewViewModel : BaseClaimViewModel
+    public class ClaimReviewViewModel : BaseClaimViewModel
 	{
 		#region Properties
 		public ClaimTypes ClaimType { get; set; }

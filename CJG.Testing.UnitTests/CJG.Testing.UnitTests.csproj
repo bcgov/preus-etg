@@ -307,6 +307,7 @@
     <Compile Include="Jobs\ReportingService\CsvLineBuilderTests.cs" />
     <Compile Include="Jobs\ReportingService\SdsiReportJobTests.cs" />
     <Compile Include="JsonResultTestHelper.cs" />
+    <Compile Include="Models\ParticipantWarningModelTests.cs" />
     <Compile Include="Models\ParticipantContactInfoViewModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

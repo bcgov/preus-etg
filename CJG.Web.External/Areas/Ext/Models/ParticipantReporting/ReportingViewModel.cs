@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using CJG.Application.Services;
 using CJG.Core.Entities;
+using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
@@ -45,7 +46,7 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 		{
 		}
 
-		public ReportingViewModel(GrantApplication grantApplication, HttpContextBase context)
+		public ReportingViewModel(GrantApplication grantApplication, IParticipantService participantService, HttpContextBase context)
 		{
 			if (context == null)
 				throw new ArgumentNullException(nameof(context));
@@ -89,6 +90,44 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 				.Select(pf => new ParticipantViewModel(pf, ShowEligibility, currentClaim))
 				.ToArray();
 
+			ParticipantWarnings = new List<ParticipantWarningModel>();
+
+			var maxReimbursementAmount = grantApplication.MaxReimbursementAmt;
+			var grantApplicationFiscal = grantApplication.GrantOpening.TrainingPeriod.FiscalYearId;
+
+			var applicationClaimStatuses = new List<ApplicationStateInternal>
+			{
+				ApplicationStateInternal.Closed,
+				ApplicationStateInternal.CompletionReporting
+			};
+
+			foreach (var participant in grantApplication.ParticipantForms)
+			{
+				var otherParticipantForms = participantService.GetParticipantFormsBySIN(participant.SIN);
+
+				var participantPayments = 0M;
+				foreach (var form in otherParticipantForms.Where(opf => opf.GrantApplicationId != GrantApplicationId)
+					.Where(opf => opf.GrantApplication.GrantOpening.TrainingPeriod.FiscalYearId == grantApplicationFiscal)
+					.Where(opf => applicationClaimStatuses.Contains(opf.GrantApplication.ApplicationStateInternal)))
+				{
+					var totalPastCosts = form.ParticipantCosts.Sum(c => c.AssessedReimbursement);
+					participantPayments += totalPastCosts;
+				}
+
+				ParticipantWarnings.Add(new ParticipantWarningModel
+				{
+					ParticipantName = $"{participant.FirstName} {participant.LastName}",
+					CurrentClaims = participantPayments,
+					FiscalYearLimit = maxReimbursementAmount
+				});
+			}
+
+			// If nearing limit ($2000 from $10k limit?)
+			//   This participant is nearing the maximum allowable amount that can be claimed per person per fiscal year. Please review the ETG eligibility criteria https://www.workbc.ca/Employer-Resources/B-C-Employer-Training-Grant.aspx for details.
+
+			// If limit reached
+			//   This person has reached their maximum allowable amount for the fiscal year
+
 			ParticipantsEditable = context.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditParticipants);
 
 			AllowIncludeAll = Participants.Any(pf => pf.ClaimReported) && ApplicationStateExternal.In(ApplicationStateExternal.ClaimReturned, ApplicationStateExternal.Approved, ApplicationStateExternal.AmendClaim, ApplicationStateExternal.ClaimApproved, ApplicationStateExternal.ClaimDenied);
@@ -97,7 +136,6 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 
 			ProgramType = grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId;
 			InvitationBrowserLink = $"{context.Request.Url.GetLeftPart(UriPartial.Authority)}/Part/Information/{HttpUtility.UrlEncode(grantApplication.InvitationKey.ToString())}";
-
 
 			var invitation = $"As this training is being funded through the {GrantProgramName}, you must complete a participant information form using the following link:\r\n\r\n{InvitationBrowserLink}\r\n\r\n";
 			InvitationEmailText =
@@ -111,6 +149,8 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 				$"Please complete your participant information form prior to midnight on {ParticipantReportingDueDate:yyyy-MM-dd}. " +
 				"If you do not complete this form, you may not be able to participate in the training.";
 		}
+
+		public List<ParticipantWarningModel> ParticipantWarnings { get; set; }
 
 		private static KeyValuePair<int, string> GetExpectedItem(ExpectedParticipantOutcome item)
 		{
