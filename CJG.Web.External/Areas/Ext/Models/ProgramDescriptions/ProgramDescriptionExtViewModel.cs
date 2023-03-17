@@ -1,15 +1,14 @@
-﻿using CJG.Application.Business.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CJG.Application.Business.Models;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CJG.Web.External.Areas.Ext.Models.ProgramDescriptions
 {
 	// TODO: Redo viewmodel as it's pulling way too much info.
 	public class ProgramDescriptionExtViewModel : ProgramDescriptionViewModel
 	{
-		#region Properties
 		public IEnumerable<KeyValuePair<int, string>> ParticipantEmploymentStatuses { get; set; }
 		public IEnumerable<KeyValuePair<int, string>> ApplicantOrganizationTypes { get; set; }
 		public IEnumerable<KeyValuePair<int, string>> VulnerableGroups { get; set; }
@@ -24,9 +23,8 @@ namespace CJG.Web.External.Areas.Ext.Models.ProgramDescriptions
 		public IEnumerable<KeyValueParent<int, string, int>> Noc2Codes { get; set; } = new List<KeyValueParent<int, string, int>>();
 		public IEnumerable<KeyValueParent<int, string, int>> Noc3Codes { get; set; } = new List<KeyValueParent<int, string, int>>();
 		public IEnumerable<KeyValueParent<int, string, int>> Noc4Codes { get; set; } = new List<KeyValueParent<int, string, int>>();
-		#endregion
+		public IEnumerable<KeyValueParent<int, string, int>> Noc5Codes { get; set; } = new List<KeyValueParent<int, string, int>>();
 
-		#region Constructors
 		public ProgramDescriptionExtViewModel()
 		{
 		}
@@ -40,44 +38,41 @@ namespace CJG.Web.External.Areas.Ext.Models.ProgramDescriptions
 		{
 			PopulateListItems(staticDataService, naIndustryClassificationSystemService, nationalOccupationalClassificationService, communityService);
 		}
-		#endregion
 
-		#region Methods
-		private void PopulateListItems(IStaticDataService _staticDataService, INaIndustryClassificationSystemService _naIndustryClassificationSystemService, INationalOccupationalClassificationService _nationalOccupationalClassificationService, ICommunityService _communityService)
+		private void PopulateListItems(IStaticDataService staticDataService, INaIndustryClassificationSystemService naIndustryClassificationSystemService, INationalOccupationalClassificationService nationalOccupationalClassificationService, ICommunityService communityService)
 		{
-			this.ParticipantEmploymentStatuses = _staticDataService.GetParticipantEmploymentStatuses().Select(x => new KeyValuePair<int, string>(x.Id, x.Caption)).ToArray();
-			this.ApplicantOrganizationTypes = _staticDataService.GetApplicantOrganizationTypes().Select(x => new KeyValuePair<int, string>(x.Id, x.Caption)).ToArray();
-			this.Communities = _communityService.GetAll().Where(t => t.IsActive).Select(x => new KeyValuePair<int, string>(x.Id, x.Caption)).ToArray();
-			this.VulnerableGroups = _staticDataService.GetVulnerableGroups().Select(x => new KeyValuePair<int, string>(x.Id, x.Caption)).ToArray();
-			this.UnderRepresentedPopulations = _staticDataService.GetUnderRepresentedPopulations().Select(x => new KeyValuePair<int, string>(x.Id, x.Caption)).ToArray();
+			ParticipantEmploymentStatuses = staticDataService.GetParticipantEmploymentStatuses().Select(x => new KeyValuePair<int, string>(x.Id, x.Caption)).ToArray();
+			ApplicantOrganizationTypes = staticDataService.GetApplicantOrganizationTypes().Select(x => new KeyValuePair<int, string>(x.Id, x.Caption)).ToArray();
+			Communities = communityService.GetAll().Where(t => t.IsActive).Select(x => new KeyValuePair<int, string>(x.Id, x.Caption)).ToArray();
+			VulnerableGroups = staticDataService.GetVulnerableGroups().Select(x => new KeyValuePair<int, string>(x.Id, x.Caption)).ToArray();
+			UnderRepresentedPopulations = staticDataService.GetUnderRepresentedPopulations().Select(x => new KeyValuePair<int, string>(x.Id, x.Caption)).ToArray();
 
 			// NAICS has maximum of 5 levels
 			for (int i = 1; i <= 5; i++)
 			{
 				var property = GetType().GetProperty($"Naics{i}Codes");
 				if (i == 1)  // first level do not have parent
-					property?.SetValue(this, _naIndustryClassificationSystemService
+					property?.SetValue(this, naIndustryClassificationSystemService
 							 .GetNaIndustryClassificationSystemLevel(i)
 							 .Select(n => new KeyValuePair<int, string>(n.Id, $"{n.Code} | {n.Description}")).ToArray());
 				else
-					property?.SetValue(this, _naIndustryClassificationSystemService
+					property?.SetValue(this, naIndustryClassificationSystemService
 							 .GetNaIndustryClassificationSystemLevel(i)
 							 .Select(n => new KeyValueParent<int, string, int>(n.Id, $"{n.Code} | {n.Description}", n.ParentId ?? 0)).ToArray());
 			}
-			// NOC has maximum of 4 levels
-			for (int i = 1; i <= 4; i++)
+			// NOC has maximum of 5 levels
+			for (int i = 1; i <= 5; i++)
 			{
 				var property = GetType().GetProperty($"Noc{i}Codes");
 				if (i == 1) // first level do not have parent
-					property?.SetValue(this, _nationalOccupationalClassificationService
+					property?.SetValue(this, nationalOccupationalClassificationService
 							 .GetNationalOccupationalClassificationLevel(i)
 							 .Select(n => new KeyValuePair<int, string>(n.Id, $"{n.Code} | {n.Description}")).ToArray());
 				else
-					property?.SetValue(this, _nationalOccupationalClassificationService
+					property?.SetValue(this, nationalOccupationalClassificationService
 							 .GetNationalOccupationalClassificationLevel(i)
 							 .Select(n => new KeyValueParent<int, string, int>(n.Id, $"{n.Code} | {n.Description}", n.ParentId ?? 0)).ToArray());
 			}
 		}
-		#endregion
 	}
 }

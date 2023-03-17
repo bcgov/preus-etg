@@ -14,5 +14,10 @@ namespace CJG.Core.Entities
 		public int IndustryThreshold { get; set; }
 		public decimal RegionalThreshold { get; set; }
 		public int EmployeeCountThreshold { get; set; }
+
+		public int IndustryAssignedScore { get; set; }
+		public int RegionalThresholdAssignedScore { get; set; }
+		public int EmployeeCountAssignedScore { get; set; }
+		public int FirstTimeApplicantAssignedScore { get; set; }
 	}
 }

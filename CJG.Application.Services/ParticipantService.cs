@@ -512,6 +512,7 @@ namespace CJG.Application.Services
 				.Select(o => new { Amount = o.Sum(b => b.pc.AssessedReimbursement), SIN = o.Key })
 				.ToDictionary(x => x.SIN, x => x.Amount);
 		}
+
 		public IEnumerable<ParticipantForm> GetParticipantFormsBySIN(string sin)
 		{
 			return _dbContext.ParticipantForms.Where(w => w.SIN == sin);

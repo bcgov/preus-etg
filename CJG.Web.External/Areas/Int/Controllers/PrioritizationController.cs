@@ -1,13 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Web;
+using System.Web.Http.Validation;
 using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
 using CJG.Web.External.Areas.Int.Models.Prioritization;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
+using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
@@ -52,8 +56,13 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				model = new PrioritizationThresholdsViewModel
 				{
 					IndustryThreshold = thresholds.IndustryThreshold,
+					IndustryAssignedScore = thresholds.IndustryAssignedScore,
 					RegionalThreshold = thresholds.RegionalThreshold,
-					EmployeeCountThreshold = thresholds.EmployeeCountThreshold
+
+					RegionalThresholdAssignedScore = thresholds.RegionalThresholdAssignedScore,
+					EmployeeCountThreshold = thresholds.EmployeeCountThreshold,
+					EmployeeCountAssignedScore = thresholds.EmployeeCountAssignedScore,
+					FirstTimeApplicantAssignedScore = thresholds.FirstTimeApplicantAssignedScore,
 				};
 				return Json(model, JsonRequestBehavior.AllowGet);
 			}
@@ -64,35 +73,63 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
 
-		[HttpGet, Route("Scores")]
+		[HttpGet, Route("Regions")]
 		[ValidateRequestHeader]
-		public JsonResult GetScores()
+		public JsonResult GetRegions()
 		{
 			var model = new PrioritizationScoresViewModel();
 			try
 			{
 				var thresholds = _prioritizationService.GetThresholds();
 				var regions = _prioritizationService.GetPrioritizationRegions();
+
+				var regionModels = regions.Select(r => new ScoreViewModel
+				{
+					Name = r.Name,
+					Score = r.RegionalScore,
+					IsPriority = r.RegionalScore >= thresholds.RegionalThreshold
+				}).ToList();
+
+                var result = new
+                {
+                    RecordsFiltered = regionModels.Count,
+                    RecordsTotal = regionModels.Count,
+                    Data = regionModels
+				};
+                return Json(result, JsonRequestBehavior.AllowGet);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		[HttpGet, Route("Industries")]
+		[ValidateRequestHeader]
+		public JsonResult GetIndustries()
+		{
+			var model = new PrioritizationScoresViewModel();
+			try
+			{
+				var thresholds = _prioritizationService.GetThresholds();
 				var industries = _prioritizationService.GetPrioritizationIndustryScores();
 
-				model = new PrioritizationScoresViewModel
+				var industryModels = industries.Select(r => new ScoreViewModel
 				{
-					Regions = regions.Select(r => new ScoreViewModel
-					{
-						Name = r.Name,
-						Score = r.RegionalScore,
-						IsPriority = r.RegionalScore >= thresholds.RegionalThreshold
-					}),
-					Industries = industries.Select(r => new ScoreViewModel
-					{
-						Name = r.Name,
-						Code = r.NaicsCode,
-						Score = r.IndustryScore,
-						IsPriority = r.IndustryScore <= thresholds.IndustryThreshold
-					}),
+					Name = r.Name,
+					Code = r.NaicsCode,
+					Score = r.IndustryScore,
+					IsPriority = r.IndustryScore <= thresholds.IndustryThreshold
+				}).ToList();
 
+				var result = new
+				{
+					RecordsFiltered = industryModels.Count,
+					RecordsTotal = industryModels.Count,
+					Data = industryModels
 				};
-				return Json(model, JsonRequestBehavior.AllowGet);
+				return Json(result, JsonRequestBehavior.AllowGet);
 			}
 			catch (Exception ex)
 			{
@@ -121,6 +158,11 @@ namespace CJG.Web.External.Areas.Int.Controllers
 					thresholds.RegionalThreshold = model.RegionalThreshold;
 					thresholds.EmployeeCountThreshold = model.EmployeeCountThreshold;
 
+					thresholds.IndustryAssignedScore = model.IndustryAssignedScore;
+					thresholds.RegionalThresholdAssignedScore = model.RegionalThresholdAssignedScore;
+					thresholds.EmployeeCountAssignedScore = model.EmployeeCountAssignedScore;
+					thresholds.FirstTimeApplicantAssignedScore = model.FirstTimeApplicantAssignedScore;
+
 					_prioritizationService.UpdateThresholds(thresholds);
 				}
 				else
@@ -134,6 +176,75 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 
 			model.RedirectURL = "/Int/Admin/Prioritization/Thresholds/View";
+			return Json(model);
+		}
+
+		/// <summary>
+		/// Forces the Intake Queue to recalculate all Prioritization Scores
+		/// </summary>
+		/// <returns></returns>
+		[HttpPut]
+		[PreventSpam]
+		[ValidateRequestHeader]
+		[Route("Recalculate")]
+		public JsonResult RecalculatePriorities()
+		{
+			var model = new BaseViewModel();
+			try
+			{
+				if (ModelState.IsValid)
+				{
+					_prioritizationService.RecalculatePriorityScores();
+				}
+				else
+				{
+					HandleModelStateValidation(model);
+				}
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+
+			model.RedirectURL = "/Int/Admin/Prioritization/Thresholds/View";
+			return Json(model);
+		}
+
+		[HttpPost]
+		[ValidateRequestHeader]
+		[Route("UpdateIndustries")]
+		public JsonResult UpdateIndustries(HttpPostedFileBase file)
+		{
+			var model = new PrioritizationUpdateScoresFileViewModel();
+			int maxUploadSize = int.Parse(ConfigurationManager.AppSettings["MaxUploadSizeInBytes"]);
+			string[] permittedAttachmentTypes = ConfigurationManager.AppSettings["PrioritizationPermittedAttachmentTypes"].Split('|');
+			try
+			{
+				_prioritizationService.UpdateIndustryScores(file.Validate(maxUploadSize, permittedAttachmentTypes).InputStream);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model);
+		}
+
+		[HttpPost]
+		[ValidateRequestHeader]
+		[Route("UpdateRegions")]
+		public JsonResult UpdateRegions(HttpPostedFileBase file)
+		{
+			var model = new PrioritizationUpdateScoresFileViewModel();
+			int maxUploadSize = int.Parse(ConfigurationManager.AppSettings["MaxUploadSizeInBytes"]);
+			string[] permittedAttachmentTypes = ConfigurationManager.AppSettings["PrioritizationPermittedAttachmentTypes"].Split('|');
+			try
+			{
+				_prioritizationService.UpdateRegionScores(file.Validate(maxUploadSize, permittedAttachmentTypes).InputStream);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
 			return Json(model);
 		}
 	}

@@ -11,8 +11,6 @@
         <div class="main">
             <h1>Edit Training Program</h1>
 
-            <p>Your training dates must fall within the application delivery period {{toPST(model.IntakePeriodStartDate)}} to {{toPST(model.IntakePeriodEndDate)}}.</p>
-
             <div ng-if="alert.message" class="row row--alert">
                 <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
             </div>
@@ -22,6 +20,9 @@
 
             <div class="form__group">
                 <div class="label-wrapper"><label class="form__label">Course, program or certificate name <abbr title="Required">*</abbr></label></div>
+                <div class="notice notice--icon">
+                    <p>To avoid assessment and reimbursement delays, please enter a training course title that matches the course title used by the training provider.</p>
+                </div>
                 <div class="control-wrapper form-control"><input type="text" class="input--medium" ng-model="model.CourseTitle" ng-validation></div>
             </div>
             
@@ -131,7 +132,7 @@
             </div>
 
             <div class="form__group">
-                <div class="label-wrapper"><label class="form__label">Total training hours <abbr title="Required">*</abbr></label></div>
+                <div class="label-wrapper"><label class="form__label">Total training hours per participant <abbr title="Required">*</abbr></label></div>
                 <div class="control-wrapper form-control"><input type="text" class="input--small" ng-model="model.TotalTrainingHours" maxlength="5" ng-number ng-validation></div>
             </div>
 

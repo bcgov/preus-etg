@@ -8,10 +8,10 @@ namespace CJG.Application.Services.Notifications
 {
 	public class NotificationViewModel
 	{
-		#region Properties
 		public GrantApplication GrantApplication { get; set; }
 		public User Applicant { get; set; }
 		public int GrantApplicationId { get; set; }
+
 		public string BaseURL { get; set; }
 		public string RecipientFirstName { get; set; }
 		public string RecipientLastName { get; set; }
@@ -52,9 +52,13 @@ namespace CJG.Application.Services.Notifications
 		public string ClaimApprovedReason { get; set; }
 		public string NotificationTicketId { get; set; }
 		public bool IsPayment { get; set; }
-		#endregion
 
-		#region Constructors
+		public int PriorityTotalFactorsQualified { get; set; }
+		public string PriorityFirstTimeApplicant { get; set; }
+		public string PrioritySmallBusiness { get; set; }
+		public string PriorityIndustry { get; set; }
+		public string PriorityRegion { get; set; }
+
 		public NotificationViewModel(GrantApplication grantApplication, User applicant, HttpContextBase httpContext = null)
 		{
 			GrantApplication = grantApplication ?? throw new ArgumentNullException(nameof(grantApplication));
@@ -96,7 +100,7 @@ namespace CJG.Application.Services.Notifications
 			ClaimReportDueDate = FormatDate(grantApplication.StartDate.AddDays(30));
 
 			CompletionReportDueDate = FormatDate(grantApplication.EndDate.AddDays(30));
-			ParticipantsWithCompletionReport = grantApplication.ParticipantForms.Where(pf => pf.ParticipantCompletionReportAnswers.Any()).Count();
+			ParticipantsWithCompletionReport = grantApplication.ParticipantForms.Count(pf => pf.ParticipantCompletionReportAnswers.Any());
 
 			DeniedReason = new HtmlString(grantApplication.GetReason(ApplicationStateInternal.ApplicationDenied));
 			CancellationReason = grantApplication.GetReason(ApplicationStateInternal.CancelledByMinistry);
@@ -121,10 +125,49 @@ namespace CJG.Application.Services.Notifications
 				var approved = changeRequests.Where(tp => tp.TrainingProviderState == TrainingProviderStates.Complete).ToList();
 				ChangeRequestResults += approved.Any() ? $"Provider Changes Approved:<ul>{string.Join("", approved.Select(tp => $"<li>To \"{tp.Name}\" from \"{tp.GetPriorApproved()?.Name}\"</li>"))}</ul>" : "";
 			}
-		}
-		#endregion
 
-		#region Methods
+			SetPriorityFactors(grantApplication);
+		}
+
+		private void SetPriorityFactors(GrantApplication grantApplication)
+		{
+			var breakdown = grantApplication.PrioritizationScoreBreakdown;
+
+			PriorityTotalFactorsQualified = 0;
+
+			PriorityFirstTimeApplicant = "No";
+			PrioritySmallBusiness = "No";
+			PriorityIndustry = "No";
+			PriorityRegion = "No";
+
+			if (breakdown == null)
+				return;
+
+			if (breakdown.FirstTimeApplicantScore > 0)
+			{
+				PriorityFirstTimeApplicant = "Yes";
+				PriorityTotalFactorsQualified++;
+			}
+
+			if (breakdown.SmallBusinessScore > 0)
+			{
+				PrioritySmallBusiness = "Yes";
+				PriorityTotalFactorsQualified++;
+			}
+
+			if (breakdown.IndustryScore > 0)
+			{
+				PriorityIndustry = "Yes";
+				PriorityTotalFactorsQualified++;
+			}
+
+			if (breakdown.RegionalScore > 0)
+			{
+				PriorityRegion = "Yes";
+				PriorityTotalFactorsQualified++;
+			}
+		}
+
 		/// <summary>
 		/// Format the date as a string.
 		/// </summary>
@@ -208,6 +251,5 @@ namespace CJG.Application.Services.Notifications
 
 			return str.ToString();
 		}
-		#endregion
 	}
 }

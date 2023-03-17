@@ -1,31 +1,53 @@
 ﻿<div class="form-section" ng-controller="PrioritizationManagementIndustries">
     <div class="panel-section-item">
         <div class="panel-section-title" ng-click="toggle($event)">
-            <h3 class="display-inline-block">Prioritization Industries ({{ scores.Industries.length }})</h3>
+            <h3 class="display-inline-block">Prioritization Industries ({{ totalScores }})</h3>
         </div>
         <div class="panel-section-buttons">
             <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            <section-edit-buttons ng-model="section.editing" ng-removeSave="true"></section-edit-buttons>
             <span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
         </div>
     </div>
     <div class="panel-section-content" ng-show="section.show">
-        <table class="form-table">
-            <thead>
-            <tr class="form-table-heading display--table-row">
-                <th>Industry</th>
-                <th>NAICS 2017 Code</th>
-                <th>Priority Score</th>
-                <th>Is Priority</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr class="form-table-row-with-hover" ng-repeat="industry in scores.Industries">
-                <td class="form-table-cell">{{ industry.Name }}</td>
-                <td class="form-table-cell">{{ industry.Code }}</td>
-                <td class="form-table-cell">{{ industry.Score }}</td>
-                <td class="form-table-cell">{{ industry.IsPriority ? "Priority" : "Non-priority" }}</td>
-            </tr>
-            </tbody>
-        </table>
+        
+        <div class="row row--alert" ng-if="alert.message">
+            <div class="alert alert--default" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+        </div>
+        
+        <div class="form__section" ng-if="section.editing">
+            <div class="form__group">
+                <div class="form__label">Industry Scores File:</div>
+                <div class="form__control">
+                    <div class="control-wrapper">
+                        <input type="file" name="AsyncDocumentsFiles" id="industry-import-file" accept=".xls,.xlsx" autocomplete="off" ng-file-selected="upload.file" class="display-none" />
+                        <input type="text" ng-model="upload.file.name" disabled class="input-half-width" />
+                        <button class="btn btn--secondary" ng-click="selectFile()">Select</button>
+                        <button class="btn btn--primary" style="margin-left: 0" ng-click="updateIndustries($event)" ng-disabled="!upload.file">Update Industries</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <pager ng-if="scores" ng-filter="getScores" ng-page-size="[500]" ng-page-header="false" ng-Page-Search="false">
+            <table class="form-table">
+                <thead>
+                <tr class="form-table-heading display--table-row">
+                    <th ng-click="changeSorting('Name')"><img ng-src="{{imgSrcName}}" /> Industry</th>
+                    <th ng-click="changeSorting('Code')"><img ng-src="{{imgSrcCode}}" /> NAICS 2017 Code</th>
+                    <th ng-click="changeSorting('Score')"><img ng-src="{{imgSrcScore}}" /> Regional Score</th>
+                    <th ng-click="changeSorting('IsPriority')"><img ng-src="{{imgSrcPriority}}" /> Is Priority</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="form-table-row-with-hover" ng-repeat="industry in $parent.$ctrl.ngItems | orderBy: sort.column:sort.descending">
+                    <td class="form-table-cell">{{ industry.Name }}</td>
+                    <td class="form-table-cell">{{ industry.Code }}</td>
+                    <td class="form-table-cell">{{ industry.Score }}</td>
+                    <td class="form-table-cell">{{ industry.IsPriority ? "Priority" : "Non-priority" }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </pager>
     </div>
 </div>

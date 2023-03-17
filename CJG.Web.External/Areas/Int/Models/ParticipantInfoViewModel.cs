@@ -52,8 +52,8 @@ namespace CJG.Web.External.Areas.Int.Models
 
 			var pifs = participantService.GetParticipantFormsBySIN(participant.SIN);
 
-			//ETG grants only
-			foreach (var p in pifs.Where(w=>w.GrantApplication.IsWDAService() == false))
+			// ETG grants only
+			foreach (var p in pifs.Where(w => w.GrantApplication.IsWDAService() == false))
 			{
 				decimal reimbursement = 0.0m;
 				decimal amtPaid = 0.0m;

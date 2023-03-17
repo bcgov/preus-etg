@@ -37,6 +37,10 @@ namespace CJG.Web.External.Areas.Part.Models
 		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidateCurrentNoc")]
 		public int? CurrentNoc4Id { get; set; }
 		public List<KeyValueParent<int, string, int>> CurrentNoc4Codes { get; set; } = new List<KeyValueParent<int, string, int>>();
+
+		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidateCurrentNoc")]
+		public int? CurrentNoc5Id { get; set; }
+		public List<KeyValueParent<int, string, int>> CurrentNoc5Codes { get; set; } = new List<KeyValueParent<int, string, int>>();
 		#endregion
 
 		#region Future NOC
@@ -55,6 +59,10 @@ namespace CJG.Web.External.Areas.Part.Models
 		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidateFutureNoc")]
 		public int? FutureNoc4Id { get; set; }
 		public List<KeyValueParent<int, string, int>> FutureNoc4Codes { get; set; } = new List<KeyValueParent<int, string, int>>();
+
+		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidateFutureNoc")]
+		public int? FutureNoc5Id { get; set; }
+		public List<KeyValueParent<int, string, int>> FutureNoc5Codes { get; set; } = new List<KeyValueParent<int, string, int>>();
 		#endregion
 
 		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidateJobTitleBefore")]

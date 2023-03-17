@@ -204,7 +204,7 @@ namespace CJG.Core.Entities
 
 			// AgreedParticipants cannot be greater than any eligible cost AgreedMaxParticipants.
 			if (this.TrainingCost.AgreedParticipants < this.AgreedMaxParticipants)
-				yield return new ValidationResult($"The number of participants for an eligible cost cannot be greater than the application maximum number of participants.", new[] { nameof(this.AgreedMaxParticipants) });
+				yield return new ValidationResult("The number of participants for an eligible cost cannot be greater than the application maximum number of participants.", new[] { nameof(this.AgreedMaxParticipants) });
 
 			// EstimatedCost must be equal to calculated EstimatedReimbursement + EstimatedEmployerContribution.
 			if (Math.Round(this.EstimatedReimbursement + this.EstimatedEmployerContribution, 2) > Math.Round(this.EstimatedCost, 2))
@@ -216,7 +216,7 @@ namespace CJG.Core.Entities
 
 			// Cannot enter more participants than specified in the training program.
 			if (this.AddedByAssessor ? this.AgreedMaxParticipants > this.TrainingCost.AgreedParticipants : this.EstimatedParticipants > this.TrainingCost.EstimatedParticipants)
-				yield return new ValidationResult($"The number of participants for expense type '{this.EligibleExpenseType.Caption}' cannot exceed the number of participants you entered in part 1, which was '{this.TrainingCost.EstimatedParticipants}'", new[] { nameof(this.EstimatedParticipants) });
+				yield return new ValidationResult($"The number of participants for expense type '{this.EligibleExpenseType.Caption}' cannot exceed the number of participants you entered above, which was '{this.TrainingCost.EstimatedParticipants}'", new[] { nameof(this.EstimatedParticipants) });
 
 			// Cannot add multiple expenses of the same type if they are not allowed.
 			if (!this.EligibleExpenseType.AllowMultiple && context.Set<EligibleCost>().Count(x => x.GrantApplicationId == this.GrantApplicationId && x.EligibleExpenseTypeId == this.EligibleExpenseTypeId) > 1)
@@ -271,7 +271,6 @@ namespace CJG.Core.Entities
 						break;
 				}
 			}
-
 
 			//Cannot exceed the per participant fiscal year maximum reimbursement allowed.
 			if (this.TrainingCost.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant

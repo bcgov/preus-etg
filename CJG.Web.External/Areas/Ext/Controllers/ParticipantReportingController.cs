@@ -77,11 +77,9 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
 
 				if (!User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.ViewParticipants))
-				{
 					throw new NotAuthorizedException("You are not authorized to manage participants.");
-				}
 
-				model = new ReportingViewModel(grantApplication, this.HttpContext);
+				model = new ReportingViewModel(grantApplication, _participantService, this.HttpContext);
 			}
 			catch (Exception ex)
 			{
@@ -110,7 +108,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				var grantApplication = participant.GrantApplication;
 				_participantService.UpdateExpectedOutcome(participant, model.ExpectedOutcome);
 
-				viewModel = new ReportingViewModel(grantApplication, this.HttpContext);
+				viewModel = new ReportingViewModel(grantApplication, _participantService, this.HttpContext);
 			}
 			catch (Exception ex)
 			{
@@ -139,7 +137,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				var grantApplication = participant.GrantApplication;
 				_participantService.RemoveParticipant(participant);
 
-				viewModel = new ReportingViewModel(grantApplication, this.HttpContext);
+				viewModel = new ReportingViewModel(grantApplication, _participantService, this.HttpContext);
 			}
 			catch (Exception ex)
 			{
@@ -176,7 +174,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					else _participantService.ExcludeParticipant(participantForm);
 				}
 
-				viewModel = new ReportingViewModel(grantApplication, this.HttpContext);
+				viewModel = new ReportingViewModel(grantApplication, _participantService, this.HttpContext);
 			}
 			catch (Exception ex)
 			{

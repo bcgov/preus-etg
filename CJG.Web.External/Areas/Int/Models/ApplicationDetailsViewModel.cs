@@ -66,6 +66,7 @@ namespace CJG.Web.External.Areas.Int.Models
 		public bool EditTrainingProvider { get; set; }
 		public bool EditProviderServices { get; set; }
 		public bool AddRemoveTrainingProviders { get; set; }
+		public bool AllowReprioritization { get; set; }
 		public bool EditProgramCost { get; set; }
 		public IEnumerable<ApplicationComponentViewModel> Components { get; set; }
 		public ClaimTypes ClaimType { get; set; }
@@ -178,6 +179,7 @@ namespace CJG.Web.External.Areas.Int.Models
 			EditProgramCost = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCosts);
 			EditProviderServices = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCosts);
 			AddRemoveTrainingProviders = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.AddRemoveTrainingProvider);
+			AllowReprioritization = grantApplication.AllowReprioritization();
 			ClaimType = grantApplication.GrantOpening.GrantStream.ProgramConfiguration.ClaimTypeId;
 			HasAgreement = grantApplication.GrantAgreement != null;
 			ScheduledNotificationsEnabled = grantApplication.ScheduledNotificationsEnabled;

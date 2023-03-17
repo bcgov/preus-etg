@@ -12,7 +12,7 @@ using System.Web.Mvc;
 namespace CJG.Web.External.Areas.Int.Controllers
 {
 	/// <summary>
-	/// IntakeController class, provides endpoints to select and search for grant applications.
+	/// RegionalExceptionControl class, provides endpoints to select and search for regional exceptions.
 	/// </summary>
 	[RouteArea("Int")]
 	[Authorize(Roles = "Assessor, System Administrator, Director, Financial Clerk")]
@@ -176,7 +176,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[ValidateRequestHeader]
 		[AuthorizeAction(Privilege.IA1)]
 		[Route("RegionalExceptions/SelectRegion")]
-		public JsonResult SelectRegion(int grantApplicationId, int selectedRegionId/*, string rowVersion*/)
+		public JsonResult SelectRegion(int grantApplicationId, int selectedRegionId)
 		{
 			var model = new Models.Prioritization.GrantApplicationViewModel();
 			try
@@ -184,6 +184,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
 
 				_prioritizationService.SetRegionException(grantApplication, selectedRegionId);
+				_prioritizationService.AddPostalCodeToRegion(grantApplication, selectedRegionId);
+
 				_grantApplicationService.Update(grantApplication);
 			}
 			catch (Exception ex)

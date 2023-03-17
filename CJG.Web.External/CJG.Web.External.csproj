@@ -1179,6 +1179,7 @@
     <Compile Include="Areas\Ext\Models\OrganizationProfile\OrganizationProfileViewModel.cs" />
     <Compile Include="Areas\Ext\Models\ParticipantReporting\IncludeParticipantsViewModel.cs" />
     <Compile Include="Areas\Ext\Models\ParticipantReporting\ParticipantViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ParticipantReporting\ParticipantWarningModel.cs" />
     <Compile Include="Areas\Ext\Models\Reports\CompletionReportAnswerViewModel.cs" />
     <Compile Include="Areas\Ext\Models\Reports\CompletionReportGroupViewModel.cs" />
     <Compile Include="Areas\Ext\Models\Reports\CompletionReportOptionViewModel.cs" />
@@ -1331,6 +1332,7 @@
     <Compile Include="Areas\Int\Models\Prioritization\PrioritizationFilterViewModel.cs" />
     <Compile Include="Areas\Int\Models\Prioritization\PrioritizationScoresViewModel.cs" />
     <Compile Include="Areas\Int\Models\Prioritization\PrioritizationThresholdsViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Prioritization\PrioritizationUpdateScoresFileViewModel.cs" />
     <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationPreviewModel.cs" />
     <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationListViewModel.cs" />
     <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationRecipientViewModel.cs" />

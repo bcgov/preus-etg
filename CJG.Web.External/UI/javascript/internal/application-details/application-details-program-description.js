@@ -112,7 +112,7 @@ app.controller('ProgramDescription', function ($scope, $attrs, $controller, $tim
       condition: !$scope[set] || !$scope[set].length
     });
   }
-
+  
   /**
    * Make AJAX request and load NOCs data
    * @function loadNOCs
@@ -122,9 +122,15 @@ app.controller('ProgramDescription', function ($scope, $attrs, $controller, $tim
    * @returns {Promise}
    **/
   function loadNOCs(level, parentId, set) {
-    if (level > 1 && !parentId) return Promise.resolve(); // No need to fetch the data.
-    if (!level) level = 1;
-    if (!set) set = 'nocs' + level;
+    if (level > 1 && !parentId)
+      return Promise.resolve(); // No need to fetch the data.
+
+    if (!level)
+      level = 1;
+
+    if (!set)
+      set = 'nocs' + level;
+
     var url = '/Int/Application/Program/Description/NOCs/' + level + '/' + (parentId ? parentId : '');
     return $scope.load({
       url: url,
@@ -154,28 +160,29 @@ app.controller('ProgramDescription', function ($scope, $attrs, $controller, $tim
    **/
   function loadProgramDescription() {
     return $scope.load({
-      url: '/Int/Application/Program/Description/' + $scope.parent.grantApplicationId,
-      set: 'model'
-    })
+        url: '/Int/Application/Program/Description/' + $scope.parent.grantApplicationId,
+        set: 'model'
+      })
       .then(function (response) {
         return Promise.all([
-          loadNAICS(2, $scope.model.Naics1Id, 'programNAICS2'),
-          loadNAICS(3, $scope.model.Naics2Id, 'programNAICS3'),
-          loadNAICS(4, $scope.model.Naics3Id, 'programNAICS4'),
-          loadNAICS(5, $scope.model.Naics4Id, 'programNAICS5'),
-          loadNOCs(2, $scope.model.Noc1Id, 'programNOCs2'),
-          loadNOCs(3, $scope.model.Noc2Id, 'programNOCs3'),
-          loadNOCs(4, $scope.model.Noc3Id, 'programNOCs4'),
-        ])
+            loadNAICS(2, $scope.model.Naics1Id, 'programNAICS2'),
+            loadNAICS(3, $scope.model.Naics2Id, 'programNAICS3'),
+            loadNAICS(4, $scope.model.Naics3Id, 'programNAICS4'),
+            loadNAICS(5, $scope.model.Naics4Id, 'programNAICS5'),
+
+            loadNOCs(2, $scope.model.Noc1Id, 'programNOCs2'),
+            loadNOCs(3, $scope.model.Noc2Id, 'programNOCs3'),
+            loadNOCs(4, $scope.model.Noc3Id, 'programNOCs4'),
+            loadNOCs(5, $scope.model.Noc4Id, 'programNOCs5')
+          ])
           .then(function () {
             return $timeout(function () {
-              $scope.section.selectedNOC = getSelectedNOC();
               $scope.section.selectedNAICS = getSelectedNAICS();
+              $scope.section.selectedNOC = getSelectedNOC();
             });
           });
       });
   }
-
   /**
    * Initialize section data.
    * @function init

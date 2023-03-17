@@ -7,9 +7,9 @@ namespace CJG.Core.Entities
 	public class PrioritizationRegion : EntityBase
 	{
 		/// <summary>
-		/// get/set - Primary key uses IDENTITY.
+		/// get/set - Primary key uses NONE. We must supply a RegionId here.
 		/// </summary>
-		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		[Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
 		public int Id { get; set; }
 
 		public string Name { get; set; } // Region Name

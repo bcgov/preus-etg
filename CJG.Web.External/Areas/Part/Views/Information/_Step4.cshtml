@@ -467,7 +467,7 @@
                 <label class="form__label" for="">What is your <u><em>current</em></u> National Occupation Classification (NOC) <u><em>before training</em></u> <abbr title="Required">*</abbr></label>
                 <div class="form__control">
                     <div class="form__group--multiselect">
-                        @Html.DropDown(new FormControl()
+                        @Html.DropDown(new FormControl
                         {
                             Model = "model.ParticipantInfoStep4ViewModel.CurrentNoc1Id",
                             Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.CurrentNoc1Codes",
@@ -475,7 +475,7 @@
                             IsInnerModel = true
                         })
 
-                        @Html.DropDown(new FormControl()
+                        @Html.DropDown(new FormControl
                         {
                             Model = "model.ParticipantInfoStep4ViewModel.CurrentNoc2Id",
                             Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.CurrentNoc2Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.CurrentNoc1Id}:true",
@@ -483,7 +483,7 @@
                             IsInnerModel = true
                         })
 
-                        @Html.DropDown(new FormControl()
+                        @Html.DropDown(new FormControl
                         {
                             Model = "model.ParticipantInfoStep4ViewModel.CurrentNoc3Id",
                             Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.CurrentNoc3Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.CurrentNoc2Id}:true",
@@ -491,10 +491,18 @@
                             IsInnerModel = true
                         })
 
-                        @Html.DropDown(new FormControl()
+                        @Html.DropDown(new FormControl
                         {
                             Model = "model.ParticipantInfoStep4ViewModel.CurrentNoc4Id",
                             Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.CurrentNoc4Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.CurrentNoc3Id}:true",
+                            Size = "input--full",
+                            IsInnerModel = true
+                        })
+                        
+                        @Html.DropDown(new FormControl
+                        {
+                            Model = "model.ParticipantInfoStep4ViewModel.CurrentNoc5Id",
+                            Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.CurrentNoc5Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.CurrentNoc4Id}:true",
                             Size = "input--full",
                             IsInnerModel = true
                         })
@@ -522,7 +530,7 @@
             <label class="form__label" for="">What <u><em>will</em></u> your National Occupation Classification (NOC) be <u><em>after training</em></u> <abbr title="Required">*</abbr></label>
             <div class="form__control">
                 <div class="form__group--multiselect">
-                    @Html.DropDown(new FormControl()
+                    @Html.DropDown(new FormControl
                     {
                         Model = "model.ParticipantInfoStep4ViewModel.FutureNoc1Id",
                         Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.FutureNoc1Codes",
@@ -530,7 +538,7 @@
                         IsInnerModel = true
                     })
 
-                    @Html.DropDown(new FormControl()
+                    @Html.DropDown(new FormControl
                     {
                         Model = "model.ParticipantInfoStep4ViewModel.FutureNoc2Id",
                         Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.FutureNoc2Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.FutureNoc1Id}:true",
@@ -538,7 +546,7 @@
                         IsInnerModel = true
                     })
 
-                    @Html.DropDown(new FormControl()
+                    @Html.DropDown(new FormControl
                     {
                         Model = "model.ParticipantInfoStep4ViewModel.FutureNoc3Id",
                         Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.FutureNoc3Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.FutureNoc2Id}:true",
@@ -546,10 +554,18 @@
                         IsInnerModel = true
                     })
 
-                    @Html.DropDown(new FormControl()
+                    @Html.DropDown(new FormControl
                     {
                         Model = "model.ParticipantInfoStep4ViewModel.FutureNoc4Id",
                         Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.FutureNoc4Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.FutureNoc3Id}:true",
+                        Size = "input--full",
+                        IsInnerModel = true
+                    })
+
+                    @Html.DropDown(new FormControl
+                    {
+                        Model = "model.ParticipantInfoStep4ViewModel.FutureNoc5Id",
+                        Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.FutureNoc5Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.FutureNoc4Id}:true",
                         Size = "input--full",
                         IsInnerModel = true
                     })

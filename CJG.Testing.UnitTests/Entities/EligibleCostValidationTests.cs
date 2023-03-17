@@ -194,7 +194,7 @@ namespace CJG.Testing.UnitTests.Entities
             var validationResults = service.Validate(eligibleCost).ToArray();
 
             // message
-            string validateMsg = "The number of participants for expense type '" + eligibleExpenseType.Caption + "' cannot exceed the number of participants you entered in part 1, which was '" + trainingCost.EstimatedParticipants + "'";
+            string validateMsg = "The number of participants for expense type '" + eligibleExpenseType.Caption + "' cannot exceed the number of participants you entered above, which was '" + trainingCost.EstimatedParticipants + "'";
 
             // Assert
             Assert.AreEqual(true, validationResults.Any(x => x.ErrorMessage == validateMsg));
@@ -232,7 +232,7 @@ namespace CJG.Testing.UnitTests.Entities
                 EstimatedParticipants = 20,
                 GrantApplicationId = 1
             };
-            string validateMsg = "The number of participants for expense type '" + eligibleExpenseType.Caption + "' cannot exceed the number of participants you entered in part 1, which was '" + trainingCost.EstimatedParticipants + "'";
+            string validateMsg = "The number of participants for expense type '" + eligibleExpenseType.Caption + "' cannot exceed the number of participants you entered above, which was '" + trainingCost.EstimatedParticipants + "'";
 
             helper.MockDbSet<EligibleCost>(eligibleCost);
             helper.MockDbSet<EligibleCost>(eligibleCost_duplicate);

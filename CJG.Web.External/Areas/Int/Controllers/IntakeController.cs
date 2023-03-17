@@ -1,19 +1,19 @@
-﻿using CJG.Core.Interfaces.Service;
+﻿using System;
+using System.Linq;
+using System.Web.Mvc;
+using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
 using CJG.Web.External.Areas.Int.Models;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
-using System;
-using System.Linq;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	/// <summary>
-	/// IntakeController class, provides endpoints to manage Streams and GrantOpenings.
-	/// </summary>
-	[AuthorizeAction(Privilege.IA4)]
+    /// <summary>
+    /// IntakeController class, provides endpoints to manage Streams and GrantOpenings.
+    /// </summary>
+    [AuthorizeAction(Privilege.IA4)]
 	public class IntakeController : BaseController
 	{
 		private readonly IStaticDataService _staticDataService;

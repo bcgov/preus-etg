@@ -1,4 +1,10 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Mime;
+using System.Web;
+using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
@@ -9,22 +15,17 @@ using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mime;
-using System.Web;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	[RouteArea("Int")]
+    [RouteArea("Int")]
 	[Authorize(Roles = "Assessor, System Administrator, Director, Financial Clerk")]
 	public class ApplicationController : BaseController
 	{
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IAttachmentService _attachmentService;
 		private readonly INoteService _noteService;
+		private readonly IPrioritizationService _prioritizationService;
 		private readonly IAuthorizationService _authorizationService;
 
 		#region Constructors
@@ -33,12 +34,14 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			IGrantApplicationService grantApplicationService,
 			IAttachmentService attachmentService,
 			INoteService noteService,
+			IPrioritizationService prioritizationService,
 			IAuthorizationService authorizationService
 		   ) : base(controllerService.Logger)
 		{
 			_grantApplicationService = grantApplicationService;
 			_attachmentService = attachmentService;
 			_noteService = noteService;
+			_prioritizationService = prioritizationService;
 			_authorizationService = authorizationService;
 		}
 		#endregion
@@ -429,5 +432,35 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
 
+		/// <summary>
+		/// Forces the Intake Queue to recalculate all Prioritization Scores
+		/// </summary>
+		/// <returns></returns>
+		[HttpPut]
+		[PreventSpam]
+		[ValidateRequestHeader]
+		[Route("Application/Prioritization/Recalculate/{grantApplicationId}")]
+		public JsonResult RecalculatePriorities(int grantApplicationId)
+		{
+			var model = new BaseViewModel();
+			try
+			{
+				if (ModelState.IsValid)
+				{
+					_prioritizationService.RecalculatePriorityScores(grantApplicationId);
+				}
+				else
+				{
+					HandleModelStateValidation(model);
+				}
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+
+			model.RedirectURL = "/Int/Admin/Prioritization/Thresholds/View";
+			return Json(model);
+		}
 	}
 }

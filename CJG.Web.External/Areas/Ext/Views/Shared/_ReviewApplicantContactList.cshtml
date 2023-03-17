@@ -39,7 +39,7 @@
     <p class="margin-top">The business location where you work. This can be different from your head office.</p>
 
     <div class="form__group">
-        <div class="form__label">Business address:</div>
+        <div class="form__label">B.C. Business address:</div>
         <div class="form__control">
             @if (Model.ApplicantPhysicalAddress == null)
             {
@@ -59,7 +59,7 @@
         <div class="form__control">
             @if (Model.ApplicantMailingAddress == null || (Model.ApplicantMailingAddress == Model.ApplicantPhysicalAddress))
             {
-                <text>Same as Business Address</text>
+                <text>Same as B.C. Business Address</text>
             }
             else
             {

@@ -243,7 +243,7 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
 
     if (Number($scope.EligibleCost.EstimatedParticipants) > Number($scope.model.EstimatedParticipants)) {
       $scope.EligibleCostEstimatedParticipantsError = true;
-      $scope.EligibleCostSummaryMessage += "<p>The number of participants for expense type '" + $scope.EligibleCost.EligibleExpenseType.Caption + "' cannot exceed the number of participants you entered in part 1, which was '" + $scope.model.EstimatedParticipants + "'.</p>";
+      $scope.EligibleCostSummaryMessage += "<p>The number of participants for expense type '" + $scope.EligibleCost.EligibleExpenseType.Caption + "' cannot exceed the number of participants you entered above, which was '" + $scope.model.EstimatedParticipants + "'.</p>";
       validate = false;
     }
 

@@ -1,3 +1,10 @@
+app.filter('stripHTML', [function () {
+  return function (stringWithHtml) {
+    var strippedText = $('<div/>').html(stringWithHtml).text();
+    return strippedText;
+  };
+}]);
+
 app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
   $scope.section = {
     name: 'ApplicationSummary',

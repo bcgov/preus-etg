@@ -91,7 +91,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
 				if (currentUser.PhysicalAddress == null)
 				{
-					this.SetAlert("Business Address is required to start new application", AlertType.Warning, true);
+					this.SetAlert("B.C. Business Address is required to start new application", AlertType.Warning, true);
 					return RedirectToAction(nameof(UserProfileController.UpdateUserProfileView), nameof(UserProfileController).Replace("Controller", ""));
 				}
 			}

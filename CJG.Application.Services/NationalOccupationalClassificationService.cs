@@ -1,17 +1,19 @@
-﻿using CJG.Core.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Web;
+using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Entities;
 using NLog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace CJG.Application.Services
 {
 	public class NationalOccupationalClassificationService : Service, INationalOccupationalClassificationService
 	{
-		#region Constructors
+		public string UseNocVersion { get; set; }
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -19,14 +21,21 @@ namespace CJG.Application.Services
 		/// <param name="httpContext"></param>
 		/// <param name="logger"></param>
 		public NationalOccupationalClassificationService(
-			IDataContext dbContext, 
+			IDataContext dbContext,
 			HttpContextBase httpContext,
 			ILogger logger) : base(dbContext, httpContext, logger)
 		{
-		}
-		#endregion
+			var configNocSetting = ConfigurationManager.AppSettings["NocVersion"];
 
-		#region Methods
+			if (configNocSetting == null)
+				UseNocVersion = "2016";
+
+			var validVersions = new List<string> { "2016", "2021" };
+
+			if (configNocSetting != null && validVersions.Contains(configNocSetting))
+				UseNocVersion = configNocSetting;
+		}
+
 		public void AddNationalOccupationalClassification(NationalOccupationalClassification newNationalOccupationalClassification)
 		{
 			try
@@ -45,7 +54,7 @@ namespace CJG.Application.Services
 		{
 			try
 			{
-				_dbContext.Update<NationalOccupationalClassification>(nationalOccupationalClassification);
+				_dbContext.Update(nationalOccupationalClassification);
 				_dbContext.Commit();
 			}
 			catch (Exception e)
@@ -66,12 +75,27 @@ namespace CJG.Application.Services
 		{
 			try
 			{
+				// Find the parent for the NOC Version we are defaulting to
+				if (parentId == 0)
+				{
+					var rootNoc = _dbContext.NationalOccupationalClassifications
+						.Where(n => n.Level == 0)
+						.FirstOrDefault(n => n.NOCVersion == UseNocVersion);
+
+					if (rootNoc != null)
+						parentId = rootNoc.Id;
+				}
+
 				var parent = GetNationalOccupationalClassification(parentId);
 
 				if (level <= 0)
 					level = parent.Level + 1;
 
-				var nationalOccupationalClassifications = _dbContext.NationalOccupationalClassifications.Where(noc => noc.Level == level && noc.Left > parent.Left && noc.Right < parent.Right).OrderBy(noc => noc.Code);
+				var nationalOccupationalClassifications = _dbContext.NationalOccupationalClassifications
+					.Where(n => n.Level == level)
+					.Where(n => n.ParentId == parentId)
+					.Where(n => n.NOCVersion == UseNocVersion)
+					.OrderBy(noc => noc.Code);
 
 				return nationalOccupationalClassifications;
 			}
@@ -86,7 +110,10 @@ namespace CJG.Application.Services
 		{
 			try
 			{
-				var nationalOccupationalClassifications = _dbContext.NationalOccupationalClassifications.Where(noc => noc.Level == level).OrderBy(noc => noc.Code);
+				var nationalOccupationalClassifications = _dbContext.NationalOccupationalClassifications
+					.Where(noc => noc.Level == level)
+					.Where(noc => noc.NOCVersion == UseNocVersion)
+					.OrderBy(noc => noc.Code);
 
 				return nationalOccupationalClassifications;
 			}
@@ -109,14 +136,29 @@ namespace CJG.Application.Services
 				if (!id.HasValue)
 					return Enumerable.Empty<NationalOccupationalClassification>();
 
-				return (from p in _dbContext.NationalOccupationalClassifications
-						from c in _dbContext.NationalOccupationalClassifications
-						where p.Id == id
-							&& p.Left >= c.Left
-							&& p.Right <= c.Right
-							&& c.Level > 0
-						select c);
-			} catch (Exception e)
+				var targetNoc = _dbContext.NationalOccupationalClassifications.Find(id);
+				if (targetNoc == null)
+					return Enumerable.Empty<NationalOccupationalClassification>();
+
+				var nocChain = new List<NationalOccupationalClassification> { targetNoc };
+				var parentId = targetNoc.ParentId;
+
+				while (parentId > 0)
+				{
+					var parentNoc = _dbContext.NationalOccupationalClassifications.Find(parentId);
+					if (parentNoc == null)
+					{
+						parentId = 0;
+						continue;
+					}
+
+					nocChain.Add(parentNoc);
+					parentId = parentNoc.ParentId;
+				}
+
+				return nocChain.OrderBy(n => n.Level);
+			}
+			catch (Exception e)
 			{
 				_logger.Error(e, "Couldn't get NOCs for ID: {0}", id);
 				throw;
@@ -145,24 +187,5 @@ namespace CJG.Application.Services
 				throw;
 			}
 		}
-
-		public Tuple<int?, int?, int?, int?> GetNationalOccupationalClassificationIds(int? id)
-		{
-			try
-			{
-				if (!id.HasValue)
-					return new Tuple<int?, int?, int?, int?>(null, null, null, null);
-
-				var nocs = GetNationalOccupationalClassifications(id);
-
-				return new Tuple<int?, int?, int?, int?> (nocs.FirstOrDefault(n => n.Level == 1)?.Id, nocs.FirstOrDefault(n => n.Level == 2)?.Id, nocs.FirstOrDefault(n => n.Level == 3)?.Id, nocs.FirstOrDefault(n => n.Level == 4)?.Id);
-			}
-			catch (Exception e)
-			{
-				_logger.Error(e, "Couldn't get NOC Ids for Parent ID: {0}", id);
-				throw;
-			}
-		}
-		#endregion
 	}
 }

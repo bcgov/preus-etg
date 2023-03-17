@@ -177,6 +177,13 @@
                                     </select>
                                 </div>
                             </div>
+                            <div ng-show="model.Noc4Id" class="ng-hide" ng-validation="errors.Noc5Id">
+                                <div class="control-wrapper selectmenu">
+                                    <select class="input--full form-control" ng-model="model.Noc5Id" ng-options="item.Key as item.Value for item in model.Noc5Codes | filter:{Parent: model.Noc4Id} : true">
+                                        <option value="" selected="selected">&lt; Select value &gt;</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

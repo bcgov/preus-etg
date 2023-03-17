@@ -306,7 +306,7 @@ namespace CJG.Testing.UnitTests.Entities
 			// Act
 			var validationResults = service.Validate(trainingCost).ToArray();
 
-			string validationMsg = "The number of participants for one expense type cannot exceed the number of participants you entered in part 1, which was " + trainingCost.EstimatedParticipants + ".";
+			string validationMsg = "The number of participants for one expense type cannot exceed the number of participants you entered above, which was " + trainingCost.EstimatedParticipants + ".";
 
 			// Assert
 			Assert.AreEqual(true, validationResults.Any(x => x.ErrorMessage == validationMsg));
