@@ -39,6 +39,17 @@ namespace CJG.Application.Services
 				.ToList();
 		}
 
+		public IEnumerable<Tuple<int, int>> GetRegionPostalCodeCounts()
+		{
+			var counts = _dbContext.PrioritizationPostalCodes
+				.GroupBy(pc => pc.RegionId)
+				.Select(pc => new { RegionId = pc.Key, PostalCodeCount = pc.Count() })
+				.AsEnumerable()
+				.Select(an => new Tuple<int, int>(an.RegionId, an.PostalCodeCount));
+
+			return counts;
+		}
+
 		public PrioritizationThreshold GetThresholds()
 		{
 			return _dbContext.PrioritizationThresholds.SingleOrDefault() ?? new PrioritizationThreshold();

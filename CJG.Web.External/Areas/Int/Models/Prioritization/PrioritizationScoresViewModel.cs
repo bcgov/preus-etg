@@ -15,5 +15,6 @@ namespace CJG.Web.External.Areas.Int.Models.Prioritization
 		public decimal Score { get; set; }
 		public bool IsPriority { get; set; }
 		public string Code { get; set; }
+		public int PostalCodeCount { get; set; }
 	}
 }

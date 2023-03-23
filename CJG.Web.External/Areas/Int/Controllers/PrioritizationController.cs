@@ -2,7 +2,6 @@
 using System.Configuration;
 using System.Linq;
 using System.Web;
-using System.Web.Http.Validation;
 using System.Web.Mvc;
 using CJG.Application.Services;
 using CJG.Core.Interfaces.Service;
@@ -83,11 +82,16 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				var thresholds = _prioritizationService.GetThresholds();
 				var regions = _prioritizationService.GetPrioritizationRegions();
 
+				var postalCodeCounts = _prioritizationService
+					.GetRegionPostalCodeCounts()
+					.ToList();
+
 				var regionModels = regions.Select(r => new ScoreViewModel
 				{
 					Name = r.Name,
 					Score = r.RegionalScore,
-					IsPriority = r.RegionalScore >= thresholds.RegionalThreshold
+					IsPriority = r.RegionalScore >= thresholds.RegionalThreshold,
+					PostalCodeCount = postalCodeCounts.FirstOrDefault(c => c.Item1 == r.Id)?.Item2 ?? 0
 				}).ToList();
 
                 var result = new
