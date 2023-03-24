@@ -59,7 +59,11 @@
 
     <div class="form__group">
         <div class="label-wrapper"><label class="form__label">Postal Code <abbr title="Required">*</abbr></label></div>
-        <div class="control-wrapper form-control"><input type="text" class="input--small" ng-model="model.UserProfileDetails.PhysicalPostalCode" maxlength="6" ng-postal ng-validation></div>
+        <div class="control-wrapper form-control"><input type="text" class="input--small" ng-model="model.UserProfileDetails.PhysicalPostalCode" ng-change="checkPostalCode()" maxlength="6" ng-postal ng-validation></div>
+    </div>
+
+    <div class="alert alert--error" role="alert" ng-show="section.postalCodeNotInBC">
+        <p>Please enter your B.C. business address. Failure to do so may result in your application not being assessed.</p>
     </div>
 
     <h3 class="subheader--body">Mailing Address</h3>

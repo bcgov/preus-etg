@@ -405,11 +405,28 @@ namespace CJG.Application.Services
 			if (string.IsNullOrWhiteSpace(postalCode))
 				return result;
 
+			if (IsOutOfProvince(postalCode))
+				return new RegionalResult
+				{
+					Name = "Out of Province",
+					Score = 0
+				};
+
 			var foundRegion = GetPriorityRegion(postalCode);
 			if (foundRegion == null)
 				return result;
 
 			return GetRegionalResult(foundRegion, threshold);
+		}
+
+		private bool IsOutOfProvince(string postalCode)
+		{
+			if (string.IsNullOrWhiteSpace(postalCode))
+				return false;
+
+			var postal = postalCode.Trim().ToUpper();
+
+			return !postal.StartsWith("V");
 		}
 
 		private static string GetPriorityPostalCode(GrantApplication grantApplication)
