@@ -34,6 +34,7 @@
                 <thead>
                     <tr class="form-table-heading display--table-row">
                         <th ng-click="changeSorting('Name')"><img ng-src="{{imgSrcName}}" /> Region</th>
+                        <th>Postal Codes</th>
                         <th ng-click="changeSorting('Score')"><img ng-src="{{imgSrcScore}}" /> Regional Score</th>
                         <th ng-click="changeSorting('IsPriority')"><img ng-src="{{imgSrcPriority}}" /> Is Priority</th>
                     </tr>
@@ -41,6 +42,7 @@
                 <tbody>
                     <tr class="form-table-row-with-hover" ng-repeat="region in $parent.$ctrl.ngItems | orderBy: sort.column:sort.descending">
                         <td class="form-table-cell">{{ region.Name }}</td>
+                        <td class="form-table-cell">{{ region.PostalCodeCount }}</td>
                         <td class="form-table-cell">{{ region.Score }}</td>
                         <td class="form-table-cell">{{ region.IsPriority ? "Priority" : "Non-priority" }}</td>
                     </tr>

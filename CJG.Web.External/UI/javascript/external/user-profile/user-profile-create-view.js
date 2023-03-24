@@ -4,6 +4,10 @@ app.controller('CreateUserProfile', function ($scope, $attrs, $controller, $time
 
   $scope.displayProgramDetails = false;
 
+  $scope.section = {
+    postalCodeNotInBC: null
+  }
+
   function loadUserProfile() {
     return $scope.load({
       url: '/Ext/User/Profile/0',
@@ -16,8 +20,24 @@ app.controller('CreateUserProfile', function ($scope, $attrs, $controller, $time
   }
 
   function init() {
-    return loadUserProfile()
-      .catch(angular.noop);
+    return Promise.all([
+        loadUserProfile()
+      ])
+      .then(function () {
+        return $timeout(function () {
+          $scope.checkPostalCode();
+        });
+      }).catch(angular.noop);
+  }
+
+  $scope.checkPostalCode = function () {
+    let postalCode = $scope.model.UserProfileDetails.PhysicalPostalCode.toUpperCase().trim();
+    if (postalCode === undefined || postalCode === '') {
+      $scope.postalCodeNotInBC = false;
+      return;
+    }
+
+    $scope.postalCodeNotInBC = postalCode.charAt(0) !== "V";
   }
 
   $scope.confirmDetails = function () {

@@ -1,5 +1,9 @@
 app.controller('EditUserProfile', function ($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
 
+  $scope.section = {
+    postalCodeNotInBC: null
+  }
+
   angular.extend(this, $controller('Base', { $scope: $scope, $attrs: $attrs }));
 
   function loadUserProfile() {
@@ -10,8 +14,24 @@ app.controller('EditUserProfile', function ($scope, $attrs, $controller, $timeou
   }
 
   function init() {
-    return loadUserProfile()
-      .catch(angular.noop);
+    return Promise.all([
+        loadUserProfile()
+      ])
+      .then(function () {
+        return $timeout(function () {
+          $scope.checkPostalCode();
+        });
+      }).catch(angular.noop);
+  }
+
+  $scope.checkPostalCode = function () {
+    let postalCode = $scope.model.UserProfileDetails.PhysicalPostalCode.toUpperCase().trim();
+    if (postalCode === undefined || postalCode === '') {
+      $scope.section.postalCodeNotInBC = false;
+      return;
+    }
+
+    $scope.section.postalCodeNotInBC = postalCode.charAt(0) !== "V";
   }
 
   $scope.save = function () {

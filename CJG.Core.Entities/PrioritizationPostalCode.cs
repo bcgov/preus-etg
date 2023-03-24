@@ -14,6 +14,8 @@ namespace CJG.Core.Entities
 		[ForeignKey("Region")]
 		public int RegionId { get; set; }
 		public virtual PrioritizationRegion Region { get; set; }
+
+		[MaxLength(10)]
 		public string PostalCode { get; set; }
 	}
 }

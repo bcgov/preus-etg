@@ -361,6 +361,16 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 		}
 
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Regional Score")]
+		public void GetBreakdown_SetsRegion_OutOfProvince()
+		{
+			_grantApplication.ApplicantPhysicalAddress.PostalCode = "m7D 7A3";
+			var result = _service.GetBreakdown(_grantApplication);
+
+			Assert.AreEqual("Out of Province", result.RegionalName);
+			Assert.AreEqual(0, result.RegionalScore);
+		}
+
+		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Regional Score")]
 		public void GetBreakdown_SetsRegion_Exception_WhenNotPostalCodeMatch()
 		{
 			_grantApplication.ApplicantPhysicalAddress.PostalCode = "V7A3Y1";

@@ -20,6 +20,13 @@
 
         <div ng-repeat="program in grantPrograms" class="program-information-container">
             <h2>{{program.Name}}</h2>
+            
+            @if (ViewBag.UserIsOutOfProvince != null && ViewBag.UserIsOutOfProvince)
+            { 
+                <div class="alert alert--error">
+                    <p>Please update your @Html.ActionLink("User Profile", "UpdateUserProfileView", "UserProfile", null, new { @class = "link" }) to include your B.C. business address before starting a new application. Failure to do so may result in your application not being assessed.</p>
+                </div>
+            }
             <div>
                 <div class="program-action float-left">
                     <a class="btn btn--primary"

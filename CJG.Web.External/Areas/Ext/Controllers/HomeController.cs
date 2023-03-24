@@ -66,7 +66,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		public ActionResult Index()
 		{
 			var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
-
 			if (currentUser == null)
 			{
 				_logger.Debug($"New BCeID user must first create an account profile - '{_siteMinderService.CurrentUserName}':{_siteMinderService.CurrentUserGuid}");
@@ -97,6 +96,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				this.SetAlerts(MessageConstants.Message_BCeID_BusinessDocuments_Required, AlertType.Warning);
 			}
 
+			ViewBag.UserIsOutOfProvince = IsUserOutOfProvince(currentUser);
+
 			if (_organizationService.NotSubmittedGrantApplicationsForUser(currentUser.Organization.Id, currentUser.BCeIDGuid) > 0)
 			{
 				//Clear NAICS and revert status in case application is complete and not submitted
@@ -105,6 +106,15 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			}
 
 			return View();
+		}
+
+		private bool IsUserOutOfProvince(User user)
+		{
+			if (user.PhysicalAddress == null)
+				return false;
+
+			var postalCode = user.PhysicalAddress.PostalCode.Trim().ToUpper();
+			return !postalCode.StartsWith("V");
 		}
 
 		/// <summary>

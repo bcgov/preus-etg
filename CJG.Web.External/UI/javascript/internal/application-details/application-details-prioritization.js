@@ -4,6 +4,9 @@ app.controller('Prioritization', function ($scope, $attrs, $controller, $element
     displayName: 'Prioritization',
     loaded: function () {
       return $scope.model && $scope.model.RowVersion && $scope.model.RowVersion === $scope.grantFile.RowVersion;
+    },
+    onRefresh: function () {
+      return loadPrioritizationInfo().catch(angular.noop);
     }
   };
 

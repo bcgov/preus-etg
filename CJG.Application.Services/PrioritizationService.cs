@@ -39,6 +39,17 @@ namespace CJG.Application.Services
 				.ToList();
 		}
 
+		public IEnumerable<Tuple<int, int>> GetRegionPostalCodeCounts()
+		{
+			var counts = _dbContext.PrioritizationPostalCodes
+				.GroupBy(pc => pc.RegionId)
+				.Select(pc => new { RegionId = pc.Key, PostalCodeCount = pc.Count() })
+				.AsEnumerable()
+				.Select(an => new Tuple<int, int>(an.RegionId, an.PostalCodeCount));
+
+			return counts;
+		}
+
 		public PrioritizationThreshold GetThresholds()
 		{
 			return _dbContext.PrioritizationThresholds.SingleOrDefault() ?? new PrioritizationThreshold();
@@ -394,11 +405,28 @@ namespace CJG.Application.Services
 			if (string.IsNullOrWhiteSpace(postalCode))
 				return result;
 
+			if (IsOutOfProvince(postalCode))
+				return new RegionalResult
+				{
+					Name = "Out of Province",
+					Score = 0
+				};
+
 			var foundRegion = GetPriorityRegion(postalCode);
 			if (foundRegion == null)
 				return result;
 
 			return GetRegionalResult(foundRegion, threshold);
+		}
+
+		private bool IsOutOfProvince(string postalCode)
+		{
+			if (string.IsNullOrWhiteSpace(postalCode))
+				return false;
+
+			var postal = postalCode.Trim().ToUpper();
+
+			return !postal.StartsWith("V");
 		}
 
 		private static string GetPriorityPostalCode(GrantApplication grantApplication)

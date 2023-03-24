@@ -330,11 +330,13 @@ namespace CJG.Application.Services
 				case ApplicationWorkflowTrigger.EditApplicant:
 					switch (grantApplication.ApplicationStateInternal)
 					{
+						case ApplicationStateInternal.New:
+						case ApplicationStateInternal.PendingAssessment:
+							return user.HasPrivilege(Privilege.AM2, Privilege.AM3);
 						case ApplicationStateInternal.Draft:
 						case ApplicationStateInternal.ApplicationWithdrawn:
 						case ApplicationStateInternal.Unfunded:
 							return isApplicationAdministrator;
-						case ApplicationStateInternal.New:
 						case ApplicationStateInternal.OfferIssued:
 						case ApplicationStateInternal.OfferWithdrawn:
 						case ApplicationStateInternal.Closed:
