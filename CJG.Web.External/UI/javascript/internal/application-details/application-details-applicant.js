@@ -17,6 +17,7 @@ app.controller('Applicant', function ($scope, $attrs, $controller, $timeout, ngD
       $scope.emit('update', { grantFile: { RowVersion: $scope.model.RowVersion } });
       $scope.emit('refresh', { target: 'ApplicationNotes', force: true });
       $scope.emit('refresh', { target: 'ApplicationSummary', force: true });
+      $scope.emit('refresh', { target: 'Prioritization', force: true });
     },
     onRefresh: function () {
       return loadApplicant().catch(angular.noop);
