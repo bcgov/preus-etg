@@ -140,7 +140,8 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Small Business Score")]
 		public void GetBreakdown_SetsBusinessSize_On()
 		{
-			_grantApplication.OrganizationNumberOfEmployeesInBC = 25;
+			_grantApplication.OrganizationNumberOfEmployeesInBC = 10;
+			_grantApplication.OrganizationNumberOfEmployeesWorldwide = 25;
 			var result = _service.GetBreakdown(_grantApplication);
 
 			Assert.AreEqual(4, result.SmallBusinessScore);
@@ -149,7 +150,8 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Small Business Score")]
 		public void GetBreakdown_SetsBusinessExactSize_Off()
 		{
-			_grantApplication.OrganizationNumberOfEmployeesInBC = 50;
+			_grantApplication.OrganizationNumberOfEmployeesInBC = 15;
+			_grantApplication.OrganizationNumberOfEmployeesWorldwide = 50;
 			var result = _service.GetBreakdown(_grantApplication);
 
 			Assert.AreEqual(4, result.SmallBusinessScore);
@@ -158,7 +160,8 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Small Business Score")]
 		public void GetBreakdown_SetsBusinessBiggerSize_Off()
 		{
-			_grantApplication.OrganizationNumberOfEmployeesInBC = 75;
+			_grantApplication.OrganizationNumberOfEmployeesInBC = 28;
+			_grantApplication.OrganizationNumberOfEmployeesWorldwide = 75;
 			var result = _service.GetBreakdown(_grantApplication);
 
 			Assert.AreEqual(0, result.SmallBusinessScore);
