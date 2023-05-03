@@ -816,7 +816,18 @@ namespace CJG.Application.Services
 			{
 				var orderBy = filter.OrderBy != null && filter.OrderBy.Length > 0 ? filter.OrderBy : new[] { $"{nameof(GrantApplication.DateSubmitted)} desc" };
 				query = query
-					.OrderByProperty(orderBy)
+					.OrderByProperty(orderBy);
+
+				if (filter.OrderBy != null && filter.OrderBy[0].StartsWith("PrioritizationScore"))
+				{
+					var sortDesc = filter.OrderBy[0].Contains("desc");
+					query = query
+						.OrderByDynamic(f => f.PrioritizationScore, !sortDesc)
+						.ThenBy(f => f.DateSubmitted)
+						.ThenBy(f => f.StartDate);
+				}
+
+				query = query
 					.Skip((page - 1) * quantity)
 					.Take(quantity);
 			}
