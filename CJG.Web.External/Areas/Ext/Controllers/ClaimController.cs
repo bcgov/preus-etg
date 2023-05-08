@@ -320,21 +320,21 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <summary>
 		/// Update the claim with the list of eligible claim costs.
 		/// </summary>
-		/// <param name="eligibleCosts"></param>
+		/// <param name="claimModel"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[PreventSpam]
 		[ValidateRequestHeader]
 		[Route("Claim/Attendance")]
-		public JsonResult UpdateClaimAttendance(ClaimModel claim)
+		public JsonResult UpdateClaimAttendance(ClaimModel claimModel)
 		{
 			var model = new ClaimReportViewModel();
 			try
 			{
-				var claimEligibleCost = _claimEligibleCostService.Get(claim.EligibleCosts.FirstOrDefault().Id);
+				var claimEligibleCost = _claimEligibleCostService.Get(claimModel.EligibleCosts.FirstOrDefault().Id);
 
 				//save the participant attendance info, update the Attended property
-				var participantsAttended = claim.Participants.ToDictionary(d => d.Id, d => d.Attended);
+				var participantsAttended = claimModel.Participants.ToDictionary(d => d.Id, d => d.Attended);
 
 				_participantService.ReportAttendance(participantsAttended);
 

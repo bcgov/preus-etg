@@ -411,7 +411,9 @@ namespace CJG.Application.Services
 										_dbContext.Attachments.Remove(trainingProvider.ProofOfQualificationsDocument);
 									if (trainingProvider.CourseOutlineDocumentId.HasValue)
 										_dbContext.Attachments.Remove(trainingProvider.CourseOutlineDocument);
-									_dbContext.ApplicationAddresses.Remove(trainingProvider.TrainingAddress);
+									if (trainingProvider.TrainingAddress != null)
+										_dbContext.ApplicationAddresses.Remove(trainingProvider.TrainingAddress);
+
 									_dbContext.TrainingProviders.Remove(trainingProvider);
 								}
 								if (trainingProgram.CourseOutlineDocumentId.HasValue)

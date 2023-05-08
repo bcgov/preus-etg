@@ -91,10 +91,13 @@ namespace CJG.Application.Business.Models
 			EligibleExpenseTypeCaption = claimEligibleCost.EligibleExpenseType.Caption;
 			EligibleExpenseTypeDescription = claimEligibleCost.EligibleExpenseType.Description;
 			SourceId = claimEligibleCost.SourceId;
-			TotalClaimedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.ClaimReimbursement);
+			TotalClaimedReimbursement = claimEligibleCost.ParticipantCosts
+				//.Where(x => x.ParticipantForm.Approved.HasValue && x.ParticipantForm.Approved.Value)
+				//.Where(x => x.ParticipantForm.Attended.HasValue && x.ParticipantForm.Attended.Value)
+				.Sum(x => x.ClaimReimbursement);
 			EligibleCostId = claimEligibleCost.EligibleCostId;
 			ExpenseType = claimEligibleCost.EligibleExpenseType.ExpenseType.Id;
-
+			
 			AgreedReimbursementRate = claimEligibleCost.Claim.GrantApplication.ReimbursementRate;
 			AgreedMaxCost = claimEligibleCost.EligibleCost?.AgreedMaxCost ?? claimEligibleCost.Source?.AssessedCost ?? 0;
 			AgreedMaxParticipants = claimEligibleCost.EligibleCost?.AgreedMaxParticipants ?? claimEligibleCost.Source?.AssessedParticipants ?? 0;

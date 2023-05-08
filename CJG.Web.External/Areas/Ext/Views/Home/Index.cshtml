@@ -42,15 +42,16 @@
                             <span ng-if="$index == 0 && program.GrantOpenings.length == 1">
                                 between <span class="no-wrap">{{openingTime.StartDate}}</span> and <span class="no-wrap">{{openingTime.EndDate}}.</span>
                             </span>
+
                             <span ng-if="$index == 0 && program.GrantOpenings.length > 1">
                                 between <span class="no-wrap">{{openingTime.StartDate}}</span> and <span class="no-wrap">{{openingTime.EndDate}},</span>
                             </span>
-
                             <span ng-if="$index != program.GrantOpenings.length - 1 && $index > 0">
                                 or between <span class="no-wrap">{{openingTime.StartDate}}</span> and <span class="no-wrap">{{openingTime.EndDate}},</span>
                             </span>
-
-                            <span ng-if="$index == program.GrantOpenings.length - 1 && program.GrantOpenings.length != 1">or between <span class="no-wrap">{{openingTime.StartDate}}</span> and <span class="no-wrap">{{openingTime.EndDate}}.</span></span>
+                            <span ng-if="$index == program.GrantOpenings.length - 1 && program.GrantOpenings.length != 1">
+                                or between <span class="no-wrap">{{openingTime.StartDate}}</span> and <span class="no-wrap">{{openingTime.EndDate}}.</span>
+                            </span>
                         </text>
                     </p>
                     <p ng-if="program.GrantOpenings.length == 0" ng-class="!program.Message ? 'program-text-top': ''">
@@ -81,7 +82,7 @@
                                 <text ng-if="item.ShowSubmittedDate">Date submitted: </text>
                                 <span ng-if="item.ShowSubmittedDate">{{item.DateSubmitted}}</span>
                                 @*<text ng-if="item.ShowGrantOpeningDate">Earliest submission date: </text>
-            <span ng-if="item.ShowGrantOpeningDate">{{item.GrantOpeningDate}}</span>*@
+                                <span ng-if="item.ShowGrantOpeningDate">{{item.GrantOpeningDate}}</span>*@
                                 <span class="label label--acceptby" ng-if="item.ShowAgreementStartDate">
                                     Accept by {{item.AgreementStartDate}}
                                 </span>

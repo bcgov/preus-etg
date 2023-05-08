@@ -57,139 +57,72 @@ namespace CJG.Application.Services
 			var claim = Get<Claim>(anyClaimEligibleCost.ClaimId, anyClaimEligibleCost.ClaimVersion);
 
 			if (claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant)
+				return;
+
+			foreach (var viewModelClaimEligibleCost in eligibleCosts)
 			{
-				foreach (var viewModelClaimEligibleCost in eligibleCosts)
-				{
-					claim.RowVersion = System.Convert.FromBase64String(viewModelClaimEligibleCost.ClaimRowVersion);
-					var claimEligibleCost = Get<ClaimEligibleCost>(viewModelClaimEligibleCost.Id);
+				claim.RowVersion = System.Convert.FromBase64String(viewModelClaimEligibleCost.ClaimRowVersion);
 
-					// If RowVersion is different, update claim participants, update row version to match, and set error to true
-					if (!claimEligibleCost.Claim.RowVersion.SequenceEqual(System.Convert.FromBase64String(viewModelClaimEligibleCost.ClaimRowVersion)))
+				var claimEligibleCost = Get<ClaimEligibleCost>(viewModelClaimEligibleCost.Id);
+
+				// If RowVersion is different, update claim participants, update row version to match, and set error to true
+				if (!claimEligibleCost.Claim.RowVersion.SequenceEqual(System.Convert.FromBase64String(viewModelClaimEligibleCost.ClaimRowVersion)))
+				{
+					viewModelClaimEligibleCost.ClaimParticipants = claimEligibleCost.ClaimParticipants;
+					viewModelClaimEligibleCost.ClaimCost = claimEligibleCost.ClaimCost;
+					viewModelClaimEligibleCost.ConcurrencyError = true;
+				}
+				else
+				{
+					if (isExternalUser)
 					{
-						viewModelClaimEligibleCost.ClaimParticipants = claimEligibleCost.ClaimParticipants;
-						viewModelClaimEligibleCost.ClaimCost = claimEligibleCost.ClaimCost;
-						foreach (var breakdown in viewModelClaimEligibleCost.Breakdowns)
-						{
-							breakdown.ClaimCost = claimEligibleCost.Breakdowns.FirstOrDefault(b => b.Id == breakdown.Id).ClaimCost;
-						}
-						viewModelClaimEligibleCost.ConcurrencyError = true;
+						claim.ClaimState = ClaimState.Complete;
+						claimEligibleCost.ClaimCost = viewModelClaimEligibleCost.ClaimCost;
+
+						// Count the number of for the specified expense types.
+						var requiredPIFs = claim.GrantApplication.RequireAllParticipantsBeforeSubmission;
+
+						claimEligibleCost.UpdateUpToMaxClaimParticipants(_dbContext.ParticipantForms.Count(pf => pf.GrantApplicationId == claim.GrantApplicationId && !pf.IsExcludedFromClaim &&
+						                                                                                         ((pf.Attended.HasValue && pf.Attended.Value) || !requiredPIFs)));
+
+						claimEligibleCost.ClaimReimbursementCost = viewModelClaimEligibleCost.TotalClaimedReimbursement;
 					}
 					else
 					{
-						if (isExternalUser)
-						{
-							claim.ClaimState = ClaimState.Complete;
-							claimEligibleCost.ClaimCost = viewModelClaimEligibleCost.ClaimCost;
-							// Count the number of reported participants for the specified expense types.
-							claimEligibleCost.ClaimParticipants = claimEligibleCost.EligibleExpenseType.ExpenseTypeId != ExpenseTypes.NotParticipantLimited ? viewModelClaimEligibleCost.ClaimParticipants ?? 0 : _dbContext.ParticipantForms.Count(pf => pf.GrantApplicationId == claim.GrantApplicationId && !pf.IsExcludedFromClaim);
-							claimEligibleCost.ClaimReimbursementCost = viewModelClaimEligibleCost.TotalClaimedReimbursement;
-						}
-						else
-						{
-							claimEligibleCost.AssessedCost = viewModelClaimEligibleCost.AssessedCost;
-							claimEligibleCost.AssessedParticipants = viewModelClaimEligibleCost.AssessedParticipants;
-							claimEligibleCost.RecalculateAssessedCost();
-						}
-
-						if (viewModelClaimEligibleCost.ServiceType != null && viewModelClaimEligibleCost.ServiceType != ServiceTypes.EmploymentServicesAndSupports && viewModelClaimEligibleCost.Breakdowns.Any())
-						{
-							foreach (var original in claimEligibleCost.Breakdowns)
-							{
-								var updated = viewModelClaimEligibleCost.Breakdowns.FirstOrDefault(pc => pc.Id == original.Id);
-								if (updated != null)
-								{
-									original.ClaimCost = updated.ClaimCost;
-									if (!isExternalUser)
-									{
-										original.AssessedCost = updated.AssessedCost;
-									}
-								}
-							}
-							claimEligibleCost.ClaimCost = claimEligibleCost.Breakdowns.Sum(x => x.ClaimCost);
-						}
-
-						if (viewModelClaimEligibleCost.ExpenseType == ExpenseTypes.ParticipantAssigned)
-						{
-							foreach (var original in claimEligibleCost.ParticipantCosts)
-							{
-								var updated = viewModelClaimEligibleCost.ParticipantCosts.First(pc => pc.Id == original.Id);
-								original.ClaimParticipantCost = updated.ClaimParticipantCost;
-								if (!isExternalUser)
-								{
-									original.AssessedParticipantCost = updated.AssessedParticipantCost;
-									original.AssessedReimbursement = updated.AssessedReimbursement;
-									original.AssessedEmployerContribution = updated.AssessedEmployerContribution;
-									original.RecalculatedAssessedCost();
-								}
-
-								original.RecalculateClaimCost();
-							}
-						}
+						claimEligibleCost.AssessedCost = viewModelClaimEligibleCost.AssessedCost;
+						claimEligibleCost.AssessedParticipants = viewModelClaimEligibleCost.AssessedParticipants;
+						claimEligibleCost.RecalculateAssessedCost();
 					}
-					claim.RecalculateClaimedCosts();
-					claim.RecalculateAssessedCosts(viewModelClaimEligibleCost.RemoveOverride);
-				}
-			}
-			else {
-				foreach (var viewModelClaimEligibleCost in eligibleCosts)
-				{
-					claim.RowVersion = System.Convert.FromBase64String(viewModelClaimEligibleCost.ClaimRowVersion);
 
-					var claimEligibleCost = Get<ClaimEligibleCost>(viewModelClaimEligibleCost.Id);
-
-					// If RowVersion is different, update claim participants, update row version to match, and set error to true
-					if (!claimEligibleCost.Claim.RowVersion.SequenceEqual(System.Convert.FromBase64String(viewModelClaimEligibleCost.ClaimRowVersion)))
+					if (viewModelClaimEligibleCost.ExpenseType == ExpenseTypes.ParticipantAssigned)
 					{
-						viewModelClaimEligibleCost.ClaimParticipants = claimEligibleCost.ClaimParticipants;
-						viewModelClaimEligibleCost.ClaimCost = claimEligibleCost.ClaimCost;
-						viewModelClaimEligibleCost.ConcurrencyError = true;
-					}
-					else
-					{
-						if (isExternalUser)
+						foreach (var original in claimEligibleCost.ParticipantCosts)
 						{
-							claim.ClaimState = ClaimState.Complete;
-							claimEligibleCost.ClaimCost = viewModelClaimEligibleCost.ClaimCost;
-							// Count the number of for the specified expense types.
-							var requiredPIFs = claim.GrantApplication.RequireAllParticipantsBeforeSubmission;
-							claimEligibleCost.UpdateUpToMaxClaimParticipants(_dbContext.ParticipantForms.Count(pf => pf.GrantApplicationId == claim.GrantApplicationId && !pf.IsExcludedFromClaim &&
-							                                                                                         ((pf.Attended.HasValue && pf.Attended.Value) || !requiredPIFs)));
-							claimEligibleCost.ClaimReimbursementCost = viewModelClaimEligibleCost.TotalClaimedReimbursement;
-						}
-						else
-						{
-							claimEligibleCost.AssessedCost = viewModelClaimEligibleCost.AssessedCost;
-							claimEligibleCost.AssessedParticipants = viewModelClaimEligibleCost.AssessedParticipants;
-							claimEligibleCost.RecalculateAssessedCost();
-						}
+							var updated = viewModelClaimEligibleCost.ParticipantCosts.First(pc => pc.Id == original.Id);
+							original.ClaimParticipantCost = updated.ClaimParticipantCost;
+							original.ClaimReimbursement = updated.ClaimReimbursement;
+							original.ClaimEmployerContribution = updated.ClaimEmployerContribution;
 
-						if (viewModelClaimEligibleCost.ExpenseType == ExpenseTypes.ParticipantAssigned)
-						{
-							foreach (var original in claimEligibleCost.ParticipantCosts)
+							if (!isExternalUser)
 							{
-								var updated = viewModelClaimEligibleCost.ParticipantCosts.First(pc => pc.Id == original.Id);
-								original.ClaimParticipantCost = updated.ClaimParticipantCost;
-								original.ClaimReimbursement = updated.ClaimReimbursement;
-								original.ClaimEmployerContribution = updated.ClaimEmployerContribution;
-								if (!isExternalUser)
-								{
-									original.AssessedParticipantCost = updated.AssessedParticipantCost;
-									original.AssessedReimbursement = updated.AssessedReimbursement;
-									original.AssessedEmployerContribution = updated.AssessedEmployerContribution;
-									original.RecalculatedAssessedCost();
-								}
-
-								original.RecalculateClaimParticipantCostETG();
+								original.AssessedParticipantCost = updated.AssessedParticipantCost;
+								original.AssessedReimbursement = updated.AssessedReimbursement;
+								original.AssessedEmployerContribution = updated.AssessedEmployerContribution;
+								original.RecalculatedAssessedCost();
 							}
+
+							original.RecalculateClaimParticipantCostETG();
 						}
 					}
-					claim.RecalculateClaimedCosts();
-					claim.RecalculateAssessedCosts(viewModelClaimEligibleCost.RemoveOverride);
 				}
 
-				claim.ParticipantsPaidForExpenses = participantsPaidForExpenses;
-				claim.ParticipantsHaveBeenReimbursed = participantsHaveBeenReimbursed;
+				claim.RecalculateClaimedCosts();
+				claim.RecalculateAssessedCosts(viewModelClaimEligibleCost.RemoveOverride);
 			}
+
+			claim.ParticipantsPaidForExpenses = participantsPaidForExpenses;
+			claim.ParticipantsHaveBeenReimbursed = participantsHaveBeenReimbursed;
+
 			_claimService.Update(claim);
 
 			eligibleCosts.Select(e => e.ClaimRowVersion = System.Convert.ToBase64String(claim.RowVersion)).ToList();
