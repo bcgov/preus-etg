@@ -67,9 +67,10 @@ namespace CJG.Web.External.Areas.Int.Models
 				
 				foreach (var t in p.GrantApplication.TrainingPrograms)
 				{
-					//do not show grant apps that have not yet been submitted
-					//grant apps get a filenumber when they are submitted
-					if (t.GrantApplication.FileNumber != null){
+					// do not show grant apps that have not yet been submitted
+					// grant apps get a filenumber when they are submitted
+					if (t.GrantApplication.FileNumber != null)
+					{
 						TrainingHistory.Add(new ParticipantTrainingHistory(t, reimbursement, amtPaid));
 					}					
 				}

@@ -138,21 +138,9 @@ namespace CJG.Application.Business.Models
 			ClaimEmployerContribution = claimEligibleCost.CalculateClaimEmployerContribution();
 			ClaimMaxReimbursement = claimEligibleCost.CalculateClaimReimbursement();
 
-
-			if (claimEligibleCost.EligibleCost?.TrainingCost.GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.WDAService)
-			{
-				Calculate(claimEligibleCost.EligibleCost.TrainingCost.GrantApplication, claimEligibleCost.Claim, claimEligibleCost);
-
-				ClaimTotalPaid = claimEligibleCost.GetRemainingReimbursement();
-				TotalClaimedReimbursement = ClaimTotalPaid;
-
-			}
-			else
-			{
-				TotalClaimedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.ClaimReimbursement);
-				TotalAssessedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.AssessedReimbursement);
-				SumOfParticipantCostUnitsUnassigned = claimEligibleCost.ClaimCost - ParticipantCosts.Sum(pc => pc.ClaimParticipantCost);
-			}
+			TotalClaimedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.ClaimReimbursement);
+			TotalAssessedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.AssessedReimbursement);
+			SumOfParticipantCostUnitsUnassigned = claimEligibleCost.ClaimCost - ParticipantCosts.Sum(pc => pc.ClaimParticipantCost);
 
 			AssessedCost = claimEligibleCost.AssessedCost;
 			AssessedParticipants = claimEligibleCost.AssessedParticipants;
@@ -164,9 +152,8 @@ namespace CJG.Application.Business.Models
 			AssessedReimbursementCost = claimEligibleCost.AssessedReimbursementCost;
 			AddedByAssessor = claimEligibleCost.AddedByAssessor;
 			TotalAssessedReimbursement = claimEligibleCost.AssessedReimbursementCost;
-			if (claimEligibleCost.Claim?.GrantApplication?.GetProgramType() == ProgramTypes.EmployerGrant) {
-				TotalAssessedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.AssessedReimbursement);
-			}
+
+			TotalAssessedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.AssessedReimbursement);
 
 			ClaimRowVersion = Convert.ToBase64String(claimEligibleCost.Claim.RowVersion);
 		}

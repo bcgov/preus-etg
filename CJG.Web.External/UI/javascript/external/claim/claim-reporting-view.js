@@ -48,6 +48,7 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
   $scope.redirectToReview = false;
   $scope.participantsPaidForExpenses = null;
   $scope.participantsHaveBeenReimbursed = null;
+  $scope.participantsHaveWarnings = null;
 
   $scope.allowSubmitButton = false;
 
@@ -67,6 +68,13 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
     });
   }
 
+  function loadClaimWarnings() {
+    return $scope.load({
+      url: '/Ext/Claim/Warnings/' + $scope.section.grantApplicationId,
+      set: 'warnings'
+    });
+  }
+
   /**
    * Initialize the form data.
    * @function loadClaim
@@ -74,9 +82,15 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
    **/
   function init() {
     return Promise.all([
-      loadClaim(),
-      loadGrantFile()
-    ])
+        loadClaim(),
+        loadClaimWarnings(),
+        loadGrantFile()
+      ])
+      .then(function () {
+        return $timeout(function() {
+          $scope.updateWarningTotals();
+        });
+      })
       .catch(angular.noop);
   }
 
@@ -339,6 +353,7 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
 
     $scope.validateActualTraining(claimEligibleCost);
 
+    $scope.updateWarningTotals();
     //Recalculate other eligible costs
     //let otherEligibleCosts = $scope.model.Claim.EligibleCosts.filter((ec) => ec.Id !== claimEligibleCost.Id);
     //otherEligibleCosts.forEach($scope.recalculateParticipantCosts);
@@ -401,6 +416,42 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
     console.groupEnd();
   }
 
+  $scope.updateWarningTotals = function () {
+    $scope.participantsHaveWarnings = false;
+    for (let i = 0; i < $scope.model.Claim.Participants.length; i++) {
+      let participantFormId = $scope.model.Claim.Participants[i].Id;
+      $scope.updateWarningTotal(participantFormId);
+    }
+  }
+
+  $scope.updateWarningTotal = function (participantFormId) {
+    var participantTotals = 0;
+    for (let i = 0; i < $scope.model.Claim.EligibleCosts.length; i++) {
+      let item = $scope.model.Claim.EligibleCosts[i];
+      for (let j = 0; j < item.ParticipantCosts.length; j++) {
+        let costItem = $scope.model.Claim.EligibleCosts[i].ParticipantCosts[j];
+        if (costItem.ParticipantFormId !== participantFormId)
+          continue;
+
+        let lineTotal = MathFunction.truncate(costItem.ClaimParticipantCost * 100);
+        participantTotals = participantTotals + lineTotal;
+      }
+    }
+
+    var participantIndex = $scope.warnings.ParticipantWarnings.findIndex(w => {
+      return w.MappedParticipantFormId === participantFormId;
+    });
+
+    if (participantIndex !== -1) {
+      $scope.warnings.ParticipantWarnings[participantIndex].CostsOnClaim = participantTotals;
+
+      let totalCurrentClaimCosts = $scope.warnings.ParticipantWarnings[participantIndex].CurrentClaims + $scope.warnings.ParticipantWarnings[participantIndex].CostsOnClaim;
+      if (totalCurrentClaimCosts > $scope.warnings.ParticipantWarnings[participantIndex].FiscalYearLimit) {
+        $scope.participantsHaveWarnings = true;
+      }
+    }
+  }
+  
   $scope.validateActualTraining = function (claimEligibleCost) {
     errors = [];
     if (!claimEligibleCost.ClaimCost && claimEligibleCost.ClaimCost != 0) {

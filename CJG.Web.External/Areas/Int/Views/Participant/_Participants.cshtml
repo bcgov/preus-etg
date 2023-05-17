@@ -3,6 +3,8 @@
 <div ng-controller="Participants" ng-if="grantFile.ShowParticipants">
 	<span class="panel-section-item">
         <span class="panel-section-title" ng-click="toggle($event)">
+            @*<span class="notice--icon" ng-if="(model.ParticipantInfo | filter: { HasClaimWarnings: true }).length > 0" title="Possible claim issues."></span>*@
+
             <span ng-if="grantFile.CanManageParticipantEligibilty" class="width-35">
                 Participants - {{grantFile.TotalApprovedParticipants}} of {{grantFile.TotalParticipants}} eligible participants
             </span>
@@ -10,7 +12,7 @@
                 Participants - {{grantFile.TotalParticipants}} of {{grantFile.MaxParticipants}} participants reported
             </span>
             <span class="width-30" ng-if="!grantFile.ShowParticipantReportingButton">
-                Reporting {{grantFile.CanReportParticipants ?  'Enabled': 'Disabled'}}
+                Reporting {{grantFile.CanReportParticipants ? 'Enabled': 'Disabled'}}
             </span>
         </span>
         <span class="panel-section-buttons">
@@ -31,6 +33,7 @@
 	<div class="panel-section-content" ng-if="section.show">
         <table class="participant-form-table">
             <tr class="participant-form-tr__header">
+                <td style="width: 10px"></td>
                 <td ng-click="changeSorting('LastName')"><img ng-src="{{imgSrcLastName}}" /> Name</td>
                 <td>Email</td>
                 <td>Phone</td>
@@ -40,7 +43,12 @@
                 <td ng-click="changeSorting('ReportedOn')"><img ng-src="{{imgSrcReportedOn}}" /> Reported On</td>
             </tr>
             <tr ng-repeat="participant in model.ParticipantInfo | orderBy:sort.column:sort.descending">
-                <td><a href="/Int/Application/Participant/Info/View/{{participant.ParticipantId}}" target="_blank">{{participant.LastName}}, {{participant.FirstName}}</a></td>
+                <td>
+                    <span class="notice--icon" ng-if="participant.HasClaimWarnings != null && participant.HasClaimWarnings" title="Possible claim issues."></span>
+                </td>
+                <td>
+                    <a href="/Int/Application/Participant/Info/View/{{participant.ParticipantId}}" target="_blank">{{participant.LastName}}, {{participant.FirstName}}</a>
+                </td>
                 <td><a href="mailto:{{participant.EmailAddress}}">{{participant.EmailAddress}}</a></td>
                 <td>{{participant.PhoneNumber}}</td>
                   

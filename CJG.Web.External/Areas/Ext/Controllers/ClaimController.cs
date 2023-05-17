@@ -12,9 +12,11 @@ using CJG.Core.Interfaces.Service.Settings;
 using CJG.Web.External.Areas.Ext.Models;
 using CJG.Web.External.Areas.Ext.Models.Attachments;
 using CJG.Web.External.Areas.Ext.Models.Claims;
+using CJG.Web.External.Areas.Ext.Models.ParticipantReporting;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
+using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
@@ -148,6 +150,74 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			var jsonResult = Json(model, JsonRequestBehavior.AllowGet);
 			jsonResult.MaxJsonLength = int.MaxValue;
 			return jsonResult;
+		}
+
+		/// <summary>
+		/// Get the data for the claim report view.
+		/// </summary>
+		/// <param name="grantApplicationId"></param>
+		/// <returns></returns>
+		[HttpGet]
+		[Route("Claim/Warnings/{grantApplicationId}")]
+		public JsonResult GetClaimWarnings(int grantApplicationId)
+		{
+			var model = new ParticipantWarningsModel
+			{
+				ParticipantWarnings = new List<ParticipantWarningModel>()
+			};
+			try
+			{
+				var grantApplication = _grantApplicationService.Get(grantApplicationId);
+				model.ParticipantWarnings = GetParticipantWarnings(grantApplication, _participantService);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			var jsonResult = Json(model, JsonRequestBehavior.AllowGet);
+			jsonResult.MaxJsonLength = int.MaxValue;
+			return jsonResult;
+		}
+
+		private List<ParticipantWarningModel> GetParticipantWarnings(GrantApplication grantApplication, IParticipantService participantService)
+		{
+			var participantSinList = grantApplication.ParticipantForms.Select(pf => new { ParticipantFormId = pf.Id, pf.SIN }).ToList();
+
+			var warnings = new List<ParticipantWarningModel>();
+
+			var maxReimbursementAmount = grantApplication.MaxReimbursementAmt;
+			var grantApplicationFiscal = grantApplication.GrantOpening.TrainingPeriod.FiscalYearId;
+
+			var applicationClaimStatuses = new List<ApplicationStateInternal>
+			{
+				ApplicationStateInternal.Closed,
+				ApplicationStateInternal.CompletionReporting
+			};
+
+			foreach (var participant in grantApplication.ParticipantForms)
+			{
+				var otherParticipantForms = participantService.GetParticipantFormsBySIN(participant.SIN);
+
+				var participantPayments = 0M;
+
+				foreach (var form in otherParticipantForms.Where(opf => opf.GrantApplicationId != grantApplication.Id)
+					.Where(opf => opf.GrantApplication.GrantOpening.TrainingPeriod.FiscalYearId == grantApplicationFiscal)
+					.Where(opf => applicationClaimStatuses.Contains(opf.GrantApplication.ApplicationStateInternal)))
+				{
+					var totalPastCosts = form.ParticipantCosts.Sum(c => c.AssessedReimbursement);
+					participantPayments += totalPastCosts;
+				}
+
+				warnings.Add(new ParticipantWarningModel
+				{
+					MappedParticipantFormId = participantSinList.FirstOrDefault(p => p.SIN == participant.SIN)?.ParticipantFormId ?? 0,
+					ParticipantName = $"{participant.FirstName} {participant.LastName}",
+					CurrentClaims = participantPayments,
+					FiscalYearLimit = maxReimbursementAmount
+				});
+			}
+
+			return warnings;
 		}
 
 		/// <summary>
@@ -626,4 +696,9 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		#endregion
 		#endregion
 	}
+
+    public class ParticipantWarningsModel : BaseViewModel
+    {
+	    public List<ParticipantWarningModel> ParticipantWarnings { get; set; }
+    }
 }

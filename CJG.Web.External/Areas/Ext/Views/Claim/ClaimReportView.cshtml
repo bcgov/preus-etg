@@ -21,15 +21,22 @@
                 </div>
 
                 @Html.Partial("_ClaimAttachments")
-
+                
                 @if (!ViewBag.ReviewAndSubmit)
                 {
+                    <div ng-if="participantsHaveWarnings">
+                        <br />
+                        <div class="alert alert--error">
+                            There are currently issues with Participant maximum annual amounts and the claim amounts you have entered. You will not be able to submit your claim <a href="#top" style="display: inline-block; width: auto;">until these are resolved</a>.
+                        </div>
+                    </div>
+
                     <div class="margin-bottom pull-right" ng-if="model.Claim.IsEditable && model.Claim.EligibleCosts.length > 0">
                         <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-click="save()" ng-disabled="!IsValid">Save for later</a>
                     </div>
                     <div class="clearfix"></div>
                     <div class="margin-bottom pull-right" ng-if="model.Claim.IsEditable && grantFile.ReportingPeriodIsOpen && allowSubmitButton">
-                        <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-disabled="totalAttachments <= 0" ng-click="saveAndReview();">Submit my claim now</a>
+                        <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-disabled="totalAttachments <= 0 || participantsHaveWarnings" ng-click="saveAndReview();">Submit my claim now</a>
                     </div>
                     @*<div class="margin-bottom pull-right" ng-if="grantFile.AllowReviewAndSubmit && grantFile.EnableSubmit">
                         @Html.ActionLink("Submit my claim now", "ClaimReviewView", "Claim", new { claimId = ViewBag.ClaimId, claimVersion = ViewBag.ClaimVersion }, new { @class = "btn btn--primary" })
