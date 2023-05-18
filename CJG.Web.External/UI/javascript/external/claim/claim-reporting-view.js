@@ -25,16 +25,17 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
     },
     onSave: function (event, data) {
       if ($scope.redirectToReview) {
-        let claimReviewUrl = '/Ext/Claim/Reporting/Review/View/' + $scope.section.claimId + '/' + $scope.section.claimVersion;
-        window.location = claimReviewUrl;
-        return;
+        return $timeout(function () {
+          let claimReviewUrl = '/Ext/Claim/Reporting/Review/View/' + $scope.section.claimId + '/' + $scope.section.claimVersion;
+          window.location = claimReviewUrl;
+        }, 1500);
       }
-
-      $scope.IsValid = false;
-
-      $scope.EligibleCostSuccessMessage = "Claimed costs saved successfully.";
-      angular.element("html, body").animate({ scrollTop: $('h2').offset().top }, 300);
-
+      else {
+        $scope.IsValid = false;
+        $scope.EligibleCostSuccessMessage = "Claimed costs saved successfully.";
+        angular.element("html, body").animate({ scrollTop: $('h2').offset().top }, 300);
+      }
+      $scope.redirectToReview = false;
     },
     grantApplicationId: $attrs.ngGrantApplicationId,
     claimId: $attrs.ngClaimId,
