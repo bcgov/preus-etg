@@ -1,4 +1,10 @@
-﻿using CJG.Application.Services.Notifications;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Web;
+using CJG.Application.Services.Notifications;
 using CJG.Core.Entities;
 using CJG.Core.Entities.Helpers;
 using CJG.Core.Interfaces;
@@ -8,12 +14,6 @@ using CJG.Infrastructure.Entities;
 using Microsoft.CSharp.RuntimeBinder;
 using NLog;
 using RazorEngine.Templating;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Web;
 
 namespace CJG.Application.Services
 {
@@ -22,14 +22,11 @@ namespace CJG.Application.Services
 	/// </summary>
 	public class NotificationService : Service, INotificationService
 	{
-		#region Variables
 		private readonly IEmailSenderService _emailSender;
 		private readonly INotificationSettings _notificationSettings;
 		private readonly ISettingService _settingService;
 		private readonly ICompletionReportService _completionReportService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="NotificationService"/> class.
 		/// </summary>
@@ -54,9 +51,7 @@ namespace CJG.Application.Services
 			_settingService = settingsService;
 			_completionReportService = completionReportService;
 		}
-		#endregion
 
-		#region Methods
 		/// <summary>
 		/// Returns the grant application notification for the specified 'notificationQueueId' or throw NoContentException if not found.
 		/// </summary>
@@ -491,7 +486,6 @@ namespace CJG.Application.Services
 				throw new TemplateException("EmailBody", "Template", ex);
 			}
 		}
-		#endregion
 
 		/// <summary>
 		/// Check to see if the template model contains any invalid "@Models..."
@@ -594,18 +588,18 @@ namespace CJG.Application.Services
 			var type = grantProgramNotificationType.NotificationType;
 			var milestoneDate = GetMilestoneDate(grantApplication, type.MilestoneDateName, appDate);
 
-			return (grantProgramNotificationType.IsActive
-				&& type.IsActive
-				&& type.NotificationTrigger.IsActive
-				&& (type.PreviousApplicationState == null ? true : type.PreviousApplicationState == (previousState ?? grantApplication.StateChanges.LastOrDefault()?.FromState))
-				&& (type.CurrentApplicationState == null ? true : type.CurrentApplicationState == grantApplication.ApplicationStateInternal)
-				&& (milestoneDate != null && milestoneDate?.AddDays(type.MilestoneDateOffset) <= appDate) // If the milestone date returns null this should result in a false.
-				&& (type.MilestoneDateExpires == 0 || milestoneDate?.AddDays(type.MilestoneDateExpires) >= appDate) // If the milestone date returns null this should result in a true.
-				&& ApprovalRule(grantApplication, type.ApprovalRule)
-				&& ResendRule(grantApplication, type, appDate)
-				&& (type.ParticipantReportRule == NotificationParticipantReportRules.NotApplicable ? true : ParticipantReportingRule(grantApplication) == type.ParticipantReportRule)
-				&& (type.ClaimReportRule == NotificationClaimReportRules.NotApplicable ? true : NotificationClaimReportingRule(grantApplication, type.ClaimReportRule) == type.ClaimReportRule)
-				&& (type.CompletionReportRule == NotificationCompletionReportRules.NotApplicable ? true : CompletionReportingRule(grantApplication) == type.CompletionReportRule));
+			return grantProgramNotificationType.IsActive
+			       && type.IsActive
+			       && type.NotificationTrigger.IsActive
+			       && (type.PreviousApplicationState == null || type.PreviousApplicationState == (previousState ?? grantApplication.StateChanges.LastOrDefault()?.FromState))
+			       && (type.CurrentApplicationState == null || type.CurrentApplicationState == grantApplication.ApplicationStateInternal)
+			       && (milestoneDate != null && milestoneDate?.AddDays(type.MilestoneDateOffset) <= appDate) // If the milestone date returns null this should result in a false.
+			       && (type.MilestoneDateExpires == 0 || milestoneDate?.AddDays(type.MilestoneDateExpires) >= appDate) // If the milestone date returns null this should result in a true.
+			       && ApprovalRule(grantApplication, type.ApprovalRule)
+			       && ResendRule(grantApplication, type, appDate)
+			       && (type.ParticipantReportRule == NotificationParticipantReportRules.NotApplicable || ParticipantReportingRule(grantApplication) == type.ParticipantReportRule)
+			       && (type.ClaimReportRule == NotificationClaimReportRules.NotApplicable || NotificationClaimReportingRule(grantApplication, type.ClaimReportRule) == type.ClaimReportRule)
+			       && (type.CompletionReportRule == NotificationCompletionReportRules.NotApplicable || CompletionReportingRule(grantApplication) == type.CompletionReportRule);
 		}
 
 		/// <summary>
@@ -674,18 +668,36 @@ namespace CJG.Application.Services
 			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
 
 			var currentClaim = grantApplication.GetCurrentClaim();
-			var claims = grantApplication.Claims.Where(c => !c.ClaimState.In(ClaimState.Incomplete, ClaimState.Complete));
+			var claims = grantApplication.Claims
+				.Where(c => !c.ClaimState.In(ClaimState.Incomplete, ClaimState.Complete))
+				.ToList();
 			var claimsTotal = claims.Sum(c => c.AmountPaidOrOwing());
 			var agreedAmountCommitment = grantApplication.TrainingCost.AgreedCommitment;
 
-			if (claims.Count() == 0) return NotificationClaimReportRules.NoneReported;
-			else if (rule == NotificationClaimReportRules.ClaimReported && claims.Any()) return NotificationClaimReportRules.ClaimReported;
-			else if (currentClaim.ClaimState == ClaimState.PaymentRequested) return NotificationClaimReportRules.PaymentRequestIssued;
-			else if (currentClaim.ClaimState == ClaimState.ClaimPaid) return NotificationClaimReportRules.ClaimPaid;
-			else if (claimsTotal < agreedAmountCommitment) return NotificationClaimReportRules.AmountRemaining;
-			else if (claimsTotal > agreedAmountCommitment) return NotificationClaimReportRules.AmountOwing;
-			else if (grantApplication.Claims.Any(c => c.IsFinalClaim)) return NotificationClaimReportRules.FinalClaimReported;
-			else return NotificationClaimReportRules.NotApplicable;
+			var anyClaims = claims.Any();
+
+			if (!anyClaims)
+				return NotificationClaimReportRules.NoneReported;
+
+			if (rule == NotificationClaimReportRules.ClaimReported)
+				return NotificationClaimReportRules.ClaimReported;
+
+			if (currentClaim.ClaimState == ClaimState.PaymentRequested)
+				return NotificationClaimReportRules.PaymentRequestIssued;
+
+			if (currentClaim.ClaimState == ClaimState.ClaimPaid)
+				return NotificationClaimReportRules.ClaimPaid;
+
+			if (claimsTotal < agreedAmountCommitment)
+				return NotificationClaimReportRules.AmountRemaining;
+
+			if (claimsTotal > agreedAmountCommitment)
+				return NotificationClaimReportRules.AmountOwing;
+
+			if (grantApplication.Claims.Any(c => c.IsFinalClaim))
+				return NotificationClaimReportRules.FinalClaimReported;
+
+			return NotificationClaimReportRules.NotApplicable;
 		}
 
 		/// <summary>
@@ -720,14 +732,23 @@ namespace CJG.Application.Services
 		/// <returns></returns>
 		private bool ResendRule(GrantApplication grantApplication, NotificationType notificationType, DateTime appDate = default)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
-			if (appDate == default) appDate = AppDateTime.UtcNow;
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
+
+			if (appDate == default)
+				appDate = AppDateTime.UtcNow;
 
 			// Find all sent notifications of given notification type
 			var resendRule = notificationType.ResendRule;
-			var notifications = _dbContext.NotificationQueue.Where(q => q.GrantApplicationId == grantApplication.Id && q.NotificationTypeId == notificationType.Id).ToArray();
-			if (notifications.Count() == 0) return true;
-			if (notifications.Any(n => n.State != NotificationState.Sent)) return false; // Don't add a new notification to the queue if any are queued or failed presently.
+			var notifications = _dbContext.NotificationQueue
+				.Where(q => q.GrantApplicationId == grantApplication.Id && q.NotificationTypeId == notificationType.Id)
+				.ToList();
+
+			if (!notifications.Any())
+				return true;
+
+			if (notifications.Any(n => n.State != NotificationState.Sent))
+				return false; // Don't add a new notification to the queue if any are queued or failed presently.
 
 			// If the notification type has a claim reporting rule, check if the current claim has already sent this notification.
 			if (notificationType.ClaimReportRule.In(NotificationClaimReportRules.PaymentRequestIssued, NotificationClaimReportRules.ClaimPaid))
@@ -742,17 +763,23 @@ namespace CJG.Application.Services
 			switch (resendRule)
 			{
 				case NotificationResendRules.Always:
+					if (resendDelay == 0)
+						return true;
+
 					// Don't queue if today is not after resend delay.
-					return latestNotificationDate.HasValue ? (latestNotificationDate.Value.AddDays(resendDelay) >= appDate) : true;
+					return !latestNotificationDate.HasValue || latestNotificationDate.Value.AddDays(resendDelay) >= appDate;
+
 				case NotificationResendRules.Never:
-					return notifications.Count() == 0;
+					return !notifications.Any();
+
 				case NotificationResendRules.AgreementDateChanged:
 					// If the last time this notification was sent was before the agreement was updated then send another.
 					// A note for training dates changed highlights an agreement date change.
 					var agreementUpdatedOn = _dbContext.Notes
 						.OrderByDescending(n => n.DateAdded)
-						.Where(n => n.GrantApplicationId == grantApplication.Id && n.NoteTypeId == NoteTypes.TD).FirstOrDefault()?.DateAdded;
-					return agreementUpdatedOn.HasValue ? latestNotificationDate < agreementUpdatedOn : false;
+						.FirstOrDefault(n => n.GrantApplicationId == grantApplication.Id && n.NoteTypeId == NoteTypes.TD)?.DateAdded;
+					return agreementUpdatedOn.HasValue && latestNotificationDate < agreementUpdatedOn;
+
 				default: return true; // Default to send.
 			}
 		}
