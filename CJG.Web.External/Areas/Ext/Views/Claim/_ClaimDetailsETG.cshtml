@@ -2,6 +2,19 @@
 
 @if (ViewBag.Reporting)
 {
+    <a name="errors-list"></a>
+    <div class="alert alert--error notice--icon" ng-repeat="warning in warnings.ParticipantWarnings" ng-if="(warning.CurrentClaims + warning.CostsOnClaim) > warning.FiscalYearLimit">
+        Claiming {{ warning.CostsOnClaim | currency : '$' : 2  }} for {{ warning.ParticipantName }} would exceed the maximum allowable amount that can be 
+        claimed per person per fiscal year by {{ warning.CurrentClaims + warning.CostsOnClaim - warning.FiscalYearLimit | currency : '$' : 2 }}. 
+        Please review the <a href="https://www.workbc.ca/Employer-Resources/B-C-Employer-Training-Grant.aspx" target="_blank">ETG eligibility criteria for details.</a>
+    
+        <br /><br />
+        Paid claims: {{ warning.CurrentClaims | currency : '$' : 2  }}<br/>
+        This claim: {{ warning.CostsOnClaim | currency : '$' : 2  }}<br/>
+        Total: {{ warning.CurrentClaims + warning.CostsOnClaim | currency : '$' : 2 }}<br/>
+        Allowable limit per fiscal year: {{ warning.FiscalYearLimit | currency : '$' : 2  }}<br/>
+    </div>
+
     <div class="pull-right">
         <a href="https://www.workbc.ca/getmedia/33f85e91-e8f8-4a90-a694-2fa5f1d0bdb7/Reimbursement-Guidelines.pdf.aspx" target="_blank">Read the Reimbursement Guidelines</a>
     </div>
@@ -124,7 +137,7 @@
                         <b>Paid Amount</b>
                         <span class="text--bold pull-right no-border" ng-if="model.Claim.IsEditable">
                             <input type="text" class="input-inline-align input-right-align input--small currency-width-wide" ng-model="eligibleCost.ClaimCost"
-                                   id="claim-cost-{{eligibleCost.Id}}" ng-class="{'has-error':eligibleCost.ClaimCostErrorMessage}" ng-currency="13" ng-change="recalculateTrainingCost(eligibleCost)">
+                                   id="claim-cost-{{eligibleCost.Id}}" ng-class="{'has-error':eligibleCost.ClaimCostErrorMessage}" ng-currency="13" ng-model-options='{ debounce: 250 }' ng-change="recalculateTrainingCost(eligibleCost)">
                         </span>
                         <span class="text--bold pull-right no-border entry--display-number-align-with-input" ng-if="!model.Claim.IsEditable">
                             {{ eligibleCost.ClaimCost | currency : '$' : 2 }}
@@ -154,31 +167,31 @@
                 <div class="notice notice--icon" ng-if="model.RequireAllParticipantsBeforeSubmission"><p>Only participants who were approved during the assessment of your application can be included in your reimbursement claim. Please see Schedule A of your Agreement for approved participants. You are responsible for the full cost of training for any participant not listed in Schedule A of your Agreement.</p></div>*@
 
                 <div class="entry--claim-line">                            
-                        <div ng-repeat="participantCost in eligibleCost.ParticipantCosts | orderBy : 'Name'">
-                            <div class="entry--claim-line">
-                                <div>
-                                    <span class="col--participant-name text--italic text--bold">{{participantCost.Name}}</span>
-                                    <span class="text--bold pull-right no-border" ng-if="model.Claim.IsEditable">
-                                        <input class="text--bold input-inline-align input-right-align input--small currency-width-wide pull-right js-actual-participant-cost" type="text" ng-if="model.Claim.IsEditable" ng-model="participantCost.ClaimParticipantCost"
-                                               id='participant-cost-{{participantCost.Id}}' ng-change="recalculateParticipantCost(participantCost, eligibleCost)" ng-currency="13" />
-                                    </span>
-                                    <span class="text--bold pull-right entry--display-number-align-with-input" ng-if="!model.Claim.IsEditable">{{ participantCost.ClaimParticipantCost | currency : '$' : 2 }}</span>
-                                </div>
-                                <div><b>Amount for {{eligibleCost.EligibleExpenseTypeCaption}} paid</b></div>
-                            </div>
-
-                            <div style="display: block;">
-                                Government contribution per participant
-                                <span class="text--bold pull-right col--government-contribution entry--display-number-align-with-input">{{ participantCost.ClaimReimbursement | currency : '$' : 2 }}</span>
-                            </div>
-                            <span ng-if="model.Claim.IsEditable && !model.RequireAllParticipantsBeforeSubmission">
-                                <span class="pull-right">
-                                    <a href="/Ext/Reporting/Participant/View/{{model.Id}}">Remove Participant</a>
+                    <div ng-repeat="participantCost in eligibleCost.ParticipantCosts | orderBy : 'Name'">
+                        <div class="entry--claim-line">
+                            <div>
+                                <span class="col--participant-name text--italic text--bold">{{participantCost.Name}}</span>
+                                <span class="text--bold pull-right no-border" ng-if="model.Claim.IsEditable">
+                                    <input class="text--bold input-inline-align input-right-align input--small currency-width-wide pull-right js-actual-participant-cost" type="text" ng-if="model.Claim.IsEditable" ng-model="participantCost.ClaimParticipantCost"
+                                           id='participant-cost-{{participantCost.Id}}' ng-model-options='{ debounce: 250 }' ng-change="recalculateParticipantCost(participantCost, eligibleCost)" ng-currency="13" />
                                 </span>
-                                <br />
+                                <span class="text--bold pull-right entry--display-number-align-with-input" ng-if="!model.Claim.IsEditable">{{ participantCost.ClaimParticipantCost | currency : '$' : 2 }}</span>
+                            </div>
+                            <div><b>Amount for {{eligibleCost.EligibleExpenseTypeCaption}} paid</b></div>
+                        </div>
+
+                        <div style="display: block;">
+                            Government contribution per participant
+                            <span class="text--bold pull-right col--government-contribution entry--display-number-align-with-input">{{ participantCost.ClaimReimbursement | currency : '$' : 2 }}</span>
+                        </div>
+                        <span ng-if="model.Claim.IsEditable && !model.RequireAllParticipantsBeforeSubmission">
+                            <span class="pull-right">
+                                <a href="/Ext/Reporting/Participant/View/{{model.Id}}">Remove Participant</a>
                             </span>
                             <br />
-                        </div>
+                        </span>
+                        <br />
+                    </div>
                 </div>
                 <div class="entry--claim-line">
                     <span class="text--italic">

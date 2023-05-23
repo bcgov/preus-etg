@@ -91,10 +91,13 @@ namespace CJG.Application.Business.Models
 			EligibleExpenseTypeCaption = claimEligibleCost.EligibleExpenseType.Caption;
 			EligibleExpenseTypeDescription = claimEligibleCost.EligibleExpenseType.Description;
 			SourceId = claimEligibleCost.SourceId;
-			TotalClaimedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.ClaimReimbursement);
+			TotalClaimedReimbursement = claimEligibleCost.ParticipantCosts
+				//.Where(x => x.ParticipantForm.Approved.HasValue && x.ParticipantForm.Approved.Value)
+				//.Where(x => x.ParticipantForm.Attended.HasValue && x.ParticipantForm.Attended.Value)
+				.Sum(x => x.ClaimReimbursement);
 			EligibleCostId = claimEligibleCost.EligibleCostId;
 			ExpenseType = claimEligibleCost.EligibleExpenseType.ExpenseType.Id;
-
+			
 			AgreedReimbursementRate = claimEligibleCost.Claim.GrantApplication.ReimbursementRate;
 			AgreedMaxCost = claimEligibleCost.EligibleCost?.AgreedMaxCost ?? claimEligibleCost.Source?.AssessedCost ?? 0;
 			AgreedMaxParticipants = claimEligibleCost.EligibleCost?.AgreedMaxParticipants ?? claimEligibleCost.Source?.AssessedParticipants ?? 0;
@@ -135,21 +138,9 @@ namespace CJG.Application.Business.Models
 			ClaimEmployerContribution = claimEligibleCost.CalculateClaimEmployerContribution();
 			ClaimMaxReimbursement = claimEligibleCost.CalculateClaimReimbursement();
 
-
-			if (claimEligibleCost.EligibleCost?.TrainingCost.GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.WDAService)
-			{
-				Calculate(claimEligibleCost.EligibleCost.TrainingCost.GrantApplication, claimEligibleCost.Claim, claimEligibleCost);
-
-				ClaimTotalPaid = claimEligibleCost.GetRemainingReimbursement();
-				TotalClaimedReimbursement = ClaimTotalPaid;
-
-			}
-			else
-			{
-				TotalClaimedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.ClaimReimbursement);
-				TotalAssessedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.AssessedReimbursement);
-				SumOfParticipantCostUnitsUnassigned = claimEligibleCost.ClaimCost - ParticipantCosts.Sum(pc => pc.ClaimParticipantCost);
-			}
+			TotalClaimedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.ClaimReimbursement);
+			TotalAssessedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.AssessedReimbursement);
+			SumOfParticipantCostUnitsUnassigned = claimEligibleCost.ClaimCost - ParticipantCosts.Sum(pc => pc.ClaimParticipantCost);
 
 			AssessedCost = claimEligibleCost.AssessedCost;
 			AssessedParticipants = claimEligibleCost.AssessedParticipants;
@@ -161,9 +152,8 @@ namespace CJG.Application.Business.Models
 			AssessedReimbursementCost = claimEligibleCost.AssessedReimbursementCost;
 			AddedByAssessor = claimEligibleCost.AddedByAssessor;
 			TotalAssessedReimbursement = claimEligibleCost.AssessedReimbursementCost;
-			if (claimEligibleCost.Claim?.GrantApplication?.GetProgramType() == ProgramTypes.EmployerGrant) {
-				TotalAssessedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.AssessedReimbursement);
-			}
+
+			TotalAssessedReimbursement = claimEligibleCost.ParticipantCosts.Sum(x => x.AssessedReimbursement);
 
 			ClaimRowVersion = Convert.ToBase64String(claimEligibleCost.Claim.RowVersion);
 		}

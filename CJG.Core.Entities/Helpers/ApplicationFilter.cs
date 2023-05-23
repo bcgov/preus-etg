@@ -33,7 +33,7 @@ namespace CJG.Core.Entities.Helpers
 			OnlyShowPriorityRegionExceptions = false;
 		}
 
-		public ApplicationFilter(StateFilter<ApplicationStateInternal>[] states, int? assessorId, int? fiscalYearId, string trainingPeriodCaption, int? grantProgramId, int? grantStreamId, bool onlyShowPriorityRegionExceptions = false,string[] orderBy = null)
+		public ApplicationFilter(StateFilter<ApplicationStateInternal>[] states, int? assessorId, int? fiscalYearId, string trainingPeriodCaption, int? grantProgramId, int? grantStreamId, bool onlyShowPriorityRegionExceptions = false, string[] orderBy = null)
 		{
 			States = states;
 			AssessorId = assessorId;

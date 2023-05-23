@@ -3,8 +3,7 @@ using System;
 
 namespace CJG.Application.Business.Models
 {
-
-    public class ParticipantFormModel
+	public class ParticipantFormModel
     {
 		public int Id { get; set; }
 		public string Name { get; set; }
@@ -12,10 +11,12 @@ namespace CJG.Application.Business.Models
         public string Phone { get; set; }
         public string WorkLocation { get; set; }
 		public bool? Attended { get; set; }
+
 		public ParticipantFormModel()
         {
 
         }
+
         public ParticipantFormModel(ParticipantForm participantForm)
         {
             if (participantForm == null)

@@ -93,9 +93,7 @@ namespace CJG.Application.Services
 
 			var regionalResult = GetRegionalScore(grantApplication, threshold);
 			var industryResult = GetIndustryScore(grantApplication, threshold);
-			var smallBusinessScore = grantApplication.OrganizationNumberOfEmployeesInBC <= threshold.EmployeeCountThreshold
-				? threshold.EmployeeCountAssignedScore
-				: 0;
+			var smallBusinessScore = GetSmallBusinessScore(grantApplication, threshold);
 			var firstTimeApplicantScore = GetFirstTimeApplicantScore(grantApplication, threshold);
 
 			var breakdown = grantApplication.PrioritizationScoreBreakdown ?? new PrioritizationScoreBreakdown();
@@ -117,7 +115,7 @@ namespace CJG.Application.Services
 
 			return breakdown;
 		}
-		
+
 		public bool UpdateIndustryScores(Stream stream)
 		{
 			var importRows = new List<Tuple<string, string, int>>();
@@ -528,6 +526,13 @@ namespace CJG.Application.Services
 			}
 
 			return matchingIndustryScore;
+		}
+
+		private static int GetSmallBusinessScore(GrantApplication grantApplication, PrioritizationThreshold threshold)
+		{
+			return grantApplication.OrganizationNumberOfEmployeesWorldwide <= threshold.EmployeeCountThreshold
+				? threshold.EmployeeCountAssignedScore
+				: 0;
 		}
 
 		private int GetFirstTimeApplicantScore(GrantApplication grantApplication, PrioritizationThreshold threshold)

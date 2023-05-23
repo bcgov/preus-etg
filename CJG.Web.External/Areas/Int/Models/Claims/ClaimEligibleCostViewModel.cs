@@ -103,14 +103,6 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 			this.ReimbursementRate = claimEligibleCost.EligibleExpenseType?.Rate ?? claimEligibleCost.Claim.GrantApplication.ReimbursementRate;
 			this.OverrideRate = this.ReimbursementRate;
 
-			// If the amount being reimbursed is different than the agreement rate, then the director has overridden.
-			if (claimEligibleCost.AssessedReimbursementCost != claimEligibleCost.CalculateAssessedReimbursement()
-				|| claimEligibleCost.AssessedMaxParticipantReimbursementCost != claimEligibleCost.CalculateAssessedMaxParticipantReimbursement())
-			{
-				if (claimEligibleCost.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant)
-					this.OverrideRate = (double)claimEligibleCost.AssessedReimbursementCost / (double)claimEligibleCost.AssessedCost;
-			}
-
 			this.SourceId = claimEligibleCost.SourceId;
 			this.PreviousAssessedCost = claimEligibleCost.Source?.AssessedCost ?? 0;
 

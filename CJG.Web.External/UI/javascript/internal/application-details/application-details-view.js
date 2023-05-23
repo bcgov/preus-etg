@@ -80,7 +80,8 @@ app.controller('ApplicationDetails', function ($scope, $attrs, $controller, $tim
       loadApplicationDetails()
     ])
       .then(function () {
-        $scope.broadcast('show', { target: 'ApplicationSummary,ApplicationNotes' });
+        $scope.broadcast('show', { target: 'ApplicationSummary, ApplicationNotes' });
+        //  $scope.broadcast('init', { target: 'Participants' })
       })
       .catch(angular.noop);
   }

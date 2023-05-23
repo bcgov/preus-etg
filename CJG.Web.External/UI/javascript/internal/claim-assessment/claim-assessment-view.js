@@ -99,7 +99,7 @@ app.controller('ClaimAssessmentView', function ($scope, $attrs, $controller, $ti
         template: '/content/dialogs/_FinishEditing.html',
         data: {
           title: 'Unsaved Changes',
-          question: 'Finish editing before attempting to perform a worflow action. Clicking "Cancel" will undo any edits you have currently made.'
+          question: 'Finish editing before attempting to perform a workflow action. Clicking "Cancel" will undo any edits you have currently made.'
         }
       }).catch(function (data) {
         $scope.parent.cancel(event, data);

@@ -14,7 +14,6 @@ namespace CJG.Web.External.Areas.Ext.Models.Claims
 
 		public ClaimReportViewModel()
 		{
-
 		}
 
 		public ClaimReportViewModel(Claim claim, IPrincipal user) : base(claim)
