@@ -433,8 +433,7 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
         let costItem = $scope.model.Claim.EligibleCosts[i].ParticipantCosts[j];
         if (costItem.ParticipantFormId !== participantFormId)
           continue;
-
-        let lineTotal = MathFunction.truncate(costItem.ClaimParticipantCost * 100);
+        let lineTotal = MathFunction.truncate(costItem.ClaimReimbursement * 100);
         participantTotals = participantTotals + lineTotal;
       }
     }
