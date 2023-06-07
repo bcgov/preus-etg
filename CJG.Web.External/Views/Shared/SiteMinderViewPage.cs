@@ -115,29 +115,14 @@ namespace CJG.Web.External.Views.Shared
 		private void CheckDevPreconditions()
 		{
 			ShowSTGInfo = true;
-			EnvironmentShortName = Request.Url.Host;
+			EnvironmentShortName = "CWRG";
 		}
 
 		[System.Diagnostics.Conditional("DEBUG")]
 		private void CheckQAPreconditions()
 		{
 			ShowSTGInfo = true;
-
-			var qaEnvironmentNamesByPort = new Dictionary<int, string>
-			{
-				[8080] = "ETG-DEV",
-				[8081] = "ETG-QA",
-				[8090] = "CWRG-DEV",
-				[8091] = "CWRG-QA"
-			};
-
-			if (qaEnvironmentNamesByPort.TryGetValue(Request.Url.Port, out var possibleName))
-			{
-				EnvironmentShortName = possibleName;
-				return;
-			}
-
-			EnvironmentShortName = "N/A";
+			EnvironmentShortName = "CWRG";
 		}
 	}
 }
