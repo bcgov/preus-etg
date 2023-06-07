@@ -1,5 +1,4 @@
 ﻿@model CJG.Web.External.Areas.Part.Models.ParticipantInfoStep1ViewModel
-@using CJG.Core.Entities
 
 @using (Html.BeginForm())
 {
@@ -10,28 +9,12 @@
         <p>You are confirming your intention to attend the following training:</p>
 
         <dl class="info-list">
-            @if (Model.ProgramType == ProgramTypes.WDAService)
-            {
-                <dt>Applicant</dt>
-            }
-            else
-            {
-                <dt>Employer</dt>
-            }
-            <dd>
-                @Model.ProgramEmployerName
-            </dd>
-            @if (Model.ProgramType == ProgramTypes.WDAService)
-            {
-                <dt>Applicant contact name</dt>
-            }
-            else
-            {
-                <dt>Employer contact name</dt>
-            }
-            <dd>
-                @Model.ProgramSponsorName
-            </dd>
+            <dt>Employer</dt>
+            <dd>@Model.ProgramEmployerName</dd>
+
+            <dt>Employer contact name</dt>
+            <dd>@Model.ProgramSponsorName</dd>
+            
             <dt>Training description</dt>
             <dd>
                 @Model.ProgramDescription
@@ -42,89 +25,44 @@
             </dd>
         </dl>
 
-        <div ng-if="@Model.GrantProgramId != 2">
-            <!--2 is for ETG-->
-            <p>
-                As the
-                @if (Model.ProgramType == ProgramTypes.WDAService)
-                {
-                    <span>applicant </span>
-                }
-                else
-                {
-                    <span>employer </span>
-                }
-                may be eligible for @Model.GrantProgramName benefits,
-                there are reporting requirements for your participation.
-            </p>
-
-            <p>
-                Following your confirmation to attend training (below) and entry of your personal information,
-                you will be asked to confirm your consent for the collection and use of your personal information.
-            </p>
-
-            <p>Be prepared with the following information:</p>
-
-            <ul>
-                <li>
-                    Your Social Insurance Number
-                </li>
-                <li>
-                    Your National Occupation Classification – see
-                    <a href="http://www.cic.gc.ca/english/immigrate/skilled/noc.asp" target="_blank">http://www.cic.gc.ca/english/immigrate/skilled/noc.asp</a>
-                </li>
-            </ul>
-
-            <p>
-                All steps that follow must be completed for your training to meet grant eligibility requirements. If you exit without completing all steps or your session idle longer than @Model.TimeoutPeriod minutes, then you will need to redo all steps again. Please follow all steps carefully.
-            </p>
-
-            <p>If you will attend the training please complete the Captcha below and confirm your attendance.</p>
-        </div>
-
-        <div ng-if="@Model.GrantProgramId == 2">
-            <p>
-                To participate in training through the @Model.GrantProgramName, you are required to provide personal information.
-                You will also be asked to confirm your consent for the collection and use of this information.
-            </p>
-
-            <p>
-                <b>Important:</b> Participants that are on Employment Insurance (EI) or in receipt of Income Assistance (IA) 
-                who do not obtain approval before training starts may become ineligible for financial support under EI or IA. 
-                Please review Appendix A of the <a href="https://www.workbc.ca/getmedia/6e2d9797-4503-4675-b8a3-68e350ff1f78/ETG-Eligibility-Criteria-Version-List.pdf.aspx" target="_blank">ETG Eligibility Criteria</a> for instructions on how to ensure your benefits will not be impacted.
-            </p>
-
-            <p>
-                Before you begin your application, please be prepared with the following:
-                <ul>
-                    <li>
-                        Your Social Insurance Number
-                    </li>
-                    <li>
-                        If you are unemployed, the National Occupation Classification code after training will be completed.
-                    </li>
-                    <li>
-                        If you are currently employed, the National Occupation Classification code before and after training.
-                    </li>
-                </ul>
-            </p>
-
-            <p>
-                National Occupation Classification codes can be searched here:
-                <br><a href="http://www.cic.gc.ca/english/immigrate/skilled/noc.asp" target="_blank">http://www.cic.gc.ca/english/immigrate/skilled/noc.asp</a>. 
-                If you are unsure which code to select, please contact your employer. WorkBC agents are also available to help via email,
-                online chat or telephone at <a href="https://www.workbc.ca/Contact-Us.aspx" target="_blank">https://www.workbc.ca/Contact-Us.aspx</a>.
-            </p>
+        <div>
             
-            <p>
-                All steps that follow must be completed. If you exit without completing all steps, or if your session idles longer than 30 minutes, then you will need to start over.
-            </p>
+            <p>Welcome,</p>
 
-            <p>
-                To begin, please complete the Captcha below and confirm you will attend training. Don’t see the Captcha? Try refreshing the page.
-            </p>
+            <p>You've been invited by your employer to participate in training sponsored by the Government of Canada and the Province of B.C. You are not required to pay for training or related expenses. This training is free for participants to attend.</p>
+            <p>Before the application can be submitted by your employer and the training can begin, we need to collect some information from you. Don’t worry, we'll guide you every step of the way. If you’re wondering how your personal information will be used, please check out our <a href="https://www.workbc.ca/find-loans-and-grants/industry-and-employers/bc-employer-training-grant/frequently-asked-questions" target="_blank">FAQs</a>.</p>
+            <p>Here’s what you need to do:</p>
+
+            <ol class="step-1-list">
+                <li>
+                    <strong>Gather necessary information:</strong>
+                    <br/>
+                    <ul>
+                        <li>Your Social Insurance Number</li>
+                        <li>Your National Occupational Classification (NOC) code (before & after training). You can choose your NOC code from a drop-down list on the following screen or search for it here: <a href="https://www.cic.gc.ca/english/immigrate/skilled/noc.asp" target="_blank">www.cic.gc.ca/english/immigrate/skilled/noc.asp</a></li>
+                        <li>If you need assistance choosing your NOC, please talk to your employer.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Protect your benefits:</strong>
+                    <br/>
+                    <ul>
+                        <li>If you are currently receiving Employment Insurance or Income Assistance, please review the instructions here to ensure your benefits continue.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Complete this form:</strong>
+                    <br/>
+                    <ul>
+                        <li>Fill in the Captcha below to confirm you will attend training. If you don’t see the Captcha, try refreshing this web page.</li>
+                        <li>If you don’t complete this form in 30 minutes, you will have to start over.</li>
+                    </ul>
+                </li>
+            </ol>
+            
+            <p><strong>Need assistance? Feel free to contact us at <a href="mailto:ETG@gov.bc.ca" target="_blank">ETG@gov.bc.ca</a>.</strong></p>
         </div>
-         
+
         <div class="margin-bottom" id="recaptcha" data-site-key="@Model.RecaptchaSiteKey"></div>
          
         <div>
