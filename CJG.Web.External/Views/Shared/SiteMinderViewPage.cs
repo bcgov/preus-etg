@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Web;
@@ -107,7 +106,7 @@ namespace CJG.Web.External.Views.Shared
 
 			var headerPos = BitConverter.ToInt32(bytes, peHeaderOffset);
 			var secondsSince1970 = BitConverter.ToInt32(bytes, headerPos + linkerTimestampOffset);
-			var dt = new DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
+			var dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 			return dt.AddSeconds(secondsSince1970);
 		}
 
@@ -115,14 +114,14 @@ namespace CJG.Web.External.Views.Shared
 		private void CheckDevPreconditions()
 		{
 			ShowSTGInfo = true;
-			EnvironmentShortName = "CWRG";
+			EnvironmentShortName = "ETG";
 		}
 
 		[System.Diagnostics.Conditional("DEBUG")]
 		private void CheckQAPreconditions()
 		{
 			ShowSTGInfo = true;
-			EnvironmentShortName = "CWRG";
+			EnvironmentShortName = "ETG";
 		}
 	}
 }
