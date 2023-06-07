@@ -166,10 +166,13 @@ namespace CJG.Application.Services
 					NaicsCode = i.Item2,
 					IndustryScore = i.Item3,
 					DateAdded = AppDateTime.UtcNow
-				});
-				_dbContext.PrioritizationIndustryScores.AddRange(newIndustries);
+				}).ToList();
 
+				_dbContext.PrioritizationIndustryScores.AddRange(newIndustries);
 				_dbContext.CommitTransaction();
+
+				_logger.Log(LogLevel.Info, $"Prioritization Industries Uploaded. Updated: {newIndustries.Count()}.");
+
 				return true;
 			}
 			catch
@@ -181,6 +184,7 @@ namespace CJG.Application.Services
 		public bool UpdateRegionScores(Stream stream)
 		{
 			var importRows = new List<Tuple<int, string, decimal>>();
+
 			try
 			{
 				using (var document = SpreadsheetDocument.Open(stream, false))
@@ -200,6 +204,7 @@ namespace CJG.Application.Services
 						if (!firstRowSkipped)
 						{
 							firstRowSkipped = true;
+
 							continue;
 						}
 
@@ -227,24 +232,21 @@ namespace CJG.Application.Services
 				var regions = _dbContext.PrioritizationRegions.ToList();
 
 				var newRegions = importRows.Select(i => new PrioritizationRegion
-				{
-					Id = i.Item1,
-					Name = i.Item2,
-					RegionalScore = i.Item3,
-					DateAdded = AppDateTime.UtcNow
-				})
+					{
+						Id = i.Item1,
+						Name = i.Item2,
+						RegionalScore = i.Item3,
+						DateAdded = AppDateTime.UtcNow
+					})
 					.ToList();
 
-				var newRegionsIds = newRegions
-					.Select(r => r.Id)
-					.ToList();
-
-				var regionsToDelete = regions.Where(r => !newRegionsIds.Contains(r.Id))
-					.ToList();
+				var addedRegions = 0;
+				var totalRegions = 0;
 
 				foreach (var newRegion in newRegions)
 				{
 					var existingRegion = regions.FirstOrDefault(r => r.Id == newRegion.Id);
+
 					if (existingRegion == null)
 					{
 						existingRegion = new PrioritizationRegion
@@ -252,17 +254,19 @@ namespace CJG.Application.Services
 							Id = newRegion.Id,
 							DateAdded = DateTime.UtcNow
 						};
+
+						addedRegions++;
 						_dbContext.PrioritizationRegions.Add(existingRegion);
 					}
 
 					existingRegion.Name = newRegion.Name;
 					existingRegion.RegionalScore = newRegion.RegionalScore;
+
+					totalRegions++;
 				}
 
-				if (regionsToDelete.Any())
-					_dbContext.PrioritizationRegions.RemoveRange(regionsToDelete);
-
 				_dbContext.CommitTransaction();
+				_logger.Log(LogLevel.Info, $"Prioritization Regions Uploaded. Added: {addedRegions}. Updated: {totalRegions - addedRegions}.");
 
 				return true;
 			}
