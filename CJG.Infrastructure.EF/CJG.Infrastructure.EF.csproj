@@ -420,6 +420,10 @@
     <Compile Include="Migrations\202303231751152_v02.10.02.Designer.cs">
       <DependentUpon>202303231751152_v02.10.02.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202306092229149_v02.11.00.cs" />
+    <Compile Include="Migrations\202306092229149_v02.11.00.Designer.cs">
+      <DependentUpon>202306092229149_v02.11.00.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Content Include="Migrations\v02.02.03\PostDeploy\Seed\03 GrantOpenings.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1276,6 +1280,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202303231751152_v02.10.02.resx">
       <DependentUpon>202303231751152_v02.10.02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202306092229149_v02.11.00.resx">
+      <DependentUpon>202306092229149_v02.11.00.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

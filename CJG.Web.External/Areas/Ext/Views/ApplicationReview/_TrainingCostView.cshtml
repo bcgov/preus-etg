@@ -8,60 +8,60 @@
     <div class="table--horizontal-wrapper-wide">
         <table class="table table--expenses">
             <thead>
-                <tr>
-                    <th class="table-col__expense-type">Expense Type</th>
-                    <th class="num-col table-col__num-part">Number of Participants</th>
-                    <th class="num-col table-col__cost-per-part">Average Cost per Participant</th>
-                    <th class="num-col table-col__total-train-cost">Total Cost</th>
-                    <th class="num-col table-col__emp-contribution" ng-if="model.TraingingCost.ShowEmployer && model.ProgramType != @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">Applicant Contribution</th>
-                    <th ng-if="model.ProgramType != @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)" class="num-col table-col__gov-contribution">Requested Government Contribution</th>
-                </tr>
+            <tr>
+                <th class="table-col__expense-type">Expense Type</th>
+                <th class="num-col table-col__num-part">Number of Participants</th>
+                <th class="num-col table-col__cost-per-part">Average Cost per Participant</th>
+                <th class="num-col table-col__total-train-cost">Total Cost</th>
+                <th class="num-col table-col__emp-contribution" ng-if="model.TraingingCost.ShowEmployer && model.ProgramType != @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">Applicant Contribution</th>
+                <th ng-if="model.ProgramType != @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)" class="num-col table-col__gov-contribution">Requested Government Contribution</th>
+            </tr>
             </thead>
             <tbody ng-hide="!@ShowESS== 1 && item.TotalCost < 0 && item.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.EmploymentServicesAndSupports)" ng-repeat="item in model.TrainingCost.EstimatedCosts">
-                <tr>
-                    <td>
-                        <span>{{ item.EligibleExpenseTypeCaption }}</span>
-                    </td>
-                    <td class="num-col">
-                        <span ng-if="item.ServiceType != @((int)ServiceTypes.Administration)">
-                            {{ !item.HasOfferBeenIssued ? item.EstimatedParticipants : item.AgreedMaxParticipants}}
-                        </span>
-                    </td>
-                    <td class="num-col">
-                        <span ng-if="item.ServiceType != @((int)ServiceTypes.Administration)">
-                            {{ !item.HasOfferBeenIssued ? item.EstimatedParticipantCost : item.AgreedMaxParticipantCost | currency : '$' : 2}}
-                        </span>
-                    </td>
-                    <td class="num-col">
-                        <span>
-                            {{item.TotalCost | currency : '$' : 2}}
-                        </span>
-                    </td>
-                    <td class="num-col" ng-if="model.TraingingCost.ShowEmployer && model.ProgramType != @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
-                        <span>
-                            {{ !item.HasOfferBeenIssued ? item.EstimatedEmployerContribution : AgreedEmployerContribution | currency : '$' : 2}}
-                        </span>
-                    </td>
-                    <td class="num-col" ng-if="model.ProgramType != @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
-                        <span>
-                            {{ !item.HasOfferBeenIssued ? item.EstimatedReimbursement: item.AgreedMaxReimbursement | currency : '$' : 2}}
-                        </span>
-                    </td>
-                </tr>
-                <tr ng-repeat="subrow in item.Breakdowns" style="border-bottom-color:grey !important;">
-                    <td>
-                        &#9654; <span>{{ subrow.Caption }}</span>
-                    </td>
-                    <td class="num-col"></td>
-                    <td class="num-col"></td>
-                    <td class="num-col">
-                        <span>
-                            {{subrow.TotalCost | currency : '$' : 2}}
-                        </span>
-                    </td>
-                    <td class="num-col" ng-if="model.TraingingCost.ShowEmployer"></td>
-                    <td class="num-col"></td>
-                </tr>
+            <tr>
+                <td>
+                    <span>{{ item.EligibleExpenseTypeCaption }}</span>
+                </td>
+                <td class="num-col">
+                    <span ng-if="item.ServiceType != @((int)ServiceTypes.Administration)">
+                        {{ !item.HasOfferBeenIssued ? item.EstimatedParticipants : item.AgreedMaxParticipants}}
+                    </span>
+                </td>
+                <td class="num-col">
+                    <span ng-if="item.ServiceType != @((int)ServiceTypes.Administration)">
+                        {{ !item.HasOfferBeenIssued ? item.EstimatedParticipantCost : item.AgreedMaxParticipantCost | currency : '$' : 2}}
+                    </span>
+                </td>
+                <td class="num-col">
+                    <span>
+                        {{item.TotalCost | currency : '$' : 2}}
+                    </span>
+                </td>
+                <td class="num-col" ng-if="model.TraingingCost.ShowEmployer && model.ProgramType != @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+                    <span>
+                        {{ !item.HasOfferBeenIssued ? item.EstimatedEmployerContribution : AgreedEmployerContribution | currency : '$' : 2}}
+                    </span>
+                </td>
+                <td class="num-col" ng-if="model.ProgramType != @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+                    <span>
+                        {{ !item.HasOfferBeenIssued ? item.EstimatedReimbursement: item.AgreedMaxReimbursement | currency : '$' : 2}}
+                    </span>
+                </td>
+            </tr>
+            <tr ng-repeat="subrow in item.Breakdowns" style="border-bottom-color:grey !important;">
+                <td>
+                    &#9654; <span>{{ subrow.Caption }}</span>
+                </td>
+                <td class="num-col"></td>
+                <td class="num-col"></td>
+                <td class="num-col">
+                    <span>
+                        {{subrow.TotalCost | currency : '$' : 2}}
+                    </span>
+                </td>
+                <td class="num-col" ng-if="model.TraingingCost.ShowEmployer"></td>
+                <td class="num-col"></td>
+            </tr>
             </tbody>
             <tr>
                 <td><b>Totals</b></td>
@@ -94,6 +94,23 @@
                 </td>
             </tr>
         </table>
+    </div>
+    <div class="form--readonly">
+        <div id="providerTypePanel">
+            <div ng-show="model.TrainingCost && model.TrainingCost.TravelExpenseDocument">
+                <div class="form__group">
+                    <div class="form__label">Travel Expense document:</div>
+                    <div class="form__control">
+                        <div ng-if="model.TrainingCost.TravelExpenseDocument != null">
+                            <a href="/Ext/Application/Attachment/Download/{{model.Id}}/{{model.TrainingCost.TravelExpenseDocument.Id}}">{{model.TrainingCost.TravelExpenseDocument.FileName}}</a>
+                        </div>
+                        <div ng-if="model.TrainingCost.TravelExpenseDocument == null">
+                            <span>None</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <br />
     <div style="text-align:center" ng-if="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">

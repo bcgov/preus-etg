@@ -1,29 +1,32 @@
-﻿using CJG.Application.Business.Models;
-using CJG.Application.Services;
-using CJG.Core.Entities;
-using CJG.Core.Interfaces.Service;
-using CJG.Web.External.Controllers;
-using CJG.Web.External.Helpers;
-using CJG.Web.External.Helpers.Filters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
+using CJG.Application.Business.Models;
+using CJG.Application.Services;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces.Service;
+using CJG.Web.External.Areas.Ext.Models.TrainingCosts;
+using CJG.Web.External.Controllers;
+using CJG.Web.External.Helpers;
+using CJG.Web.External.Helpers.Filters;
+using Newtonsoft.Json;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
-	/// <summary>
-	/// TrainingCostController class, provides a way to edit training costs.
-	/// </summary>
-	[ExternalFilter]
+    /// <summary>
+    /// TrainingCostController class, provides a way to edit training costs.
+    /// </summary>
+    [ExternalFilter]
 	[RouteArea("Ext")]
 	public class TrainingCostController : BaseController
 	{
-		#region Variables
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IGrantStreamService _grantStreamService;
-		#endregion
+		private readonly IAttachmentService _attachmentService;
+
 
 		/// <summary>
 		/// Creates a new instance of a TrainingCostController object.
@@ -31,13 +34,16 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <param name="controllerService"></param>
 		/// <param name="grantApplicationService"></param>
 		/// <param name="grantStreamService"></param>
+		/// <param name="attachmentService"></param>
 		public TrainingCostController(
 			IControllerService controllerService,
 			IGrantApplicationService grantApplicationService,
-			IGrantStreamService grantStreamService) : base(controllerService.Logger)
+			IGrantStreamService grantStreamService,
+			IAttachmentService attachmentService) : base(controllerService.Logger)
 		{
 			_grantApplicationService = grantApplicationService;
 			_grantStreamService = grantStreamService;
+			_attachmentService = attachmentService;
 		}
 
 		/// <summary>
@@ -66,11 +72,11 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		[Route("Application/Training/Cost/{id}")]
 		public JsonResult GetTrainingCosts(int id)
 		{
-			var model = new Models.TrainingCosts.TrainingCostViewModel();
+			var model = new TrainingCostViewModel();
 			try
 			{
 				var grantApplication = _grantApplicationService.Get(id);
-				model = new Models.TrainingCosts.TrainingCostViewModel(grantApplication, User, _grantStreamService);
+				model = new TrainingCostViewModel(grantApplication, User, _grantStreamService);
 			}
 			catch (Exception ex)
 			{
@@ -82,19 +88,34 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <summary>
 		/// Update the training costs in the datasource.
 		/// </summary>
-		/// <param name="model"></param>
+		/// <param name="component"></param>
+		/// <param name="files"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[ValidateRequestHeader]
 		[Route("Application/Training/Cost")]
-		public JsonResult UpdateTrainingCosts(Models.TrainingCosts.TrainingCostViewModel model)
+		public JsonResult UpdateTrainingCosts(string component, HttpPostedFileBase[] files)
 		{
+			var model = new TrainingCostViewModel();
 			try
 			{
+				model = JsonConvert.DeserializeObject<TrainingCostViewModel>(component);
+
+				ModelState.Clear();
+				TryUpdateModel(model);
+
+				var anyFilesUploaded = files != null && files.Length > 0;
+				var existingFileUploaded = model.TravelExpenseDocument?.Id > 0;
+
+				// NEED Extra condition check here
+				var haveAnyTravelExpenses = model.EligibleCosts.Any(ec => ec.EligibleExpenseType.Caption.StartsWith("Travel -"));
+				if (haveAnyTravelExpenses && !existingFileUploaded && !anyFilesUploaded)
+					ModelState.AddModelError("TravelExpenseDocument", "You must provide a travel expense document.");
+
 				if (ModelState.IsValid)
 				{
-					var grantApplication = model.UpdateTrainingCosts(_grantApplicationService);
-					model = new Models.TrainingCosts.TrainingCostViewModel(grantApplication, User, _grantStreamService);
+					var grantApplication = model.UpdateTrainingCosts(_grantApplicationService, _attachmentService, files);
+					model = new TrainingCostViewModel(grantApplication, User, _grantStreamService);
 				}
 				else
 				{

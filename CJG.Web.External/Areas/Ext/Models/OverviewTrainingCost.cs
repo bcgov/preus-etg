@@ -1,13 +1,12 @@
-﻿using CJG.Application.Services;
-using CJG.Core.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using CJG.Application.Services;
+using CJG.Core.Entities;
 
 namespace CJG.Web.External.Areas.Ext.Models
 {
-	public class OverviewTrainingCost
+    public class OverviewTrainingCost
 	{
-		#region Properties
 		public int GrantApplicationId { get; set; }
 		public TrainingCostStates TrainingCostState { get; set; }
 		public int EstimatedParticipants { get; set; }
@@ -22,23 +21,25 @@ namespace CJG.Web.External.Areas.Ext.Models
 		public decimal ESSAveragePerParticipant { get; set; }
 		public bool ShowEmployer { get; set; }
 		public bool HasOfferBeenIssued { get; set; }
+		public Attachment TravelExpenseDocument { get; set; }
+
 
 		public IEnumerable<EstimatedCostViewModel> EstimatedCosts { get; set; }
-		#endregion
 
-		#region Constructors
 		public OverviewTrainingCost()
 		{ 
 		}
 
 		public OverviewTrainingCost(TrainingCost trainingCost)
 		{
-			if (trainingCost == null) throw new ArgumentNullException(nameof(trainingCost));
+			if (trainingCost == null)
+				throw new ArgumentNullException(nameof(trainingCost));
 
 			Utilities.MapProperties(trainingCost, this);
-			this.HasOfferBeenIssued = trainingCost?.GrantApplication?.HasOfferBeenIssued() ?? false;
-			this.ShowEmployer = trainingCost.GrantApplication.ReimbursementRate != 1;
+
+			TravelExpenseDocument = trainingCost.TravelExpenseDocument;
+			HasOfferBeenIssued = trainingCost?.GrantApplication?.HasOfferBeenIssued() ?? false;
+			ShowEmployer = trainingCost.GrantApplication.ReimbursementRate != 1;
 		}
-		#endregion  
 	}
 }

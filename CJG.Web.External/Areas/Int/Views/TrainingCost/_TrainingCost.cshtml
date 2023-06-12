@@ -13,14 +13,15 @@
 		<div>
 			<a href="javascript:void(0)" ng-click="toggleRequestRows()">{{section.showRequestRows ? 'Hide' : 'Show'}} Requested Amounts</a>
 		</div>
-		<div class="form__group">
-			<div class="form__label">Number of participants:</div>
-			<div class="form__control">
-				<div class="control-wrapper">
-					<input ng-model="model.TrainingCost.AgreedParticipants" class="input-right-align input--small" maxlength="4" ng-number ng-change="syncNumberOfParticipants()" ng-validation="errors.AgreedParticipants" ng-editing />
-				</div>
-			</div>
-		</div>
+        <div class="form__group">
+            <div class="form__label">Number of participants:</div>
+            <div class="form__control">
+                <div class="control-wrapper">
+                    <input ng-model="model.TrainingCost.AgreedParticipants" class="input-right-align input--small" maxlength="4" ng-number ng-change="syncNumberOfParticipants()" ng-validation="errors.AgreedParticipants" ng-editing />
+                </div>
+            </div>
+        </div>
+
 		<div class="form__group from-applicant" ng-show="section.showRequestRows">
 			<div class="form__label">Number of participants:</div>
 			<div class="form__control">{{model.TrainingCost.EstimatedParticipants}}</div>
@@ -237,116 +238,115 @@
             </table>
 		</div>
 		<br />
-		<div class="form__group" ng-if="model.TrainingCost.ProgramType == @((int)ProgramTypes.WDAService)">
-			<span class="form__label">
-				Employment supports total average reimbursement per participant:
-			</span>
-			<span class="form__control">
-				{{model.TrainingCost.ESSAgreedAverage | currency : '$' : 2}}
-			</span>
-		</div>
-		<div class="form__group from-applicant" ng-if="model.TrainingCost.ProgramType == @((int)ProgramTypes.WDAService)" ng-show="section.showRequestRows">
-			<span class="form__label">
-				Employment supports total average reimbursement per participant:
-			</span>
-			<span class="form__control">
-				{{model.TrainingCost.ESSEstimatedAverage | currency : '$' : 2}}
-			</span>
-		</div>
-		<br />
-		<div class="js-expenses--add-edit" ng-if="section.editing && model.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)">
-			<button class="btn btn--secondary" ng-show="!section.showEditEligibleCost"
-					ng-if="model.TrainingCost.AllExpenseTypeAllowMultiple"
-					ng-disabled="model.TrainingCost.AgreedParticipants == null || model.TrainingCost.AgreedParticipants <= 0"
-					ng-click="createEligibleCost()">
-				Add new expense type
-			</button>
-			<div ng-if="section.showEditEligibleCost">
-				<h2 class="no-text-transform">{{ section.eligibleCost.Id === 0 ? 'Add' : 'Edit' }} Expense</h2>
+        <div class="js-expenses--add-edit" ng-if="section.editing && model.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+            <button class="btn btn--secondary" ng-show="!section.showEditEligibleCost"
+                    ng-if="model.TrainingCost.AllExpenseTypeAllowMultiple"
+                    ng-disabled="model.TrainingCost.AgreedParticipants == null || model.TrainingCost.AgreedParticipants <= 0"
+                    ng-click="createEligibleCost()">
+                Add new expense type
+            </button>
+            <div ng-if="section.showEditEligibleCost">
+                <h2 class="no-text-transform">{{ section.eligibleCost.Id === 0 ? 'Add' : 'Edit' }} Expense</h2>
 
-				<div class="row--alert" ng-if="EligibleCostSummaryMessage">
-					<div class="alert alert--default alert--error" role="alert">
-						{{EligibleCostSummaryMessage}}
-					</div>
-				</div>
-				<div class="table--horizontal-wrapper-wide">
-					<table class="table table--expenses">
-						<thead>
-							<tr>
-								<th class="table-col__expense-type">Expense Type</th>
-								<th class="num-col table-col__num-part">Number of Participants</th>
-								<th class="num-col table-col__cost-per-part"
-									ng-if="model.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)">
-									Cost Per <br />Participant
-								</th>
-								<th class="num-col table-col__cost-per-part"
-									ng-if="model.TrainingCost.ProgramType == @((int)ProgramTypes.WDAService)">
-									Average <br />Cost per <br />Participant
-								</th>
-								<th class="num-col table-col__total-train-cost"
-									ng-if="model.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)">
-									Total <br />Training <br />Cost
-								</th>
-								<th class="num-col table-col__total-train-cost"
-									ng-if="model.TrainingCost.ProgramType == @((int)ProgramTypes.WDAService)">
-									Total <br />Cost
-								</th>
-								<th class="num-col table-col__emp-contribution"
-									ng-if="model.TrainingCost.ShouldDisplayEmployerContribution">
-									Employer Contribution
-								</th>
-								<th class="num-col table-col__gov-contribution">Requested Government Contribution</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>
-									<div class="selectmenu" ng-if="eligibleExpenseTypes.length > 0">
-										<select ng-model="section.eligibleCost.EligibleExpenseType" ng-options="eet.Caption for eet in eligibleExpenseTypes track by eet.Id" class="input--full" ng-validation="errors.eligibleCost.EligibleExpenseType" ng-editing></select>
-									</div>
-									<div ng-if="eligibleExpenseTypes.length == 0">
-										<span>{{section.eligibleCost.EligibleExpenseType.Caption}}</span>
-									</div>
-								</td>
-								<td class="num-col">
-									<div ng-if="section.eligibleCost.EligibleExpenseType && section.eligibleCost.EligibleExpenseType.ExpenseTypeId === @((int)ExpenseTypes.ParticipantAssigned)">
-										<input ng-model="section.eligibleCost.AgreedMaxParticipants" class="input-right-align input--small" maxlength="4" ng-number ng-change="calculate()" ng-validation="errors.eligibleCost.AgreedMaxParticipants" ng-editing />
-									</div>
-									<span ng-if="section.eligibleCost.EligibleExpenseType && section.eligibleCost.EligibleExpenseType.ExpenseTypeId !== @((int)ExpenseTypes.ParticipantAssigned)">
-										{{model.TrainingProgramEligibleCost.AgreedMaxParticipants}}
-									</span>
-									<span ng-if="!section.eligibleCost.EligibleExpenseType">0</span>
-								</td>
-								<td class="num-col">
-									<span>
-										{{section.eligibleCost.AgreedMaxParticipantCost | currency}}
-									</span>
-								</td>
-								<td class="num-col">
-									<span ng-if="!section.eligibleCost.EligibleExpenseType">0</span>
-									<span ng-if="section.eligibleCost.EligibleExpenseType">
-										<input ng-model="section.eligibleCost.AgreedCost" class="input-right-align input--small" ng-currency="10" ng-change="calculate()" ng-validation="errors.eligibleCost.AgreedCost" ng-editing />
-									</span>
-								</td>
-								<td class="num-col" ng-if="model.TrainingCost.ShouldDisplayEmployerContribution">
-									<span class="js-employer-contribution">{{section.eligibleCost.AgreedEmployerContribution | currency}}</span>
-								</td>
-								<td class="num-col">
-									<span class="js-grant-request">{{section.eligibleCost.AgreedMaxReimbursement | currency}}</span>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="button-group">
-					<button class="btn btn--secondary" ng-click="cancelEligibleCost()">Cancel</button>
-					<button class="btn btn--primary btn--forward" ng-disabled="section.eligibleCost.EligibleExpenseType == null || (section.eligibleCost.Id === 0 && (section.eligibleCost.AgreedMaxParticipants <= 0 || section.eligibleCost.AgreedCost <= 0)) || section.eligibleCost.AgreedMaxParticipants > model.TrainingCost.AgreedParticipants" ng-click="updateEligibleCost()">
-						{{ section.addNewEligibleCost ? 'Add' : 'Update' }} Expense
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
+                <div class="row--alert" ng-if="EligibleCostSummaryMessage">
+                    <div class="alert alert--default alert--error" role="alert">
+                        {{EligibleCostSummaryMessage}}
+                    </div>
+                </div>
+                <div class="table--horizontal-wrapper-wide">
+                    <table class="table table--expenses">
+                        <thead>
+                        <tr>
+                            <th class="table-col__expense-type">Expense Type</th>
+                            <th class="num-col table-col__num-part">Number of Participants</th>
+                            <th class="num-col table-col__cost-per-part"
+                                ng-if="model.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                                Cost Per <br />Participant
+                            </th>
+                            <th class="num-col table-col__cost-per-part"
+                                ng-if="model.TrainingCost.ProgramType == @((int)ProgramTypes.WDAService)">
+                                Average <br />Cost per <br />Participant
+                            </th>
+                            <th class="num-col table-col__total-train-cost"
+                                ng-if="model.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                                Total <br />Training <br />Cost
+                            </th>
+                            <th class="num-col table-col__total-train-cost"
+                                ng-if="model.TrainingCost.ProgramType == @((int)ProgramTypes.WDAService)">
+                                Total <br />Cost
+                            </th>
+                            <th class="num-col table-col__emp-contribution"
+                                ng-if="model.TrainingCost.ShouldDisplayEmployerContribution">
+                                Employer Contribution
+                            </th>
+                            <th class="num-col table-col__gov-contribution">Requested Government Contribution</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <div class="selectmenu" ng-if="eligibleExpenseTypes.length > 0">
+                                    <select ng-model="section.eligibleCost.EligibleExpenseType" ng-options="eet.Caption for eet in eligibleExpenseTypes track by eet.Id" class="input--full" ng-validation="errors.eligibleCost.EligibleExpenseType" ng-editing></select>
+                                </div>
+                                <div ng-if="eligibleExpenseTypes.length == 0">
+                                    <span>{{section.eligibleCost.EligibleExpenseType.Caption}}</span>
+                                </div>
+                            </td>
+                            <td class="num-col">
+                                <div ng-if="section.eligibleCost.EligibleExpenseType && section.eligibleCost.EligibleExpenseType.ExpenseTypeId === @((int)ExpenseTypes.ParticipantAssigned)">
+                                    <input ng-model="section.eligibleCost.AgreedMaxParticipants" class="input-right-align input--small" maxlength="4" ng-number ng-change="calculate()" ng-validation="errors.eligibleCost.AgreedMaxParticipants" ng-editing />
+                                </div>
+                                <span ng-if="section.eligibleCost.EligibleExpenseType && section.eligibleCost.EligibleExpenseType.ExpenseTypeId !== @((int)ExpenseTypes.ParticipantAssigned)">
+                                    {{model.TrainingProgramEligibleCost.AgreedMaxParticipants}}
+                                </span>
+                                <span ng-if="!section.eligibleCost.EligibleExpenseType">0</span>
+                            </td>
+                            <td class="num-col">
+                                <span>
+                                    {{section.eligibleCost.AgreedMaxParticipantCost | currency}}
+                                </span>
+                            </td>
+                            <td class="num-col">
+                                <span ng-if="!section.eligibleCost.EligibleExpenseType">0</span>
+                                <span ng-if="section.eligibleCost.EligibleExpenseType">
+                                    <input ng-model="section.eligibleCost.AgreedCost" class="input-right-align input--small" ng-currency="10" ng-change="calculate()" ng-validation="errors.eligibleCost.AgreedCost" ng-editing />
+                                </span>
+                            </td>
+                            <td class="num-col" ng-if="model.TrainingCost.ShouldDisplayEmployerContribution">
+                                <span class="js-employer-contribution">{{section.eligibleCost.AgreedEmployerContribution | currency}}</span>
+                            </td>
+                            <td class="num-col">
+                                <span class="js-grant-request">{{section.eligibleCost.AgreedMaxReimbursement | currency}}</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn--secondary" ng-click="cancelEligibleCost()">Cancel</button>
+                    <button class="btn btn--primary btn--forward" ng-disabled="section.eligibleCost.EligibleExpenseType == null || (section.eligibleCost.Id === 0 && (section.eligibleCost.AgreedMaxParticipants <= 0 || section.eligibleCost.AgreedCost <= 0)) || section.eligibleCost.AgreedMaxParticipants > model.TrainingCost.AgreedParticipants" ng-click="updateEligibleCost()">
+                        {{ section.addNewEligibleCost ? 'Add' : 'Update' }} Expense
+                    </button>
+                </div>
+            </div>
+            <br />
+            <br />
+        </div>
+
+        <div class="form__group">
+            <div class="form__label">Travel Expense document:</div>
+            <div class="form__control">
+                <div class="control-wrapper" ng-validation="errors.TravelExpenseDocument">
+                    <a class="link" ng-if="model.TravelExpenseDocument" ng-click="!model.TravelExpenseDocument.Id || downloadAttachment(model.TravelExpenseDocument.Id)">{{model.TravelExpenseDocument.FileName}}</a>
+                    <button ng-if="model.TravelExpenseDocument && section.editing" class="btn btn--primary pull-right" ng-click="changeAttachment('TravelExpenseDocument')">Change</button>
+                    <span ng-if="!model.TravelExpenseDocument">None</span>
+                    <button ng-if="!model.TravelExpenseDocument && section.editing" class="btn btn--primary pull-right" ng-click="addAttachment('TravelExpenseDocument')">Upload</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
 
 <style>

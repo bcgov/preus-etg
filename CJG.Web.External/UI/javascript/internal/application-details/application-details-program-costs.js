@@ -1,4 +1,4 @@
-app.controller('ProgramCosts', function ($scope, $attrs, $controller, $timeout, Utils) {
+app.controller('ProgramCosts', function ($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
   $scope.section = {
     name: 'ProgramCosts',
     displayName: 'Program Costs',
@@ -6,8 +6,19 @@ app.controller('ProgramCosts', function ($scope, $attrs, $controller, $timeout, 
     save: {
       url: '/Int/Application/Training/Cost',
       method: 'PUT',
+      dataType: 'file',
       data: function () {
-        return $scope.model;
+        var files = [];
+
+        if ($scope.model.TravelExpenseDocument && $scope.model.TravelExpenseDocument.File) {
+          files.push($scope.model.TravelExpenseDocument.File);
+          $scope.model.TravelExpenseDocument.Index = files.length - 1;
+        }
+
+        return {
+          files: files,
+          component: angular.toJson($scope.model)
+        };
       },
       backup: true
     },
@@ -304,5 +315,88 @@ app.controller('ProgramCosts', function ($scope, $attrs, $controller, $timeout, 
     recalculate();
     $scope.section.showEditEligibleCost = false;
     $scope.section.addNewEligibleCost = false;
+  }
+
+  /**
+ * Open the modal file uploaded.
+ * @function openAttachmentModal
+ * @param {any} title - The title of the modal window.
+ * @param {any} attachment - The attachment to update/add.
+ * @returns {Promise} modal
+ */
+  function openAttachmentModal(title, attachment) {
+    return ngDialog.openConfirm({
+      template: '/content/dialogs/_TrainingProviderAttachment.html',
+      data: {
+        title: title,
+        attachment: attachment
+      },
+      controller: ['$scope', function ($scope) {
+        /**
+         * Return the selected file in the promise.
+         * @function save
+         * @returns {Promise}
+         **/
+        $scope.save = function () {
+          $scope.confirm($scope.ngDialogData.attachment);
+        };
+
+        /**
+         * Manually call the file select.
+         * @function chooseFile
+         * @returns {void}
+         **/
+        $scope.chooseFile = function () {
+          var $input = angular.element('#training-provider-upload');
+          $input.trigger('click');
+        }
+
+        /**
+         * Set the selected file as the active attachment.
+         * @function fileChanged
+         * @param {any} $files
+         * @returns {void}
+         */
+        $scope.fileChanged = function ($files) {
+          if ($files.length) {
+            $scope.ngDialogData.attachment.File = $files[0];
+            $scope.ngDialogData.attachment.FileName = $scope.ngDialogData.attachment.File.name;
+          }
+        }
+      }]
+    });
+  }
+
+  /**
+   * Open modal file uploader popup and then add the new file to the model.
+   * @function addAttachment
+   * @param {string} prop - The name of the property for this attachment.
+   * @returns {void}
+   **/
+  $scope.addAttachment = function (prop) {
+    openAttachmentModal('Add Attachment', {
+        Id: 0,
+        FileName: '',
+        Description: '',
+        File: {}
+      })
+      .then(function (attachment) {
+        $scope.model[prop] = attachment;
+      })
+      .catch(angular.noop);
+  }
+
+  /**
+   * Open modal file uploader popup and allow user to update the attachment and/or file.
+   * @function changeAttachment
+   * @param {string} prop - The name of the property for this attachment.
+   * @returns {void}
+   */
+  $scope.changeAttachment = function (prop) {
+    openAttachmentModal('Change Attachment', $scope.model[prop])
+      .then(function (attachment) {
+        prop = attachment;
+      })
+      .catch(angular.noop);
   }
 });

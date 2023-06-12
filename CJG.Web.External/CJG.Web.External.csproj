@@ -874,6 +874,7 @@
     <Content Include="Areas\Int\Views\RegionalException\SelectRegionView.cshtml" />
     <Content Include="Areas\Int\Views\Prioritization\_Regions.cshtml" />
     <Content Include="Areas\Int\Views\Prioritization\_Industries.cshtml" />
+    <Content Include="App_Data\PDF\ETG-Travel-Expense-Claim-Form.docx" />
     <None Include="NLog.Training.config">
       <DependentUpon>NLog.config</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1624,6 +1625,7 @@
     <Compile Include="Models\Shared\SkillsTrainings\SkillTrainingProviderDetailsViewModel.cs" />
     <Compile Include="Models\Shared\SkillsTrainings\SkillTrainingProviderViewModel.cs" />
     <Compile Include="Models\Shared\SkillsTrainings\SkillTrainingViewModel.cs" />
+    <Compile Include="Models\Shared\TrainingProviders\TrainingCostAttachmentViewModel.cs" />
     <Compile Include="Models\Shared\TrainingProviders\TrainingProgramAttachmentViewModel.cs" />
     <Compile Include="Models\Shared\TrainingProviders\TrainingProviderAttachmentViewModel.cs" />
     <Compile Include="Models\Shared\SkillsTrainings\TrainingProviderDetailsViewModel.cs" />
