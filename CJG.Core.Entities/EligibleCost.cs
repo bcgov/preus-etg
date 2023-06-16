@@ -1,4 +1,3 @@
-using DataAnnotationsExtensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
+using DataAnnotationsExtensions;
 
 namespace CJG.Core.Entities
 {
@@ -14,7 +14,6 @@ namespace CJG.Core.Entities
 	/// </summary>
 	public class EligibleCost : EntityBase
 	{
-		#region Properties
 		/// <summary>
 		/// get/set - The primary key to identify this eligible cost.
 		/// </summary>
@@ -84,7 +83,6 @@ namespace CJG.Core.Entities
 		public virtual ICollection<EligibleCostBreakdown> Breakdowns { get; set; } = new List<EligibleCostBreakdown>();
 		public virtual ICollection<TrainingProvider> TrainingProviders { get; set; } = new List<TrainingProvider>();
 
-		#region Assessment
 		/// <summary>
 		/// get/set - The agreed maximum cost.
 		/// </summary>
@@ -124,10 +122,10 @@ namespace CJG.Core.Entities
 		/// get/set - Flag to indicate that the eligible cost was added by the assessor after the application has been submitted
 		/// </summary>
 		public bool AddedByAssessor { get; set; } = false;
-		#endregion
-		#endregion
 
-		#region Constructors
+		[DisplayName("Expense Description")]
+		public string ExpenseExplanation { get; set; }
+
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="EligibleCost"/> object.
 		/// </summary>
@@ -145,21 +143,21 @@ namespace CJG.Core.Entities
 		/// <param name="estimatedParticipants"></param>
 		public EligibleCost(TrainingCost trainingCost, EligibleExpenseType expenseType, decimal estimatedCost, int estimatedParticipants)
 		{
-			this.TrainingCost = trainingCost ?? throw new ArgumentNullException(nameof(trainingCost)); ;
-			this.GrantApplicationId = trainingCost.GrantApplicationId;
-			this.EligibleExpenseType = expenseType ?? throw new ArgumentNullException(nameof(expenseType));
-			this.EligibleExpenseTypeId = expenseType.Id;
-			this.EstimatedCost = estimatedCost;
-			this.EstimatedParticipants = estimatedParticipants;
+			TrainingCost = trainingCost ?? throw new ArgumentNullException(nameof(trainingCost)); ;
+			GrantApplicationId = trainingCost.GrantApplicationId;
+			EligibleExpenseType = expenseType ?? throw new ArgumentNullException(nameof(expenseType));
+			EligibleExpenseTypeId = expenseType.Id;
+			EstimatedCost = estimatedCost;
+			EstimatedParticipants = estimatedParticipants;
 
-			if (this.EstimatedParticipants == 0)
-				this.EstimatedParticipantCost = 0;
+			if (EstimatedParticipants == 0)
+				EstimatedParticipantCost = 0;
 			else
-				this.EstimatedParticipantCost = Math.Round(estimatedCost / EstimatedParticipants, 2);
+				EstimatedParticipantCost = Math.Round(estimatedCost / EstimatedParticipants, 2);
 
 			var rate = trainingCost.GrantApplication.GrantOpening.GrantStream.ReimbursementRate;
-			this.EstimatedReimbursement = Math.Round(estimatedCost * (decimal)rate, 2);
-			this.EstimatedEmployerContribution = estimatedCost - this.EstimatedReimbursement;
+			EstimatedReimbursement = Math.Round(estimatedCost * (decimal)rate, 2);
+			EstimatedEmployerContribution = estimatedCost - EstimatedReimbursement;
 		}
 
 		/// <summary>
@@ -175,9 +173,6 @@ namespace CJG.Core.Entities
 
 		}
 
-		#endregion
-
-		#region Methods
 		/// <summary>
 		/// Validates the eligible cost.
 		/// </summary>
@@ -192,91 +187,91 @@ namespace CJG.Core.Entities
 			if (entry == null)
 				yield break;
 
-			var grantApplication = context.Set<GrantApplication>().Include(m => m.GrantOpening).Include(m => m.GrantOpening.GrantStream).Include(m => m.GrantOpening.GrantStream.GrantProgram).Include(m => m.GrantOpening.GrantStream.ProgramConfiguration).FirstOrDefault(ga => ga.Id == this.TrainingCost.GrantApplicationId);
+			var grantApplication = context.Set<GrantApplication>().Include(m => m.GrantOpening).Include(m => m.GrantOpening.GrantStream).Include(m => m.GrantOpening.GrantStream.GrantProgram).Include(m => m.GrantOpening.GrantStream.ProgramConfiguration).FirstOrDefault(ga => ga.Id == TrainingCost.GrantApplicationId);
 
-			var eligibleExpenseType = context.Set<EligibleExpenseType>().Include(m => m.ServiceCategory).FirstOrDefault(x => x.Id == this.EligibleExpenseTypeId);
-			var reimbursementRate = this.TrainingCost.GrantApplication.ReimbursementRate;
-			var maxReimbursementAmount = this.TrainingCost.GrantApplication.MaxReimbursementAmt;
+			var eligibleExpenseType = context.Set<EligibleExpenseType>().Include(m => m.ServiceCategory).FirstOrDefault(x => x.Id == EligibleExpenseTypeId);
+			var reimbursementRate = TrainingCost.GrantApplication.ReimbursementRate;
+			var maxReimbursementAmount = TrainingCost.GrantApplication.MaxReimbursementAmt;
 
 			// Ensure EligibleExpenseType is in context.
-			if (this.EligibleExpenseType == null)
-				this.EligibleExpenseType = eligibleExpenseType;
+			if (EligibleExpenseType == null)
+				EligibleExpenseType = eligibleExpenseType;
 
 			// AgreedParticipants cannot be greater than any eligible cost AgreedMaxParticipants.
-			if (this.TrainingCost.AgreedParticipants < this.AgreedMaxParticipants)
-				yield return new ValidationResult("The number of participants for an eligible cost cannot be greater than the application maximum number of participants.", new[] { nameof(this.AgreedMaxParticipants) });
+			if (TrainingCost.AgreedParticipants < AgreedMaxParticipants)
+				yield return new ValidationResult("The number of participants for an eligible cost cannot be greater than the application maximum number of participants.", new[] { nameof(AgreedMaxParticipants) });
 
 			// EstimatedCost must be equal to calculated EstimatedReimbursement + EstimatedEmployerContribution.
-			if (Math.Round(this.EstimatedReimbursement + this.EstimatedEmployerContribution, 2) > Math.Round(this.EstimatedCost, 2))
-				yield return new ValidationResult("The estimated reimbursement and employer contribution cannot exceed the estimated cost.", new[] { nameof(this.EstimatedCost), nameof(this.EstimatedReimbursement), nameof(this.EstimatedEmployerContribution) });
+			if (Math.Round(EstimatedReimbursement + EstimatedEmployerContribution, 2) > Math.Round(EstimatedCost, 2))
+				yield return new ValidationResult("The estimated reimbursement and employer contribution cannot exceed the estimated cost.", new[] { nameof(EstimatedCost), nameof(EstimatedReimbursement), nameof(EstimatedEmployerContribution) });
 
 			// AgreedMaxCost must be equal to the calculated AgreedMaxReimbursement + AgreedEmployerContribution.
-			if (Math.Round(this.AgreedMaxReimbursement + this.AgreedEmployerContribution, 2) > Math.Round(this.AgreedMaxCost, 2))
-				yield return new ValidationResult("The agreed reimbursement and employer contribution cannot exceed the agreed cost.", new[] { nameof(this.AgreedMaxCost), nameof(this.EstimatedReimbursement), nameof(this.EstimatedEmployerContribution) });
+			if (Math.Round(AgreedMaxReimbursement + AgreedEmployerContribution, 2) > Math.Round(AgreedMaxCost, 2))
+				yield return new ValidationResult("The agreed reimbursement and employer contribution cannot exceed the agreed cost.", new[] { nameof(AgreedMaxCost), nameof(EstimatedReimbursement), nameof(EstimatedEmployerContribution) });
 
 			// Cannot enter more participants than specified in the training program.
-			if (this.AddedByAssessor ? this.AgreedMaxParticipants > this.TrainingCost.AgreedParticipants : this.EstimatedParticipants > this.TrainingCost.EstimatedParticipants)
-				yield return new ValidationResult($"The number of participants for expense type '{this.EligibleExpenseType.Caption}' cannot exceed the number of participants you entered above, which was '{this.TrainingCost.EstimatedParticipants}'", new[] { nameof(this.EstimatedParticipants) });
+			if (AddedByAssessor ? AgreedMaxParticipants > TrainingCost.AgreedParticipants : EstimatedParticipants > TrainingCost.EstimatedParticipants)
+				yield return new ValidationResult($"The number of participants for expense type '{EligibleExpenseType.Caption}' cannot exceed the number of participants you entered above, which was '{TrainingCost.EstimatedParticipants}'", new[] { nameof(EstimatedParticipants) });
 
 			// Cannot add multiple expenses of the same type if they are not allowed.
-			if (!this.EligibleExpenseType.AllowMultiple && context.Set<EligibleCost>().Count(x => x.GrantApplicationId == this.GrantApplicationId && x.EligibleExpenseTypeId == this.EligibleExpenseTypeId) > 1)
-				yield return new ValidationResult($"Cannot add multiple expenses of type '{this.EligibleExpenseType.Caption}'.", new[] { nameof(this.EligibleExpenseType) });
+			if (!EligibleExpenseType.AllowMultiple && context.Set<EligibleCost>().Count(x => x.GrantApplicationId == GrantApplicationId && x.EligibleExpenseTypeId == EligibleExpenseTypeId) > 1)
+				yield return new ValidationResult($"Cannot add multiple expenses of type '{EligibleExpenseType.Caption}'.", new[] { nameof(EligibleExpenseType) });
 
 			// Cannot exceed the estimated maximum cost limit.
-			if (this.EligibleExpenseType.ExpenseTypeId.In(ExpenseTypes.AutoLimitEstimatedCosts))
+			if (EligibleExpenseType.ExpenseTypeId.In(ExpenseTypes.AutoLimitEstimatedCosts))
 			{
-				this.EligibleExpenseType = this.EligibleExpenseType ?? context.Set<EligibleExpenseType>().SingleOrDefault(x => x.Id == this.EligibleExpenseTypeId);
-				var maxEstimatedCost = this.TrainingCost.CalculateEstimatedCostLimit(this);
-				if (maxEstimatedCost < this.EstimatedCost)
-					yield return new ValidationResult($"Estimated cost exceeded maximum allowed '{maxEstimatedCost.ToString("c2")}' for expense type '{this.EligibleExpenseType.Caption}'", new[] { nameof(this.EstimatedCost) });
+				EligibleExpenseType = EligibleExpenseType ?? context.Set<EligibleExpenseType>().SingleOrDefault(x => x.Id == EligibleExpenseTypeId);
+				var maxEstimatedCost = TrainingCost.CalculateEstimatedCostLimit(this);
+				if (maxEstimatedCost < EstimatedCost)
+					yield return new ValidationResult($"Estimated cost exceeded maximum allowed '{maxEstimatedCost.ToString("c2")}' for expense type '{EligibleExpenseType.Caption}'", new[] { nameof(EstimatedCost) });
 			}
 
 			// An auto limit estimated costs must not exceed its limit.
-			if (this.EligibleExpenseType.ExpenseTypeId.In(ExpenseTypes.AutoLimitEstimatedCosts))
+			if (EligibleExpenseType.ExpenseTypeId.In(ExpenseTypes.AutoLimitEstimatedCosts))
 			{
-				var otherCost = this.TrainingCost.EligibleCosts.Sum(t => t.EstimatedCost) - this.EstimatedCost;
-				if (this.EstimatedCost > otherCost * (decimal)(EligibleExpenseType.Rate ?? 0))
-					yield return new ValidationResult($"{EligibleExpenseType.Caption} Total Cost exceeds the limit for your program total cost.", new[] { nameof(this.EstimatedCost) });
+				var otherCost = TrainingCost.EligibleCosts.Sum(t => t.EstimatedCost) - EstimatedCost;
+				if (EstimatedCost > otherCost * (decimal)(EligibleExpenseType.Rate ?? 0))
+					yield return new ValidationResult($"{EligibleExpenseType.Caption} Total Cost exceeds the limit for your program total cost.", new[] { nameof(EstimatedCost) });
 			}
 
 			// The sum of the eligible cost breakdown must not be greater than the total.
-			if (this.Breakdowns.Sum(ecb => ecb.EstimatedCost) > this.EstimatedCost)
-				yield return new ValidationResult($"The sum of the breakdown costs must not exceed the estimated cost of {this.EstimatedCost.ToString("c2")}.", new[] { nameof(this.EstimatedCost) });
+			if (Breakdowns.Sum(ecb => ecb.EstimatedCost) > EstimatedCost)
+				yield return new ValidationResult($"The sum of the breakdown costs must not exceed the estimated cost of {EstimatedCost.ToString("c2")}.", new[] { nameof(EstimatedCost) });
 
 			// The sum of the eligible cost breakdown must not be greater than the total.
-			if (this.Breakdowns.Sum(ecb => ecb.AssessedCost) > this.AgreedMaxCost)
-				yield return new ValidationResult($"The sum of the breakdown costs must not exceed the agreed maximum cost of {this.AgreedMaxCost.ToString("c2")}.", new[] { nameof(this.AgreedMaxCost) });
+			if (Breakdowns.Sum(ecb => ecb.AssessedCost) > AgreedMaxCost)
+				yield return new ValidationResult($"The sum of the breakdown costs must not exceed the agreed maximum cost of {AgreedMaxCost.ToString("c2")}.", new[] { nameof(AgreedMaxCost) });
 
-			var program = this.TrainingCost.GrantApplication.GrantOpening.GrantStream.GrantProgram ?? context.Set<GrantProgram>().FirstOrDefault(x => x.Id == this.TrainingCost.GrantApplication.GrantOpening.GrantStream.GrantProgramId);
+			var program = TrainingCost.GrantApplication.GrantOpening.GrantStream.GrantProgram ?? context.Set<GrantProgram>().FirstOrDefault(x => x.Id == TrainingCost.GrantApplication.GrantOpening.GrantStream.GrantProgramId);
 
 			if (program.ProgramTypeId == ProgramTypes.WDAService)
 			{
-				switch (this.EligibleExpenseType.ServiceCategory?.ServiceTypeId)
+				switch (EligibleExpenseType.ServiceCategory?.ServiceTypeId)
 				{
 					// Cannot exceed limit for skills training costs.
 					case ServiceTypes.SkillsTraining:
-						var skillTrainingMax = this.TrainingCost.GrantApplication.GrantOpening.GrantStream.ProgramConfiguration.SkillsTrainingMaxEstimatedParticipantCosts;
+						var skillTrainingMax = TrainingCost.GrantApplication.GrantOpening.GrantStream.ProgramConfiguration.SkillsTrainingMaxEstimatedParticipantCosts;
 						if (this.CalculateEstimatedPerParticipantReimbursement() > skillTrainingMax)
-							yield return new ValidationResult($"{EligibleExpenseType.Caption} average reimbursement cost per participant may not exceed '{skillTrainingMax.ToString("c2")}'.", new[] { nameof(this.EstimatedParticipantCost) });
+							yield return new ValidationResult($"{EligibleExpenseType.Caption} average reimbursement cost per participant may not exceed '{skillTrainingMax.ToString("c2")}'.", new[] { nameof(EstimatedParticipantCost) });
 						else if (this.CalculateAgreedPerParticipantReimbursement() > skillTrainingMax)
-							yield return new ValidationResult($"{EligibleExpenseType.Caption} average reimbursement cost per participant may not exceed '{skillTrainingMax.ToString("c2")}'.", new[] { nameof(this.AgreedMaxParticipantCost) });
+							yield return new ValidationResult($"{EligibleExpenseType.Caption} average reimbursement cost per participant may not exceed '{skillTrainingMax.ToString("c2")}'.", new[] { nameof(AgreedMaxParticipantCost) });
 						break;
 					// Cannot exceed limit for employment services and supports costs.
 					case ServiceTypes.EmploymentServicesAndSupports:
-						var essMax = this.TrainingCost.GrantApplication.GrantOpening.GrantStream.ProgramConfiguration.ESSMaxEstimatedParticipantCost;
+						var essMax = TrainingCost.GrantApplication.GrantOpening.GrantStream.ProgramConfiguration.ESSMaxEstimatedParticipantCost;
 						if (this.CalculateEstimatedPerParticipantReimbursement() > essMax)
-							yield return new ValidationResult($"{EligibleExpenseType.Caption} average reimbursement cost per participant may not exceed '{essMax.ToString("c2")}'.", new[] { nameof(this.EstimatedParticipantCost) });
+							yield return new ValidationResult($"{EligibleExpenseType.Caption} average reimbursement cost per participant may not exceed '{essMax.ToString("c2")}'.", new[] { nameof(EstimatedParticipantCost) });
 						else if (this.CalculateAgreedPerParticipantReimbursement() > essMax)
-							yield return new ValidationResult($"{EligibleExpenseType.Caption} average reimbursement cost per participant may not exceed '{essMax.ToString("c2")}'.", new[] { nameof(this.AgreedMaxParticipantCost) });
+							yield return new ValidationResult($"{EligibleExpenseType.Caption} average reimbursement cost per participant may not exceed '{essMax.ToString("c2")}'.", new[] { nameof(AgreedMaxParticipantCost) });
 						break;
 				}
 			}
 
 			//Cannot exceed the per participant fiscal year maximum reimbursement allowed.
-			if (this.TrainingCost.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant
-				&& this.EligibleExpenseType.ExpenseTypeId.In(ExpenseTypes.ParticipantLimited, ExpenseTypes.ParticipantAssigned)
-				&& TrainingCostExtensions.CalculateRoundedReimbursementAmount(this.EstimatedParticipantCost, reimbursementRate) > maxReimbursementAmount)
-				yield return new ValidationResult($"The total requested government contribution exceeds the per participant fiscal year maximum reimbursement allowed of '{maxReimbursementAmount.ToString("c2")}'", new[] { nameof(this.EstimatedReimbursement) });
+			if (TrainingCost.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant
+				&& EligibleExpenseType.ExpenseTypeId.In(ExpenseTypes.ParticipantLimited, ExpenseTypes.ParticipantAssigned)
+				&& TrainingCostExtensions.CalculateRoundedReimbursementAmount(EstimatedParticipantCost, reimbursementRate) > maxReimbursementAmount)
+				yield return new ValidationResult($"The total requested government contribution exceeds the per participant fiscal year maximum reimbursement allowed of '{maxReimbursementAmount.ToString("c2")}'", new[] { nameof(EstimatedReimbursement) });
 
 			foreach (var validation in base.Validate(validationContext))
 			{
@@ -288,17 +283,20 @@ namespace CJG.Core.Entities
 		{
 			EligibleExpenseType = ec.EligibleExpenseType;
 			EligibleExpenseTypeId = ec.EligibleExpenseTypeId;
+
 			EstimatedCost = ec.EstimatedCost;
 			EstimatedParticipants = ec.EstimatedParticipants;
 			EstimatedParticipantCost = ec.EstimatedParticipantCost;
 			EstimatedReimbursement = ec.EstimatedReimbursement;
 			EstimatedEmployerContribution = ec.EstimatedEmployerContribution;
+
 			AgreedMaxCost = ec.AgreedMaxCost;
 			AgreedMaxParticipants = ec.AgreedMaxParticipants;
 			AgreedMaxParticipantCost = ec.AgreedMaxParticipantCost;
 			AgreedMaxReimbursement = ec.AgreedMaxReimbursement;
-			AgreedEmployerContribution = ec.AgreedEmployerContribution;		
+			AgreedEmployerContribution = ec.AgreedEmployerContribution;
+
+			ExpenseExplanation = ec.ExpenseExplanation;
 		}
-		#endregion
 	}
 }

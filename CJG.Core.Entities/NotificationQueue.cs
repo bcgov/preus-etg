@@ -1,8 +1,8 @@
-﻿using CJG.Core.Entities.Attributes;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CJG.Core.Entities.Attributes;
 
 namespace CJG.Core.Entities
 {
@@ -11,7 +11,6 @@ namespace CJG.Core.Entities
 	/// </summary>
 	public class NotificationQueue : EntityBase
 	{
-		#region Properties
 		/// <summary>
 		/// get/set - Primary key identity.
 		/// </summary>
@@ -102,9 +101,7 @@ namespace CJG.Core.Entities
 		[DateTimeKind(DateTimeKind.Utc)]
 		[Column(TypeName = "DATETIME2")]
 		public DateTime? SendDate { get; set; }
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a NotificationQueue object.
 		/// </summary>
@@ -119,18 +116,21 @@ namespace CJG.Core.Entities
 		/// <param name="sender"></param>
 		public NotificationQueue(ProgramNotification programNotification, User applicant, string sender)
 		{
-			if (programNotification == null) throw new ArgumentNullException(nameof(programNotification));
-			if (applicant == null) throw new ArgumentNullException(nameof(applicant));
-			if (String.IsNullOrWhiteSpace(sender)) throw new ArgumentException($"The argument '{nameof(sender)}' is required.", nameof(sender));
+			if (programNotification == null)
+				throw new ArgumentNullException(nameof(programNotification));
+			if (applicant == null)
+				throw new ArgumentNullException(nameof(applicant));
+			if (string.IsNullOrWhiteSpace(sender))
+				throw new ArgumentException($"The argument '{nameof(sender)}' is required.", nameof(sender));
 
-			this.BatchNumber = $"PN:{programNotification.Id}";
-			this.EmailSender = sender;
-			this.EmailBody = programNotification.NotificationTemplate.EmailBody;
-			this.EmailSubject = programNotification.NotificationTemplate.EmailSubject;
-			this.EmailRecipients = applicant.EmailAddress;
-			this.SendDate = programNotification.SendDate;
-			this.OrganizationId = applicant.OrganizationId;
-			this.State = NotificationState.Queued;
+			BatchNumber = $"PN:{programNotification.Id}";
+			EmailSender = sender;
+			EmailBody = programNotification.NotificationTemplate.EmailBody;
+			EmailSubject = programNotification.NotificationTemplate.EmailSubject;
+			EmailRecipients = applicant.EmailAddress;
+			SendDate = programNotification.SendDate;
+			OrganizationId = applicant.OrganizationId;
+			State = NotificationState.Queued;
 		}
 
 		/// <summary>
@@ -145,28 +145,33 @@ namespace CJG.Core.Entities
 		/// <param name="type"></param>
 		public NotificationQueue(GrantApplication grantApplication, User applicant, string sender, string body, string subject, NotificationType type)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
-			if (applicant == null) throw new ArgumentNullException(nameof(applicant));
-			if (type == null) throw new ArgumentNullException(nameof(type));
-			if (String.IsNullOrWhiteSpace(sender)) throw new ArgumentException($"The argument '{nameof(sender)}' is required.", nameof(sender));
-			if (String.IsNullOrWhiteSpace(body)) throw new ArgumentException($"The argument '{nameof(body)}' is required.", nameof(body));
-			if (String.IsNullOrWhiteSpace(subject)) throw new ArgumentException($"The argument '{nameof(subject)}' is required.", nameof(subject));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
+			if (applicant == null)
+				throw new ArgumentNullException(nameof(applicant));
+			if (type == null)
+				throw new ArgumentNullException(nameof(type));
+			if (string.IsNullOrWhiteSpace(sender))
+				throw new ArgumentException($"The argument '{nameof(sender)}' is required.", nameof(sender));
+			if (string.IsNullOrWhiteSpace(body))
+				throw new ArgumentException($"The argument '{nameof(body)}' is required.", nameof(body));
+			if (string.IsNullOrWhiteSpace(subject))
+				throw new ArgumentException($"The argument '{nameof(subject)}' is required.", nameof(subject));
 
 			var claim = grantApplication.GetCurrentClaim();
 
-			this.BatchNumber = $"N-G:{grantApplication.Id}" + (claim != null ? $"-C:{claim.Id}-CV:{claim.ClaimVersion}" : "");
-			this.GrantApplicationId = grantApplication.Id;
-			this.GrantApplication = grantApplication;
-			this.NotificationTypeId = type.Id;
-			this.NotificationType = type;
-			this.EmailSender = sender;
-			this.EmailBody = body;
-			this.EmailSubject = subject;
-			this.EmailRecipients = applicant.EmailAddress;
-			this.OrganizationId = grantApplication.Organization.Id;
-			this.Organization = grantApplication.Organization;
-			this.State = NotificationState.Queued;
+			BatchNumber = $"N-G:{grantApplication.Id}" + (claim != null ? $"-C:{claim.Id}-CV:{claim.ClaimVersion}" : "");
+			GrantApplicationId = grantApplication.Id;
+			GrantApplication = grantApplication;
+			NotificationTypeId = type.Id;
+			NotificationType = type;
+			EmailSender = sender;
+			EmailBody = body;
+			EmailSubject = subject;
+			EmailRecipients = applicant.EmailAddress;
+			OrganizationId = grantApplication.Organization.Id;
+			Organization = grantApplication.Organization;
+			State = NotificationState.Queued;
 		}
-		#endregion
 	}
 }

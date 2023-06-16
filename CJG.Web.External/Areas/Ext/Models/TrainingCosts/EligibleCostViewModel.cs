@@ -1,6 +1,6 @@
-﻿using CJG.Core.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using CJG.Core.Entities;
 
 namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 {
@@ -14,6 +14,8 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 		public decimal EstimatedCost { get; set; }
 		public decimal EstimatedEmployerContribution { get; set; }
 		public decimal EstimatedReimbursement { get; set; }
+
+		public string ExpenseExplanation { get; set; }
 
 		public int AgreedMaxParticipants { get; set; }
 		public decimal AgreedMaxParticipantCost { get; set; }
@@ -40,23 +42,24 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 			if (eligibleCost == null)
 				throw new ArgumentNullException(nameof(eligibleCost));
 
-			this.Id = eligibleCost.Id;
-			this.EstimatedCost = eligibleCost.EstimatedCost;
-			this.EstimatedParticipantCost = eligibleCost.EstimatedParticipantCost;
-			this.EstimatedEmployerContribution = eligibleCost.EstimatedEmployerContribution;
-			this.EstimatedParticipants = eligibleCost.EstimatedParticipants;
-			this.EstimatedReimbursement = eligibleCost.EstimatedReimbursement;
+			Id = eligibleCost.Id;
+			EstimatedCost = eligibleCost.EstimatedCost;
+			EstimatedParticipantCost = eligibleCost.EstimatedParticipantCost;
+			EstimatedEmployerContribution = eligibleCost.EstimatedEmployerContribution;
+			EstimatedParticipants = eligibleCost.EstimatedParticipants;
+			EstimatedReimbursement = eligibleCost.EstimatedReimbursement;
 
-			this.AgreedMaxParticipants = eligibleCost.AgreedMaxParticipants;
-			this.AgreedMaxParticipantCost = eligibleCost.AgreedMaxParticipantCost;
-			this.AgreedCost = eligibleCost.AgreedMaxCost;
-			this.AgreedEmployerContribution = eligibleCost.AgreedEmployerContribution;
-			this.AgreedMaxReimbursement = eligibleCost.AgreedMaxReimbursement;
+			ExpenseExplanation = eligibleCost.ExpenseExplanation;
+			AgreedMaxParticipants = eligibleCost.AgreedMaxParticipants;
+			AgreedMaxParticipantCost = eligibleCost.AgreedMaxParticipantCost;
+			AgreedCost = eligibleCost.AgreedMaxCost;
+			AgreedEmployerContribution = eligibleCost.AgreedEmployerContribution;
+			AgreedMaxReimbursement = eligibleCost.AgreedMaxReimbursement;
 
-			this.EligibleExpenseType = new EligibleExpenseTypeViewModel(eligibleCost.EligibleExpenseType);
-			this.ShowBreakdowns = !(eligibleCost.EligibleExpenseType.ServiceCategory?.ServiceTypeId.In(ServiceTypes.EmploymentServicesAndSupports, ServiceTypes.Administration) ?? false);
-			this.ServiceType = eligibleCost.EligibleExpenseType.ServiceCategory?.ServiceTypeId;
-			this.AddedByAssessor = eligibleCost.AddedByAssessor;
+			EligibleExpenseType = new EligibleExpenseTypeViewModel(eligibleCost.EligibleExpenseType);
+			ShowBreakdowns = !(eligibleCost.EligibleExpenseType.ServiceCategory?.ServiceTypeId.In(ServiceTypes.EmploymentServicesAndSupports, ServiceTypes.Administration) ?? false);
+			ServiceType = eligibleCost.EligibleExpenseType.ServiceCategory?.ServiceTypeId;
+			AddedByAssessor = eligibleCost.AddedByAssessor;
 
 			foreach (var item in eligibleCost.Breakdowns)
 			{
@@ -67,7 +70,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 
 		public EligibleCostViewModel(EligibleExpenseType eligibleExpenseType)
 		{
-			this.EligibleExpenseType = new EligibleExpenseTypeViewModel(eligibleExpenseType);
+			EligibleExpenseType = new EligibleExpenseTypeViewModel(eligibleExpenseType);
 		}
 		#endregion
 	}

@@ -32,12 +32,8 @@
                     <tr>
                         <th class="table-col__expense-type">Expense Type</th>
                         <th class="num-col table-col__num-part">Number of Participants</th>
-                        <th class="num-col table-col__cost-per-part">
-                            {{model.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant) ? 'Cost per Participant' : 'Average Cost per Participant'}}
-                        </th>
-                        <th class="num-col table-col__total-train-cost">
-                            {{model.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant) ? 'Total Training Cost' : 'Total Cost'}}
-                        </th>
+                        <th class="num-col table-col__cost-per-part">Cost per Participant</th>
+                        <th class="num-col table-col__total-train-cost">Total Training Cost</th>
                         <th class="num-col table-col__emp-contribution"
                             ng-if="model.TrainingCost.ShouldDisplayEmployerContribution && model.TrainingCost.ProgramType != @((int)ProgramTypes.EmployerGrant)">
                             Employer Contribution
@@ -57,6 +53,7 @@
                     <tr>
                         <td class="{{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom">
                             <span>{{ item.EligibleExpenseType.Caption }}</span>
+                            <span ng-if="item.EligibleExpenseType.RequireExpenseExplanation"><br /><em>{{ item.ExpenseExplanation }}</em></span>
                         </td>
                         <td class="num-col {{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom" ng-class="{ 'has-error' : item.AgreedMaxParticipants > model.TrainingCost.AgreedParticipants }">
                             <span ng-if="item.ServiceType != @((int)ServiceTypes.Administration)">
@@ -259,22 +256,8 @@
                         <tr>
                             <th class="table-col__expense-type">Expense Type</th>
                             <th class="num-col table-col__num-part">Number of Participants</th>
-                            <th class="num-col table-col__cost-per-part"
-                                ng-if="model.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)">
-                                Cost Per <br />Participant
-                            </th>
-                            <th class="num-col table-col__cost-per-part"
-                                ng-if="model.TrainingCost.ProgramType == @((int)ProgramTypes.WDAService)">
-                                Average <br />Cost per <br />Participant
-                            </th>
-                            <th class="num-col table-col__total-train-cost"
-                                ng-if="model.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)">
-                                Total <br />Training <br />Cost
-                            </th>
-                            <th class="num-col table-col__total-train-cost"
-                                ng-if="model.TrainingCost.ProgramType == @((int)ProgramTypes.WDAService)">
-                                Total <br />Cost
-                            </th>
+                            <th class="num-col table-col__cost-per-part">Cost Per <br />Participant</th>
+                            <th class="num-col table-col__total-train-cost">Total Training <br />Cost</th>
                             <th class="num-col table-col__emp-contribution"
                                 ng-if="model.TrainingCost.ShouldDisplayEmployerContribution">
                                 Employer Contribution
@@ -319,6 +302,15 @@
                                 <span class="js-grant-request">{{section.eligibleCost.AgreedMaxReimbursement | currency}}</span>
                             </td>
                         </tr>
+                        <tr ng-if="section.eligibleCost.EligibleExpenseType && section.eligibleCost.EligibleExpenseType.RequireExpenseExplanation">
+                            <td colspan="4" style="border-top: 0; padding-top: 0;">
+                                <div>
+                                    <input class="input--full" ng-model="section.eligibleCost.ExpenseExplanation" placeholder="Description of the expense" ng-validation="errors.eligibleCost.ExpenseExplanation">
+                                </div>
+                            </td>
+                            <td colspan="2" style="border-top: 0; padding-top: 0;"></td>
+                        </tr>
+
                         </tbody>
                     </table>
                 </div>

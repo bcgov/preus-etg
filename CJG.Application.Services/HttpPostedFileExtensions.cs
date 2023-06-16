@@ -32,10 +32,10 @@ namespace CJG.Application.Services
 			attachment.CreateNewVersion(result.FileName, result.Description, result.FileExtension, result.AttachmentData);
 		}
 
-		public static Attachment UploadFile(this HttpPostedFileBase file, string description, string newFileName = "")
+		public static Attachment UploadFile(this HttpPostedFileBase file, string description, string newFileName = "", string permittedFileTypesKey = "PermittedAttachmentTypes")
 		{
 			int maxUploadSize = int.Parse(ConfigurationManager.AppSettings["MaxUploadSizeInBytes"]);
-			string[] permittedAttachmentTypes = ConfigurationManager.AppSettings["PermittedAttachmentTypes"].Split('|');
+			string[] permittedAttachmentTypes = ConfigurationManager.AppSettings[permittedFileTypesKey].Split('|');
 
 			using (var memoryStream = new MemoryStream())
 			{
@@ -49,7 +49,7 @@ namespace CJG.Application.Services
 				}
 				else if (file.ContentLength < 17)
 				{
-					throw new InvalidOperationException($"The file type is not valid.");
+					throw new InvalidOperationException("The file type is not valid.");
 				}
 				throw new InvalidOperationException($"The file does not match the extension type '{fileExtension}'.");
 			}
@@ -85,6 +85,10 @@ namespace CJG.Application.Services
 			using (BinaryReader reader = new BinaryReader(memoryStream))
 			{
 				reader.BaseStream.Position = 0x0;
+
+				var bypassFileTypes = new[] { ".doc", ".docx" };
+				if (bypassFileTypes.Contains(fileExtension, StringComparer.InvariantCultureIgnoreCase))
+					return true;
 
 				// the file needs to be a minimum of 16 bytes in length, to accommodate the file type signatures
 				if (reader.BaseStream.Length >= 16)

@@ -81,7 +81,14 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 			AgreedParticipants = grantApplication.TrainingCost.AgreedParticipants == 0 ? null : (int?)grantApplication.TrainingCost.AgreedParticipants;
 			EstimatedParticipants = grantApplication.TrainingCost.EstimatedParticipants == 0 ? null : (int?)grantApplication.TrainingCost.EstimatedParticipants;
 
-			var eligibleCosts = !grantApplication.HasOfferBeenIssued() ? grantApplication.TrainingCost.EligibleCosts.Where(ec => !ec.AddedByAssessor).Select(ec => new EligibleCostViewModel(ec)).ToList() : grantApplication.TrainingCost.EligibleCosts.Select(ec => new EligibleCostViewModel(ec)).ToList();
+			var eligibleCosts = !grantApplication.HasOfferBeenIssued()
+				? grantApplication.TrainingCost.EligibleCosts
+					.Where(ec => !ec.AddedByAssessor)
+					.Select(ec => new EligibleCostViewModel(ec))
+					.ToList()
+				: grantApplication.TrainingCost.EligibleCosts
+					.Select(ec => new EligibleCostViewModel(ec))
+					.ToList();
 
 			if (eligibleCosts.Count != autoIncludeEligibleExpenseTypes.Count())
 			{
@@ -89,21 +96,16 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 					.Select(eet => new EligibleCostViewModel(eet) { EstimatedParticipants = EstimatedParticipants ?? 0 }).ToArray());
 			}
 
-			EligibleCosts = eligibleCosts.OrderBy(t => t.EligibleExpenseType.RowSequence).ThenBy(ec => ec.EligibleExpenseType.Caption).ToArray();
-			if (grantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
+			EligibleCosts = eligibleCosts
+				.OrderBy(t => t.EligibleExpenseType.RowSequence)
+				.ThenBy(ec => ec.EligibleExpenseType.Caption)
+				.ToArray();
+
+			if (grantApplication.TrainingCost != null)
 			{
-				if (grantApplication.TrainingCost != null)
-				{
-					TotalEstimatedCost = grantApplication.TrainingCost.TotalEstimatedCost;
-					TotalRequest = grantApplication.TrainingCost.TotalEstimatedReimbursement;
-					TotalEmployer = TotalEstimatedCost - TotalRequest;
-				}
-			}
-			else
-			{
-				TotalEmployer = EligibleCosts.Sum(x => x.EstimatedEmployerContribution);
-				TotalEstimatedCost = EligibleCosts.Sum(x => x.EstimatedCost);
-				TotalRequest = EligibleCosts.Sum(x => x.EstimatedReimbursement);
+				TotalEstimatedCost = grantApplication.TrainingCost.TotalEstimatedCost;
+				TotalRequest = grantApplication.TrainingCost.TotalEstimatedReimbursement;
+				TotalEmployer = TotalEstimatedCost - TotalRequest;
 			}
 
 			var haveAnyTravelExpenses = HaveAnyTravelExpenses();
@@ -124,7 +126,9 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 
 		public GrantApplication UpdateTrainingCosts(IGrantApplicationService grantApplicationService, IAttachmentService attachmentService, HttpPostedFileBase[] files)
 		{
-			if (grantApplicationService == null) throw new ArgumentNullException(nameof(grantApplicationService));
+			if (grantApplicationService == null)
+				throw new ArgumentNullException(nameof(grantApplicationService));
+
 			var grantApplication = grantApplicationService.Get(GrantApplicationId);
 
 			var trainingCost = grantApplication.TrainingCost;
@@ -164,6 +168,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 				}
 				eligibleCost.EstimatedParticipantCost = cost.EstimatedParticipantCost;
 				eligibleCost.EstimatedCost = cost.EstimatedCost;
+				eligibleCost.ExpenseExplanation = eligibleCost.EligibleExpenseType.RequireExplanation() ? cost.ExpenseExplanation : null;
 
 				foreach (var breakdown in cost.Breakdowns)
 				{
@@ -222,7 +227,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 
 			if (TravelExpenseDocument?.Index != null && files.Count() > TravelExpenseDocument.Index)
 			{
-				var attachment = files[TravelExpenseDocument.Index.Value].UploadFile(TravelExpenseDocument.Description, TravelExpenseDocument.FileName);
+				var attachment = files[TravelExpenseDocument.Index.Value].UploadFile(TravelExpenseDocument.Description, TravelExpenseDocument.FileName, permittedFileTypesKey: "TravelExpensePermittedAttachmentTypes");
 				attachment.Id = TravelExpenseDocument.Id;
 
 				if (TravelExpenseDocument.Id == 0)

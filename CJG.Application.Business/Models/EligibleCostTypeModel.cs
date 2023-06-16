@@ -5,16 +5,14 @@ namespace CJG.Application.Business.Models
 {
     public class EligibleExpenseTypeModel : CollectionItemModel
     {
-        #region Properties
-        public double? Rate { get; set; }
+	    public double? Rate { get; set; }
         public bool AllowMultiple { get; set; }
         public bool AutoInclude { get; set; }
+		public bool RequireExpenseExplanation { get; set; }
         public ExpenseTypes ExpenseTypeId { get; set; }
 
         public ServiceTypes? ServiceType { get; set; }
-        #endregion  
 
-        #region Constructors
         public EligibleExpenseTypeModel()
         { }
 
@@ -31,7 +29,8 @@ namespace CJG.Application.Business.Models
             Rate = eligibleExpenseType.Rate;
             AutoInclude = eligibleExpenseType.AutoInclude;
             ServiceType = eligibleExpenseType.ServiceCategory?.ServiceTypeId;
+
+            RequireExpenseExplanation = eligibleExpenseType.RequireExplanation();
         }
-        #endregion
     }
 }

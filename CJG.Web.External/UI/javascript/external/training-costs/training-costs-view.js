@@ -65,6 +65,8 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
   $scope.recalculate = function () {
     $scope.model.SummaryMessage = null;
     if ($scope.EligibleCost.EligibleExpenseType) {
+      if (!$scope.EligibleCost.EligibleExpenseType.RequireExpenseExplanation)
+        $scope.EligibleCost.ExpenseExplanation = null;
 
       if ($scope.EligibleCost.EligibleExpenseType.ExpenseTypeId == utils.ExpenseTypes.ParticipantAssigned) {
         if ($scope.EligibleCost.EstimatedParticipants == 0 || $scope.EligibleCost.EstimatedParticipants == null) {
@@ -234,6 +236,7 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
       EstimatedCost: 0,
       EstimatedEmployerContribution: 0,
       EstimatedReimbursement: 0,
+      ExpenseExplanation: '',
       ServiceType: null,
       ShowBreakdowns: false,
       AddedByAssessor: false,
@@ -254,8 +257,7 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
       var matches = $.grep($scope.model.EligibleCosts, function (item) {
         return (item.EligibleExpenseType.Id === $scope.EligibleCost.EligibleExpenseType.Id && !item.EligibleExpenseType.AllowMultiple);
       });
-
-
+      
       if (matches.length > 0 && $scope.EligibleCostIndex == null ||
         matches.length > 1 && $scope.EligibleCostIndex >= 0) {
         $scope.EligibleCostExpenseTypeIdError = true;
@@ -267,11 +269,16 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
         $scope.EligibleCostSummaryMessage += "<p>The total expense cost of type '" + $scope.EligibleCost.EligibleExpenseType.Caption + "' must be greater than 0.</p>";
         validate = false;
       }
+      if ($scope.EligibleCost.EligibleExpenseType.RequireExpenseExplanation && $scope.EligibleCost.ExpenseExplanation.trim().length <= 0) {
+        $scope.EligibleCostEstimatedParticipantsError = true;
+        $scope.EligibleCostSummaryMessage += "<p>A description of the expense '" + $scope.EligibleCost.EligibleExpenseType.Caption + "' must be provided.</p>";
+        validate = false;
+      }
     }
 
     if (Number($scope.EligibleCost.EstimatedParticipants) <= 0) {
       $scope.EligibleCostEstimatedParticipantsError = true;
-      $scope.EligibleCostSummaryMessage += "<p>The number of participants for expense type '" + $scope.EligibleCost.EligibleExpenseType.Caption + "' must be greater than 0</p>";
+      $scope.EligibleCostSummaryMessage += "<p>The number of participants for expense type '" + $scope.EligibleCost.EligibleExpenseType.Caption + "' must be greater than 0.</p>";
       validate = false;
     }
 
@@ -381,7 +388,7 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
    */
   function openAttachmentModal(title, attachment) {
     return ngDialog.openConfirm({
-      template: '/content/dialogs/_TrainingProviderAttachment.html',
+      template: '/content/dialogs/_TrainingCostAttachment.html',
       data: {
         title: title,
         attachment: attachment
@@ -442,7 +449,7 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
   };
 
   /**
-   * Open modal file uploader popup and allow user to updte the attachment and/or file.
+   * Open modal file uploader popup and allow user to update the attachment and/or file.
    * @function changeAttachment
    * @param {string} prop - The name of the property for this attachment.
    * @returns {void}

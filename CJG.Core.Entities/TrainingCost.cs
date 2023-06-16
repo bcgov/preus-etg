@@ -246,12 +246,13 @@ namespace CJG.Core.Entities
 		public void Clone(TrainingCost tc)
 		{
 			TrainingCostState = tc.TrainingCostState;
+
 			EstimatedParticipants = tc.EstimatedParticipants;
+			AgreedParticipants = tc.AgreedParticipants;
+			AgreedCommitment = tc.AgreedCommitment;
 			TotalEstimatedCost = tc.TotalEstimatedCost;
 			TotalEstimatedReimbursement = tc.TotalEstimatedReimbursement;
-			AgreedParticipants = tc.AgreedParticipants;
 			TotalAgreedMaxCost = tc.TotalAgreedMaxCost;
-			AgreedCommitment = tc.AgreedCommitment;
 		}
 		#endregion
 	}

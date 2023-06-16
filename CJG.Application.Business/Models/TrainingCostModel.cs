@@ -1,13 +1,12 @@
-﻿using CJG.Core.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using CJG.Core.Entities;
 
 namespace CJG.Application.Business.Models
 {
 	public class TrainingCostModel
 	{
-		#region Properties
 		public int GrantApplicationId { get; set; }
 		public int GrantProgramId { get; set; }
 		public ProgramTypes ProgramType { get; set; }
@@ -29,6 +28,10 @@ namespace CJG.Application.Business.Models
 		public decimal ESSAgreedAverage { get; set; }
 		public decimal ESSEstimatedAverage { get; set; }
 
+		public bool ShouldDisplayEmployerContribution { get; set; }
+		public bool ShouldDisplayESSSummary { get; set; }
+		public string UserGuidanceCostEstimates { get; set; }
+
 		public bool AllExpenseTypeAllowMultiple
 		{
 			get
@@ -37,42 +40,35 @@ namespace CJG.Application.Business.Models
 			}
 		}
 
-		public bool ShouldDisplayEmployerContribution { get; set; }
-		public bool ShouldDisplayESSSummary { get; set; }
-		public string UserGuidanceCostEstimates { get; set; }
-		#endregion
-
-		#region Constructors
 		public TrainingCostModel()
 		{
-
 		}
 
 		public TrainingCostModel(GrantApplication grantApplication, IEnumerable<EligibleExpenseTypeModel> AllEligibleExpenseTypes, IEnumerable<EligibleExpenseTypeModel> AutoIncludedEligibleExpenseTypes)
 		{
-			this.GrantApplicationId = grantApplication.Id;
-			this.GrantProgramId = grantApplication.GrantOpening.GrantStream.GrantProgramId;
-			this.ProgramType = grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId;
-			this.MaxReimbursementAmt = grantApplication.MaxReimbursementAmt;
-			this.ReimbursementRate = grantApplication.ReimbursementRate;
-			this.AgreedParticipants = grantApplication.TrainingCost.AgreedParticipants == 0 ? null : (int?)grantApplication.TrainingCost.AgreedParticipants;
-			this.EstimatedParticipants = grantApplication.TrainingCost.EstimatedParticipants == 0 ? null : (int?)grantApplication.TrainingCost.EstimatedParticipants;
+			GrantApplicationId = grantApplication.Id;
+			GrantProgramId = grantApplication.GrantOpening.GrantStream.GrantProgramId;
+			ProgramType = grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId;
+			MaxReimbursementAmt = grantApplication.MaxReimbursementAmt;
+			ReimbursementRate = grantApplication.ReimbursementRate;
+			AgreedParticipants = grantApplication.TrainingCost.AgreedParticipants == 0 ? null : (int?)grantApplication.TrainingCost.AgreedParticipants;
+			EstimatedParticipants = grantApplication.TrainingCost.EstimatedParticipants == 0 ? null : (int?)grantApplication.TrainingCost.EstimatedParticipants;
 
 			var eligibleCosts = !grantApplication.HasOfferBeenIssued() ? grantApplication.TrainingCost.EligibleCosts.Where(ec => !ec.AddedByAssessor).Select(ec => new EligibleCostModel(ec)).ToList() : grantApplication.TrainingCost.EligibleCosts.Select(ec => new EligibleCostModel(ec)).ToList();
 
-			if (eligibleCosts.Count() != AutoIncludedEligibleExpenseTypes.Count())
+			if (eligibleCosts.Count != AutoIncludedEligibleExpenseTypes.Count())
 			{
 				eligibleCosts.AddRange(AutoIncludedEligibleExpenseTypes.Where(t => !eligibleCosts.Select(e => e.EligibleExpenseType.Id).Contains(t.Id))
-					.Select(eet => new EligibleCostModel(eet) { EstimatedParticipants = this.EstimatedParticipants ?? 0 }).ToArray());
+					.Select(eet => new EligibleCostModel(eet) { EstimatedParticipants = EstimatedParticipants ?? 0 }).ToArray());
 			}
 
-			this.EligibleCosts = eligibleCosts.OrderBy(t => t.EligibleExpenseType.RowSequence).ThenBy(ec => ec.EligibleExpenseType.Caption).ToArray();
-			this.TotalEmployer = this.EligibleCosts.Sum(x => x.EstimatedEmployerContribution);
-			this.TotalEstimatedCost = this.EligibleCosts.Sum(x => x.EstimatedCost);
-			this.TotalRequest = this.EligibleCosts.Sum(x => x.EstimatedReimbursement);
-			this.ShouldDisplayEmployerContribution = grantApplication.ReimbursementRate != 1;
-			this.ShouldDisplayESSSummary = grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.WDAService;
-			this.UserGuidanceCostEstimates =
+			EligibleCosts = eligibleCosts.OrderBy(t => t.EligibleExpenseType.RowSequence).ThenBy(ec => ec.EligibleExpenseType.Caption).ToArray();
+			TotalEmployer = EligibleCosts.Sum(x => x.EstimatedEmployerContribution);
+			TotalEstimatedCost = EligibleCosts.Sum(x => x.EstimatedCost);
+			TotalRequest = EligibleCosts.Sum(x => x.EstimatedReimbursement);
+			ShouldDisplayEmployerContribution = grantApplication.ReimbursementRate != 1;
+			ShouldDisplayESSSummary = grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.WDAService;
+			UserGuidanceCostEstimates =
 				grantApplication.GrantOpening.GrantStream.ProgramConfiguration?.GrantPrograms.Count == 0 ?
 				grantApplication.GrantOpening.GrantStream.ProgramConfiguration.UserGuidanceCostEstimates
 				: grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramConfiguration.UserGuidanceCostEstimates;
@@ -80,48 +76,48 @@ namespace CJG.Application.Business.Models
 
 		public TrainingCostModel(GrantApplication grantApplication)
 		{
-			this.GrantApplicationId = grantApplication.Id;
-			this.GrantProgramId = grantApplication.GrantOpening.GrantStream.GrantProgramId;
-			this.ProgramType = grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId;
-			this.MaxReimbursementAmt = grantApplication.MaxReimbursementAmt;
-			this.ReimbursementRate = grantApplication.ReimbursementRate;
-			this.AgreedParticipants = grantApplication.TrainingCost.AgreedParticipants == 0 ? null : (int?)grantApplication.TrainingCost.AgreedParticipants;
-			this.EstimatedParticipants = grantApplication.TrainingCost.EstimatedParticipants == 0 ? null : (int?)grantApplication.TrainingCost.EstimatedParticipants;
-			this.UserGuidanceCostEstimates =
+			GrantApplicationId = grantApplication.Id;
+			GrantProgramId = grantApplication.GrantOpening.GrantStream.GrantProgramId;
+			ProgramType = grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId;
+			MaxReimbursementAmt = grantApplication.MaxReimbursementAmt;
+			ReimbursementRate = grantApplication.ReimbursementRate;
+			AgreedParticipants = grantApplication.TrainingCost.AgreedParticipants == 0 ? null : (int?)grantApplication.TrainingCost.AgreedParticipants;
+			EstimatedParticipants = grantApplication.TrainingCost.EstimatedParticipants == 0 ? null : (int?)grantApplication.TrainingCost.EstimatedParticipants;
+			UserGuidanceCostEstimates =
 				grantApplication.GrantOpening.GrantStream.ProgramConfiguration?.GrantPrograms.Count == 0 ?
 				grantApplication.GrantOpening.GrantStream.ProgramConfiguration.UserGuidanceCostEstimates
 				: grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramConfiguration.UserGuidanceCostEstimates;
 
-			this.EligibleCosts = grantApplication.TrainingCost.EligibleCosts
+			EligibleCosts = grantApplication.TrainingCost.EligibleCosts
 				.Select(ec => new EligibleCostModel(ec))
 				.OrderBy(t => t.EligibleExpenseType.RowSequence)
 				.ThenBy(ec => ec.EligibleExpenseType.Caption).ToArray();
 
-			this.TotalAgreedCost = this.EligibleCosts.Sum(x => x.AgreedCost);
-			this.TotalEstimatedCost = this.EligibleCosts.Sum(x => x.EstimatedCost);
+			TotalAgreedCost = EligibleCosts.Sum(x => x.AgreedCost);
+			TotalEstimatedCost = EligibleCosts.Sum(x => x.EstimatedCost);
 
 			if (grantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
 			{
-				this.TotalAgreedReimbursement = grantApplication.TrainingCost.AgreedCommitment;
-				this.TotalAgreedEmployer = this.TotalAgreedCost - this.TotalAgreedReimbursement;
+				TotalAgreedReimbursement = grantApplication.TrainingCost.AgreedCommitment;
+				TotalAgreedEmployer = TotalAgreedCost - TotalAgreedReimbursement;
 
-				this.TotalRequest = grantApplication.TrainingCost.TotalEstimatedReimbursement;
-				this.TotalEmployer = this.TotalEstimatedCost - this.TotalRequest;
+				TotalRequest = grantApplication.TrainingCost.TotalEstimatedReimbursement;
+				TotalEmployer = TotalEstimatedCost - TotalRequest;
 			}
 			else {
-				this.TotalAgreedEmployer = this.EligibleCosts.Sum(x => x.AgreedEmployerContribution);
-				this.TotalAgreedReimbursement = this.EligibleCosts.Sum(x => x.AgreedMaxReimbursement);
-				this.TotalEmployer = this.EligibleCosts.Sum(x => x.EstimatedEmployerContribution);
-				this.TotalRequest = this.EligibleCosts.Sum(x => x.EstimatedReimbursement);
+				TotalAgreedEmployer = EligibleCosts.Sum(x => x.AgreedEmployerContribution);
+				TotalAgreedReimbursement = EligibleCosts.Sum(x => x.AgreedMaxReimbursement);
+				TotalEmployer = EligibleCosts.Sum(x => x.EstimatedEmployerContribution);
+				TotalRequest = EligibleCosts.Sum(x => x.EstimatedReimbursement);
 			}
-			this.ShouldDisplayEmployerContribution = grantApplication.ReimbursementRate != 1;
-			this.ShouldDisplayESSSummary = grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.WDAService;
 
-			this.NewEligibleCost.AddedByAssessor = true;
+			ShouldDisplayEmployerContribution = grantApplication.ReimbursementRate != 1;
+			ShouldDisplayESSSummary = grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.WDAService;
 
-			this.ESSAgreedAverage = this.EligibleCosts.Where(x => x.ServiceType == ServiceTypes.EmploymentServicesAndSupports).Sum(x => x.AgreedMaxParticipantCost);
-			this.ESSEstimatedAverage = this.EligibleCosts.Where(x => x.ServiceType == ServiceTypes.EmploymentServicesAndSupports).Sum(x => x.EstimatedParticipantCost);
+			NewEligibleCost.AddedByAssessor = true;
+
+			ESSAgreedAverage = EligibleCosts.Where(x => x.ServiceType == ServiceTypes.EmploymentServicesAndSupports).Sum(x => x.AgreedMaxParticipantCost);
+			ESSEstimatedAverage = EligibleCosts.Where(x => x.ServiceType == ServiceTypes.EmploymentServicesAndSupports).Sum(x => x.EstimatedParticipantCost);
 		}
-		#endregion
 	}
 }

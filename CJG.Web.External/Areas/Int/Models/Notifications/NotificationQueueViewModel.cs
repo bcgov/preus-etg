@@ -1,14 +1,13 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace CJG.Web.External.Areas.Int.Models.Notifications
 {
-	public class NotificationQueueViewModel : BaseViewModel
+    public class NotificationQueueViewModel : BaseViewModel
 	{
-		#region Properties
 		public string RowVersion { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
@@ -42,9 +41,7 @@ namespace CJG.Web.External.Areas.Int.Models.Notifications
 		public string ErrorMessage { get; set; }
 		public DateTime? SendDate { get; set; }
 		public DateTime? SentOn { get; set; }
-		#endregion
 
-		#region Constructors
 		public NotificationQueueViewModel() { }
 
 		public NotificationQueueViewModel(NotificationQueue notification)
@@ -53,13 +50,12 @@ namespace CJG.Web.External.Areas.Int.Models.Notifications
 
 			Utilities.MapProperties(notification, this);
 
-			this.Name = notification.NotificationType?.Caption;
-			this.Description = notification.NotificationType?.Description;
-			this.Status = notification.State.GetDescription();
-			this.NotificationTypeCaption = notification.NotificationType?.Caption;
-			this.OrganizationCaption = notification.Organization.LegalName;
-			this.SentOn = notification.State == NotificationState.Sent ? notification.DateUpdated ?? notification.DateAdded : (DateTime?)null;
+			Name = notification.NotificationType?.Caption;
+			Description = notification.NotificationType?.Description;
+			Status = notification.State.GetDescription();
+			NotificationTypeCaption = notification.NotificationType?.Caption;
+			OrganizationCaption = notification.Organization.LegalName;
+			SentOn = notification.State == NotificationState.Sent ? notification.DateUpdated ?? notification.DateAdded : (DateTime?)null;
 		}
-		#endregion
 	}
 }

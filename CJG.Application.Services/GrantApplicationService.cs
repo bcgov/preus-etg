@@ -2055,10 +2055,11 @@ namespace CJG.Application.Services
 					entity.EstimatedCost = entity.EstimatedParticipants > 0 ? cost.EstimatedCost : 0;
 				}
 
+				entity.ExpenseExplanation = expenseType.RequireExplanation() ? cost.ExpenseExplanation : null;
+
 				foreach (var breakdown in cost.Breakdowns)
 				{
 					var breakdownEntity = Get<EligibleCostBreakdown>(breakdown.Id);
-
 
 					if (isInternal)
 					{

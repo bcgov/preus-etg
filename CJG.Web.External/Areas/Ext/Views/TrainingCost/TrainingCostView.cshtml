@@ -51,12 +51,9 @@
 
         <div id="ExpensePopup" class="js-expenses--add-edit">
             <button class="btn btn--secondary" ng-show="!EnableEdit" ng-if="model.AllExpenseTypeAllowMultiple" ng-disabled="model.EstimatedParticipants == null || model.EstimatedParticipants <= 0" ng-click="createEligibleCost()">Add new expense type</button>
-            <b style="margin-left:20px" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">Your maximum amount per participant is {{model.MaxReimbursementAmt | currency}}</b>
+            <b style="margin-left:20px">Your maximum amount per participant is {{model.MaxReimbursementAmt | currency}}</b>
             <div class="form well" ng-if="EnableEdit">
-                <h2 class="no-text-transform" ng-if="model.ProgramType == @((int)ProgramTypes.WDAService)">
-                    <span ng-if="!EligibleCost.EligibleExpenseType.AutoInclude && EligibleCost.EligibleExpenseType.AllowMultiple">Add or </span>Edit Expense
-                </h2>
-                <h2 class="no-text-transform" ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                <h2 class="no-text-transform">
                     Add or Edit Expense
                 </h2>
                 <div class="row--alert" ng-if="EligibleCostSummaryMessage">
@@ -70,17 +67,13 @@
                         <tr>
                             <th class="etg-table-col__expense-type">Expense type</th>
                             <th class="num-col etg-table-col__gov-contribution">
-                                Enter the number of participants to which this expense will apply
-                            </th>
-                            <th class="num-col etg-table-col__empty">
+                                Number of participants to which this expense applies
                             </th>
                             <th class="num-col etg-table-col__num-part">
-                                Enter the total expense for all participants
-                            </th>
-                            <th class="num-col etg-table-col__empty">
+                                Total expense
                             </th>
                             <th class="num-col etg-table-col__cost-per-part">
-                                Cost per Participant<br />(calculated)
+                                Cost per participant
                             </th>
                         </tr>
                         </thead>
@@ -110,7 +103,6 @@
                                     0
                                 </span>
                             </td>
-                            <td class="num-col"></td>
                             <td class="num-col">
                                 <span ng-if="!EligibleCost.EligibleExpenseType">
                                     0
@@ -119,11 +111,20 @@
                                     <input class="currency-width input-right-align" ng-model="EligibleCost.EstimatedCost" ng-class="{'has-error':EligibleCostEstimatedCostError}" ng-currency="13" ng-change="recalculate()">
                                 </span>
                             </td>
-                            <td class="num-col"></td>
                             <td class="num-col">
                                 <span>
                                     {{EligibleCost.EstimatedParticipantCost | currency}}
                                 </span>
+                            </td>
+                        </tr>
+                        <tr ng-if="EligibleCost.EligibleExpenseType && EligibleCost.EligibleExpenseType.RequireExpenseExplanation">
+                            <td colspan="4" style="border-top: 0; padding-top: 0;">
+                                <div>
+                                    <input class="input--full" placeholder="Please provide a description of the expense" ng-model="EligibleCost.ExpenseExplanation" ng-class="{'has-error':EligibleCostEstimatedParticipantsError}" maxlength="500">
+                                </div>
+                                <div ng-if="EligibleCost.EligibleExpenseType.Caption.startsWith('Other')" style="text-align: left; padding-top: 0.25em">
+                                    The following costs are not eligible: membership fees, subscription fees, annual, fees, professional association dues, software purchase/license, laptops, tablets and other hardware, equipment (e.g. boots and tools), and participant wages while in training.
+                                </div>
                             </td>
                         </tr>
                         </tbody>
@@ -197,7 +198,7 @@
 
             <div class="form__group">
                 <label class="form__label">Supporting documentation for Travel Expenses <abbr title="Required">*</abbr></label>
-                <p>One file of the following type may be attached: PDF, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}}MB.</p>
+                <p>One file of the following type may be attached: DOC, DOCX, PDF, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}}MB.</p>
                 <div ng-validation="errors.TravelExpenseDocument">
                     <div class="form__control" ng-if="model.TravelExpenseDocument.FileName">
                         <a class="link"

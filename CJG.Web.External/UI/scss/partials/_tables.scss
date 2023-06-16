@@ -193,7 +193,7 @@ table {
   }
 
   .table-col__expense-type {
-    width: 25%;
+    width: 30%;
 
     .selectmenu {
       width: calc(100% - 2px);
@@ -209,7 +209,7 @@ table {
   }
 
   .table-col__total-train-cost {
-    width: 17%;
+    width: 15%;
   }
 
   .table-col__emp-contribution {
@@ -226,6 +226,14 @@ table {
 
   .table-col__delete {
     width: 86px;
+  }
+
+  .table-col__edit-delete {
+    width: 162px;
+
+    span {
+        display: none;
+    }
   }
 }
 

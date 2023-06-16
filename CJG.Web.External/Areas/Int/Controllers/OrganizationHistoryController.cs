@@ -1,21 +1,21 @@
-﻿using CJG.Core.Interfaces.Service;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
 using CJG.Web.External.Areas.Int.Models.Organizations;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	/// <summary>
-	/// <typeparamref name="OrganizationHistoryController"/> class, provides endpoints to manage organization History.
-	/// </summary>
-	[RouteArea("Int")]
+    /// <summary>
+    /// <typeparamref name="OrganizationHistoryController"/> class, provides endpoints to manage organization History.
+    /// </summary>
+    [RouteArea("Int")]
 	[RoutePrefix("Organization")]
 	[AuthorizeAction(Privilege.AM1, Privilege.AM2, Privilege.AM3, Privilege.AM4, Privilege.AM5)]
 	public class OrganizationHistoryController : BaseController

@@ -291,6 +291,7 @@
     <Content Include="content\dialogs\_Message.html" />
     <Content Include="content\dialogs\_ReturnToAssessmentReason.html" />
     <Content Include="content\dialogs\_Reason.html" />
+    <Content Include="content\dialogs\_TrainingCostAttachment.html" />
     <Content Include="content\dialogs\_TrainingProviderAttachment.html" />
     <Content Include="content\dialogs\_ApplicationAttachments.html" />
     <Content Include="content\dialogs\_Confirmation.html" />
