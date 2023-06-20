@@ -681,7 +681,7 @@ namespace CJG.Application.Services
 
 			return GetGrantApplicationsForSummary(grantApplication)
 				.ToList()
-				.Sum(y => y.TrainingCost.TotalAgreedMaxCost);
+				.Sum(y => y.TrainingCost.AgreedCommitment);
 		}
 
 		private IQueryable<GrantApplication> GetGrantApplicationsForSummary(GrantApplication grantApplication)
