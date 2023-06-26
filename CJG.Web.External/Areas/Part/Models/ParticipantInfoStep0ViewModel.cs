@@ -10,8 +10,9 @@ namespace CJG.Web.External.Areas.Part.Models
         public int GrantApplicationId { get; set; }
 
         public Guid InvitationKey { get; set; }
+        public Guid? IndividualKey { get; set; }
 
-        public int DataCollected { get; set; }
+		public int DataCollected { get; set; }
         public DateTime AppDateTimeNow { get; set; } = AppDateTime.UtcNow;
 
         public bool ReportedByApplicant { get; set; }
@@ -27,5 +28,5 @@ namespace CJG.Web.External.Areas.Part.Models
 		public DateTime ApplicationSubmissionDate { get; set; }
 
 		public int? GrantProgramId { get; set; }
-	}
+    }
 }

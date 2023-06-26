@@ -173,5 +173,30 @@ namespace CJG.Core.Entities
 			Organization = grantApplication.Organization;
 			State = NotificationState.Queued;
 		}
+
+		public NotificationQueue(GrantApplication grantApplication, ParticipantInvitation participantInvitation, string sender, string body, string subject)
+		{
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
+			if (participantInvitation == null)
+				throw new ArgumentNullException(nameof(participantInvitation));
+			if (string.IsNullOrWhiteSpace(sender))
+				throw new ArgumentException($"The argument '{nameof(sender)}' is required.", nameof(sender));
+			if (string.IsNullOrWhiteSpace(body))
+				throw new ArgumentException($"The argument '{nameof(body)}' is required.", nameof(body));
+			if (string.IsNullOrWhiteSpace(subject))
+				throw new ArgumentException($"The argument '{nameof(subject)}' is required.", nameof(subject));
+
+			BatchNumber = $"N-G:{grantApplication.Id}-PIF:{participantInvitation.Id}";
+			//GrantApplicationId = grantApplication.Id;
+			//GrantApplication = grantApplication;
+			EmailSender = sender;
+			EmailBody = body;
+			EmailSubject = subject;
+			EmailRecipients = participantInvitation.EmailAddress;
+			OrganizationId = grantApplication.Organization.Id;
+			Organization = grantApplication.Organization;
+			State = NotificationState.Queued;
+		}
 	}
 }

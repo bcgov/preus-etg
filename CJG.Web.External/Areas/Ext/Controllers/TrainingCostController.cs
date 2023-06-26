@@ -27,7 +27,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		private readonly IGrantStreamService _grantStreamService;
 		private readonly IAttachmentService _attachmentService;
 
-
 		/// <summary>
 		/// Creates a new instance of a TrainingCostController object.
 		/// </summary>
@@ -108,6 +107,16 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				var existingFileUploaded = model.TravelExpenseDocument?.Id > 0;
 
 				// NEED Extra condition check here
+				var ga = _grantApplicationService.Get(model.GrantApplicationId);
+				var currentInvites = ga.ParticipantInvitations.Count;
+				var currentTakenInvites = ga.ParticipantInvitations.Count(i => i.ParticipantInvitationStatus != ParticipantInvitationStatus.Empty);
+
+				if (model.EstimatedParticipants < currentInvites)
+				{
+					if (model.EstimatedParticipants < currentTakenInvites)
+						ModelState.AddModelError("EstimatedParticipants", "You cannot decrease number of participants below your current Participant invitations. Please go to the Participant Information section and remove some invitations before reducing this amount.");
+				}
+
 				var haveAnyTravelExpenses = model.EligibleCosts.Any(ec => ec.EligibleExpenseType.Caption.StartsWith("Travel -"));
 				if (haveAnyTravelExpenses && !existingFileUploaded && !anyFilesUploaded)
 					ModelState.AddModelError("TravelExpenseDocument", "You must provide a travel expense document.");

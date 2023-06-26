@@ -40,7 +40,8 @@
 }
 
 .table--completion-report,
-.table--participants {
+.table--participants,
+.table--participant-invitations {
   @extend .table--datatable;
 
   thead th, table.dataTable thead td {
@@ -58,6 +59,32 @@
   @media (max-width: 900px) {
     overflow-x: scroll;
     min-width: 860px;
+  }
+}
+
+.table--participant-invitations {
+  .btn + .btn {
+    margin-left: 0.25em !important;
+  }
+
+  tr:first-child {
+    td {
+      padding-bottom: 15px !important;
+    }
+  }
+
+  th.email--address,
+  td.email--address {
+    min-width: 10em !important;
+  }
+
+  th.actions,
+  td.actions {
+    min-width: 8em !important;
+
+    .btn--primary {
+      font-weight: bold !important;
+    }
   }
 }
 

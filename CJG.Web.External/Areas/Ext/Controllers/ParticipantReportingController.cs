@@ -1,16 +1,16 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Areas.Ext.Models.ParticipantReporting;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
-using System;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
-	[RouteArea("Ext")]
+    [RouteArea("Ext")]
 	[ExternalFilter]
 	public class ParticipantReportingController : BaseController
 	{
@@ -88,6 +88,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
+		// ParticipantInvitationDetailsModel
 
 		/// <summary>
 		/// Launched when the 'Set Outcome' modal on the 'ParticipantsReport' page is clicked
@@ -182,6 +183,117 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			}
 			return Json(viewModel);
 		}
+
+
+		/// <summary>
+		/// Update the alternate contact information in the datasource.
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		[HttpPut]
+		[ValidateRequestHeader]
+		[PreventSpam]
+		[Route("Reporting/Participant/AddInvitation")]
+		public JsonResult AddParticipantInvitation(ParticipantInvitationModel model)
+		{
+			var viewModel = new ReportingViewModel();
+
+			try
+			{
+				if (ModelState.IsValid)
+				{
+					var grantApplication = _grantApplicationService.Get(model.Id);
+					var invitation = _participantService.GetInvitation(grantApplication.Id, model.InvitationId);
+
+					invitation.FirstName = model.FirstName;
+					invitation.LastName = model.LastName;
+					invitation.EmailAddress = model.EmailAddress;
+					invitation.ExpectedParticipantOutcome = model.ExpectedParticipantOutcome;
+					invitation.ParticipantInvitationStatus = ParticipantInvitationStatus.NotSent;
+
+					_participantService.UpdateParticipantInvitation(invitation);
+
+					viewModel = new ReportingViewModel(grantApplication, _participantService, this.HttpContext);
+				}
+				else
+				{
+					HandleModelStateValidation(model);
+					return Json(model, JsonRequestBehavior.AllowGet);
+				}
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+
+			return Json(viewModel, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
+		/// Update the alternate contact information in the datasource.
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		[HttpPut]
+		[ValidateRequestHeader]
+		[PreventSpam]
+		[Route("Reporting/Participant/RemoveInvitation")]
+		public JsonResult RemoveParticipantInvitation(ParticipantInvitationModel model)
+		{
+			var viewModel = new ReportingViewModel();
+
+			try
+			{
+				if (ModelState.IsValid)
+				{
+					var grantApplication = _grantApplicationService.Get(model.Id);
+					var invitation = _participantService.GetInvitation(grantApplication.Id, model.InvitationId);
+
+					_participantService.RemoveParticipantInvitation(invitation);
+
+					viewModel = new ReportingViewModel(grantApplication, _participantService, this.HttpContext);
+				}
+				else
+				{
+					HandleModelStateValidation(model);
+				}
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+
+			return Json(viewModel, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
+		/// Update the alternate contact information in the datasource.
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		[HttpPut]
+		[ValidateRequestHeader]
+		[PreventSpam]
+		[Route("Reporting/Participant/SendInvitation")]
+		public JsonResult SendParticipantInvitation(ParticipantInvitationModel model)
+		{
+			var viewModel = new ReportingViewModel();
+
+			try
+			{
+                var grantApplication = _grantApplicationService.Get(model.Id);
+                var invitation = _participantService.GetInvitation(grantApplication.Id, model.InvitationId);
+
+                _participantService.SendParticipantInvitation(invitation);
+            }
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+
+			return Json(viewModel, JsonRequestBehavior.AllowGet);
+		}
+
 		#endregion
 	}
 }

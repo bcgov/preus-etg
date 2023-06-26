@@ -1,0 +1,52 @@
+﻿<div>
+	<div class="dialog-header">
+		<h3>{{ngDialogData.title}}</h3>
+	</div>
+	<div class="dialog-content">
+		<div class="modal-content">
+            <div class="form well">
+                <div class="form__label">
+                    <p>Enter the details for your participant and click Save.</p>
+                </div>
+                <div class="form__group form__group--applicant-contact">
+                    <div class="form__label">First Name:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <input ng-model="ngDialogData.model.FirstName" class="input--medium" maxlength="250" ng-validation="ngDialogData.model.errors.FirstName" />
+                        </div>
+                    </div>
+
+                    <div class="form__label">Last Name:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <input ng-model="ngDialogData.model.LastName" class="input--medium" maxlength="250" ng-validation="ngDialogData.model.errors.LastName"  />
+                        </div>
+                    </div>
+
+                    <div class="form__label">Email:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <input ng-model="ngDialogData.model.EmailAddress" class="input--medium" maxlength="250" ng-validation="ngDialogData.model.errors.EmailAddress" />
+                        </div>
+                    </div>
+
+                    <div class="form__label">Expected job outcome:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper selectmenu input--large" ng-validation="ngDialogData.model.errors.ExpectedParticipantOutcome">
+                            <select class="input--large"
+                                    ng-model="ngDialogData.model.ExpectedParticipantOutcome"
+                                    ng-options="item.Key as item.Value for item in ngDialogData.model.ExpectedOutcomes"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+			<div class="modal-footer">
+				<div class="form well">
+					<button class="btn btn--secondary" data-disableonsubmit="false" ng-click="cancel()">Cancel</button>
+					<button class="btn btn--primary pull-right" ng-click="save()">Save</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

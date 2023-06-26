@@ -193,6 +193,8 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 				}
 			}
 
+			CreateParticipantInvitations(trainingCost);
+
 			UpdateAttachments(trainingCost, attachmentService, files);
 
 			trainingCost.RecalculateEstimatedCosts();
@@ -200,6 +202,57 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 
 			grantApplicationService.UpdateTrainingCosts(grantApplication);
 			return grantApplication;
+		}
+
+		private void CreateParticipantInvitations(TrainingCost trainingCost)
+		{
+			if (!trainingCost.GrantApplication.UsePIFInvitations)
+				return;
+
+			var invitations = trainingCost.GrantApplication.ParticipantInvitations.ToList();
+
+			var currentInvites = invitations.Count;
+			var currentTakenInvites = invitations.Count(i => i.ParticipantInvitationStatus != ParticipantInvitationStatus.Empty);
+			var expectedInvitations = trainingCost.EstimatedParticipants;
+
+			// If we have the required amount of invitations
+			if (expectedInvitations == currentInvites)
+				return;
+
+			if (currentInvites < expectedInvitations)
+			{
+				var createHowMany = expectedInvitations - currentInvites;
+				var invites = CreateParticipantInvitations(trainingCost, createHowMany);
+
+				foreach (var invite in invites)
+					trainingCost.GrantApplication.ParticipantInvitations.Add(invite);
+			}
+
+			if (expectedInvitations < currentInvites)
+			{
+				var invitesToRemove = invitations.Where(i => i.ParticipantInvitationStatus == ParticipantInvitationStatus.Empty);
+
+				foreach (var invite in invitesToRemove)
+					trainingCost.GrantApplication.ParticipantInvitations.Remove(invite);
+			}
+		}
+
+		private static List<ParticipantInvitation> CreateParticipantInvitations(TrainingCost trainingCost, int expectedInvitations)
+		{
+			var invites = new List<ParticipantInvitation>();
+
+			for (var i = 0; i < expectedInvitations; i++)
+			{
+				invites.Add(new ParticipantInvitation
+				{
+					IndividualKey = Guid.NewGuid(),
+					GrantApplicationId = trainingCost.GrantApplicationId,
+					ExpectedParticipantOutcome = 0, // Set no enum
+					ParticipantInvitationStatus = ParticipantInvitationStatus.Empty,
+				});
+			}
+
+			return invites;
 		}
 
 		/// <summary>

@@ -68,25 +68,31 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		/// Return participant information form view.
 		/// </summary>
 		/// <param name="invitationKey"></param>
+		/// <param name="individualKey"></param>
 		/// <returns></returns>
-		[Route("{invitationKey}")]
-		public ActionResult Index(string invitationKey)
+		[Route("{invitationKey}/{individualKey?}")]
+		public ActionResult Index(string invitationKey, string individualKey = null)
 		{
 			// Launched on page load - displays Step1 of the wizard
 			try
 			{
 				var model = new ParticipantInfoViewModel();
-				var expired = IsInvitationExpired(invitationKey, out Guid guidResult);
 
+				var expired = IsInvitationExpired(invitationKey, out Guid guidResult);
 				if (expired != null)
 					return expired;
+
+				var individualGuid = GetIndividualKey(individualKey);
+				var individualKeyValid = IsIndividualInviteValid(guidResult, individualGuid);
+				if (individualKeyValid != null)
+					return individualKeyValid;
 
 				var maxParticipantEnrolled = IsMaxParticipantEnrolled(new Guid(invitationKey));
 				if (maxParticipantEnrolled != null)
 					return maxParticipantEnrolled;
 
 				// Continue with the participant information collection process
-				PrepareStep1(ref model, guidResult);
+				PrepareStep1(ref model, guidResult, individualGuid);
 
 				return View(model);
 			}
@@ -103,13 +109,23 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			return RedirectToAction(nameof(SessionTimeout));
 		}
 
+		private Guid GetIndividualKey(string individualKey)
+		{
+			if (string.IsNullOrWhiteSpace(individualKey))
+				return Guid.Empty;
+
+			var valid = Guid.TryParse(individualKey, out var key);
+			return valid ? key : Guid.Empty;
+		}
+
 		/// <summary>
 		/// Return the applicant view.
 		/// </summary>
 		/// <param name="invitationKey"></param>
+		/// <param name="individualKey"></param>
 		/// <returns></returns>
-		[Route("Applicant/View/{invitationKey}")]
-		public ActionResult ApplicantReportingView(string invitationKey)
+		[Route("Applicant/View/{invitationKey}/{individualKey?}")]
+		public ActionResult ApplicantReportingView(string invitationKey, string individualKey = null)
 		{
 			// Launched on page load - displays Step1 of the wizard
 			try
@@ -126,8 +142,13 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				if (expired != null)
 					return expired;
 
+				var individualGuid = GetIndividualKey(individualKey);
+				var individualKeyValid = IsIndividualInviteValid(guidResult, individualGuid);
+				if (individualKeyValid != null)
+					return individualKeyValid;
+
 				// Continue with the participant information collection process
-				PrepareStep1(ref model, guidResult);
+				PrepareStep1(ref model, guidResult, individualGuid);
 				model.ParticipantInfoStep0ViewModel.ReportedByApplicant = true;
 				return View(model);
 			}
@@ -149,10 +170,11 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		/// </summary>
 		/// <param name="model"></param>
 		/// <param name="invitationKey"></param>
+		/// <param name="individualKey"></param>
 		/// <returns></returns>
 		[HttpPost]
-		[Route("{invitationKey}")]
-		public ActionResult Index(ParticipantInfoViewModel model, string invitationKey)
+		[Route("{invitationKey}/{individualKey?}")]
+		public ActionResult Index(ParticipantInfoViewModel model, string invitationKey, string individualKey = null)
 		{
 			try
 			{
@@ -160,6 +182,11 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				var expired = IsInvitationExpired(invitationKey, out Guid guidResult);
 				if (expired != null)
 					return expired;
+
+				var individualGuid = GetIndividualKey(individualKey);
+				var individualKeyValid = IsIndividualInviteValid(guidResult, individualGuid);
+				if (individualKeyValid != null)
+					return individualKeyValid;
 
 				// Validate the reCAPTCHA
 				var encodedResponse = Request.Form["g-recaptcha-response"];
@@ -173,7 +200,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				}
 
 				ControllerContext.SetAlert("An error has occurred, please try again. If the error continues, please contact support. Additional info:" + errorCodes, AlertType.Error, false);
-				PrepareStep1(ref model, guidResult);
+				PrepareStep1(ref model, guidResult, individualGuid);
 			}
 			catch (DbEntityValidationException e)
 			{
@@ -193,9 +220,10 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		/// Return the participant information form view.
 		/// </summary>
 		/// <param name="invitationKey"></param>
+		/// <param name="individualKey"></param>
 		/// <returns></returns>
-		[Route("Form/{invitationKey}")]
-		public ActionResult Form(string invitationKey)
+		[Route("Form/{invitationKey}/{individualKey?}")]
+		public ActionResult Form(string invitationKey, string individualKey = null)
 		{
 			if (TempData["CaptchaValidated"] as bool? != true)
 			{
@@ -209,9 +237,14 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			if (expired != null)
 				return expired;
 
+			var individualGuid = GetIndividualKey(individualKey);
+			var individualKeyValid = IsIndividualInviteValid(guidResult, individualGuid);
+			if (individualKeyValid != null)
+				return individualKeyValid;
+
 			try
 			{
-				PrepareStep1(ref model, guidResult);
+				PrepareStep1(ref model, guidResult, individualGuid);
 				PrepareStep2(ref model);
 				model.ParticipantInfoStep0ViewModel.Step = 2;
 			}
@@ -229,9 +262,10 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		/// Return the participant information form view.
 		/// </summary>
 		/// <param name="invitationKey"></param>
+		/// <param name="individualKey"></param>
 		/// <returns></returns>
-		[Route("Applicant/Form/{invitationKey}")]
-		public ActionResult ApplicantForm(string invitationKey)
+		[Route("Applicant/Form/{invitationKey}/{individualKey?}")]
+		public ActionResult ApplicantForm(string invitationKey, string individualKey = null)
 		{
 			var model = new ParticipantInfoViewModel();
 
@@ -239,9 +273,14 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			if (expired != null)
 				return expired;
 
+			var individualGuid = GetIndividualKey(individualKey);
+			var individualKeyValid = IsIndividualInviteValid(guidResult, individualGuid);
+			if (individualKeyValid != null)
+				return individualKeyValid;
+
 			try
 			{
-				PrepareStep1(ref model, guidResult);
+				PrepareStep1(ref model, guidResult, individualGuid);
 				PrepareStep2(ref model);
 				model.ParticipantInfoStep0ViewModel.ReportedByApplicant = true;
 				model.ParticipantInfoStep0ViewModel.Step = 2;
@@ -270,16 +309,15 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				// need to check that the agreement has not been cancelled
 				var expired = IsInvitationExpired(model.ParticipantInfoStep0ViewModel.InvitationKey, out Guid guidResult);
 				if (expired != null)
-				{
 					return expired;
-				}
-				else
-				{
-					var maxparticipation = IsMaxParticipantEnrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
-					if (maxparticipation != null)
-						return maxparticipation;
-				}
 
+				var individualKeyValid = IsIndividualInviteValid(guidResult, model.ParticipantInfoStep0ViewModel.IndividualKey ?? Guid.Empty);
+				if (individualKeyValid != null)
+					return individualKeyValid;
+
+				var maxparticipation = IsMaxParticipantEnrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
+				if (maxparticipation != null)
+					return maxparticipation;
 
 				ClearParticipantModelErrors(model);
 
@@ -324,15 +362,15 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				// need to check that the agreement has not been cancelled
 				var expired = IsInvitationExpired(model.ParticipantInfoStep0ViewModel.InvitationKey, out Guid guidResult);
 				if (expired != null)
-				{
 					return expired;
-				}
-				else
-				{
-					var maxparticipation = IsMaxParticipantEnrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
-					if (maxparticipation != null)
-						return maxparticipation;
-				}
+
+				var individualKeyValid = IsIndividualInviteValid(guidResult, model.ParticipantInfoStep0ViewModel.IndividualKey ?? Guid.Empty);
+				if (individualKeyValid != null)
+					return individualKeyValid;
+
+				var maxparticipation = IsMaxParticipantEnrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
+				if (maxparticipation != null)
+					return maxparticipation;
 
 				ClearParticipantModelErrors(model);
 
@@ -378,15 +416,15 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				// need to check that the agreement has not been cancelled
 				var expired = IsInvitationExpired(model.ParticipantInfoStep0ViewModel.InvitationKey, out Guid guidResult);
 				if (expired != null)
-				{
 					return expired;
-				}
-				else
-				{
-					var maxparticipation = IsMaxParticipantEnrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
-					if (maxparticipation != null)
-						return maxparticipation;
-				}
+
+				var individualKeyValid = IsIndividualInviteValid(guidResult, model.ParticipantInfoStep0ViewModel.IndividualKey ?? Guid.Empty);
+				if (individualKeyValid != null)
+					return individualKeyValid;
+
+				var maxparticipation = IsMaxParticipantEnrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
+				if (maxparticipation != null)
+					return maxparticipation;
 
 				ClearParticipantModelErrors(model);
 
@@ -433,15 +471,15 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				// need to check that the agreement has not been cancelled
 				var expired = IsInvitationExpired(model.ParticipantInfoStep0ViewModel.InvitationKey, out Guid guidResult);
 				if (expired != null)
-				{
 					return expired;
-				}
-				else
-				{
-					var maxparticipation = IsMaxParticipantEnrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
-					if (maxparticipation != null)
-						return maxparticipation;
-				}
+
+				var individualKeyValid = IsIndividualInviteValid(guidResult, model.ParticipantInfoStep0ViewModel.IndividualKey ?? Guid.Empty);
+				if (individualKeyValid != null)
+					return individualKeyValid;
+
+				var maxparticipation = IsMaxParticipantEnrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
+				if (maxparticipation != null)
+					return maxparticipation;
 
 				if (ModelState.IsValid)
 				{
@@ -665,14 +703,43 @@ namespace CJG.Web.External.Areas.Part.Controllers
 
 			if (grantApplication.GetMaxParticipants() <= grantApplication.ParticipantForms.Count)
 			{
-				_logger.Info($"The total number of allowed participants exceeded.");
+				_logger.Info("The total number of allowed participants exceeded.");
 				return RedirectToAction(nameof(MaxParticipantEnrolled));
-
-
 			}
 
 			return null;
 		}
+
+		private ActionResult IsIndividualInviteValid(Guid invitationKey, Guid individualKey)
+		{
+			var grantApplication = _grantApplicationService.Get(invitationKey);
+
+			if (!grantApplication.ParticipantInvitations.Any())
+				return null;
+
+			// If we have active invitations, we require a key here
+			if (individualKey == Guid.Empty)
+				return RedirectToAction("InvitationExpired");
+
+			var individualInvite = GetParticipantInvitation(invitationKey, individualKey);
+			if (individualInvite != null)
+				return null;
+
+			_logger.Info("The individual invite was either found, or complete.");
+			return RedirectToAction("InvitationExpired");
+		}
+
+		private ParticipantInvitation GetParticipantInvitation(Guid invitationKey, Guid individualKey)
+		{
+			var grantApplication = _grantApplicationService.Get(invitationKey);
+			var individualInvite = grantApplication
+				.ParticipantInvitations
+				.Where(pi => pi.ParticipantInvitationStatus == ParticipantInvitationStatus.Sent)
+				.FirstOrDefault(pi => pi.IndividualKey == individualKey);
+
+			return individualInvite;
+		}
+
 		private void ClearParticipantModelErrors(ParticipantInfoViewModel data)
 		{
 			for (int i = data.ParticipantInfoStep0ViewModel.Step + 1; i <= 6; i++)
@@ -690,7 +757,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			}
 		}
 
-		private void PrepareStep1(ref ParticipantInfoViewModel model, Guid invitationKey)
+		private void PrepareStep1(ref ParticipantInfoViewModel model, Guid invitationKey, Guid? individualKey = null)
 		{
 			// Prepare to display Step1 (Confirmation)
 			if (model == null)
@@ -706,7 +773,8 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				ApplicationSubmissionDate = grantApplication.DateSubmitted ?? DateTime.Now,
 				GrantProgramId = grantApplication.GrantOpening.GrantStream.GrantProgram.AccountCodeId,
 				DataCollected = 0,
-				InvitationKey = invitationKey
+				InvitationKey = invitationKey,
+				IndividualKey = individualKey
 			};
 
 			var employerNames = new[] { grantApplication.Organization.LegalName, grantApplication.Organization.DoingBusinessAs };
@@ -768,6 +836,18 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				model.ParticipantInfoStep2ViewModel.ParticipantOldestAge = participantOldestAge;
 				model.ParticipantInfoStep2ViewModel.ParticipantYoungestAge = participantYoungestAge;
 				model.ParticipantInfoStep2ViewModel.EnteredSINs = grantApplication.ParticipantForms.Select(x => x.SIN.Replace("-", "")).ToList();
+			}
+
+			if (model.ParticipantInfoStep0ViewModel.IndividualKey != null
+			    && model.ParticipantInfoStep0ViewModel.IndividualKey != Guid.Empty)
+			{
+				var individualInvite = GetParticipantInvitation(model.ParticipantInfoStep0ViewModel.InvitationKey, model.ParticipantInfoStep0ViewModel.IndividualKey.Value);
+				if (individualInvite != null)
+				{
+					model.ParticipantInfoStep2ViewModel.FirstName = individualInvite.FirstName;
+					model.ParticipantInfoStep2ViewModel.LastName = individualInvite.LastName;
+					model.ParticipantInfoStep2ViewModel.EmailAddress = individualInvite.EmailAddress;
+				}
 			}
 
 			PrimeStep2(ref model);
@@ -851,13 +931,13 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			LookupNocCodes(ref model);
 
 			var kvpEmploymentStatuses = _staticDataService.GetEmploymentStatuses().Select(x => new KeyValuePair<int, string>(x.Id, x.Caption)).ToList();
-			model.ParticipantInfoStep4ViewModel.EmploymentStatuses = kvpEmploymentStatuses.ToList();
+			model.ParticipantInfoStep4ViewModel.EmploymentStatuses = kvpEmploymentStatuses;
 
 			var kvpEmploymentTypes = _staticDataService.GetEmploymentTypes().Select(x => new KeyValuePair<int, string>(x.Id, x.Caption)).ToList();
-			model.ParticipantInfoStep4ViewModel.EmploymentTypes = kvpEmploymentTypes.ToList();
+			model.ParticipantInfoStep4ViewModel.EmploymentTypes = kvpEmploymentTypes;
 
 			var kvpTrainingResults = _staticDataService.GetTrainingResults().Select(x => new KeyValuePair<int, string>(x.Id, x.Caption)).ToList();
-			model.ParticipantInfoStep4ViewModel.TrainingResults = kvpTrainingResults.ToList();
+			model.ParticipantInfoStep4ViewModel.TrainingResults = kvpTrainingResults;
 
 			model.ParticipantInfoStep4ViewModel.ProgramType = model.ParticipantInfoStep1ViewModel.ProgramType;
 		}
@@ -1090,14 +1170,21 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					newParticipantForm.FutureNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.FutureNoc1Id.Value);
 				#endregion
 
+				var individualInvitation = GetParticipantInvitation(model.ParticipantInfoStep0ViewModel.InvitationKey, model.ParticipantInfoStep0ViewModel.IndividualKey ?? Guid.Empty);
+
+				if (individualInvitation != null)
+					newParticipantForm.ExpectedParticipantOutcome = individualInvitation.ExpectedParticipantOutcome;
+
 				if (HasConsentForm())
 				{
 					newParticipantForm.ParticipantConsentAttachmentId = GetConsentFormId();
 					Session["consentFormId"] = null;
 				}
 
-				// Save row to table
-				_participantService.Add(newParticipantForm);
+				var participantForm = _participantService.Add(newParticipantForm);
+
+				if (individualInvitation != null)
+					_participantService.CompleteIndividualInvitation(participantForm, individualInvitation);
 
 				// Set result message
 				this.SetAlert("Thank you. Your participant information has been saved successfully.", AlertType.Success);

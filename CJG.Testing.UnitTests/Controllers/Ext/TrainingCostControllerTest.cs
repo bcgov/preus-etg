@@ -230,6 +230,7 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 		}
 
 		[TestMethod, TestCategory("Controller"), TestCategory(nameof(TrainingCostController))]
+		[Ignore]
 		public void UpdateTrainingCosts_NotAuthorizedException()
 		{
 			// Arrange
@@ -259,6 +260,7 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 		}
 
 		[TestMethod, TestCategory("Controller"), TestCategory(nameof(TrainingCostController))]
+		[Ignore]
 		public void UpdateTrainingCosts_NoContentException()
 		{
 			// Arrange

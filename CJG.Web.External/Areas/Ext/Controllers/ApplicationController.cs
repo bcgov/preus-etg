@@ -283,6 +283,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					grantApplication.TrainingCost = grantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.EmployerGrant ? new TrainingCost(grantApplication, 0) : new TrainingCost(grantApplication, 1);
 
 					grantApplication.RequireAllParticipantsBeforeSubmission = grantOpening.GrantStream.RequireAllParticipantsBeforeSubmission;
+					grantApplication.UsePIFInvitations = true; // All new Applications will now use PIF Invitations instead of the open PIF structure.
 
 					// set start/end dates to user selected dates
 					var earliest = grantApplication.DateSubmitted ?? grantApplication.DateAdded;

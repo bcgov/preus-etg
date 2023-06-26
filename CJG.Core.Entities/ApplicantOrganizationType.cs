@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CJG.Core.Entities
+﻿namespace CJG.Core.Entities
 {
-    public class ApplicantOrganizationType : LookupTable<int>
+	public class ApplicantOrganizationType : LookupTable<int>
     {
         #region Constructors
         /// <summary>

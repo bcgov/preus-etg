@@ -9,7 +9,7 @@ using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 {
-    public class ReportingViewModel : BaseViewModel
+	public class ReportingViewModel : BaseViewModel
 	{
 		public int GrantApplicationId { get; set; }
 		public string ClaimRowVersion { get; set; }
@@ -33,9 +33,13 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 		public int MaxParticipantsAllowed { get; set; }
 		public bool AllowIncludeAll { get; set; }
 
+		public bool UseInvitations { get; set; }
+
 		public List<KeyValuePair<int, string>> ExpectedOutcomes { get; set; } = new List<KeyValuePair<int, string>>();
 
 		public IEnumerable<ParticipantViewModel> Participants { get; set; } = new List<ParticipantViewModel>();
+		public IEnumerable<ParticipantInvitationModel> ParticipantInvitations { get; set; } = new List<ParticipantInvitationModel>();
+
 		public List<ParticipantWarningModel> ParticipantWarnings { get; set; }
 
 		public ProgramTitleLabelViewModel ProgramTitleLabel { get; set; }
@@ -74,6 +78,7 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 
 			MaxParticipantsAllowed = grantApplication.GetMaxParticipants();
 			ShowEligibility = grantApplication.CanViewParticipantEligibilty();
+			UseInvitations = grantApplication.UsePIFInvitations;
 
 			ExpectedOutcomes = new List<KeyValuePair<int, string>> {
 				new KeyValuePair<int, string>(0, "Please select expected training outcome"),
@@ -91,7 +96,13 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 				.Select(pf => new ParticipantViewModel(pf, ShowEligibility, currentClaim))
 				.ToArray();
 
-			ParticipantWarnings = GetParticipantWarnings(grantApplication, participantService);
+            ParticipantInvitations = grantApplication.ParticipantInvitations
+                .OrderBy(pi => pi.DateAdded)
+                //.ThenBy(pi => pi.FirstName)
+                .Select(pi => new ParticipantInvitationModel(pi))
+                .ToList();
+
+            ParticipantWarnings = GetParticipantWarnings(grantApplication, participantService);
 			ParticipantsEditable = context.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditParticipants);
 
 			AllowIncludeAll = Participants.Any(pf => pf.ClaimReported) && ApplicationStateExternal.In(ApplicationStateExternal.ClaimReturned, ApplicationStateExternal.Approved, ApplicationStateExternal.AmendClaim, ApplicationStateExternal.ClaimApproved, ApplicationStateExternal.ClaimDenied);

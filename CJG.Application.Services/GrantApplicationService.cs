@@ -1092,7 +1092,7 @@ namespace CJG.Application.Services
 		public int RestartApplicationFromWithdrawn(int id)
 		{
 			var withdrawnApp = Get(id);
-			var grantApp = GrantApplicationExtensions.Clone(withdrawnApp);
+			var grantApp = withdrawnApp.Clone();
 
 			grantApp.FileNumber = null;
 			grantApp.ApplicationStateExternal = ApplicationStateExternal.Incomplete;
@@ -1105,11 +1105,8 @@ namespace CJG.Application.Services
 			grantApp.ApplicantPhysicalAddress = new ApplicationAddress(withdrawnApp.ApplicantPhysicalAddress);
 			grantApp.OrganizationAddress = new ApplicationAddress(withdrawnApp.OrganizationAddress);
 
-
-			foreach (var busContact in withdrawnApp.BusinessContactRoles)
-			{
-				grantApp.BusinessContactRoles.Add(new BusinessContactRole { UserId = busContact.UserId });
-			}
+			foreach (var businessContactRole in withdrawnApp.BusinessContactRoles)
+				grantApp.BusinessContactRoles.Add(new BusinessContactRole { UserId = businessContactRole.UserId });
 
 			//add GrantApplication to the database
 			grantApp = Add(grantApp);

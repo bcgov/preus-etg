@@ -1,4 +1,8 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
@@ -6,18 +10,13 @@ using CJG.Web.External.Areas.Int.Models;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	/// <summary>
-	/// <paramtyperef name="ParticipantController"/> class. Provides endpoints to manage the Participant partial form.
-	/// </summary>
-	[RouteArea("Int")]
+    /// <summary>
+    /// <paramtyperef name="ParticipantController"/> class. Provides endpoints to manage the Participant partial form.
+    /// </summary>
+    [RouteArea("Int")]
 	[RoutePrefix("Application")]
 	public class ParticipantController : BaseController
 	{

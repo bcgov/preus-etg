@@ -28,5 +28,12 @@ namespace CJG.Core.Interfaces.Service
 		void IncludeParticipant(ParticipantForm participant);
 		void ExcludeParticipant(ParticipantForm participant);
 		IEnumerable<ParticipantForm> GetParticipantFormsBySIN(string sin);
+
+		ParticipantInvitation UpdateParticipantInvitation(ParticipantInvitation participantInvitation);
+		ParticipantInvitation RemoveParticipantInvitation(ParticipantInvitation participantInvitation);
+		ParticipantInvitation SendParticipantInvitation(ParticipantInvitation participantInvitation);
+		ParticipantInvitation GetInvitation(int grantApplicationId, int invitationId);
+
+		ParticipantInvitation CompleteIndividualInvitation(ParticipantForm participantForm, ParticipantInvitation participantInvitation);
 	}
 }

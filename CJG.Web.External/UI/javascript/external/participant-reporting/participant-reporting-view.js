@@ -1,4 +1,4 @@
-app.controller('ParticipantReportingView', function ($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
+app.controller('ParticipantReportingView', function($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
 
   $scope.section = {
     name: 'ParticipantReportingView',
@@ -16,16 +16,108 @@ app.controller('ParticipantReportingView', function ($scope, $attrs, $controller
    **/
   function loadParticipants() {
     return $scope.load({
-      url: '/Ext/Reporting/Participants/' + $scope.section.grantApplicationId,
-      set: 'model'
-    })
-      .then(function () {
-        return $timeout(function () {
-          $scope.section.includeAll = $scope.model.Participants.every(function (participant) {
+        url: '/Ext/Reporting/Participants/' + $scope.section.grantApplicationId,
+        set: 'model'
+      })
+      .then(function() {
+        return $timeout(function() {
+          $scope.section.includeAll = $scope.model.Participants.every(function(participant) {
             return participant.IsIncludedInClaim;
           });
         });
       });
+  }
+
+  $scope.showParticipantDialog = function(invitation) {
+    return ngDialog.openConfirm({
+      template: '/content/dialogs/_AddParticipantInvitation.html',
+      data: {
+        title: 'Add Participant Invitation',
+        model: invitation
+      },
+      controller: function($scope) {
+
+        $scope.cancel = function() {
+            $scope.ngDialogData.model.FirstName = '';
+            $scope.ngDialogData.model.LastName = '';
+            $scope.ngDialogData.model.EmailAddress = '';
+            $scope.ngDialogData.model.ExpectedParticipantOutcome = 0;
+            Utils.clearErrors($scope.ngDialogData.model);
+
+            $scope.closeThisDialog();
+          },
+          $scope.save = function() {
+            Utils.clearErrors($scope.ngDialogData.model);
+
+            if ($scope.ngDialogData.model.FirstName.trim() === '')
+              Utils.initValue($scope.ngDialogData.model, 'errors.FirstName', 'First name is required');
+
+            if ($scope.ngDialogData.model.LastName.trim() === '')
+              Utils.initValue($scope.ngDialogData.model, 'errors.LastName', 'Last name is required');
+
+            let emailAddress = $scope.ngDialogData.model.EmailAddress.trim();
+            if (emailAddress === '')
+              Utils.initValue($scope.ngDialogData.model, 'errors.EmailAddress', 'Email address is required');
+
+            if (emailAddress !== '' && !isValidEmail(emailAddress))
+              Utils.initValue($scope.ngDialogData.model, 'errors.EmailAddress', 'Email address is not valid');
+
+            if ($scope.ngDialogData.model.ExpectedParticipantOutcome === 0)
+              Utils.initValue($scope.ngDialogData.model, 'errors.ExpectedParticipantOutcome', 'Expected participant outcome is required');
+
+            if (JSON.stringify($scope.ngDialogData.model.errors) !== '{}')
+              return angular.noop;
+
+            return $scope.confirm($scope.ngDialogData.model);
+          };
+      }
+    }).then(function(model) {
+      return addParticipantInvite(model);
+    });
+  }
+
+  function isValidEmail(email) {
+    return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email));
+  }
+
+  function addParticipantInvite(model) {
+    return $scope.load({
+      url: '/Ext/Reporting/Participant/AddInvitation',
+      method: 'PUT',
+      
+      data: {
+        model: model
+      },
+      set: 'model'
+    }).then(function (response) {
+      loadParticipants();
+    }).catch(angular.noop);
+  }
+
+  $scope.sendParticipantInvite = function(model) {
+    return $scope.load({
+      url: '/Ext/Reporting/Participant/SendInvitation',
+      method: 'PUT',
+      data: {
+        model: model
+      },
+      set: 'model'
+    }).then(function (response) {
+      loadParticipants();
+    }).catch(angular.noop);
+  }
+
+  $scope.removeParticipantInvite = function(model) {
+    return $scope.load({
+      url: '/Ext/Reporting/Participant/RemoveInvitation',
+      method: 'PUT',
+      data: {
+        model: model
+      },
+      set: 'model'
+    }).then(function (response) {
+      loadParticipants();
+    }).catch(angular.noop);
   }
 
   /**
@@ -35,8 +127,8 @@ app.controller('ParticipantReportingView', function ($scope, $attrs, $controller
    **/
   function init() {
     return Promise.all([
-      loadParticipants()
-    ])
+        loadParticipants()
+      ])
       .catch(angular.noop);
   }
 
