@@ -43,9 +43,14 @@ namespace CJG.Web.External.Areas.Ext.Models.Reporting
 
 		public GrantFileViewModel(GrantApplication grantApplication, IParticipantService participantService, ICompletionReportService completionReportService, IPrincipal user)
 		{
-			if (participantService == null) throw new ArgumentNullException(nameof(participantService));
-			if (completionReportService == null) throw new ArgumentNullException(nameof(completionReportService));
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
+			if (participantService == null)
+				throw new ArgumentNullException(nameof(participantService));
+
+			if (completionReportService == null)
+				throw new ArgumentNullException(nameof(completionReportService));
+
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
 
 			Id = grantApplication.Id;
 			ClaimType = grantApplication.GrantOpening.GrantStream.ProgramConfiguration.ClaimTypeId;

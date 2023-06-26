@@ -145,6 +145,7 @@ namespace CJG.Infrastructure.EF
 		#endregion
 
 		#region Participants
+		public DbSet<ParticipantInvitation> ParticipantInvitations => _context.ParticipantInvitations;
 		public DbSet<ParticipantForm> ParticipantForms => _context.ParticipantForms;
 		public DbSet<Participant> Participants => _context.Participants;
 		public DbSet<ParticipantCost> ParticipantCosts => _context.ParticipantCosts;

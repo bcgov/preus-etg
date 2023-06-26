@@ -17,13 +17,9 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 	[ExternalFilter]
 	public class ReportingController : BaseController
 	{
-		#region Variables
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IParticipantService _participantService;
 		private readonly ICompletionReportService _completionReportService;
-		#endregion
-
-		#region Constructors
 
 		/// <summary>
 		/// Creates a new instance of a ReportingController object.
@@ -42,7 +38,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			_participantService = participantService;
 			_completionReportService = completionReportService;
 		}
-		#endregion
 
 		#region Endpoints
 		/// <summary>

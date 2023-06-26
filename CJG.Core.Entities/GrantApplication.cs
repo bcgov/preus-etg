@@ -364,6 +364,11 @@ namespace CJG.Core.Entities
 		public DateTime? InvitationExpiresOn { get; set; }
 
 		/// <summary>
+		/// get/set - Require ParticipantForms to use the ParticipantInvitation system, or the deprecated self sign up method.
+		/// </summary>
+		public bool UsePIFInvitations { get; set; }
+
+		/// <summary>
 		/// get/set - Used to prevent payments when multiple training programs are present.
 		/// </summary>
 		public bool HoldPaymentRequests { get; set; } = false;
@@ -417,6 +422,8 @@ namespace CJG.Core.Entities
 		/// get - All of the participant forms submitted for the grant application.
 		/// </summary>
 		public virtual ICollection<ParticipantForm> ParticipantForms { get; set; } = new List<ParticipantForm>();
+
+		public virtual ICollection<ParticipantInvitation> ParticipantInvitations { get; set; } = new List<ParticipantInvitation>();
 
 		/// <summary>
 		/// get - All of the claims associated with this grant application.

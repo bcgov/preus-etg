@@ -1,27 +1,35 @@
-﻿using CJG.Core.Entities;
-using CJG.Core.Interfaces;
-using CJG.Core.Interfaces.Service;
-using CJG.Infrastructure.Entities;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces;
+using CJG.Core.Interfaces.Service;
+using CJG.Core.Interfaces.Service.Settings;
+using CJG.Infrastructure.Entities;
+using NLog;
 
 namespace CJG.Application.Services
 {
 	public class ParticipantService : Service, IParticipantService
 	{
+		private readonly INotificationService _notificationService;
+		private readonly INotificationSettings _notificationSettings;
+
 		/// <summary>
-		///
+		/// 
 		/// </summary>
 		/// <param name="context"></param>
 		/// <param name="httpContext"></param>
 		/// <param name="logger"></param>
-		public ParticipantService(IDataContext context, HttpContextBase httpContext, ILogger logger)
+		/// <param name="notificationService"></param>
+		/// <param name="notificationSettings"></param>
+		public ParticipantService(IDataContext context, HttpContextBase httpContext, ILogger logger, INotificationService notificationService, INotificationSettings notificationSettings)
 			: base(context, httpContext, logger)
 		{
+			_notificationService = notificationService;
+			_notificationSettings = notificationSettings;
 		}
 
 		/// <summary>
@@ -516,6 +524,100 @@ namespace CJG.Application.Services
 		public IEnumerable<ParticipantForm> GetParticipantFormsBySIN(string sin)
 		{
 			return _dbContext.ParticipantForms.Where(w => w.SIN == sin);
+		}
+
+		public ParticipantInvitation UpdateParticipantInvitation(ParticipantInvitation participantInvitation)
+		{
+				if (participantInvitation == null)
+					throw new ArgumentNullException(nameof(participantInvitation));
+
+				_dbContext.Update(participantInvitation);
+				_dbContext.Commit();
+
+				return participantInvitation;
+		}
+
+		public ParticipantInvitation RemoveParticipantInvitation(ParticipantInvitation participantInvitation)
+		{
+			if (participantInvitation == null)
+				throw new ArgumentNullException(nameof(participantInvitation));
+
+			participantInvitation.IndividualKey = Guid.NewGuid();
+			participantInvitation.FirstName = null;
+			participantInvitation.LastName = null;
+			participantInvitation.EmailAddress = null;
+			participantInvitation.ExpectedParticipantOutcome = 0;
+			participantInvitation.ParticipantInvitationStatus = ParticipantInvitationStatus.Empty;
+
+			if (participantInvitation.ParticipantForm != null)
+			{
+				participantInvitation.GrantApplication.ParticipantForms.Remove(participantInvitation.ParticipantForm);
+				_dbContext.ParticipantForms.Remove(participantInvitation.ParticipantForm);
+			}
+
+			_dbContext.Update(participantInvitation);
+			_dbContext.Commit();
+
+			return participantInvitation;
+		}
+
+		public ParticipantInvitation SendParticipantInvitation(ParticipantInvitation participantInvitation)
+		{
+			if (participantInvitation == null)
+				throw new ArgumentNullException(nameof(participantInvitation));
+
+			var grantApplication = participantInvitation.GrantApplication;
+
+//			var GrantProgramName = grantApplication?.GrantOpening?.GrantStream?.GrantProgram?.Name ?? throw new ArgumentNullException(nameof(grantApplication), "The argument 'grantApplication' must provide the grant program name.");
+			var startDate = grantApplication.StartDate.ToLocalTime();
+			var invitationBrowserLink = $"{_httpContext.Request.Url.GetLeftPart(UriPartial.Authority)}/Part/Information/{HttpUtility.UrlEncode(grantApplication.InvitationKey.ToString())}/{HttpUtility.UrlEncode(participantInvitation.IndividualKey.ToString())}";
+
+			var inviteSubject = $"Participant Information Form for {grantApplication.GetProgramDescription()}";
+			var inviteBody = $@"<p>Dear {participantInvitation.FirstName} {participantInvitation.LastName},</p>
+<p>You have been chosen by your employer to participate in {grantApplication.GetProgramDescription()} training starting on {startDate.ToLocalMorning():yyyy-MM-dd}. This training will be funded by your employer as well as through the B.C. Employer Training Grant program. If approved, your training expenses will be fully covered, and you will not be required to pay anything.</p>
+<p>To make sure you are eligible, please complete your Participant Information Form (PIF) as soon as possible. Click the following link using the Chrome or Firefox browser: <a href='{invitationBrowserLink}'>{invitationBrowserLink}</a></p>
+<p>For questions, please contact your employer. We are also available to answer any questions at <a href='mailto: ETG@gov.bc.ca'>ETG@gov.bc.ca</a>.</p>
+<p>Thank you,</p>
+<p>The B.C. Employer Training Grant</p>";
+
+			var sender = $"{_notificationSettings.DefaultSenderName} <{_notificationSettings.DefaultSenderAddress}>";
+
+			var email = new NotificationQueue(participantInvitation.GrantApplication, participantInvitation, sender, inviteBody, inviteSubject);
+			_notificationService.SendNotification(email);
+
+			participantInvitation.ParticipantInvitationStatus = ParticipantInvitationStatus.Sent;
+
+			_dbContext.Update(participantInvitation);
+			_dbContext.Commit();
+
+			return participantInvitation;
+		}
+
+		public ParticipantInvitation GetInvitation(int grantApplicationId, int invitationId)
+		{
+			var invitation = Get<ParticipantInvitation>(invitationId);
+
+			if (!_httpContext.User.CanPerformAction(invitation.GrantApplication, ApplicationWorkflowTrigger.ViewParticipants))
+				throw new NotAuthorizedException($"User does not have permission to view participants from grant application '{invitation.GrantApplication}'.");
+
+			return invitation;
+		}
+
+		public ParticipantInvitation CompleteIndividualInvitation(ParticipantForm participantForm, ParticipantInvitation participantInvitation)
+		{
+			if (participantForm == null)
+				throw new ArgumentNullException(nameof(participantForm));
+
+			if (participantInvitation == null)
+				throw new ArgumentNullException(nameof(participantInvitation));
+
+			participantInvitation.ParticipantForm = participantForm;
+			participantInvitation.ParticipantInvitationStatus = ParticipantInvitationStatus.Completed;
+
+			_dbContext.Update(participantInvitation);
+			_dbContext.Commit();
+
+			return participantInvitation;
 		}
 	}
 }

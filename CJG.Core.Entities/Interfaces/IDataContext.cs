@@ -135,6 +135,7 @@ namespace CJG.Infrastructure.Entities
 		#endregion
 
 		#region Participants
+		DbSet<ParticipantInvitation> ParticipantInvitations { get; }
 		DbSet<ParticipantForm> ParticipantForms { get; }
 		DbSet<ClaimParticipant> ClaimParticipants { get; }
 		DbSet<Participant> Participants { get; }

@@ -1465,92 +1465,93 @@ namespace CJG.Core.Entities
 
 		public static GrantApplication Clone(this GrantApplication grantApplication)
 		{
-			GrantApplication retval = new GrantApplication();
+			var application = new GrantApplication();
 
-			retval.ApplicationStateExternal = grantApplication.ApplicationStateExternal;
-			retval.ApplicationStateInternal = grantApplication.ApplicationStateInternal;
-			retval.FileNumber = grantApplication.FileNumber;
+			application.ApplicationStateExternal = grantApplication.ApplicationStateExternal;
+			application.ApplicationStateInternal = grantApplication.ApplicationStateInternal;
+			application.FileNumber = grantApplication.FileNumber;
 
-			retval.GrantOpeningId = grantApplication.GrantOpeningId;
-			retval.GrantOpening = grantApplication.GrantOpening;
+			application.GrantOpeningId = grantApplication.GrantOpeningId;
+			application.GrantOpening = grantApplication.GrantOpening;
 	
-			retval.ApplicationTypeId = grantApplication.ApplicationTypeId;
-			retval.ApplicationType = grantApplication.ApplicationType;
+			application.ApplicationTypeId = grantApplication.ApplicationTypeId;
+			application.ApplicationType = grantApplication.ApplicationType;
 
-			retval.HostingTrainingProgram = grantApplication.HostingTrainingProgram;
-			retval.ApplicantBCeID = grantApplication.ApplicantBCeID;
+			application.HostingTrainingProgram = grantApplication.HostingTrainingProgram;
+			application.ApplicantBCeID = grantApplication.ApplicantBCeID;
 
-			retval.ApplicantSalutation = grantApplication.ApplicantSalutation;
-			retval.ApplicantFirstName = grantApplication.ApplicantFirstName;
-			retval.ApplicantLastName = grantApplication.ApplicantLastName;
+			application.ApplicantSalutation = grantApplication.ApplicantSalutation;
+			application.ApplicantFirstName = grantApplication.ApplicantFirstName;
+			application.ApplicantLastName = grantApplication.ApplicantLastName;
 
-			retval.ApplicantPhoneNumber = grantApplication.ApplicantPhoneNumber;
-			retval.ApplicantPhoneExtension = grantApplication.ApplicantPhoneExtension;
-			retval.ApplicantJobTitle = grantApplication.ApplicantJobTitle;
+			application.ApplicantPhoneNumber = grantApplication.ApplicantPhoneNumber;
+			application.ApplicantPhoneExtension = grantApplication.ApplicantPhoneExtension;
+			application.ApplicantJobTitle = grantApplication.ApplicantJobTitle;
 
-			retval.OrganizationId = grantApplication.OrganizationId;
-			retval.Organization = grantApplication.Organization;
+			application.OrganizationId = grantApplication.OrganizationId;
+			application.Organization = grantApplication.Organization;
 
-			retval.OrganizationTypeId = grantApplication.OrganizationTypeId;
-			retval.OrganizationType = grantApplication.OrganizationType;
+			application.OrganizationTypeId = grantApplication.OrganizationTypeId;
+			application.OrganizationType = grantApplication.OrganizationType;
 
-			retval.OrganizationLegalName = grantApplication.OrganizationLegalName;
-			retval.OrganizationLegalStructureId = grantApplication.OrganizationLegalStructureId;
-			retval.OrganizationLegalStructure = grantApplication.OrganizationLegalStructure;
-			retval.OrganizationBusinessLicenseNumber = grantApplication.OrganizationBusinessLicenseNumber;
+			application.OrganizationLegalName = grantApplication.OrganizationLegalName;
+			application.OrganizationLegalStructureId = grantApplication.OrganizationLegalStructureId;
+			application.OrganizationLegalStructure = grantApplication.OrganizationLegalStructure;
+			application.OrganizationBusinessLicenseNumber = grantApplication.OrganizationBusinessLicenseNumber;
 		
-			retval.OrganizationBCeID = grantApplication.OrganizationBCeID;
+			application.OrganizationBCeID = grantApplication.OrganizationBCeID;
 
-			retval.OrganizationYearEstablished = grantApplication.OrganizationYearEstablished;
-			retval.OrganizationNumberOfEmployeesWorldwide = grantApplication.OrganizationNumberOfEmployeesWorldwide;
-			retval.OrganizationAnnualTrainingBudget = grantApplication.OrganizationAnnualTrainingBudget;
-			retval.OrganizationAnnualEmployeesTrained = grantApplication.OrganizationAnnualEmployeesTrained;
-			retval.PrioritySectorId = grantApplication.PrioritySectorId;
-			retval.OrganizationDoingBusinessAs = grantApplication.OrganizationDoingBusinessAs;
-			retval.NAICSId = grantApplication.NAICSId;			
+			application.OrganizationYearEstablished = grantApplication.OrganizationYearEstablished;
+			application.OrganizationNumberOfEmployeesWorldwide = grantApplication.OrganizationNumberOfEmployeesWorldwide;
+			application.OrganizationAnnualTrainingBudget = grantApplication.OrganizationAnnualTrainingBudget;
+			application.OrganizationAnnualEmployeesTrained = grantApplication.OrganizationAnnualEmployeesTrained;
+			application.PrioritySectorId = grantApplication.PrioritySectorId;
+			application.OrganizationDoingBusinessAs = grantApplication.OrganizationDoingBusinessAs;
+			application.NAICSId = grantApplication.NAICSId;			
 
-			retval.AssessorNote = grantApplication.AssessorNote;
-			retval.MaxReimbursementAmt = grantApplication.MaxReimbursementAmt;
-			retval.ReimbursementRate = grantApplication.ReimbursementRate;
+			application.AssessorNote = grantApplication.AssessorNote;
+			application.MaxReimbursementAmt = grantApplication.MaxReimbursementAmt;
+			application.ReimbursementRate = grantApplication.ReimbursementRate;
 
-			retval.OrganizationNumberOfEmployeesInBC = grantApplication.OrganizationNumberOfEmployeesInBC;
-			retval.RiskClassificationId = grantApplication.RiskClassificationId;
-			retval.RiskClassification = grantApplication.RiskClassification;
+			application.OrganizationNumberOfEmployeesInBC = grantApplication.OrganizationNumberOfEmployeesInBC;
+			application.RiskClassificationId = grantApplication.RiskClassificationId;
+			application.RiskClassification = grantApplication.RiskClassification;
 
-			retval.EligibilityConfirmed = grantApplication.EligibilityConfirmed;
-			retval.CanApplicantReportParticipants = grantApplication.CanApplicantReportParticipants;
-			retval.StartDate = grantApplication.StartDate;
-			retval.EndDate = grantApplication.EndDate;
-			retval.DateUpdated = grantApplication.DateUpdated;
+			application.EligibilityConfirmed = grantApplication.EligibilityConfirmed;
+			application.CanApplicantReportParticipants = grantApplication.CanApplicantReportParticipants;
+			application.StartDate = grantApplication.StartDate;
+			application.EndDate = grantApplication.EndDate;
+			application.DateUpdated = grantApplication.DateUpdated;
 
-			retval.CompletionReportId = grantApplication.CompletionReportId;
-			retval.CompletionReport = grantApplication.CompletionReport;
+			application.CompletionReportId = grantApplication.CompletionReportId;
+			application.CompletionReport = grantApplication.CompletionReport;
 
-			retval.HoldPaymentRequests = grantApplication.HoldPaymentRequests;
+			application.HoldPaymentRequests = grantApplication.HoldPaymentRequests;
 
-			retval.UsedDeliveryPartner = grantApplication.UsedDeliveryPartner;
-			retval.DeliveryPartnerId = grantApplication.DeliveryPartnerId;
+			application.UsedDeliveryPartner = grantApplication.UsedDeliveryPartner;
+			application.DeliveryPartnerId = grantApplication.DeliveryPartnerId;
 			
 
-			retval.OrganizationBusinessLicenseNumber = grantApplication.OrganizationBusinessLicenseNumber;
-			retval.CanReportParticipants = grantApplication.CanReportParticipants;
+			application.OrganizationBusinessLicenseNumber = grantApplication.OrganizationBusinessLicenseNumber;
+			application.CanReportParticipants = grantApplication.CanReportParticipants;
+			application.UsePIFInvitations = grantApplication.UsePIFInvitations;
 
-			retval.ScheduledNotificationsEnabled = grantApplication.ScheduledNotificationsEnabled;
+			application.ScheduledNotificationsEnabled = grantApplication.ScheduledNotificationsEnabled;
 
-			retval.AlternateSalutation = grantApplication.AlternateSalutation;
-			retval.AlternateFirstName = grantApplication.AlternateFirstName;
-			retval.AlternateLastName = grantApplication.AlternateLastName;
-			retval.AlternatePhoneNumber = grantApplication.AlternatePhoneNumber;
-			retval.AlternatePhoneExtension = grantApplication.AlternatePhoneExtension;
-			retval.AlternateJobTitle = grantApplication.AlternateJobTitle;
-			retval.AlternateEmail = grantApplication.AlternateEmail;
-			retval.IsAlternateContact = grantApplication.IsAlternateContact;
-			retval.HasRequestedAdditionalFunding = grantApplication.HasRequestedAdditionalFunding;
-			retval.DescriptionOfFundingRequested = grantApplication.DescriptionOfFundingRequested;
+			application.AlternateSalutation = grantApplication.AlternateSalutation;
+			application.AlternateFirstName = grantApplication.AlternateFirstName;
+			application.AlternateLastName = grantApplication.AlternateLastName;
+			application.AlternatePhoneNumber = grantApplication.AlternatePhoneNumber;
+			application.AlternatePhoneExtension = grantApplication.AlternatePhoneExtension;
+			application.AlternateJobTitle = grantApplication.AlternateJobTitle;
+			application.AlternateEmail = grantApplication.AlternateEmail;
+			application.IsAlternateContact = grantApplication.IsAlternateContact;
+			application.HasRequestedAdditionalFunding = grantApplication.HasRequestedAdditionalFunding;
+			application.DescriptionOfFundingRequested = grantApplication.DescriptionOfFundingRequested;
 
-			retval.BusinessCase = grantApplication.BusinessCase;
+			application.BusinessCase = grantApplication.BusinessCase;
 
-			return retval;
+			return application;
 		}
 
 		#region Training Costs

@@ -70,7 +70,7 @@ app.controller('GrantOpeningView', function ($scope, $attrs, $controller, $timeo
           backup();
           $scope.setAlert({ 
             response: { status: 200 }, 
-            message: 'Grant Openining has been ' + $scope.getOpeningStateLabel($scope.ngDialogData.model.State).toLowerCase() + ' successfully.' });
+            message: 'Grant Opening has been ' + $scope.getOpeningStateLabel($scope.ngDialogData.model.State).toLowerCase() + ' successfully.' });
             $event.target.setAttribute("disabled", false);
         })
       }).catch(angular.noop);
