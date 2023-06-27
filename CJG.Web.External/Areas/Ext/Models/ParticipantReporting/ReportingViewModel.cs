@@ -110,19 +110,15 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 			ProgramTitleLabel = new ProgramTitleLabelViewModel(grantApplication, false);
 
 			ProgramType = grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId;
-			InvitationBrowserLink = $"{context.Request.Url.GetLeftPart(UriPartial.Authority)}/Part/Information/{HttpUtility.UrlEncode(grantApplication.InvitationKey.ToString())}";
 
-			var invitation = $"As this training is being funded through the {GrantProgramName}, you must complete a participant information form using the following link:\r\n\r\n{InvitationBrowserLink}\r\n\r\n";
+			InvitationBrowserLink = $"{context.Request.Url.GetLeftPart(UriPartial.Authority)}/Part/Information/{HttpUtility.UrlEncode(grantApplication.InvitationKey.ToString())}";
 			InvitationEmailText =
 				"Dear {{participant}},\r\n\r\n" +
-				"You have been identified as a participant for the following training program:\r\n\r\n" +
-				$"{grantApplication.GetProgramDescription()}\r\n" +
-				$"Start Date: {StartDate.ToLocalMorning():yyyy-MM-dd}\r\n" +
-				$"Location: {grantApplication.GetProviderLocation()}\r\n\r\n" +
-				$"{invitation}" +
-				"Please use a current version of Chrome or Firefox to enter participant information.\r\n\r\n" +
-				$"Please complete your participant information form prior to midnight on {ParticipantReportingDueDate:yyyy-MM-dd}. " +
-				"If you do not complete this form, you may not be able to participate in the training.";
+				$"You have been chosen by your employer to participate in {grantApplication.GetProgramDescription()} training starting on {StartDate.ToLocalMorning():yyyy-MM-dd}. This training will be funded by your employer as well as through the B.C. Employer Training Grant program. If approved, your training expenses will be fully covered, and you will not be required to pay anything.\r\n\r\n" +
+				$"To make sure you are eligible, please complete your Participant Information Form (PIF) as soon as possible. Click the following link using the Chrome or Firefox browser: { InvitationBrowserLink }\r\n\r\n" +
+				"For questions, please contact your employer. We are also available to answer any questions at ETG@gov.bc.ca.\r\n\r\n" +
+				"Thank you,\r\n" +
+				"The B.C. Employer Training Grant";
 		}
 
 		private List<ParticipantWarningModel> GetParticipantWarnings(GrantApplication grantApplication, IParticipantService participantService)

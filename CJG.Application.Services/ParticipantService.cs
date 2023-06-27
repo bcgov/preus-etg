@@ -572,7 +572,7 @@ namespace CJG.Application.Services
 			var startDate = grantApplication.StartDate.ToLocalTime();
 			var invitationBrowserLink = $"{_httpContext.Request.Url.GetLeftPart(UriPartial.Authority)}/Part/Information/{HttpUtility.UrlEncode(grantApplication.InvitationKey.ToString())}/{HttpUtility.UrlEncode(participantInvitation.IndividualKey.ToString())}";
 
-			var inviteSubject = $"Participant Information Form for {grantApplication.GetProgramDescription()}";
+			var inviteSubject = $"Invitation to Participate in {grantApplication.GetProgramDescription()} - Training Funded by the B.C. Employer Training Grant";
 			var inviteBody = $@"<p>Dear {participantInvitation.FirstName} {participantInvitation.LastName},</p>
 <p>You have been chosen by your employer to participate in {grantApplication.GetProgramDescription()} training starting on {startDate.ToLocalMorning():yyyy-MM-dd}. This training will be funded by your employer as well as through the B.C. Employer Training Grant program. If approved, your training expenses will be fully covered, and you will not be required to pay anything.</p>
 <p>To make sure you are eligible, please complete your Participant Information Form (PIF) as soon as possible. Click the following link using the Chrome or Firefox browser: <a href='{invitationBrowserLink}'>{invitationBrowserLink}</a></p>
