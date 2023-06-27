@@ -270,7 +270,7 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
         validate = false;
       }
       if ($scope.EligibleCost.EligibleExpenseType.RequireExpenseExplanation && $scope.EligibleCost.ExpenseExplanation.trim().length <= 0) {
-        $scope.EligibleCostEstimatedParticipantsError = true;
+        $scope.EligibleCostRequiredDescriptionError = true;
         $scope.EligibleCostSummaryMessage += "<p>A description of the expense '" + $scope.EligibleCost.EligibleExpenseType.Caption + "' must be provided.</p>";
         validate = false;
       }
@@ -295,6 +295,7 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
     $scope.EligibleCostExpenseTypeIdError = false;
     $scope.EligibleCostEstimatedParticipantsError = false;
     $scope.EligibleCostEstimatedCostError = false;
+    $scope.EligibleCostRequiredDescriptionError = false;
     $scope.EligibleCostSummaryMessage = "";
   }
 

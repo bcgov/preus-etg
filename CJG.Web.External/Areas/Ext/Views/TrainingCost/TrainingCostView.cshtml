@@ -120,7 +120,7 @@
                         <tr ng-if="EligibleCost.EligibleExpenseType && EligibleCost.EligibleExpenseType.RequireExpenseExplanation">
                             <td colspan="4" style="border-top: 0; padding-top: 0;">
                                 <div>
-                                    <input class="input--full" placeholder="Please provide a description of the expense" ng-model="EligibleCost.ExpenseExplanation" ng-class="{'has-error':EligibleCostEstimatedParticipantsError}" maxlength="500">
+                                    <input class="input--full" placeholder="Please provide a description of the expense" ng-model="EligibleCost.ExpenseExplanation" ng-class="{'has-error':EligibleCostRequiredDescriptionError}" maxlength="500">
                                 </div>
                                 <div ng-if="EligibleCost.EligibleExpenseType.Caption.startsWith('Other')" style="text-align: left; padding-top: 0.25em">
                                     The following costs are not eligible: membership fees, subscription fees, annual, fees, professional association dues, software purchase/license, laptops, tablets and other hardware, equipment (e.g. boots and tools), and participant wages while in training.
