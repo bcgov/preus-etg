@@ -17,7 +17,9 @@
             <tr>
                 <td>
                     {{cost.EligibleExpenseType.Caption}}
-                    <span ng-if="cost.EligibleExpenseType.RequireExpenseExplanation"><br /><em>{{ cost.ExpenseExplanation }}</em></span>
+                    <div ng-if="cost.EligibleExpenseType.RequireExpenseExplanation" style="display: inline-block; padding-top: 0.5em">
+                        <em>{{ cost.ExpenseExplanation }}</em>
+                    </div>
                 </td>
                 <td class="num-col">
                     <span ng-if="cost.EligibleExpenseType.ServiceType != @((int)ServiceTypes.Administration)">

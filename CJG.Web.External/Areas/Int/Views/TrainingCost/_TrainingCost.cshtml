@@ -305,7 +305,7 @@
                         <tr ng-if="section.eligibleCost.EligibleExpenseType && section.eligibleCost.EligibleExpenseType.RequireExpenseExplanation">
                             <td colspan="4" style="border-top: 0; padding-top: 0;">
                                 <div>
-                                    <input class="input--full" ng-model="section.eligibleCost.ExpenseExplanation" placeholder="Description of the expense" ng-validation="errors.eligibleCost.ExpenseExplanation">
+                                    <textarea class="input--full textarea--shorter" ng-model="section.eligibleCost.ExpenseExplanation" placeholder="Description of the expense" ng-validation="errors.eligibleCost.ExpenseExplanation" maxlength="500"></textarea>
                                 </div>
                             </td>
                             <td colspan="2" style="border-top: 0; padding-top: 0;"></td>

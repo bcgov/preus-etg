@@ -96,6 +96,10 @@ textarea {
   }
 }
 
+.textarea--shorter {
+  min-height: 8em;
+}
+
 .textarea--short {
   min-height: 10em;
 }
