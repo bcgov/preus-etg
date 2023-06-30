@@ -541,7 +541,11 @@ namespace CJG.Application.Services
 
 		private int GetFirstTimeApplicantScore(GrantApplication grantApplication, PrioritizationThreshold threshold)
 		{
+			var defaultProgramId = GetDefaultGrantProgramId();
+
 			var existingApplications = _dbContext.GrantApplications
+				.Where(ga => ga.GrantOpening.GrantStream.GrantProgramId == defaultProgramId)
+				.Where(ga => ga.ApplicationStateInternal != ApplicationStateInternal.Draft)
 				.Where(ga => ga.OrganizationId == grantApplication.OrganizationId)
 				.Where(ga => ga.Id != grantApplication.Id);
 
