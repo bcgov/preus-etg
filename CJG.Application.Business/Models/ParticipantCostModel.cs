@@ -1,11 +1,10 @@
-﻿using CJG.Core.Entities;
-using System;
+﻿using System;
+using CJG.Core.Entities;
 
 namespace CJG.Application.Business
 {
 	public class ParticipantCostModel
 	{
-		#region Properties
 		public int Id { get; set; }
 		public string RowVersion { get; set; }
 		public string Name { get; set; }
@@ -17,9 +16,7 @@ namespace CJG.Application.Business
 		public decimal AssessedReimbursement { get; set; }
 		public double Rate { get; set; }
 		public int ParticipantFormId { get; set; }
-		#endregion
 
-		#region Constructors
 		public ParticipantCostModel()
 		{
 
@@ -29,19 +26,18 @@ namespace CJG.Application.Business
 			if (participantCost == null)
 				throw new ArgumentNullException(nameof(participantCost));
 
-			this.Id = participantCost.Id;
-			this.RowVersion = participantCost.RowVersion != null ? Convert.ToBase64String(participantCost.RowVersion) : null;
-			this.Name = $"{participantCost.ParticipantForm?.LastName}, {participantCost.ParticipantForm?.FirstName}";
-			this.ClaimParticipantCost = participantCost.ClaimParticipantCost;
-			this.ClaimEmployerContribution = participantCost.ClaimEmployerContribution;
-			this.ClaimReimbursement = participantCost.ClaimReimbursement;
-			this.AssessedParticipantCost = participantCost.AssessedParticipantCost;
-			this.AssessedEmployerContribution = participantCost.AssessedEmployerContribution;
-			this.AssessedReimbursement = participantCost.AssessedReimbursement;
-			this.ParticipantFormId = participantCost.ParticipantFormId;
+			Id = participantCost.Id;
+			RowVersion = participantCost.RowVersion != null ? Convert.ToBase64String(participantCost.RowVersion) : null;
+			Name = $"{participantCost.ParticipantForm?.LastName}, {participantCost.ParticipantForm?.FirstName}";
+			ClaimParticipantCost = participantCost.ClaimParticipantCost;
+			ClaimEmployerContribution = participantCost.ClaimEmployerContribution;
+			ClaimReimbursement = participantCost.ClaimReimbursement;
+			AssessedParticipantCost = participantCost.AssessedParticipantCost;
+			AssessedEmployerContribution = participantCost.AssessedEmployerContribution;
+			AssessedReimbursement = participantCost.AssessedReimbursement;
+			ParticipantFormId = participantCost.ParticipantFormId;
 
-			this.Rate = rate;
+			Rate = rate;
 		}
-		#endregion
 	}
 }

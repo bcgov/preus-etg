@@ -32,7 +32,7 @@ app.controller('ClaimAssessmentDetails', function ($scope, $attrs, $controller, 
   * @returns {Promise}
   **/
   $scope.init = function () {
-    return Promise.all([,
+    return Promise.all([
       loadClaim()
     ]).catch(angular.noop);
   }
@@ -128,83 +128,44 @@ app.controller('ClaimAssessmentDetails', function ($scope, $attrs, $controller, 
    */
   $scope.recalculateTrainingCost = function (claimEligibleCost, override) {
     $scope.errors = {};
-    if ($scope.model.ProgramType !== 1) {
-      var override = typeof (override) === 'undefined' ? false : true;
-      var assessedCost = claimEligibleCost.AssessedCost == null ? 0 : claimEligibleCost.AssessedCost;
-      var claimParticipants = claimEligibleCost.AssessedParticipants == null ? 0 : claimEligibleCost.AssessedParticipants;
 
-      // A skills training component assessed cost is the total of its breakdowns.
-      if (claimEligibleCost.Breakdowns != null && claimEligibleCost.Breakdowns.length > 0 && claimEligibleCost.ServiceType === utils.ServiceTypes.SkillsTraining) {
-        claimEligibleCost.AssessedCost = 0;
-        for (var i = 0; i < claimEligibleCost.Breakdowns.length; i++) {
-          claimEligibleCost.AssessedCost += (claimEligibleCost.Breakdowns[i].AssessedCost * 1);
-        }
-        assessedCost = claimEligibleCost.AssessedCost;
-      }
-
-      claimEligibleCost.AssessedMaxParticipantCost = claimParticipants == 0 ? 0 : MathFunction.truncate(assessedCost / claimParticipants * 100);
-      if (override) {
-        claimEligibleCost.OverrideRate = claimEligibleCost.AssessedMaxParticipantReimbursementCost / claimEligibleCost.AssessedMaxParticipantCost;
-
-        claimEligibleCost.ParticipantCosts.map(function (participantCost) {
-          participantCost.AssessedReimbursement = MathFunction.truncate(participantCost.AssessedParticipantCost * claimEligibleCost.OverrideRate * 100);
-          participantCost.AssessedEmployerContribution = MathFunction.round((participantCost.AssessedParticipantCost - participantCost.AssessedReimbursement) * 100) / 100;
-        });
-      } else {
-        claimEligibleCost.AssessedMaxParticipantReimbursementCost = MathFunction.truncate(claimEligibleCost.AssessedMaxParticipantCost * claimEligibleCost.OverrideRate * 100);
-
-        // Clear participant costs
-        claimEligibleCost.ParticipantCosts.map(function (participantCost) {
-          participantCost.AssessedParticipantCost = 0;
-          participantCost.AssessedReimbursement = 0;
-          participantCost.AssessedEmployerContribution = 0;
-        });
-      }
-      claimEligibleCost.AssessedReimbursementCost = MathFunction.truncate(assessedCost * claimEligibleCost.OverrideRate * 100);
-      claimEligibleCost.AssessedEmployerContribution = assessedCost - claimEligibleCost.AssessedReimbursementCost;
-      claimEligibleCost.AssessedParticipantEmployerContribution = MathFunction.round((claimEligibleCost.AssessedMaxParticipantCost - claimEligibleCost.AssessedMaxParticipantReimbursementCost) * 100) / 100;
-
-      if (claimEligibleCost.ParticipantCosts != null) {
-        claimEligibleCost.TotalAssessedParticipantReimbursement = claimEligibleCost.ParticipantCosts.reduce(function (a, b) {
-          return a + b.AssessedReimbursement;
-        }, 0);
-      }
-
-      validateClaimEligibleCost(claimEligibleCost);
-      calculateGrantTotal();
-    } else {
-      if (!$.isNumeric(claimEligibleCost.AssessedCost)) {
-        claimEligibleCost.AssessedCost = 0;
-      }
-      var assessedCost = claimEligibleCost.AssessedCost;
-      var claimParticipants = claimEligibleCost.AssessedParticipants == null ? 0 : claimEligibleCost.AssessedParticipants;
-
-      claimEligibleCost.AssessedMaxParticipantCost = (assessedCost === 0 || claimParticipants === 0) ? 0 : MathFunction.truncate(assessedCost / claimParticipants * 100);
-
-      claimEligibleCost.AssessedMaxParticipantReimbursementCost = Math.min(
-        (assessedCost === 0) ? 0 : MathFunction.truncate(assessedCost / claimParticipants * 100),
-        (assessedCost === 0) ? 0 : MathFunction.truncate($scope.model.AgreedMaxCommittment / $scope.model.MaximumParticipants * 100),
-        (assessedCost === 0) ? 0 : MathFunction.truncate((assessedCost / claimParticipants) * claimEligibleCost.ReimbursementRate * 100),
-        claimEligibleCost.AgreedMaxParticipantCost);
-
-      claimEligibleCost.AssessedParticipantEmployerContribution = (assessedCost === 0) ? 0 : MathFunction.truncate((claimEligibleCost.AssessedMaxParticipantCost - claimEligibleCost.AssessedMaxParticipantReimbursementCost) * 100);
-
-      if (claimEligibleCost.ParticipantCosts != null) {
-        claimEligibleCost.TotalAssessedParticipantReimbursement = claimEligibleCost.ParticipantCosts.reduce(function (a, b) {
-          return a + b.AssessedReimbursement;
-        }, 0);
-      }
-
-      // Clear participant costs
-      claimEligibleCost.ParticipantCosts.map(function (participantCost) {
-        participantCost.AssessedParticipantCost = 0;
-        participantCost.AssessedReimbursement = 0;
-        participantCost.AssessedEmployerContribution = 0;
-      });
-
-      validateClaimEligibleCost(claimEligibleCost);
-      calculateGrantTotal();
+    if (!$.isNumeric(claimEligibleCost.AssessedCost)) {
+      claimEligibleCost.AssessedCost = 0;
     }
+    var assessedCost = claimEligibleCost.AssessedCost;
+    var claimParticipants = claimEligibleCost.AssessedParticipants == null ? 0 : claimEligibleCost.AssessedParticipants;
+
+    claimEligibleCost.AssessedMaxParticipantCost = (assessedCost === 0 || claimEligibleCost.AssessedParticipants === 0)
+      ? 0
+      : MathFunction.truncate(assessedCost / claimEligibleCost.AgreedMaxParticipants * 100);
+    // CJG-1183
+          claimEligibleCost.AssessedMaxParticipantCost = claimEligibleCost.AgreedMaxParticipantCost;
+
+    claimEligibleCost.AssessedMaxParticipantReimbursementCost = Math.min(
+      (assessedCost === 0) ? 0 : MathFunction.truncate(assessedCost / claimParticipants * 100),
+      (assessedCost === 0) ? 0 : MathFunction.truncate($scope.model.AgreedMaxCommittment / $scope.model.MaximumParticipants * 100),
+      (assessedCost === 0) ? 0 : MathFunction.truncate((assessedCost / claimParticipants) * claimEligibleCost.ReimbursementRate * 100),
+      claimEligibleCost.AgreedMaxParticipantCost);
+
+    claimEligibleCost.AssessedParticipantEmployerContribution = (assessedCost === 0)
+      ? 0
+      : MathFunction.truncate((claimEligibleCost.AssessedMaxParticipantCost - claimEligibleCost.AssessedMaxParticipantReimbursementCost) * 100);
+
+    if (claimEligibleCost.ParticipantCosts != null) {
+      claimEligibleCost.TotalAssessedParticipantReimbursement = claimEligibleCost.ParticipantCosts.reduce(function (a, b) {
+        return a + b.AssessedReimbursement;
+      }, 0);
+    }
+
+    // Clear participant costs
+    claimEligibleCost.ParticipantCosts.map(function (participantCost) {
+      participantCost.AssessedParticipantCost = 0;
+      participantCost.AssessedReimbursement = 0;
+      participantCost.AssessedEmployerContribution = 0;
+    });
+
+    validateClaimEligibleCost(claimEligibleCost);
+    calculateGrantTotal();
   }
 
   /**
@@ -219,24 +180,18 @@ app.controller('ClaimAssessmentDetails', function ($scope, $attrs, $controller, 
     if (!$.isNumeric(participantCost.AssessedParticipantCost)) {
       participantCost.AssessedParticipantCost = 0;
     }
+
     var claimParticipantCost = MathFunction.truncate(participantCost.AssessedParticipantCost * 100);
+    let maxPerParticipantCost = ($scope.model.AgreedMaxCommittment / $scope.model.MaximumParticipants);
 
+    let rule0 = (claimParticipantCost === 0) ? 0 : claimParticipantCost;
+    let rule1 = (claimEligibleCost.AssessedCost === 0) ? 0 : MathFunction.truncate(claimEligibleCost.AssessedCost / claimEligibleCost.AssessedParticipants * 100);
+    let rule2 = (claimEligibleCost.AssessedCost === 0) ? 0 : MathFunction.truncate($scope.claim.AgreedMaxCommittment / claimEligibleCost.AgreedMaxParticipants * 100);
+    let rule3 = (claimEligibleCost.AssessedCost === 0) ? 0 : MathFunction.truncate(((maxPerParticipantCost * claimEligibleCost.AssessedParticipants) + participantCost.AssessedReimbursement - $scope.claim.TotalAssessedReimbursement) * 100);
+    let rule4 = (claimParticipantCost === 0) ? 0 : MathFunction.truncate((claimParticipantCost * claimEligibleCost.OverrideRate) * 100);
 
-    if ($scope.model.ProgramType !== 1) {
-      participantCost.AssessedReimbursement = claimParticipantCost === 0 ? 0 : MathFunction.truncate(claimParticipantCost * claimEligibleCost.OverrideRate * 100);
-      participantCost.AssessedEmployerContribution = claimParticipantCost - participantCost.AssessedReimbursement;
-    } else {
-      let maxPerParticipantCost = ($scope.model.AgreedMaxCommittment / $scope.model.MaximumParticipants);
-
-      let rule0 = (claimParticipantCost === 0) ? 0 : claimParticipantCost;
-      let rule1 = (claimEligibleCost.AssessedCost === 0) ? 0 : MathFunction.truncate(claimEligibleCost.AssessedCost / claimEligibleCost.AssessedParticipants * 100);
-      let rule2 = (claimEligibleCost.AssessedCost === 0) ? 0 : MathFunction.truncate($scope.claim.AgreedMaxCommittment / claimEligibleCost.AgreedMaxParticipants * 100);
-      let rule3 = (claimEligibleCost.AssessedCost === 0) ? 0 : MathFunction.truncate(((maxPerParticipantCost * claimEligibleCost.AssessedParticipants) + participantCost.AssessedReimbursement - $scope.claim.TotalAssessedReimbursement) * 100);
-      let rule4 = (claimParticipantCost === 0) ? 0 : MathFunction.truncate((claimParticipantCost * claimEligibleCost.OverrideRate) * 100);
-
-      participantCost.AssessedReimbursement = Math.min(rule0, rule1, rule2, rule3, rule4, claimEligibleCost.AgreedMaxParticipantCost, claimEligibleCost.AssessedMaxParticipantReimbursementCost);
-      participantCost.AssessedEmployerContribution = claimParticipantCost - participantCost.AssessedReimbursement;
-    }
+    participantCost.AssessedReimbursement = Math.min(rule0, rule1, rule2, rule3, rule4, claimEligibleCost.AgreedMaxParticipantCost, claimEligibleCost.AssessedMaxParticipantReimbursementCost);
+    participantCost.AssessedEmployerContribution = claimParticipantCost - participantCost.AssessedReimbursement;
 
     validateParticipantCost(claimEligibleCost, participantCost);
     calculateGrantTotal();
@@ -577,7 +532,7 @@ app.controller('ClaimAssessmentDetails', function ($scope, $attrs, $controller, 
    **/
   $scope.addExpenseType = function (selectedExpenseType) {
     var rate = selectedExpenseType.Rate || $scope.claim.ReimbursementRate;
-    var maxParticipantCost = MathFunction.round($scope.model.AgreedMaxCost / $scope.model.MaximumParticipants * 100);
+    var maxParticipantCost = MathFunction.truncate($scope.model.AgreedMaxCost / $scope.model.MaximumParticipants * 100);
     var eligibleCost = {
       Id: '_' + $scope.model.EligibleCosts.length,
       EligibleExpenseTypeId: selectedExpenseType.Id,
@@ -607,6 +562,7 @@ app.controller('ClaimAssessmentDetails', function ($scope, $attrs, $controller, 
       AgreedMaxParticipantCost: maxParticipantCost,
       AgreedMaxParticipantReimbursement: MathFunction.truncate(maxParticipantCost * rate * 100) / 100
     };
+
     $scope.EligibleCostSummaryMessage = '';
     $scope.model.EligibleCosts.push(eligibleCost);
     $scope.toggle(eligibleCost);
