@@ -1,0 +1,49 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: CI
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: etg-ci
+
+    steps:
+    - uses: actions/checkout@v3
+#    - name: Setup .NET
+#      uses: actions/setup-dotnet@v3
+#      with:
+#        dotnet-version: 6.0.x
+    - name: Restore dependencies .NET
+      run: |
+        dotnet restore "${{github.workspace}}\ETG.sln"
+    - name: Build .NET
+      run: |
+        dotnet build --no-restore "${{github.workspace}}\ETG.sln"
+#    - name: Test .NET
+#      run: dotnet test --no-build --verbosity normal
+    - name: Publish .NET
+      run: dotnet publish "ETG.sln" -o ./Publish -c Release --no-self-contained
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '12.16.1'
+    - run: npm install
+      working-directory: "CJG.Web.External\UI"
+    - run: npm run build
+      working-directory: "CJG.Web.External\UI"
+#    - run: npm test
+    - name: Upload artifacts - frontend
+      uses: actions/upload-artifact@v3
+      with:
+        name: web
+        path: CJG.Web.External/UI/obj/Release/Package/PackageTmp
+    - name: Upload artifacts - backend
+      uses: actions/upload-artifact@v3
+      with:
+        name: ef
+        path: CJG.Infrastructure.EF/bin/Release

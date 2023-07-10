@@ -1,0 +1,75 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Deploy DEV
+
+on:
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
+
+jobs:
+  cd:
+    name: cd
+    runs-on: etg-cd-dev
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+    - name: check out repo
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.workflow_run.head_branch }}
+
+    - name: Download artifacts - frontend
+      uses: dawidd6/action-download-artifact@v2
+      with:
+        workflow: build.yaml
+        workflow_conclusion: success
+        branch: master
+        name: web
+        path: downloads/web
+    - name: Download artifacts - backend
+      uses: dawidd6/action-download-artifact@v2
+      with:
+        workflow: build.yaml
+        workflow_conclusion: success
+        branch: master
+        name: ef
+        path: downloads/ef
+    - name: Display structure of downloaded files
+      run: ls -R
+    - name: Script
+      run: |
+        powershell/replaceoffline.ps1 ${{secrets.WEB_FOLDER}}\app_offline_template.htm ${{secrets.WEB_FOLDER}}\DEV\app_offline.htm ${{secrets.CONFIG_VALUES}}
+        powershell/DeployApp.ps1 downloads/ef/* ${{secrets.DB_BACKUP_DIR}}\DEV\Databases
+        powershell/backupdatabase.ps1 ${{secrets.DB_HOST_NAME_DEV}} ${{secrets.DB_NAME_DEV}} ${{secrets.DB_USER_DEV}} ${{secrets.DB_PWD_DEV}} ${{secrets.DB_BACKUP_DIR}}\DEV\Databases ${{github.job}} ${{secrets.DB_BACKUP_RETENTION}}
+        powershell/EFmigrate.ps1 ${{secrets.DB_BACKUP_DIR}}\DEV\Databases
+        powershell/DeployApp.ps1 downloads/web/* ${{secrets.WEB_FOLDER}}\DEV
+    - name: Replace tokens
+      uses: cschleiden/replace-tokens@v1.2
+      with:
+        files: '["**/web.config"]'
+      env:
+        DB_HOST_NAME: ${{secrets.DB_HOST_NAME_DEV}}
+        DB_NAME: ${{secrets.DB_NAME_DEV}}
+        DB_USER: ${{secrets.DB_USER}}
+        DB_PWD: ${{secrets.DB_PWD}}
+        BCEID_OSD: ${{secrets.BCEID_OSD_TEST}}
+        BCEID_USR: ${{secrets.BCEID_USR_TEST}}
+        BCEID_PWD: ${{secrets.BCEID_PWD_TEST}}
+        BCEID_LOGOFF_URL: ${{secrets.BCEID_LOGOFF_URL_TEST}}
+        BCEID_LOGOFF_RETURN_URL: ${{secrets.BCEID_LOGOFF_RETURN_URL}}
+        BCEID_TIMEOUT: ${{secrets.BCEID_TIMEOUT}}
+        SMTP_SERVER: ${{secrets.SMTP_SERVER}}
+        MAX_UPLOAD_SIZE: ${{secrets.MAX_UPLOAD_SIZE}}
+        EMAIL_FROM_ADDRESS: ${{secrets.EMAIL_FROM_ADDRESS_TEST}}
+        EMAIL_FROM_NAME: ${{secrets.EMAIL_FROM_NAME_TEST}}
+        EMAIL_ENABLED: ${{secrets.EMAIL_ENABLED}}
+        RECAPTCHA_SECRET: ${{secrets.RECAPTCHA_SECRET}}
+        RECAPTCHA_KEY: ${{secrets.RECAPTCHA_KEY}}
+    - name: Deployment cleanup
+      run: |
+        powershell/deleteoffline.ps1 ${{secrets.WEB_FOLDER}}\DEV\app_offline.htm
+        
