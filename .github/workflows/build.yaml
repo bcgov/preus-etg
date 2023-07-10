@@ -33,9 +33,9 @@ jobs:
       with:
         node-version: '12.16.1'
     - run: npm install
-      working-directory: "CJG.Web.External\UI"
+      working-directory: "CJG.Web.External/UI"
     - run: npm run build
-      working-directory: "CJG.Web.External\UI"
+      working-directory: "CJG.Web.External/UI"
 #    - run: npm test
     - name: Upload artifacts - frontend
       uses: actions/upload-artifact@v3
