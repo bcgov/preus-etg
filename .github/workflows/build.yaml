@@ -16,9 +16,10 @@ jobs:
     - uses: actions/checkout@v3
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
-#    - name: Restore dependencies .NET
-#      run: |
-#        dotnet restore "${{github.workspace}}\ETG.sln"
+    - name: NuGet Restore
+      uses: NuGet/setup-nuget@v1.0.5
+      run: |
+        nuget restore "${{github.workspace}}\ETG.sln"
     - name: MSBuild .NET framework
       run: |
         msbuild.exe "${{github.workspace}}\ETG.sln" /p:platform="Any CPU" /p:configuration="Release"
