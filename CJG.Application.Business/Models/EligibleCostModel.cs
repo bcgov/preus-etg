@@ -1,13 +1,12 @@
-﻿using CJG.Core.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using CJG.Core.Entities;
 
 namespace CJG.Application.Business.Models
 {
-    public class EligibleCostModel
+	public class EligibleCostModel
     {
-        #region Properties
-        public int Id { get; set; }
+	    public int Id { get; set; }
         public EligibleExpenseTypeModel EligibleExpenseType { get; set; }
         public int EstimatedParticipants { get; set; }
         public decimal EstimatedParticipantCost { get; set; }
@@ -15,7 +14,9 @@ namespace CJG.Application.Business.Models
         public decimal EstimatedEmployerContribution { get; set; }
         public decimal EstimatedReimbursement { get; set; }
 
-        public int AgreedMaxParticipants { get; set; }
+        public string ExpenseExplanation { get; set; }
+
+		public int AgreedMaxParticipants { get; set; }
         public decimal AgreedMaxParticipantCost { get; set; }
         public decimal AgreedCost { get; set; }
         public decimal AgreedEmployerContribution { get; set; }
@@ -27,9 +28,7 @@ namespace CJG.Application.Business.Models
 
 
         public List<EligibleCostBreakdownModel> Breakdowns { get; set; } = new List<EligibleCostBreakdownModel>();
-        #endregion
 
-        #region Constructors
         public EligibleCostModel()
         {
 
@@ -40,35 +39,35 @@ namespace CJG.Application.Business.Models
             if (eligibleCost == null)
                 throw new ArgumentNullException(nameof(eligibleCost));
 
-            this.Id = eligibleCost.Id;
-            this.EstimatedCost = eligibleCost.EstimatedCost;
-            this.EstimatedParticipantCost = eligibleCost.EstimatedParticipantCost;
-            this.EstimatedEmployerContribution = eligibleCost.EstimatedEmployerContribution;
-            this.EstimatedParticipants = eligibleCost.EstimatedParticipants;
-            this.EstimatedReimbursement = eligibleCost.EstimatedReimbursement;
+            Id = eligibleCost.Id;
+            EstimatedCost = eligibleCost.EstimatedCost;
+            EstimatedParticipantCost = eligibleCost.EstimatedParticipantCost;
+            EstimatedEmployerContribution = eligibleCost.EstimatedEmployerContribution;
+            EstimatedParticipants = eligibleCost.EstimatedParticipants;
+            EstimatedReimbursement = eligibleCost.EstimatedReimbursement;
 
-            this.AgreedMaxParticipants = eligibleCost.AgreedMaxParticipants;
-            this.AgreedMaxParticipantCost = eligibleCost.AgreedMaxParticipantCost;
-            this.AgreedCost = eligibleCost.AgreedMaxCost;
-            this.AgreedEmployerContribution = eligibleCost.AgreedEmployerContribution;
-            this.AgreedMaxReimbursement = eligibleCost.AgreedMaxReimbursement;
+            ExpenseExplanation = eligibleCost.ExpenseExplanation;
 
-            this.EligibleExpenseType = new EligibleExpenseTypeModel(eligibleCost.EligibleExpenseType);
-            this.ShowBreakdowns = !(eligibleCost.EligibleExpenseType.ServiceCategory?.ServiceTypeId.In(ServiceTypes.EmploymentServicesAndSupports, ServiceTypes.Administration) ?? false);
-            this.ServiceType = eligibleCost.EligibleExpenseType.ServiceCategory?.ServiceTypeId;
-            this.AddedByAssessor = eligibleCost.AddedByAssessor;
+            AgreedMaxParticipants = eligibleCost.AgreedMaxParticipants;
+            AgreedMaxParticipantCost = eligibleCost.AgreedMaxParticipantCost;
+            AgreedCost = eligibleCost.AgreedMaxCost;
+            AgreedEmployerContribution = eligibleCost.AgreedEmployerContribution;
+            AgreedMaxReimbursement = eligibleCost.AgreedMaxReimbursement;
+
+            EligibleExpenseType = new EligibleExpenseTypeModel(eligibleCost.EligibleExpenseType);
+            ShowBreakdowns = !(eligibleCost.EligibleExpenseType.ServiceCategory?.ServiceTypeId.In(ServiceTypes.EmploymentServicesAndSupports, ServiceTypes.Administration) ?? false);
+            ServiceType = eligibleCost.EligibleExpenseType.ServiceCategory?.ServiceTypeId;
+            AddedByAssessor = eligibleCost.AddedByAssessor;
 
             foreach (var item in eligibleCost.Breakdowns)
             {
                 Breakdowns.Add(new EligibleCostBreakdownModel(item));
             }
-
         }
 
         public EligibleCostModel(EligibleExpenseTypeModel eligibleExpenseType)
         {
-            this.EligibleExpenseType = eligibleExpenseType;
+            EligibleExpenseType = eligibleExpenseType;
         }
-        #endregion
     }
 }

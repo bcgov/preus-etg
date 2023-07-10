@@ -1,14 +1,13 @@
-﻿using CJG.Application.Services;
-using CJG.Core.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CJG.Application.Services;
+using CJG.Core.Entities;
 
 namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 {
-	public class EligibleExpenseTypeViewModel
+    public class EligibleExpenseTypeViewModel
 	{
-		#region Properties
 		public int Id { get; set; }
 		public string Caption { get; set; }
 		public string Description { get; set; }
@@ -20,46 +19,49 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 		public int? ServiceCategoryId { get; set; }
 		public IEnumerable<EligibleExpenseBreakdownViewModel> EligibleExpenseBreakdowns { get; set; }
 		public ServiceTypes? ServiceType { get; set; }
-		#endregion
+		public bool RequireExpenseExplanation { get; set; }
 
-		#region Constructors
 		public EligibleExpenseTypeViewModel()
 		{
-
 		}
 
 		public EligibleExpenseTypeViewModel(EligibleExpenseType eligibleExpenseType)
 		{
-			if (eligibleExpenseType == null) throw new ArgumentNullException(nameof(eligibleExpenseType));
+			if (eligibleExpenseType == null)
+				throw new ArgumentNullException(nameof(eligibleExpenseType));
 
 			Utilities.MapProperties(eligibleExpenseType, this);
-			this.ServiceType = eligibleExpenseType.ServiceCategory?.ServiceTypeId;
 
-			this.EligibleExpenseBreakdowns = eligibleExpenseType.Breakdowns.Where(b => b.IsActive).Select(eeb => new EligibleExpenseBreakdownViewModel(eeb)).ToArray();
+			RequireExpenseExplanation = eligibleExpenseType.RequireExplanation();
+			ServiceType = eligibleExpenseType.ServiceCategory?.ServiceTypeId;
+
+			EligibleExpenseBreakdowns = eligibleExpenseType.Breakdowns
+				.Where(b => b.IsActive)
+				.Select(eeb => new EligibleExpenseBreakdownViewModel(eeb))
+				.ToArray();
 		}
 
 		public EligibleExpenseTypeViewModel(EligibleExpenseType eligibleExpenseType, EligibleCost eligibleCost)
 		{
-			if (eligibleExpenseType == null) throw new ArgumentNullException(nameof(eligibleExpenseType));
+			if (eligibleExpenseType == null)
+				throw new ArgumentNullException(nameof(eligibleExpenseType));
 
 			Utilities.MapProperties(eligibleExpenseType, this);
-			this.ServiceType = eligibleExpenseType.ServiceCategory?.ServiceTypeId;
 
-			this.EligibleExpenseBreakdowns = eligibleExpenseType.Breakdowns.Where(b => b.IsActive).Select(eeb =>
-			{
-				var lineItem = new EligibleExpenseBreakdownViewModel(eeb);
+			RequireExpenseExplanation = eligibleExpenseType.RequireExplanation();
+			ServiceType = eligibleExpenseType.ServiceCategory?.ServiceTypeId;
 
-				if (eligibleCost != null)
+			EligibleExpenseBreakdowns = eligibleExpenseType.Breakdowns
+				.Where(b => b.IsActive)
+				.Select(eeb =>
 				{
-					lineItem.Selected = eligibleCost.Breakdowns.Any(t => t.EligibleExpenseBreakdown.ServiceLineId == eeb.ServiceLineId);
-				}
+					var lineItem = new EligibleExpenseBreakdownViewModel(eeb);
 
-				return lineItem;
-			});
+					if (eligibleCost != null)
+						lineItem.Selected = eligibleCost.Breakdowns.Any(t => t.EligibleExpenseBreakdown.ServiceLineId == eeb.ServiceLineId);
+
+					return lineItem;
+				});
 		}
-		#endregion
 	}
-
-
-
 }

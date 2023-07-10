@@ -117,6 +117,14 @@
   }
 }
 
+ol.step-1-list li {
+    font-weight: bold;
+
+    ul li {
+        font-weight: normal;
+    }
+}
+
 .link {
   color: #1A5A96;
   text-decoration: none;

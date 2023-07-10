@@ -1,5 +1,5 @@
-﻿using CJG.Core.Entities;
-using System;
+﻿using System;
+using CJG.Core.Entities;
 
 namespace CJG.Application.Business.Models
 {
@@ -14,7 +14,6 @@ namespace CJG.Application.Business.Models
 
 		public ParticipantFormModel()
         {
-
         }
 
         public ParticipantFormModel(ParticipantForm participantForm)
@@ -22,12 +21,12 @@ namespace CJG.Application.Business.Models
             if (participantForm == null)
                 throw new ArgumentNullException(nameof(participantForm));
 
-			this.Id = participantForm.Id;
-            this.Name = $"{participantForm.LastName}, {participantForm.FirstName}";
-            this.Email = participantForm.EmailAddress;
-            this.Phone = string.Format("{0}", participantForm.PhoneNumber1 + (string.IsNullOrWhiteSpace(participantForm.PhoneExtension1) ? null : $" ext. {participantForm.PhoneExtension1}"));
-            this.WorkLocation = participantForm.PrimaryCity;
-			this.Attended = participantForm.Attended;
+			Id = participantForm.Id;
+            Name = $"{participantForm.LastName}, {participantForm.FirstName}";
+            Email = participantForm.EmailAddress;
+            Phone = $"{participantForm.PhoneNumber1 + (string.IsNullOrWhiteSpace(participantForm.PhoneExtension1) ? null : $" ext. {participantForm.PhoneExtension1}")}";
+            WorkLocation = participantForm.PrimaryCity;
+			Attended = participantForm.Attended;
 		}
     }
 }

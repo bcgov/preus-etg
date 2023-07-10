@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.Net.Compilers.3.1.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.3.1.1\build\Microsoft.Net.Compilers.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
@@ -283,6 +283,7 @@
     <Content Include="content\components\_AngularValidation.html" />
     <Content Include="content\components\_AngularText.html" />
     <Content Include="content\components\_AngularTextArea.html" />
+    <Content Include="content\dialogs\_AddParticipantInvitation.html" />
     <Content Include="content\dialogs\_ChangeAlternateContact.html" />
     <Content Include="content\dialogs\_DenialReason.html" />
     <Content Include="content\dialogs\_FullContent.html" />
@@ -291,6 +292,7 @@
     <Content Include="content\dialogs\_Message.html" />
     <Content Include="content\dialogs\_ReturnToAssessmentReason.html" />
     <Content Include="content\dialogs\_Reason.html" />
+    <Content Include="content\dialogs\_TrainingCostAttachment.html" />
     <Content Include="content\dialogs\_TrainingProviderAttachment.html" />
     <Content Include="content\dialogs\_ApplicationAttachments.html" />
     <Content Include="content\dialogs\_Confirmation.html" />
@@ -874,6 +876,7 @@
     <Content Include="Areas\Int\Views\RegionalException\SelectRegionView.cshtml" />
     <Content Include="Areas\Int\Views\Prioritization\_Regions.cshtml" />
     <Content Include="Areas\Int\Views\Prioritization\_Industries.cshtml" />
+    <Content Include="App_Data\PDF\ETG-Travel-Expense-Claim-Form.docx" />
     <None Include="NLog.Training.config">
       <DependentUpon>NLog.config</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1178,6 +1181,7 @@
     <Compile Include="Areas\Ext\Models\Claims\SidebarClaimModel.cs" />
     <Compile Include="Areas\Ext\Models\OrganizationProfile\OrganizationProfileViewModel.cs" />
     <Compile Include="Areas\Ext\Models\ParticipantReporting\IncludeParticipantsViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ParticipantReporting\ParticipantInvitationModel.cs" />
     <Compile Include="Areas\Ext\Models\ParticipantReporting\ParticipantViewModel.cs" />
     <Compile Include="Areas\Ext\Models\ParticipantReporting\ParticipantWarningModel.cs" />
     <Compile Include="Areas\Ext\Models\Reports\CompletionReportAnswerViewModel.cs" />
@@ -1624,6 +1628,7 @@
     <Compile Include="Models\Shared\SkillsTrainings\SkillTrainingProviderDetailsViewModel.cs" />
     <Compile Include="Models\Shared\SkillsTrainings\SkillTrainingProviderViewModel.cs" />
     <Compile Include="Models\Shared\SkillsTrainings\SkillTrainingViewModel.cs" />
+    <Compile Include="Models\Shared\TrainingProviders\TrainingCostAttachmentViewModel.cs" />
     <Compile Include="Models\Shared\TrainingProviders\TrainingProgramAttachmentViewModel.cs" />
     <Compile Include="Models\Shared\TrainingProviders\TrainingProviderAttachmentViewModel.cs" />
     <Compile Include="Models\Shared\SkillsTrainings\TrainingProviderDetailsViewModel.cs" />

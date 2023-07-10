@@ -3,7 +3,41 @@
     <label class="checkbox checkbox__all" for="include_all_participant">Include All</label>
 </div>
 
-<div class="table--participants-wrapper" style="overflow-x: auto; width:100%;">
+<div class="table--participants-wrapper" style="overflow-x: auto; width:100%;" ng-if="model.UseInvitations">
+    <table class="table table--open-border table--tbody-border table--participant-invitations">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Last</th>
+                <th>First</th>
+                <th>Email</th>
+                <th>Expected outcome</th>
+                <th>PIF Status</th>
+                <th ng-if="model.ParticipantsEditable">Action</th>
+            </tr>
+        </thead>
+        <tbody ng-repeat="invitation in model.ParticipantInvitations">
+            <tr>
+                <td><strong style="white-space: nowrap">{{$index + 1}}</strong></td>
+                <td ng-if="invitation.ParticipantInvitationStatus > 0">{{invitation.LastName}}</td>
+                <td ng-if="invitation.ParticipantInvitationStatus > 0">{{invitation.FirstName}}</td>
+                <td ng-if="invitation.ParticipantInvitationStatus == 0" colspan="2">
+                    <a ng-click="showParticipantDialog(invitation)">Add participant details</a>
+                </td>
+                <td class="email--address"><a href="mailto:{{invitation.EmailAddress}}">{{invitation.EmailAddress}}</a></td>
+                <td>{{invitation.Outcome}}</td>
+                <td><span ng-if="invitation.ParticipantInvitationStatus > 0">{{invitation.Status}}</span></td>
+                <td class="actions">
+                    <button class="btn btn--primary" style="height: 40px;" ng-if="invitation.ParticipantInvitationStatus == 1" ng-click="sendParticipantInvite(invitation)">Send</button>
+                    <button class="btn btn--primary" style="height: 40px;" ng-if="invitation.ParticipantInvitationStatus == 2" ng-click="sendParticipantInvite(invitation)">Resend</button>
+                    <button class="btn btn--secondary" ng-if="invitation.ParticipantInvitationStatus == 1 || invitation.ParticipantInvitationStatus == 2" ng-click="removeParticipantInvite(invitation)">Remove</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="table--participants-wrapper" style="overflow-x: auto; width:100%;" ng-if="!model.UseInvitations">
     <table class="table table--open-border table--tbody-border table--participants">
         <thead>
             <tr>

@@ -1,4 +1,11 @@
-﻿using CJG.Core.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Web.Mvc;
+using CJG.Application.Services;
+using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.GrantOpeningService;
 using CJG.Infrastructure.Identity;
@@ -11,37 +18,26 @@ using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
 using Microsoft.AspNet.Identity;
 using NLog;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Web.Mvc;
-using CJG.Application.Services;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	/// <summary>
-	/// DebugController class, provides endpoints for debugging the application.
-	/// </summary>
-	[RouteArea("Int")]
+    /// <summary>
+    /// DebugController class, provides endpoints for debugging the application.
+    /// </summary>
+    [RouteArea("Int")]
 	[RoutePrefix("Debug")]
 	[AuthorizeAction(Privilege.SM)]
 	public class DebugController : BaseController
 	{
-		#region Variables
+		private readonly ApplicationUserManager _userManager;
+		private readonly ApplicationSignInManager _signInManager;
 		private readonly ILogService _logService;
 		private readonly ISiteMinderService _siteMinderService;
 		private readonly IUserService _userService;
 		private readonly ISettingService _settingService;
-		private readonly ApplicationUserManager _userManager;
-		private readonly ApplicationSignInManager _signInManager;
 		private readonly IGrantOpeningService _grantOpeningService;
 		private readonly IParticipantService _participantService;
 		private readonly INotificationService _notificationService;
-		#endregion
-
-		#region Constructors
 
 		/// <summary>
 		/// Creates a new instance of a DebugController object, and initializes with arguments.
@@ -75,13 +71,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_notificationService = notificationService;
 		}
 
-		#endregion
-
-		#region Endpoints
-		/// <summary>
-		///     Display the debug screen menu.
-		/// </summary>
-		/// <returns></returns>
 		public ActionResult Index()
 		{
 			return View();
@@ -627,7 +616,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			model.FileNames = paths
 				.Select(x => new SelectListItem { Value = x.Replace(tempPath, string.Empty), Text = Path.GetFileName(x) }).ToList();
 		}
-		#endregion
 		#endregion
 	}
 }

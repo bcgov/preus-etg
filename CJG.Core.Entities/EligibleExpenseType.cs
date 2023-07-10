@@ -7,20 +7,19 @@ using System.Linq;
 
 namespace CJG.Core.Entities
 {
-    /// <summary>
-    /// EligibleExpenseType class, provides a way to manage eligible expense types.
-    /// </summary>
-    public class EligibleExpenseType : LookupTable<int>
+	/// <summary>
+	/// EligibleExpenseType class, provides a way to manage eligible expense types.
+	/// </summary>
+	public class EligibleExpenseType : LookupTable<int>
     {
-        #region  Properties
-        /// <summary>
+	    /// <summary>
         /// get/set - The unique caption.
         /// </summary>
         [Required, MaxLength(250), Index("IX_EligibleExpenseType", Order = 2)]
         public new string Caption { get; set; }
 
         /// <summary>
-        /// get/set - A description for this eligbible expense type.
+        /// get/set - A description for this eligible expense type.
         /// </summary>
         [MaxLength(1000)]
         public string Description { get; set; }
@@ -96,9 +95,7 @@ namespace CJG.Core.Entities
         /// get - All of the training cost associated with this expense type.
         /// </summary>
         public virtual ICollection<EligibleCost> EligibleCosts { get; set; } = new List<EligibleCost>();
-        #endregion
 
-        #region Constructors
         /// <summary>
         /// Creates a new instance of a <typeparamref name="EligibleExpenseType"/> object.
         /// </summary>
@@ -115,9 +112,11 @@ namespace CJG.Core.Entities
         /// <param name="rowSequence"></param>
         public EligibleExpenseType(string caption, ExpenseType expenseType, int rowSequence = 0) : base(caption, rowSequence)
         {
-            this.Caption = caption;
-            if (expenseType == null) throw new ArgumentNullException(nameof(expenseType));
-            this.ExpenseTypeId = (ExpenseTypes)expenseType.Id;
+            Caption = caption;
+            if (expenseType == null)
+	            throw new ArgumentNullException(nameof(expenseType));
+
+            ExpenseTypeId = expenseType.Id;
         }
 
         /// <summary>
@@ -129,9 +128,9 @@ namespace CJG.Core.Entities
         /// <param name="rowSequence"></param>
         public EligibleExpenseType(string caption, string description, ExpenseTypes expenseType = ExpenseTypes.ParticipantAssigned, int rowSequence = 0) : base(caption, rowSequence)
         {
-            this.Caption = caption;
-            this.Description = description;
-            this.ExpenseTypeId = expenseType;
+            Caption = caption;
+            Description = description;
+            ExpenseTypeId = expenseType;
         }
 
         /// <summary>
@@ -141,17 +140,24 @@ namespace CJG.Core.Entities
         /// <param name="expenseType"></param>
         public EligibleExpenseType(ServiceCategory serviceCategory, ExpenseTypes expenseType = ExpenseTypes.ParticipantAssigned) : this(serviceCategory?.Caption, serviceCategory?.Description, expenseType, serviceCategory?.RowSequence ?? 0)
         {
-            this.ServiceCategoryId = serviceCategory?.Id ?? throw new ArgumentNullException(nameof(serviceCategory));
-            this.ServiceCategory = serviceCategory;
-            this.IsActive = serviceCategory.IsActive;
-            this.MinProviders = serviceCategory.MinProviders;
-            this.MaxProviders = serviceCategory.MaxProviders;
-            this.AllowMultiple = serviceCategory.AllowMultiple;
-            this.AutoInclude = serviceCategory.AutoInclude;
+            ServiceCategoryId = serviceCategory?.Id ?? throw new ArgumentNullException(nameof(serviceCategory));
+            ServiceCategory = serviceCategory;
+            IsActive = serviceCategory.IsActive;
+            MinProviders = serviceCategory.MinProviders;
+            MaxProviders = serviceCategory.MaxProviders;
+            AllowMultiple = serviceCategory.AllowMultiple;
+            AutoInclude = serviceCategory.AutoInclude;
         }
-        #endregion
 
-        #region Methods
+        public bool RequireExplanation()
+        {
+	        var caption = Caption.ToLower();
+	        if (caption.StartsWith("other") || caption == "mandatory student fees")
+		        return true;
+
+	        return false;
+        }
+
         /// <summary>
         /// Validates this eligible expense type before updating the datasource.
         /// </summary>
@@ -166,14 +172,13 @@ namespace CJG.Core.Entities
             if (entry == null)
                 yield break;
 
-            if (this.ProgramConfigurations.Any(cc => cc.EligibleExpenseTypes.Any(eet => eet.Caption == this.Caption && eet.Id != this.Id)))
-                yield return new ValidationResult("The caption must be unique within a program configuration.", new[] { nameof(this.Caption) });
+            if (ProgramConfigurations.Any(cc => cc.EligibleExpenseTypes.Any(eet => eet.Caption == Caption && eet.Id != Id)))
+                yield return new ValidationResult("The caption must be unique within a program configuration.", new[] { nameof(Caption) });
 
             foreach (var validation in base.Validate(validationContext))
             {
                 yield return validation;
             }
         }
-        #endregion
     }
 }

@@ -119,7 +119,7 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 			this.ClaimParticipants = claimEligibleCost.ClaimParticipants;
 			this.ClaimCost = claimEligibleCost.ClaimCost;
 			this.ClaimReimbursementCost = claimEligibleCost.ClaimReimbursementCost;
-			this.ClaimEmployerContribution = claimEligibleCost.ClaimCost - claimEligibleCost.ClaimReimbursementCost;
+			this.ClaimEmployerContribution = claimEligibleCost.ClaimParticipantEmployerContribution;
 			this.ClaimMaxParticipantCost = claimEligibleCost.ClaimMaxParticipantCost;
 			this.ClaimMaxParticipantReimbursementCost = claimEligibleCost.ClaimMaxParticipantReimbursementCost;
 			this.ClaimParticipantEmployerContribution = claimEligibleCost.ClaimParticipantEmployerContribution;

@@ -75,6 +75,11 @@ namespace CJG.Core.Entities
 		[DisplayName("Total Government Contribution")]
 		public decimal AgreedCommitment { get; set; }
 
+		public int? TravelExpenseDocumentId { get; set; }
+
+		[ForeignKey(nameof(TravelExpenseDocumentId))]
+		public virtual Attachment TravelExpenseDocument { get; set; }
+
 		/// <summary>
 		/// get - All the eligible cost line items associated with this grant application.
 		/// </summary>
@@ -241,12 +246,13 @@ namespace CJG.Core.Entities
 		public void Clone(TrainingCost tc)
 		{
 			TrainingCostState = tc.TrainingCostState;
+
 			EstimatedParticipants = tc.EstimatedParticipants;
+			AgreedParticipants = tc.AgreedParticipants;
+			AgreedCommitment = tc.AgreedCommitment;
 			TotalEstimatedCost = tc.TotalEstimatedCost;
 			TotalEstimatedReimbursement = tc.TotalEstimatedReimbursement;
-			AgreedParticipants = tc.AgreedParticipants;
 			TotalAgreedMaxCost = tc.TotalAgreedMaxCost;
-			AgreedCommitment = tc.AgreedCommitment;
 		}
 		#endregion
 	}

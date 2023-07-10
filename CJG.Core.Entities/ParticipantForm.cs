@@ -15,7 +15,6 @@ namespace CJG.Core.Entities
 	/// </summary>
 	public class ParticipantForm : EntityBase
 	{
-		#region Properties
 		/// <summary>
 		/// get/set - Primary key used IDENTITY
 		/// </summary>
@@ -27,6 +26,12 @@ namespace CJG.Core.Entities
 		/// </summary>
 		[Required]
 		public Guid InvitationKey { get; set; }
+
+		/// <summary>
+		/// get/set - this is set for the personalized PIFs being sent out. Existing functionality requires only the InvitationKey is set.
+		/// This one is used to pre-load the PIF.
+		/// </summary>
+		public Guid IndividualKey { get; set; }
 
 		/// <summary>
 		/// get/set - Foreign key to the parent grant application.
@@ -103,7 +108,7 @@ namespace CJG.Core.Entities
 		public int NumberOfDependents { get; set; }
 
 		/// <summary>
-		/// get/set - The foreing key to the education level of this participant.
+		/// get/set - The foreign key to the education level of this participant.
 		/// </summary>
 		public int? EducationLevelId { get; set; }
 
@@ -574,8 +579,6 @@ namespace CJG.Core.Entities
 		/// What does the Applicant see as the expected outcome for this Participant?
 		/// </summary>
 		public ExpectedParticipantOutcome? ExpectedParticipantOutcome { get; set; }
-
-		#endregion
 
 		#region Constructors
 		/// <summary>

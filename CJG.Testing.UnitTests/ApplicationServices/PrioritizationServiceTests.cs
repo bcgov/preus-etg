@@ -18,6 +18,8 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 		private ServiceHelper _helper;
 		private static PrioritizationRegion _regionInDemand;
 		private static PrioritizationRegion _regionNoDemand;
+		private GrantOpening _grantOpening;
+		private List<GrantApplication> _existingApplications;
 
 		[TestInitialize]
 		public void Setup()
@@ -47,16 +49,31 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			_helper.MockDbSet(user);
 			_helper.MockDbSet(threshold);
 
+			_grantOpening = new GrantOpening
+			{
+				GrantStream = new GrantStream
+				{
+					GrantProgramId = 1
+				}
+			};
 			_grantApplication = GetFilledGrantApplication();
 
-			var existingApplications = new List<GrantApplication>
+			_existingApplications = new List<GrantApplication>
 			{
-				new GrantApplication { Id = 2, ApplicationStateInternal = ApplicationStateInternal.UnderAssessment, OrganizationId = 57 },
-				new GrantApplication { Id = 5, ApplicationStateInternal = ApplicationStateInternal.New, OrganizationId = 57 },
+				new GrantApplication { Id = 2, ApplicationStateInternal = ApplicationStateInternal.UnderAssessment, OrganizationId = 57, GrantOpening = _grantOpening},
+				new GrantApplication { Id = 5, ApplicationStateInternal = ApplicationStateInternal.New, OrganizationId = 57, GrantOpening = _grantOpening},
+				//new GrantApplication { Id = 5, ApplicationStateInternal = ApplicationStateInternal.New, OrganizationId = 57 },
 				_grantApplication
 			};
 
-			_helper.MockDbSet(existingApplications);
+			var grantPrograms = new List<GrantProgram>
+			{
+				new GrantProgram {Id = 1, Name = "ETG Program", ProgramCode = "ETG"},
+				new GrantProgram { Id = 2, Name = "Other Programs", ProgramCode = "OTHER"}
+			};
+
+			_helper.MockDbSet(grantPrograms);
+			_helper.MockDbSet(_existingApplications);
 
 			_helper.GetMock<IUserService>().Setup(m => m.GetUser(It.IsAny<int>())).Returns(user);
 
@@ -203,15 +220,38 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 		{
 			var existingApplications = new List<GrantApplication>
 			{
-				new GrantApplication { Id = 2, ApplicationStateInternal = ApplicationStateInternal.UnderAssessment, OrganizationId = 57 },
-				new GrantApplication { Id = 5, ApplicationStateInternal = ApplicationStateInternal.OfferIssued, OrganizationId = 57 },
+				new GrantApplication { Id = 2, ApplicationStateInternal = ApplicationStateInternal.UnderAssessment, OrganizationId = 57, GrantOpening = _grantOpening },
+				new GrantApplication { Id = 5, ApplicationStateInternal = ApplicationStateInternal.OfferIssued, OrganizationId = 57, GrantOpening = _grantOpening },
+			};
+
+			_existingApplications.AddRange(existingApplications);
+
+			var result = _service.GetBreakdown(_grantApplication);
+
+			Assert.AreEqual(0, result.FirstTimeApplicantScore);
+		}
+
+		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("First-time Score")]
+		public void GetBreakdown_SetsFirstTimeScore_IgnoresOtherGrantPrograms_On()
+		{
+			var otherGrantOpening = new GrantOpening
+			{
+				GrantStream = new GrantStream
+				{
+					GrantProgramId = 2
+				}
+			};
+
+			var existingApplications = new List<GrantApplication>
+			{
+				new GrantApplication { Id = 5, ApplicationStateInternal = ApplicationStateInternal.OfferIssued, OrganizationId = 57, GrantOpening = otherGrantOpening },
 				_grantApplication
 			};
 
 			_helper.MockDbSet(existingApplications);
 			var result = _service.GetBreakdown(_grantApplication);
 
-			Assert.AreEqual(0, result.FirstTimeApplicantScore);
+			Assert.AreEqual(5, result.FirstTimeApplicantScore);
 		}
 
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Industry Score")]
@@ -403,7 +443,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			Assert.AreEqual(3, _grantApplication.PrioritizationScore);
 		}
 
-		private static GrantApplication GetFilledGrantApplication()
+		private GrantApplication GetFilledGrantApplication()
 		{
 			var filledGrantApplication = new GrantApplication
 			{
@@ -417,7 +457,8 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 					PostalCode = "V8T4G2", // Have to allow for space or no-space
 					Region = new Region(), // This is province/state
 					Country = new Country()
-				}
+				},
+				GrantOpening = _grantOpening
 			};
 
 			// Add the Eligibility Questions and Answers to the application that we'll be checking for Positive responses

@@ -285,14 +285,16 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// Download the specified file.
 		/// </summary>
 		/// <param name="filename"></param>
+		/// <param name="message"></param>
+		/// <param name="defaultExtension"></param>
 		/// <returns></returns>
 		[HttpGet]
 		[Route("Application/DownloadResource/{filename}")]
-		public ActionResult DownloadResource(string filename, string message)
+		public ActionResult DownloadResource(string filename, string message, string defaultExtension = ".pdf")
 		{
 			try
 			{
-				filename += ".pdf";
+				filename += defaultExtension;
 				var fullPath = Server.MapPath($"~/App_Data/PDF/{filename}");
 
 				if (_fileWrapper.Exists(fullPath))

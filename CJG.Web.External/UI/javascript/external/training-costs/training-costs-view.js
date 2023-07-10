@@ -7,9 +7,23 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
     save: {
       url: '/Ext/Application/Training/Cost',
       method: 'PUT',
+
+      dataType: 'file',
       data: function () {
-        return $scope.model
+        var files = [];
+        if ($scope.model.TravelExpenseDocument && $scope.model.TravelExpenseDocument.File) {
+          files.push($scope.model.TravelExpenseDocument.File);
+          $scope.model.TravelExpenseDocument.Index = files.length - 1;
+        }
+        return {
+          files: files,
+          component: angular.toJson($scope.model)
+        };
       }
+
+    //  data: function () {
+    //    return $scope.model;
+    //  }
     },
     onSave: function () {
       window.location = '/Ext/Application/Overview/View/' + $scope.section.grantApplicationId;
@@ -26,7 +40,7 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
     });
   }
 
-  function loadTraningCost() {
+  function loadTrainingCost() {
     return $scope.load({
       url: '/Ext/Application/Training/Cost/' + $scope.section.grantApplicationId,
       set: 'model'
@@ -39,7 +53,7 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
   function init() {
     return Promise.all([
       loadDropdowns('/Eligible/Expense/Types/' + $scope.section.grantApplicationId, 'EligibleExpenseTypes'),
-      loadTraningCost()
+      loadTrainingCost()
     ])
       .catch(angular.noop);
   }
@@ -51,6 +65,8 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
   $scope.recalculate = function () {
     $scope.model.SummaryMessage = null;
     if ($scope.EligibleCost.EligibleExpenseType) {
+      if (!$scope.EligibleCost.EligibleExpenseType.RequireExpenseExplanation)
+        $scope.EligibleCost.ExpenseExplanation = null;
 
       if ($scope.EligibleCost.EligibleExpenseType.ExpenseTypeId == utils.ExpenseTypes.ParticipantAssigned) {
         if ($scope.EligibleCost.EstimatedParticipants == 0 || $scope.EligibleCost.EstimatedParticipants == null) {
@@ -104,14 +120,14 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
     return Math.round(cost / participant * 100) / 100;
   }
 
-  function calculateReimbursement(cost, partticipant) {
+  function calculateReimbursement(cost, participant) {
     let rate = $scope.EligibleCost.EligibleExpenseType.Rate == null ? $scope.model.ReimbursementRate : $scope.EligibleCost.EligibleExpenseType.Rate;
 
     if ($scope.model.ProgramType == utils.ProgramTypes.EmployerGrant) {
       let reimbursementAmount = Math.round(cost * rate * 100) / 100;
       reimbursementAmount = reimbursementAmount >= $scope.model.MaxReimbursementAmt ? $scope.model.MaxReimbursementAmt : reimbursementAmount;
 
-      return reimbursementAmount * partticipant;
+      return reimbursementAmount * participant;
     }
 
      return Math.round(cost * rate * 100) / 100;
@@ -136,6 +152,9 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
       .then(function () {
         $scope.model.EligibleCosts.splice(index, 1);
         calculateTotals();
+      })
+      .then(function() {
+        checkTravelExpenseRequirements();
       })
       .catch(angular.noop);
   }
@@ -167,6 +186,7 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
     var trainingCostTotal = 0;
     var employerTotal = 0;
     var reimbursementTotal = 0;
+
     $scope.model.EligibleCosts.forEach(function (cost) {
       trainingCostTotal += parseFloat(cost.EstimatedCost);
       employerTotal += parseFloat(cost.EstimatedEmployerContribution);
@@ -180,7 +200,23 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
     $scope.model.TotalEstimatedCost = trainingCostTotal;
     $scope.model.TotalEmployer = trainingCostTotal - ratedAmount;
     $scope.model.TotalRequest = ratedAmount;
+
     calculateESSTotal();
+
+    checkTravelExpenseRequirements();
+  }
+
+  function checkTravelExpenseRequirements() {
+    var costRequiresDocumentUpload = false;
+    $scope.model.EligibleCosts.forEach(function (cost) {
+      if (cost.EligibleExpenseType.Caption.toLowerCase().startsWith("travel -"))
+        costRequiresDocumentUpload = true;
+    });
+
+    if (!costRequiresDocumentUpload)
+      $scope.model.TravelExpenseDocument = null;
+
+    $scope.model.RequireTravelExpenseForm = costRequiresDocumentUpload;
   }
 
   function calculateESSTotal() {
@@ -200,6 +236,7 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
       EstimatedCost: 0,
       EstimatedEmployerContribution: 0,
       EstimatedReimbursement: 0,
+      ExpenseExplanation: '',
       ServiceType: null,
       ShowBreakdowns: false,
       AddedByAssessor: false,
@@ -220,8 +257,7 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
       var matches = $.grep($scope.model.EligibleCosts, function (item) {
         return (item.EligibleExpenseType.Id === $scope.EligibleCost.EligibleExpenseType.Id && !item.EligibleExpenseType.AllowMultiple);
       });
-
-
+      
       if (matches.length > 0 && $scope.EligibleCostIndex == null ||
         matches.length > 1 && $scope.EligibleCostIndex >= 0) {
         $scope.EligibleCostExpenseTypeIdError = true;
@@ -233,11 +269,16 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
         $scope.EligibleCostSummaryMessage += "<p>The total expense cost of type '" + $scope.EligibleCost.EligibleExpenseType.Caption + "' must be greater than 0.</p>";
         validate = false;
       }
+      if ($scope.EligibleCost.EligibleExpenseType.RequireExpenseExplanation && $scope.EligibleCost.ExpenseExplanation.trim().length <= 0) {
+        $scope.EligibleCostRequiredDescriptionError = true;
+        $scope.EligibleCostSummaryMessage += "<p>A description of the expense '" + $scope.EligibleCost.EligibleExpenseType.Caption + "' must be provided.</p>";
+        validate = false;
+      }
     }
 
     if (Number($scope.EligibleCost.EstimatedParticipants) <= 0) {
       $scope.EligibleCostEstimatedParticipantsError = true;
-      $scope.EligibleCostSummaryMessage += "<p>The number of participants for expense type '" + $scope.EligibleCost.EligibleExpenseType.Caption + "' must be greater than 0</p>";
+      $scope.EligibleCostSummaryMessage += "<p>The number of participants for expense type '" + $scope.EligibleCost.EligibleExpenseType.Caption + "' must be greater than 0.</p>";
       validate = false;
     }
 
@@ -254,6 +295,7 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
     $scope.EligibleCostExpenseTypeIdError = false;
     $scope.EligibleCostEstimatedParticipantsError = false;
     $scope.EligibleCostEstimatedCostError = false;
+    $scope.EligibleCostRequiredDescriptionError = false;
     $scope.EligibleCostSummaryMessage = "";
   }
 
@@ -336,6 +378,90 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
       recalculateParticipantCosts();
     }
   }
+
+
+  /**
+   * Open the modal file uploaded.
+   * @function openAttachmentModal
+   * @param {any} title - The title of the modal window.
+   * @param {any} attachment - The attachment to update/add.
+   * @returns {Promise} modal
+   */
+  function openAttachmentModal(title, attachment) {
+    return ngDialog.openConfirm({
+      template: '/content/dialogs/_TrainingCostAttachment.html',
+      data: {
+        title: title,
+        attachment: attachment
+      },
+      controller: ['$scope', function ($scope) {
+        /**
+         * Return the selected file in the promise.
+         * @function save
+         * @returns {Promise}
+         **/
+        $scope.save = function () {
+          $scope.confirm($scope.ngDialogData.attachment);
+        };
+
+        /**
+         * Manually call the file select.
+         * @function chooseFile
+         * @returns {void}
+         **/
+        $scope.chooseFile = function () {
+          var $input = angular.element('#training-provider-upload');
+          $input.trigger('click');
+        }
+
+        /**
+         * Set the selected file as the active attachment.
+         * @function fileChanged
+         * @param {any} $files
+         * @returns {void}
+         */
+        $scope.fileChanged = function ($files) {
+          if ($files.length) {
+            $scope.ngDialogData.attachment.File = $files[0];
+            $scope.ngDialogData.attachment.FileName = $scope.ngDialogData.attachment.File.name;
+          }
+        }
+      }]
+    });
+  }
+
+  /**
+   * Open modal file uploader popup and then add the new file to the model.
+   * @function addAttachment
+   * @param {string} prop - The name of the property for this attachment.
+   * @returns {void}
+   **/
+  $scope.addAttachment = function (prop) {
+    openAttachmentModal('Add Attachment', {
+      Id: 0,
+      FileName: '',
+      Description: '',
+      File: {}
+    })
+      .then(function (attachment) {
+        $scope.model[prop] = attachment;
+      })
+      .catch(angular.noop);
+  };
+
+  /**
+   * Open modal file uploader popup and allow user to update the attachment and/or file.
+   * @function changeAttachment
+   * @param {string} prop - The name of the property for this attachment.
+   * @returns {void}
+   */
+  $scope.changeAttachment = function (prop) {
+    openAttachmentModal('Change Attachment', $scope.model[prop])
+      .then(function (attachment) {
+        prop = attachment;
+      })
+      .catch(angular.noop);
+  };
 
   init();
 });

@@ -243,8 +243,9 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
           claimCost === 0 ? 0 : MathFunction.truncate(claimCost / claimEligibleCost.AgreedMaxParticipants * claimEligibleCost.AgreedReimbursementRate * 100),
           claimEligibleCost.AgreedMaxParticipantCost);
 
-        //result = claimEligibleCost.AgreedMaxParticipantCost * claimEligibleCost.AgreedReimbursementRate;
+        result = claimEligibleCost.AgreedMaxParticipantCost * claimEligibleCost.AgreedReimbursementRate;
         //console.group('Claim values');
+        //console.log(claimEligibleCost);
         //console.log('A: ' + MathFunction.truncate($scope.model.Claim.TotalApprovedAmount / claimEligibleCost.AgreedMaxParticipants * 100));
         //console.log('B: ' + MathFunction.truncate(claimCost / claimEligibleCost.AgreedMaxParticipants * claimEligibleCost.AgreedReimbursementRate * 100));
 
@@ -257,9 +258,8 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
         //console.log('Claim Cost: ' + claimCost);
         //console.log('Max Part Cost: ' + claimEligibleCost.ClaimMaxParticipantCost);
         //console.log('Max Part Reimb Cost: ' + claimEligibleCost.ClaimMaxParticipantReimbursementCost);
-        //
+        
         //console.log('Calculated Max Reimb: ' + result);
-        //
         //console.groupEnd('Claim values');
 
         claimEligibleCost.ClaimMaxParticipantReimbursementCost = result;  // This is the per cost, "Maximum government contribution per participant"
@@ -286,8 +286,6 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
   }
 
   $scope.recalculateParticipantCost = function (participantCost, claimEligibleCost) {
-    //console.group("recalculateParticipantCost");
-
     if (!$.isNumeric(participantCost.ClaimParticipantCost)) {
       participantCost.ClaimParticipantCost = 0;
     }
@@ -306,22 +304,24 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
 
     let maxPerParticipantCost = ($scope.model.Claim.TotalApprovedAmount / claimEligibleCost.AgreedMaxParticipants);
     let rule0 = (claimParticipantCost === 0) ? 0 : claimParticipantCost;
-    let rule1 = (claimEligibleCost.ClaimCost === 0) ? 0 : MathFunction.truncate(claimEligibleCost.ClaimCost / claimEligibleCost.AgreedMaxParticipants * 100);
+    //let rule1 = (claimEligibleCost.ClaimCost === 0) ? 0 : MathFunction.truncate(claimEligibleCost.ClaimCost / claimEligibleCost.AgreedMaxParticipants * 100);
+    let rule1 = (claimEligibleCost.ClaimCost === 0) ? 0 : MathFunction.truncate(claimEligibleCost.AgreedMaxParticipantCost * 100);
     let rule2 = (claimEligibleCost.ClaimCost === 0) ? 0 : MathFunction.truncate($scope.model.Claim.TotalApprovedAmount / claimEligibleCost.AgreedMaxParticipants * 100);
     let rule3 = (claimEligibleCost.ClaimCost === 0) ? 0 : MathFunction.truncate(((maxPerParticipantCost * $scope.model.Claim.CountParticipants) + participantCost.ClaimReimbursement - $scope.model.Claim.TotalClaimReimbursement) * 100);
     let rule4 = (claimParticipantCost === 0) ? 0 : MathFunction.truncate(claimParticipantCost * participantCost.Rate * 100);
 
     let result = Math.min(rule0, rule1, rule2, rule3, rule4, claimEligibleCost.AgreedMaxParticipantCost, claimEligibleCost.ClaimMaxParticipantReimbursementCost);
 
+    //console.group("recalculateParticipantCost");
+    //console.log(claimEligibleCost);
+    //console.log($scope.model.Claim);
     //console.log('Claim Cost: ' + claimParticipantCost);
-    //console.log('Claim REimb: ' + participantCost.ClaimReimbursement);
     //console.log('Rule 0: ' + rule0);
     //console.log('Rule 1: ' + rule1);
     //console.log('Rule 2: ' + rule2);
     //console.log('Rule 3: ' + rule3);
     //console.log('Rule 4: ' + rule4);
     //console.log('Result: ' + result);
-    //
     //console.groupEnd();
 
     participantCost.ClaimReimbursement = result;  // This is the 'per participant/per cost' "Government contribution per participant"

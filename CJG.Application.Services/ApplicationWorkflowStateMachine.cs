@@ -1817,12 +1817,16 @@ namespace CJG.Application.Services
 		private void HandleWorkflowNotifications()
 		{
 			// Send notifications
-			foreach (var grantProgramNotificationType in _grantApplication.GrantOpening.GrantStream.GrantProgram.GrantProgramNotificationTypes.Where(t => t.IsActive && t.NotificationType.IsActive && t.NotificationType.NotificationTriggerId == NotificationTriggerTypes.Workflow))
+			var notificationTypes = _grantApplication.GrantOpening.GrantStream.GrantProgram
+				.GrantProgramNotificationTypes
+				.Where(t => t.IsActive)
+				.Where(t => t.NotificationType.IsActive)
+				.Where(t => t.NotificationType.NotificationTriggerId == NotificationTriggerTypes.Workflow);
+
+			foreach (var grantProgramNotificationType in notificationTypes)
 			{
 				if (_notificationService.CheckNotificationWorkflow(grantProgramNotificationType, _grantApplication, _originalState))
-				{
 					_notificationService.HandleWorkflowNotification(_grantApplication, grantProgramNotificationType);
-				}
 			}
 		}
 		#endregion

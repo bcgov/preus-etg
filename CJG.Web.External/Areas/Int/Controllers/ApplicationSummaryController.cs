@@ -17,7 +17,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
     [RouteArea("Int")]
 	public class ApplicationSummaryController : BaseController
 	{
-		#region Variables
 		private readonly IStaticDataService _staticDataService;
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IAuthorizationService _authorizationService;
@@ -25,9 +24,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		private readonly IGrantAgreementService _grantAgreementService;
 		private readonly IDeliveryPartnerService _deliveryPartnerService;
 		private readonly IAttachmentService _attachmentService;
-		#endregion
 
-		#region Constructors
 		public ApplicationSummaryController(
 			IControllerService controllerService,
 			IAuthorizationService authorizationService,
@@ -47,7 +44,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_deliveryPartnerService = deliveryPartnerService;
 			_attachmentService = attachmentService;
 		}
-		#endregion
 
 		#region Endpoints
 		/// <summary>

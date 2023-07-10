@@ -169,26 +169,22 @@ namespace CJG.Core.Entities
 		/// <param name="claimEligibleCost"></param>
 		public static void RecalculateClaimCost(this ClaimEligibleCost claimEligibleCost)
 		{
-			if (claimEligibleCost.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant)
-			{
-				claimEligibleCost.ClaimMaxParticipantCost = claimEligibleCost.CalculateClaimParticipantCost();
-				claimEligibleCost.ClaimMaxParticipantReimbursementCost = claimEligibleCost.CalculateClaimMaxParticipantReimbursement();
-				claimEligibleCost.ClaimParticipantEmployerContribution = claimEligibleCost.CalculateClaimParticipantEmployerContribution();
-				claimEligibleCost.ClaimReimbursementCost = claimEligibleCost.CalculateClaimReimbursement();
-			}
-			else
-			{
-				//claimEligibleCost.ClaimMaxParticipantCost = claimEligibleCost.EligibleCost?.AgreedMaxParticipantCost ?? 0;
-				claimEligibleCost.ClaimMaxParticipantCost = claimEligibleCost.CalculateClaimParticipantCost();
+			claimEligibleCost.ClaimMaxParticipantCost = claimEligibleCost.EligibleCost?.AgreedMaxParticipantCost ?? 0;
+			//claimEligibleCost.ClaimMaxParticipantCost = claimEligibleCost.CalculateClaimParticipantCost();
 
-				var rate = (decimal)claimEligibleCost.Claim.GrantApplication.ReimbursementRate;
-				var rule1 = (claimEligibleCost.ClaimCost == 0 || claimEligibleCost.ClaimParticipants == 0) ? 0 : Math.Round(((claimEligibleCost.ClaimCost / claimEligibleCost.ClaimParticipants) * rate), 2);
-				var rule2 = (claimEligibleCost.ClaimCost == 0) ? 0 : Math.Round((claimEligibleCost.Claim.GrantApplication.TrainingCost.AgreedCommitment / claimEligibleCost.Claim.GrantApplication.TrainingCost.AgreedParticipants), 2);
-				var result = Math.Min(Math.Min(rule1, rule2), claimEligibleCost.EligibleCost?.AgreedMaxParticipantCost ?? claimEligibleCost.Claim.GrantApplication.MaxReimbursementAmt);
+			var rate = (decimal) claimEligibleCost.Claim.GrantApplication.ReimbursementRate;
 
-				claimEligibleCost.ClaimMaxParticipantReimbursementCost = result;
-				claimEligibleCost.ClaimParticipantEmployerContribution = (claimEligibleCost.ClaimParticipants == 0) ? 0 : (claimEligibleCost.ClaimCost / claimEligibleCost.ClaimParticipants) - result;
-			}
+			var ruleMaxReimbursement = Math.Round(claimEligibleCost.ClaimMaxParticipantCost * rate, 2);
+			var rule1 = claimEligibleCost.ClaimCost == 0 || claimEligibleCost.ClaimParticipants == 0
+				? 0
+				: Math.Round(((claimEligibleCost.ClaimCost / claimEligibleCost.ClaimParticipants) * rate), 2);
+			var rule2 = claimEligibleCost.ClaimCost == 0
+				? 0
+				: Math.Round(claimEligibleCost.Claim.GrantApplication.TrainingCost.AgreedCommitment / claimEligibleCost.Claim.GrantApplication.TrainingCost.AgreedParticipants, 2);
+			var result = Math.Min(ruleMaxReimbursement, Math.Min(Math.Min(rule1, rule2), claimEligibleCost.EligibleCost?.AgreedMaxParticipantCost ?? claimEligibleCost.Claim.GrantApplication.MaxReimbursementAmt));
+			
+			claimEligibleCost.ClaimMaxParticipantReimbursementCost = result;
+			claimEligibleCost.ClaimParticipantEmployerContribution = claimEligibleCost.ClaimParticipants == 0 ? 0 : (claimEligibleCost.ClaimCost / claimEligibleCost.ClaimParticipants) - result;
 		}
 
 		/// <summary>
@@ -198,42 +194,26 @@ namespace CJG.Core.Entities
 		/// <param name="overrideRates">Whether to override the default rate calculations</param>
 		public static void RecalculateAssessedCost(this ClaimEligibleCost claimEligibleCost, bool overrideRates = false)
 		{
-			if (claimEligibleCost.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant)
+			var maxAssessedParticipantCost = claimEligibleCost.EligibleCost.AgreedMaxParticipantCost;
+			claimEligibleCost.AssessedMaxParticipantCost = Math.Min(maxAssessedParticipantCost, claimEligibleCost.CalculateAssessedParticipantCost());
+
+			if (!overrideRates)
 			{
-				claimEligibleCost.AssessedMaxParticipantCost = claimEligibleCost.CalculateAssessedParticipantCost();
+				claimEligibleCost.AssessedReimbursementCost = claimEligibleCost.AssessedCost;
 
-				if (!overrideRates)
+				var rate = (decimal) claimEligibleCost.Claim.GrantApplication.ReimbursementRate;
+
+				var ruleMaxReimbursement = Math.Round(claimEligibleCost.AssessedMaxParticipantCost * rate, 2);
+				var rule1 = (claimEligibleCost.AssessedCost == 0 || claimEligibleCost.ClaimParticipants == 0) ? 0 : Math.Round(((claimEligibleCost.AssessedCost / claimEligibleCost.ClaimParticipants) * rate), 2);
+				var rule2 = (claimEligibleCost.AssessedCost == 0) ? 0 : Math.Round((claimEligibleCost.Claim.GrantApplication.TrainingCost.AgreedCommitment / claimEligibleCost.Claim.GrantApplication.TrainingCost.AgreedParticipants), 2);
+				var result = Math.Min(ruleMaxReimbursement, Math.Min(Math.Min(rule1, rule2), claimEligibleCost.EligibleCost?.AgreedMaxParticipantCost ?? claimEligibleCost.Claim.GrantApplication.MaxReimbursementAmt));
+
+				claimEligibleCost.AssessedMaxParticipantReimbursementCost = result;
+				claimEligibleCost.AssessedParticipantEmployerContribution = (claimEligibleCost.ClaimParticipants == 0) ? 0 : (claimEligibleCost.AssessedCost / claimEligibleCost.ClaimParticipants) - result;
+
+				foreach (var participantCost in claimEligibleCost.ParticipantCosts)
 				{
-					claimEligibleCost.AssessedReimbursementCost = TrainingCostExtensions.CalculateRoundedReimbursementAmount(claimEligibleCost.AssessedCost, claimEligibleCost.Claim.GrantApplication.ReimbursementRate);
-
-					claimEligibleCost.AssessedMaxParticipantReimbursementCost = claimEligibleCost.CalculateAssessedMaxParticipantReimbursement();
-					claimEligibleCost.AssessedParticipantEmployerContribution = claimEligibleCost.CalculateAssessedMaxParticipantEmployerContribution();
-					foreach (var participantCost in claimEligibleCost.ParticipantCosts)
-					{
-						participantCost.RecalculatedAssessedCost();
-					}
-				}
-			}
-			else
-			{
-				claimEligibleCost.AssessedMaxParticipantCost = claimEligibleCost.CalculateAssessedParticipantCost();
-				if (!overrideRates)
-				{
-					claimEligibleCost.AssessedReimbursementCost = claimEligibleCost.AssessedCost;
-
-					var rate = (decimal)claimEligibleCost.Claim.GrantApplication.ReimbursementRate;
-
-					var rule1 = (claimEligibleCost.AssessedCost == 0 || claimEligibleCost.ClaimParticipants == 0) ? 0 : Math.Round(((claimEligibleCost.AssessedCost / claimEligibleCost.ClaimParticipants) * rate), 2);
-					var rule2 = (claimEligibleCost.AssessedCost == 0) ? 0 : Math.Round((claimEligibleCost.Claim.GrantApplication.TrainingCost.AgreedCommitment / claimEligibleCost.Claim.GrantApplication.TrainingCost.AgreedParticipants), 2);
-					var result = Math.Min(Math.Min(rule1, rule2), claimEligibleCost.EligibleCost?.AgreedMaxParticipantCost ?? claimEligibleCost.Claim.GrantApplication.MaxReimbursementAmt);
-
-					claimEligibleCost.AssessedMaxParticipantReimbursementCost = result;
-					claimEligibleCost.AssessedParticipantEmployerContribution = (claimEligibleCost.ClaimParticipants == 0) ? 0 : (claimEligibleCost.AssessedCost / claimEligibleCost.ClaimParticipants) - result;
-
-					foreach (var participantCost in claimEligibleCost.ParticipantCosts)
-					{
-						participantCost.RecalculatedAssessedCost();
-					}
+					participantCost.RecalculatedAssessedCost();
 				}
 			}
 		}
@@ -271,7 +251,8 @@ namespace CJG.Core.Entities
 			{
 				if (eligibleCost.EligibleExpenseType.ExpenseTypeId == ExpenseTypes.ParticipantAssigned)
 					totalAssessedReimbursement += eligibleCost.ParticipantCosts.Sum(pc => pc.AssessedReimbursement);
-				else if ((eligibleCost.EligibleExpenseType.ExpenseTypeId == ExpenseTypes.NotParticipantLimited))
+
+				else if (eligibleCost.EligibleExpenseType.ExpenseTypeId == ExpenseTypes.NotParticipantLimited)
 					totalAssessedReimbursement += eligibleCost.AssessedReimbursementCost;
 			}
 
@@ -289,12 +270,7 @@ namespace CJG.Core.Entities
 				eligibleCost.RecalculateClaimCost();
 
 				foreach (var participantCost in eligibleCost.ParticipantCosts)
-				{
-					if (claim.GrantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
-						participantCost.RecalculateClaimParticipantCostETG();
-					else
-						participantCost.RecalculateClaimCost();
-				}
+					participantCost.RecalculateClaimParticipantCostETG();
 			}
 
 			claim.TotalClaimReimbursement = claim.CalculateTotalClaimReimbursement();

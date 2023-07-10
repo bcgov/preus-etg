@@ -1,4 +1,10 @@
-﻿using CJG.Application.Business.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity.Validation;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using CJG.Application.Business.Models;
 using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
@@ -6,43 +12,30 @@ using CJG.Web.External.Areas.Int.Models;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.Validation;
-using System.Linq;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	[RouteArea("Int")]
+    [RouteArea("Int")]
 	[Authorize(Roles = "Assessor, System Administrator, Director, Financial Clerk")]
 	public class TrainingCostController : BaseController
 	{
-		#region Variables
-		private readonly IStaticDataService _staticDataService;
 		private readonly IGrantApplicationService _grantApplicationService;
-		private readonly IGrantAgreementService _grantAgreementService;
-		private readonly IUserService _userService;
 		private readonly IGrantStreamService _grantStreamService;
-		#endregion
+		private readonly IAttachmentService _attachmentService;
 
-		#region Constructors
 		public TrainingCostController(
 			IControllerService controllerService,
 			IGrantApplicationService grantApplicationService,
 			IGrantAgreementService grantAgreementService,
-			IGrantStreamService grantStreamService
+			IGrantStreamService grantStreamService,
+			IAttachmentService attachmentService
 		   ) : base(controllerService.Logger)
 		{
-			_userService = controllerService.UserService;
-			_staticDataService = controllerService.StaticDataService;
 			_grantApplicationService = grantApplicationService;
-			_grantAgreementService = grantAgreementService;
 			_grantStreamService = grantStreamService;
+			_attachmentService = attachmentService;
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
 		/// Get the data for the ApplicationOverviewView page.
 		/// </summary>
@@ -94,47 +87,74 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Update the training costs in the datasource.
 		/// </summary>
-		/// <param name="viewModel"></param>
+		/// <param name="component"></param>
+		/// <param name="files"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[PreventSpam]
 		[ValidateRequestHeader]
 		[Route("Application/Training/Cost")]
-		public JsonResult UpdateTrainingCosts(ProgramCostViewModel viewModel)
+		public JsonResult UpdateTrainingCosts(string component, HttpPostedFileBase[] files)
 		{
+			var model = new ProgramCostViewModel();
 			try
 			{
-				if (viewModel.TrainingCost.AgreedParticipants == null)
-					throw new InvalidOperationException("You must enter the number of participants.");
+				model = Newtonsoft.Json.JsonConvert.DeserializeObject<ProgramCostViewModel>(component);
+				TryValidateModel(model);
 
-				var grantApplication = _grantApplicationService.Get(viewModel.TrainingCost.GrantApplicationId);
-				var trainingCost = _grantApplicationService.Update(viewModel.TrainingCost);
+				if (ModelState.IsValid)
+				{
+
+					if (model.TrainingCost.AgreedParticipants == null)
+						throw new InvalidOperationException("You must enter the number of participants.");
+
+					var grantApplication = _grantApplicationService.Get(model.TrainingCost.GrantApplicationId);
+					var trainingCost = _grantApplicationService.Update(model.TrainingCost);
+
+					if (files != null && files.Any())
+					{
+						if (model.TravelExpenseDocument != null && files.Any())
+						{
+							var attachment = files.First().UploadFile(model.TravelExpenseDocument.Description, model.TravelExpenseDocument.FileName);
+							attachment.Id = model.TravelExpenseDocument.Id;
+							if (model.TravelExpenseDocument.Id == 0)
+							{
+								trainingCost.TravelExpenseDocument = attachment;
+								_attachmentService.Add(attachment, commit: true);
+							}
+							else
+							{
+								attachment.RowVersion = Convert.FromBase64String(model.TravelExpenseDocument.RowVersion);
+								_attachmentService.Update(attachment, commit: true);
+							}
+						}
+					}
+				}
 			}
 			catch (Exception ex)
 			{
-				HandleAngularException(ex, viewModel, () =>
+				HandleAngularException(ex, model, () =>
 				{
 					if (ex is DbEntityValidationException)
 					{
-						viewModel.ValidationErrors = Utilities.GetErrors((DbEntityValidationException)ex, viewModel);
+						model.ValidationErrors = Utilities.GetErrors((DbEntityValidationException)ex, model);
 						var errorToDistinct = new KeyValuePair<string, string>(nameof(TrainingCost.TotalEstimatedReimbursement), nameof(EligibleCost.EstimatedParticipantCost));
 
-						var foundErrorToKeep = viewModel.ValidationErrors.Count(t => t.Key == errorToDistinct.Key) > 0;
-						var foundErrorToRemove = viewModel.ValidationErrors.Count(t => t.Key == errorToDistinct.Value) > 0;
+						var foundErrorToKeep = model.ValidationErrors.Count(t => t.Key == errorToDistinct.Key) > 0;
+						var foundErrorToRemove = model.ValidationErrors.Count(t => t.Key == errorToDistinct.Value) > 0;
 
 						if (foundErrorToKeep && foundErrorToRemove)
 						{
-							var errorToRemove = viewModel.ValidationErrors.FirstOrDefault(t => t.Key == errorToDistinct.Value);
-							viewModel.ValidationErrors.Remove(errorToRemove);
+							var errorToRemove = model.ValidationErrors.FirstOrDefault(t => t.Key == errorToDistinct.Value);
+							model.ValidationErrors.Remove(errorToRemove);
 						}
 
-						var summary = String.Join("<br/>", viewModel.ValidationErrors.Select(ve => ve.Value).Where(e => !String.IsNullOrEmpty(e)).Distinct().ToArray());
-						AddGenericError(viewModel, summary);
+						var summary = String.Join("<br/>", model.ValidationErrors.Select(ve => ve.Value).Where(e => !String.IsNullOrEmpty(e)).Distinct().ToArray());
+						AddGenericError(model, summary);
 					}
 				});
 			}
-			return Json(viewModel, JsonRequestBehavior.AllowGet);
+			return Json(model, JsonRequestBehavior.AllowGet);
 		}
-		#endregion
 	}
 }

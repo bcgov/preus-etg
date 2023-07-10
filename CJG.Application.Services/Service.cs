@@ -1,10 +1,4 @@
-﻿using CJG.Core.Entities;
-using CJG.Core.Interfaces.Service;
-using CJG.Infrastructure.Entities;
-using NLog;
-using RazorEngine;
-using RazorEngine.Templating;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
@@ -13,6 +7,12 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces.Service;
+using CJG.Infrastructure.Entities;
+using NLog;
+using RazorEngine;
+using RazorEngine.Templating;
 
 namespace CJG.Application.Services
 {

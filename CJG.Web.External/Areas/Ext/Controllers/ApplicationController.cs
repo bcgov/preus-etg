@@ -1,4 +1,8 @@
-﻿using CJG.Core.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using CJG.Core.Entities;
 using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Areas.Ext.Models;
@@ -7,21 +11,16 @@ using CJG.Web.External.Areas.Int.Models.GrantStreams;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
-	/// <summary>
-	/// <typeparamref name="ApplicationController"/> class, provides a controller endpoints for managing external user grant applications.
-	/// </summary>
-	[RouteArea("Ext")]
+    /// <summary>
+    /// <typeparamref name="ApplicationController"/> class, provides a controller endpoints for managing external user grant applications.
+    /// </summary>
+    [RouteArea("Ext")]
 	[ExternalFilter]
 	public class ApplicationController : BaseController
 	{
-		#region Variables
 		private readonly IStaticDataService _staticDataService;
 		private readonly ISiteMinderService _siteMinderService;
 		private readonly IUserService _userService;
@@ -33,9 +32,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		private readonly IGrantProgramService _grantProgramService;
 		private readonly ISettingService _settingService;
 		private readonly IOrganizationService _organizationService;
-		#endregion
-
-		#region Constructors
 
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="ApplicationController"/> object.
@@ -72,11 +68,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			_settingService = settingService;
 			_organizationService = organizationService;
 		}
-		#endregion
 
-		#region Endpoints
-
-		#region Grant Selection
 		/// <summary>
 		/// Create a new Grant Application View / Edit an exist Grant Application View.
 		/// </summary>
@@ -291,6 +283,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					grantApplication.TrainingCost = grantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.EmployerGrant ? new TrainingCost(grantApplication, 0) : new TrainingCost(grantApplication, 1);
 
 					grantApplication.RequireAllParticipantsBeforeSubmission = grantOpening.GrantStream.RequireAllParticipantsBeforeSubmission;
+					grantApplication.UsePIFInvitations = true; // All new Applications will now use PIF Invitations instead of the open PIF structure.
 
 					// set start/end dates to user selected dates
 					var earliest = grantApplication.DateSubmitted ?? grantApplication.DateAdded;
@@ -584,7 +577,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				_grantStreamService.AddGrantStreamAnswers(answers);
 			}
 		}
-		#endregion
 
 		#region Application Overview
 		/// <summary>
@@ -677,7 +669,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			//GrantSelectionView
 			return RedirectToAction("GrantSelectionView", new { grantApplicationId = 0, grantProgramId = grantApplication.GrantOpening.GrantStream.GrantProgramId, seedGrantApplicationId = grantApplicationId });
         }
-
 
         /// <summary>
         /// Get the data for the ApplicationOverviewView page.
@@ -776,7 +767,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			}
 			return Json(model);
 		}
-		#endregion
 		#endregion
 
 

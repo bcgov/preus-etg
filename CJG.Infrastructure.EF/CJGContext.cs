@@ -1,8 +1,3 @@
-using CJG.Core.Entities;
-using CJG.Core.Entities.Attributes;
-using CJG.Infrastructure.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using NLog;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
@@ -11,6 +6,11 @@ using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Data.Entity.Validation;
 using System.Web;
+using CJG.Core.Entities;
+using CJG.Core.Entities.Attributes;
+using CJG.Infrastructure.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using NLog;
 
 namespace CJG.Infrastructure.EF
 {
@@ -19,13 +19,9 @@ namespace CJG.Infrastructure.EF
 	/// </summary>
 	public class CJGContext : IdentityDbContext<ApplicationUser>
 	{
-		#region Variables
 		private readonly ILogger _logger;
-		#endregion
 
-		#region Properties
 		public HttpContextBase HttpContext { get; set; }
-		#endregion
 
 		#region Constructors
 
@@ -170,6 +166,7 @@ namespace CJG.Infrastructure.EF
 		#endregion
 
 		#region Participants
+		public virtual DbSet<ParticipantInvitation> ParticipantInvitations{ get; set; }
 		public virtual DbSet<ParticipantForm> ParticipantForms { get; set; }
 		public virtual DbSet<Participant> Participants { get; set; }
 		public virtual DbSet<ParticipantCost> ParticipantCosts { get; set; }

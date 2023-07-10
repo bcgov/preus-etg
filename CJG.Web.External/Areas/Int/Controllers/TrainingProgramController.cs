@@ -139,7 +139,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 					var trainingProgram = _trainingProgramService.Get(model.Id);
 					model.MapTo(trainingProgram, _staticDataService);
 
-
 					if (files != null && files.Any())
 					{
 						if (model.CourseOutlineDocument != null && files.Any())
@@ -158,8 +157,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 							}
 						}
 					}
-
-
 
 					_trainingProgramService.Update(trainingProgram);
 

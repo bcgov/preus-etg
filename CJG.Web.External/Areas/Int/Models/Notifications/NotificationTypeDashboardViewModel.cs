@@ -50,7 +50,6 @@ namespace CJG.Web.External.Areas.Int.Models.Notifications
 			RecipientRules = Enum.GetValues(typeof(NotificationRecipientRules)).Cast<NotificationRecipientRules>().Select(e => new KeyValuePair<NotificationRecipientRules, string>(e, e.GetDescription())).ToArray();
 
 			var setting = settingService.Get("EnableEmails")?.Value ?? "True";
-
 			bool.TryParse(setting, out bool enableEmails);
 			EnableNotifications = enableEmails;
 

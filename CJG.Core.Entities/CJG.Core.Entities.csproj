@@ -129,6 +129,8 @@
     <Compile Include="NotificationTriggerTypes.cs" />
     <Compile Include="Helpers\NotificationTypeFilter.cs" />
     <Compile Include="Helpers\NotificationFilter.cs" />
+    <Compile Include="ParticipantInvitation.cs" />
+    <Compile Include="ParticipantInvitationStatus.cs" />
     <Compile Include="PaymentRequestExtensions.cs" />
     <Compile Include="PrioritizationIndustryScore.cs" />
     <Compile Include="PrioritizationPostalCode.cs" />

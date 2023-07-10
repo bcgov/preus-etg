@@ -1,7 +1,8 @@
-﻿using CJG.Application.Business.Models;
+﻿using System;
+using CJG.Application.Business.Models;
 using CJG.Core.Entities;
+using CJG.Web.External.Areas.Int.Models.Attachments;
 using CJG.Web.External.Models.Shared;
-using System;
 
 namespace CJG.Web.External.Areas.Int.Models
 {
@@ -9,16 +10,20 @@ namespace CJG.Web.External.Areas.Int.Models
     {
         public string RowVersion { get; set; }
         public TrainingCostModel TrainingCost { get; set; } = new TrainingCostModel();
+        public AttachmentViewModel TravelExpenseDocument { get; set; } = new AttachmentViewModel();
 
-        public ProgramCostViewModel()
+		public ProgramCostViewModel()
         {
-
         }
+
         public ProgramCostViewModel(GrantApplication grantApplication)
         {
-            this.Id = grantApplication.Id;
-            this.RowVersion = Convert.ToBase64String(grantApplication.RowVersion);
-            this.TrainingCost = new TrainingCostModel(grantApplication);
-        }
+            Id = grantApplication.Id;
+            RowVersion = Convert.ToBase64String(grantApplication.RowVersion);
+            TrainingCost = new TrainingCostModel(grantApplication);
+
+			if (grantApplication.TrainingCost.TravelExpenseDocument != null)
+				TravelExpenseDocument = new AttachmentViewModel(grantApplication.TrainingCost?.TravelExpenseDocument);
+		}
     }
 }
