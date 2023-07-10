@@ -330,20 +330,6 @@ namespace CJG.Application.Services
 				foreach (var participantCost in participantCosts)
 					_dbContext.ParticipantCosts.Remove(participantCost);
 
-				var numberOfParticipants = grantApplication.ParticipantForms.Count(p => !p.IsExcludedFromClaim);
-				foreach (var claimEligibleCost in claim.EligibleCosts)
-				{
-					// WDA Services must sync the number of participants with each eligible expense.
-					if (claimEligibleCost.EligibleExpenseType.ExpenseTypeId == ExpenseTypes.NotParticipantLimited && grantApplication.GetProgramType() == ProgramTypes.WDAService)
-					{
-						if (numberOfParticipants != claimEligibleCost.ClaimParticipants)
-						{
-							// Re-count the number of participants reported so far, for example 5
-							claimEligibleCost.UpdateUpToMaxClaimParticipants(numberOfParticipants);
-						}
-					}
-				}
-
 				claim.ClaimState = ClaimState.Incomplete;
 				claim.RecalculateClaimedCosts();
 				claim.RecalculateAssessedCosts();
@@ -411,15 +397,6 @@ namespace CJG.Application.Services
 							claimEligibleCost.ParticipantCosts.Add(participantCost);
 						}
 					}
-					// WDA Services must sync the number of participants with each eligible expense.
-					else if (claimEligibleCost.EligibleExpenseType.ExpenseTypeId == ExpenseTypes.NotParticipantLimited && grantApplication.GetProgramType() == ProgramTypes.WDAService)
-					{
-						if (numberOfParticipants != claimEligibleCost.ClaimParticipants)
-						{
-							// Re-count the number of participants reported so far, for example 5
-							claimEligibleCost.UpdateUpToMaxClaimParticipants(numberOfParticipants);
-						}
-					}
 				}
 
 				claim.ClaimState = ClaimState.Incomplete;
@@ -461,21 +438,6 @@ namespace CJG.Application.Services
 						{
 							Remove(participantCost);
 						});
-					}
-					// WDA Services must sync the number of participants with each eligible expense.
-					else if (claimEligibleCost.EligibleExpenseType.ExpenseTypeId == ExpenseTypes.NotParticipantLimited && grantApplication.GetProgramType() == ProgramTypes.WDAService)
-					{
-						if (numberOfParticipants != claimEligibleCost.ClaimParticipants)
-						{
-							// Re-count the number of participants reported so far, for example 5
-							claimEligibleCost.UpdateUpToMaxClaimParticipants(numberOfParticipants);
-							// Re-calculate the maximum cost per participant. for example 400/5 = 80 assuming 400 is the total cost
-							claimEligibleCost.ClaimMaxParticipantCost = claimEligibleCost.CalculateClaimParticipantCost();
-							// Re-calculate the maximum participant reimbursement cost, for example 24 assuming 30% is the reimbursement rate
-							claimEligibleCost.ClaimMaxParticipantReimbursementCost = claimEligibleCost.CalculateClaimMaxParticipantReimbursement();
-							// Re-calculate employer contribution, for example 56
-							claimEligibleCost.ClaimParticipantEmployerContribution = claimEligibleCost.ClaimMaxParticipantCost - claimEligibleCost.ClaimMaxParticipantReimbursementCost;
-						}
 					}
 				}
 
