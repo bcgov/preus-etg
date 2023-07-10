@@ -14,16 +14,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 4.8.x
-    - name: Restore dependencies .NET
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1
+#    - name: Restore dependencies .NET
+#      run: |
+#        dotnet restore "${{github.workspace}}\ETG.sln"
+    - name: MSBuild .NET framework
       run: |
-        dotnet restore "${{github.workspace}}\ETG.sln"
-    - name: Build .NET
-      run: |
-        dotnet build --no-restore "${{github.workspace}}\ETG.sln"
+        msbuild.exe "${{github.workspace}}\ETG.sln" /p:platform="Any CPU" /p:configuration="Release"
 #    - name: Test .NET
 #      run: dotnet test --no-build --verbosity normal
     - name: Publish .NET
