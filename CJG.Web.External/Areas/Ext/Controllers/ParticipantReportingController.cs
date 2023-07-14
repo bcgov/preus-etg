@@ -14,13 +14,11 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 	[ExternalFilter]
 	public class ParticipantReportingController : BaseController
 	{
-		#region Properties
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IClaimService _claimService;
 		private readonly IParticipantService _participantService;
-		#endregion
+		private readonly IParticipantInvitationService _participantInvitationService;
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a ParticipantReportingController object.
 		/// </summary>
@@ -32,15 +30,15 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			IControllerService controllerService,
 			IGrantApplicationService grantApplicationService,
 			IClaimService claimService,
-			IParticipantService participantService) : base(controllerService.Logger)
+			IParticipantService participantService,
+			IParticipantInvitationService participantInvitationService) : base(controllerService.Logger)
 		{
 			_grantApplicationService = grantApplicationService;
 			_claimService = claimService;
 			_participantService = participantService;
+			_participantInvitationService = participantInvitationService;
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
 		/// Launched when the 'Report Participants' link on the 'GrantFiles' page is clicked
 		/// </summary>
@@ -203,7 +201,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				if (ModelState.IsValid)
 				{
 					var grantApplication = _grantApplicationService.Get(model.Id);
-					var invitation = _participantService.GetInvitation(grantApplication.Id, model.InvitationId);
+					var invitation = _participantInvitationService.GetInvitation(grantApplication.Id, model.InvitationId);
 
 					invitation.FirstName = model.FirstName;
 					invitation.LastName = model.LastName;
@@ -211,7 +209,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					invitation.ExpectedParticipantOutcome = model.ExpectedParticipantOutcome;
 					invitation.ParticipantInvitationStatus = ParticipantInvitationStatus.NotSent;
 
-					_participantService.UpdateParticipantInvitation(invitation);
+					_participantInvitationService.UpdateParticipantInvitation(invitation);
 
 					viewModel = new ReportingViewModel(grantApplication, _participantService, this.HttpContext);
 				}
@@ -247,9 +245,9 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				if (ModelState.IsValid)
 				{
 					var grantApplication = _grantApplicationService.Get(model.Id);
-					var invitation = _participantService.GetInvitation(grantApplication.Id, model.InvitationId);
+					var invitation = _participantInvitationService.GetInvitation(grantApplication.Id, model.InvitationId);
 
-					_participantService.RemoveParticipantInvitation(invitation);
+					_participantInvitationService.RemoveParticipantInvitation(invitation);
 
 					viewModel = new ReportingViewModel(grantApplication, _participantService, this.HttpContext);
 				}
@@ -282,9 +280,9 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			try
 			{
                 var grantApplication = _grantApplicationService.Get(model.Id);
-                var invitation = _participantService.GetInvitation(grantApplication.Id, model.InvitationId);
+                var invitation = _participantInvitationService.GetInvitation(grantApplication.Id, model.InvitationId);
 
-                _participantService.SendParticipantInvitation(invitation);
+                _participantInvitationService.SendParticipantInvitation(invitation);
             }
 			catch (Exception ex)
 			{
@@ -293,7 +291,5 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 			return Json(viewModel, JsonRequestBehavior.AllowGet);
 		}
-
-		#endregion
 	}
 }

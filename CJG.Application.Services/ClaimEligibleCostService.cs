@@ -1,11 +1,11 @@
-﻿using CJG.Application.Business.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using CJG.Application.Business.Models;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Entities;
 using NLog;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace CJG.Application.Services
 {
