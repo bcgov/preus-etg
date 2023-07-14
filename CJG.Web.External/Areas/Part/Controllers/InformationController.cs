@@ -35,6 +35,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		private readonly IReCaptchaService _reCaptchaService;
 		private readonly IGrantProgramService _grantProgramService;
 		private readonly IAttachmentService _attachmentService;
+		private readonly IParticipantInvitationService _participantInvitationService;
 
 		/// <summary>
 		/// Creates a new instance of a InformationController object, and initializes it with the specified arguments.
@@ -46,6 +47,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		/// <param name="recaptchaService"></param>
 		/// <param name="grantProgramService"></param>
 		/// <param name="attachmentService"></param>
+		/// <param name="participantInvitationService"></param>
 		public InformationController(
 			IControllerService controllerService,
 			IGrantApplicationService grantApplicationService,
@@ -53,7 +55,8 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			INationalOccupationalClassificationService nationalOccupationalClassificationService,
 			IReCaptchaService recaptchaService,
 			IGrantProgramService grantProgramService,
-			IAttachmentService attachmentService) : base(controllerService.Logger)
+			IAttachmentService attachmentService,
+			IParticipantInvitationService participantInvitationService) : base(controllerService.Logger)
 		{
 			_staticDataService = controllerService.StaticDataService;
 			_grantApplicationService = grantApplicationService;
@@ -62,6 +65,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			_reCaptchaService = recaptchaService;
 			_grantProgramService = grantProgramService;
 			_attachmentService = attachmentService;
+			_participantInvitationService = participantInvitationService;
 		}
 
 		/// <summary>
@@ -1184,7 +1188,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				var participantForm = _participantService.Add(newParticipantForm);
 
 				if (individualInvitation != null)
-					_participantService.CompleteIndividualInvitation(participantForm, individualInvitation);
+					_participantInvitationService.CompleteIndividualInvitation(participantForm, individualInvitation);
 
 				// Set result message
 				this.SetAlert("Thank you. Your participant information has been saved successfully.", AlertType.Success);
