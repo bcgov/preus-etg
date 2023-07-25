@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Linq;
+using System.Net.Mime;
 using System.Web;
 using System.Web.Mvc;
 using CJG.Application.Business.Models;
@@ -155,6 +156,25 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				});
 			}
 			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
+		/// Download the specified document.
+		/// </summary>
+		/// <param name="grantApplicationId"></param>
+		/// <param name="attachmentId"></param>
+		/// <returns></returns>
+		[HttpGet]
+		[PreventSpam]
+		[Route("Application/Training/Cost/Attachment/Download/{grantApplicationId:int}/{attachmentId:int}")]
+		public ActionResult DownloadAttachment(int grantApplicationId, int attachmentId)
+		{
+			var grantApplication = _grantApplicationService.Get(grantApplicationId);
+			var attachment = _attachmentService.Get(attachmentId);
+			if (grantApplication.TrainingCost.TravelExpenseDocumentId != attachmentId)
+				throw new NotAuthorizedException("User does not have access to document.");
+
+			return File(attachment.AttachmentData, MediaTypeNames.Application.Octet, $"{attachment.FileName}{attachment.FileExtension}");
 		}
 	}
 }

@@ -465,9 +465,3 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
 
   init();
 });
-
-
-
-
-
-
