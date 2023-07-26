@@ -463,5 +463,9 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
       .catch(angular.noop);
   };
 
+  $scope.downloadAttachment = function (attachmentId) {
+    window.open('/Ext/Training/Cost/' + $scope.section.grantApplicationId + '/Attachment/Download/' + attachmentId);
+  };
+
   init();
 });
