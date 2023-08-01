@@ -71,6 +71,11 @@ namespace CJG.Core.Entities
 		/// AgreementIssuedDate - The date the agreement was issued.
 		/// </summary>
 		[Description("Agreement Issued Date")]
-		AgreementIssuedDate = 12
+		AgreementIssuedDate = 12,
+		/// <summary>
+		/// ClaimReturnedToApplicantDate - The latest date the Claim was returned to the applicant
+		/// </summary>
+		[Description("Claim Returned to Applicant Date")]
+		ClaimReturnedToApplicantDate = 13
 	}
 }
