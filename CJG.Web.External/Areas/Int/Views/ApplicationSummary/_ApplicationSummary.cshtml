@@ -24,7 +24,7 @@
                     <div class="form__label">Status:</div>
                     <div class="form__control">
                         <internal-state-label ng-model="model.ApplicationStateInternalViewModel.Id" ng-label="model.ApplicationStateInternalViewModel.Description"></internal-state-label>
-                        on {{toPST(model.DateUpdated)}}
+                        on {{toPST(model.DateStatusChanged)}}
                         <div ng-if="model.ShowAssessorName">
                             <text><br />Assigned by</text> {{model.AssignedBy}}
                         </div>

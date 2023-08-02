@@ -21,6 +21,7 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 		public string FileNumber { get; set; }
 		public DateTime? DateUpdated { get; set; }
 		public DateTime? DateSubmitted { get; set; }
+		public DateTime DateStatusChanged { get; set; }
 		public ApplicationStateViewModel ApplicationStateExternalViewModel { get; set; }
 		public ApplicationStateViewModel ApplicationStateInternalViewModel { get; set; }
 		public string GrantStreamFullName { get; set; }
@@ -113,6 +114,7 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 			};
 			DateSubmitted = grantApplication.DateSubmitted?.ToLocalTime();
 			DateUpdated = grantApplication.DateUpdated?.ToLocalTime();
+			DateStatusChanged = grantApplication.GetStateChange(grantApplication.ApplicationStateInternal).ChangedDate;
 			FileNumber = grantApplication.FileNumber;
 			GrantStreamFullName = grantApplication.GrantOpening.GrantStream.FullName;
 			GrantProgramId = grantApplication.GrantOpening.GrantStream.GrantProgramId;
