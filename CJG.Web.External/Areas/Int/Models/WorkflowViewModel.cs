@@ -201,6 +201,9 @@ namespace CJG.Web.External.Areas.Int.Models
 		{
 			switch (trigger)
 			{
+				case ApplicationWorkflowTrigger.SelectForAssessment:
+					return grantApplication.PrioritizationScoreBreakdown != null && grantApplication.PrioritizationScoreBreakdown.RegionalName == string.Empty;
+						       
 				case ApplicationWorkflowTrigger.RecommendForApproval:
 					return grantApplication.RequiresCIPSValidation()
 					       || grantApplication.RequiresTrainingProviderValidation()
