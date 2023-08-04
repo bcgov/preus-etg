@@ -23,5 +23,7 @@ namespace CJG.Core.Interfaces.Service
 		void RecalculatePriorityScores(int? grantApplicationId = null, bool allowUnderAssessment = false);
 
 		void AddPostalCodeToRegion(GrantApplication grantApplication, int regionId);
+
+		List<string> GetHighOpportunityOccupationCodesAndNames(List<string> nocs);
 	}
 }

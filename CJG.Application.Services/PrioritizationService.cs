@@ -474,6 +474,16 @@ namespace CJG.Application.Services
 			_dbContext.Commit();
 		}
 
+		public List<string> GetHighOpportunityOccupationCodesAndNames(List<string> nocs)
+		{
+			var priorityNocs = _dbContext.PrioritizationHighOpportunityOccupationScores.Where(p => nocs.Contains(p.NOCCode));
+
+			return priorityNocs
+				.ToList()
+				.Select(n => $"{n.Name} ({n.NOCCode})")
+				.ToList();
+		}
+
 		private RegionalResult GetRegionalScore(GrantApplication grantApplication, PrioritizationThreshold threshold)
 		{
 			var result = new RegionalResult();
