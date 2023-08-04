@@ -39,6 +39,14 @@ namespace CJG.Application.Services
 				.ToList();
 		}
 
+		public IEnumerable<PrioritizationHighOpportunityOccupationScore> GetPrioritizationHighOpportunityOccupationScores()
+		{
+			return _dbContext.PrioritizationHighOpportunityOccupationScores
+				.OrderBy(r => r.NOCCode)
+				.Take(2000)  // Results aren't paginated, artificially page to stop long loads
+				.ToList();
+		}
+
 		public IEnumerable<Tuple<int, int>> GetRegionPostalCodeCounts()
 		{
 			var counts = _dbContext.PrioritizationPostalCodes
@@ -93,6 +101,7 @@ namespace CJG.Application.Services
 
 			var regionalResult = GetRegionalScore(grantApplication, threshold);
 			var industryResult = GetIndustryScore(grantApplication, threshold);
+			var highOpportunityOccupationScore = GetHighOpportunityOccupationScore(grantApplication, threshold);
 			var smallBusinessScore = GetSmallBusinessScore(grantApplication, threshold);
 			var firstTimeApplicantScore = GetFirstTimeApplicantScore(grantApplication, threshold);
 
@@ -104,6 +113,9 @@ namespace CJG.Application.Services
 			breakdown.IndustryScore = industryResult.Score;
 			breakdown.IndustryName = industryResult.Name;
 			breakdown.IndustryCode = industryResult.Code;
+
+			breakdown.HighOpportunityOccupationScore = highOpportunityOccupationScore.Score;
+			breakdown.HighOpportunityOccupationCode = highOpportunityOccupationScore.Code;
 
 			breakdown.SmallBusinessScore = smallBusinessScore;
 			breakdown.FirstTimeApplicantScore = firstTimeApplicantScore;
@@ -171,7 +183,72 @@ namespace CJG.Application.Services
 				_dbContext.PrioritizationIndustryScores.AddRange(newIndustries);
 				_dbContext.CommitTransaction();
 
-				_logger.Log(LogLevel.Info, $"Prioritization Industries Uploaded. Updated: {newIndustries.Count()}.");
+				_logger.Log(LogLevel.Info, $"Prioritization Industries Uploaded. Updated: {newIndustries.Count}.");
+
+				return true;
+			}
+			catch
+			{
+				throw;
+			}
+		}
+
+		public bool UpdateHighOpportunityOccupationScores(Stream stream)
+		{
+			var importRows = new List<Tuple<string, string, int>>();
+			try
+			{
+				using (var document = SpreadsheetDocument.Open(stream, false))
+				{
+					var workbookPart = document.WorkbookPart;
+					var sheet = workbookPart.WorksheetParts.FirstOrDefault() ?? throw new InvalidOperationException("Excel file contains no worksheets.");
+					var rows = sheet.Worksheet.Descendants<Row>().ToList();
+
+					const string nameColumn = "A";
+					const string codeColumn = "B";
+					const string scoreColumn = "C";
+
+					var firstRowSkipped = false;
+
+					foreach (var row in rows)
+					{
+						if (!firstRowSkipped)
+						{
+							firstRowSkipped = true;
+							continue;
+						}
+
+						var cells = row.Descendants<Cell>().ToList();
+						var rowIndex = row.RowIndex;
+
+						var name = GetCellValue<string>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{nameColumn}{rowIndex}"));
+						var code = GetCellValue<string>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{codeColumn}{rowIndex}"));
+						var score = GetCellValue<int>(workbookPart, cells.FirstOrDefault(c => c.CellReference == $"{scoreColumn}{rowIndex}"));
+
+						importRows.Add(new Tuple<string, string, int>(name, code, score));
+					}
+
+					document.Close();
+				}
+
+				if (!importRows.Any())
+					return false;
+
+				var hoos = _dbContext.PrioritizationHighOpportunityOccupationScores.ToList();
+				_dbContext.PrioritizationHighOpportunityOccupationScores.RemoveRange(hoos);
+
+				var newHoos = importRows.Select(i => new PrioritizationHighOpportunityOccupationScore
+				{
+					Name = i.Item1,
+					NOCCode = i.Item2,
+					HighOpportunityOccupationScore = i.Item3,
+					DateAdded = AppDateTime.UtcNow
+				}).ToList();
+
+				_dbContext.PrioritizationHighOpportunityOccupationScores.AddRange(newHoos);
+				_dbContext.CommitTransaction();
+
+				_logger.Log(LogLevel.Info, $"Prioritization High Opportunity Occupations Uploaded. Updated: {newHoos.Count}.");
 
 				return true;
 			}
@@ -497,6 +574,32 @@ namespace CJG.Application.Services
 			return result;
 		}
 
+		private HighOpportunityOccupationResult GetHighOpportunityOccupationScore(GrantApplication grantApplication, PrioritizationThreshold threshold)
+		{
+			var hooThreshold = threshold.HighOpportunityOccupationThreshold;
+			var result = new HighOpportunityOccupationResult { Code = string.Empty };
+
+			if (grantApplication.ParticipantForms == null)
+				return result;
+
+			var nocsOnApplication = grantApplication.ParticipantForms.Select(pf => pf.FutureNoc.Code);
+			var nocsMeetingThreshold = _dbContext.PrioritizationHighOpportunityOccupationScores
+				.Where(hoo => hoo.HighOpportunityOccupationScore <= hooThreshold)
+				.Select(hoo => hoo.NOCCode);
+
+			var matchingNocs = nocsMeetingThreshold
+				.Intersect(nocsOnApplication)
+				.OrderBy(n => n);
+
+			if (!matchingNocs.Any())
+				return result;
+
+			result.Score = threshold.HighOpportunityOccupationAssignedScore;
+			result.Code = string.Join(", ", matchingNocs.Distinct());
+
+			return result;
+		}
+
 		private PrioritizationIndustryScore GetPrioritizationIndustryScoreByNaics(GrantApplication grantApplication)
 		{
 			if (grantApplication.NAICS == null)
@@ -601,6 +704,12 @@ namespace CJG.Application.Services
 	{
 		public int Score { get; set; }
 		public string Name { get; set; }
+		public string Code { get; set; }
+	}
+
+	internal class HighOpportunityOccupationResult
+	{
+		public int Score { get; set; }
 		public string Code { get; set; }
 	}
 }

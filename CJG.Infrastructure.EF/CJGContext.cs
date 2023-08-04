@@ -201,6 +201,7 @@ namespace CJG.Infrastructure.EF
 		public virtual DbSet<RateFormat> RateFormats { get; set; }
 		public virtual DbSet<PrioritizationThreshold> PrioritizationThresholds { get; set; }
 		public virtual DbSet<PrioritizationIndustryScore> PrioritizationIndustryScores { get; set; }
+		public virtual DbSet<PrioritizationHighOpportunityOccupationScore> PrioritizationHighOpportunityOccupationScores { get; set; }
 		public virtual DbSet<PrioritizationRegion> PrioritizationRegions { get; set; }
 		public virtual DbSet<PrioritizationPostalCode> PrioritizationPostalCodes { get; set; }
 		#endregion

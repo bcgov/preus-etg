@@ -16,8 +16,10 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 		private PrioritizationService _service;
 		private GrantApplication _grantApplication;
 		private ServiceHelper _helper;
+
 		private static PrioritizationRegion _regionInDemand;
 		private static PrioritizationRegion _regionNoDemand;
+
 		private GrantOpening _grantOpening;
 		private List<GrantApplication> _existingApplications;
 
@@ -33,16 +35,19 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			var threshold = new PrioritizationThreshold
 			{
 				IndustryThreshold = 2,
+				HighOpportunityOccupationThreshold = 2,
 				RegionalThreshold = 2.5m,
 				EmployeeCountThreshold = 50,
 
 				IndustryAssignedScore = 2,
+				HighOpportunityOccupationAssignedScore = 15,
 				RegionalThresholdAssignedScore = 3,
 				EmployeeCountAssignedScore = 4,
 				FirstTimeApplicantAssignedScore = 5
 			};
 
 			_helper.MockDbSet(GetPrioritizationIndustryScores());
+			_helper.MockDbSet(GetPrioritizationHighOpportunityOccupationScores());
 			_helper.MockDbSet(GetPrioritizationRegions());
 			_helper.MockDbSet(GetPrioritizationPostalCodes());
 			_helper.MockDbSet(applicationAdministrator);
@@ -144,6 +149,22 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			};
 
 			return prioritizationIndustryScores;
+		}
+
+		private static List<PrioritizationHighOpportunityOccupationScore> GetPrioritizationHighOpportunityOccupationScores()
+		{
+			var fakeHighScore = new PrioritizationHighOpportunityOccupationScore { NOCCode = "12345", HighOpportunityOccupationScore = 1, DateAdded = AppDateTime.Now };
+			var fakeMidScore = new PrioritizationHighOpportunityOccupationScore { NOCCode = "33333", HighOpportunityOccupationScore = 2, DateAdded = AppDateTime.Now };
+			var fakeLowScore = new PrioritizationHighOpportunityOccupationScore { NOCCode = "54321", HighOpportunityOccupationScore = 3, DateAdded = AppDateTime.Now };
+
+			var prioritizationHighOpportunityOccupationScores = new List<PrioritizationHighOpportunityOccupationScore>
+			{
+				fakeHighScore,
+				fakeMidScore,
+				fakeLowScore,
+			};
+
+			return prioritizationHighOpportunityOccupationScores;
 		}
 
 		[TestMethod, TestCategory("Prioritization Service Methods")]
@@ -365,6 +386,81 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 
 			Assert.AreEqual("Named Industry", result.IndustryName);
 			Assert.AreEqual("4321", result.IndustryCode);
+		}
+
+		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("High Opportunity Score")]
+		public void GetBreakdown_SetsHighOccupationOpportunity_NoMatchingNOC()
+		{
+			AddPIFWithNoc(_grantApplication, "44444");
+
+			var result = _service.GetBreakdown(_grantApplication);
+
+			Assert.AreEqual(0, result.HighOpportunityOccupationScore);
+			Assert.AreEqual(string.Empty, result.HighOpportunityOccupationCode);
+		}
+
+		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("High Opportunity Score")]
+		public void GetBreakdown_SetsHighOccupationOpportunity_MatchingNOC_HighScore()
+		{
+			AddPIFWithNoc(_grantApplication, "12345");
+
+			var result = _service.GetBreakdown(_grantApplication);
+
+			Assert.AreEqual(15, result.HighOpportunityOccupationScore);
+			Assert.AreEqual("12345", result.HighOpportunityOccupationCode);
+		}
+
+		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("High Opportunity Score")]
+		public void GetBreakdown_SetsHighOccupationOpportunity_MatchingNOC_LowScore()
+		{
+			AddPIFWithNoc(_grantApplication, "54321");
+
+			var result = _service.GetBreakdown(_grantApplication);
+
+			Assert.AreEqual(0, result.HighOpportunityOccupationScore);
+			Assert.AreEqual(string.Empty, result.HighOpportunityOccupationCode);
+		}
+
+		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("High Opportunity Score")]
+		public void GetBreakdown_SetsHighOccupationOpportunity_OneMatchingNOC_ManyPIFs()
+		{
+			AddPIFWithNoc(_grantApplication, "12345");
+			AddPIFWithNoc(_grantApplication, "45456");
+			AddPIFWithNoc(_grantApplication, "54321");
+			AddPIFWithNoc(_grantApplication, "54443");
+			AddPIFWithNoc(_grantApplication, "00001");
+
+			var result = _service.GetBreakdown(_grantApplication);
+
+			Assert.AreEqual(15, result.HighOpportunityOccupationScore);
+			Assert.AreEqual("12345", result.HighOpportunityOccupationCode);
+		}
+
+		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("High Opportunity Score")]
+		public void GetBreakdown_SetsHighOccupationOpportunity_ThreeMatchingNOC_ManyPIFs()
+		{
+			AddPIFWithNoc(_grantApplication, "33333");
+			AddPIFWithNoc(_grantApplication, "33333");
+			AddPIFWithNoc(_grantApplication, "12345");
+			AddPIFWithNoc(_grantApplication, "11111");
+			AddPIFWithNoc(_grantApplication, "54443");
+
+			var result = _service.GetBreakdown(_grantApplication);
+
+			Assert.AreEqual(15, result.HighOpportunityOccupationScore);
+			Assert.AreEqual("12345, 33333", result.HighOpportunityOccupationCode);
+		}
+
+		private ParticipantForm AddPIFWithNoc(GrantApplication grantApplication, string nocCode)
+		{
+			var noc = new NationalOccupationalClassification { Code = nocCode };
+			var participantForm = new ParticipantForm
+			{
+				FutureNoc = noc
+			};
+			grantApplication.ParticipantForms.Add(participantForm);
+
+			return participantForm;
 		}
 
 		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Regional Score")]

@@ -14,6 +14,9 @@ namespace CJG.Web.External.Areas.Int.Models
 		public string IndustryCode { get; set; }
 		public int IndustryScore { get; set; }
 
+		public string HighOpportunityOccupationCode { get; set; }
+		public int HighOpportunityOccupationScore { get; set; }
+
 		public string RegionalName { get; set; }
 		public int RegionalScore { get; set; }
 
@@ -41,6 +44,9 @@ namespace CJG.Web.External.Areas.Int.Models
 			IndustryName = breakdown.IndustryName;
 			IndustryCode = breakdown.IndustryCode;
 			IndustryScore = breakdown.IndustryScore;
+
+			HighOpportunityOccupationCode = breakdown.HighOpportunityOccupationCode;
+			HighOpportunityOccupationScore = breakdown.HighOpportunityOccupationScore;
 
 			RegionalName = breakdown.RegionalName;
 			RegionalScore = breakdown.RegionalScore;

@@ -17,6 +17,9 @@ namespace CJG.Core.Entities
 		public string IndustryName { get; set; }
 		public string IndustryCode { get; set; }
 
+		public int HighOpportunityOccupationScore { get; set; }
+		public string HighOpportunityOccupationCode { get; set; }
+
 		public int RegionalScore { get; set; }
 		public string RegionalName { get; set; }
 
@@ -33,11 +36,11 @@ namespace CJG.Core.Entities
 
 		public int GetTotalScore()
 		{
-			return IndustryScore + RegionalScore + SmallBusinessScore + FirstTimeApplicantScore + QuestionScoreTotal;
+			return IndustryScore + HighOpportunityOccupationScore + RegionalScore + SmallBusinessScore + FirstTimeApplicantScore + QuestionScoreTotal;
 		}
 
 		/// <summary>
-		/// Does this breakdown encounter an Exception with it's region lookup? Ie: No matching postal code
+		/// Does this breakdown encounter an Exception with it's region lookup? Ie: No matching "V" postal code in the PostalCode listings
 		/// </summary>
 		/// <returns></returns>
 		public bool HasRegionalException()

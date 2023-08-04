@@ -177,6 +177,7 @@ namespace CJG.Infrastructure.EF
 		public DbSet<RateFormat> RateFormats => _context.RateFormats;
 		public DbSet<PrioritizationThreshold> PrioritizationThresholds => _context.PrioritizationThresholds;
 		public DbSet<PrioritizationIndustryScore> PrioritizationIndustryScores => _context.PrioritizationIndustryScores;
+		public DbSet<PrioritizationHighOpportunityOccupationScore> PrioritizationHighOpportunityOccupationScores => _context.PrioritizationHighOpportunityOccupationScores;
 		public DbSet<PrioritizationRegion> PrioritizationRegions => _context.PrioritizationRegions;
 		public DbSet<PrioritizationPostalCode> PrioritizationPostalCodes => _context.PrioritizationPostalCodes;
 		#endregion

@@ -524,6 +524,7 @@
     <Content Include="UI\javascript\internal\intake-periods\intake-period-view.js" />
     <Content Include="UI\javascript\internal\intake-periods\index.js" />
     <Content Include="UI\javascript\internal\intake-periods\intake-periods-view.js" />
+    <Content Include="UI\javascript\internal\prioritization\prioritization-management-hoo.js" />
     <Content Include="UI\javascript\internal\prioritization\prioritization-management-regions.js" />
     <Content Include="UI\javascript\internal\prioritization\prioritization-management-industries.js" />
     <Content Include="UI\javascript\internal\regional-exceptions\index.js" />
@@ -877,6 +878,7 @@
     <Content Include="Areas\Int\Views\Prioritization\_Regions.cshtml" />
     <Content Include="Areas\Int\Views\Prioritization\_Industries.cshtml" />
     <Content Include="App_Data\PDF\ETG-Travel-Expense-Claim-Form.docx" />
+    <Content Include="Areas\Int\Views\Prioritization\_HighOpportunityOccupations.cshtml" />
     <None Include="NLog.Training.config">
       <DependentUpon>NLog.config</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -27,6 +27,19 @@
                     </div>
                 </div>
                 <div class="form__group" style="padding-bottom: 0">
+                    <div class="form__label"><abbr title="High Opportunity Occupation">HOO</abbr> Codes:</div>
+                    <div class="form__control">
+                        <span ng-if="!model.HighOpportunityOccupationCode">--</span>
+                        {{model.HighOpportunityOccupationCode}}
+                    </div>
+                </div>
+                <div class="form__group" style="padding-top: 0">
+                    <div class="form__label"><abbr title="High Opportunity Occupation">HOO</abbr> Priority:</div>
+                    <div class="form__control">
+                        {{model.HighOpportunityOccupationScore}} points
+                    </div>
+                </div>
+                <div class="form__group" style="padding-bottom: 0">
                     <div class="form__label">Region:</div>
                     <div class="form__control">
                         <span ng-if="!model.RegionalName">--</span>
