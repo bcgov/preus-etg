@@ -426,7 +426,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				model = new ApplicationPrioritizationInfoViewModel(grantApplication);
 
 				// Convert the Code to a more descriptive value
-				model.HighOpportunityOccupationCode = string.Join(", ", _prioritizationService.GetHighOpportunityOccupationCodesAndNames(new List<string> { model.HighOpportunityOccupationCode }));
+				model.HighOpportunityOccupationCode = string.Join(", ", _prioritizationService.GetHighOpportunityOccupationCodesAndNames(model.HighOpportunityOccupationCode));
 			}
 			catch (Exception ex)
 			{

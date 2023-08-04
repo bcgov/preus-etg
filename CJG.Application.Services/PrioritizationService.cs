@@ -474,9 +474,10 @@ namespace CJG.Application.Services
 			_dbContext.Commit();
 		}
 
-		public List<string> GetHighOpportunityOccupationCodesAndNames(List<string> nocs)
+		public List<string> GetHighOpportunityOccupationCodesAndNames(string nocs)
 		{
-			var priorityNocs = _dbContext.PrioritizationHighOpportunityOccupationScores.Where(p => nocs.Contains(p.NOCCode));
+			var splitNocs = nocs.Split(',');
+			var priorityNocs = _dbContext.PrioritizationHighOpportunityOccupationScores.Where(p => splitNocs.Contains(p.NOCCode));
 
 			return priorityNocs
 				.ToList()

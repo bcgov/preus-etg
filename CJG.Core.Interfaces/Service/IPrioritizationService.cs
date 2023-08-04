@@ -24,6 +24,6 @@ namespace CJG.Core.Interfaces.Service
 
 		void AddPostalCodeToRegion(GrantApplication grantApplication, int regionId);
 
-		List<string> GetHighOpportunityOccupationCodesAndNames(List<string> nocs);
+		List<string> GetHighOpportunityOccupationCodesAndNames(string nocs);
 	}
 }
