@@ -11,8 +11,8 @@
             <button class="btn btn--primary btn--forward" ng-show="!section.editing" ng-if="grantFile.AllowReprioritization" ng-click="recalculatePrioritization()">Recalculate Prioritization Score</button>
         </div>
 
-        <div class="form form--2-col">
-            <div class="col-50p">
+        <div class="form form--2-col ">
+            <div class="col-50p prioritization">
                 <div class="form__group" style="padding-bottom: 0">
                     <div class="form__label">Industry:</div>
                     <div class="form__control">
@@ -27,14 +27,14 @@
                     </div>
                 </div>
                 <div class="form__group" style="padding-bottom: 0">
-                    <div class="form__label"><abbr title="High Opportunity Occupation">HOO</abbr> Codes:</div>
+                    <div class="form__label">High Opportunity Occupation Codes:</div>
                     <div class="form__control">
                         <span ng-if="!model.HighOpportunityOccupationCode">--</span>
                         {{model.HighOpportunityOccupationCode}}
                     </div>
                 </div>
                 <div class="form__group" style="padding-top: 0">
-                    <div class="form__label"><abbr title="High Opportunity Occupation">HOO</abbr> Priority:</div>
+                    <div class="form__label">High Opportunity Occupation Priority:</div>
                     <div class="form__control">
                         {{model.HighOpportunityOccupationScore}} points
                     </div>
