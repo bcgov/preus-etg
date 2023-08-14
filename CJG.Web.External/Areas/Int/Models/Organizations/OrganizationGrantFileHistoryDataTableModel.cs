@@ -28,7 +28,7 @@ namespace CJG.Web.External.Areas.Int.Models.Organizations
 			Id = grantApplication.Id;
 			FileNumber = grantApplication.FileNumber;
 			CurrentStatus = grantApplication.ApplicationStateInternal.GetDescription();
-			ApplicationStream = grantApplication.GrantOpening.GrantStream.FullNameProgramCode;
+			ApplicationStream = grantApplication.GrantOpening.GrantStream.Name;
 			ApplicantName = grantApplication.ApplicantFirstName + " " + grantApplication.ApplicantLastName;
 			ApplicantEmail = userService.GetUser(grantApplication.ApplicantBCeID).EmailAddress;
 			TrainingProgramTitle = grantApplication.TrainingPrograms.FirstOrDefault()?.CourseTitle;

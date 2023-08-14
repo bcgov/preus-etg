@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web.Mvc;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
@@ -20,14 +21,10 @@ namespace CJG.Web.External.Areas.Int.Controllers
 	[AuthorizeAction(Privilege.AM1, Privilege.AM2, Privilege.AM3, Privilege.AM4, Privilege.AM5)]
 	public class OrganizationHistoryController : BaseController
 	{
-		#region Variables
 		private readonly IOrganizationService _organizationService;
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IUserService _userService;
 		private readonly IGrantProgramService _grantProgramService;
-		#endregion
-
-		#region Constructors
 
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="OrganizationHistoryController"/> object.
@@ -49,9 +46,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_userService = userService;
 			_grantProgramService = grantProgramService;
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
 		/// Returns the organization grant file history view.
 		/// </summary>
@@ -119,23 +114,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
 
-		[HttpGet]
-		[Route("History/Program/Types")]
-		public JsonResult GetProgramTypes()
-		{
-			IEnumerable<KeyValuePair<int, string>> results = new KeyValuePair<int, string>[0];
-			try
-			{
-				var grantPrograms = _grantProgramService.GetAll();
-				results = grantPrograms.Select(p => new KeyValuePair<int, string>(p.Id, p.Name)).ToArray();
-			}
-			catch (Exception ex)
-			{
-				HandleAngularException(ex);
-			}
-			return Json(results, JsonRequestBehavior.AllowGet);
-		}
-
 		/// <summary>
 		/// Get grant file histories for organization.
 		/// </summary>
@@ -158,22 +136,13 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 				var grantApplications = _grantApplicationService.GetGrantApplicationsForOrg(organizationId, grantProgramId, search);
 
-				List<OrganizationGrantFileHistoryDataTableModel> history = grantApplications.ToList().Select(o => new OrganizationGrantFileHistoryDataTableModel(o, _userService)).ToList();
+				var history = grantApplications.ToList().Select(o => new OrganizationGrantFileHistoryDataTableModel(o, _userService)).ToList();
 
-				//SORT
 				if (string.IsNullOrEmpty(sortby))
-				{
 					sortby = "FileNumber";
-				}
-				System.Reflection.PropertyInfo prop = typeof(OrganizationGrantFileHistoryDataTableModel).GetProperty(sortby);
-				if (sortDesc)
-				{
-					history = history.OrderByDescending(o => prop.GetValue(o, null)).ToList();
-				}
-				else
-				{
-					history = history.OrderBy(o => prop.GetValue(o, null)).ToList();
-				}
+
+				var prop = typeof(OrganizationGrantFileHistoryDataTableModel).GetProperty(sortby);
+				history = sortDesc ? history.OrderByDescending(o => prop.GetValue(o, null)).ToList() : history.OrderBy(o => prop.GetValue(o, null)).ToList();
 
 				var filtered = history
 					.Skip((page - 1) * quantity)
@@ -227,7 +196,5 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
-		
-		#endregion
 	}
 }
