@@ -636,7 +636,7 @@ namespace CJG.Core.Entities
 		}
 
 		/// <summary>
-		/// Check that agreed commitments cannot exceed 10% of estimated contribution unless the user is a Director
+		/// Check that agreed commitments cannot exceed 10% of estimated contribution unless the user is a Director or Assessor
 		/// </summary>
 		/// <param name="trainingCost"></param>
 		public static bool DoesAgreedCommitmentExceedEstimatedContribution(this TrainingCost trainingCost)

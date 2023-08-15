@@ -1874,7 +1874,7 @@ namespace CJG.Application.Services
 				}
 			}
 
-			// Agreed commitment cannot exceed 10% unless user is a Director
+			// Agreed commitment cannot exceed 10% unless user is a Director or Assessor
 			if (trainingCost.DoesAgreedCommitmentExceedEstimatedContribution() && !_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCostOverride))
 				throw new InvalidOperationException("You may not increase the assessed total government contribution more than 10% over the estimated total government contribution.");
 
@@ -2087,7 +2087,7 @@ namespace CJG.Application.Services
 				}
 			}
 
-			// Agreed commitment cannot exceed 10% unless user is a Director
+			// Agreed commitment cannot exceed 10% unless user is a Director or Assessor
 			if (trainingCost.DoesAgreedCommitmentExceedEstimatedContribution() && !_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCostOverride))
 				throw new InvalidOperationException("You may not increase the assessed total government contribution more than 10% over the estimated total government contribution.");
 

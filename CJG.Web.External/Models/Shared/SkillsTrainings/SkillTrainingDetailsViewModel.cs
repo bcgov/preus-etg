@@ -310,7 +310,7 @@ namespace CJG.Web.External.Models.Shared.SkillsTrainings
 				grantApplication.TrainingCost.AgreedCommitment = grantApplication.TrainingCost.CalculateAgreedMaxReimbursement();
 			}
 
-			// Agreed commitment cannot exceed 10% unless user is a Director
+			// Agreed commitment cannot exceed 10% unless user is a Director or Assessor
 			if (grantApplication.TrainingCost.DoesAgreedCommitmentExceedEstimatedContribution() && !user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCostOverride))
 				throw new InvalidOperationException("You may not increase the assessed total government contribution more than 10% over the estimated total government contribution.");
 
