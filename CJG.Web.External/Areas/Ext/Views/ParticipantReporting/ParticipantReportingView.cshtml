@@ -47,6 +47,10 @@
                         </div>
                     </div>
                 
+                    <div class="notice notice--icon">
+                        <p>Temporary foreign workers, international students, people on working holiday visas, or other temporary residents are ineligible.</p>
+                    </div>
+
                     <div class="notice notice--icon" ng-repeat="warning in model.ParticipantWarnings | filter: { ParticipantIsNearingLimit: true }">
                         {{ warning.ParticipantName }} is nearing the maximum allowable amount that can be claimed per person per fiscal year ({{ warning.CurrentClaims | currency : '$' : 2 }} of {{ warning.FiscalYearLimit | currency : '$' : 2 }}). Please review the <a href="https://www.workbc.ca/Employer-Resources/B-C-Employer-Training-Grant.aspx" target="_blank">ETG eligibility criteria for details.</a> 
                     </div>
@@ -59,6 +63,10 @@
             <div ng-if="model.UseInvitations">
                 <p>You have indicated that there will be {{model.MaxParticipantsAllowed}} participants. To change the number of participants, return to the <a href="@Url.Action("TrainingCostView", "TrainingCost", new { id = ViewBag.GrantApplicationId })">Training Cost</a> section of your application.</p>
                 <p>Please enter participant details below. By clicking “Send”, participants will receive an email invitation to complete a Participant Information Form (PIF).</p> 
+                
+                <div class="notice notice--icon">
+                    <p>Temporary foreign workers, international students, people on working holiday visas, or other temporary residents are ineligible.</p>
+                </div>
             </div>
 
             <div>
