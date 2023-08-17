@@ -1477,12 +1477,12 @@ namespace CJG.Application.Services
 			CreateWorkflowStateMachine(grantApplication).RemoveFromAssessment();
 		}
 
-		public void RecommendForApproval(GrantApplication grantApplication)
+		public void RecommendForApproval(GrantApplication grantApplication, string reason = null)
 		{
 			if (grantApplication == null)
 				throw new ArgumentNullException(nameof(grantApplication));
 
-			CreateWorkflowStateMachine(grantApplication).RecommendForApproval();
+			CreateWorkflowStateMachine(grantApplication).RecommendForApproval(reason);
 		}
 
 		public void RecommendForDenial(GrantApplication grantApplication, string reason = null)

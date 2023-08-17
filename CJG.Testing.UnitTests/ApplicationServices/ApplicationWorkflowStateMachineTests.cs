@@ -154,7 +154,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			var stateMachine = helper.Create<ApplicationWorkflowStateMachine>(grantApplication);
 
 			// Act
-			stateMachine.RecommendForApproval();
+			stateMachine.RecommendForApproval("{ approvedReason:'application is good' }");
 
 			// Assert
 			grantApplication.Assessor.Should().Be(assessor);
@@ -163,6 +163,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			grantApplication.IsApplicationAssessor(assessor).Should().Be(true);
 			grantApplication.ApplicationStateInternal.Should().Be(ApplicationStateInternal.RecommendedForApproval);
 			grantApplication.ApplicationStateExternal.Should().Be(ApplicationStateExternal.Submitted);
+			grantApplication.StateChanges.LastOrDefault()?.Reason.Should().Be("application is good");
 		}
 
 		[TestMethod]

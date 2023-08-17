@@ -88,7 +88,7 @@ namespace CJG.Core.Interfaces.Service
 
 		void RemoveFromAssessment(GrantApplication grantApplication);
 
-		void RecommendForApproval(GrantApplication grantApplication);
+		void RecommendForApproval(GrantApplication grantApplication, string reason = null);
 
 		void RecommendForDenial(GrantApplication grantApplication, string reason = null);
 

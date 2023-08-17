@@ -221,12 +221,20 @@
                     </div>
                 </div>
             </div>
-
             <div ng-if="model.TerminalReason" class="block--row-group">
                 <div class="form__group last-item">
                     <div class="form__label">Reason:</div>
                     <div class="form__control">
                         <div class="control-wrapper collapsed__html" ng-bind-html="model.TerminalReason | unsafe" ng-click="previewDenialReason()" title="Click to view full text"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="model.ApprovalReason" class="block--row-group">
+                <div class="form__group last-item">
+                    <div class="form__label">Approval Reason:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper collapsed__html" ng-bind-html="model.ApprovalReason | unsafe" ng-click="previewApprovalReason()" title="Click to view full text"></div>
                     </div>
                 </div>
             </div>

@@ -5,6 +5,7 @@ using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using System;
+using System.Web.Http.Validation;
 using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
@@ -207,7 +208,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				var grantApplication = _grantApplicationService.Get(model.ApplicationWorkflowViewModel.Id);
 				grantApplication.RowVersion = Convert.FromBase64String(model.ApplicationWorkflowViewModel.RowVersion);
-				_grantApplicationService.RecommendForApproval(grantApplication);
+				_grantApplicationService.RecommendForApproval(grantApplication, model.ApplicationWorkflowViewModel.ReasonToApprove);
+
 				model = new WorkflowViewModel(grantApplication, User, x => Url.RouteUrl(x));
 			}
 			catch (Exception ex)

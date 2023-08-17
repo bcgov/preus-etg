@@ -16,6 +16,7 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 		public string RowVersion { get; set; }
 		public int TotalGrantApplications { get; set; }
 		public decimal TotalGrantApplicationCost { get; set; }
+		public string ApprovalReason { get; set; }
 		public string TerminalReason { get; set; }
 		public string HighLevelDenialReasons { get; set; }
 		public string FileNumber { get; set; }
@@ -95,6 +96,7 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 			};
 
 			ShowAssessorName = grantApplication.Assessor != null && grantApplication.ApplicationStateInternal >= ApplicationStateInternal.UnderAssessment;
+			ApprovalReason = grantApplication.GetApprovedReason();
 			TerminalReason = grantApplication.GetTerminalReason();
 			HighLevelDenialReasons = grantApplication.GetSelectedDeniedReason();
 			TotalGrantApplications = grantApplicationService.GetApplicationsCountByFiscal(grantApplication);

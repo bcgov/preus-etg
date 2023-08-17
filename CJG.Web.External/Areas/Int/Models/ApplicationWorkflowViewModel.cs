@@ -14,6 +14,8 @@ namespace CJG.Web.External.Areas.Int.Models
 		public string OrganizationLegalName { get; set; }
 		public int? AssessorId { get; set; }
 		[AllowHtml]
+		public string ReasonToApprove { get; set; }
+		[AllowHtml]
 		public string ReasonToDeny { get; set; }
 		public string ReasonToCancel { get; set; }
 		public string ReasonToWithdraw { get; set; }
@@ -37,6 +39,7 @@ namespace CJG.Web.External.Areas.Int.Models
 			FileName = grantApplication.GetFileName();
 			OrganizationLegalName = grantApplication.Organization.LegalName;
 			AssessorId = grantApplication.AssessorId;
+			ReasonToApprove = grantApplication.GetApprovedReason();
 			ReasonToDeny = grantApplication.GetDeniedReason();
 			ReasonToCancel = grantApplication.GetCancelledReason();
 			ApplicationStateInternal = grantApplication.ApplicationStateInternal;

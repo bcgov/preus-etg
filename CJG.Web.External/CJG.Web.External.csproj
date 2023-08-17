@@ -285,6 +285,7 @@
     <Content Include="content\components\_AngularTextArea.html" />
     <Content Include="content\dialogs\_AddParticipantInvitation.html" />
     <Content Include="content\dialogs\_ChangeAlternateContact.html" />
+    <Content Include="content\dialogs\_ApprovalReason.html" />
     <Content Include="content\dialogs\_DenialReason.html" />
     <Content Include="content\dialogs\_FullContent.html" />
     <Content Include="content\dialogs\_TestNotification.html" />

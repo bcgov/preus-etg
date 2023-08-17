@@ -23,7 +23,7 @@ namespace CJG.Web.External.Areas.Int.Models.Organizations
 		public decimal AverageCostPerParticipant { get; set; }
 		public string RowVersionString { get; set; }
 
-		public OrganizationGrantFileHistoryDataTableModel(GrantApplication grantApplication, IUserService userService)
+        public OrganizationGrantFileHistoryDataTableModel(GrantApplication grantApplication, IUserService userService)
 		{
 			Id = grantApplication.Id;
 			FileNumber = grantApplication.FileNumber;

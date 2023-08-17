@@ -8,8 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
+using System.Dynamic;
 using System.Linq;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace CJG.Application.Services
 {
@@ -46,6 +49,9 @@ namespace CJG.Application.Services
 
 		private readonly StateMachine<ApplicationStateInternal, ApplicationWorkflowTrigger>.TriggerWithParameters<string>
 			_returnToAssessmentTrigger;
+
+		private readonly StateMachine<ApplicationStateInternal, ApplicationWorkflowTrigger>.TriggerWithParameters<string>
+			_recommendForApprovalTrigger;
 
 		private readonly StateMachine<ApplicationStateInternal, ApplicationWorkflowTrigger>.TriggerWithParameters<string>
 			_recommendForDenialTrigger;
@@ -135,6 +141,7 @@ namespace CJG.Application.Services
 			_beginAssessmentTrigger = _stateMachine.SetTriggerParameters<InternalUser>(ApplicationWorkflowTrigger.BeginAssessment);
 			_withdrawApplicationTrigger = _stateMachine.SetTriggerParameters<string>(ApplicationWorkflowTrigger.WithdrawApplication);
 			_returnToAssessmentTrigger = _stateMachine.SetTriggerParameters<string>(ApplicationWorkflowTrigger.ReturnToAssessment);
+			_recommendForApprovalTrigger = _stateMachine.SetTriggerParameters<string>(ApplicationWorkflowTrigger.RecommendForApproval);
 			_recommendForDenialTrigger = _stateMachine.SetTriggerParameters<string>(ApplicationWorkflowTrigger.RecommendForDenial);
 			_rejectGrantAgreementTrigger = _stateMachine.SetTriggerParameters<string>(ApplicationWorkflowTrigger.RejectGrantAgreement);
 			_denyApplicationTrigger = _stateMachine.SetTriggerParameters<string>(ApplicationWorkflowTrigger.DenyApplication);
@@ -188,7 +195,7 @@ namespace CJG.Application.Services
 				.Permits(_grantApplication.ApplicationStateInternal);
 
 			_stateMachine.Configure(ApplicationStateInternal.RecommendedForApproval)
-				.OnEntryFrom(ApplicationWorkflowTrigger.RecommendForApproval, t => OnRecommendForApproval())
+				.OnEntryFrom(_recommendForApprovalTrigger, reason => OnRecommendForApproval(reason))
 				.Permits(_grantApplication.ApplicationStateInternal);
 
 			_stateMachine.Configure(ApplicationStateInternal.RecommendedForDenial)
@@ -554,9 +561,17 @@ namespace CJG.Application.Services
 		/// costs in the attribute ApplicationID.AssessedCommitment.This amount becomes the assessed commitment when an agreement is accepted.
 		/// The attribute ApplicationID.CostEstimates records the total submitted request of the Application Administrator and is not changed in the assessment process.
 		/// </summary>
-		private void OnRecommendForApproval()
+		private void OnRecommendForApproval(string response)
 		{
-			LogStateChanges();
+			if (string.IsNullOrEmpty(response))
+				LogStateChanges(response, response);
+			else
+			{
+				dynamic data = JsonConvert.DeserializeObject<ExpandoObject>(response, new ExpandoObjectConverter());
+				string approvedReason = data.approvedReason;
+				
+				LogStateChanges(approvedReason, approvedReason);
+			}
 
 			UpdateGrantApplication();
 
@@ -572,14 +587,14 @@ namespace CJG.Application.Services
 		/// in the attribute ApplicationID.AssessedCommitment.This amount becomes the assessed commitment when an agreement is accepted.
 		/// The attribute ApplicationID.CostEstimates records the total submitted request of the Application Administrator and is not changed in the assessment process.
 		/// </summary>
-		/// <param name="reason"></param>
+		/// <param name="response"></param>
 		private void OnRecommendForDenial(string response)
 		{
 			if (string.IsNullOrEmpty(response))
 				LogStateChanges(response, response);
 			else
 			{
-				dynamic data = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Dynamic.ExpandoObject>(response, new Newtonsoft.Json.Converters.ExpandoObjectConverter());
+				dynamic data = JsonConvert.DeserializeObject<ExpandoObject>(response, new ExpandoObjectConverter());
 				string denialReason = data.deniedReason;
 				IEnumerable<dynamic> selectedReasons = data.selectedReasons;
 
@@ -1381,10 +1396,10 @@ namespace CJG.Application.Services
 			_stateMachine.Fire(_beginAssessmentTrigger, internalUser);
 		}
 
-		public void RecommendForApproval()
+		public void RecommendForApproval(string reason)
 		{
 			CanPerformTrigger(ApplicationWorkflowTrigger.RecommendForApproval);
-			_stateMachine.Fire(ApplicationWorkflowTrigger.RecommendForApproval);
+			_stateMachine.Fire(_recommendForApprovalTrigger, reason);
 		}
 
 		public void RecommendForDenial(string reason)

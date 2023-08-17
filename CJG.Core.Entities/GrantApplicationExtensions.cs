@@ -438,6 +438,11 @@ namespace CJG.Core.Entities
 			return grantApplication.GetReason(ApplicationStateInternal.RecommendedForDenial, ApplicationStateInternal.ApplicationDenied, ApplicationStateInternal.ClaimDenied, ApplicationStateInternal.ChangeForDenial);
 		}
 
+		public static string GetApprovedReason(this GrantApplication grantApplication)
+		{
+			return grantApplication.GetReason(ApplicationStateInternal.RecommendedForApproval);
+		}
+
 		/// <summary>
 		/// Get the selected reasons for being denied.
 		/// This will return the selected denial reasons on the grant file.
