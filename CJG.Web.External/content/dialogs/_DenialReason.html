@@ -16,19 +16,23 @@
                     <label class="form__label">Select high-level denial reason<abbr title='Required'>*</abbr></label>
                     <div class="form__group">
                         <div ng-if="ngDialogData.denialReasonList.length == 0"><b>No Denial Reasons Found!</b></div>
-                        <div class="form form--2-col" ng-repeat="reason in ngDialogData.denialReasonList">
-                            <div class="col-50p" ng-if="$odd">
-                                <input type="checkbox" id="denialReason-{{reason.Id}}" name="denial-reasons-{{reason.Id}}" value="{{reason.Id}}"
-                                       ng-checked="ngDialogData.denialReasonsSelection.indexOf(reason.Id) > -1"
-                                       ng-click="ngDialogData.toggleDenialSelection(reason.Id)">
-                                <label for="denialReason-{{reason.Id}}">{{reason.Caption}}</label>
+                        <div class="form form--2-col">
+                            <div class="col-50p">
+                                <div ng-repeat="reason in ngDialogData.denialReasonList" ng-if="$index < (ngDialogData.denialReasonList.length / 2)">
+                                    <input type="checkbox" id="denialReason-{{reason.Id}}" name="denial-reasons-{{reason.Id}}" value="{{reason.Id}}"
+                                           ng-checked="ngDialogData.denialReasonsSelection.indexOf(reason.Id) > -1"
+                                           ng-click="ngDialogData.toggleDenialSelection(reason.Id)">
+                                    <label for="denialReason-{{reason.Id}}">{{reason.Caption}}</label>
+                                </div>
                             </div>
                             <div class="w-100"></div>
-                            <div class="col-50p" ng-if="$even">
-                                <input type="checkbox" id="denialReason-{{reason.Id}}" name="denial-reasons-{{reason.Id}}" value="{{reason.Id}}"
-                                       ng-checked="ngDialogData.denialReasonsSelection.indexOf(reason.Id) > -1"
-                                       ng-click="ngDialogData.toggleDenialSelection(reason.Id)">
-                                <label for="denialReason-{{reason.Id}}">{{reason.Caption}}</label>
+                            <div class="col-50p">
+                                <div ng-repeat="reason in ngDialogData.denialReasonList" ng-if="$index >= (ngDialogData.denialReasonList.length / 2)">
+                                    <input type="checkbox" id="denialReason-{{reason.Id}}" name="denial-reasons-{{reason.Id}}" value="{{reason.Id}}"
+                                           ng-checked="ngDialogData.denialReasonsSelection.indexOf(reason.Id) > -1"
+                                           ng-click="ngDialogData.toggleDenialSelection(reason.Id)">
+                                    <label for="denialReason-{{reason.Id}}">{{reason.Caption}}</label>
+                                </div>
                             </div>
                         </div>
                     </div>
