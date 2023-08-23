@@ -175,7 +175,7 @@ namespace CJG.Application.Services
 
 		public NotificationType GetPIFInvitationNotificationType()
 		{
-			var pifInvitationType = _dbContext.NotificationTypes.AsNoTracking()
+			var pifInvitationType = _dbContext.NotificationTypes
 				.Where(nt => nt.NotificationTriggerId == NotificationTriggerTypes.EmailTemplate)
 				.Where(nt => nt.Caption == "PIF Invitation")
 				.FirstOrDefault();
