@@ -116,7 +116,7 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 			};
 			DateSubmitted = grantApplication.DateSubmitted?.ToLocalTime();
 			DateUpdated = grantApplication.DateUpdated?.ToLocalTime();
-			DateStatusChanged = grantApplication.GetStateChange(grantApplication.ApplicationStateInternal).ChangedDate;
+			DateStatusChanged = grantApplication.GetStateChange(grantApplication.ApplicationStateInternal)?.ChangedDate ?? AppDateTime.UtcNow;
 			FileNumber = grantApplication.FileNumber;
 			GrantStreamFullName = grantApplication.GrantOpening.GrantStream.FullName;
 			GrantProgramId = grantApplication.GrantOpening.GrantStream.GrantProgramId;

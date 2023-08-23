@@ -15,6 +15,7 @@ namespace CJG.Core.Interfaces.Service
 
 		IEnumerable<Organization> GetGrantProgramNotificationOrganizations(int grantProgramId);
 		IEnumerable<NotificationType> GetGrantProgramNotificationNotificationTypes(int grantProgramId);
+		NotificationType GetPIFInvitationNotificationType();
 
 		bool SendNotification(NotificationQueue notification, bool test = false);
 

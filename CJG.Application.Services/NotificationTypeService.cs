@@ -1,13 +1,12 @@
-﻿using CJG.Core.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using CJG.Core.Entities;
 using CJG.Core.Entities.Helpers;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Entities;
 using NLog;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
 
 namespace CJG.Application.Services
 {
@@ -16,10 +15,6 @@ namespace CJG.Application.Services
 	/// </summary>
 	public class NotificationTypeService : Service, INotificationTypeService
 	{
-		#region Variables
-		#endregion
-
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="NotificationTypeService"/> class.
 		/// </summary>
@@ -32,9 +27,7 @@ namespace CJG.Application.Services
 			ILogger logger) : base(dbContext, httpContext, logger)
 		{
 		}
-		#endregion
 
-		#region Methods
 		/// <summary>
 		/// Returns an array of notification types filtered by 'isActive' argument.
 		/// </summary>
@@ -64,19 +57,25 @@ namespace CJG.Application.Services
 		/// <returns></returns>
 		public PageList<NotificationType> Get(int page, int quantity, NotificationTypeFilter filter)
 		{
-			if (page <= 0) page = 1;
-			if (quantity <= 0 || quantity > 100) quantity = 10;
+			if (page <= 0)
+				page = 1;
 
-			var query = _dbContext.NotificationTypes.Where(nt => true);
+			if (quantity <= 0 || quantity > 100)
+				quantity = 10;
+
+			var query = _dbContext.NotificationTypes
+				.Where(nt => nt.NotificationTriggerId != NotificationTriggerTypes.EmailTemplate);
 
 			// Filter
-			if (!String.IsNullOrWhiteSpace(filter.Caption)) query = query.Where(n => n.Caption.Contains(filter.Caption));
-			if (filter.NotificationTriggerId > 0) query = query.Where(n => n.NotificationTriggerId == filter.NotificationTriggerId);
+			if (!string.IsNullOrWhiteSpace(filter.Caption))
+				query = query.Where(n => n.Caption.Contains(filter.Caption));
+
+			if (filter.NotificationTriggerId > 0)
+				query = query.Where(n => n.NotificationTriggerId == filter.NotificationTriggerId);
 
 			var total = query.Count();
 
-			// Order By
-			var orderBy = !String.IsNullOrWhiteSpace(filter.OrderBy) ? filter.OrderBy : $"{nameof(NotificationType.Caption)} desc";
+			var orderBy = !string.IsNullOrWhiteSpace(filter.OrderBy) ? filter.OrderBy : $"{nameof(NotificationType.Caption)} desc";
 			query = query.OrderByProperty(orderBy).Skip((page - 1) * quantity).Take(quantity);
 
 			return new PageList<NotificationType>(page, quantity, total, query.ToArray());
@@ -89,7 +88,10 @@ namespace CJG.Application.Services
 		/// <returns></returns>
 		public IEnumerable<NotificationTrigger> GetTriggerTypes(bool? isActive)
 		{
-			return _dbContext.NotificationTriggers.Where(nt => nt.IsActive == (isActive ?? true)).ToArray();
+			return _dbContext.NotificationTriggers
+				.Where(nt => nt.IsActive == (isActive ?? true))
+				.Where(nt => nt.Id != NotificationTriggerTypes.EmailTemplate)
+				.ToArray();
 		}
 
 		/// <summary>
@@ -150,5 +152,4 @@ namespace CJG.Application.Services
 			_dbContext.CommitTransaction();
 		}
 	}
-	#endregion
 }

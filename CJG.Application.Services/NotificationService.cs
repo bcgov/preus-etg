@@ -173,6 +173,16 @@ namespace CJG.Application.Services
 				.ToArray();
 		}
 
+		public NotificationType GetPIFInvitationNotificationType()
+		{
+			var pifInvitationType = _dbContext.NotificationTypes.AsNoTracking()
+				.Where(nt => nt.NotificationTriggerId == NotificationTriggerTypes.EmailTemplate)
+				.Where(nt => nt.Caption == "PIF Invitation")
+				.FirstOrDefault();
+
+			return pifInvitationType;
+		}
+
 		/// <summary>
 		/// Attempts to send an email for the specified notification.
 		/// This function does not update the datasource, you will need to call CommitTransaction().

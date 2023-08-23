@@ -20,7 +20,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
     [RouteArea("Int")]
 	public class NotificationController : BaseController
 	{
-		#region Variables
 		private readonly INotificationService _notificationService;
 		private readonly INotificationTypeService _notificationTypeService;
 		private readonly IGrantApplicationService _grantApplicationService;
@@ -28,9 +27,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		private readonly IFiscalYearService _fiscalYearService;
 		private readonly ISettingService _settingService;
 		private readonly IUserService _userService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a NotificationController object, and initializes it with the specified services.
 		/// </summary>
@@ -60,9 +57,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_settingService = settingService;
 			_userService = userService;
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
 		/// Return a view to manage the notification types.
 		/// </summary>
@@ -120,7 +115,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		}
 
 		/// <summary>
-		/// Returns an arary of notification trigger types.
+		/// Returns an array of notification trigger types.
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet]
@@ -176,9 +171,10 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				var milestoneDates = new
 				{
-					Data =
-						typeof(NotificationMilestoneDateName).GetEnumValues().OfType<NotificationMilestoneDateName>().Select(value =>
-							new KeyValuePair<NotificationMilestoneDateName, string>(value, value.GetDescription())).ToArray()
+					Data = typeof(NotificationMilestoneDateName).GetEnumValues()
+						.OfType<NotificationMilestoneDateName>()
+						.Select(value => new KeyValuePair<NotificationMilestoneDateName, string>(value, value.GetDescription()))
+						.ToArray()
 				};
 				return Json(milestoneDates, JsonRequestBehavior.AllowGet);
 
@@ -261,7 +257,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Adds the new notification type to the datasource.
 		/// </summary>
-		/// <param name="id"></param>
+		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPost]
 		[PreventSpam]
@@ -273,7 +269,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				if (ModelState.IsValid)
 				{
-					var notificationType = new NotificationType()
+					var notificationType = new NotificationType
 					{
 						NotificationTemplate = new NotificationTemplate(model.NotificationTemplate.EmailSubject, model.NotificationTemplate.EmailSubject, model.NotificationTemplate.EmailBody),
 					};
@@ -313,12 +309,12 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				if (ModelState.IsValid)
 				{
 					var invalidSubjectModel = _notificationService.ValidateModelKeywords(model.NotificationTemplate.EmailSubject, new[] { "GrantApplication", "Applicant", "GrantApplicationId" });
-					if (!String.IsNullOrWhiteSpace(invalidSubjectModel)) this.AddAngularError(model, "NotificationTemplate.EmailSubject", "Invalid template variables: " + invalidSubjectModel);
+					if (!string.IsNullOrWhiteSpace(invalidSubjectModel)) this.AddAngularError(model, "NotificationTemplate.EmailSubject", "Invalid template variables: " + invalidSubjectModel);
 
 					var invalidBodyModel = _notificationService.ValidateModelKeywords(model.NotificationTemplate.EmailBody, new[] { "GrantApplication", "Applicant", "GrantApplicationId" });
-					if (!String.IsNullOrWhiteSpace(invalidBodyModel)) this.AddAngularError(model, "NotificationTemplate.EmailBody", "Invalid template variables: " + invalidBodyModel);
+					if (!string.IsNullOrWhiteSpace(invalidBodyModel)) this.AddAngularError(model, "NotificationTemplate.EmailBody", "Invalid template variables: " + invalidBodyModel);
 
-					if (!String.IsNullOrWhiteSpace(invalidSubjectModel + invalidBodyModel))
+					if (!string.IsNullOrWhiteSpace(invalidSubjectModel + invalidBodyModel))
 						throw new InvalidOperationException("The following template variables are invalid: " + invalidSubjectModel + (!String.IsNullOrWhiteSpace(invalidSubjectModel) ? ", " : "") + invalidBodyModel);
 
 					var notificationType = _notificationTypeService.Get(model.Id);
@@ -326,6 +322,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 					notificationType.NotificationTemplate.Caption = model.Caption;
 					notificationType.NotificationTemplate.EmailBody = model.NotificationTemplate.EmailBody;
 					notificationType.NotificationTemplate.EmailSubject = model.NotificationTemplate.EmailSubject;
+
 					Utilities.MapProperties(model, notificationType);
 
 					_notificationTypeService.Update(notificationType);
@@ -539,9 +536,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 			return Json(model);
 		}
-		#endregion
 
-		#region Helpers
 		private NotificationQueue GenerateNotification(NotificationQueuePreviewModel model)
 		{
 			var data = model.GenerateTestEntities(User, _userService, _grantProgramService, _fiscalYearService);
@@ -550,6 +545,5 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				new NotificationType(model.NotificationTriggerId, model.Name, model.Description,
 				new NotificationTemplate(model.Name ?? "N/A", model.Subject ?? "N/A", model.Body ?? "N/A")));
 		}
-		#endregion
 	}
 }

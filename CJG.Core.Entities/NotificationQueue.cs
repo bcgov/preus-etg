@@ -174,12 +174,14 @@ namespace CJG.Core.Entities
 			State = NotificationState.Queued;
 		}
 
-		public NotificationQueue(GrantApplication grantApplication, ParticipantInvitation participantInvitation, string sender, string body, string subject)
+		public NotificationQueue(GrantApplication grantApplication, ParticipantInvitation participantInvitation, string sender, string body, string subject, NotificationType type)
 		{
 			if (grantApplication == null)
 				throw new ArgumentNullException(nameof(grantApplication));
 			if (participantInvitation == null)
 				throw new ArgumentNullException(nameof(participantInvitation));
+			if (type == null)
+				throw new ArgumentNullException(nameof(type));
 			if (string.IsNullOrWhiteSpace(sender))
 				throw new ArgumentException($"The argument '{nameof(sender)}' is required.", nameof(sender));
 			if (string.IsNullOrWhiteSpace(body))
@@ -188,8 +190,10 @@ namespace CJG.Core.Entities
 				throw new ArgumentException($"The argument '{nameof(subject)}' is required.", nameof(subject));
 
 			BatchNumber = $"N-G:{grantApplication.Id}-PIF:{participantInvitation.Id}";
-			//GrantApplicationId = grantApplication.Id;
-			//GrantApplication = grantApplication;
+			GrantApplicationId = grantApplication.Id;
+			GrantApplication = grantApplication;
+			NotificationTypeId = type.Id;
+			NotificationType = type;
 			EmailSender = sender;
 			EmailBody = body;
 			EmailSubject = subject;
