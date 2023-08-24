@@ -476,6 +476,9 @@ namespace CJG.Application.Services
 
 		public List<string> GetHighOpportunityOccupationCodesAndNames(string nocs)
 		{
+			if (string.IsNullOrWhiteSpace(nocs))
+				return new List<string>();
+
 			var splitNocs = nocs.Split(',');
 			var priorityNocs = _dbContext.PrioritizationHighOpportunityOccupationScores.Where(p => splitNocs.Contains(p.NOCCode));
 
