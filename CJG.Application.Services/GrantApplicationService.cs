@@ -901,15 +901,16 @@ namespace CJG.Application.Services
 					providerGrantApplicationList.Add(newProvider, application);
 			}
 
+			var searchInvariant = search?.ToLowerInvariant();
 			return providerGrantApplicationList
 				.Select(l => l.Value)
 				.Where(ga => ga.GrantOpening.GrantStream.GrantProgramId == defaultGrantProgramId)
 				.AsQueryable()
 				.Distinct()
-				.Where(x => string.IsNullOrEmpty(search)
-				            || x.FileNumber.Contains(search)
-							|| x.TrainingPrograms.FirstOrDefault().CourseTitle.ToLowerInvariant().Contains(search)
-							|| x.OrganizationLegalName != null && x.OrganizationLegalName.ToLowerInvariant().Contains(search.ToLowerInvariant()))
+				.Where(x => string.IsNullOrEmpty(searchInvariant)
+				            || x.FileNumber.ToLowerInvariant().Contains(searchInvariant)
+							|| x.TrainingPrograms.FirstOrDefault().CourseTitle.ToLowerInvariant().Contains(searchInvariant)
+							|| x.OrganizationLegalName != null && x.OrganizationLegalName.ToLowerInvariant().Contains(searchInvariant))
 				.OrderBy(o => o.FileNumber);
 		}
 
