@@ -21,6 +21,7 @@ namespace CJG.Web.External.Areas.Int.Models.Organizations
 		public decimal ApprovedAmount { get; set; } = decimal.Zero;
 		public decimal PaidAmount { get; set; } = decimal.Zero;
 		public decimal AverageCostPerParticipant { get; set; }
+		public string DenialReasons { get; set; }
 		public string RowVersionString { get; set; }
 
         public OrganizationGrantFileHistoryDataTableModel(GrantApplication grantApplication, IUserService userService)
@@ -39,6 +40,7 @@ namespace CJG.Web.External.Areas.Int.Models.Organizations
 			ApprovedAmount = grantApplication.TrainingCost.CalculateApprovedAmount();
 			PaidAmount = grantApplication.Claims.Where(c => c.ClaimState.In(ClaimState.ClaimApproved, ClaimState.AmountReceived, ClaimState.ClaimPaid, ClaimState.PaymentRequested)).Sum(c => c.TotalAssessedReimbursement);
 			AverageCostPerParticipant = ApprovedAmount / grantApplication.TrainingCost.GetEstimatedParticipants();
+			DenialReasons = grantApplication.GetSelectedDeniedReason();
 			RowVersionString = Convert.ToBase64String(grantApplication.RowVersion);
 		}
 	}

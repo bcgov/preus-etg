@@ -89,7 +89,7 @@
                         <th class="data-grid-sub-header" ng-click="changeSorting('CurrentStatus')"><img ng-src="{{imgSrcCurrentStatus}}" />Status</th>
                         <th class="data-grid-sub-header" ng-click="changeSorting('ApplicationStream')"><img ng-src="{{imgSrcApplicationStream}}" />Stream</th>
                         <th class="data-grid-sub-header" ng-click="changeSorting('ApplicantName')"><img ng-src="{{imgSrcApplicantName}}" />Contact Name</th>
-                        <th class="data-grid-sub-header" ng-click="changeSorting('ApplicantEmail')"><img ng-src="{{imgSrcApplicantEmail}}" />Contact Email</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('DenialReasons')"><img ng-src="{{imgSrcApplicantEmail}}" />High-level Denial Reason</th>
                         <th class="data-grid-sub-header" ng-click="changeSorting('TrainingProgramTitle')"><img ng-src="{{imgSrcTrainingProgramTitle}}" />Training Program Title</th>
                         <th class="data-grid-sub-header" ng-click="changeSorting('StartDate')"><img ng-src="{{imgSrcStartDate}}" />Start Date</th>
                         <th class="data-grid-sub-header" ng-click="changeSorting('EndDate')"><img ng-src="{{imgSrcEndDate}}" />End Date</th>
@@ -102,19 +102,19 @@
                 </thead>
                 <tbody>
                     <tr ng-repeat="application in $parent.$ctrl.ngItems |orderBy:sort.column:sort.descending">
-                        <td style="padding:0px;"><a href="/Int/Application/Details/View/{{application.Id}}">{{application.FileNumber}}</a></td>
-                        <td style="padding:0px;">{{application.CurrentStatus}}</td>
-                        <td style="padding:0px;">{{application.ApplicationStream}}</td>
-                        <td style="padding:0px;">{{application.ApplicantName}}</td>
-                        <td style="padding:0px;">{{application.ApplicantEmail}}</td>
-                        <td style="padding:0px; text-align:center;">{{application.TrainingProgramTitle}}</td>
-                        <td style="padding:0px;">{{application.StartDate}}</td>
-                        <td style="padding:0px;">{{application.EndDate}}</td>
-                        <td style="padding:0px; text-align:center;">{{application.NumberOfParticipants}}</td>
-                        <td style="padding:0px; text-align:center;">{{application.RequestedAmount| currency : '$' : 2}}</td>
-                        <td style="padding:0px; text-align:center;">{{application.ApprovedAmount| currency : '$' : 2}}</td>
-                        <td style="padding:0px; text-align:center;">{{application.PaidAmount| currency : '$' : 2}}</td>
-                        <td style="padding:0px; text-align:center;">{{application.AverageCostPerParticipant| currency : '$' : 2}}</td>
+                        <td style="padding: 0;"><a href="/Int/Application/Details/View/{{application.Id}}">{{application.FileNumber}}</a></td>
+                        <td style="padding: 0;">{{application.CurrentStatus}}</td>
+                        <td style="padding: 0; padding-right: 15px;">{{application.ApplicationStream}}</td>
+                        <td style="padding: 0; padding-right: 15px;">{{application.ApplicantName}}</td>
+                        <td style="padding: 0; max-width: 150px;">{{application.DenialReasons}}</td>
+                        <td style="padding: 0; text-align:center;">{{application.TrainingProgramTitle}}</td>
+                        <td style="padding: 0;">{{application.StartDate}}</td>
+                        <td style="padding: 0;">{{application.EndDate}}</td>
+                        <td style="padding: 0; text-align:center;">{{application.NumberOfParticipants}}</td>
+                        <td style="padding: 0; text-align:center;">{{application.RequestedAmount| currency : '$' : 2}}</td>
+                        <td style="padding: 0; text-align:center;">{{application.ApprovedAmount| currency : '$' : 2}}</td>
+                        <td style="padding: 0; text-align:center;">{{application.PaidAmount| currency : '$' : 2}}</td>
+                        <td style="padding: 0; text-align:center;">{{application.AverageCostPerParticipant| currency : '$' : 2}}</td>
                     </tr>
                 </tbody>
             </table>
