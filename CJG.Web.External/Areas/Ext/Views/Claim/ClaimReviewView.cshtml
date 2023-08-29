@@ -28,7 +28,6 @@
 
         <div class="clearfix margin-bottom">
             <h2 class="pull-left no-margin">{{ model.ClaimType == @((int)ClaimTypes.SingleAmendableClaim) ? 'Eligible Expense Summary' : 'Claim' }}</h2>
-            @Html.ActionLink("Edit", nameof(ClaimController.ClaimReportView), nameof(ClaimController).Replace("Controller", ""), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary pull-right" })
         </div>
 
         <div>
@@ -92,6 +91,7 @@
         <div class="button-group">
             @Html.ActionLink("Cancel", nameof(ReportingController.GrantFileView), nameof(ReportingController).Replace("Controller", ""), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary btn--back" })
             <a class="pull-right btn btn--primary btn--forward" ng-click="SubmitClaim()" ng-disabled="!model.ClaimConfirmed || model.Attachments.Attachments.length == 0">Submit Claim</a>
+            @Html.ActionLink("Edit", nameof(ClaimController.ClaimReportView), nameof(ClaimController).Replace("Controller", ""), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary pull-right" })
         </div>
     </div>
 </div>
