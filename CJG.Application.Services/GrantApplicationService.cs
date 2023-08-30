@@ -901,43 +901,24 @@ namespace CJG.Application.Services
 					providerGrantApplicationList.Add(newProvider, application);
 			}
 
+			var searchInvariant = search?.ToLowerInvariant();
 			return providerGrantApplicationList
 				.Select(l => l.Value)
 				.Where(ga => ga.GrantOpening.GrantStream.GrantProgramId == defaultGrantProgramId)
 				.AsQueryable()
 				.Distinct()
-				.Where(x => string.IsNullOrEmpty(search)
-							|| x.FileNumber.Contains(search)
-							|| x.OrganizationLegalName != null && x.OrganizationLegalName.ToLowerInvariant().Contains(search.ToLowerInvariant()))
+				.Where(x => string.IsNullOrEmpty(searchInvariant)
+				            || x.FileNumber.ToLowerInvariant().Contains(searchInvariant)
+							|| x.TrainingPrograms.FirstOrDefault().CourseTitle.ToLowerInvariant().Contains(searchInvariant)
+							|| x.OrganizationLegalName != null && x.OrganizationLegalName.ToLowerInvariant().Contains(searchInvariant))
 				.OrderBy(o => o.FileNumber);
 		}
 
-		public PageList<GrantApplication> GetGrantApplicationsForOrg(int orgId, int page, int quantity, int grantProgramId, string search)
-		{
-			var grantApplications =
-				_dbContext.GrantApplications
-					.Where(ga => ga.OrganizationId == orgId && ga.ApplicationStateInternal != ApplicationStateInternal.Draft)
-					.OrderBy(o => o.FileNumber);
-
-			if (grantProgramId == 0)
-				grantProgramId = GetDefaultGrantProgramId();
-
-			var filtered = grantApplications
-				.Where(x => (grantProgramId == 0 || x.GrantOpening.GrantStream.GrantProgramId == grantProgramId)
-							&& (string.IsNullOrEmpty(search) ||
-								x.FileNumber != null && x.FileNumber.Contains(search) ||
-								x.ApplicantFirstName.Contains(search) || x.ApplicantLastName.Contains(search))
-				).OrderBy(x => x.FileNumber);
-
-			var total = filtered.Count();
-			var result = filtered.Skip((page - 1) * quantity).Take(quantity);
-
-			return new PageList<GrantApplication>(page, quantity, total, result.ToArray());
-		}
 		public IOrderedQueryable<GrantApplication> GetGrantApplicationsForOrg(int orgId, int grantProgramId, string search)
 		{
 			var grantApplications =
 				_dbContext.GrantApplications
+					.AsNoTracking()
 					.Where(ga => ga.OrganizationId == orgId && ga.ApplicationStateInternal != ApplicationStateInternal.Draft)
 					.OrderBy(o => o.FileNumber);
 
@@ -946,9 +927,10 @@ namespace CJG.Application.Services
 
 			var filtered = grantApplications
 				.Where(x => (grantProgramId == 0 || x.GrantOpening.GrantStream.GrantProgramId == grantProgramId)
-							&& (string.IsNullOrEmpty(search) ||
-								x.FileNumber != null && x.FileNumber.Contains(search) ||
-								x.ApplicantFirstName.Contains(search) || x.ApplicantLastName.Contains(search))
+							&& (string.IsNullOrEmpty(search)
+							    || x.FileNumber != null && x.FileNumber.Contains(search)
+							    || x.TrainingPrograms.FirstOrDefault().CourseTitle.Contains(search)
+								|| x.ApplicantFirstName.Contains(search) || x.ApplicantLastName.Contains(search))
 				).OrderBy(x => x.FileNumber);
 
 			return filtered;
@@ -1496,12 +1478,12 @@ namespace CJG.Application.Services
 			CreateWorkflowStateMachine(grantApplication).RemoveFromAssessment();
 		}
 
-		public void RecommendForApproval(GrantApplication grantApplication)
+		public void RecommendForApproval(GrantApplication grantApplication, string reason = null)
 		{
 			if (grantApplication == null)
 				throw new ArgumentNullException(nameof(grantApplication));
 
-			CreateWorkflowStateMachine(grantApplication).RecommendForApproval();
+			CreateWorkflowStateMachine(grantApplication).RecommendForApproval(reason);
 		}
 
 		public void RecommendForDenial(GrantApplication grantApplication, string reason = null)
@@ -1893,7 +1875,7 @@ namespace CJG.Application.Services
 				}
 			}
 
-			// Agreed commitment cannot exceed 10% unless user is a Director
+			// Agreed commitment cannot exceed 10% unless user is a Director or Assessor
 			if (trainingCost.DoesAgreedCommitmentExceedEstimatedContribution() && !_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCostOverride))
 				throw new InvalidOperationException("You may not increase the assessed total government contribution more than 10% over the estimated total government contribution.");
 
@@ -2106,7 +2088,7 @@ namespace CJG.Application.Services
 				}
 			}
 
-			// Agreed commitment cannot exceed 10% unless user is a Director
+			// Agreed commitment cannot exceed 10% unless user is a Director or Assessor
 			if (trainingCost.DoesAgreedCommitmentExceedEstimatedContribution() && !_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCostOverride))
 				throw new InvalidOperationException("You may not increase the assessed total government contribution more than 10% over the estimated total government contribution.");
 

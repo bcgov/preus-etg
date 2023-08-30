@@ -17,16 +17,7 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingProviders
 		public string RowVersion { get; set; }
 		public TrainingProviderType TrainingProviderType { get; set; }
 		public int? TrainingProviderInventoryId { get; set; }
-		public int MaxUploadSizeKB { get; set; }
-		public AttachmentViewModel CourseOutlineDocument { get; set; }
-		public AttachmentViewModel ProofOfQualificationsDocument { get; set; }
-		public AttachmentViewModel BusinessCaseDocument { get; set; }
-		public TrainingProviderStates TrainingProviderState { get; set; }
-		public TrainingTrainerDetailsListViewModel TrainingTrainerDetailsListViewModel { get; set; }
-		public AddressViewModel TrainingLocationListViewModel { get; set; }
-
-		public AddressViewModel TrainingProviderLocationListViewModel { get; set; }
-		public TrainingOutsideBCListViewModel TrainingOutsideBcListViewModel { get; set; }
+		public bool TrainingProviderInventoryIsRisk { get; set; }
 
 		public string OutOfProvinceLocationRationale { get; set; }
 		public bool RequiresTrainingProviderValidation { get; set; }
@@ -35,7 +26,17 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingProviders
 		public ProgramTypes ProgramType { get; set; }
 
 		public int[] SelectedDeliveryMethodIds { get; set; }
+		public int MaxUploadSizeKB { get; set; }
 
+		public AttachmentViewModel CourseOutlineDocument { get; set; }
+		public AttachmentViewModel ProofOfQualificationsDocument { get; set; }
+		public AttachmentViewModel BusinessCaseDocument { get; set; }
+		public TrainingTrainerDetailsListViewModel TrainingTrainerDetailsListViewModel { get; set; }
+		public AddressViewModel TrainingLocationListViewModel { get; set; }
+		public AddressViewModel TrainingProviderLocationListViewModel { get; set; }
+		public TrainingOutsideBCListViewModel TrainingOutsideBcListViewModel { get; set; }
+
+		public TrainingProviderStates TrainingProviderState { get; set; }
 
 		public TrainingProviderViewModel()
 		{
@@ -57,6 +58,7 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingProviders
 			RowVersion = Convert.ToBase64String(trainingProvider.RowVersion);
 			TrainingProviderType = trainingProvider.TrainingProviderType;
 			TrainingProviderInventoryId = trainingProvider.TrainingProviderInventoryId;
+			TrainingProviderInventoryIsRisk = trainingProvider.TrainingProviderInventory?.RiskFlag ?? false;
 			TrainingProviderState = trainingProvider.TrainingProviderState;
 			MaxUploadSizeKB = int.Parse(ConfigurationManager.AppSettings["MaxUploadSizeInBytes"]);
 			RequiresTrainingProviderValidation = trainingProvider.TrainingProviderInventoryId == null;

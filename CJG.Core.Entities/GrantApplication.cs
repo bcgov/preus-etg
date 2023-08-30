@@ -59,7 +59,7 @@ namespace CJG.Core.Entities
 		public virtual InternalUser Assessor { get; set; }
 
 		/// <summary>
-		/// get/set - The unqiue filenumber assigned to this grant application.
+		/// get/set - The unique filenumber assigned to this grant application.
 		/// </summary>
 		[MaxLength(50)]
 		public string FileNumber { get; set; }

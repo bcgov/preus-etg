@@ -681,20 +681,28 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			{
 				_logger.Error($"The invitationKey is not a valid GUID: {invitationKey}");
 				this.SetAlert("Access to the page is denied, request did not have a valid invitation key.", AlertType.Error, true);
+
 				return RedirectToAction(nameof(InvitationExpired));
 			}
+
 			return IsInvitationExpired(guidResult, false);
 		}
 
 		private ActionResult IsInvitationExpired(Guid guidResult, bool ajax)
 		{
 			var grantApplication = _grantApplicationService.Get(guidResult);
-
 			if (grantApplication == null || grantApplication.IsInvitationExpired())
 			{
-				_logger.Error($"The invitation key is either invalid or expired: { guidResult.ToString() }");
+				var applicationNumber = grantApplication == null ? string.Empty : $"Grant application {grantApplication.Id}: ";
+				
+				var inviteExpiry = grantApplication?.InvitationExpiresOn == null
+					? "Not set"
+					: grantApplication.InvitationExpiresOn.Value.ToString("yyyy-MM-dd HH:mm:ss tt");
+				_logger.Error($"{applicationNumber}The invitation key is either invalid or expired: { guidResult.ToString() }. Expiry date: { inviteExpiry }");
+
 				if (ajax)
 					return RedirectToActionAjax(nameof(InvitationExpired));
+
 				return RedirectToAction(nameof(InvitationExpired));
 			}
 
@@ -704,7 +712,6 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		private ActionResult IsMaxParticipantEnrolled(Guid invitationKey)
 		{
 			var grantApplication = _grantApplicationService.Get(invitationKey);
-
 			if (grantApplication.GetMaxParticipants() <= grantApplication.ParticipantForms.Count)
 			{
 				_logger.Info("The total number of allowed participants exceeded.");
@@ -717,7 +724,6 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		private ActionResult IsIndividualInviteValid(Guid invitationKey, Guid individualKey)
 		{
 			var grantApplication = _grantApplicationService.Get(invitationKey);
-
 			if (!grantApplication.ParticipantInvitations.Any())
 				return null;
 

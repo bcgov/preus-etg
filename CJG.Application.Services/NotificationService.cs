@@ -89,6 +89,7 @@ namespace CJG.Application.Services
 			var query = _dbContext.NotificationQueue.Where(nt => nt.GrantApplicationId == grantApplicationId &&
 														  (string.IsNullOrEmpty(search) || nt.NotificationType.Caption.Contains(search)) &
 														  (filter.TriggerType == 0 || nt.NotificationType.NotificationTriggerId == (NotificationTriggerTypes)filter.TriggerType));
+
 			return GetNotifications(page, quantity, filter, query);
 		}
 
@@ -101,8 +102,11 @@ namespace CJG.Application.Services
 		/// <returns></returns>
 		public PageList<NotificationQueue> GetNotifications(int page, int quantity, NotificationFilter filter)
 		{
-			if (page <= 0) page = 1;
-			if (quantity <= 0 || quantity > 100) quantity = 10;
+			if (page <= 0)
+				page = 1;
+
+			if (quantity <= 0 || quantity > 100)
+				quantity = 10;
 
 			var query = _dbContext.NotificationQueue.Where(nt => true);
 
@@ -167,6 +171,16 @@ namespace CJG.Application.Services
 			return query.Select(o => o.NotificationType)
 				.Distinct()
 				.ToArray();
+		}
+
+		public NotificationType GetPIFInvitationNotificationType()
+		{
+			var pifInvitationType = _dbContext.NotificationTypes
+				.Where(nt => nt.NotificationTriggerId == NotificationTriggerTypes.EmailTemplate)
+				.Where(nt => nt.Caption == "PIF Invitation")
+				.FirstOrDefault();
+
+			return pifInvitationType;
 		}
 
 		/// <summary>
@@ -280,7 +294,11 @@ namespace CJG.Application.Services
 			foreach (var grantProgram in implementedGrantPrograms)
 			{
 				// Find all active scheduled notification types.
-				var grantProgramNotificationTypes = grantProgram.GrantProgramNotificationTypes.Where(t => t.IsActive && t.NotificationType.IsActive && t.NotificationType.NotificationTriggerId == NotificationTriggerTypes.Scheduled).ToArray();
+				var grantProgramNotificationTypes = grantProgram.GrantProgramNotificationTypes
+					.Where(t => t.IsActive)
+					.Where(t => t.NotificationType.IsActive)
+					.Where(t => t.NotificationType.NotificationTriggerId == NotificationTriggerTypes.Scheduled)
+					.ToArray();
 
 				var skip = 0;
 				var query = _dbContext.GrantApplications.Where(g =>
@@ -292,7 +310,7 @@ namespace CJG.Application.Services
 					&& g.ApplicationStateInternal != ApplicationStateInternal.CancelledByMinistry
 					&& g.ApplicationStateInternal != ApplicationStateInternal.CancelledByAgreementHolder
 					&& g.ApplicationStateInternal != ApplicationStateInternal.Unfunded
-					&& g.ScheduledNotificationsEnabled == true
+					&& g.ScheduledNotificationsEnabled
 					&& g.GrantOpening.GrantStream.GrantProgramId == grantProgram.Id);
 
 				var total = query.Count();
@@ -621,19 +639,47 @@ namespace CJG.Application.Services
 
 			switch (milestoneDateNameEnum)
 			{
-				case NotificationMilestoneDateName.DateSubmitted: return grantApplication.DateSubmitted;
-				case NotificationMilestoneDateName.TrainingStartDate: return grantApplication.TrainingPrograms.FirstOrDefault()?.StartDate;
-				case NotificationMilestoneDateName.TrainingEndDate: return grantApplication.TrainingPrograms.FirstOrDefault()?.EndDate;
-				case NotificationMilestoneDateName.DateCancelled: return grantApplication.DateCancelled;
-				case NotificationMilestoneDateName.DateAccepted: return grantApplication.DateAdded;
-				case NotificationMilestoneDateName.ParticipantReportingDueDate: return grantApplication.GrantAgreement?.ParticipantReportingDueDate;
-				case NotificationMilestoneDateName.ReimbursementClaimDueDate: return grantApplication.GrantAgreement?.ReimbursementClaimDueDate;
-				case NotificationMilestoneDateName.CompletionReportingDueDate: return grantApplication.GrantAgreement?.CompletionReportingDueDate;
-				case NotificationMilestoneDateName.DeliveryStartDate: return grantApplication.StartDate;
-				case NotificationMilestoneDateName.DeliveryEndDate: return grantApplication.EndDate;
-				case NotificationMilestoneDateName.AgreementIssuedDate: return grantApplication.GrantAgreement?.StartDate;
-				case NotificationMilestoneDateName.TodaysDate: return appDate;
-				default: return appDate;
+				case NotificationMilestoneDateName.DateSubmitted:
+					return grantApplication.DateSubmitted;
+
+				case NotificationMilestoneDateName.TrainingStartDate:
+					return grantApplication.TrainingPrograms.FirstOrDefault()?.StartDate;
+
+				case NotificationMilestoneDateName.TrainingEndDate:
+					return grantApplication.TrainingPrograms.FirstOrDefault()?.EndDate;
+
+				case NotificationMilestoneDateName.DateCancelled:
+					return grantApplication.DateCancelled;
+
+				case NotificationMilestoneDateName.DateAccepted:
+					return grantApplication.DateAdded;
+
+				case NotificationMilestoneDateName.ParticipantReportingDueDate:
+					return grantApplication.GrantAgreement?.ParticipantReportingDueDate;
+
+				case NotificationMilestoneDateName.ReimbursementClaimDueDate:
+					return grantApplication.GrantAgreement?.ReimbursementClaimDueDate;
+
+				case NotificationMilestoneDateName.CompletionReportingDueDate:
+					return grantApplication.GrantAgreement?.CompletionReportingDueDate;
+
+				case NotificationMilestoneDateName.DeliveryStartDate:
+					return grantApplication.StartDate;
+
+				case NotificationMilestoneDateName.DeliveryEndDate:
+					return grantApplication.EndDate;
+
+				case NotificationMilestoneDateName.AgreementIssuedDate:
+					return grantApplication.GrantAgreement?.StartDate;
+
+				case NotificationMilestoneDateName.TodaysDate:
+					return appDate;
+
+				case NotificationMilestoneDateName.ClaimReturnedToApplicantDate:
+					return grantApplication.GetStateChange(ApplicationStateInternal.ClaimReturnedToApplicant)?.ChangedDate;
+
+				default:
+					return appDate;
 			}
 		}
 
@@ -651,10 +697,17 @@ namespace CJG.Application.Services
 			var agreedAmountParticipants = grantApplication.TrainingCost.AgreedParticipants;
 
 			if (participants == 0) return NotificationParticipantReportRules.NoneReported;
-			else if (participants > agreedAmountParticipants) return NotificationParticipantReportRules.GreaterThanAgreedReported;
-			else if (participants < agreedAmountParticipants) return NotificationParticipantReportRules.LessThanAgreedReported;
-			else if (participants == agreedAmountParticipants) return NotificationParticipantReportRules.AllReported;
-			else return NotificationParticipantReportRules.NotApplicable;
+
+			if (participants > agreedAmountParticipants)
+				return NotificationParticipantReportRules.GreaterThanAgreedReported;
+
+			if (participants < agreedAmountParticipants)
+				return NotificationParticipantReportRules.LessThanAgreedReported;
+
+			if (participants == agreedAmountParticipants)
+				return NotificationParticipantReportRules.AllReported;
+
+			return NotificationParticipantReportRules.NotApplicable;
 		}
 
 		/// <summary>

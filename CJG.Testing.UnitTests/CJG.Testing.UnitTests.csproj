@@ -265,6 +265,7 @@
     <Compile Include="Controllers\Int\ClaimIntakeControllerTest.cs" />
     <Compile Include="Dates\DateTimeTests.cs" />
     <Compile Include="Dates\GrantOpeningTests.cs" />
+    <Compile Include="Entities\PrioritizationScoreBreakdownTests.cs" />
     <Compile Include="Entities\ApplicationAddressTests.cs" />
     <Compile Include="Entities\ClaimBreakdownCostValidationTests.cs" />
     <Compile Include="Entities\ClaimEligibleCostValidationTests.cs" />

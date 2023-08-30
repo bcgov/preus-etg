@@ -153,7 +153,7 @@ app.controller('ApplicationDetails', function ($scope, $attrs, $controller, $tim
    * Open a confirmation dialog to ask for the reason for the specified trigger.
    * @function getReason
    * @param {any} url - The URL for the trigger action.
-   * @param {any} trigger - The tigger being performed.
+   * @param {any} trigger - The trigger being performed.
    * @returns {Promise}
    */
   function getReason(url, trigger) {
@@ -161,7 +161,13 @@ app.controller('ApplicationDetails', function ($scope, $attrs, $controller, $tim
     var text = '';
     var denialReasonList = '';
     var template = '/content/dialogs/_Reason.html';
+
     switch (trigger) {
+      case ('RecommendForApproval'):
+        title = 'Approve Application';
+        text = 'Your application has been approved with the optional reason:';
+        template = '/content/dialogs/_ApprovalReason.html';
+        break;
       case ('RecommendForDenial'):
         title = 'Deny Application';
         text = 'Your application has been denied for the following reason:';
@@ -214,6 +220,13 @@ app.controller('ApplicationDetails', function ($scope, $attrs, $controller, $tim
             $scope.denialReasonsSelection.push(reason);
           }
         },
+        getApprovalReason: function (reason) {
+          var approvedReason = tinymce.activeEditor.getContent();
+
+          return JSON.stringify({
+            approvedReason: approvedReason
+          });
+        },
         getDenialReasonsSelection: function (selection, reason) {
           var deniedReason = tinymce.activeEditor.getContent();
 
@@ -222,7 +235,6 @@ app.controller('ApplicationDetails', function ($scope, $attrs, $controller, $tim
             deniedReason: deniedReason
           });
         },
-
       }
     }).then(function (reason) {
       return doWorkflowTrigger(url, reason);
@@ -245,6 +257,7 @@ app.controller('ApplicationDetails', function ($scope, $attrs, $controller, $tim
           Id: $scope.grantFile.Id,
           RowVersion: $scope.grantFile.RowVersion,
           AssessorId: $scope.grantFile.AssessorId || $scope.grantFile.WorkflowViewModel.ApplicationWorkflowViewModel.AssessorId,
+          ReasonToApprove: reason,
           ReasonToDeny: reason,
           ReasonToCancel: reason,
           ReasonToWithdraw: reason,
@@ -284,21 +297,25 @@ app.controller('ApplicationDetails', function ($scope, $attrs, $controller, $tim
     return confirmAction()
       .then(function () {
         switch (trigger) {
+          case ('RecommendForApproval'):
           case ('RecommendForDenial'):
           case ('WithdrawOffer'):
           case ('CancelAgreementMinistry'):
           case ('RecommendChangeForDenial'):
             return getReason(url, trigger);
+
           case ('ReturnToAssessment'):
             if ($scope.grantFile.WorkflowViewModel.ApplicationWorkflowViewModel.ApplicationStateInternal === utils.ApplicationStateInternal.ApplicationDenied)
               return $scope.confirmDialog('Warning', 'You have indicated that you want to re-assess this previously denied application.\nDo you want to continue?').then(function () {
                 return getReason(url, trigger);
               });
             return doWorkflowTrigger(url);
+
           case ('ReturnUnassessed'):
             return $scope.confirmDialog('Warning', '<p>Do you want to return this application without being assessed?</p>' + '<p>This application will be removed from the queue and applicant will receive the "Returned to Applicant Unassessed" notification. \n Application details will remain in the system but will not affect the budget.</p>').then(function () {
               return doWorkflowTrigger(url);
             });
+
           case ('ReturnUnderAssessmentToDraft'):
           case ('ReturnOfferToAssessment'):
           case ('ReturnWithdrawnOfferToAssessment'):
@@ -307,6 +324,7 @@ app.controller('ApplicationDetails', function ($scope, $attrs, $controller, $tim
             return $scope.confirmDialog('Warning', 'Are you sure you want to reverse this decision?').then(function () {
               return doWorkflowTrigger(url);
             });
+
           default:
             return doWorkflowTrigger(url);
         }

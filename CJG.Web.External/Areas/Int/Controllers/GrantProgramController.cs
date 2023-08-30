@@ -106,7 +106,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Returns the Grant Program Management Dashboard View.
 		/// </summary>
-		/// <param name="id"></param>
 		/// <returns></returns>
 		[HttpGet]
 		[Route("Program/View")]
@@ -695,7 +694,11 @@ namespace CJG.Web.External.Areas.Int.Controllers
 								// Update the eligible expense type.
 								foreach (var breakdown in item.Breakdowns)
 								{
-									var eligibleExpenseBreakdown = breakdown.Id == 0 ? new EligibleExpenseBreakdown(breakdown.Caption, eligibleExpenseType) : eligibleExpenseType.Breakdowns.FirstOrDefault(t => t.Id == breakdown.Id) ?? throw new NoContentException($"Unable to find eligible expense breakdown '{item.Id}'."); ;
+									var eligibleExpenseBreakdown = breakdown.Id == 0
+										? new EligibleExpenseBreakdown(breakdown.Caption, eligibleExpenseType)
+										: eligibleExpenseType.Breakdowns.FirstOrDefault(t => t.Id == breakdown.Id)
+										  ?? throw new NoContentException($"Unable to find eligible expense breakdown '{item.Id}'.");
+
 									if (breakdown.Delete)
 									{
 										if (eligibleExpenseBreakdown != null)
@@ -742,7 +745,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[ValidateRequestHeader]
 		[PreventSpam]
 		[Route("Program/Notifications")]
-		public JsonResult UpdateNotifications(Models.GrantPrograms.GrantProgramNotificationsViewModel model)
+		public JsonResult UpdateNotifications(GrantProgramNotificationsViewModel model)
 		{
 			try
 			{
@@ -762,7 +765,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 					_grantProgramService.Update(grantProgram);
 
-					model = new Models.GrantPrograms.GrantProgramNotificationsViewModel(grantProgram);
+					model = new GrantProgramNotificationsViewModel(grantProgram);
 				}
 				else
 				{
@@ -786,7 +789,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[ValidateRequestHeader]
 		[PreventSpam]
 		[Route("Program/Document/Templates")]
-		public JsonResult UpdateDocumentTemplates(Models.GrantPrograms.GrantProgramDocumentTemplatesViewModel model)
+		public JsonResult UpdateDocumentTemplates(GrantProgramDocumentTemplatesViewModel model)
 		{
 			try
 			{
@@ -825,7 +828,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 					_grantProgramService.Update(grantProgram);
 
-					model = new Models.GrantPrograms.GrantProgramDocumentTemplatesViewModel(grantProgram);
+					model = new GrantProgramDocumentTemplatesViewModel(grantProgram);
 				}
 				else
 				{
@@ -921,7 +924,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[Route("Program/Template/{id}")]
 		public JsonResult GetGrantProgramTemplate(int id)
 		{
-			var viewModel = new Models.GrantPrograms.GrantProgramViewModel { };
+			var viewModel = new Models.GrantPrograms.GrantProgramViewModel();
 			try
 			{
 				var program = _grantProgramService.Get(id);
@@ -1158,14 +1161,14 @@ namespace CJG.Web.External.Areas.Int.Controllers
 					}
 					else
 					{
-						// Update
-						// Template has been updated
-						if ((notificationType.NotificationTemplate.EmailSubject != originalNotificationType.NotificationTemplate.EmailSubject) ||
-							(notificationType.NotificationTemplate.EmailBody != originalNotificationType.NotificationTemplate.EmailBody))
+						// Update - Template has been updated
+						if (notificationType.NotificationTemplate.EmailSubject != originalNotificationType.NotificationTemplate.EmailSubject ||
+							notificationType.NotificationTemplate.EmailBody != originalNotificationType.NotificationTemplate.EmailBody)
 						{
 							var notificationTemplate = new NotificationTemplate(notificationType.NotificationTemplate.Caption ?? notificationType.Caption, notificationType.NotificationTemplate.EmailSubject, notificationType.NotificationTemplate.EmailBody);
 
-							if (!String.IsNullOrWhiteSpace(originalNotificationType.NotificationTemplate.Caption)) notificationTemplate.Id = originalNotificationType.NotificationTemplate.Id; // If caption is not empty, it's a custom template
+							if (!string.IsNullOrWhiteSpace(originalNotificationType.NotificationTemplate.Caption))
+								notificationTemplate.Id = originalNotificationType.NotificationTemplate.Id; // If caption is not empty, it's a custom template
 
 							originalNotificationType.NotificationTemplate = notificationTemplate;
 						}
@@ -1194,25 +1197,38 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				var grantProgram = _grantProgramService.Get(model.Id);
 
+				var rowSequence = 0;
+
+				model.GrantProgramDenialReasons = model.GrantProgramDenialReasons.OrderBy(dr => dr.Caption);
+
 				foreach (var denialReason in model.GrantProgramDenialReasons)
 				{
+					rowSequence++;
+
 					if (denialReason.Id == 0)
 					{
 						if (string.IsNullOrEmpty(denialReason.Caption) || string.IsNullOrWhiteSpace(denialReason.Caption))
-							throw new NoContentException($"The Name of the Denial Reason is required.");
-						var grantProgramDenialReason = new DenialReason();
-						grantProgramDenialReason.GrantProgramId = grantProgram.Id;
-						grantProgramDenialReason.IsActive = denialReason.IsActive;
-						grantProgramDenialReason.Caption = denialReason.Caption;
+							throw new NoContentException("The Name of the Denial Reason is required.");
+
+						var grantProgramDenialReason = new DenialReason
+						{
+							GrantProgramId = grantProgram.Id,
+							IsActive = denialReason.IsActive,
+							Caption = denialReason.Caption,
+							RowSequence = rowSequence
+						};
 						grantProgram.DenialReasons.Add(grantProgramDenialReason);
 					}
 					else
 					{
 						var originalDenialReason = grantProgram.DenialReasons.FirstOrDefault(t => t.Id == denialReason.Id);
+						if (originalDenialReason == null)
+							continue;
+
 						originalDenialReason.IsActive = denialReason.IsActive;
 						originalDenialReason.Caption = denialReason.Caption;
+						originalDenialReason.RowSequence = rowSequence;
 					}
-
 				}
 
 				_grantProgramService.Update(grantProgram);
@@ -1235,10 +1251,13 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				if (ModelState.IsValid)
 				{
-					var grantProgramDenialReason = new DenialReason();
-					grantProgramDenialReason.IsActive = model.IsActive;
-					grantProgramDenialReason.Caption = model.Caption;
-					grantProgramDenialReason.GrantProgramId = model.GrantProgramId;
+					var grantProgramDenialReason = new DenialReason
+					{
+						IsActive = model.IsActive,
+						Caption = model.Caption,
+						GrantProgramId = model.GrantProgramId
+					};
+
 					_denialReasonService.Add(grantProgramDenialReason);
 
 					model = new GrantProgramDenialReasonViewModel(grantProgramDenialReason);

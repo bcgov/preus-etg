@@ -527,7 +527,10 @@
         })
 
         <div class="form__group form__group--radio-inline">
-            <label class="form__label" for="">What <u><em>will</em></u> your National Occupation Classification (NOC) be <u><em>after training</em></u> <abbr title="Required">*</abbr></label>
+            <label class="form__label" for="">What <u><em>will</em></u> your National Occupation Classification (NOC) be <u><em>after</em></u> training <abbr title="Required">*</abbr></label>
+            <div class="notice notice--icon">
+                The National Occupational Classification (NOC) is Canada’s national system for describing occupations. Start by selecting one of the 10 broad occupational categories and continue choosing the next <span style="font-style: italic; text-decoration: underline;">best</span> option that describes your work.
+            </div>
             <div class="form__control">
                 <div class="form__group--multiselect">
                     @Html.DropDown(new FormControl

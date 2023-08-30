@@ -1,13 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using CJG.Testing.Core;
-using CJG.Core.Entities;
+﻿using System.Linq;
 using CJG.Application.Services;
-using CJG.Core.Interfaces.Service;
+using CJG.Core.Entities;
+using CJG.Testing.Core;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CJG.Testing.UnitTests.Entities
 {
-    [TestClass()]
+	[TestClass()]
     public class GrantProgramValidationTests
     {
         ServiceHelper helper { get; set; }

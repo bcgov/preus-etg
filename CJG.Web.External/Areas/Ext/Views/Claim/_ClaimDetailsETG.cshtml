@@ -4,19 +4,14 @@
 {
     <a name="errors-list"></a>
     <div class="alert alert--error notice--icon" ng-repeat="warning in warnings.ParticipantWarnings" ng-if="(warning.CurrentClaims + warning.CostsOnClaim) > warning.FiscalYearLimit">
-        Claiming {{ warning.CostsOnClaim | currency : '$' : 2  }} for {{ warning.ParticipantName }} would exceed the maximum allowable amount that can be 
-        claimed per person per fiscal year by {{ warning.CurrentClaims + warning.CostsOnClaim - warning.FiscalYearLimit | currency : '$' : 2 }}. 
+        The maximum amount that you may claim for each participant each fiscal year is {{ warning.FiscalYearLimit | currency : '$' : 2  }}. 
+        You have already claimed {{ warning.CurrentClaims | currency : '$' : 2 }} for {{ warning.ParticipantName }}. 
+        For this reason, you can only claim an additional {{ warning.FiscalYearLimit - warning.CurrentClaims | currency : '$' : 2 }}. 
         Please review the <a href="https://www.workbc.ca/Employer-Resources/B-C-Employer-Training-Grant.aspx" target="_blank">ETG eligibility criteria for details.</a>
-    
-        <br /><br />
-        Paid claims: {{ warning.CurrentClaims | currency : '$' : 2  }}<br/>
-        This claim: {{ warning.CostsOnClaim | currency : '$' : 2  }}<br/>
-        Total: {{ warning.CurrentClaims + warning.CostsOnClaim | currency : '$' : 2 }}<br/>
-        Allowable limit per fiscal year: {{ warning.FiscalYearLimit | currency : '$' : 2  }}<br/>
     </div>
 
     <div class="pull-right">
-        <a href="https://www.workbc.ca/getmedia/33f85e91-e8f8-4a90-a694-2fa5f1d0bdb7/Reimbursement-Guidelines.pdf.aspx" target="_blank">Read the Reimbursement Guidelines</a>
+        <a href="https://www.workbc.ca/media/317/download?inline=" target="_blank">Read the Reimbursement Guidelines</a>
     </div>
     <br />
 }

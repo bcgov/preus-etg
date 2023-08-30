@@ -617,7 +617,7 @@ namespace CJG.Application.Services
 						default:
 							return user.HasPrivilege(Privilege.AM4);
 					}
-				case (ApplicationWorkflowTrigger.EditTrainingCosts):
+				case ApplicationWorkflowTrigger.EditTrainingCosts:
 					switch (grantApplication.ApplicationStateInternal)
 					{
 						case (ApplicationStateInternal.Draft):
@@ -648,15 +648,15 @@ namespace CJG.Application.Services
 						default:
 							return user.HasPrivilege(Privilege.AM4) && !hasSubmittedAClaim;
 					}
-				case (ApplicationWorkflowTrigger.EditTrainingCostOverride):
+				case ApplicationWorkflowTrigger.EditTrainingCostOverride:
 					switch (grantApplication.ApplicationStateInternal)
 					{
-						case (ApplicationStateInternal.New):
+						case ApplicationStateInternal.New:
 							return false;
 						default:
-							return user.HasPrivilege(Privilege.AM4);
+							return user.HasPrivilege(Privilege.AM2) || user.HasPrivilege(Privilege.AM4);
 					}
-				case (ApplicationWorkflowTrigger.CreateClaim):
+				case ApplicationWorkflowTrigger.CreateClaim:
 					switch (grantApplication.ApplicationStateInternal)
 					{
 						case (ApplicationStateInternal.AgreementAccepted):

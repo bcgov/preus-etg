@@ -56,11 +56,16 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				{
 					IndustryThreshold = thresholds.IndustryThreshold,
 					IndustryAssignedScore = thresholds.IndustryAssignedScore,
-					RegionalThreshold = thresholds.RegionalThreshold,
 
+					HighOpportunityOccupationThreshold = thresholds.HighOpportunityOccupationThreshold,
+					HighOpportunityOccupationAssignedScore = thresholds.HighOpportunityOccupationAssignedScore,
+
+					RegionalThreshold = thresholds.RegionalThreshold,
 					RegionalThresholdAssignedScore = thresholds.RegionalThresholdAssignedScore,
+
 					EmployeeCountThreshold = thresholds.EmployeeCountThreshold,
 					EmployeeCountAssignedScore = thresholds.EmployeeCountAssignedScore,
+
 					FirstTimeApplicantAssignedScore = thresholds.FirstTimeApplicantAssignedScore,
 				};
 				return Json(model, JsonRequestBehavior.AllowGet);
@@ -142,6 +147,39 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
 
+		[HttpGet, Route("HOO")]
+		[ValidateRequestHeader]
+		public JsonResult GetHighOpportunityOccupations()
+		{
+			var model = new PrioritizationScoresViewModel();
+			try
+			{
+				var thresholds = _prioritizationService.GetThresholds();
+				var industries = _prioritizationService.GetPrioritizationHighOpportunityOccupationScores();
+
+				var hooModels = industries.Select(r => new ScoreViewModel
+				{
+					Name = r.Name,
+					Code = r.NOCCode,
+					Score = r.HighOpportunityOccupationScore,
+					IsPriority = r.HighOpportunityOccupationScore <= thresholds.HighOpportunityOccupationThreshold
+				}).ToList();
+
+				var result = new
+				{
+					RecordsFiltered = hooModels.Count,
+					RecordsTotal = hooModels.Count,
+					Data = hooModels
+				};
+				return Json(result, JsonRequestBehavior.AllowGet);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
 		/// <summary>
 		/// Updates the Prioritization thresholds in the datasource.
 		/// </summary>
@@ -159,10 +197,12 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				{
 					var thresholds = _prioritizationService.GetThresholds();
 					thresholds.IndustryThreshold = model.IndustryThreshold;
+					thresholds.HighOpportunityOccupationThreshold = model.HighOpportunityOccupationThreshold;
 					thresholds.RegionalThreshold = model.RegionalThreshold;
 					thresholds.EmployeeCountThreshold = model.EmployeeCountThreshold;
 
 					thresholds.IndustryAssignedScore = model.IndustryAssignedScore;
+					thresholds.HighOpportunityOccupationAssignedScore = model.HighOpportunityOccupationAssignedScore;
 					thresholds.RegionalThresholdAssignedScore = model.RegionalThresholdAssignedScore;
 					thresholds.EmployeeCountAssignedScore = model.EmployeeCountAssignedScore;
 					thresholds.FirstTimeApplicantAssignedScore = model.FirstTimeApplicantAssignedScore;
@@ -225,6 +265,25 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			try
 			{
 				_prioritizationService.UpdateIndustryScores(file.Validate(maxUploadSize, permittedAttachmentTypes).InputStream);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model);
+		}
+
+		[HttpPost]
+		[ValidateRequestHeader]
+		[Route("UpdateHOO")]
+		public JsonResult UpdateHighOpportunityOccupations(HttpPostedFileBase file)
+		{
+			var model = new PrioritizationUpdateScoresFileViewModel();
+			int maxUploadSize = int.Parse(ConfigurationManager.AppSettings["MaxUploadSizeInBytes"]);
+			string[] permittedAttachmentTypes = ConfigurationManager.AppSettings["PrioritizationPermittedAttachmentTypes"].Split('|');
+			try
+			{
+				_prioritizationService.UpdateHighOpportunityOccupationScores(file.Validate(maxUploadSize, permittedAttachmentTypes).InputStream);
 			}
 			catch (Exception ex)
 			{

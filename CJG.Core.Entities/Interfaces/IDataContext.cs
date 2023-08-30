@@ -1,12 +1,12 @@
-﻿using CJG.Core.Entities;
-using CJG.Infrastructure.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Web;
+using CJG.Core.Entities;
+using CJG.Infrastructure.Identity;
 
 namespace CJG.Infrastructure.Entities
 {
@@ -168,6 +168,7 @@ namespace CJG.Infrastructure.Entities
 		DbSet<RateFormat> RateFormats { get; }
 		DbSet<PrioritizationThreshold> PrioritizationThresholds { get; }
 		DbSet<PrioritizationIndustryScore> PrioritizationIndustryScores { get; }
+		DbSet<PrioritizationHighOpportunityOccupationScore> PrioritizationHighOpportunityOccupationScores { get; }
 		DbSet<PrioritizationRegion> PrioritizationRegions { get; }
 		DbSet<PrioritizationPostalCode> PrioritizationPostalCodes { get; }
 		#endregion

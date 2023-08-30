@@ -9,12 +9,15 @@
                 {{grantFile.WorkflowViewModel.ApplicationWorkflowViewModel.FileNumber}} {{grantFile.WorkflowViewModel.ApplicationWorkflowViewModel.FileName}} (start date {{toPST(grantFile.DeliveryStartDate)}})
             </p>
             <h1><img class="center" ng-if="grantFile.WorkflowViewModel.ApplicationWorkflowViewModel.RiskFlag" src="../../../../images/icons/risk-flag.png" />{{grantFile.WorkflowViewModel.ApplicationWorkflowViewModel.OrganizationLegalName}}</h1>
-
         </div>
 
 		<div class="display-inline-block">
             <span ng-repeat="button in grantFile.WorkflowViewModel.WorkflowButtons">
                 <span ng-switch="button.Value">
+                    <button ng-switch-when="RecommendForApproval" class="btn btn--secondary modal--approve-application" ng-class="button.IsDisabled?'disabled':''"
+                            value={{button.Value}} ng-click="handleWorkflow(button.Url, button.Value)">
+                        {{button.Caption}}
+                    </button>
                     <button ng-switch-when="RecommendForDenial" class="btn btn--secondary modal--deny-application" ng-class="button.IsDisabled?'disabled':''"
                             value={{button.Value}} ng-click="handleWorkflow(button.Url, button.Value)">
                         {{button.Caption}}

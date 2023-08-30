@@ -15,7 +15,7 @@
             <h2>Training Provider Grant File History</h2>
         </div>
         <hr />
-        <h1 id="trainingProviderName">{{model.TrainingProviderInventoryName}}</h1>
+        <h1 id="trainingProviderName"><img class="center" ng-if="model.TrainingProviderRiskFlag" ng-src="../../../../../images/icons/risk-flag.png" /> {{model.TrainingProviderInventoryName}}</h1>
         <div class="form__group">
             <div class="form__label">
                 Acronym:
@@ -58,7 +58,7 @@
     <hr />
 
     <div class="wrapper--intake-queue-datatable">
-        <pager ng-if="model.TrainingProviderInventoryId" ng-filter="getTrainingProviderHistory" ng-page-size="[10, 25, 50, 100]">
+        <pager ng-if="model.TrainingProviderInventoryId" ng-filter="getTrainingProviderHistory" ng-page-size="[100, 50, 25]">
             <table class="form__group--data-grid">
                 <thead>
                     <tr>

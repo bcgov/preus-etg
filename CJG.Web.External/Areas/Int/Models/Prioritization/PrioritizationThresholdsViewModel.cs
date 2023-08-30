@@ -8,6 +8,9 @@ namespace CJG.Web.External.Areas.Int.Models.Prioritization
 		[Required(ErrorMessage = "You must enter a numeric Industry Threshold.")]
 		public int IndustryThreshold { get; set; }
 
+		[Required(ErrorMessage = "You must enter a numeric High Opportunity Occupation Threshold.")]
+		public decimal HighOpportunityOccupationThreshold { get; set; }
+
 		[Required(ErrorMessage = "You must enter a numeric Regional Threshold.")]
 		public decimal RegionalThreshold { get; set; }
 
@@ -18,6 +21,9 @@ namespace CJG.Web.External.Areas.Int.Models.Prioritization
 		[Required(ErrorMessage = "You must enter a numeric Industry Score.")]
 		public int IndustryAssignedScore { get; set; }
 
+		[Required(ErrorMessage = "You must enter a numeric High Opportunity Occupation Score.")]
+		public int HighOpportunityOccupationAssignedScore { get; set; }
+
 		[Required(ErrorMessage = "You must enter a numeric Regional Score.")]
 		public int RegionalThresholdAssignedScore { get; set; }
 
@@ -26,5 +32,6 @@ namespace CJG.Web.External.Areas.Int.Models.Prioritization
 
 		[Required(ErrorMessage = "You must enter a numeric First Time Applicant Score.")]
 		public int FirstTimeApplicantAssignedScore { get; set; }
+
 	}
 }

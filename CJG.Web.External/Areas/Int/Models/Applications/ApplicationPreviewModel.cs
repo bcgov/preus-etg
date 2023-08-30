@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
 using CJG.Application.Services;
@@ -142,32 +143,43 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 
 			switch (ApplicationStateInternal)
 			{
-				case (ApplicationStateInternal.Draft):
-				case (ApplicationStateInternal.New):
-				case (ApplicationStateInternal.Unfunded):
-				case (ApplicationStateInternal.ApplicationWithdrawn):
-				case (ApplicationStateInternal.ApplicationDenied):
+				case ApplicationStateInternal.Draft:
+				case ApplicationStateInternal.New:
+				case ApplicationStateInternal.Unfunded:
+				case ApplicationStateInternal.ApplicationWithdrawn:
+				case ApplicationStateInternal.ApplicationDenied:
 					break;
-				case (ApplicationStateInternal.PendingAssessment):
-				case (ApplicationStateInternal.UnderAssessment):
-				case (ApplicationStateInternal.ReturnedToAssessment):
-				case (ApplicationStateInternal.RecommendedForApproval):
-				case (ApplicationStateInternal.RecommendedForDenial):
+
+				case ApplicationStateInternal.PendingAssessment:
+				case ApplicationStateInternal.UnderAssessment:
+				case ApplicationStateInternal.ReturnedToAssessment:
+				case ApplicationStateInternal.RecommendedForDenial:
 					AddAssessment(grantApplication);
 					break;
-				case (ApplicationStateInternal.CancelledByMinistry):
-				case (ApplicationStateInternal.CancelledByAgreementHolder):
-				case (ApplicationStateInternal.OfferWithdrawn):
-				case (ApplicationStateInternal.OfferIssued):
-				case (ApplicationStateInternal.AgreementAccepted):
-				case (ApplicationStateInternal.AgreementRejected):
-				case (ApplicationStateInternal.ChangeRequestDenied):
+
+				case ApplicationStateInternal.RecommendedForApproval:
+					AddStateChange(grantApplication, ApplicationStateInternal.RecommendedForApproval, "Your application was excellent.");
+					AddAssessment(grantApplication);
+					break;
+
+				case ApplicationStateInternal.OfferIssued:
+					AddStateChange(grantApplication, ApplicationStateInternal.RecommendedForApproval, "Your application was excellent.");
 					AddAgreement(grantApplication);
 					break;
-				case (ApplicationStateInternal.ChangeRequest):
-				case (ApplicationStateInternal.ChangeForApproval):
-				case (ApplicationStateInternal.ChangeForDenial):
-				case (ApplicationStateInternal.ChangeReturned):
+
+				case ApplicationStateInternal.CancelledByMinistry:
+				case ApplicationStateInternal.CancelledByAgreementHolder:
+				case ApplicationStateInternal.OfferWithdrawn:
+				case ApplicationStateInternal.AgreementAccepted:
+				case ApplicationStateInternal.AgreementRejected:
+				case ApplicationStateInternal.ChangeRequestDenied:
+					AddAgreement(grantApplication);
+					break;
+
+				case ApplicationStateInternal.ChangeRequest:
+				case ApplicationStateInternal.ChangeForApproval:
+				case ApplicationStateInternal.ChangeForDenial:
+				case ApplicationStateInternal.ChangeReturned:
 					AddParticipants(grantApplication);
 
 					new TrainingProvider(trainingProvider)
@@ -182,20 +194,23 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 						TrainingProviderType = new TrainingProviderType("Training Provider Type")
 					};
 					break;
-				case (ApplicationStateInternal.NewClaim):
-				case (ApplicationStateInternal.ClaimAssessEligibility):
-				case (ApplicationStateInternal.ClaimAssessReimbursement):
-				case (ApplicationStateInternal.ClaimReturnedToApplicant):
-				case (ApplicationStateInternal.ClaimDenied):
+
+				case ApplicationStateInternal.NewClaim:
+				case ApplicationStateInternal.ClaimAssessEligibility:
+				case ApplicationStateInternal.ClaimAssessReimbursement:
+				case ApplicationStateInternal.ClaimReturnedToApplicant:
+				case ApplicationStateInternal.ClaimDenied:
 					AddParticipants(grantApplication);
 					AddClaim(grantApplication);
 					break;
-				case (ApplicationStateInternal.ClaimApproved):
+
+				case ApplicationStateInternal.ClaimApproved:
 					AddParticipants(grantApplication);
 					AddClaim(grantApplication);
 					break;
-				case (ApplicationStateInternal.CompletionReporting):
-				case (ApplicationStateInternal.Closed):
+
+				case ApplicationStateInternal.CompletionReporting:
+				case ApplicationStateInternal.Closed:
 					AddParticipants(grantApplication);
 					AddPaymentRequest(grantApplication);
 					break;
@@ -212,6 +227,20 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 				TrainingProgram = trainingProgram,
 				TrainingProvider = trainingProvider
 			};
+		}
+
+		private static void AddStateChange(GrantApplication grantApplication, ApplicationStateInternal state, string message)
+		{
+			if (grantApplication.StateChanges == null)
+				grantApplication.StateChanges = new List<GrantApplicationStateChange>();
+
+			grantApplication.StateChanges.Add(new GrantApplicationStateChange
+			{
+				FromState = ApplicationStateInternal.UnderAssessment,
+				ToState = ApplicationStateInternal.RecommendedForApproval,
+				Reason = message,
+				DateAdded = AppDateTime.UtcNow
+			});
 		}
 
 		private static void AddAssessment(GrantApplication grantApplication)

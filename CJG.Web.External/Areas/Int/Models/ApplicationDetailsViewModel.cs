@@ -185,7 +185,12 @@ namespace CJG.Web.External.Areas.Int.Models
 			ScheduledNotificationsEnabled = grantApplication.ScheduledNotificationsEnabled;
 			HasRequestedAdditionalFunding = grantApplication.HasRequestedAdditionalFunding;
 			DescriptionOfFundingRequested = grantApplication.DescriptionOfFundingRequested;
-			GrantProgramDenialReasons = grantApplication.GrantOpening.GrantStream.GrantProgram.DenialReasons.Where(r=>r.IsActive).Select(nt => new GrantProgramDenialReasonViewModel(nt)).ToArray();
+
+			GrantProgramDenialReasons = grantApplication.GrantOpening.GrantStream.GrantProgram.DenialReasons
+				.Where(r => r.IsActive)
+				.OrderBy(r => r.RowSequence)
+				.Select(r => new GrantProgramDenialReasonViewModel(r))
+				.ToArray();
 		}
 	}
 }

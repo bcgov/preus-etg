@@ -438,6 +438,11 @@ namespace CJG.Core.Entities
 			return grantApplication.GetReason(ApplicationStateInternal.RecommendedForDenial, ApplicationStateInternal.ApplicationDenied, ApplicationStateInternal.ClaimDenied, ApplicationStateInternal.ChangeForDenial);
 		}
 
+		public static string GetApprovedReason(this GrantApplication grantApplication)
+		{
+			return grantApplication.GetReason(ApplicationStateInternal.RecommendedForApproval);
+		}
+
 		/// <summary>
 		/// Get the selected reasons for being denied.
 		/// This will return the selected denial reasons on the grant file.
@@ -446,16 +451,18 @@ namespace CJG.Core.Entities
 		/// <returns></returns>
 		public static string GetSelectedDeniedReason(this GrantApplication grantApplication)
 		{
-			if (grantApplication.ApplicationStateInternal.In(ApplicationStateInternal.RecommendedForDenial, ApplicationStateInternal.ApplicationDenied))
-			{
-				if (grantApplication.GrantApplicationDenialReasons?.Count > 0)
-				{
-					var selectedDeniedReasons = grantApplication.GrantApplicationDenialReasons.Select(r => r.Caption).Aggregate((c, s) => $"{c}; {s}");
-					return string.Join("; ", selectedDeniedReasons);
-				}
-			}
+			if (!grantApplication.ApplicationStateInternal.In(ApplicationStateInternal.RecommendedForDenial, ApplicationStateInternal.ApplicationDenied))
+				return string.Empty;
 
-			return string.Empty;
+			if (!(grantApplication.GrantApplicationDenialReasons?.Count > 0))
+				return string.Empty;
+
+			var selectedDeniedReasons = grantApplication
+				.GrantApplicationDenialReasons
+				.Select(r => r.Caption)
+				.OrderBy(c => c);
+
+			return string.Join("; ", selectedDeniedReasons);
 		}
 
 		/// <summary>

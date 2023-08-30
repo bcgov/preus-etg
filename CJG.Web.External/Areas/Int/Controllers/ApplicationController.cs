@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
+using System.Runtime.CompilerServices;
 using System.Web;
 using System.Web.Mvc;
 using CJG.Application.Services;
@@ -423,6 +424,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
 				model = new ApplicationPrioritizationInfoViewModel(grantApplication);
+
+				// Convert the Code to a more descriptive value
+				model.HighOpportunityOccupationCode = string.Join(", ", _prioritizationService.GetHighOpportunityOccupationCodesAndNames(model.HighOpportunityOccupationCode));
 			}
 			catch (Exception ex)
 			{

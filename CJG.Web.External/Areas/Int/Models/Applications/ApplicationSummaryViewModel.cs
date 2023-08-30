@@ -16,11 +16,13 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 		public string RowVersion { get; set; }
 		public int TotalGrantApplications { get; set; }
 		public decimal TotalGrantApplicationCost { get; set; }
+		public string ApprovalReason { get; set; }
 		public string TerminalReason { get; set; }
 		public string HighLevelDenialReasons { get; set; }
 		public string FileNumber { get; set; }
 		public DateTime? DateUpdated { get; set; }
 		public DateTime? DateSubmitted { get; set; }
+		public DateTime DateStatusChanged { get; set; }
 		public ApplicationStateViewModel ApplicationStateExternalViewModel { get; set; }
 		public ApplicationStateViewModel ApplicationStateInternalViewModel { get; set; }
 		public string GrantStreamFullName { get; set; }
@@ -94,6 +96,7 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 			};
 
 			ShowAssessorName = grantApplication.Assessor != null && grantApplication.ApplicationStateInternal >= ApplicationStateInternal.UnderAssessment;
+			ApprovalReason = grantApplication.GetApprovedReason();
 			TerminalReason = grantApplication.GetTerminalReason();
 			HighLevelDenialReasons = grantApplication.GetSelectedDeniedReason();
 			TotalGrantApplications = grantApplicationService.GetApplicationsCountByFiscal(grantApplication);
@@ -113,6 +116,7 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 			};
 			DateSubmitted = grantApplication.DateSubmitted?.ToLocalTime();
 			DateUpdated = grantApplication.DateUpdated?.ToLocalTime();
+			DateStatusChanged = grantApplication.GetStateChange(grantApplication.ApplicationStateInternal)?.ChangedDate ?? AppDateTime.UtcNow;
 			FileNumber = grantApplication.FileNumber;
 			GrantStreamFullName = grantApplication.GrantOpening.GrantStream.FullName;
 			GrantProgramId = grantApplication.GrantOpening.GrantStream.GrantProgramId;

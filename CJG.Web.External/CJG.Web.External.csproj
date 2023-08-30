@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.Net.Compilers.3.1.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.3.1.1\build\Microsoft.Net.Compilers.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
@@ -285,6 +285,7 @@
     <Content Include="content\components\_AngularTextArea.html" />
     <Content Include="content\dialogs\_AddParticipantInvitation.html" />
     <Content Include="content\dialogs\_ChangeAlternateContact.html" />
+    <Content Include="content\dialogs\_ApprovalReason.html" />
     <Content Include="content\dialogs\_DenialReason.html" />
     <Content Include="content\dialogs\_FullContent.html" />
     <Content Include="content\dialogs\_TestNotification.html" />
@@ -524,6 +525,7 @@
     <Content Include="UI\javascript\internal\intake-periods\intake-period-view.js" />
     <Content Include="UI\javascript\internal\intake-periods\index.js" />
     <Content Include="UI\javascript\internal\intake-periods\intake-periods-view.js" />
+    <Content Include="UI\javascript\internal\prioritization\prioritization-management-hoo.js" />
     <Content Include="UI\javascript\internal\prioritization\prioritization-management-regions.js" />
     <Content Include="UI\javascript\internal\prioritization\prioritization-management-industries.js" />
     <Content Include="UI\javascript\internal\regional-exceptions\index.js" />
@@ -877,6 +879,7 @@
     <Content Include="Areas\Int\Views\Prioritization\_Regions.cshtml" />
     <Content Include="Areas\Int\Views\Prioritization\_Industries.cshtml" />
     <Content Include="App_Data\PDF\ETG-Travel-Expense-Claim-Form.docx" />
+    <Content Include="Areas\Int\Views\Prioritization\_HighOpportunityOccupations.cshtml" />
     <None Include="NLog.Training.config">
       <DependentUpon>NLog.config</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

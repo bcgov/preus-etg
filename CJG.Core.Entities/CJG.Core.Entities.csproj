@@ -132,6 +132,7 @@
     <Compile Include="ParticipantInvitation.cs" />
     <Compile Include="ParticipantInvitationStatus.cs" />
     <Compile Include="PaymentRequestExtensions.cs" />
+    <Compile Include="PrioritizationHighOpportunityOccupationScore.cs" />
     <Compile Include="PrioritizationIndustryScore.cs" />
     <Compile Include="PrioritizationPostalCode.cs" />
     <Compile Include="PrioritizationRegion.cs" />

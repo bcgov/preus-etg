@@ -399,4 +399,9 @@ app.controller('ProgramCosts', function ($scope, $attrs, $controller, $timeout, 
       })
       .catch(angular.noop);
   }
+
+  $scope.downloadAttachment = function (attachmentId) {
+    window.open('/Int/Application/Training/Cost/Attachment/Download/' + $scope.parent.grantApplicationId + '/' + attachmentId);
+  }
+
 });

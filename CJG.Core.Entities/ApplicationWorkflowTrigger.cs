@@ -293,7 +293,7 @@ namespace CJG.Core.Entities
 		[Description("Enable Applicant Reporting Of Participants")]
 		EnableApplicantReportingOfParticipants = 57,
 		/// <summary>
-		/// EditTrainingCostOverride - Allows the Director to edit the training cost and exceed the 10% total government contribution limit
+		/// EditTrainingCostOverride - Allows the Director or Assessor to edit the training cost and exceed the 10% total government contribution limit
 		/// </summary>
 		[Description("Edit Training Cost Override")]
 		EditTrainingCostOverride = 58,

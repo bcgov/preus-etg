@@ -30,7 +30,9 @@
                     <div class="form__label">Training provider name:</div>
                     <div class="form__control">
                         <div ng-if="model.IsValidated">
-                            <a href="/Int/Training/Provider/History/View/{{model.TrainingProviderInventoryId}}" target="_blank">{{model.Name}}</a>
+                            <a href="/Int/Training/Provider/History/View/{{model.TrainingProviderInventoryId}}" target="_blank">{{model.Name}}
+                                <img class="center provider-risk-flag" ng-if="model.TrainingProviderInventoryIsRisk" ng-src="../../../../../images/icons/risk-flag.png" />
+                            </a>
                         </div>
                         <div ng-if="!model.IsValidated">{{model.Name}}</div>
                         <div ng-if="model.IsValidated" class="label label--complete">Validated</div>

@@ -82,9 +82,11 @@ namespace CJG.Application.Services
 <p>Thank you,</p>
 <p>The B.C. Employer Training Grant</p>";
 
-			var sender = $"{_notificationSettings.DefaultSenderName} <{_notificationSettings.DefaultSenderAddress}>";
+			// This service doesn't use the template subject or body for content - just hooks it up for Ref. Integrity
+			var pifInvitationNotificationType = _notificationService.GetPIFInvitationNotificationType();
 
-			var email = new NotificationQueue(participantInvitation.GrantApplication, participantInvitation, sender, inviteBody, inviteSubject);
+			var sender = $"{_notificationSettings.DefaultSenderName} <{_notificationSettings.DefaultSenderAddress}>";
+			var email = new NotificationQueue(participantInvitation.GrantApplication, participantInvitation, sender, inviteBody, inviteSubject, pifInvitationNotificationType);
 			_notificationService.SendNotification(email);
 
 			participantInvitation.ParticipantInvitationStatus = ParticipantInvitationStatus.Sent;

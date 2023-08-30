@@ -28,16 +28,13 @@
         <hr />
         <h1 id="organizationName">{{model.LegalName}} | Doing Business As: {{model.DoingBusinessAs}}</h1>
         <div class="form__label">
-            <b>Total for: &nbsp;{{GrantProgramDescription}}</b>
+            <strong>YTD Requested:</strong> {{model.YTDRequested | currency : '$' : 2}}
         </div>
         <div class="form__label">
-            <b>YTD Requested: &nbsp;{{model.YTDRequested | currency : '$' : 2}}</b>
+            <strong>YTD Approved:</strong> {{model.YTDApproved | currency : '$' : 2}}
         </div>
         <div class="form__label">
-            <b>YTD Approved: &nbsp;{{model.YTDApproved | currency : '$' : 2}}</b>
-        </div>
-        <div class="form__label">
-            <b>YTD Paid: &nbsp;{{model.YTDPaid | currency : '$' : 2}}</b>
+            <strong>YTD Paid:</strong> {{model.YTDPaid | currency : '$' : 2}}
         </div>
         <br />
         <div class="form__group form__group--radio-inline">
@@ -84,16 +81,7 @@
     <hr />
 
     <div class="wrapper--intake-queue-datatable">
-        <pager ng-if="model.OrgId" ng-filter="getOrganizationHistory" ng-page-size="[10, 25, 50, 100]">
-            <div class="form__control float-right" style="padding-top:15px;">
-                <span>Select Grant Program: </span>
-                <span class="selectmenu">
-                    <select id="grantProgramId" ng-model="model.GrantProgramId" ng-change="getOrganizationHistoryGrant()" ng-options="item.Key as item.Value for item in grantPrograms">
-                        <option value="">All Programs</option>
-                    </select>
-                </span>
-            </div>
-            <br />
+        <pager ng-if="model.OrgId" ng-filter="getOrganizationHistory" ng-page-size="[100, 50, 25]">
             <table class="form__group--data-grid">
                 <thead>
                     <tr>
@@ -101,7 +89,7 @@
                         <th class="data-grid-sub-header" ng-click="changeSorting('CurrentStatus')"><img ng-src="{{imgSrcCurrentStatus}}" />Status</th>
                         <th class="data-grid-sub-header" ng-click="changeSorting('ApplicationStream')"><img ng-src="{{imgSrcApplicationStream}}" />Stream</th>
                         <th class="data-grid-sub-header" ng-click="changeSorting('ApplicantName')"><img ng-src="{{imgSrcApplicantName}}" />Contact Name</th>
-                        <th class="data-grid-sub-header" ng-click="changeSorting('ApplicantEmail')"><img ng-src="{{imgSrcApplicantEmail}}" />Contact Email</th>
+                        <th class="data-grid-sub-header" ng-click="changeSorting('DenialReasons')"><img ng-src="{{imgSrcApplicantEmail}}" />High-level Denial Reason</th>
                         <th class="data-grid-sub-header" ng-click="changeSorting('TrainingProgramTitle')"><img ng-src="{{imgSrcTrainingProgramTitle}}" />Training Program Title</th>
                         <th class="data-grid-sub-header" ng-click="changeSorting('StartDate')"><img ng-src="{{imgSrcStartDate}}" />Start Date</th>
                         <th class="data-grid-sub-header" ng-click="changeSorting('EndDate')"><img ng-src="{{imgSrcEndDate}}" />End Date</th>
@@ -114,19 +102,19 @@
                 </thead>
                 <tbody>
                     <tr ng-repeat="application in $parent.$ctrl.ngItems |orderBy:sort.column:sort.descending">
-                        <td style="padding:0px;"><a href="/Int/Application/Details/View/{{application.Id}}">{{application.FileNumber}}</a></td>
-                        <td style="padding:0px;">{{application.CurrentStatus}}</td>
-                        <td style="padding:0px;">{{application.ApplicationStream}}</td>
-                        <td style="padding:0px;">{{application.ApplicantName}}</td>
-                        <td style="padding:0px;">{{application.ApplicantEmail}}</td>
-                        <td style="padding:0px; text-align:center;">{{application.TrainingProgramTitle}}</td>
-                        <td style="padding:0px;">{{application.StartDate}}</td>
-                        <td style="padding:0px;">{{application.EndDate}}</td>
-                        <td style="padding:0px; text-align:center;">{{application.NumberOfParticipants}}</td>
-                        <td style="padding:0px; text-align:center;">{{application.RequestedAmount| currency : '$' : 2}}</td>
-                        <td style="padding:0px; text-align:center;">{{application.ApprovedAmount| currency : '$' : 2}}</td>
-                        <td style="padding:0px; text-align:center;">{{application.PaidAmount| currency : '$' : 2}}</td>
-                        <td style="padding:0px; text-align:center;">{{application.AverageCostPerParticipant| currency : '$' : 2}}</td>
+                        <td style="padding: 0;"><a href="/Int/Application/Details/View/{{application.Id}}">{{application.FileNumber}}</a></td>
+                        <td style="padding: 0;">{{application.CurrentStatus}}</td>
+                        <td style="padding: 0; padding-right: 15px;">{{application.ApplicationStream}}</td>
+                        <td style="padding: 0; padding-right: 15px;">{{application.ApplicantName}}</td>
+                        <td style="padding: 0; max-width: 150px;">{{application.DenialReasons}}</td>
+                        <td style="padding: 0; text-align:center;">{{application.TrainingProgramTitle}}</td>
+                        <td style="padding: 0;">{{application.StartDate}}</td>
+                        <td style="padding: 0;">{{application.EndDate}}</td>
+                        <td style="padding: 0; text-align:center;">{{application.NumberOfParticipants}}</td>
+                        <td style="padding: 0; text-align:center;">{{application.RequestedAmount| currency : '$' : 2}}</td>
+                        <td style="padding: 0; text-align:center;">{{application.ApprovedAmount| currency : '$' : 2}}</td>
+                        <td style="padding: 0; text-align:center;">{{application.PaidAmount| currency : '$' : 2}}</td>
+                        <td style="padding: 0; text-align:center;">{{application.AverageCostPerParticipant| currency : '$' : 2}}</td>
                     </tr>
                 </tbody>
             </table>

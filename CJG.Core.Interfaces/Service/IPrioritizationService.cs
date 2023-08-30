@@ -14,11 +14,16 @@ namespace CJG.Core.Interfaces.Service
 		PrioritizationScoreBreakdown GetBreakdown(GrantApplication grantApplication);
 		IEnumerable<PrioritizationRegion> GetPrioritizationRegions();
 		IEnumerable<PrioritizationIndustryScore> GetPrioritizationIndustryScores();
+		IEnumerable<PrioritizationHighOpportunityOccupationScore> GetPrioritizationHighOpportunityOccupationScores();
 		IEnumerable<Tuple<int, int>> GetRegionPostalCodeCounts();
 
 		bool UpdateIndustryScores(Stream stream);
+		bool UpdateHighOpportunityOccupationScores(Stream stream);
 		bool UpdateRegionScores(Stream stream);
 		void RecalculatePriorityScores(int? grantApplicationId = null, bool allowUnderAssessment = false);
+
 		void AddPostalCodeToRegion(GrantApplication grantApplication, int regionId);
+
+		List<string> GetHighOpportunityOccupationCodesAndNames(string nocs);
 	}
 }

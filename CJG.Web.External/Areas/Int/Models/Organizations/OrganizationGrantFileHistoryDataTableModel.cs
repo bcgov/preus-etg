@@ -21,14 +21,15 @@ namespace CJG.Web.External.Areas.Int.Models.Organizations
 		public decimal ApprovedAmount { get; set; } = decimal.Zero;
 		public decimal PaidAmount { get; set; } = decimal.Zero;
 		public decimal AverageCostPerParticipant { get; set; }
+		public string DenialReasons { get; set; }
 		public string RowVersionString { get; set; }
 
-		public OrganizationGrantFileHistoryDataTableModel(GrantApplication grantApplication, IUserService userService)
+        public OrganizationGrantFileHistoryDataTableModel(GrantApplication grantApplication, IUserService userService)
 		{
 			Id = grantApplication.Id;
 			FileNumber = grantApplication.FileNumber;
 			CurrentStatus = grantApplication.ApplicationStateInternal.GetDescription();
-			ApplicationStream = grantApplication.GrantOpening.GrantStream.FullNameProgramCode;
+			ApplicationStream = grantApplication.GrantOpening.GrantStream.Name;
 			ApplicantName = grantApplication.ApplicantFirstName + " " + grantApplication.ApplicantLastName;
 			ApplicantEmail = userService.GetUser(grantApplication.ApplicantBCeID).EmailAddress;
 			TrainingProgramTitle = grantApplication.TrainingPrograms.FirstOrDefault()?.CourseTitle;
@@ -39,6 +40,7 @@ namespace CJG.Web.External.Areas.Int.Models.Organizations
 			ApprovedAmount = grantApplication.TrainingCost.CalculateApprovedAmount();
 			PaidAmount = grantApplication.Claims.Where(c => c.ClaimState.In(ClaimState.ClaimApproved, ClaimState.AmountReceived, ClaimState.ClaimPaid, ClaimState.PaymentRequested)).Sum(c => c.TotalAssessedReimbursement);
 			AverageCostPerParticipant = ApprovedAmount / grantApplication.TrainingCost.GetEstimatedParticipants();
+			DenialReasons = grantApplication.GetSelectedDeniedReason();
 			RowVersionString = Convert.ToBase64String(grantApplication.RowVersion);
 		}
 	}

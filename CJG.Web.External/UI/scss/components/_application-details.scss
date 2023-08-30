@@ -223,3 +223,16 @@
     margin-bottom: 0.6rem;
   }
 }
+
+.form--2-col {
+  .prioritization {
+    .form__label {
+      width: 50% !important;
+    }
+
+    .form__control {
+      width: 50% !important;
+      padding-right: 1.5em !important;
+    }
+  }
+}
