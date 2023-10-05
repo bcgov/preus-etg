@@ -41,9 +41,9 @@ app.controller('TrainingProviderInventoryList', function ($scope, $attrs, $contr
    * @param {int} quantity - The number of items in a page.
    * @returns {Promise}
    **/
-  $scope.getProviders = function (pageKeyword, page, quantity) {
+  $scope.getProviders = function (pageKeyword, page, quantity, riskFlag) {
     return $scope.ajax({
-      url: '/Int/Training/Provider/Inventory/Search/' + page + '/' + quantity + (pageKeyword ? '?search=' + pageKeyword : '')
+      url: '/Int/Training/Provider/Inventory/Search/' + page + '/' + quantity + '?riskFlag=' + riskFlag + (pageKeyword ? '&search=' + pageKeyword : '')
     })
       .then(function (response) {
         return Promise.resolve(response.data);

@@ -69,14 +69,23 @@ namespace CJG.Application.Services
 			return _dbContext.TrainingProviderInventory.FirstOrDefault(t => t.Name == name);
 		}
 
-		public PageList<TrainingProviderInventory> GetInventory(int page, int quantity, string search, bool? isActive = null)
+		public PageList<TrainingProviderInventory> GetInventory(int page, int quantity, string search, bool? isActive = null, bool? isRisk = null)
 		{
 			var filtered = _dbContext.TrainingProviderInventory
-				.Where(x => (string.IsNullOrEmpty(search) || x.Name.Contains(search) || x.Acronym != null && x.Acronym.Contains(search))
-					&& (isActive == null || x.IsActive == isActive)
-				).OrderBy(x => x.Name);
+				.Where(x => (string.IsNullOrEmpty(search)
+				             || x.Name.Contains(search)
+				             || x.Acronym != null && x.Acronym.Contains(search))
+				            && (isActive == null || x.IsActive == isActive)
+				);
+
+			if (isRisk.HasValue)
+				filtered = filtered.Where(x => x.RiskFlag == isRisk.Value);
+
+			filtered = filtered.OrderBy(x => x.Name);
+
 			var total = filtered.Count();
 			var result = filtered.Skip((page - 1) * quantity).Take(quantity);
+
 			return new PageList<TrainingProviderInventory>(page, quantity, total, result.ToArray());
 		}
 

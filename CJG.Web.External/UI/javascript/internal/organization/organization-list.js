@@ -41,9 +41,9 @@ app.controller('OrganizationList', function ($scope, $attrs, $controller, $timeo
    * @param {int} quantity - The number of items in a page.
    * @returns {Promise}
    **/
-  $scope.getOrganizations = function (pageKeyword, page, quantity) {
+  $scope.getOrganizations = function (pageKeyword, page, quantity, riskFlag) {
     return $scope.ajax({
-      url: '/Int/Organization/Search/' + page + '/' + quantity + (pageKeyword ? '?search=' + pageKeyword : '')
+      url: '/Int/Organization/Search/' + page + '/' + quantity + '?riskFlag=' + riskFlag + (pageKeyword ? '&search=' + pageKeyword : '')
     })
       .then(function (response) {
         return Promise.resolve(response.data);

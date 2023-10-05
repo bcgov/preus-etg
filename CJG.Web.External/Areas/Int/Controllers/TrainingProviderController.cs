@@ -1,4 +1,12 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Mime;
+using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.Mvc;
+using CJG.Application.Business.Models;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Areas.Ext.Models.TrainingProviders;
@@ -7,21 +15,13 @@ using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mime;
-using System.Text.RegularExpressions;
-using System.Web;
-using System.Web.Mvc;
-using CJG.Application.Business.Models;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	/// <summary>
-	/// TrainingProviderController class, controller provides API endpoints to manage training providers.
-	/// </summary>
-	[RouteArea("Int")]
+    /// <summary>
+    /// TrainingProviderController class, controller provides API endpoints to manage training providers.
+    /// </summary>
+    [RouteArea("Int")]
 	[Authorize(Roles = "Assessor, System Administrator, Director, Financial Clerk")]
 	public class TrainingProviderController : BaseController
 	{
