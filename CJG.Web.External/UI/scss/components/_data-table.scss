@@ -63,6 +63,16 @@
 }
 
 .table--participant-invitations {
+
+  tbody {
+    tr {
+      td {
+        border-bottom: 2px solid color('border') !important;
+      }
+    }
+  }
+
+
   .btn + .btn {
     margin-left: 0.25em !important;
   }
