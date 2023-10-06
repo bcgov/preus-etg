@@ -1,10 +1,9 @@
-﻿@using CJG.Web.External.Areas.Ext.Controllers
-@{
+﻿@{
     ViewBag.Title = "Organization Profile";
 }
 
 <div class="row">
-    @Html.ActionLink("Home", nameof(HomeController.Index), typeof(HomeController), null, new { @class = "link--back" })
+    @Html.ActionLink("Home", "Index", "Home", null, new { @class = "link--back" })
 </div>
 
 <div class="row">
@@ -33,7 +32,7 @@
                     <p>Your organization is responsible for ensuring that your profile is accurate.</p>
                 </div>
                 <div class="alert alert--warning notice--icon" ng-show="!model.CreateOrganizationProfile && model.CanEditOrganizationProfile && model.RequiresBusinessLicenseDocuments">
-                    <p>The organization profile is missing information about your business.</p>
+                    <p>Your organization’s business information documents must be uploaded yearly. As your documents are out of date, please upload current business information.</p>
                 </div>
 
                 <p>Your business legal and operating names are provided by BCeID and are shown below. Please check that this information is correct.</p>
