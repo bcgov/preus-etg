@@ -17,7 +17,7 @@
         <div class="form form--2-col">
             <div class="col-50p">
                 <div class="form__group">
-                    <div class="form__label">File number:</div>
+                    <div class="form__label">File Number:</div>
                     <div class="form__control">{{model.FileNumber}}</div>
                 </div>
                 <div class="form__group">
@@ -31,14 +31,14 @@
                     </div>
                 </div>
                 <div class="form__group">
-                    <div class="form__label">Grant opening:</div>
+                    <div class="form__label">Grant Opening:</div>
                     <div class="form__control">
                         {{model.GrantStreamFullName}} <br>
                         ({{toPST(model.TrainingPeriodStartDate)}} to {{toPST(model.TrainingPeriodEndDate)}})
                     </div>
                 </div>
                 <div class="form__group">
-                    <div class="form__label">Delivery dates:</div>
+                    <div class="form__label">Delivery Dates:</div>
                     <div class="form__control">
                         <div class="control-wrapper" ng-class="{ 'float-left' : !section.editing }">
                             <datedropdown ng-model="model.DeliveryStartDate" ng-text="model.DeliveryStartDate" ng-min-date="model.TrainingPeriodStartDate" ng-max-date="model.TrainingPeriodEndDate"></datedropdown>
@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 <div class="form__group">
-                    <div class="form__label">Training cost:</div>
+                    <div class="form__label">Training Cost:</div>
                     <div class="form__control">
                         {{model.EligibleTotalCost|currency}}
                     </div>
@@ -170,7 +170,7 @@
                     </div>
                 </div>
                 <div class="form__group">
-                    <div class="form__label">Risk classification:</div>
+                    <div class="form__label">Risk Classification:</div>
                     <div class="form__control">
                         <div class="control-wrapper selectmenu">
                             <select ng-model="model.RiskClassificationId" ng-options="item.Id as item.Caption for item in riskClassifications" class="input--small" ng-validation ng-editing></select>
@@ -178,7 +178,7 @@
                     </div>
                 </div>
                 <div class="form__group" ng-if="model.AllowEditDeliveryPartner">
-                    <div class="form__label">Delivery partner:</div>
+                    <div class="form__label">Delivery Partner:</div>
                     <div class="form__control">
                         <div class="control-wrapper selectmenu input--full">
                             <select ng-model="model.DeliveryPartnerId" ng-options="item.Key as item.Value for item in deliveryPartners" class="input--full" ng-validation ng-editing>
@@ -188,7 +188,7 @@
                     </div>
                 </div>
                 <div class="form__group form__group--checkbox-list last-item" ng-if="model.AllowEditDeliveryPartner && model.DeliveryPartnerId">
-                    <div class="form__label">Assisted with:</div>
+                    <div class="form__label">Assisted With:</div>
                     <div class="form__control">
                         <div class="form__group--edit-wrapper">
                             <div class="control-wrapper input--full">
@@ -213,7 +213,7 @@
             <div class="clear-both"></div>
             <div ng-if="model.HighLevelDenialReasons" class="block--row-group">
                 <div class="form__group">
-                    <div class="form__label">High-level denial reason:</div>
+                    <div class="form__label">High-level Denial Reason:</div>
                     <div class="form__control">
                         <div class="control-wrapper">
                             {{model.HighLevelDenialReasons}}
@@ -232,7 +232,7 @@
 
             <div ng-if="model.ApprovalReason" class="block--row-group">
                 <div class="form__group last-item">
-                    <div class="form__label">Approval Reason:</div>
+                    <div class="form__label">Additional Details Provided to Applicant:</div>
                     <div class="form__control">
                         <div class="control-wrapper collapsed__html" ng-bind-html="model.ApprovalReason | unsafe" ng-click="previewApprovalReason()" title="Click to view full text"></div>
                     </div>
