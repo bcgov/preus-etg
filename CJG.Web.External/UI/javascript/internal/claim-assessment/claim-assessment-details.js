@@ -1,28 +1,37 @@
 var MathFunction = require("../../shared/math-functions");
 var utils = require('../../shared/utils');
-app.controller('ClaimAssessmentDetails', function ($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
-  $scope.section = {
-    name: 'ClaimAssessmentDetails',
-    displayName: 'Claim Assessment Details',
-    save: {
-      url: "/Int/Claim",
-      method: 'PUT',
-      data: function () {
-        return $scope.model;
+app.controller('ClaimAssessmentDetails',
+  function($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
+    $scope.section = {
+      name: 'ClaimAssessmentDetails',
+      displayName: 'Claim Assessment Details',
+      save: {
+        url: "/Int/Claim",
+        method: 'PUT',
+        data: function() {
+          return $scope.model;
+        },
+        backup: true
       },
-      backup: true
-    },
-    onSave: function () {
-      $scope.resyncClaimDetails();
-    },
-    loaded: function () {
-      return $scope.model && $scope.model.RowVersion && $scope.claim && $scope.model.RowVersion === $scope.claim.RowVersion;
-    },
-    onRefresh: function () {
-      return loadClaim().catch(angular.noop);
-    },
-    canSave: true
+      onSave: function() {
+        $scope.resyncClaimDetails();
+      },
+      loaded: function() {
+        return $scope.model &&
+          $scope.model.RowVersion &&
+          $scope.claim &&
+          $scope.model.RowVersion === $scope.claim.RowVersion;
+      },
+      onRefresh: function() {
+        return loadClaim().catch(angular.noop);
+      },
+      canSave: true,
+      notesExternallyUpdated: false
   };
+
+    $scope.$on('notesUpdated', function (event, data) {
+      $scope.section.notesExternallyUpdated = data.updated;
+    });
 
   angular.extend(this, $controller('Section', { $scope: $scope, $attrs: $attrs }));
 
@@ -56,13 +65,27 @@ app.controller('ClaimAssessmentDetails', function ($scope, $attrs, $controller, 
    * @param {any} $event - The event.
    * @returns {void}
    */
-  $scope.editClaim = function ($event) {
-    var toggle = $scope.model.EligibleCosts.find(function (ec) {
-      return ec.show;
-    });
+    $scope.editClaim = function ($event) {
+      if (!$scope.section.notesExternallyUpdated) {
+        var toggle = $scope.model.EligibleCosts.find(function(ec) {
+          return ec.show;
+        });
 
-    if (!toggle) $scope.model.EligibleCosts[0].show = true;
-    $scope.edit($event);
+        if (!toggle)
+          $scope.model.EligibleCosts[0].show = true;
+        $scope.edit($event);
+      } else {
+        return $scope.confirmDialog('Claim notes updated', 'Claim notes have been modified. Finish editing before attempting to edit Eligible Expense Types, otherwise you may lose your changes.<br />Click "Yes" to edit Expenses and ignore updated notes changes.')
+          .then(function () {
+            var toggle = $scope.model.EligibleCosts.find(function (ec) {
+              return ec.show;
+            });
+
+            if (!toggle)
+              $scope.model.EligibleCosts[0].show = true;
+            $scope.edit($event);
+          }).catch(angular.noop);
+      }
   }
 
   /**

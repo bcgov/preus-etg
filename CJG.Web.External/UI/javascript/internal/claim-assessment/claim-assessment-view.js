@@ -4,14 +4,17 @@ require('./claim-assessment-details');
 app.controller('ClaimAssessmentView', function ($scope, $attrs, $controller, $timeout, Utils, ngDialog) {
   $scope.section = {
     name: 'ClaimAssessmentView',
-    displayName: 'Claim Assessment'
-  };
+    displayName: 'Claim Assessment',
+    notesUpdated: false
+};
   $scope.parent = {
     grantApplicationId: $attrs.grantApplicationId,
     claimId: $attrs.claimId,
-    claimVersion: $attrs.claimVersion,
+    claimVersion: $attrs.claimVersion
   };
-  if (typeof ($scope.assessors) === 'undefined') $scope.assessors = [];
+
+  if (typeof ($scope.assessors) === 'undefined')
+    $scope.assessors = [];
 
   angular.extend(this, $controller('ParentSection', { $scope: $scope, $attrs: $attrs }));
 
@@ -167,10 +170,22 @@ app.controller('ClaimAssessmentView', function ($scope, $attrs, $controller, $ti
       data: $scope.claim
     }).then(function () {
       $scope.broadcast('refresh', { force: true });
+      $scope.section.notesUpdated = false;
+      $scope.$broadcast('notesUpdated', {
+        updated: false
+      });
+
       return $timeout(function () {
         $scope.alert.message = "Claim has has been updated successfully.";
         $scope.alert.type = 'success';
       });
+    });
+  }
+
+  $scope.flagNotesUpdated = function() {
+    $scope.section.notesUpdated = true;
+    $scope.$broadcast('notesUpdated', {
+      updated: true
     });
   }
 

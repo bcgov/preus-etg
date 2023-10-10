@@ -2,7 +2,7 @@
 <div ng-controller="ClaimAssessmentDetails" ng-init="init()" show="true">
     <div class="block--claim-assessment-expense-type">
         <div class="panel-section-buttons">
-            <h2 class="display-inline-block">{{model.ProgramType == @((int)ProgramTypes.EmployerGrant) ? 'Eligible Expense Types' : 'Claim Expenses'}} </h2>
+            <h2 class="display-inline-block">Eligible Expense Types</h2>
             <div class="pull-right">
                 <span class="reimbursement-claim-rate">
                     Reimbursement Rate: {{claim.ReimbursementRate * 100 | number : 2}} %
