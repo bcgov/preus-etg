@@ -1,7 +1,6 @@
 ﻿
 <div ng-if="model.ParticipantInfoStep2ViewModel" ng-show="model.ParticipantInfoStep0ViewModel.Step == 2">
-    <p class="subheader--step">Step 2 of {{model.ParticipantInfoStep0ViewModel.TotalSteps}}</p>
-    <h2 class="subheader">Contact information</h2>
+    <p class="subheader--step">Step 2 of {{model.ParticipantInfoStep0ViewModel.TotalSteps}}: Contact information</p>
 
     @Html.TextBoxBlock(new FormControl
     {
@@ -112,7 +111,7 @@
     @Html.TextBoxBlock(new FormControl
     {
         Id = "PostalCode",
-        Label = "Postal Code <abbr title='Required'>*</abbr>",
+        Label = "Postal code <abbr title='Required'>*</abbr>",
         Model = "model.ParticipantInfoStep2ViewModel.PostalCode",
         IsInnerModel = true,
         Size = "input--small",
@@ -122,6 +121,6 @@
     @Html.IncludeCanadaPostAutoComplete()
 
     <br />
-    <p>NEXT STEP: Demographic information</p>
+    <p>Next step: Demographic information</p>
    
  </div>

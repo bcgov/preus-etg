@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Application Review";
+    ViewBag.Title = "Review your application";
 }
 <div ng-controller="ApplicationReviewView" ng-grant-application-id="@ViewBag.GrantApplicationId">
     <div class="row">
@@ -9,15 +9,10 @@
                 <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
             </div>
 
-            <h1>Submit Application</h1>
-            <p class="subheader--step">Step 1 of {{model.Steps}}</p>
-            <h2>Review Application</h2>
+            <h1 class="header--large sentence--case">Submit your application</h1>
+            <p class="subheader--step">Step 1 of {{model.Steps}}: Review your application</p>
 
-            <div class="notice notice--icon">
-                <p>
-                    Please make sure you review your application carefully before you continue. You may use the edit buttons in each section to correct your application. Once the application has been submitted, you will not be able to make changes to it unless you withdraw and resubmit.
-                </p>
-            </div>
+            <p>Please review your application carefully. You can use the edit buttons in each section to make any changes. Once you submit the application, you will not be able to make changes unless you withdraw and re-apply.</p>
 
             <div class="heading-group">
                 <h4 class="light">Applicant Contact</h4>
@@ -30,32 +25,32 @@
             <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
                 <div class="heading-group">
                     <h4 class="light">Grant Selection</h4>
-                    <a class="btn btn--secondary" href="/ext/Application/Grant/Selection/View/{{model.Id}}/0">Edit funding category</a>
+                    <a class="btn btn--secondary" href="/ext/Application/Grant/Selection/View/{{model.Id}}/0">Edit</a>
                 </div>
                 @Html.Partial("_GrantSelectionView")
 
                 <div class="heading-group">
                     <h4 class="light">Training Provider</h4>
-                    <a class="btn btn--secondary" href="/ext/training/provider/view/{{model.Id}}/{{model.TrainingProvider.Id}}">Edit training provider</a>
+                    <a class="btn btn--secondary" href="/ext/training/provider/view/{{model.Id}}/{{model.TrainingProvider.Id}}">Edit</a>
                 </div>
                 @Html.Partial("_TrainingProviderView")
 
                 <div class="heading-group">
                     <h4 class="light">Training Program</h4>
-                    <a class="btn btn--secondary" href="/ext/training/program/view/{{model.Id}}/{{model.TrainingProgram.Id}}">Edit training program</a>
+                    <a class="btn btn--secondary" href="/ext/training/program/view/{{model.Id}}/{{model.TrainingProgram.Id}}">Edit</a>
                 </div>
                 @Html.Partial("_TrainingProgramView")
 
                 <div class="heading-group">
                     <h4 class="light">Cost Estimate</h4>
-                    <a class="btn btn--secondary" href="/Ext/Application/training/cost/view/{{model.Id}}">Edit cost estimate</a>
+                    <a class="btn btn--secondary" href="/Ext/Application/training/cost/view/{{model.Id}}">Edit</a>
                 </div>
                 @Html.Partial("_TrainingCostView")
 
                 <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant) && model.EnableBusinessCase">
                     <div class="heading-group">
                         <h4 class="light">{{model.BusinessCaseHeader}}</h4>
-                        <a class="btn btn--secondary" href="/Ext/Application/Business/Case/View/{{model.Id}}">Edit {{model.BusinessCaseHeader | lowercase}}</a>
+                        <a class="btn btn--secondary" href="/Ext/Application/Business/Case/View/{{model.Id}}">Edit</a>
                     </div>
                     @Html.Partial("_BusinessCaseView")
                 </div>
@@ -63,7 +58,7 @@
                 <div ng-show="model.EnableAttachments">
                     <div class="heading-group">
                         <h4 class="light">{{model.AttachmentsHeader}}</h4>
-                        <a class="btn btn--secondary" href="/Ext/Application/Attachments/View/{{model.Id}}">Edit attachments</a>
+                        <a class="btn btn--secondary" href="/Ext/Application/Attachments/View/{{model.Id}}">Edit</a>
                     </div>
                     @Html.Partial("_AttachmentsView")
                 </div>
@@ -71,13 +66,13 @@
                 <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
                     <div class="heading-group">
                         <h4 class="light">Participants</h4>
-                        <a class="btn btn--secondary" href="/Ext/Reporting/Participant/View/{{model.Id}}">Edit participants</a>
+                        <a class="btn btn--secondary" href="/Ext/Reporting/Participant/View/{{model.Id}}">Edit</a>
                     </div>
                     @Html.Partial("_ParticipantList")                
                 </div>
             </div>
             <div class="button-group">
-                @Html.ActionLink("Cancel", nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController.ApplicationOverviewView), nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController).Replace("Controller", ""), new { grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary" })
+                @Html.ActionLink("Cancel", "ApplicationOverviewView", "Application", new { grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary" })
                 <a class="btn btn--primary btn--forward" value="Continue" href="{{model.NextStepUrl}}">Continue</a>
             </div>
         </div>

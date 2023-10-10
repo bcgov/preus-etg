@@ -8,7 +8,7 @@
     <div class="sidebar__container">
         @if(Model.ShowClaimInformation)
         { 
-            <h5 class="sidebar__heading">Claim Status</h5>
+            <h5 class="sidebar__heading">Claim status</h5>
             <div class="sidebar__content">
                 <strong>
                     @switch (Model.CurrentClaim.ClaimState)
@@ -61,7 +61,7 @@
         
         @if (!Model.ShowClaimInformation)
         { 
-        <h5 class="sidebar__heading">Status</h5>
+        <h5 class="sidebar__heading">Application status</h5>
         <div class="sidebar__content">
             <strong>@Html.Partial("_ApplicationStatusLabel", Model.GrantApplication.ApplicationStateExternal)</strong>
 

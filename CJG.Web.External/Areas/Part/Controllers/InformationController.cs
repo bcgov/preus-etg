@@ -153,7 +153,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 
 				// Continue with the participant information collection process
 				PrepareStep1(ref model, guidResult, individualGuid);
-				model.ParticipantInfoStep0ViewModel.ReportedByApplicant = true;
+				model.ParticipantInfoStep0ViewModel.ReportedByApplicant = false;
 				return View(model);
 			}
 			catch (DbEntityValidationException e)
@@ -286,7 +286,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			{
 				PrepareStep1(ref model, guidResult, individualGuid);
 				PrepareStep2(ref model);
-				model.ParticipantInfoStep0ViewModel.ReportedByApplicant = true;
+				model.ParticipantInfoStep0ViewModel.ReportedByApplicant = false;
 				model.ParticipantInfoStep0ViewModel.Step = 2;
 			}
 			catch (Exception e)

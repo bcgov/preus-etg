@@ -11,11 +11,10 @@
             <div ng-if="alert.message" class="row row--alert">
                 <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
             </div>
+            
+            <h1 class="header--large sentence--case">Submit your application</h1>
 
-            <h1>Submit Application</h1>
-
-            <p class="subheader--step">Step {{model.CurrentStep}} of {{model.Steps}}</p>
-            <h2 class="subheader">Did anyone assist you with this application?</h2>
+            <p class="subheader--step">Step {{model.CurrentStep}} of {{model.Steps}}: Did anyone assist you with this application?</p>
 
             <div class="form__group form__group--radio-inline">
                 <div class="form__label">

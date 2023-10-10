@@ -1,20 +1,17 @@
 ﻿@using CJG.Core.Entities
 @using CJG.Web.External.Areas.Ext.Controllers
 @{
-    ViewBag.Title = "Edit Training Costs";
+    ViewBag.Title = "Training Costs";
 }
 
 <div class="row">
-    @Html.ActionLink("Return", nameof(ApplicationController.ApplicationOverviewView),
-        nameof(ApplicationController).Replace("Controller", ""),
-        new { grantApplicationId = (int)ViewBag.GrantApplicationId },
-        new { @class = "link--back" })
+    @Html.ActionLink("Return", "ApplicationOverviewView", "Application", new { grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "link--back" })
 </div>
 
 <div class="row" ng-controller="TrainingCostsView" ng-grant-application-id="@ViewBag.GrantApplicationId">
     <div class="main main--full">
-        <div ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
-            <h1>Edit Training Costs</h1>
+        <div>
+            <h1 class="header--large sentence--case">Training costs</h1>
             <div class="notice notice--icon">
                 <p>Grants will be calculated based on the reimbursement amount outlined in the Eligibility Criteria.</p>
             </div>
