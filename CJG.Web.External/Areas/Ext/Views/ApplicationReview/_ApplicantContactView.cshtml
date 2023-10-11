@@ -6,13 +6,13 @@
         </div>
     </div>
     <div class="form__group">
-        <div class="form__label">Business Email:</div>
+        <div class="form__label">Business email:</div>
         <div class="form__control">
             {{model.ApplicantContact.ApplicantEmail}}
         </div>
     </div>
     <div class="form__group">
-        <div class="form__label">Preferred Contact Number:</div>
+        <div class="form__label">Preferred contact number:</div>
         <div class="form__control">
             {{model.ApplicantContact.ApplicantPhoneNumber}}
             <text ng-if="model.ApplicantContact.ApplicantPhoneExtension != null">Ext: {{ model.ApplicantContact.ApplicantPhoneExtension }}</text>
@@ -59,26 +59,26 @@
     </div>
     <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
         <div class="form__group">
-            <div class="form__label">Alternate Contact Name:</div>
+            <div class="form__label">Alternate contact name:</div>
             <div class="form__control">
                 {{model.ApplicantContact.AlternateSalutation}} {{model.ApplicantContact.AlternateFirstName}} {{ model.ApplicantContact.AlternateLastName}}
             </div>
         </div>
         <div class="form__group">
-            <div class="form__label">Alternate Business Email:</div>
+            <div class="form__label">Alternate business email:</div>
             <div class="form__control">
                 {{model.ApplicantContact.AlternateEmail}}
             </div>
         </div>
         <div class="form__group">
-            <div class="form__label">Alternate Contact Number:</div>
+            <div class="form__label">Alternate contact number:</div>
             <div class="form__control">
                 {{model.ApplicantContact.AlternatePhoneNumber}}
-                <text ng-if="model.ApplicantContact.AlternatePhoneExtension != null">Ext: {{ model.ApplicantContact.AlternatePhoneExtension }}</text>
+                <text ng-if="model.ApplicantContact.AlternatePhoneExtension != null">ext: {{ model.ApplicantContact.AlternatePhoneExtension }}</text>
             </div>
         </div>
         <div class="form__group">
-            <div class="form__label">Alternate Contact Position/Title:</div>
+            <div class="form__label">Alternate contact position/title:</div>
             <div class="form__control">
                 {{model.ApplicantContact.AlternateJobTitle}}
             </div>

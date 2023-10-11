@@ -59,7 +59,7 @@
             <ul class="panel-bar k-widget k-reset k-header k-panelbar" id="panelBar">
                 <li class="k-item k-state-default k-first">
                     <span class="panel-bar__heading k-link k-header" ng-click="toggleSection($event)">
-                        <span class="panel-bar__heading--text">Grant Selection</span>
+                        <span class="panel-bar__heading--text">Grant selection</span>
                         <span class="panel-bar__status">
                             <text>
                                 <span class="label {{PopulateClass('Selection')}}">{{PopulateText('Selection')}}</span>
@@ -77,7 +77,7 @@
                 <li ng-show="model.ProgramType == @((int)ProgramTypes.WDAService)" class="k-item k-state-default"
                     data-state="{{PopulateText('Description') == 'Not Started' ? 'disabled' : 'enabled' }}">
                     <span class="k-link k-header" ng-click="toggleSection($event)">
-                        <span class="panel-bar__heading--text">Program Description</span>
+                        <span class="panel-bar__heading--text">Program description</span>
                         <span class="panel-bar__status">
                             <text>
                                 <span class="label {{PopulateClass('Description')}}">{{PopulateText('Description')}}</span>
@@ -179,7 +179,7 @@
                 <li ng-show="model.ProgramType == @((int)ProgramTypes.EmployerGrant)" class="k-item k-state-default"
                     data-state="{{model.TrainingProgram == null || model.TrainingProgram.TrainingProgramState == null ? 'disabled' : 'enabled'}}">
                     <span class="k-link k-header" ng-click="toggleSection($event)">
-                        <span class="panel-bar__heading--text">Training Program</span>
+                        <span class="panel-bar__heading--text">Training program</span>
                         <span class="panel-bar__status">
                             <text>
                                 <span class="label {{PopulateClass('Program')}}">{{PopulateText('Program')}}</span>
@@ -197,7 +197,7 @@
                 <li ng-show="model.ProgramType == @((int)ProgramTypes.EmployerGrant)" class="k-item k-state-default"
                     data-state="{{model.TrainingProvider == null || model.TrainingProvider.TrainingProviderState == null ? 'disabled' : 'enabled'}}">
                     <span class="k-link k-header" ng-click="toggleSection($event)">
-                        <span class="panel-bar__heading--text">Training Provider</span>
+                        <span class="panel-bar__heading--text">Training provider</span>
                         <span class="panel-bar__status">
                             <text>
                                 <span class="label {{PopulateClass('AssociatedProvider')}}">{{PopulateText('AssociatedProvider')}}</span>
@@ -215,7 +215,7 @@
                 <li class="k-item k-state-default"
                     data-state="{{model.TrainingCost == null || (model.TrainingCost.TrainingCostState == 0 && model.TrainingCost.TotalCost == 0) ? 'disabled' : 'enabled'}}">
                     <span class="k-link k-header" ng-click="toggleSection($event)">
-                        <span class="panel-bar__heading--text">Training Costs</span>
+                        <span class="panel-bar__heading--text">Training costs</span>
                         <span class="panel-bar__status">
                             <text>
                                 <span class="label {{PopulateClass('Cost')}}">{{PopulateText('Cost')}}</span>
@@ -233,7 +233,7 @@
                 <li class="k-item k-state-default"
                     data-state="{{model.CanReportParticipants ? 'enabled' : 'disabled'}}">
                     <span class="k-link k-header" ng-click="toggleSection($event)">
-                        <span class="panel-bar__heading--text">Participant Information</span>
+                        <span class="panel-bar__heading--text">Participant information</span>
                         <span class="panel-bar__status">
                             <text>
                                 <span class="label {{PopulateClass('PIF')}}">{{PopulateText('PIF')}}</span>
@@ -264,7 +264,7 @@
 
             <div class="button-group">
                 <span ng-if="model.ProgramType == @((int)ProgramTypes.WDAService) && model.ApplicationStateExternal == @((int)ApplicationStateExternal.ApplicationWithdrawn)">
-                    <a class="btn btn--primary" href="/Ext/Application/Resume/{{model.Id}}" value="Resume">Resume Application</a>
+                    <a class="btn btn--primary" href="/Ext/Application/Resume/{{model.Id}}" value="Resume">Resume application</a>
                 </span>
                 <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
                     <a class="btn btn--primary" href="/Ext/Application/Review/View/{{model.Id}}" value="Review and submit" ng-disabled="!(model.CanSubmit && model.PIFCompletionConfirmed && AllParticipantsHaveOutcomes())">Review and submit</a>

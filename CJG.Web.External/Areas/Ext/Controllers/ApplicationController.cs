@@ -529,7 +529,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 						RedirectURL = Url.Action(nameof(ApplicationOverviewView), new { grantApplicationId = grantApplication.Id })
 					};
 
-					this.SetAlert("Grant Selection details are complete.", AlertType.Success, true);
+					this.SetAlert("Grant selection details are complete.", AlertType.Success, true);
 				}
 				else
 				{

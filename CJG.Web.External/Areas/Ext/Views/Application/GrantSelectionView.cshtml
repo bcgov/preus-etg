@@ -1,6 +1,4 @@
-﻿@using CJG.Web.External.Areas.Ext.Controllers
-
-@model CJG.Web.External.Areas.Ext.Models.ApplicationStartViewModel
+﻿@model CJG.Web.External.Areas.Ext.Models.ApplicationStartViewModel
 
 <div ng-controller="GrantSelectionView" ng-init="init()" 
      ng-grant-application-id="@ViewBag.GrantApplicationId" 
@@ -29,7 +27,7 @@
                 </div>
             </div>
             <div ng-show="!isNewApplication">
-                <h1 class="header--large">Grant Selection</h1>
+                <h1 class="header--large">Grant selection</h1>
             </div>
 
             <div ng-if="alert.message" class="row row--alert">

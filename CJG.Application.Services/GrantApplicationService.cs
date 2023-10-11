@@ -337,7 +337,7 @@ namespace CJG.Application.Services
 				throw new ArgumentNullException(nameof(grantApplication));
 
 			if (!_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.SubmitChangeRequest))
-				throw new NotAuthorizedException("The delivery dates cannot be changed at this time.");
+				throw new NotAuthorizedException("The training dates cannot be changed at this time.");
 
 			_grantAgreementService.UpdateAgreement(grantApplication);
 
@@ -345,11 +345,11 @@ namespace CJG.Application.Services
 			var originalEndDate = OriginalValue(grantApplication, ga => ga.EndDate);
 
 			if (grantApplication.StartDate != originalStartDate)
-				_noteService.AddDateChangedNote(grantApplication, "Delivery Start Date", originalStartDate,
+				_noteService.AddDateChangedNote(grantApplication, "Training Start Date", originalStartDate,
 					grantApplication.StartDate);
 
 			if (grantApplication.EndDate != originalEndDate)
-				_noteService.AddDateChangedNote(grantApplication, "Delivery End Date", originalEndDate,
+				_noteService.AddDateChangedNote(grantApplication, "Training End Date", originalEndDate,
 					grantApplication.EndDate);
 
 			_dbContext.Update(grantApplication);

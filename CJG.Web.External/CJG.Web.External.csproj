@@ -381,11 +381,9 @@
     <Content Include="KendoUI\styles\Bootstrap\sprite_kpi_2x.png" />
     <Content Include="KendoUI\styles\kendo.bootstrap.min.css" />
     <Content Include="KendoUI\styles\kendo.common-bootstrap.min.css" />
-    <Content Include="Areas\Ext\Views\Shared\_ExpensesTotal.cshtml" />
     <Content Include="Areas\Ext\Views\Shared\_OrganizationProfileList.cshtml" />
     <Content Include="Areas\Ext\Views\Shared\_ApplicationStatusLabel.cshtml" />
     <Content Include="Areas\Ext\Views\Debug\SiteMinder.cshtml" />
-    <Content Include="Areas\Ext\Views\Shared\_ProgramTitleLabel.cshtml" />
     <Content Include="Areas\Int\Views\Shared\_ApplicationList.cshtml" />
     <Content Include="Areas\Int\Views\Shared\_InternalApplicationStatusLabelOld.cshtml" />
     <Content Include="Areas\Int\Views\Shared\_GrantStreamDetails.cshtml" />
@@ -734,7 +732,6 @@
     <Content Include="Areas\Int\Views\CompletionReport\_CompletionReport.cshtml" />
     <Content Include="Areas\Int\Views\ESS\_Services.cshtml" />
     <Content Include="Areas\Int\Views\ESS\_Provider.cshtml" />
-    <Content Include="Areas\Ext\Views\Shared\_ProgramTitleLabelView.cshtml" />
     <Content Include="Areas\Int\Views\Shared\_AttachmentUploadPartial.cshtml" />
     <Content Include="Areas\Ext\Views\GrantAgreement\AgreementOverviewView.cshtml" />
     <Content Include="Areas\Ext\Views\ChangeRequest\_DeliveryDatesView.cshtml" />
@@ -929,7 +926,6 @@
     <Content Include="Areas\Ext\Views\GrantAgreement\ScheduleAView.cshtml" />
     <Content Include="Areas\Ext\Views\Shared\_GrantApplicationSidebar.cshtml" />
     <Content Include="Areas\Ext\Views\GrantAgreement\ScheduleBView.cshtml" />
-    <Content Include="Areas\Ext\Views\Shared\_EligibleTrainingCosts.cshtml" />
     <Content Include="Areas\Ext\Views\ParticipantReporting\ParticipantReportingView.cshtml" />
     <Content Include="Areas\Ext\Views\ParticipantReporting\_ParticipantList.cshtml" />
     <Content Include="Areas\Ext\Views\GrantAgreement\_RejectAgreement.cshtml" />
@@ -938,10 +934,6 @@
     <Content Include="Areas\Ext\Views\UserProfile\UpdateUserProfileView.cshtml" />
     <Content Include="Areas\Ext\Views\UserProfile\_UserProfileDetails.cshtml" />
     <Content Include="Areas\Ext\Views\Shared\_UserProfileReview.cshtml" />
-    <Content Include="Areas\Ext\Views\Shared\_GrantOpeningLabel.cshtml" />
-    <Content Include="Areas\Ext\Views\Shared\_TrainingProgramStatusLabel.cshtml" />
-    <Content Include="Areas\Ext\Views\Shared\_TrainingProviderStatusLabel.cshtml" />
-    <Content Include="Areas\Ext\Views\Shared\_TrainingCostStatusLabel.cshtml" />
     <Content Include="Areas\Int\Views\ClaimIntake\ClaimManagementDashboardView.cshtml" />
     <Content Include="Areas\Ext\Views\GrantAgreement\CoverLetterView.cshtml" />
     <Content Include="Areas\Ext\Views\Shared\_ClaimAssessmentOutcome.cshtml" />
@@ -950,15 +942,11 @@
     <Content Include="Areas\Int\Views\Participant\ParticipantContactInfo.cshtml" />
     <Content Include="Areas\Int\Views\Participant\ParticipantEmployerInfo.cshtml" />
     <Content Include="Areas\Int\Views\Participant\ParticipantInfo.cshtml" />
-    <Content Include="Areas\Ext\Views\Shared\_ApplicantContactList.cshtml" />
-    <Content Include="Areas\Ext\Views\Shared\_AddEligibleCost.cshtml" />
     <Content Include="Views\ContactUs\Index.cshtml" />
     <Content Include="Areas\Ext\Views\_ViewImports.cshtml" />
     <Content Include="Areas\Int\Views\Shared\_DenyApplicationReasonOld.cshtml" />
     <Content Include="Areas\Int\Views\Shared\_WithdrawOfferReasonOld.cshtml" />
-    <Content Include="Areas\Ext\Views\Shared\_ReviewApplicantContactList.cshtml" />
     <Content Include="Areas\Int\Views\Debug\Index.cshtml" />
-    <Content Include="Areas\Ext\Views\Shared\_TrainingGrantStatusLabel.cshtml" />
     <Content Include="Areas\Int\Views\Shared\_RecommendChangeForDenialReasonOld.cshtml" />
     <Content Include="Areas\Int\Views\Debug\AppDateTimeView.cshtml" />
     <Content Include="Areas\Int\Views\Debug\BCeID.cshtml" />
@@ -1016,11 +1004,7 @@
     <None Include=".bin\npm.cmd" />
     <Content Include="Areas\Ext\Views\Application\ApplicationOverviewView.cshtml" />
     <Content Include="Areas\Ext\Views\Shared\_TrainingLocation.cshtml" />
-    <Content Include="Areas\Ext\Views\Shared\_TrainingTrainerDetails.cshtml" />
-    <Content Include="Areas\Ext\Views\Shared\_TrainingProgram.cshtml" />
     <Content Include="Areas\Ext\Views\ApplicationReview\ApplicationReviewView.cshtml" />
-    <Content Include="Areas\Ext\Views\Shared\_StreamsList.cshtml" />
-    <Content Include="Areas\Ext\Views\Shared\_ExpensesList.cshtml" />
     <None Include="CJG.Web.External.wpp.targets">
       <SubType>Designer</SubType>
     </None>

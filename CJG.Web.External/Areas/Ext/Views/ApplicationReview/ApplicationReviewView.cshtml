@@ -15,7 +15,7 @@
             <p>Please review your application carefully. You can use the edit buttons in each section to make any changes. Once you submit the application, you will not be able to make changes unless you withdraw and re-apply.</p>
 
             <div class="heading-group">
-                <h4 class="light">Applicant Contact</h4>
+                <h4 class="light">Applicant contact</h4>
             </div>
             @Html.Partial("_ApplicantContactView")
             <div class="heading-group">
@@ -24,25 +24,25 @@
             @Html.Partial("_ApplicantView")
             <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
                 <div class="heading-group">
-                    <h4 class="light">Grant Selection</h4>
+                    <h4 class="light">Grant selection</h4>
                     <a class="btn btn--secondary" href="/ext/Application/Grant/Selection/View/{{model.Id}}/0">Edit</a>
                 </div>
                 @Html.Partial("_GrantSelectionView")
 
                 <div class="heading-group">
-                    <h4 class="light">Training Provider</h4>
+                    <h4 class="light">Training provider</h4>
                     <a class="btn btn--secondary" href="/ext/training/provider/view/{{model.Id}}/{{model.TrainingProvider.Id}}">Edit</a>
                 </div>
                 @Html.Partial("_TrainingProviderView")
 
                 <div class="heading-group">
-                    <h4 class="light">Training Program</h4>
+                    <h4 class="light">Training program</h4>
                     <a class="btn btn--secondary" href="/ext/training/program/view/{{model.Id}}/{{model.TrainingProgram.Id}}">Edit</a>
                 </div>
                 @Html.Partial("_TrainingProgramView")
 
                 <div class="heading-group">
-                    <h4 class="light">Cost Estimate</h4>
+                    <h4 class="light">Cost estimate</h4>
                     <a class="btn btn--secondary" href="/Ext/Application/training/cost/view/{{model.Id}}">Edit</a>
                 </div>
                 @Html.Partial("_TrainingCostView")

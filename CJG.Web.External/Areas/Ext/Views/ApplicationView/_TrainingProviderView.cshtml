@@ -64,7 +64,7 @@
 </div>
 <div class="form--readonly">
     <div class="form__group">
-        <div class="form__label">Training Provider address:</div>
+        <div class="form__label">Training provider address:</div>
         <div class="form__control">
             {{model.TrainingProvider.AddressLine1TrainingProvider}}<br />
             <div ng-if="model.TrainingProvider.AddressLine2TrainingProvider != null">
@@ -108,13 +108,13 @@
             </div>
         </div>
         <div class="form__group">
-            <div class="form__label">Alternative Training Options:</div>
+            <div class="form__label">Alternative training options:</div>
             <div class="form__control">
                 <div class="form__group__with_embedded_html" ng-bind-html="model.TrainingProvider.AlternativeTrainingOptions | unsafe"></div>
             </div>
         </div>
         <div class="form__group">
-            <div class="form__label">Choice of Training Provider:</div>
+            <div class="form__label">Choice of training provider:</div>
             <div class="form__control">
                 <div class="form__group__with_embedded_html" ng-bind-html="model.TrainingProvider.ChoiceOfTrainerOrProgram | unsafe"></div>
             </div>

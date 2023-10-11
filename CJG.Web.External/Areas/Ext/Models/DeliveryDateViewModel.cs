@@ -1,12 +1,11 @@
-﻿using CJG.Core.Entities;
+﻿using System;
+using CJG.Core.Entities;
 using CJG.Web.External.Models.Shared;
-using System;
 
 namespace CJG.Web.External.Areas.Ext.Models
 {
 	public class DeliveryDateViewModel : BaseViewModel
 	{
-		#region Properties
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
 		public string RowVersion { get; set; }
@@ -24,26 +23,24 @@ namespace CJG.Web.External.Areas.Ext.Models
 			return startdate.AddYears(1);
 		};
 
-		#endregion
-
-		#region Constructors
 		public DeliveryDateViewModel()
 		{
 
 		}
 		public DeliveryDateViewModel(GrantApplication grantApplication)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
-			this.Id = grantApplication.Id;
-			this.StartDate = grantApplication.StartDate.ToLocalTime();
-			this.EndDate = grantApplication.EndDate.ToLocalTime();
-			this.RowVersion = Convert.ToBase64String(grantApplication.RowVersion);
-			this.TermStartDate = grantApplication.GrantAgreement.StartDate.ToLocalTime();
-			this.TermEndDate = grantApplication.GrantAgreement.ConvertEndDateToLocalTime();
-			this.ParticipantReportingDueDate = grantApplication.GrantAgreement.ParticipantReportingDueDate.ToLocalTime();
-			this.ReimbursementClaimDueDate = grantApplication.GrantAgreement.ReimbursementClaimDueDate.ToLocalTime();
-			this.MaxEndDate = MaxEndDateGetter(grantApplication.GrantAgreement.StartDate.ToLocalTime());
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
+
+			Id = grantApplication.Id;
+			StartDate = grantApplication.StartDate.ToLocalTime();
+			EndDate = grantApplication.EndDate.ToLocalTime();
+			RowVersion = Convert.ToBase64String(grantApplication.RowVersion);
+			TermStartDate = grantApplication.GrantAgreement.StartDate.ToLocalTime();
+			TermEndDate = grantApplication.GrantAgreement.ConvertEndDateToLocalTime();
+			ParticipantReportingDueDate = grantApplication.GrantAgreement.ParticipantReportingDueDate.ToLocalTime();
+			ReimbursementClaimDueDate = grantApplication.GrantAgreement.ReimbursementClaimDueDate.ToLocalTime();
+			MaxEndDate = MaxEndDateGetter(grantApplication.GrantAgreement.StartDate.ToLocalTime());
 		}
-		#endregion
 	}
 }
