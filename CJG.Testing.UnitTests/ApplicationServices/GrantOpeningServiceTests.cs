@@ -447,34 +447,36 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 		[TestCategory("Grant Opening"), TestCategory("Service")]
 		public void GetGrantOpeningsInStates_WithSpecifiedStates_ReturnsOpeningsWithMatchedStatesAndActive()
 		{
-			// Act
+			var grantProgram = new GrantProgram { Id = 1, ProgramCode = "ETG" };
+			_helper.MockDbSet(grantProgram);
 
+			var grantStream = new GrantStream { IsActive = true, GrantProgram = grantProgram };
 			var dbSetMock = _helper.MockDbSet(new[]
 			{
 				new GrantOpening
 				{
 					Id = 1,
 					State = GrantOpeningStates.Open,
-					GrantStream = new GrantStream {IsActive = true}
+					GrantStream = grantStream
 				},
 				new GrantOpening
 				{
 					Id = 2,
 					State = GrantOpeningStates.Published,
-					GrantStream = new GrantStream {IsActive = true}
+					GrantStream = grantStream
 				},
 				new GrantOpening
 				{
 					Id = 3,
 					State = GrantOpeningStates.Scheduled,
-					GrantStream = new GrantStream {IsActive = true}
+					GrantStream = grantStream
 				},
 				new GrantOpening
 				{
 					Id = 4,
 					State = GrantOpeningStates.Scheduled,
-					GrantStream = new GrantStream {IsActive = false}
-				}
+					GrantStream = new GrantStream { IsActive = false, GrantProgram = grantProgram }
+		}
 			});
 
 			// Act
@@ -495,6 +497,11 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			// Arrange
 			AppDateTime.SetNow(DateTime.Now);
 
+			var grantProgram = new GrantProgram { Id = 1, ProgramCode = "ETG" };
+			_helper.MockDbSet(grantProgram);
+
+			var grantStream = new GrantStream { IsActive = true, GrantProgram = grantProgram };
+
 			var dbSetMock = _helper.MockDbSet(new[]
 			{
 				new GrantOpening
@@ -502,33 +509,32 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 					Id = 1,
 					State = GrantOpeningStates.Open,
 					ClosingDate = new AppDateTime(2017, 1, 1),
-					GrantStream = new GrantStream {IsActive = true}
+					GrantStream = grantStream
 				},
 				new GrantOpening
 				{
 					Id = 2,
 					State = GrantOpeningStates.Published,
 					ClosingDate = new AppDateTime(2017, 1, 29),
-					GrantStream = new GrantStream {IsActive = true}
+					GrantStream = grantStream
 				},
 				new GrantOpening
 				{
 					Id = 3,
 					State = GrantOpeningStates.Published,
 					ClosingDate = new AppDateTime(2017, 2, 1),
-					GrantStream = new GrantStream {IsActive = true}
+					GrantStream = grantStream
 				},
 				new GrantOpening
 				{
 					Id = 4,
 					State = GrantOpeningStates.Scheduled,
 					ClosingDate = new AppDateTime(2017, 3, 1),
-					GrantStream = new GrantStream {IsActive = false}
+					GrantStream = new GrantStream { IsActive = false, GrantProgram = grantProgram }
 				}
 			});
 			var dbContextMock = _helper.GetMock<IDataContext>();
 			dbContextMock.Setup(x => x.GrantOpenings.AsNoTracking()).Returns(dbSetMock.Object);
-
 
 			// Act
 			var result = _service.GetPublishedGrantOpenings(new AppDateTime(2017, 1, 31));
@@ -544,6 +550,9 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 		{
 			AppDateTime.SetNow(DateTime.Now);
 
+			var grantProgram = new GrantProgram { Id = 1, ProgramCode = "ETG" };
+			_helper.MockDbSet(grantProgram);
+
 			_helper.MockDbSet(new[]
 			{
 				new GrantOpening
@@ -551,7 +560,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 					Id = 1,
 					State = GrantOpeningStates.Open,
 					ClosingDate = new DateTime(2017, 1, 1),
-					GrantStream = new GrantStream("name", "criteria", new GrantProgram(), new AccountCode()) { IsActive = true },
+					GrantStream = new GrantStream("name", "criteria", grantProgram, new AccountCode()) { IsActive = true },
 					TrainingPeriod = new TrainingPeriod()
 				},
 				new GrantOpening
@@ -559,7 +568,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 					Id = 2,
 					State = GrantOpeningStates.Published,
 					ClosingDate = new DateTime(2017, 1, 29),
-					GrantStream = new GrantStream("name", "criteria", new GrantProgram(), new AccountCode()) { IsActive = true },
+					GrantStream = new GrantStream("name", "criteria", grantProgram, new AccountCode()) { IsActive = true },
 					TrainingPeriod = new TrainingPeriod()
 				},
 				new GrantOpening
@@ -567,7 +576,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 					Id = 3,
 					State = GrantOpeningStates.Published,
 					ClosingDate = new DateTime(2017, 2, 1),
-					GrantStream = new GrantStream("name", "criteria", new GrantProgram(), new AccountCode()) { IsActive = true },
+					GrantStream = new GrantStream("name", "criteria", grantProgram, new AccountCode()) { IsActive = true },
 					TrainingPeriod = new TrainingPeriod()
 				},
 				new GrantOpening
@@ -575,7 +584,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 					Id = 4,
 					State = GrantOpeningStates.Scheduled,
 					ClosingDate = new DateTime(2017, 3, 1),
-					GrantStream = new GrantStream("name", "criteria", new GrantProgram(), new AccountCode()) { IsActive = true },
+					GrantStream = new GrantStream("name", "criteria", grantProgram, new AccountCode()) { IsActive = true },
 					TrainingPeriod = new TrainingPeriod()
 				}
 			});

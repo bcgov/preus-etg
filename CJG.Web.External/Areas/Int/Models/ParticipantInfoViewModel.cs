@@ -5,7 +5,7 @@ using CJG.Core.Interfaces.Service;
 
 namespace CJG.Web.External.Areas.Int.Models
 {
-	public class ParticipantInfoViewModel
+    public class ParticipantInfoViewModel
 	{
 		public int ParticipantId { get; set; }
 		public string FileNo { get; set; }

@@ -113,7 +113,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			return RedirectToAction(nameof(SessionTimeout));
 		}
 
-		private Guid GetIndividualKey(string individualKey)
+		private static Guid GetIndividualKey(string individualKey)
 		{
 			if (string.IsNullOrWhiteSpace(individualKey))
 				return Guid.Empty;
@@ -481,9 +481,9 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				if (individualKeyValid != null)
 					return individualKeyValid;
 
-				var maxparticipation = IsMaxParticipantEnrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
-				if (maxparticipation != null)
-					return maxparticipation;
+				var maxParticipantsEnrolled = IsMaxParticipantEnrolled(model.ParticipantInfoStep0ViewModel.InvitationKey);
+				if (maxParticipantsEnrolled != null)
+					return maxParticipantsEnrolled;
 
 				if (ModelState.IsValid)
 				{
@@ -510,7 +510,6 @@ namespace CJG.Web.External.Areas.Part.Controllers
 
 						AddGenericError(model, "The consent name entered does not match the First Name and Last Name entered on Step 2.");
 					}
-
 				}
 				else
 				{

@@ -1,4 +1,6 @@
-﻿using CJG.Application.Business.Models.DocumentTemplate;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
@@ -9,15 +11,9 @@ using FluentAssertions;
 using Microsoft.AspNet.Identity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CJG.Testing.UnitTests.ApplicationServices
 {
-	/// <summary>
-	///     Unit tests for GrantStreamService
-	/// </summary>
 	[TestClass]
 	public class GrantProgramServiceTests : ServiceUnitTestBase
 	{
@@ -34,12 +30,13 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			var user = EntityHelper.CreateInternalUser();
 			var identity = HttpHelper.CreateIdentity(user, "Assessor");
 			var helper = new ServiceHelper(typeof(GrantProgramService), identity);
-			var programs = new List<GrantProgram>()
+			var programs = new List<GrantProgram>
 			{
-				 new GrantProgram()
+				 new GrantProgram
 				 {
 					 Id = 1,
 					 Name = "Program",
+					 ProgramCode = "ETG"
 
 				}
 			 };
@@ -66,10 +63,11 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			var helper = new ServiceHelper(typeof(GrantProgramService), identity);
 			var programs = new List<GrantProgram>()
 			{
-				 new GrantProgram()
+				 new GrantProgram
 				 {
 					 Id = 1,
 					 Name = "Program",
+					 ProgramCode = "ETG"
 
 				}
 			 };
@@ -99,9 +97,9 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 
 			var templates = new List<DocumentTemplate>()
 			{
-				new DocumentTemplate()
+				new DocumentTemplate
 				{
-					Id =10,
+					Id = 10,
 					IsActive = true
 				}
 			};
@@ -117,7 +115,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			helper.GetMock<IStaticDataService>().Setup(m => m.GetClaimTypes()).Returns(new List<ClaimType>() { new ClaimType() });
 			var service = helper.Create<GrantProgramService>();
 
-			var programToAdd = new GrantProgram()
+			var programToAdd = new GrantProgram
 			{
 				Id = 1,
 				Name = "Program 1",
@@ -139,9 +137,9 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			var user = EntityHelper.CreateInternalUser();
 			var identity = HttpHelper.CreateIdentity(user, "Assessor");
 			var helper = new ServiceHelper(typeof(GrantProgramService), identity);
-			var programs = new List<GrantProgram>()
+			var programs = new List<GrantProgram>
 			{
-				 new GrantProgram()
+				 new GrantProgram
 				 {
 					 Id = 1,
 					 Name = "Program",
@@ -346,7 +344,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			Action action = () =>  service.GenerateApplicantDeclarationBody(grantApplication);
 
 			// Assert
-			action.Should().Throw<InvalidOperationException>().Where(x => x.Message.Contains("declartion"));
+			action.Should().Throw<InvalidOperationException>().Where(x => x.Message.Contains("declaration"));
 		}
 
 		[Ignore, TestMethod]

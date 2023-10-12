@@ -115,18 +115,30 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			var user = EntityHelper.CreateInternalUser();
 			var identity = HttpHelper.CreateIdentity(user, "Assessor");
 			var helper = new ServiceHelper(typeof(GrantStreamService), identity);
+
+			var grantProgram = new GrantProgram
+			{
+				Id = 3,
+				ProgramCode = "ETG"
+			};
+
+			helper.MockDbSet(grantProgram);
+
 			helper.MockDbSet( new[] {
 				new GrantStream
 				{
-					Id = 1
+					Id = 1,
+					GrantProgram = grantProgram
 				},
 				new GrantStream
 				{
-					Id = 2
+					Id = 2,
+					GrantProgram = grantProgram
 				},
 				new GrantStream
 				{
-					Id = 3
+					Id = 3,
+					GrantProgram = grantProgram
 				}
 			});
 			var service = helper.Create<GrantStreamService>();

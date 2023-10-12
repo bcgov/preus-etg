@@ -48,7 +48,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 
 		[TestMethod]
 		[TestCategory("Workflow"), TestCategory("State Machine")]
-		public void WithdrawlApplication_FromNew_Success()
+		public void WithdrawApplication_FromNew_Success()
 		{
 			// Arrange
 			var applicationAdministrator = EntityHelper.CreateExternalUser();

@@ -317,7 +317,7 @@ namespace CJG.Testing.UnitTests.Controllers.Int
 				Items = new List<TrainingProviderInventory>() { trainingProviderInventory }
 			};
 			helper.GetMock<ITrainingProviderInventoryService>()
-				.Setup(m => m.GetInventory(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool?>()))
+				.Setup(m => m.GetInventory(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool?>(), It.IsAny<bool?>()))
 				.Returns(trainingProviderInventories);
 			var controller = helper.Create();
 
@@ -330,7 +330,7 @@ namespace CJG.Testing.UnitTests.Controllers.Int
 			list.Count().Should().Be(trainingProviderInventories.Items.Count());
 			list[0].Name.Should().Be(trainingProviderInventory.Name);
 			helper.GetMock<ITrainingProviderInventoryService>()
-				.Verify(m => m.GetInventory(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool?>()), Times.Once);
+				.Verify(m => m.GetInventory(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool?>(), It.IsAny<bool?>()), Times.Once);
 		}
 
 		[TestMethod, TestCategory("Controller"), TestCategory(nameof(TrainingProviderController))]
@@ -345,7 +345,7 @@ namespace CJG.Testing.UnitTests.Controllers.Int
 				Items = new List<TrainingProviderInventory>() { trainingProviderInventory }
 			};
 			helper.GetMock<ITrainingProviderInventoryService>()
-				.Setup(m => m.GetInventory(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool?>()))
+				.Setup(m => m.GetInventory(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool?>(), It.IsAny<bool?>()))
 				.Throws<NotAuthorizedException>();
 			var controller = helper.Create();
 
@@ -356,7 +356,7 @@ namespace CJG.Testing.UnitTests.Controllers.Int
 			result.Should().NotBeNull().And.BeOfType<JsonResult>();
 			controller.HttpContext.Response.StatusCode.Should().Be(403);
 			helper.GetMock<ITrainingProviderInventoryService>()
-				.Verify(m => m.GetInventory(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool?>()), Times.Once);
+				.Verify(m => m.GetInventory(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool?>(), It.IsAny<bool?>()), Times.Once);
 		}
 		#endregion
 

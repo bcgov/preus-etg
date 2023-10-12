@@ -79,7 +79,7 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 			var route = result as RedirectToRouteResult;
 			route.RouteValues["action"].Should().Be(nameof(UserProfileController.UpdateUserProfileView));
 			route.RouteValues["controller"].Should().Be(nameof(UserProfileController).Replace("Controller", ""));
-			controller.TempData["Message"].Should().Be("Business Address is required to start new application");
+			controller.TempData["Message"].Should().Be("B.C. Business Address is required to start new application");
 			controller.TempData["MessageType"].Should().Be("warning");
 		}
 
@@ -656,7 +656,7 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 		}
 
 		[TestMethod, TestCategory("Controller"), TestCategory(nameof(ApplicationController))]
-		public void ApplicationOverviewView_NotSubmitable()
+		public void ApplicationOverviewView_NotSubmittable()
 		{
 			// Arrange
 			var user = EntityHelper.CreateExternalUser();
@@ -682,7 +682,7 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 		}
 
 		[TestMethod, TestCategory("Controller"), TestCategory(nameof(ApplicationController))]
-		public void ApplicationOverviewView_NotSubmitable_TrainingPrograms()
+		public void ApplicationOverviewView_NotSubmittable_TrainingPrograms()
 		{
 			// Arrange
 			var user = EntityHelper.CreateExternalUser();

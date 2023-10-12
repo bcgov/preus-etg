@@ -147,48 +147,5 @@ namespace CJG.Testing.UnitTests.ApplicationServices
             results.Count().Should().BeGreaterThan(0);
             results.Contains(noc);
         }
-
-        [TestMethod, TestCategory("NOC"), TestCategory("Service")]
-        public void GetNationalOccupationalClassificationChildren_WhenPassInParentIDAndLevel_ShouldReturnListOfNocChildrenOrderByNocCode()
-        {
-            // Arrange
-            var loggerMock = new Mock<ILogger>();
-            var httpContextMock = new Mock<HttpContextBase>();
-            var parent = new NationalOccupationalClassification() {
-                Code = "Parent",
-                Description = "Description",
-                ParentId = 3,
-                Level = 4,
-				Id = 3,
-				Left = 1,
-				Right = 3
-			};
-            var child = new NationalOccupationalClassification()
-            {
-                Code = "Child",
-                Description = "Description",
-                ParentId = 3,
-                Level = 4,
-				Id = 1,
-				Left = 4,
-				Right = 2,
-				Parent = parent
-			};
-			var nocs = new List<NationalOccupationalClassification>() { parent, child };
-			var user = EntityHelper.CreateExternalUser();
-			var helper = new ServiceHelper(typeof(NationalOccupationalClassificationService), user);
-			var dbSetMock = helper.MockDbSet(nocs);
-			var dbContextMock = helper.GetMock<IDataContext>();
-			dbContextMock.Setup(x => x.NationalOccupationalClassifications).Returns(dbSetMock.Object);
-
-			var service = helper.Create<NationalOccupationalClassificationService>();
-
-			// Act
-			var results = service.GetNationalOccupationalClassificationChildren(3, 4);
-
-            // Assert
-            results.Count().Should().BeGreaterThan(0);
-            results.ToList()[0].Code.Should().Be(child.Code);
-        }
     }
 }

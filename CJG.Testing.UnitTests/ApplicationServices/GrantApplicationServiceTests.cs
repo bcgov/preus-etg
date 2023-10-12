@@ -941,6 +941,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 
 		[TestMethod]
 		[TestCategory("Grant Application"), TestCategory("Service")]
+		[Ignore] // Restart functionality was temporarily removed
 		public void RestartApplicationFromWithdrawn()
 		{
 			// Arrange
