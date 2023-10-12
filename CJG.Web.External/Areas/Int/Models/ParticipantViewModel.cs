@@ -36,8 +36,7 @@ namespace CJG.Web.External.Areas.Int.Models
 			EmailAddress = participant.EmailAddress;
 			PhoneNumber = participant.PhoneNumber1 ?? participant.PhoneNumber2;
 			ReportedBy = participant.ParticipantConsentAttachmentId.HasValue ? "Applicant" : "Participant";
-			bool isReportedLate = (int)(participant.GrantApplication.StartDate - participant.DateAdded).TotalDays < 0;
-			ReportedOn = $"{ participant.DateAdded.ToLocalTime() } { (isReportedLate ? " (Late)" : "") }";
+			ReportedOn = $"{ participant.DateAdded.ToLocalTime() }";
 			ConsentFormAttachmentId = participant.ParticipantConsentAttachmentId;
 			SIN = participant.SIN;
 			Approved = participant.Approved;

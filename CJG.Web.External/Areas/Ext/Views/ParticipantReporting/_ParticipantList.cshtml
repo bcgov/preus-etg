@@ -65,8 +65,8 @@
                     <span ng-if="!participant.Approved">Ineligible</span>
                 </td>
                 <td>{{participant.PrimaryCity}}</td>
-                <td ng-class="{ 'table--datacell-late' : participant.IsLate }" style="min-width: 170px !important;">
-                    {{toPST(participant.DateAdded, 'YYYY-MM-DD HH:mm')}} <strong ng-if="participant.IsLate">Late</strong>
+                <td style="min-width: 170px !important;">
+                    {{toPST(participant.DateAdded, 'YYYY-MM-DD HH:mm')}}
                 </td>
                 <td class="wrapper--include-checkbox" ng-if="model.ParticipantsEditable">
                     <div ng-if="participant.ClaimReported">

@@ -20,7 +20,7 @@
                     <span ng-if="participant.PhoneExtension1">ext. {{participant.PhoneExtension1}}</span>
                 </td>
                 <td ng-class="{ 'table--datacell-late': (participant.DateAdded > model.ParticipantReportingDueDate) }" style="min-width: 170px !important;">
-                    {{toPST(participant.DateAdded, 'YYYY-MM-DD HH:mm')}} <strong ng-if="participant.IsLate">Late</strong>
+                    {{toPST(participant.DateAdded, 'YYYY-MM-DD HH:mm')}}
                 </td>
             </tr>
         </tbody>
