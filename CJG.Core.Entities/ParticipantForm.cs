@@ -440,12 +440,14 @@ namespace CJG.Core.Entities
 		/// get/set - The last high school attended by this participant.
 		/// </summary>
 		[MaxLength(250)]
+		[Obsolete("This field is no longer used")]
 		public string LastHighSchoolName { get; set; }
 
 		/// <summary>
 		/// get/set - The last high school city attended by this participant.
 		/// </summary>
 		[MaxLength(250)]
+		[Obsolete("This field is no longer used")]
 		public string LastHighSchoolCity { get; set; }
 
 		/// <summary>

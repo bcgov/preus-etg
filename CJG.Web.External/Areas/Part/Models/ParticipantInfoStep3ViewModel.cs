@@ -61,16 +61,6 @@ namespace CJG.Web.External.Areas.Part.Models
 		[CustomValidation(typeof(ParticipantInfoStep3VmValidation), "ValidateVisibileMinority")]
 		public int? VisibleMinority { get; set; }
 
-		[CustomValidation(typeof(ParticipantInfoStep3VmValidation), "ValidateLastHighSchoolName")]
-		[StringLength(250, ErrorMessage = "The field must be a string with a maximum length of 250")]
-		[RegularExpression("^[\\sA-Za-z0-9\\-\\`\\'\\\"\\#\\(\\)]*$", ErrorMessage = "Last High School Name Invalid Format")]
-		public string LastHighSchoolName { get; set; }
-
-		[CustomValidation(typeof(ParticipantInfoStep3VmValidation), "ValidateLastHighSchoolCity")]
-		[StringLength(250, ErrorMessage = "The field must be a string with a maximum length of 250")]
-		[RegularExpression("^[\\sA-Za-z0-9\\-\\`\\'\\\"\\#\\(\\)]*$", ErrorMessage = "Last High School City Invalid Format")]
-		public string LastHighSchoolCity { get; set; }
-
 		public IEnumerable<KeyValuePair<string, string>> ImmigrationCountries { get; set; }
 	}
 }

@@ -395,22 +395,6 @@
         DefaultOverride = true
     })
 
-    <div ng-show="model.ParticipantInfoStep3ViewModel.EducationLevel > 1">
-        @Html.TextBoxBlock(new FormControl
-        {
-            Label = "What is the name of the last high school you attended <abbr title='Required'>*</abbr>",
-            Model = "model.ParticipantInfoStep3ViewModel.LastHighSchoolName",
-            IsInnerModel = true
-        })
-
-        @Html.TextBoxBlock(new FormControl
-        {
-            Label = "What is the city of the last high school you attended <abbr title='Required'>*</abbr>",
-            Model = "model.ParticipantInfoStep3ViewModel.LastHighSchoolCity",
-            IsInnerModel = true
-        })
-    </div>
-
     <br />
     <p>Next step: Employment information</p>
 </div>

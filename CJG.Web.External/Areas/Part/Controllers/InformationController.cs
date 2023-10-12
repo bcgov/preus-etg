@@ -1124,8 +1124,6 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					PersonAboriginal = model.ParticipantInfoStep3ViewModel.PersonAboriginal,
 					LiveOnReserve = model.ParticipantInfoStep3ViewModel.LiveOnReserve ?? false,
 					VisibleMinority = model.ParticipantInfoStep3ViewModel.VisibleMinority,
-					LastHighSchoolName = model.ParticipantInfoStep3ViewModel.LastHighSchoolName,
-					LastHighSchoolCity = model.ParticipantInfoStep3ViewModel.LastHighSchoolCity,
 
 					// Step 4 of 6
 					EmploymentStatusId = model.ParticipantInfoStep4ViewModel.EmploymentStatus,

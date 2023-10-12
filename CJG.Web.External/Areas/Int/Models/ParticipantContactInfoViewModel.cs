@@ -33,8 +33,6 @@ namespace CJG.Web.External.Areas.Int.Models
 		public string MaritalStatus { get; set; }
 		public string FederalOfficialLanguage { get; set; }
 		public int NumberOfDependents { get; set; }
-		public string LastHighSchoolAttended { get; set; }
-		public string LastHighSchoolCity { get; set; }
 
 		public ParticipantContactInfoViewModel(ParticipantForm participantForm)
 		{
@@ -66,8 +64,6 @@ namespace CJG.Web.External.Areas.Int.Models
 			MaritalStatus = participantForm.MaritalStatus?.Caption;
 			FederalOfficialLanguage = participantForm.FederalOfficialLanguage?.Caption;
 			NumberOfDependents = participantForm.NumberOfDependents;
-			LastHighSchoolAttended = participantForm.LastHighSchoolName;
-			LastHighSchoolCity = participantForm.LastHighSchoolCity;
 		 }
 
 		public ParticipantContactInfoViewModel()
