@@ -190,7 +190,7 @@ namespace CJG.Application.Services
 
 			// Select the claims in the correct state.
 			// (Do not select ClaimState.AmountOwing (which is used in ClaimExtensions.AmountPaidOrOwing()), b/c it should not include owing).
-			var result = queryClaims.Where(q => q.ClaimState.In(ClaimState.ClaimApproved , ClaimState.PaymentRequested, ClaimState.ClaimPaid, ClaimState.AmountReceived)).ToList();
+			var result = queryClaims.Where(q => q.ClaimState.In(ClaimState.ClaimApproved, ClaimState.PaymentRequested, ClaimState.ClaimPaid, ClaimState.AmountReceived)).ToList();
 
 			var singleAmendable = result.Where(c => c.ClaimTypeId == ClaimTypes.SingleAmendableClaim).ToList();
 			var notSingleAmendable = result.Where(c => c.ClaimTypeId != ClaimTypes.SingleAmendableClaim).ToList();
