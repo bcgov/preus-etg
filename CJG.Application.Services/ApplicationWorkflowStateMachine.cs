@@ -1224,6 +1224,8 @@ namespace CJG.Application.Services
 			claim.AssessorId = _httpContext.User.GetUserId();
 			claim.LockParticipants();
 
+			claim.IsFinalClaim = true;
+
 			_grantApplication.ApplicationStateExternal = ApplicationStateExternal.ClaimApproved;
 
 			_grantOpeningService.AdjustFinancialStatements(_grantApplication, _originalState, ApplicationWorkflowTrigger.ApproveClaim);
@@ -1231,6 +1233,8 @@ namespace CJG.Application.Services
 			LogStateChanges(stateChangeReason: claim.ClaimAssessmentNotes, suffix: $" for claim {claim.ClaimNumber}");
 
 			UpdateGrantApplication();
+
+			//OnCloseClaimReporting();
 		}
 
 		private void OnDenyClaim(Claim claim)
@@ -1318,8 +1322,6 @@ namespace CJG.Application.Services
 			_grantApplication.DisableParticipantReporting();
 
 			_grantOpeningService.AdjustFinancialStatements(_grantApplication, _originalState, ApplicationWorkflowTrigger.CloseClaimReporting);
-
-			_grantApplication.DisableParticipantReporting();
 
 			LogStateChanges();
 			UpdateGrantApplication();
