@@ -192,6 +192,28 @@ namespace CJG.Application.Services
 		}
 
 		/// <summary>
+		/// Update the specified GrantApplication in the datasource.
+		/// </summary>
+		/// <param name="grantApplication"></param>
+		/// <returns></returns>
+		public GrantApplication UpdateWithNoPermissionCheck(GrantApplication grantApplication)
+		{
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
+
+			var accountType = _httpContext.User.GetAccountType();
+			if (accountType == AccountTypes.Internal)
+			{
+				_noteService.GenerateUpdateNote(grantApplication);
+			}
+
+			_dbContext.Update(grantApplication);
+			CommitTransaction();
+
+			return grantApplication;
+		}
+
+		/// <summary>
 		/// Delete the specified grant application from the datasource.
 		/// </summary>
 		/// <param name="grantApplication"></param>
@@ -795,10 +817,13 @@ namespace CJG.Application.Services
 			}
 
 			if (filter.OnlyShowPriorityRegionExceptions)
-				query = query.Where(ga => ga.PrioritizationScoreBreakdown != null && ga.PrioritizationScoreBreakdown.RegionalName == "");
+				query = query.Where(ga => ga.PrioritizationScoreBreakdown != null
+				                          && ga.PrioritizationScoreBreakdown.RegionalName == null || ga.PrioritizationScoreBreakdown.RegionalName == "");
 
-			if (!filter.OnlyShowPriorityRegionExceptions)
-				query = query.Where(ga => ga.PrioritizationScoreBreakdown == null || (ga.PrioritizationScoreBreakdown != null && ga.PrioritizationScoreBreakdown.RegionalName != ""));
+			//if (!filter.OnlyShowPriorityRegionExceptions)
+			//	query = query.Where(ga => ga.PrioritizationScoreBreakdown == null
+			//	                          || (ga.PrioritizationScoreBreakdown != null
+			//	                              && (ga.PrioritizationScoreBreakdown.RegionalName != null && ga.PrioritizationScoreBreakdown.RegionalName != "")));
 
 			var total = query.Count();
 			if (filter.OrderBy?.Any(x => x.Contains(nameof(GrantApplication.StateChanges))) ?? false)

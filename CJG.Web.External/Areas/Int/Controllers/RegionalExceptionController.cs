@@ -186,7 +186,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				_prioritizationService.SetRegionException(grantApplication, selectedRegionId);
 				_prioritizationService.AddPostalCodeToRegion(grantApplication, selectedRegionId);
 
-				_grantApplicationService.Update(grantApplication);
+				_grantApplicationService.UpdateWithNoPermissionCheck(grantApplication);
 			}
 			catch (Exception ex)
 			{

@@ -14,6 +14,7 @@ namespace CJG.Core.Interfaces.Service
 		GrantApplication Get(int id);
 		GrantApplication Add(GrantApplication newGrantApplication);
 		GrantApplication Update(GrantApplication grantApplication, ApplicationWorkflowTrigger trigger = ApplicationWorkflowTrigger.EditApplication, Func<ApplicationWorkflowTrigger, bool> canPerformAction = null);
+		GrantApplication UpdateWithNoPermissionCheck(GrantApplication grantApplication);
 		void Delete(GrantApplication grantApplication);
 
 		void UpdateDeliveryDates(GrantApplication grantApplication);
