@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Web.UI.WebControls.WebParts;
 
 namespace CJG.Core.Entities.Helpers
 {
@@ -13,6 +14,7 @@ namespace CJG.Core.Entities.Helpers
 		public bool? IsAssigned { get; }
 		public string FileNumber { get; }
 		public string Applicant { get; }
+		public string Participant { get; }
 		public string[] OrderBy { get; }
 		public bool OnlyShowPriorityRegionExceptions { get; }
 
@@ -30,6 +32,7 @@ namespace CJG.Core.Entities.Helpers
 			IsAssigned = null;
 			FileNumber = null;
 			Applicant = null;
+			Participant = null;
 			OnlyShowPriorityRegionExceptions = false;
 		}
 
@@ -45,6 +48,7 @@ namespace CJG.Core.Entities.Helpers
 			IsAssigned = null;
 			FileNumber = null;
 			Applicant = null;
+			Participant = null;
 			OnlyShowPriorityRegionExceptions = onlyShowPriorityRegionExceptions;
 		}
 
@@ -60,6 +64,25 @@ namespace CJG.Core.Entities.Helpers
 			IsAssigned = isAssigned;
 			FileNumber = fileNumber;
 			Applicant = applicant;
+			Participant = null;
+			OnlyShowPriorityRegionExceptions = false;
+		}
+
+		public ApplicationFilter(string fileNumber, string participant, string[] orderBy = null)
+		{
+			States = new StateFilter<ApplicationStateInternal>[0];
+
+			FileNumber = fileNumber;
+			Participant = participant;
+			OrderBy = orderBy;
+
+			AssessorId = null;
+			FiscalYearId = null;
+			TrainingPeriodCaption = null;
+			GrantProgramId = null;
+			GrantStreamId = null;
+			IsAssigned = null;
+			Applicant = null;
 			OnlyShowPriorityRegionExceptions = false;
 		}
 	}

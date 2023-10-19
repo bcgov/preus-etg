@@ -98,6 +98,7 @@
     <Compile Include="Service\IDenialReasonService.cs" />
     <Compile Include="Service\IParticipantEmploymentStatusService.cs" />
     <Compile Include="Service\IParticipantInvitationService.cs" />
+    <Compile Include="Service\IParticipantsService.cs" />
     <Compile Include="Service\IPaymentReconciliationService.cs" />
     <Compile Include="Service\IDeliveryPartnerService.cs" />
     <Compile Include="Service\IPrioritizationService.cs" />

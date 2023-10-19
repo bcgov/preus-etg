@@ -387,7 +387,7 @@ namespace CJG.Core.Entities
 		public bool BusinessOwner { get; set; }
 
 		/// <summary>
-		/// get/set - Wether this participant is an apprentice.
+		/// get/set - Whether this participant is an apprentice.
 		/// </summary>
 		public bool Apprentice { get; set; }
 
@@ -397,7 +397,7 @@ namespace CJG.Core.Entities
 		public bool ItaRegistered { get; set; }
 
 		/// <summary>
-		/// get/set - Whether this participant has applied for other pograms.
+		/// get/set - Whether this participant has applied for other programs.
 		/// </summary>
 		public bool OtherPrograms { get; set; }
 

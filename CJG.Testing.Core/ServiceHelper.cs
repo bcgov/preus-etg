@@ -1,12 +1,4 @@
-﻿using CJG.Application.Services;
-using CJG.Core.Entities;
-using CJG.Core.Interfaces.Service;
-using CJG.Infrastructure.EF;
-using CJG.Infrastructure.Entities;
-using CJG.Infrastructure.Identity;
-using Moq;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -18,6 +10,14 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Principal;
 using System.Web;
+using CJG.Application.Services;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces.Service;
+using CJG.Infrastructure.EF;
+using CJG.Infrastructure.Entities;
+using CJG.Infrastructure.Identity;
+using Moq;
+using NLog;
 
 namespace CJG.Testing.Core
 {
@@ -58,9 +58,6 @@ namespace CJG.Testing.Core
 			{ "Financial Clerk", new[] { Privilege.IA1, Privilege.PM1, Privilege.PM2, Privilege.AM5 } },
 			{ "Director Of Finance", new[] { Privilege.IA1, Privilege.IA2, Privilege.PM1, Privilege.PM2 } }
 		};
-		#endregion
-
-		#region Properties
 		#endregion
 
 		#region Constructors

@@ -477,7 +477,9 @@ namespace CJG.Application.Services
 
 		public IEnumerable<ParticipantForm> GetParticipantFormsBySIN(string sin)
 		{
-			return _dbContext.ParticipantForms.Where(w => w.SIN == sin);
+			return _dbContext.ParticipantForms
+				.Include(pf => pf.GrantApplication)
+				.Where(w => w.SIN == sin);
 		}
 	}
 }

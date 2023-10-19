@@ -75,6 +75,9 @@ require('./service-description');
 // Organization Profile
 require('./organization');
 
+// Participants List
+require('./participants');
+
 // Participant Info
 require('./participant');
 

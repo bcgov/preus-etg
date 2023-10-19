@@ -936,6 +936,26 @@ namespace CJG.Application.Services
 			return filtered;
 		}
 
+		public IOrderedQueryable<GrantApplication> GetGrantApplicationsBySIN(string sin, string search)
+		{
+			var grantProgramId = GetDefaultGrantProgramId();
+			var grantApplications =
+				_dbContext.GrantApplications
+					.AsNoTracking()
+					.Where(ga => ga.ParticipantForms.Any(pf => pf.SIN == sin) && ga.ApplicationStateInternal != ApplicationStateInternal.Draft)
+					.OrderBy(o => o.FileNumber);
+
+			var filtered = grantApplications
+				.Where(x => x.GrantOpening.GrantStream.GrantProgramId == grantProgramId
+				            && (string.IsNullOrEmpty(search)
+				                || x.FileNumber != null && x.FileNumber.Contains(search)
+				                || x.TrainingPrograms.FirstOrDefault().CourseTitle.Contains(search)
+				                || x.ApplicantFirstName.Contains(search) || x.ApplicantLastName.Contains(search))
+				).OrderBy(x => x.FileNumber);
+
+			return filtered;
+		}
+
 		public int GetTotalGrantApplications(List<ApplicationStateInternal> applicationStates, int assessorId, int grantOpeningId,
 			int fiscalYearId, int intakePeriodId, int grantProgramId, int grantStreamId, string fileNumber, string applicant)
 		{

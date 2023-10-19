@@ -303,6 +303,15 @@ $int-header-height: 32px;
   }
 }
 
+.application-header.participant {
+  padding: 20px 40px 0;
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: 5px;
+  }
+}
+
 .application-header.internal-application-header {
   position: relative;
   width: calc(100% + 40px);

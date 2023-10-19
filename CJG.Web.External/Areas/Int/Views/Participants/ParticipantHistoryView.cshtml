@@ -1,8 +1,19 @@
-﻿@model CJG.Web.External.Areas.Int.Models.ParticipantInfoViewModel
+﻿@{
+    ViewBag.Title = "Participant History";
+}
 
-<div ng-controller="Participantrainingory" participant-id="@ViewBag.ParticipantId" class="page--training-provider-history">
+<div ng-controller="ParticipantsHistory" participant-form-id="@ViewBag.ParticipantFormId" class="page--training-provider-history">
+    <div class="application-header participant">
+        <div class="clearfix">
+            <h2>
+                Participant History - {{ model.ParticipantFirstName }} {{ model.ParticipantMiddleName }} {{ model.ParticipantLastName }}
+            </h2>
+            <p><strong>SIN:</strong> {{ model.SIN }}</p>
+        </div>
+    </div>
+    
     <div class="wrapper--intake-queue-datatable" style="padding: 0.5em;">
-        <pager ng-if="model" ng-filter="getTrainingHistory" ng-page-size="[10, 25, 50, 100]" ng-Page-Search="false">
+        <pager ng-if="model" ng-filter="getParticipantHistory" ng-page-size="[100, 50, 25]">
             <table class="form__group--data-grid">
                 <thead>
                 <tr>

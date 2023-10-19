@@ -107,8 +107,7 @@ namespace CJG.Web.External.Areas.Ext.Models
 									ApplicationStateExternal.ClaimReturned,
 									ApplicationStateExternal.AmendClaim,
 									ApplicationStateExternal.ReportCompletion);
-			ShowViewGrantFilesLink = grantApplication.ApplicationStateExternal.In(
-								ApplicationStateExternal.Closed);
+			ShowViewGrantFilesLink = grantApplication.ApplicationStateExternal.In(ApplicationStateExternal.Closed);
 
 		}
 
