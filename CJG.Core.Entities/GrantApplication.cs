@@ -700,8 +700,7 @@ namespace CJG.Core.Entities
 
 				// Must have valid dates.
 				if (!hasValidStartDate)
-					yield return new ValidationResult($"Your program start date must fall in the period '{trainingPeriodStartDate.ToLocalMorning():yyyy-MM-dd}' to '{trainingPeriodEndDate.ToLocalMidnight():yyyy-MM-dd}' " +
-						"for the grant you have selected and it may not be before your application submission date.", new[] { nameof(StartDate) });
+					yield return new ValidationResult($"Your program start date must fall in the period '{trainingPeriodStartDate.ToLocalMorning():yyyy-MM-dd}' to '{trainingPeriodEndDate.ToLocalMidnight():yyyy-MM-dd}' for the grant you have selected and it may not be before your application submission date.", new[] { nameof(StartDate) });
 			}
 			else if (entry.State == EntityState.Modified)
 			{

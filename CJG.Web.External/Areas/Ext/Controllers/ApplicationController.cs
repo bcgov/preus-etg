@@ -624,7 +624,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				grantApplication.ApplicationStateExternal = ApplicationStateExternal.Incomplete;
 				_grantApplicationService.Update(grantApplication);
 			}
-			if (!grantApplication.CanReportParticipants && grantApplication.IsPIFSubmittable())
+
+			if (!grantApplication.CanReportParticipants && grantApplication.HasValidDates() && grantApplication.IsPIFSubmittable())
 			{
 				grantApplication.EnableParticipantReporting();
 				_grantApplicationService.Update(grantApplication);
