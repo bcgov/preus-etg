@@ -13,7 +13,8 @@ app.controller('ClaimAssessmentDetails',
         },
         backup: true
       },
-      onSave: function() {
+      onSave: function () {
+        $scope.section.notesExternallyUpdated = false;
         $scope.resyncClaimDetails();
       },
       loaded: function() {
