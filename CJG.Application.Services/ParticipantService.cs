@@ -477,8 +477,10 @@ namespace CJG.Application.Services
 
 		public IEnumerable<ParticipantForm> GetParticipantFormsBySIN(string sin)
 		{
+			var defaultProgramId = GetDefaultGrantProgramId();
 			return _dbContext.ParticipantForms
 				.Include(pf => pf.GrantApplication)
+				.Where(pf => pf.GrantApplication.GrantOpening.GrantStream.GrantProgramId == defaultProgramId)
 				.Where(w => w.SIN == sin);
 		}
 	}

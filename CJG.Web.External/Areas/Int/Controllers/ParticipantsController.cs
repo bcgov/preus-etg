@@ -61,9 +61,11 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				model.Quantity = participants.Quantity;
 				model.Total = participants.Total;
 
+				var hasIA3Privilege = User.HasPrivilege(Privilege.IA3);
+
 				model.Items = participants.Items.Select(pf => new ParticipantApplicationModel
 				{
-					SIN = MaskSIN(pf.SIN),  // Hide SIN in page
+					SIN = MaskSIN(pf.SIN, hasIA3Privilege),  // Hide SIN in page
 					ParticipantFormId = pf.ParticipantFormId,
 					ParticipantLastName = pf.ParticipantLastName,
 					ParticipantMiddleName = pf.ParticipantMiddleName,
@@ -99,13 +101,14 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			try
 			{
 				var participantForm = _participantService.Get(participantFormId);
+				var hasIA3Privilege = User.HasPrivilege(Privilege.IA3);
 				model = new ParticipantApplicationModel
 				{
 					ParticipantFormId = participantFormId,
 					ParticipantFirstName = participantForm.FirstName,
 					ParticipantMiddleName = participantForm.MiddleName,
 					ParticipantLastName = participantForm.LastName,
-					SIN = MaskSIN(participantForm.SIN)
+					SIN = MaskSIN(participantForm.SIN, hasIA3Privilege)
 				};
 			}
 			catch (Exception ex)
@@ -179,7 +182,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 					Data = filtered.ToArray()
 				};
 
-
 				return Json(result, JsonRequestBehavior.AllowGet);
 			}
 			catch (Exception ex)
@@ -189,14 +191,14 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
 
-		private string MaskSIN(string sin)
+		private string MaskSIN(string sin, bool hasIA3Privilege)
 		{
 #if Training || Support
 				sin = string.Concat(sin?.Substring(0, 1), "** *** ***");
 #endif
 
 			// Mask the social insurance number for anyone without privilege IA3
-			if (!User.HasPrivilege(Privilege.IA3))
+			if (!hasIA3Privilege)
 				return string.Concat(sin?.Substring(0, 1), "** *** ***");
 
 			return sin;

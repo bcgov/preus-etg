@@ -13,12 +13,6 @@ namespace CJG.Application.Services
 {
 	public class ParticipantsService : Service, IParticipantsService
 	{
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="context"></param>
-		/// <param name="httpContext"></param>
-		/// <param name="logger"></param>
 		public ParticipantsService(IDataContext context, HttpContextBase httpContext, ILogger logger) : base(context, httpContext, logger)
 		{
 		}
@@ -31,9 +25,12 @@ namespace CJG.Application.Services
 			if (quantity <= 0 || quantity > 100)
 				quantity = 10;
 
+			var defaultProgramId = GetDefaultGrantProgramId();
+			
 			var participantForms = _dbContext.ParticipantForms
 				.Include(pf => pf.GrantApplication)
 				.AsNoTracking()
+				.Where(pf => pf.GrantApplication.GrantOpening.GrantStream.GrantProgramId == defaultProgramId)
 				.Where(pf => pf.GrantApplication.FileNumber != null)
 				.Where(pf => pf.GrantApplication.ApplicationStateInternal != ApplicationStateInternal.Draft)
 				.AsQueryable();
@@ -53,7 +50,6 @@ namespace CJG.Application.Services
 			foreach (var participantForm in participantForms)
 			{
 				var courseName = participantForm.GrantApplication.TrainingPrograms.FirstOrDefault()?.CourseTitle ?? "--";
-
 				var participantsModel = new GroupedParticipantsModel
 				{
 					SIN = participantForm.SIN,
