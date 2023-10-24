@@ -50,8 +50,6 @@ namespace CJG.Web.External.Areas.Int.Models
 			TrainingHistory = new List<ParticipantTrainingHistory>();
 
 			var pifs = participantService.GetParticipantFormsBySIN(participant.SIN);
-
-			// ETG grants only
 			foreach (var p in pifs.Where(w => w.GrantApplication.IsWDAService() == false))
 			{
 				var reimbursement = 0.0m;
@@ -70,7 +68,7 @@ namespace CJG.Web.External.Areas.Int.Models
 					if (t.GrantApplication.FileNumber == null)
 						continue;
 
-					TrainingHistory.Add(new ParticipantTrainingHistory(t, reimbursement, amtPaid));
+					TrainingHistory.Add(new ParticipantTrainingHistory(t, reimbursement, amtPaid, p));
 				}
 			}
 		}

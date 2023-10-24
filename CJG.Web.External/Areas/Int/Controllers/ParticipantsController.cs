@@ -71,11 +71,10 @@ namespace CJG.Web.External.Areas.Int.Controllers
 					ParticipantMiddleName = pf.ParticipantMiddleName,
 					ParticipantFirstName = pf.ParticipantFirstName,
 					LastApplicationDateTime = pf.LastApplicationDateTime,
-					//ApplicationFileNumbers = pf.ApplicationFileNumbers.ToList(),
 					FileNumber = pf.FileNumber,
 					CourseName = pf.CourseName,
 					EmployerName = pf.EmployerName,
-					//Names = pf.ParticipantForms.Select(pff => pff.LastName + ", " + pff.FirstName).ToList()
+                    PaidToDate = pf.PaidToDate
 				});
 			}
 			catch (Exception ex)
@@ -143,11 +142,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 				foreach (var p in participantForms)
 				{
-					var reimbursement = 0.0m;
-					var amtPaid = 0.0m;
-
-					reimbursement = p.ParticipantCosts.Sum(s => s.AssessedReimbursement);
-					amtPaid = p.ParticipantCosts
+					var reimbursement = p.ParticipantCosts.Sum(s => s.AssessedReimbursement);
+					var amtPaid = p.ParticipantCosts
 						.Where(w => w.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimApproved ||
 						            w.ClaimEligibleCost.Claim.ClaimState == ClaimState.PaymentRequested ||
 						            w.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimPaid)
@@ -158,7 +154,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 						if (t.GrantApplication.FileNumber == null || t.GrantApplication.ApplicationStateInternal == ApplicationStateInternal.Draft)
 							continue;
 
-						trainingHistory.Add(new ParticipantTrainingHistory(t, reimbursement, amtPaid));
+						trainingHistory.Add(new ParticipantTrainingHistory(t, reimbursement, amtPaid, p));
 					}
 				}
 

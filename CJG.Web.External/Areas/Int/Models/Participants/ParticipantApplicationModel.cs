@@ -13,10 +13,8 @@ namespace CJG.Web.External.Areas.Int.Models.Participants
 		public string FileNumber { get; set; }
 		public string CourseName { get; set; }
 		public string EmployerName { get; set; }
+		public decimal PaidToDate { get; set; }
 
 		public DateTime LastApplicationDateTime { get; set; }
-
-		//public List<string> ApplicationFileNumbers { get; set; }
-		//public List<string> Names { get; set; } = new List<string>();
 	}
 }

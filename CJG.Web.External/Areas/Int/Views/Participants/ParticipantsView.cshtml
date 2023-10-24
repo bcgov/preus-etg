@@ -60,8 +60,8 @@
 					<div class="form-table-cell">
 						<label class="action {{sortDirection('EmployerName')}}" ng-click="sort('EmployerName')">Employer Name</label>
 					</div>
-					<div class="form-table-cell">
-                        <label class="">Year to Date Funded</label>
+					<div class="form-table-cell width-175px">
+                        <label class="action {{sortDirection('PaidToDate')}}" ng-click="sort('PaidToDate')">Year to Date Funded</label>
 					</div>
 					<div class="form-table-cell">
 						<label class="action {{sortDirection('LastApplicationDateTime')}}" ng-click="sort('LastApplicationDateTime')">Date Created</label>
@@ -86,8 +86,8 @@
                     <div class="form-table-cell">
                         {{ application.EmployerName }}
                     </div>
-                    <div class="form-table-cell">
-                        --- 
+                    <div class="form-table-cell" style="text-align: right; padding-right: 1em;">
+                        {{ application.PaidToDate | currency : '$' : 2 }}
                     </div>
                     <div class="form-table-cell">
                         {{ toPST(application.LastApplicationDateTime) }}

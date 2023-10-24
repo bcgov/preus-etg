@@ -1,6 +1,6 @@
-﻿@model CJG.Web.External.Areas.Int.Models.ParticipantInfoViewModel
+@model CJG.Web.External.Areas.Int.Models.ParticipantInfoViewModel
 
-<div ng-controller="Participantrainingory" participant-id="@ViewBag.ParticipantId" class="page--training-provider-history">
+<div ng-controller="ParticipantHistory" participant-id="@ViewBag.ParticipantId" class="page--training-provider-history">
     <div class="wrapper--intake-queue-datatable" style="padding: 0.5em;">
         <pager ng-if="model" ng-filter="getTrainingHistory" ng-page-size="[10, 25, 50, 100]" ng-Page-Search="false">
             <table class="form__group--data-grid">

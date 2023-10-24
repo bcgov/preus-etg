@@ -4,6 +4,7 @@ namespace CJG.Web.External.Areas.Int.Models
 {
 	public class ParticipantTrainingHistory
 	{
+		public int ParticipantFormId { get; set; }
 		public int GrantId { get; set; }
 		public string FileNumber { get; set; }
 		public string TrainingStartDate { get; set; }
@@ -15,9 +16,10 @@ namespace CJG.Web.External.Areas.Int.Models
 		public string ApprovedGovtContribution { get; set; }
 		public string AmountPaid { get; set; }
 
-		public ParticipantTrainingHistory(TrainingProgram trainingProgram, decimal governmentContribution, decimal paid)
+		public ParticipantTrainingHistory(TrainingProgram trainingProgram, decimal governmentContribution, decimal paid, ParticipantForm participantForm)
 		{
 			GrantId = trainingProgram.GrantApplication.Id;
+			ParticipantFormId = participantForm.Id;
 			FileNumber = trainingProgram.GrantApplication.FileNumber ?? "";
 
 			TrainingStartDate = trainingProgram.StartDate.ToString("yyyy-MM-dd");

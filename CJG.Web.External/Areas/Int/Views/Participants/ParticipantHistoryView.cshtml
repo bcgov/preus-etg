@@ -30,7 +30,10 @@
                 </thead>
                 <tbody>
                 <tr ng-repeat="trainingHistory in $parent.$ctrl.ngItems |orderBy:sort.column:sort.descending">
-                    <td><a href="/Int/Application/Details/View/{{trainingHistory.GrantId}}" target="_blank">{{trainingHistory.FileNumber}}</a></td>
+                    <td>
+                        <a href="/Int/Application/Details/View/{{trainingHistory.GrantId}}" target="_blank">{{trainingHistory.FileNumber}}</a> /
+                        <a href="/Int/Application/Participant/Info/View/{{trainingHistory.ParticipantFormId}}" target="_blank">PIF</a>
+                    </td>
                     <td>{{trainingHistory.TrainingStartDate}}</td>
                     <td>{{trainingHistory.TrainingEndDate}}</td>
                     <td>{{trainingHistory.TrainingStream}}</td>

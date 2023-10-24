@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using CJG.Core.Entities;
 
 namespace CJG.Application.Business.Models
 {
@@ -14,9 +12,8 @@ namespace CJG.Application.Business.Models
 		public string FileNumber { get; set; }
 		public string CourseName { get; set; }
 		public string EmployerName { get; set; }
+		public decimal PaidToDate { get; set; }
 
-		public IEnumerable<string> ApplicationFileNumbers { get; set; }
-		public List<ParticipantForm> ParticipantForms { get; set; }
 		public DateTime LastApplicationDateTime { get; set; }
 	}
 }
