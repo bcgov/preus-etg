@@ -1,5 +1,4 @@
 ﻿@using CJG.Core.Entities
-@using CJG.Web.External.Areas.Ext.Controllers
 @{
     ViewBag.Title = "Training Costs";
 }
@@ -215,13 +214,15 @@
                 </div>
             </div>
         </div>
+        
+        <br/>
+        <div class="alert alert--error notice--icon" ng-if="model.RequestExceedsAllowed">
+            Your organization has gone over the maximum allowable amount that can be applied for per employer per fiscal year ({{ model.MaximumFiscalGovernmentContributions | currency : '$' : 0 }}). Please adjust your costs.
+        </div>
 
         <div class="button-group" ng-if="!EnableEdit && !EnableEditBreakdown">
-            @Html.Button("Cancel", new { @class = "btn btn--secondary", onclick = "window.location='" + Url.Action(nameof(ApplicationController.ApplicationOverviewView),
-                nameof(ApplicationController).Replace("Controller", ""),
-                new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'"
-            })
-            <button id="btnDone" name="btnDone" class="btn btn--primary btn--forward" ng-click="save()">Done</button>
+            @Html.Button("Cancel", new { @class = "btn btn--secondary", onclick = "window.location='" + Url.Action("ApplicationOverviewView", "Application", new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'" })
+            <button id="btnDone" name="btnDone" class="btn btn--primary btn--forward" ng-click="save()" ng-disabled="model.RequestExceedsAllowed">Done</button>
         </div>
     </div>
 </div>

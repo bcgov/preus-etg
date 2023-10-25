@@ -76,7 +76,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			try
 			{
 				var grantApplication = _grantApplicationService.Get(id);
-				model = new TrainingCostViewModel(grantApplication, User, _grantStreamService);
+				model = new TrainingCostViewModel(grantApplication, User, _grantStreamService, _grantApplicationService);
 			}
 			catch (Exception ex)
 			{
@@ -125,7 +125,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				if (ModelState.IsValid)
 				{
 					var grantApplication = model.UpdateTrainingCosts(_grantApplicationService, _attachmentService, files);
-					model = new TrainingCostViewModel(grantApplication, User, _grantStreamService);
+					model = new TrainingCostViewModel(grantApplication, User, _grantStreamService, _grantApplicationService);
 				}
 				else
 				{
