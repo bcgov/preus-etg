@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
@@ -39,10 +40,12 @@ namespace CJG.Application.Services
 				participantForms = participantForms.Where(pf => pf.GrantApplication.FileNumber.Contains(filter.FileNumber));
 
 			if (!string.IsNullOrWhiteSpace(filter.Participant))
-				participantForms = participantForms.Where(pf => pf.FirstName.Contains(filter.Participant)
-				                                                || pf.MiddleName.Contains(filter.Participant)
-				                                                || pf.LastName.Contains(filter.Participant));
-
+			{
+				var searchTerms = filter.Participant.Split(new []{ ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				participantForms = participantForms.Where(pf => searchTerms.Any(t => pf.FirstName.Contains(t))
+				                                                || searchTerms.Any(t => pf.MiddleName.Contains(t))
+																|| searchTerms.Any(t => pf.LastName.Contains(t)));
+			}
 			var total = participantForms.Count();
 
 			var participants = new List<GroupedParticipantsModel>();
