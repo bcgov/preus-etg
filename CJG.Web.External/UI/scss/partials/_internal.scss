@@ -214,6 +214,17 @@ $int-header-height: 32px;
     line-height: 1;
     padding: 8px 20px;
   }
+
+  @media only screen and (max-width: 1440px) {
+    a {
+      padding: 8px 10px;
+    }
+  }
+  @media only screen and (max-width: 1240px) {
+    a {
+      padding: 8px 5px;
+    }
+  }
 }
 
 .primary-nav {
