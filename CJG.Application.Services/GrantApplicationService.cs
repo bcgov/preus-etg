@@ -816,14 +816,14 @@ namespace CJG.Application.Services
 					query = query.Where(ga => ga.AssessorId == null);
 			}
 
-			if (filter.OnlyShowPriorityRegionExceptions)
+			if (filter.OnlyShowPriorityRegionExceptions == PriorityExceptionsMode.OnlyShowExceptions)
 				query = query.Where(ga => ga.PrioritizationScoreBreakdown != null
 				                          && ga.PrioritizationScoreBreakdown.RegionalName == null || ga.PrioritizationScoreBreakdown.RegionalName == "");
 
-			//if (!filter.OnlyShowPriorityRegionExceptions)
-			//	query = query.Where(ga => ga.PrioritizationScoreBreakdown == null
-			//	                          || (ga.PrioritizationScoreBreakdown != null
-			//	                              && (ga.PrioritizationScoreBreakdown.RegionalName != null && ga.PrioritizationScoreBreakdown.RegionalName != "")));
+			if (filter.OnlyShowPriorityRegionExceptions == PriorityExceptionsMode.OnlyShowNonExceptions)
+				query = query.Where(ga => ga.PrioritizationScoreBreakdown == null
+										  || (ga.PrioritizationScoreBreakdown != null
+											  && (ga.PrioritizationScoreBreakdown.RegionalName != null && ga.PrioritizationScoreBreakdown.RegionalName != "")));
 
 			var total = query.Count();
 			if (filter.OrderBy?.Any(x => x.Contains(nameof(GrantApplication.StateChanges))) ?? false)

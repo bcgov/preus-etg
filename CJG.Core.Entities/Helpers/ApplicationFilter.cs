@@ -15,7 +15,7 @@ namespace CJG.Core.Entities.Helpers
 		public string Applicant { get; }
 		public string Participant { get; }
 		public string[] OrderBy { get; }
-		public bool OnlyShowPriorityRegionExceptions { get; }
+		public PriorityExceptionsMode OnlyShowPriorityRegionExceptions { get; }
 
 		public StateFilter<ApplicationStateInternal>[] States { get; }
 
@@ -32,10 +32,10 @@ namespace CJG.Core.Entities.Helpers
 			FileNumber = null;
 			Applicant = null;
 			Participant = null;
-			OnlyShowPriorityRegionExceptions = false;
+			OnlyShowPriorityRegionExceptions = PriorityExceptionsMode.IgnoreExceptionFiltering;
 		}
 
-		public ApplicationFilter(StateFilter<ApplicationStateInternal>[] states, int? assessorId, int? fiscalYearId, string trainingPeriodCaption, int? grantProgramId, int? grantStreamId, bool onlyShowPriorityRegionExceptions = false, string[] orderBy = null)
+		public ApplicationFilter(StateFilter<ApplicationStateInternal>[] states, int? assessorId, int? fiscalYearId, string trainingPeriodCaption, int? grantProgramId, int? grantStreamId, PriorityExceptionsMode onlyShowPriorityRegionExceptions = PriorityExceptionsMode.IgnoreExceptionFiltering, string[] orderBy = null)
 		{
 			States = states;
 			AssessorId = assessorId;
@@ -64,7 +64,7 @@ namespace CJG.Core.Entities.Helpers
 			FileNumber = fileNumber;
 			Applicant = applicant;
 			Participant = null;
-			OnlyShowPriorityRegionExceptions = false;
+			OnlyShowPriorityRegionExceptions = PriorityExceptionsMode.IgnoreExceptionFiltering;
 		}
 
 		public ApplicationFilter(string fileNumber, string participant, string[] orderBy = null)
@@ -82,7 +82,16 @@ namespace CJG.Core.Entities.Helpers
 			GrantStreamId = null;
 			IsAssigned = null;
 			Applicant = null;
-			OnlyShowPriorityRegionExceptions = false;
+			OnlyShowPriorityRegionExceptions = PriorityExceptionsMode.IgnoreExceptionFiltering;
 		}
+	}
+
+	public enum PriorityExceptionsMode
+	{
+		IgnoreExceptionFiltering = 0,
+
+		OnlyShowExceptions = 1,
+
+		OnlyShowNonExceptions = 2
 	}
 }
