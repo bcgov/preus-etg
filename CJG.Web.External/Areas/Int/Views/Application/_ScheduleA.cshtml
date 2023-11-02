@@ -17,26 +17,26 @@
 }
 <div class="form--readonly">
 	<div class="form__group two-col">
-		<label class="form__label schedule-a__label" for="FileNumber">Agreement Number:</label>
+		<label class="form__label schedule-a__label" for="FileNumber">Agreement number:</label>
 		<div class="form__control schedule-a__control">
 			@Model.FileNumber
 		</div>
 	</div>
 	<div class="form__group two-col">
-		<label class="form__label schedule-a__label" for="Organization_LegalName">Applicant Name:</label>
+		<label class="form__label schedule-a__label" for="Organization_LegalName">Applicant name:</label>
 		<div class="form__control schedule-a__control">
 			@Model.Organization.LegalName
 		</div>
 	</div>
 	<p><h3>Agreement Term</h3></p>
 	<div class="form__group two-col">
-		<label class="form__label schedule-a__label" for="GrantAgreement_StartDate">Term Start Date:</label>
+		<label class="form__label schedule-a__label" for="GrantAgreement_StartDate">Term start date:</label>
 		<div class="form__control schedule-a__control">
 			@(Model.GrantAgreement.StartDate.ToLocalTime().ToString("MMMM dd, yyyy"))
 		</div>
 	</div>
 	<div class="form__group two-col">
-		<label class="form__label schedule-a__label" for="GrantAgreement_EndDate">Term End Date:</label>
+		<label class="form__label schedule-a__label" for="GrantAgreement_EndDate">Term end date:</label>
 		<div class="form__control schedule-a__control">
 			@(Model.GrantAgreement.EndDate.ToLocalTime().ToString("MMMM dd, yyyy"))
 		</div>
@@ -44,14 +44,14 @@
 	<p><h3>Program Delivery Plan</h3></p>
 	<div class="form__group__wrapper ">
 		<div class="form__group two-col">
-			<label class="form__label schedule-a__label" for="DefaultTrainingProgram_StartDate">Delivery Start Date:</label>
+			<label class="form__label schedule-a__label" for="DefaultTrainingProgram_StartDate">Training start date:</label>
 			<div class="form__control schedule-a__control">
 				@(Model.StartDate.ToLocalTime().ToString("MMMM dd, yyyy"))
 			</div>
 		</div>
 	</div>
 	<div class="form__group two-col">
-		<label class="form__label schedule-a__label" for="DefaultTrainingProgram_EndDate">Delivery End Date:</label>
+		<label class="form__label schedule-a__label" for="DefaultTrainingProgram_EndDate">Training end date:</label>
 		<div class="form__control schedule-a__control">
 			@(Model.EndDate.ToLocalTime().ToString("MMMM dd, yyyy"))
 		</div>
@@ -115,7 +115,7 @@
 	<br />
 	<div class="form__group two-col">
 		<label class="form__label schedule-a__label" for="GrantAgreement_ReimbursementClaimDueDate">
-			Number of Participants in Program:
+			Number of participants in program:
 		</label>
 		<div class="form__control schedule-a__control">
 			@if (Model.TrainingCost.AgreedParticipants > 0)
@@ -129,7 +129,7 @@
 		</div>
 	</div>
 	@* hide the edit/delete buttons when rendering to the application administrator *@
-	<h3>Eligible Costs</h3>
+	<h3>Eligible costs</h3>
 	<table id="tblExpenses" class="table table--expenses js-table-expense-list">
 		<thead>
 			<tr>
@@ -224,12 +224,4 @@
 
 		</tbody>
 	</table>
-	@if (programType == ProgramTypes.WDAService)
-	{
-		var includedServices = String.Join(" and ", Model.TrainingCost.EligibleCosts.Where(ec => ec.EligibleExpenseType.ServiceCategory.ServiceTypeId == ServiceTypes.EmploymentServicesAndSupports && ec.AgreedMaxCost > 0).Select(ec => ec.EligibleExpenseType.ServiceCategory.Caption));
-		if (!String.IsNullOrWhiteSpace(includedServices))
-		{
-			<p class="schedule-a-ess-sum">@includedServices total maximum blended cost per Participant is @(ToCurrency(sumESSAverageCost))</p>
-		}
-	}
 </div>

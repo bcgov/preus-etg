@@ -18,14 +18,12 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 		public bool ClaimReported { get; set; }
 		public bool IsIncludedInClaim { get; set; }
 		public DateTime DateAdded { get; set; }
-		public bool IsLate { get; set; }
 
 		public bool? Approved { get; set; }
 		public bool ShowEligibility { get; set; }
 
 		public ParticipantViewModel()
 		{
-
 		}
 
 		public ParticipantViewModel(ParticipantForm participantForm, bool showEligibility, Claim claim = null)
@@ -46,7 +44,6 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 			ClaimReported = participantForm.ClaimReported || participantForm.Claims.Any(c => c.Id != claim?.Id && c.ClaimVersion != claim?.ClaimVersion);
 			IsIncludedInClaim = !participantForm.IsExcludedFromClaim;
 			DateAdded = participantForm.DateAdded.ToLocalTime();
-			IsLate = DateAdded > participantForm.GrantApplication.GetParticipantReportingDueDate();
 			Approved = participantForm.Approved;
 			ShowEligibility = showEligibility;
 

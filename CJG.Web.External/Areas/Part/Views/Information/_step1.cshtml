@@ -3,65 +3,42 @@
 @using (Html.BeginForm())
 {
     <div id="step1-participant-info">
-        <p class="subheader--step">Step 1 of 6</p>
-        <h2 class="subheader">Confirmation of Participation</h2>
+        <p class="subheader--step">Step 1 of 5: Confirm participation</p>
          
-        <p>You are confirming your intention to attend the following training:</p>
+        <p>You are confirming that you will attend the following training:</p>
 
         <dl class="info-list">
             <dt>Employer</dt>
             <dd>@Model.ProgramEmployerName</dd>
 
-            <dt>Employer contact name</dt>
+            <dt>Employer contact</dt>
             <dd>@Model.ProgramSponsorName</dd>
             
             <dt>Training description</dt>
             <dd>
                 @Model.ProgramDescription
             </dd>
-            <dt>Start date</dt>
+            <dt>Training start date</dt>
             <dd>
-                @Model.ProgramStartDate.ToString("yyyy-MM-dd")
+                @Model.ProgramStartDate.ToString("MMMM d, yyyy")
             </dd>
         </dl>
 
         <div>
-            
-            <p>Welcome,</p>
+            <p>To participate in training through the B.C. Employer Training Grant, you are required to provide personal information. You will also be asked to confirm your consent for the collection and use of this information.</p>
+            <p><strong>Important:</strong> If you are on Employment Insurance (EI) or in receipt of Income Assistance (IA) and do not obtain approval before training starts, you may become ineligible for continued financial support under EI or IA. Please review <a href="https://www.workbc.ca/find-loans-and-grants/industry-and-employers/bc-employer-training-grant/application-support-and" target="_blank">Appendix A of the ETG Eligibility Criteria</a> for instructions on how to ensure your benefits will not be impacted.</p>
 
-            <p>You've been invited by your employer to participate in training sponsored by the Government of Canada and the Province of B.C. You are not required to pay for training or related expenses. This training is free for participants to attend.</p>
-            <p>Before the application can be submitted by your employer and the training can begin, we need to collect some information from you. Don’t worry, we'll guide you every step of the way. If you’re wondering how your personal information will be used, please check out our <a href="https://www.workbc.ca/find-loans-and-grants/industry-and-employers/bc-employer-training-grant/frequently-asked-questions" target="_blank">FAQs</a>.</p>
-            <p>Here’s what you need to do:</p>
-
-            <ol class="step-1-list">
-                <li>
-                    <strong>Gather necessary information:</strong>
-                    <br/>
-                    <ul>
-                        <li>Your Social Insurance Number</li>
-                        <li>Your National Occupational Classification (NOC) code (before & after training). You can choose your NOC code from a drop-down list on the following screen.</li>
-                        <li>If you need assistance choosing your NOC, please talk to your employer.</li>
-                    </ul>
-                </li>
-                <li>
-                    <strong>Protect your benefits:</strong>
-                    <br/>
-                    <ul>
-                        <li>If you are currently receiving Employment Insurance or Income Assistance, please review the instructions here to ensure your benefits continue.</li>
-                    </ul>
-                </li>
-                <li>
-                    <strong>Complete this form:</strong>
-                    <br/>
-                    <ul>
-                        <li>Fill in the Captcha below to confirm you will attend training. If you don’t see the Captcha, try refreshing this web page.</li>
-                        <li>If you don’t complete this form in 30 minutes, you will have to start over.</li>
-                    </ul>
-                </li>
-            </ol>
-            
-            <p><strong>Need assistance? Feel free to contact us at <a href="mailto:ETG@gov.bc.ca" target="_blank">ETG@gov.bc.ca</a>.</strong></p>
+            <p>Before you begin your application, please be prepared with the following::</p>
+            <ul>
+                <li>Your Social Insurance Number</li>
+                <li>If you are unemployed, the National Occupation Classification code after training will be completed.</li>
+                <li>If you are currently employed, the National Occupation Classification code before and after training.</li>
+            </ul>
         </div>
+
+        <p>National Occupation Classification codes can be searched here: <a href="http://www.cic.gc.ca/english/immigrate/skilled/noc.asp" target="_blank">http://www.cic.gc.ca/english/immigrate/skilled/noc.asp</a>. If you are unsure which code to select, please contact your employer. WorkBC agents are also available to help via email, online chat or telephone at <a href="https://www.workbc.ca/Contact-Us.aspx" target="_blank">https://www.workbc.ca/Contact-Us.aspx</a>.</p>
+        <p>All steps that follow must be completed. If you exit without completing all steps, or if your session idles longer than 30 minutes, then you will need to start over.</p>
+        <p>To begin, please complete the Captcha below and confirm you will attend this training. Don’t see the Captcha? Try refreshing the page.</p>
 
         <div class="margin-bottom" id="recaptcha" data-site-key="@Model.RecaptchaSiteKey"></div>
          
@@ -80,7 +57,7 @@
 
         <p>If you will not attend training then click <a href="/Part/Information/Exit" class="btn btn--primary js-btn-cancel">Exit</a></p>
 
-        <p>NEXT STEP: Contact Information</p>
+        <p>Next step: Contact information</p>
 
     </div>
 }

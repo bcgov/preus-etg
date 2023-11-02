@@ -1,21 +1,21 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities.Helpers;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	/// <summary>
-	/// IntakeController class, provides endpoints to select and search for grant applications.
-	/// </summary>
-	[RouteArea("Int")]
+    /// <summary>
+    /// WorkQueueController class, provides endpoints to select and search for grant applications.
+    /// </summary>
+    [RouteArea("Int")]
 	[Authorize(Roles = "Assessor, System Administrator, Director, Financial Clerk")]
 	public class WorkQueueController : BaseController
 	{
@@ -44,8 +44,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_grantStreamService = grantStreamService;
 		}
 
-		#region Endpoints
-		#region Work Queue
 		[HttpGet]
 		[Route("Work/Queue/View", Name = nameof(WorkQueueView))]
 		public ActionResult WorkQueueView()
@@ -164,7 +162,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 			return Json(model);
 		}
-		#endregion
 
 		#region Filters
 		/// <summary>
@@ -299,7 +296,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 			return Json(model);
 		}
-		#endregion
 		#endregion
 	}
 }

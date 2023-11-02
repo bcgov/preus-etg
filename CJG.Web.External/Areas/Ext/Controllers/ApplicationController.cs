@@ -529,7 +529,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 						RedirectURL = Url.Action(nameof(ApplicationOverviewView), new { grantApplicationId = grantApplication.Id })
 					};
 
-					this.SetAlert("Grant Selection details are complete.", AlertType.Success, true);
+					this.SetAlert("Grant selection details are complete.", AlertType.Success, true);
 				}
 				else
 				{
@@ -624,7 +624,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				grantApplication.ApplicationStateExternal = ApplicationStateExternal.Incomplete;
 				_grantApplicationService.Update(grantApplication);
 			}
-			if (!grantApplication.CanReportParticipants && grantApplication.IsPIFSubmittable())
+
+			if (!grantApplication.CanReportParticipants && grantApplication.HasValidDates() && grantApplication.IsPIFSubmittable())
 			{
 				grantApplication.EnableParticipantReporting();
 				_grantApplicationService.Update(grantApplication);

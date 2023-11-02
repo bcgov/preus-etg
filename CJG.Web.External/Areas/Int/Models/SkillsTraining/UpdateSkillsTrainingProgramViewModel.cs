@@ -1,14 +1,13 @@
-﻿using CJG.Web.External.Helpers.Validation;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using CJG.Web.External.Helpers.Validation;
 using CJG.Web.External.Models.Shared;
 using DataAnnotationsExtensions;
-using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace CJG.Web.External.Areas.Int.Models.SkillsTraining
 {
-	public class UpdateSkillsTrainingProgramViewModel : BaseViewModel
+    public class UpdateSkillsTrainingProgramViewModel : BaseViewModel
 	{
-		#region Properties
 		public int GrantApplicationId { get; set; }
 
 		[Min(1, ErrorMessage = "Skills training focus is required")]
@@ -18,10 +17,10 @@ namespace CJG.Web.External.Areas.Int.Models.SkillsTraining
 
 		public int EligibleCostId { get; set; }
 
-		[Required(ErrorMessage = "Start date is required and must be within the program delivery dates")]
+		[Required(ErrorMessage = "Start date is required and must be within the program training dates")]
 		public DateTime? StartDate { get; set; }
 
-		[Required(ErrorMessage = "End date is required and must be within the program delivery dates")]
+		[Required(ErrorMessage = "End date is required and must be within the program training dates")]
 		public DateTime? EndDate { get; set; }
 
 		[Required(ErrorMessage = "Course title is required")]
@@ -32,7 +31,7 @@ namespace CJG.Web.External.Areas.Int.Models.SkillsTraining
 
 		public string TitleOfQualification { get; set; }
 
-		[RequiredEnumerable(ErrorMessage = "A Delivery method is required")]
+		[RequiredEnumerable(ErrorMessage = "A delivery method is required")]
 		public int[] SelectedDeliveryMethodIds { get; set; }
 
 		[Required(ErrorMessage = "Expected qualification is required")]
@@ -44,10 +43,7 @@ namespace CJG.Web.External.Areas.Int.Models.SkillsTraining
 		public decimal AgreedCost { get; set; }
 
 		public UpdateSkillsTrainingProviderViewModel TrainingProvider { get; set; }
-		#endregion
 
-		#region Constructors
 		public UpdateSkillsTrainingProgramViewModel() { }
-		#endregion
 	}
 }

@@ -12,6 +12,7 @@ app.component('pager', {
     this.pageSizes = $attrs.ngPageSize ? JSON.parse($attrs.ngPageSize) : [5, 10, 20];
     this.pageHeader = $attrs.ngPageHeader ? JSON.parse($attrs.ngPageHeader) : true;
     this.pageSearch = $attrs.ngPageSearch ? JSON.parse($attrs.ngPageSearch) : true;
+    this.riskFlag = $attrs.ngRiskFlag ? JSON.parse($attrs.ngRiskFlag) : false;
 
     this.updatePager = function () {
       $ctrl.page = 1;
@@ -47,13 +48,24 @@ app.component('pager', {
         $ctrl.updatePager();
       } else {
         $ctrl.page = page || 1;
-        $ctrl.ngFilter()($ctrl.ngKeyword, $ctrl.page, $ctrl.pageSize).then(function (response) {
-          $timeout(function () {
-            $ctrl.ngItems = response.Data;
-            $ctrl.pageTotal = response.RecordsTotal;
-            updatePager($ctrl.page);
+
+        if (!$ctrl.riskFlag) {
+          $ctrl.ngFilter()($ctrl.ngKeyword, $ctrl.page, $ctrl.pageSize).then(function(response) {
+            $timeout(function() {
+              $ctrl.ngItems = response.Data;
+              $ctrl.pageTotal = response.RecordsTotal;
+              updatePager($ctrl.page);
+            });
           });
-        });
+        } else {
+          $ctrl.ngFilter()($ctrl.ngKeyword, $ctrl.page, $ctrl.pageSize, $ctrl.ngRiskFlag).then(function (response) {
+            $timeout(function () {
+              $ctrl.ngItems = response.Data;
+              $ctrl.pageTotal = response.RecordsTotal;
+              updatePager($ctrl.page);
+            });
+          });
+        }
       }
     };
 

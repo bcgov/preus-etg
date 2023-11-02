@@ -3,9 +3,10 @@
 @if (ViewBag.Reporting)
 {
     <a name="errors-list"></a>
+    
     <div class="alert alert--error notice--icon" ng-repeat="warning in warnings.ParticipantWarnings" ng-if="(warning.CurrentClaims + warning.CostsOnClaim) > warning.FiscalYearLimit">
-        The maximum amount that you may claim for each participant each fiscal year is {{ warning.FiscalYearLimit | currency : '$' : 2  }}. 
-        You have already claimed {{ warning.CurrentClaims | currency : '$' : 2 }} for {{ warning.ParticipantName }}. 
+        The maximum amount that a participant may receive each fiscal year is {{ warning.FiscalYearLimit | currency : '$' : 2  }}. 
+        The participant {{ warning.ParticipantName }} has already received {{ warning.CurrentClaims | currency : '$' : 2 }}. 
         For this reason, you can only claim an additional {{ warning.FiscalYearLimit - warning.CurrentClaims | currency : '$' : 2 }}. 
         Please review the <a href="https://www.workbc.ca/Employer-Resources/B-C-Employer-Training-Grant.aspx" target="_blank">ETG eligibility criteria for details.</a>
     </div>
@@ -53,7 +54,7 @@
             </span>
             <div class="panel-bar panel-bar__content" id="participantAttendance" style="padding-left:inherit;padding-right:inherit;">
                 <span class="pull-left" style="padding-top: 10px;">
-                    <strong>I certify the following participants received this training</strong>
+                    <strong>I certify the following participant(s) started or completed training</strong>
                 </span>
                 <table class="participant-form-table">
                     <tr class="participant-form-tr__header">

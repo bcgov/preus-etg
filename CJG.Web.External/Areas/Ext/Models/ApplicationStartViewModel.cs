@@ -10,10 +10,8 @@ using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Ext.Models
 {
-	public class ApplicationStartViewModel : BaseViewModel
+    public class ApplicationStartViewModel : BaseViewModel
 	{
-		#region Properties
-
 		public int GrantApplicationId { get { return Id; } set { Id = value; } }
 
 		public byte[] RowVersion { get; set; }
@@ -91,9 +89,6 @@ namespace CJG.Web.External.Areas.Ext.Models
 		public string AlternatePhoneNumber { get; set; }
 		public string AlternatePhoneExtension { get; set; }
 
-		#endregion
-
-		#region Constructors
 		public ApplicationStartViewModel()
 		{
 		}
@@ -187,6 +182,5 @@ namespace CJG.Web.External.Areas.Ext.Models
 					o.Select(g => new ApplicationGrantOpeningViewModel(g)).ToList())).ToList();
 			PrioritySectors = staticDataService.GetPrioritySectors().Select(x => new KeyValuePair<int, string>(x.Id, x.Caption)).ToList();
 		}
-		#endregion
 	}
 }

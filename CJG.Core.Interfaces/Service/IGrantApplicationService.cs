@@ -11,13 +11,10 @@ namespace CJG.Core.Interfaces.Service
 	public interface IGrantApplicationService : IService
 	{
 		GrantApplication Get(Guid invitationKey);
-
 		GrantApplication Get(int id);
-
 		GrantApplication Add(GrantApplication newGrantApplication);
-
 		GrantApplication Update(GrantApplication grantApplication, ApplicationWorkflowTrigger trigger = ApplicationWorkflowTrigger.EditApplication, Func<ApplicationWorkflowTrigger, bool> canPerformAction = null);
-
+		GrantApplication UpdateWithNoPermissionCheck(GrantApplication grantApplication);
 		void Delete(GrantApplication grantApplication);
 
 		void UpdateDeliveryDates(GrantApplication grantApplication);
@@ -29,13 +26,11 @@ namespace CJG.Core.Interfaces.Service
 		decimal GetApplicationsCostByFiscal(GrantApplication grantApplication);
 
 		PageList<GrantApplication> GetGrantApplications(int page, int quantity, ApplicationFilter filter);
-
 		IOrderedQueryable<GrantApplication> GetGrantApplications(int trainingProviderInventoryId, string search);
-
 		IOrderedQueryable<GrantApplication> GetGrantApplicationsForOrg(int orgId, int grantProgramId, string search);
+		IOrderedQueryable<GrantApplication> GetGrantApplicationsBySIN(string sin, string search);
 
 		int GetTotalGrantApplications(List<ApplicationStateInternal> applicationStates, int assessorId, int grantOpeningId, int fiscalYearId, int intakePeriodId, int grantProgramId, int grantStreamId, string fileNumber, string applicant);
-
 		int GetTotalGrantApplications(int trainingProviderInventoryId);
 
 		ApplicationType GetDefaultApplicationType();
@@ -45,7 +40,6 @@ namespace CJG.Core.Interfaces.Service
 		List<User> GetAvailableApplicationContacts(GrantApplication grantApplication);
 
 		void UnassignAssessor(int assessorId);
-
 		void AssignAssessor(GrantApplication grantApplication, int? assessorId);
 
 		void ChangeApplicationAdministrator(GrantApplication grantApplication, int? applicantId);
@@ -65,16 +59,16 @@ namespace CJG.Core.Interfaces.Service
 
 		void Withdraw(GrantApplication grantApplication, string withdrawReason);
 
-
 		int RestartApplicationFromWithdrawn(int id);
 
 		/// <summary>
-		/// Update grant application based on values in gtant app == seeId
+		/// Update grant application based on values in grant app == seeId
 		/// </summary>
 		/// <param name="id"></param>
 		/// <param name="seedId"></param>
 		/// <returns></returns>
 		int DuplicateApplication(GrantApplication id, int seedId);
+
 		/// <summary>
 		/// Determine if an Application can be duplicated. If it cannot be duplicated then return the reason
 		/// </summary>
@@ -137,18 +131,14 @@ namespace CJG.Core.Interfaces.Service
 		void EnableCompletionReporting(GrantApplication grantApplication);
 		#endregion
 
-		#region Attachments
 		IEnumerable<AttachmentModel> GetAttachments(int id);
-		#endregion
 
-		#region TrainingCosts
 		void UpdateTrainingCosts(GrantApplication grantApplication);
 		TrainingCostModel GetTrainingCostModel(int grantApplicationId);
 
 		TrainingCost Update(TrainingCostModel trainingCost);
 
 		void UpdateDeliveryPartner(GrantApplication grantApplication, int? deliveryPartnerId, IEnumerable<int> selectedServices);
-		#endregion
 
 		int CurrentPrioritizationRegionalExceptions();
 	}

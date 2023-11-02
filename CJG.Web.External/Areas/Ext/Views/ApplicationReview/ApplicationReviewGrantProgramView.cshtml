@@ -14,28 +14,28 @@
 				<div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
 			</div>
 
-			<h1>Submit Application</h1>
+			<h1 class="sentence--case">Submit application</h1>
 			<p class="subheader--step">Step {{model.CurrentStep}} of {{model.Steps}}</p>
-			<h2>Review Grant Selection and Program Description</h2>
+			<h2>Review grant selection and program description</h2>
 
 			<div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
 				<div class="heading-group">
-					<h4 class="light">Grant Selection</h4>
-					<a class="btn btn--secondary" href="/ext/Application/Grant/Selection/View/{{model.Id}}/0">Edit funding category</a>
+					<h4 class="light">Grant selection</h4>
+					<a class="btn btn--secondary" href="/ext/Application/Grant/Selection/View/{{model.Id}}/0">Edit</a>
 				</div>
 				@Html.Partial("_GrantSelectionView")
 
 
 				<div class="heading-group">
-					<h4 class="light">Program Description</h4>
-					<a class="btn btn--secondary" href="/ext/Application/Program/Description/View/{{model.Id}}">Edit program description</a>
+					<h4 class="light">Program description</h4>
+					<a class="btn btn--secondary" href="/ext/Application/Program/Description/View/{{model.Id}}">Edit</a>
 				</div>
 				@Html.Partial("_ProgramDescriptionView")
 
 				<div ng-show="model.EnableAttachments">
 					<div class="heading-group">
 						<h4 class="light">{{model.AttachmentsHeader}}</h4>
-						<a class="btn btn--secondary" href="/Ext/Application/Attachments/View/{{model.Id}}">Edit attachments</a>
+						<a class="btn btn--secondary" href="/Ext/Application/Attachments/View/{{model.Id}}">Edit</a>
 					</div>
 					@Html.Partial("_AttachmentsView")
 				</div>

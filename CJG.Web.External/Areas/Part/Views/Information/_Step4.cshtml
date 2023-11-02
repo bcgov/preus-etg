@@ -2,14 +2,11 @@
 @model CJG.Web.External.Areas.Part.Models.ParticipantInfoViewModel
 
 <div ng-if="model.ParticipantInfoStep4ViewModel" ng-show="model.ParticipantInfoStep0ViewModel.Step == 4">
-    <p class="subheader--step">Step 4 of {{model.ParticipantInfoStep0ViewModel.TotalSteps}}</p>
-    <h2 class="subheader">Employment information</h2>
+    <p class="subheader--step">Step 4 of {{model.ParticipantInfoStep0ViewModel.TotalSteps}}: Employment information</p>
 
     @Html.DropDownList(new FormControl
     {
-        Label = Model.ParticipantInfoStep1ViewModel.ProgramType == ProgramTypes.WDAService ?
-            "Which best describes your employment status <b>on the first day</b> of training <abbr title='Required'>*</abbr>" :
-            "Which best describes your employment status before starting the training <abbr title='Required'>*</abbr>",
+        Label = "Which best describes your employment status before starting the training <abbr title='Required'>*</abbr>",
         Model = "model.ParticipantInfoStep4ViewModel.EmploymentStatus",
         Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.EmploymentStatuses",
         CssClass = "input--full",
@@ -520,14 +517,14 @@
         
         @Html.TextBoxBlock(new FormControl
         {
-            Label = "After Training Job Title <abbr title='Required'>*</abbr>",
+            Label = "After training job title <abbr title='Required'>*</abbr>",
             Model = "model.ParticipantInfoStep4ViewModel.JobTitleFuture",
             Size = "input--full",
             IsInnerModel = true
         })
 
         <div class="form__group form__group--radio-inline">
-            <label class="form__label" for="">What <u><em>will</em></u> your National Occupation Classification (NOC) be <u><em>after</em></u> training <abbr title="Required">*</abbr></label>
+            <label class="form__label" for="">What <em>will</em> your National Occupation Classification (NOC) be <em>after</em> training <abbr title="Required">*</abbr></label>
             <div class="notice notice--icon">
                 The National Occupational Classification (NOC) is Canada’s national system for describing occupations. Start by selecting one of the 10 broad occupational categories and continue choosing the next <span style="font-style: italic; text-decoration: underline;">best</span> option that describes your work.
             </div>
@@ -641,7 +638,7 @@
 
     <div class="form__group form__group--radio-inline">
         <div class="form__label">
-            On the first day of training will you be participating in any other provincially or federally funded training programs <abbr title="Required">*</abbr>
+            On the first day of training will you be participating in any other provincially or federally funded training programs? <abbr title="Required">*</abbr>
         </div>
 
         <div>
@@ -656,7 +653,7 @@
             </div>
 
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
+                @Html.RadioButton(new FormControl
                 {
                     Label = "No",
                     Id = "OtherProgramsNo",
@@ -670,7 +667,7 @@
     </div>
 
     <div ng-if="model.ParticipantInfoStep4ViewModel.OtherPrograms">
-        @Html.TextBoxBlock(new FormControl()
+        @Html.TextBoxBlock(new FormControl
         {
             Label = "Please describe the provincially or federally funded program <abbr title='Required'>*</abbr>",
             Model = "model.ParticipantInfoStep4ViewModel.OtherProgramDesc",
@@ -679,7 +676,7 @@
         })
     </div>
 
-    @Html.DropDownList(new FormControl()
+    @Html.DropDownList(new FormControl
     {
         Label = "What do you expect will be the most important result of training <abbr title='Required'>*</abbr>",
         Model = "model.ParticipantInfoStep4ViewModel.TrainingResult",
@@ -690,8 +687,6 @@
     })
 
     <br />
-
-    <p ng-if="model.ParticipantInfoStep0ViewModel.ReportedByApplicant">NEXT STEP: Confirmation of Completion</p>
-
-    <p ng-if="!model.ParticipantInfoStep0ViewModel.ReportedByApplicant">NEXT STEP: Consent for Collection and Use of Personal Information</p>
+    <p ng-if="model.ParticipantInfoStep0ViewModel.ReportedByApplicant">Next step: Confirmation of completion</p>
+    <p ng-if="!model.ParticipantInfoStep0ViewModel.ReportedByApplicant">Next step: Consent for collection and use of personal information</p>
 </div>

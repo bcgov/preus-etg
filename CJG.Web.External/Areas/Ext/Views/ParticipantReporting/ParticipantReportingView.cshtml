@@ -1,6 +1,5 @@
-﻿@using CJG.Core.Entities
-@{
-    ViewBag.Title = "Participant Report";
+﻿@{
+    ViewBag.Title = "Participant information";
 }
 
 <div class="row" ng-controller="ParticipantReportingView" ng-grant-application-id="@ViewBag.GrantApplicationId">
@@ -15,7 +14,7 @@
 
     <div class="grant-files">
         <div class="margin-bottom container-full-width">
-            <h2>Participant Report</h2>
+            <h1 class="header--large sentence--case">Participant information</h1>
             <div ng-if="alert.message" class="row row--alert">
                 <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
             </div>
@@ -62,7 +61,7 @@
 
             <div ng-if="model.UseInvitations">
                 <p>You have indicated that there will be {{model.MaxParticipantsAllowed}} participants. To change the number of participants, return to the <a href="@Url.Action("TrainingCostView", "TrainingCost", new { id = ViewBag.GrantApplicationId })">Training Cost</a> section of your application.</p>
-                <p>Please enter participant details below. By clicking “Send”, participants will receive an email invitation to complete a Participant Information Form (PIF).</p> 
+                <p>Please enter participant details below. By clicking “Send”, participants will receive an email invitation to complete a Participant Information Form (PIF). <strong style="padding-left: 0.25em;">Please note:</strong> Participants must complete their own PIFs. Employers who complete PIFs on behalf of participants will have their applications denied.</p>
                 
                 <div class="notice notice--icon">
                     <p>Temporary foreign workers, international students, people on working holiday visas, or other temporary residents are ineligible.</p>

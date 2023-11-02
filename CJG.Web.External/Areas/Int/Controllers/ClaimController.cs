@@ -1,27 +1,24 @@
-﻿using CJG.Core.Entities;
+﻿using System;
+using System.Web.Mvc;
+using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
 using CJG.Web.External.Areas.Int.Models;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
-using System;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	/// <summary>
-	/// <paramtyperef name="ClaimController"/> class, provides endpoints to manage the assessment of claims.
-	/// </summary>
-	[Authorize(Roles = "Assessor, Director, Financial Clerk, System Administrator")]
+    /// <summary>
+    /// <paramtyperef name="ClaimController"/> class, provides endpoints to manage the assessment of claims.
+    /// </summary>
+    [Authorize(Roles = "Assessor, Director, Financial Clerk, System Administrator")]
 	[RouteArea("Int")]
 	public class ClaimController : BaseController
 	{
-		#region Variables
 		private readonly IGrantApplicationService _grantApplicationService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a ClaimController object.
 		/// </summary>
@@ -34,9 +31,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		{
 			_grantApplicationService = grantApplicationService;
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
 		/// Get the claims for the specified grant application on the application details view.
 		/// </summary>
@@ -95,6 +90,5 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
-		#endregion
 	}
 }

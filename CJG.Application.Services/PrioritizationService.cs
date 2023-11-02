@@ -72,7 +72,7 @@ namespace CJG.Application.Services
 			_dbContext.Commit();
 		}
 
-		public void SetRegionException(GrantApplication grantApplication, int prioritizationRegionId)
+		public string SetRegionException(GrantApplication grantApplication, int prioritizationRegionId)
 		{
 			var threshold = GetThresholds();
 			if (threshold == null)
@@ -83,7 +83,7 @@ namespace CJG.Application.Services
 			var applicationScoreBreakdown = grantApplication.PrioritizationScoreBreakdown;
 
 			if (region == null || applicationScoreBreakdown == null)
-				return;
+				return string.Empty;
 
 			var regionalResult = GetRegionalResult(region, threshold);
 
@@ -91,6 +91,8 @@ namespace CJG.Application.Services
 			applicationScoreBreakdown.RegionalName = regionalResult.Name;
 
 			grantApplication.PrioritizationScore = applicationScoreBreakdown.GetTotalScore();
+
+			return regionalResult.Name;
 		}
 
 		public PrioritizationScoreBreakdown GetBreakdown(GrantApplication grantApplication)
@@ -708,7 +710,7 @@ namespace CJG.Application.Services
 		}
 	}
 
-	internal class RegionalResult
+	public class RegionalResult
 	{
 		public int Score { get; set; }
 		public string Name { get; set; }

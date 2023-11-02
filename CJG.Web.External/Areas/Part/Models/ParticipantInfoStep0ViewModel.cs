@@ -21,7 +21,7 @@ namespace CJG.Web.External.Areas.Part.Models
         /// If the PIF form is filled in the by participant, there are six steps required.
         /// If the PIF form is filled in the by applicant, there are five steps required.
         /// </summary>
-        public int TotalSteps => ReportedByApplicant ? 5 : 6;
+        public int TotalSteps => ReportedByApplicant ? 5 : 5;
 
         public bool HasConsentForm { get; set; }
 

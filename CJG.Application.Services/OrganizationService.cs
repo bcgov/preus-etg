@@ -135,12 +135,19 @@ namespace CJG.Application.Services
 			return applicationCount;
 		}
 
-		public PageList<Organization> GetOrganizationList(int page, int quantity, string search, bool? isActive = null)
+		public PageList<Organization> GetOrganizationList(int page, int quantity, string search, bool? isActive = null, bool? isRisk = null)
 		{
 			var filtered = _dbContext.Organizations
-				.Where(x => (string.IsNullOrEmpty(search) || x.LegalName.Contains(search) || x.DoingBusinessAs != null && x.DoingBusinessAs.Contains(search))
-					&& (isActive == null)
-				).OrderBy(x => x.LegalName);
+				.Where(x => (string.IsNullOrEmpty(search)
+				             || x.LegalName.Contains(search)
+				             || x.DoingBusinessAs != null && x.DoingBusinessAs.Contains(search))
+				            && isActive == null
+				);
+
+			if (isRisk.HasValue)
+				filtered = filtered.Where(o => o.RiskFlag == isRisk.Value);
+
+			filtered = filtered.OrderBy(x => x.LegalName);
 
 			var total = filtered.Count();
 			var result = filtered.Skip((page - 1) * quantity).Take(quantity);
@@ -183,7 +190,7 @@ namespace CJG.Application.Services
 
 			// Select the claims in the correct state.
 			// (Do not select ClaimState.AmountOwing (which is used in ClaimExtensions.AmountPaidOrOwing()), b/c it should not include owing).
-			var result = queryClaims.Where(q => q.ClaimState.In(ClaimState.ClaimApproved , ClaimState.PaymentRequested, ClaimState.ClaimPaid, ClaimState.AmountReceived)).ToList();
+			var result = queryClaims.Where(q => q.ClaimState.In(ClaimState.ClaimApproved, ClaimState.PaymentRequested, ClaimState.ClaimPaid, ClaimState.AmountReceived)).ToList();
 
 			var singleAmendable = result.Where(c => c.ClaimTypeId == ClaimTypes.SingleAmendableClaim).ToList();
 			var notSingleAmendable = result.Where(c => c.ClaimTypeId != ClaimTypes.SingleAmendableClaim).ToList();

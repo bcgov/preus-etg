@@ -63,6 +63,7 @@
     <Compile Include="Models\EligibleCostModel.cs" />
     <Compile Include="Models\EligibleCostTypeModel.cs" />
     <Compile Include="Models\EligibleExpenseBreakdownModel.cs" />
+    <Compile Include="Models\GroupedParticipantsModel.cs" />
     <Compile Include="Models\KeyValueListItem.cs" />
     <Compile Include="Models\ParticipantFormModel.cs" />
     <Compile Include="Models\RequestBatchPDFBaseModel.cs" />

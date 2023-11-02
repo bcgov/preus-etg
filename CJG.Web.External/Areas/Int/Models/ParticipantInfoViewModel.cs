@@ -5,7 +5,7 @@ using CJG.Core.Interfaces.Service;
 
 namespace CJG.Web.External.Areas.Int.Models
 {
-	public class ParticipantInfoViewModel
+    public class ParticipantInfoViewModel
 	{
 		public int ParticipantId { get; set; }
 		public string FileNo { get; set; }
@@ -30,8 +30,7 @@ namespace CJG.Web.External.Areas.Int.Models
 			FileNo = participant.GrantApplication.FileNumber;
 			OrganizationName = participant.GrantApplication.OrganizationLegalName;
 
-			var daysLate = (int)(participant.GrantApplication.StartDate - participant.DateAdded).TotalDays;
-			ReportingDate = $"{participant.DateAdded.Date:yyyy-MM-dd} {(daysLate > 5 ? "" : $"(Late {daysLate} days)")}";
+			ReportingDate = $"{participant.DateAdded.Date:yyyy-MM-dd}";
 			ExpectedTrainingOutcome = participant.ExpectedParticipantOutcome.HasValue ? participant.ExpectedParticipantOutcome.Value.GetDescription() : string.Empty;
 			participant.GrantApplication.Organization.Users.Any();
 
@@ -51,12 +50,10 @@ namespace CJG.Web.External.Areas.Int.Models
 			TrainingHistory = new List<ParticipantTrainingHistory>();
 
 			var pifs = participantService.GetParticipantFormsBySIN(participant.SIN);
-
-			// ETG grants only
 			foreach (var p in pifs.Where(w => w.GrantApplication.IsWDAService() == false))
 			{
-				decimal reimbursement = 0.0m;
-				decimal amtPaid = 0.0m;
+				var reimbursement = 0.0m;
+				var amtPaid = 0.0m;
 
 				reimbursement = p.ParticipantCosts.Sum(s => s.AssessedReimbursement);
 				amtPaid = p.ParticipantCosts
@@ -67,12 +64,11 @@ namespace CJG.Web.External.Areas.Int.Models
 				
 				foreach (var t in p.GrantApplication.TrainingPrograms)
 				{
-					// do not show grant apps that have not yet been submitted
-					// grant apps get a filenumber when they are submitted
-					if (t.GrantApplication.FileNumber != null)
-					{
-						TrainingHistory.Add(new ParticipantTrainingHistory(t, reimbursement, amtPaid));
-					}					
+					// Do not show grant apps that have not yet been submitted
+					if (t.GrantApplication.FileNumber == null)
+						continue;
+
+					TrainingHistory.Add(new ParticipantTrainingHistory(t, reimbursement, amtPaid, p));
 				}
 			}
 		}

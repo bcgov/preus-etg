@@ -145,6 +145,7 @@
     <Compile Include="Notifications\NotificationViewModel.cs" />
     <Compile Include="ParticipantEmploymentStatusService.cs" />
     <Compile Include="ParticipantInvitationService.cs" />
+    <Compile Include="ParticipantsService.cs" />
     <Compile Include="PaymentReconciliationService.cs" />
     <Compile Include="PrioritizationService.cs" />
     <Compile Include="ProgramNotificationService.cs" />

@@ -1,33 +1,33 @@
 ﻿@using CJG.Web.External.Areas.Ext.Controllers
 @{
-    ViewBag.Title = "Edit Training Program";
+    ViewBag.Title = "Training program";
 }
 
 <div ng-controller="TrainingProgramView" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-training-program-id="@ViewBag.TrainingProgramId">
     <div class="row">
-        @Html.ActionLink("Return", nameof(ApplicationController.ApplicationOverviewView), typeof(ApplicationController), new { grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "link--back" })
+        @Html.ActionLink("Return", "ApplicationOverviewView", "Application", new { grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "link--back" })
     </div>
     <div class="row">
         <div class="main">
-            <h1>Edit Training Program</h1>
+            <h1 class="header--large sentence--case">Training program</h1>
 
             <div ng-if="alert.message" class="row row--alert">
                 <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
             </div>
-
-            <h2 class="subheader--body">Training Program</h2>
-            <p>Do not apply for an entire program or certificate that cannot be paid for, in full, at once. Many training providers require separate payments for individual courses. If this is the case, you will need to submit a separate application for each course. Please note that diploma and degree programs, in full or in part, are ineligible for ETG funding and no single application can contain training that exceeds 52 weeks.</p>
+            
+            <p style="margin-bottom: 0.5em;"><strong>Important:</strong></p>
+            <ul>
+                <li>Do not apply for an entire program or certificate that cannot be paid for, in full, at once.</li>
+                <li>Many training providers require separate payments for individual courses. If this is the case, you will need to submit a separate application for each course. Diploma and degree programs, in full or in part, are not eligible for ETG funding.</li>
+            </ul>
 
             <div class="form__group">
-                <div class="label-wrapper"><label class="form__label">Course, program or certificate name <abbr title="Required">*</abbr></label></div>
-                <div class="notice notice--icon">
-                    <p>To avoid assessment and reimbursement delays, please enter a training course title that matches the course title used by the training provider.</p>
-                </div>
+                <div class="label-wrapper"><label class="form__label">Course, program or certificate name (to avoid delays, ensure the title you enter matches the title used by the training provider) <abbr title="Required">*</abbr></label></div>
                 <div class="control-wrapper form-control"><input type="text" class="input--medium" ng-model="model.CourseTitle" ng-validation></div>
             </div>
             
             <div class="form__group">
-                <label class="form__label">Describe how this training is relevant to your business needs <abbr title="Required">*</abbr></label>
+                <label class="form__label">Describe how this training is relevant to your business’ needs <abbr title="Required">*</abbr></label>
                 <div class="form__control">
                     <textarea ng-model="model.BusinessTrainingRelevance" class="input--full textarea--medium"
                                 ng-validation="errors.BusinessTrainingRelevance"
@@ -36,7 +36,7 @@
             </div>
 
             <div class="form__group">
-                <label class="form__label">Describe how this training is relevant to the available job for the participant(s) <abbr title="Required">*</abbr></label>
+                <label class="form__label">Describe how this training will improve the participant’s job-related skills <abbr title="Required">*</abbr></label>
                 <div class="form__control">
                     <textarea ng-model="model.ParticipantTrainingRelevance" class="input--full textarea--medium"
                                 ng-validation="errors.ParticipantTrainingRelevance"
@@ -45,7 +45,7 @@
             </div>
 
             <div class="form__group">
-                <div class="label-wrapper"><label class="form__label">Link to Course Description</label></div>
+                <div class="label-wrapper"><label class="form__label">Link to course description</label></div>
                 <div class="control-wrapper form-control"><input type="text" class="input--medium" ng-model="model.CourseLink" ng-validation></div>
                 <div ng-if="model.CourseLink !== null && model.CourseLink !== '' " class="control-wrapper form-control">
                     <span ng-if="model.CourseLink.indexOf('http') > -1  || model.CourseLink.indexOf('https') > -1">
@@ -58,8 +58,8 @@
             </div>
                 
             <div class="form__group">
-                <label class="form__label">Course outline including defined instructional objectives, delivery method and assessment methods <abbr title="Required">*</abbr></label>
-                <p>One file of the following type may be attached: PDF, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}} MB.</p>
+                <label class="form__label">Course outline <abbr title="Required">*</abbr></label>
+                <p>The outline must include the course objectives, how it will be taught, and how the trainer will assess what the students learn. Click the “Upload” button to attach one file, up to {{model.MaxUploadSize}} MB, of the following type: PDF, JPG, JPEG, PNG, GIF.</p>
 
                 <div ng-validation="errors.CourseOutlineDocument">
                     <div class="form__control" ng-if="model.CourseOutlineDocument.FileName">
@@ -81,7 +81,7 @@
             </div>
 
             <div class="form__group form__group--date">
-                <label class="form__label">Training Start Date:<abbr title="Required">*</abbr></label>
+                <label class="form__label">Training start date:<abbr title="Required">*</abbr></label>
                 <div class="form__control--flexible">
                     <div class="form__control">
                         <datedropdown ng-editing="true"
@@ -99,7 +99,7 @@
                 </div>
             </div>
             <div class="form__group form__group--date">
-                <label class="form__label">Training End Date:<abbr title="Required">*</abbr></label>
+                <label class="form__label">Training end date:<abbr title="Required">*</abbr></label>
                 <div class="form__control--flexible">
                     <div class="form__control">
                         <datedropdown ng-editing="true"
@@ -118,7 +118,7 @@
             </div>
 
             <div class="form__group form__group--checkbox-list">
-                <label class="form__label">Primary Delivery Method <abbr title="Required">*</abbr></label>
+                <label class="form__label">Primary delivery method <abbr title="Required">*</abbr></label>
                 <div class="form__control" ng-validation="errors.SelectedDeliveryMethodIds">
                     <ul>
                         <li ng-repeat="method in DeliveryMethods">
@@ -132,7 +132,7 @@
             </div>
 
             <div class="form__group">
-                <div class="label-wrapper"><label class="form__label">Total training hours per participant <abbr title="Required">*</abbr></label></div>
+                <div class="label-wrapper"><label class="form__label">Total training hours <abbr title="Required">*</abbr></label></div>
                 <div class="control-wrapper form-control"><input type="text" class="input--small" ng-model="model.TotalTrainingHours" maxlength="5" ng-number ng-validation></div>
             </div>
 
@@ -148,7 +148,7 @@
             </div>
 
             <div class="form__group input--medium">
-                <div class="label-wrapper"><label class="form__label">Training skills focus <abbr title='Required'>*</abbr></label></div>
+                <div class="label-wrapper"><label class="form__label">Main focus of training skills <abbr title='Required'>*</abbr></label></div>
                 <div class="control-wrapper">
                     <div class="selectmenu input--medium" ng-validation="errors.SkillFocusId">
                         <select class="input--medium form-control ng-pristine ng-untouched ng-valid ng-empty" ng-model="model.SkillFocusId" ng-options="item.Id as item.Caption for item in SkillFocus">
@@ -181,25 +181,6 @@
                     </div>
                 </div>
 
-                <div ng-if="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
-
-                    <div class="form__group form__group--radio-inline">
-                        <div class="form__label">
-                            Are all participants taking apprenticeship or foundation programs members from the underrepresented groups in the labour force <abbr title="Required">*</abbr>
-                        </div>
-                        <div ng-validation="errors.MemberOfUnderRepresentedGroup">
-                            <div class="form-item">
-                                <input type="radio" id="member-under-represented-group-yes" ng-value="true" ng-model="model.MemberOfUnderRepresentedGroup" name="model.MemberOfUnderRepresentedGroup">
-                                <label for="member-under-represented-group-yes">Yes</label>
-                            </div>
-                            <div class="form-item">
-                                <input type="radio" id="member-under-represented-group-no" ng-value="false" ng-model="model.MemberOfUnderRepresentedGroup" name="model.MemberOfUnderRepresentedGroup">
-                                <label for="member-under-represented-group-no">No</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div ng-if="model.MemberOfUnderRepresentedGroup">
                     <div class="form__group form__group--checkbox-list">
                         <label class="form__label">Select all that apply <abbr title="Required">*</abbr></label>
@@ -215,17 +196,18 @@
                 </div>
             </div>
 
-            <div class="form__group input--medium">
-                <div class="label-wrapper"><label class="form__label">Expected certificates, qualifications or credentials <abbr title="Required">*</abbr>
-                     <span class="inline-help tooltip">
-                        <span class="tooltiptext edit-training-provider">
-                            <b>Definitions</b>
-                            <br /><b>Trade Certification</b> - Trades training must be certified by the Industry Training Authority (ITA).
-                            <br /><b>Occupational Certification</b> - Occupational Certifications must be granted by an organization with the authority to set standards required to practice an occupation. Example certificates include the Residential Care Worker Certificate and Early Childhood Education Certificate.
-                            <br /><b>Industry-recognized credential</b> - Industry-recognized training results in credentials that are transferable and recognized by employers across an industry. Examples include health and safety training (e.g. WHMIS, first aid), hospitality training (e.g. FoodSafe Level 1, Serving it Right) and computer or software training (e.g. Microsoft, Cisco).
-                            <br /><b>Proprietary credential (firm-issued)</b> - Proprietary credential includes other certificates of completion provided by a company or its trainer.
+            <div class="form__group">
+                <div class="label-wrapper"><label class="form__label">Certificates, qualifications or credentials the student will have if they pass the training <abbr title="Required">*</abbr>
+                        <span class="inline-help tooltip">
+                            <span class="tooltiptext edit-training-provider">
+                                <b>Definitions</b>
+                                <br /><b>Trade Certification</b> - Trades training must be certified by the Industry Training Authority (ITA).
+                                <br /><b>Occupational Certification</b> - Occupational Certifications must be granted by an organization with the authority to set standards required to practice an occupation. Example certificates include the Residential Care Worker Certificate and Early Childhood Education Certificate.
+                                <br /><b>Industry-recognized credential</b> - Industry-recognized training results in credentials that are transferable and recognized by employers across an industry. Examples include health and safety training (e.g. WHMIS, first aid), hospitality training (e.g. FoodSafe Level 1, Serving it Right) and computer or software training (e.g. Microsoft, Cisco).
+                                <br /><b>Proprietary credential (firm-issued)</b> - Proprietary credential includes other certificates of completion provided by a company or its trainer.
+                            </span>
                         </span>
-                    </span></label>
+                        </label>
                 </div>
                 <div class="control-wrapper">
                     <div class="selectmenu input--medium" ng-validation="errors.ExpectedQualificationId">

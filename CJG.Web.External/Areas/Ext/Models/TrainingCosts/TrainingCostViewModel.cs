@@ -40,6 +40,8 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 		public decimal ESSAgreedAverage { get; set; }
 		public decimal ESSEstimatedAverage { get; set; }
 
+		public bool RequestExceedsAllowed { get; set; }
+
 		public bool AllExpenseTypeAllowMultiple
 		{
 			get
@@ -55,14 +57,18 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 		public bool ShouldDisplayESSSummary { get; set; }
 		public string UserGuidanceCostEstimates { get; set; }
 
+		public decimal CurrentFiscalGovernmentContributions { get; set; }
+		public decimal MaximumFiscalGovernmentContributions { get; set; } = 300000m;
+
 		public int MaxUploadSize { get; set; }
 
 		public TrainingCostViewModel() { }
 
-		public TrainingCostViewModel(GrantApplication grantApplication, IPrincipal user, IGrantStreamService grantStreamService)
+		public TrainingCostViewModel(GrantApplication grantApplication, IPrincipal user, IGrantStreamService grantStreamService, IGrantApplicationService grantApplicationService)
 		{
 			if (grantApplication == null)
 				throw new ArgumentNullException(nameof(grantApplication));
+
 			if (grantStreamService == null)
 				throw new ArgumentNullException(nameof(grantStreamService));
 
@@ -80,6 +86,9 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 			ReimbursementRate = grantApplication.ReimbursementRate;
 			AgreedParticipants = grantApplication.TrainingCost.AgreedParticipants == 0 ? null : (int?)grantApplication.TrainingCost.AgreedParticipants;
 			EstimatedParticipants = grantApplication.TrainingCost.EstimatedParticipants == 0 ? null : (int?)grantApplication.TrainingCost.EstimatedParticipants;
+
+			if (grantApplicationService != null)
+				CurrentFiscalGovernmentContributions = grantApplicationService.GetApplicationsCostByFiscal(grantApplication);
 
 			var eligibleCosts = !grantApplication.HasOfferBeenIssued()
 				? grantApplication.TrainingCost.EligibleCosts
@@ -107,6 +116,8 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 				TotalRequest = grantApplication.TrainingCost.TotalEstimatedReimbursement;
 				TotalEmployer = TotalEstimatedCost - TotalRequest;
 			}
+
+			RequestExceedsAllowed = TotalRequest + CurrentFiscalGovernmentContributions > MaximumFiscalGovernmentContributions;
 
 			var haveAnyTravelExpenses = HaveAnyTravelExpenses();
 			RequireTravelExpenseForm = haveAnyTravelExpenses;

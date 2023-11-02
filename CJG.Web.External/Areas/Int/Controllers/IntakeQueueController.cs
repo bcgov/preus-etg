@@ -164,6 +164,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				int.TryParse(Request.QueryString["quantity"], out int quantityNumber);
 
 				var query = filter.GetFilter();
+
 				var applications = _grantApplicationService.GetGrantApplications(pageNumber, quantityNumber, query);
 
 				model.Page = applications.Page;

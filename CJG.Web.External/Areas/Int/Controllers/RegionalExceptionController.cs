@@ -23,6 +23,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		private readonly IGrantProgramService _grantProgramService;
 		private readonly IGrantStreamService _grantStreamService;
 		private readonly IPrioritizationService _prioritizationService;
+		private readonly INoteService _noteService;
 
 		public RegionalExceptionController(
 			IControllerService controllerService,
@@ -30,7 +31,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			IFiscalYearService fiscalYearService,
 			IGrantProgramService grantProgramService,
 			IGrantStreamService grantStreamService,
-			IPrioritizationService prioritizationService
+			IPrioritizationService prioritizationService,
+			INoteService noteService
 		   ) : base(controllerService.Logger)
 		{
 			_grantApplicationService = grantApplicationService;
@@ -38,6 +40,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_grantProgramService = grantProgramService;
 			_grantStreamService = grantStreamService;
 			_prioritizationService = prioritizationService;
+			_noteService = noteService;
 		}
 
 		[HttpGet]
@@ -183,10 +186,13 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
 
-				_prioritizationService.SetRegionException(grantApplication, selectedRegionId);
+				var regionalResult = _prioritizationService.SetRegionException(grantApplication, selectedRegionId);
 				_prioritizationService.AddPostalCodeToRegion(grantApplication, selectedRegionId);
 
-				_grantApplicationService.Update(grantApplication);
+				if (!string.IsNullOrWhiteSpace(regionalResult))
+					_noteService.AddWorkflowNote(grantApplication, $"Application priority region assigned to {regionalResult}.");
+
+				_grantApplicationService.UpdateWithNoPermissionCheck(grantApplication);
 			}
 			catch (Exception ex)
 			{

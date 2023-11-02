@@ -418,7 +418,7 @@ namespace CJG.Testing.Core
 		public Mock<ITrainingProviderInventoryService> MockTrainingProviderInventoryService(Mock<ITrainingProviderInventoryService> mockTrainingProviderInventoryService, TrainingProviderInventory trainingProviderInventory)
 		{
 			mockTrainingProviderInventoryService = new Mock<ITrainingProviderInventoryService>();
-			mockTrainingProviderInventoryService.Setup(x => x.GetInventory(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), null)).Returns(new CJG.Core.Entities.Helpers.PageList<TrainingProviderInventory>() { Items = new[] { trainingProviderInventory } });
+			mockTrainingProviderInventoryService.Setup(x => x.GetInventory(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), null, null)).Returns(new CJG.Core.Entities.Helpers.PageList<TrainingProviderInventory>() { Items = new[] { trainingProviderInventory } });
 			return mockTrainingProviderInventoryService;
 		}
 

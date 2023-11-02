@@ -37,240 +37,239 @@
                         </div>
                     </div>
                 </div>
-                <p ng-show="model.Reason">
-                    <br />
+                <div ng-show="model.Reason">
                     <h4>{{model.ReasonHeading}}</h4>
-                <p ng-show="model.Reason" class="alert alert--warning"><em>{{model.Reason}}</em></p>
-                </p>
+                    <p ng-show="model.Reason" class="alert alert--warning"><em>{{model.Reason}}</em></p>
+                </div>
             </div>
 
-            <h2>Complete Grant Application</h2>
+            <h2>Grant application</h2>
 
-            <p class="notice notice--icon"
-               ng-if="model.GrantOpeningState == @((int)GrantOpeningStates.Closed) && model.ApplicationStateExternal < @((int)ApplicationStateExternal.Submitted)">
-                Your grant selection is no longer available.  You must make a new grant selection for this application.
+            <div class="notice notice--icon" ng-if="model.GrantOpeningState == @((int)GrantOpeningStates.Closed) && model.ApplicationStateExternal < @((int)ApplicationStateExternal.Submitted)">
+                <p>Your grant selection is no longer available. You must make a new grant selection for this application.</p>
+            </div>
+            <div class="notice notice--icon" ng-if="model.ApplicationStateExternal == @((int) ApplicationStateExternal.Complete) && !model.OrganizationCreated">
+                <p>You will not be able to submit your application until a member of your organization enters an organization profile using the link above. Click the link and read the instructions now.</p>
+            </div>
+            <div ng-if="model.ApplicationStateExternal < @((int)ApplicationStateExternal.Complete)">
+                <p>Fill in each of the following sections by clicking “Edit”. When a section is finished, click “Done”. You must fill in each field marked with a star (*).</p>
+                <p>When every section is complete, you can review the application and submit it.</p>
+            </div>
+
+            <ul class="panel-bar k-widget k-reset k-header k-panelbar" id="panelBar">
+                <li class="k-item k-state-default k-first">
+                    <span class="panel-bar__heading k-link k-header" ng-click="toggleSection($event)">
+                        <span class="panel-bar__heading--text">Grant selection</span>
+                        <span class="panel-bar__status">
+                            <text>
+                                <span class="label {{PopulateClass('Selection')}}">{{PopulateText('Selection')}}</span>
+                            </text>
+                            <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
+                                @Html.ActionLink("Edit", nameof(ApplicationController.GrantSelectionView), new { grantApplicationId = (int?)ViewBag.GrantApplicationId, grantProgramId = 0 }, new { @class = "btn btn--secondary" })
+                            </span>
+                        </span>
+                        <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
+                    </span>
+                    <div class="ng-hide">
+                        @Html.Partial("_GrantSelectionView")
+                    </div>
+                </li>
+                <li ng-show="model.ProgramType == @((int)ProgramTypes.WDAService)" class="k-item k-state-default"
+                    data-state="{{PopulateText('Description') == 'Not Started' ? 'disabled' : 'enabled' }}">
+                    <span class="k-link k-header" ng-click="toggleSection($event)">
+                        <span class="panel-bar__heading--text">Program description</span>
+                        <span class="panel-bar__status">
+                            <text>
+                                <span class="label {{PopulateClass('Description')}}">{{PopulateText('Description')}}</span>
+                            </text>
+                            <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
+                                <a class="btn btn--secondary" href="@Url.Action("ProgramDescriptionView", "ProgramDescription", new { grantApplicationId = (int?)ViewBag.GrantApplicationId })">Edit</a>
+                            </span>
+                        </span>
+                        <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
+                    </span>
+                    <div class="ng-hide">
+                        @Html.Partial("_ProgramDescriptionView")
+                    </div>
+                </li>
+                <li ng-show="model.EnableAttachments" class="k-item k-state-default"
+                    data-state="{{model.AttachmentCount == 0 ? 'disabled' : 'enabled'}}">
+                    <span class="k-link k-header" ng-click="toggleSection($event)">
+                        <span ng-if="model.AttachmentsHeader.length < 80 " class="panel-bar__heading--text" style="white-space: normal;">{{model.AttachmentsHeader }}</span>
+                        <span ng-if="model.AttachmentsHeader.length >= 80 " class="panel-bar__heading--text" style="white-space:nowrap; overflow: hidden; text-overflow: ellipsis;">{{model.AttachmentsHeader }}</span>
+                        <span class="panel-bar__status">
+                            <text>
+                                <span class="label {{PopulateClass('Attachment')}}">{{PopulateText('Attachment')}}</span>
+                            </text>
+                            <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
+                                @Html.ActionLink("Edit", nameof(ApplicationAttachmentController.AttachmentsView), typeof(ApplicationAttachmentController), new { grantApplicationId = (int?)ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary" })
+                            </span>
+                        </span>
+                        <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
+                    </span>
+                    <div class="ng-hide">
+                        @Html.Partial("_AttachmentsView")
+                    </div>
+                </li>
+                <li ng-show="model.EnableBusinessCase && model.ProgramType == @((int)ProgramTypes.EmployerGrant)" class="k-item k-state-default"
+                    data-state="{{model.HasBusinessCase? 'enabled' : 'disabled'}}">
+                    <span class="k-link k-header" ng-click="toggleSection($event)">
+                        <span ng-if="model.BusinessCaseHeader.length < 80 " class="panel-bar__heading--text" style="white-space: normal;">{{model.BusinessCaseHeader }}</span>
+                        <span ng-if="model.BusinessCaseHeader.length >= 80 " class="panel-bar__heading--text" style="white-space:nowrap; overflow: hidden; text-overflow: ellipsis;">{{model.BusinessCaseHeader }}</span>
+                        <span class="panel-bar__status">
+                            <text>
+                                <span class="label {{PopulateClass('BusinessCase')}}">{{PopulateText('BusinessCase')}}</span>
+                            </text>
+                            <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
+                                @Html.ActionLink("Edit", nameof(ApplicationAttachmentController.BusinessCaseView), typeof(ApplicationAttachmentController), new { grantApplicationId = (int?)ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary" })
+                            </span>
+                        </span>
+                        <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
+                    </span>
+                    <div class="ng-hide">
+                        @Html.Partial("_BusinessCaseView")
+                    </div>
+                </li>
+                <li ng-show="model.ProgramType == @((int)ProgramTypes.WDAService)" class="k-item k-state-default"
+                    ng-repeat="process in model.DynamicProcesses"
+                    data-state="{{PopulateSectionText(process) == 'Not Started' || PopulateSectionText(process) == 'Optional'? 'disabled' : 'enabled'}}"
+                    id="item{{process.ServiceCategoryTypeId}}">
+                    <span class="k-link k-header" ng-click="toggleSection($event)">
+                        <span class="panel-bar__heading--text">{{process.ServiceCategoryCaption}}</span>
+                        <span class="panel-bar__heading--description notice--icon"
+                              ng-if="process.ServiceCategoryTypeId == @((int)ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider > 0 && (((process.MinProvider > 0 || process.AssociatedEligibleCost.EstimatedCost > 0 && process.AssociatedEligibleCost.ServiceLines && process.AssociatedEligibleCost.ServiceLines.length > 0) && !process.TrainingProviders.length) || (process.MaxProvider > 0 && process.AssociatedEligibleCost && process.AssociatedEligibleCost.EstimatedCost > 0 && (process.TrainingProviders && process.TrainingProviders.length > process.MaxProvider)))">
+                            At least one provider must be added to your application.
+                        </span>
+                        <span class="panel-bar__status">
+                            <text>
+                                <span ng-if="process.ServiceCategoryTypeId == @((int)ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider > 0" class="label {{PopulateSectionClass(process)}}">{{PopulateSectionText(process)}}</span>
+                                <span ng-if="!(process.ServiceCategoryTypeId == @((int)ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider > 0)" class="label {{PopulateSectionClass(process)}}">{{PopulateSectionText(process)}}</span>
+                            </text>
+                            <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
+                                <a class="btn btn--secondary" style="height: auto;"
+                                   ng-if="process.ServiceCategoryTypeId == @((int)ServiceTypes.SkillsTraining)"
+                                   ng-disabled="process.MaxPrograms <= process.TrainingPrograms.length"
+                                   href="/Ext/Application/{{model.Id}}/Skills/Training/View/{{process.ServiceCategoryId}}/0">Add<br />New</a>
+                                <a class="btn btn--secondary"
+                                   style="{{process.MaxProvider > 0 ? 'height:55.07px;text-align:center' : ''}}"
+                                   ng-if="process.ServiceCategoryTypeId == @((int)ServiceTypes.EmploymentServicesAndSupports)"
+                                   href="/Ext/Application/{{model.Id}}/Employment/Services/Supports/View/{{process.ServiceCategoryId}}{{process.AssociatedEligibleCost != null ? '/' + process.AssociatedEligibleCost.Id : ''}}">Edit</a>
+                                <a class="btn btn--secondary"
+                                   style="margin-right:5px; height: auto;"
+                                   ng-if="process.ServiceCategoryTypeId == @((int)ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider > 0"
+                                   ng-disabled="process.MaxProvider <= process.TrainingProviders.length"
+                                   href="/Ext/Application/{{model.Id}}/Service/Provider/View/{{process.ServiceCategoryId}}/0">Add<br />Provider</a>
+                            </span>
+                        </span>
+                        <span ng-class="process.ServiceCategoryTypeId == @((int)ServiceTypes.SkillsTraining) || process.MaxProvider > 0 ? 'k-icon k-i-arrow-n k-panelbar-collapse' : 'k-icon k-i-arrow-s k-panelbar-expand'"></span>
+                    </span>
+                    <div style="padding-bottom:0"
+                         ng-class="(process.ServiceCategoryTypeId == @((int)ServiceTypes.SkillsTraining)) || (process.ServiceCategoryTypeId == @((int)ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider > 0)? 'ng-show' : 'ng-hide'">
+                        <div ng-if="process.ServiceCategoryTypeId == @((int)ServiceTypes.SkillsTraining)">
+                            @Html.Partial("_SkillsTrainingView", Model.GrantApplication.ApplicationStateExternal)
+                        </div>
+                        <div ng-if="process.ServiceCategoryTypeId == @((int)ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider > 0">
+                            @Html.Partial("_ServiceProviderView", Model.GrantApplication.ApplicationStateExternal)
+                        </div>
+                        <div ng-if="process.ServiceCategoryTypeId == @((int)ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider == 0">
+                            @Html.Partial("_EmploymentServicesAndSupportsView")
+                        </div>
+                    </div>
+                </li>
+                <li ng-show="model.ProgramType == @((int)ProgramTypes.EmployerGrant)" class="k-item k-state-default"
+                    data-state="{{model.TrainingProgram == null || model.TrainingProgram.TrainingProgramState == null ? 'disabled' : 'enabled'}}">
+                    <span class="k-link k-header" ng-click="toggleSection($event)">
+                        <span class="panel-bar__heading--text">Training program</span>
+                        <span class="panel-bar__status">
+                            <text>
+                                <span class="label {{PopulateClass('Program')}}">{{PopulateText('Program')}}</span>
+                            </text>
+                            <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
+                                <a class="btn btn--secondary" href="/Ext/Training/Program/View/{{model.Id}}/{{model.TrainingProgram == null? 0 : model.TrainingProgram.Id}}">Edit</a>
+                            </span>
+                        </span>
+                        <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
+                    </span>
+                    <div class="ng-hide">
+                        @Html.Partial("_TrainingProgramView")
+                    </div>
+                </li>
+                <li ng-show="model.ProgramType == @((int)ProgramTypes.EmployerGrant)" class="k-item k-state-default"
+                    data-state="{{model.TrainingProvider == null || model.TrainingProvider.TrainingProviderState == null ? 'disabled' : 'enabled'}}">
+                    <span class="k-link k-header" ng-click="toggleSection($event)">
+                        <span class="panel-bar__heading--text">Training provider</span>
+                        <span class="panel-bar__status">
+                            <text>
+                                <span class="label {{PopulateClass('AssociatedProvider')}}">{{PopulateText('AssociatedProvider')}}</span>
+                            </text>
+                            <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
+                                <a class="btn btn--secondary" href="/Ext/Training/Provider/View/{{model.Id}}/{{model.TrainingProvider == null? 0 : model.TrainingProvider.Id}}">Edit</a>
+                            </span>
+                        </span>
+                        <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
+                    </span>
+                    <div class="ng-hide">
+                        @Html.Partial("_TrainingProviderView")
+                    </div>
+                </li>
+                <li class="k-item k-state-default"
+                    data-state="{{model.TrainingCost == null || (model.TrainingCost.TrainingCostState == 0 && model.TrainingCost.TotalCost == 0) ? 'disabled' : 'enabled'}}">
+                    <span class="k-link k-header" ng-click="toggleSection($event)">
+                        <span class="panel-bar__heading--text">Training costs</span>
+                        <span class="panel-bar__status">
+                            <text>
+                                <span class="label {{PopulateClass('Cost')}}">{{PopulateText('Cost')}}</span>
+                            </text>
+                            <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
+                                @Html.ActionLink("Edit", nameof(TrainingCostController.TrainingCostView), nameof(TrainingCostController).Replace("Controller", ""), new { id = ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary", ng_if = "model.TrainingProgram == null || model.TrainingProgram.Id" })
+                            </span>
+                        </span>
+                        <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
+                    </span>
+                    <div class="ng-hide">
+                        @Html.Partial("_TrainingCostView", new ViewDataDictionary { { "showESS", 1 } })
+                    </div>
+                </li>
+                <li class="k-item k-state-default"
+                    data-state="{{model.CanReportParticipants ? 'enabled' : 'disabled'}}">
+                    <span class="k-link k-header" ng-click="toggleSection($event)">
+                        <span class="panel-bar__heading--text">Participant information</span>
+                        <span class="panel-bar__status">
+                            <text>
+                                <span class="label {{PopulateClass('PIF')}}">{{PopulateText('PIF')}}</span>
+                            </text>
+                            <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
+                                <a class="btn btn--secondary" href="/Ext/Reporting/Participant/View/{{model.Id}}" ng-disabled="!model.CanReportParticipants">Edit</a>
+                            </span>
+                        </span>
+                        <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
+                    </span>
+                    <div class="ng-hide">
+                        @Html.Partial("_ParticipantList")
+                    </div>
+                </li>
+            </ul>
+
+            <div class="notice" ng-show="section.showPifWarning">
+                <div class="inline-help">
+                    <p>
+                        Please click Edit in Participant Information to return to that section and select the expected training outcome for each participant.
+                    </p>
+                </div>    
+            </div>
+
+            <p class="notice notice--icon" ng-if="(model.CanSubmit && !model.PIFCompletionConfirmed)">
+                You must ensure the number of Participant Information Forms submitted ({{model.Participants.length}}) is equal to the number of participants ({{model.MaxParticipantsAllowed}}) that will receive training.
             </p>
-            <div class="notice notice--icon"
-                 ng-if="(model.ApplicationStateExternal == @((int)ApplicationStateExternal.Complete) && model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)) || (model.ApplicationStateExternal == @((int)ApplicationStateExternal.Complete) && !model.OrganizationCreated) || (model.ApplicationStateExternal < @((int)ApplicationStateExternal.Complete) && model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)) || (model.ApplicationStateExternal < @((int)ApplicationStateExternal.Complete) && model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant))">
-                <p ng-if="model.ApplicationStateExternal == @((int)ApplicationStateExternal.Complete) && model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">Your application is complete.  Your earliest submission date is shown in the status block.</p>
-                <p ng-if="model.ApplicationStateExternal == @((int)ApplicationStateExternal.Complete) && !model.OrganizationCreated">You will not be able to submit your application until a member of your organization enters an organization profile using the link above.  Click the link and read the instructions now.</p>
-                <p ng-if="model.ApplicationStateExternal < @((int)ApplicationStateExternal.Complete) && model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">Complete the following information. Once complete, you can review and submit the application on or after the earliest submission date.</p>
-                <p ng-if="model.ApplicationStateExternal < @((int)ApplicationStateExternal.Complete) && model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">Complete the following information. Once complete, you can review and submit the application.</p>
+
+            <div class="button-group">
+                <span ng-if="model.ProgramType == @((int)ProgramTypes.WDAService) && model.ApplicationStateExternal == @((int)ApplicationStateExternal.ApplicationWithdrawn)">
+                    <a class="btn btn--primary" href="/Ext/Application/Resume/{{model.Id}}" value="Resume">Resume application</a>
+                </span>
+                <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
+                    <a class="btn btn--primary" href="/Ext/Application/Review/View/{{model.Id}}" value="Review and submit" ng-disabled="!(model.CanSubmit && model.PIFCompletionConfirmed && AllParticipantsHaveOutcomes())">Review and submit</a>
+                </span>
             </div>
-        <ul class="panel-bar k-widget k-reset k-header k-panelbar" id="panelBar">
-            <li class="k-item k-state-default k-first">
-                <span class="panel-bar__heading k-link k-header" ng-click="toggleSection($event)">
-                    <span class="panel-bar__heading--text">Grant Selection</span>
-                    <span class="panel-bar__status">
-                        <text>
-                            <span class="label {{PopulateClass('Selection')}}">{{PopulateText('Selection')}}</span>
-                        </text>
-                        <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
-                            @Html.ActionLink("Edit", nameof(ApplicationController.GrantSelectionView), new { grantApplicationId = (int?)ViewBag.GrantApplicationId, grantProgramId = 0 }, new { @class = "btn btn--secondary" })
-                        </span>
-                    </span>
-                    <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
-                </span>
-                <div class="ng-hide">
-                    @Html.Partial("_GrantSelectionView")
-                </div>
-            </li>
-            <li ng-show="model.ProgramType == @((int)ProgramTypes.WDAService)" class="k-item k-state-default"
-                data-state="{{PopulateText('Description') == 'Not Started' ? 'disabled' : 'enabled' }}">
-                <span class="k-link k-header" ng-click="toggleSection($event)">
-                    <span class="panel-bar__heading--text">Program Description</span>
-                    <span class="panel-bar__status">
-                        <text>
-                            <span class="label {{PopulateClass('Description')}}">{{PopulateText('Description')}}</span>
-                        </text>
-                        <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
-                            <a class="btn btn--secondary" href="@Url.Action("ProgramDescriptionView", "ProgramDescription", new { grantApplicationId = (int?)ViewBag.GrantApplicationId })">Edit</a>
-                        </span>
-                    </span>
-                    <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
-                </span>
-                <div class="ng-hide">
-                    @Html.Partial("_ProgramDescriptionView")
-                </div>
-            </li>
-            <li ng-show="model.EnableAttachments" class="k-item k-state-default"
-                data-state="{{model.AttachmentCount == 0 ? 'disabled' : 'enabled'}}">
-                <span class="k-link k-header" ng-click="toggleSection($event)">
-                    <span ng-if="model.AttachmentsHeader.length < 80 " class="panel-bar__heading--text" style="white-space: normal;">{{model.AttachmentsHeader }}</span>
-                    <span ng-if="model.AttachmentsHeader.length >= 80 " class="panel-bar__heading--text" style="white-space:nowrap; overflow: hidden; text-overflow: ellipsis;">{{model.AttachmentsHeader }}</span>
-                    <span class="panel-bar__status">
-                        <text>
-                            <span class="label {{PopulateClass('Attachment')}}">{{PopulateText('Attachment')}}</span>
-                        </text>
-                        <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
-                            @Html.ActionLink("Edit", nameof(ApplicationAttachmentController.AttachmentsView), typeof(ApplicationAttachmentController), new { grantApplicationId = (int?)ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary" })
-                        </span>
-                    </span>
-                    <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
-                </span>
-                <div class="ng-hide">
-                    @Html.Partial("_AttachmentsView")
-                </div>
-            </li>
-            <li ng-show="model.EnableBusinessCase && model.ProgramType == @((int)ProgramTypes.EmployerGrant)" class="k-item k-state-default"
-                data-state="{{model.HasBusinessCase? 'enabled' : 'disabled'}}">
-                <span class="k-link k-header" ng-click="toggleSection($event)">
-                    <span ng-if="model.BusinessCaseHeader.length < 80 " class="panel-bar__heading--text" style="white-space: normal;">{{model.BusinessCaseHeader }}</span>
-                    <span ng-if="model.BusinessCaseHeader.length >= 80 " class="panel-bar__heading--text" style="white-space:nowrap; overflow: hidden; text-overflow: ellipsis;">{{model.BusinessCaseHeader }}</span>
-                    <span class="panel-bar__status">
-                        <text>
-                            <span class="label {{PopulateClass('BusinessCase')}}">{{PopulateText('BusinessCase')}}</span>
-                        </text>
-                        <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
-                            @Html.ActionLink("Edit", nameof(ApplicationAttachmentController.BusinessCaseView), typeof(ApplicationAttachmentController), new { grantApplicationId = (int?)ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary" })
-                        </span>
-                    </span>
-                    <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
-                </span>
-                <div class="ng-hide">
-                    @Html.Partial("_BusinessCaseView")
-                </div>
-            </li>
-            <li ng-show="model.ProgramType == @((int)ProgramTypes.WDAService)" class="k-item k-state-default"
-                ng-repeat="process in model.DynamicProcesses"
-                data-state="{{PopulateSectionText(process) == 'Not Started' || PopulateSectionText(process) == 'Optional'? 'disabled' : 'enabled'}}"
-                id="item{{process.ServiceCategoryTypeId}}">
-                <span class="k-link k-header" ng-click="toggleSection($event)">
-                    <span class="panel-bar__heading--text">{{process.ServiceCategoryCaption}}</span>
-                    <span class="panel-bar__heading--description notice--icon"
-                          ng-if="process.ServiceCategoryTypeId == @((int)ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider > 0 && (((process.MinProvider > 0 || process.AssociatedEligibleCost.EstimatedCost > 0 && process.AssociatedEligibleCost.ServiceLines && process.AssociatedEligibleCost.ServiceLines.length > 0) && !process.TrainingProviders.length) || (process.MaxProvider > 0 && process.AssociatedEligibleCost && process.AssociatedEligibleCost.EstimatedCost > 0 && (process.TrainingProviders && process.TrainingProviders.length > process.MaxProvider)))">
-                        At least one provider must be added to your application.
-                    </span>
-                    <span class="panel-bar__status">
-                        <text>
-                            <span ng-if="process.ServiceCategoryTypeId == @((int)ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider > 0" class="label {{PopulateSectionClass(process)}}">{{PopulateSectionText(process)}}</span>
-                            <span ng-if="!(process.ServiceCategoryTypeId == @((int)ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider > 0)" class="label {{PopulateSectionClass(process)}}">{{PopulateSectionText(process)}}</span>
-                        </text>
-                        <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
-                            <a class="btn btn--secondary" style="height: auto;"
-                               ng-if="process.ServiceCategoryTypeId == @((int)ServiceTypes.SkillsTraining)"
-                               ng-disabled="process.MaxPrograms <= process.TrainingPrograms.length"
-                               href="/Ext/Application/{{model.Id}}/Skills/Training/View/{{process.ServiceCategoryId}}/0">Add<br />New</a>
-                            <a class="btn btn--secondary"
-                               style="{{process.MaxProvider > 0 ? 'height:55.07px;text-align:center' : ''}}"
-                               ng-if="process.ServiceCategoryTypeId == @((int)ServiceTypes.EmploymentServicesAndSupports)"
-                               href="/Ext/Application/{{model.Id}}/Employment/Services/Supports/View/{{process.ServiceCategoryId}}{{process.AssociatedEligibleCost != null ? '/' + process.AssociatedEligibleCost.Id : ''}}">Edit</a>
-                            <a class="btn btn--secondary"
-                               style="margin-right:5px; height: auto;"
-                               ng-if="process.ServiceCategoryTypeId == @((int)ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider > 0"
-                               ng-disabled="process.MaxProvider <= process.TrainingProviders.length"
-                               href="/Ext/Application/{{model.Id}}/Service/Provider/View/{{process.ServiceCategoryId}}/0">Add<br />Provider</a>
-                        </span>
-                    </span>
-                    <span ng-class="process.ServiceCategoryTypeId == @((int)ServiceTypes.SkillsTraining) || process.MaxProvider > 0 ? 'k-icon k-i-arrow-n k-panelbar-collapse' : 'k-icon k-i-arrow-s k-panelbar-expand'"></span>
-                </span>
-                <div style="padding-bottom:0"
-                     ng-class="(process.ServiceCategoryTypeId == @((int)ServiceTypes.SkillsTraining)) || (process.ServiceCategoryTypeId == @((int)ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider > 0)? 'ng-show' : 'ng-hide'">
-                    <div ng-if="process.ServiceCategoryTypeId == @((int)ServiceTypes.SkillsTraining)">
-                        @Html.Partial("_SkillsTrainingView", Model.GrantApplication.ApplicationStateExternal)
-                    </div>
-                    <div ng-if="process.ServiceCategoryTypeId == @((int)ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider > 0">
-                        @Html.Partial("_ServiceProviderView", Model.GrantApplication.ApplicationStateExternal)
-                    </div>
-                    <div ng-if="process.ServiceCategoryTypeId == @((int)ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider == 0">
-                        @Html.Partial("_EmploymentServicesAndSupportsView")
-                    </div>
-                </div>
-            </li>
-            <li ng-show="model.ProgramType == @((int)ProgramTypes.EmployerGrant)" class="k-item k-state-default"
-                data-state="{{model.TrainingProgram == null || model.TrainingProgram.TrainingProgramState == null ? 'disabled' : 'enabled'}}">
-                <span class="k-link k-header" ng-click="toggleSection($event)">
-                    <span class="panel-bar__heading--text">Training Program</span>
-                    <span class="panel-bar__status">
-                        <text>
-                            <span class="label {{PopulateClass('Program')}}">{{PopulateText('Program')}}</span>
-                        </text>
-                        <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
-                            <a class="btn btn--secondary" href="/Ext/Training/Program/View/{{model.Id}}/{{model.TrainingProgram == null? 0 : model.TrainingProgram.Id}}">Edit</a>
-                        </span>
-                    </span>
-                    <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
-                </span>
-                <div class="ng-hide">
-                    @Html.Partial("_TrainingProgramView")
-                </div>
-            </li>
-            <li ng-show="model.ProgramType == @((int)ProgramTypes.EmployerGrant)" class="k-item k-state-default"
-                data-state="{{model.TrainingProvider == null || model.TrainingProvider.TrainingProviderState == null ? 'disabled' : 'enabled'}}">
-                <span class="k-link k-header" ng-click="toggleSection($event)">
-                    <span class="panel-bar__heading--text">Training Provider</span>
-                    <span class="panel-bar__status">
-                        <text>
-                            <span class="label {{PopulateClass('AssociatedProvider')}}">{{PopulateText('AssociatedProvider')}}</span>
-                        </text>
-                        <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
-                            <a class="btn btn--secondary" href="/Ext/Training/Provider/View/{{model.Id}}/{{model.TrainingProvider == null? 0 : model.TrainingProvider.Id}}">Edit</a>
-                        </span>
-                    </span>
-                    <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
-                </span>
-                <div class="ng-hide">
-                    @Html.Partial("_TrainingProviderView")
-                </div>
-            </li>
-            <li class="k-item k-state-default"
-                data-state="{{model.TrainingCost == null || (model.TrainingCost.TrainingCostState == 0 && model.TrainingCost.TotalCost == 0) ? 'disabled' : 'enabled'}}">
-                <span class="k-link k-header" ng-click="toggleSection($event)">
-                    <span class="panel-bar__heading--text">Training Costs</span>
-                    <span class="panel-bar__status">
-                        <text>
-                            <span class="label {{PopulateClass('Cost')}}">{{PopulateText('Cost')}}</span>
-                        </text>
-                        <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
-                            @Html.ActionLink("Edit", nameof(TrainingCostController.TrainingCostView), nameof(TrainingCostController).Replace("Controller", ""), new { id = ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary", ng_if = "model.TrainingProgram == null || model.TrainingProgram.Id" })
-                        </span>
-                    </span>
-                    <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
-                </span>
-                <div class="ng-hide">
-                    @Html.Partial("_TrainingCostView", new ViewDataDictionary { { "showESS", 1 } })
-                </div>
-            </li>
-            <li class="k-item k-state-default"
-                data-state="{{model.CanReportParticipants ? 'enabled' : 'disabled'}}">
-                <span class="k-link k-header" ng-click="toggleSection($event)">
-                    <span class="panel-bar__heading--text">Participant Information</span>
-                    <span class="panel-bar__status">
-                        <text>
-                            <span class="label {{PopulateClass('PIF')}}">{{PopulateText('PIF')}}</span>
-                        </text>
-                        <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
-                            <a class="btn btn--secondary" href="/Ext/Reporting/Participant/View/{{model.Id}}" ng-disabled="!model.CanReportParticipants">Edit</a>
-                        </span>
-                    </span>
-                    <span class="k-icon k-i-arrow-s k-panelbar-expand"></span>
-                </span>
-                <div class="ng-hide">
-                    @Html.Partial("_ParticipantList")
-                </div>
-            </li>
-        </ul>
-
-        <div class="notice" ng-show="section.showPifWarning">
-            <div class="inline-help">
-                <p>
-                    Please click Edit in Participant Information to return to that section and select the expected training outcome for each participant.
-                </p>
-            </div>    
-        </div>
-
-        <p class="notice notice--icon" ng-if="(model.CanSubmit && !model.PIFCompletionConfirmed)">
-            You must ensure the number of Participant Information Forms submitted ({{model.Participants.length}}) is equal to the number of participants ({{model.MaxParticipantsAllowed}}) that will receive training.
-        </p>
-
-        <div class="button-group">
-            <span ng-if="model.ProgramType == @((int)ProgramTypes.WDAService) && model.ApplicationStateExternal == @((int)ApplicationStateExternal.ApplicationWithdrawn)">
-                <a class="btn btn--primary" href="/Ext/Application/Resume/{{model.Id}}" value="Resume">Resume Application</a>
-            </span>
-            <span ng-if="model.ApplicationStateExternal != @((int)ApplicationStateExternal.ApplicationWithdrawn)">
-                <a class="btn btn--primary" href="/Ext/Application/Review/View/{{model.Id}}" value="Review and submit" ng-disabled="!(model.CanSubmit && model.PIFCompletionConfirmed && AllParticipantsHaveOutcomes())">Review and submit</a>
-            </span>
-        </div>
 
             @*<hr/>
         <div>

@@ -1,4 +1,4 @@
-﻿@model CJG.Web.External.Areas.Int.Models.ParticipantInfoViewModel
+@model CJG.Web.External.Areas.Int.Models.ParticipantInfoViewModel
 
 <div ng-controller="ParticipantHistory" participant-id="@ViewBag.ParticipantId" class="page--training-provider-history">
     <div class="wrapper--intake-queue-datatable" style="padding: 0.5em;">
@@ -13,21 +13,21 @@
                     <th class="data-grid-sub-header" ng-click="changeSorting('ApplicationStatus')"><img ng-src="{{imgSrcApplicationStatus}}" />Application Status</th>
                     <th class="data-grid-sub-header" ng-click="changeSorting('TrainingProvider')"><img ng-src="{{imgSrcTrainingProvider}}" />Training Provider</th>
                     <th class="data-grid-sub-header" ng-click="changeSorting('TrainingCourse')"><img ng-src="{{imgSrcTrainingCourse}}" />Training Course</th>
-                    <th class="data-grid-sub-header" ng-click="changeSorting('ApprovedGovtContribution')"><img ng-src="{{imgSrcApprovedGovtContribution}}" />Approved Gov''t Contribution</th>
+                    <th class="data-grid-sub-header" ng-click="changeSorting('ApprovedGovtContribution')"><img ng-src="{{imgSrcApprovedGovtContribution}}" />Approved Gov't Contribution</th>
                     <th class="data-grid-sub-header" ng-click="changeSorting('AmountPaid')"><img ng-src="{{imgSrcAmountPaid}}" />Amount Paid or Owing</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="thist in $parent.$ctrl.ngItems |orderBy:sort.column:sort.descending">
-                    <td><a href="/Int/Application/Details/View/{{thist.GrantId}}" target="_blank">{{thist.FileNumber}}</a></td>
-                    <td>{{thist.TrainingStartDate}}</td>
-                    <td>{{thist.TrainingEndDate}}</td>
-                    <td>{{thist.TrainingStream}}</td>
-                    <td>{{thist.ApplicationStatus}}</td>
-                    <td>{{thist.TrainingProvider}}</td>
-                    <td>{{thist.TrainingCourse}}</td>
-                    <td class="data-grid-right-data">{{thist.ApprovedGovtContribution}}</td>
-                    <td class="data-grid-right-data">{{thist.AmountPaid}}</td>
+                <tr ng-repeat="trainingHistory in $parent.$ctrl.ngItems |orderBy:sort.column:sort.descending">
+                    <td><a href="/Int/Application/Details/View/{{trainingHistory.GrantId}}" target="_blank">{{trainingHistory.FileNumber}}</a></td>
+                    <td>{{trainingHistory.TrainingStartDate}}</td>
+                    <td>{{trainingHistory.TrainingEndDate}}</td>
+                    <td>{{trainingHistory.TrainingStream}}</td>
+                    <td>{{trainingHistory.ApplicationStatus}}</td>
+                    <td>{{trainingHistory.TrainingProvider}}</td>
+                    <td>{{trainingHistory.TrainingCourse}}</td>
+                    <td class="data-grid-right-data">{{trainingHistory.ApprovedGovtContribution}}</td>
+                    <td class="data-grid-right-data">{{trainingHistory.AmountPaid}}</td>
                 </tr>
                 </tbody>
             </table>

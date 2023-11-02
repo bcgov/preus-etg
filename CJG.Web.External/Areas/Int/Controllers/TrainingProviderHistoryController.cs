@@ -1,4 +1,7 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Linq;
+using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities.Helpers;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
@@ -7,16 +10,13 @@ using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.Linq;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	/// <summary>
-	/// <typeparamref name="TrainingProviderHistoryController"/> class, provides endpoints to manage Training Provider History.
-	/// </summary>
-	[RouteArea("Int")]
+    /// <summary>
+    /// <typeparamref name="TrainingProviderHistoryController"/> class, provides endpoints to manage Training Provider History.
+    /// </summary>
+    [RouteArea("Int")]
 	[RoutePrefix("Training/Provider")]
 	[AuthorizeAction(Privilege.AM1, Privilege.AM2, Privilege.AM3, Privilege.AM4, Privilege.AM5)]
 	public class TrainingProviderHistoryController : BaseController

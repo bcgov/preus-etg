@@ -39,7 +39,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			_completionReportService = completionReportService;
 		}
 
-		#region Endpoints
 		/// <summary>
 		/// Load the grant file view
 		/// </summary>
@@ -98,6 +97,5 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
-		#endregion
 	}
 }

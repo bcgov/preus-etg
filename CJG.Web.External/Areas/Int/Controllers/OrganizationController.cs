@@ -73,14 +73,16 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <param name="page"></param>
 		/// <param name="quantity"></param>
 		/// <param name="search"></param>
+		/// <param name="riskFlag"></param>
 		/// <returns></returns>
 		[HttpGet, Route("Search/{page}/{quantity}")]
-		public JsonResult GetOrganization(int page, int quantity, string search)
+		public JsonResult GetOrganization(int page, int quantity, string search, bool? riskFlag)
 		{
 			var model = new BaseViewModel();
 			try
 			{
-				var orgList = _organizationService.GetOrganizationList(page, quantity, search);
+				var orgList = _organizationService.GetOrganizationList(page, quantity, search, isRisk: riskFlag);
+
 				var result = new
 				{
 					RecordsFiltered = orgList.Items.Count(),

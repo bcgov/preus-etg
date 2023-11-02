@@ -27,7 +27,7 @@
 					  model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.CancelledByAgreementHolder) ||
 					  model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.ReturnedUnassessed) ||
 					  model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.AcceptGrantAgreement))">
-            @Html.ActionLink("Return", nameof(CJG.Web.External.Areas.Ext.Controllers.ReportingController.GrantFileView), nameof(CJG.Web.External.Areas.Ext.Controllers.ReportingController).Replace("Controller", ""), new { @grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "link--back" })
+            @Html.ActionLink("Return", nameof(ReportingController.GrantFileView), nameof(ReportingController).Replace("Controller", ""), new { @grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "link--back" })
 
         </div>
         <div class="main">
@@ -38,10 +38,10 @@
 
             <program-title-label ng-model="model.ProgramTitleLabel"></program-title-label>
 
-            <h2>View Grant Application</h2>
+            <h2>View grant application</h2>
             <p class="notice notice--icon"
                ng-if="model.GrantOpeningState == @((int)CJG.Core.Entities.GrantOpeningStates.Closed) && model.ApplicationStateExternal < @((int)CJG.Core.Entities.ApplicationStateExternal.Submitted)">
-                Your grant selection is no longer available.  You must make a new grant selection for this application.
+                Your grant selection is no longer available. You must make a new grant selection for this application.
             </p>
             <div class="notice notice--icon"
                  ng-if="model.GrantOpeningState != @((int)CJG.Core.Entities.GrantOpeningStates.Closed) && model.ApplicationStateExternal <= @((int)CJG.Core.Entities.ApplicationStateExternal.Complete)">
@@ -50,10 +50,6 @@
                 <p ng-if="model.ApplicationStateExternal == @((int)ApplicationStateExternal.Complete) && !model.OrganizationCreated">You will not be able to submit your application until a member of your organization enters an organization profile using the link above.  Click the link and read the instructions now.</p>
                 <p ng-if="model.ApplicationStateExternal < @((int)ApplicationStateExternal.Complete) && model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">Complete the following information. Once complete, you can review and submit the application on or after the earliest submission date.</p>
                 <p ng-if="model.ApplicationStateExternal < @((int)ApplicationStateExternal.Complete) && model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">Complete the following information. Once complete, you can review and submit the application.</p>
-                @*<p ng-if="model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.Complete)">Your application is complete.  Your earliest submission date is shown in the status block.</p>*@
-                @*<p ng-if="model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.Complete) && model.OrganizationNotCreated">You will not be able to submit your application until a member of your organization enters an organization profile using the link above.  Click the link and read the instructions now.</p>*@
-                @*<p ng-if="model.ApplicationStateExternal < @((int)CJG.Core.Entities.ApplicationStateExternal.Complete)">Complete the following information. Once complete, you can review and submit the application on or after the earliest submission date.</p>*@
-                @*<p ng-if="model.ApplicationStateExternal < @((int)CJG.Core.Entities.ApplicationStateExternal.Complete)">Complete the following information. Once complete, you can review and submit the application.</p>*@
             </div>
 
             <div class="alert--error"
@@ -63,7 +59,7 @@
 
             <div>
                 <div class="heading-group action" ng-click="showComponent($event)">
-                    <h4 class="light width-90">Applicant Contact</h4>
+                    <h4 class="light width-90">Applicant contact</h4>
                     <span class="icon small up-arrow"></span>
                 </div>
                 <div>
@@ -83,7 +79,7 @@
 
             <div>
                 <div class="heading-group action" ng-click="showComponent($event)">
-                    <h4 class="light width-90">Grant Selection</h4>
+                    <h4 class="light width-90">Grant selection</h4>
                     <span class="icon small down-arrow"></span>
                 </div>
                 <div class="ng-hide">
@@ -93,7 +89,7 @@
 
             <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
                 <div class="heading-group action" ng-click="showComponent($event)">
-                    <h4 class="light width-90">Program Description</h4>
+                    <h4 class="light width-90">Program description</h4>
                     <span class="icon small down-arrow"></span>
                 </div>
                 <div class="ng-hide">
@@ -137,7 +133,7 @@
 
             <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
                 <div class="heading-group action" ng-click="showComponent($event)">
-                    <h4 class="light width-90">Training Provider</h4>
+                    <h4 class="light width-90">Training provider</h4>
                     <span class="icon small down-arrow"></span>
                 </div>
                 <div class="ng-hide">
@@ -147,7 +143,7 @@
 
             <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
                 <div class="heading-group action" ng-click="showComponent($event)">
-                    <h4 class="light width-90">Training Program</h4>
+                    <h4 class="light width-90">Training program</h4>
                     <span class="icon small down-arrow"></span>
                 </div>
                 <div class="ng-hide">
@@ -157,7 +153,7 @@
 
             <div>
                 <div class="heading-group action" ng-click="showComponent($event)">
-                    <h4 class="light width-90">Training Costs</h4>
+                    <h4 class="light width-90">Training costs</h4>
                     <span class="icon small down-arrow"></span>
                 </div>
                 <div class="ng-hide">

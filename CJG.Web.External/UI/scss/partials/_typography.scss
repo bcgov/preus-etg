@@ -56,6 +56,10 @@ h6 {
   font-weight: bold;
   line-height: 1;
   text-transform: capitalize;
+
+  &.sentence--case {
+    text-transform: initial;
+  }
 }
 
 .header--small {
@@ -85,7 +89,7 @@ h6 {
 .subheader--step {
   font-size: $font-size-small;
   font-weight: 400;
-  text-transform: uppercase;
+//  text-transform: uppercase;
   &.with-pad {
     padding-bottom: gap(2);
   }

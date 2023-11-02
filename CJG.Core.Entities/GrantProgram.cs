@@ -100,19 +100,19 @@ namespace CJG.Core.Entities
 		public GrantProgramStates State { get; set; } = GrantProgramStates.NotImplemented;
 
 		/// <summary>
-		/// get/set - The foreign key to the applicant declation documente template.
+		/// get/set - The foreign key to the applicant declaration document template.
 		/// </summary>
 		public int ApplicantDeclarationTemplateId { get; set; }
 
 		/// <summary>
-		/// get/set - The applicant declartion document template.
+		/// get/set - The applicant declaration document template.
 		/// </summary>
 		[ForeignKey(nameof(ApplicantDeclarationTemplateId))]
 		[InverseProperty("ApplicantDeclarationTemplates")]
 		public virtual DocumentTemplate ApplicantDeclarationTemplate { get; set; }
 
 		/// <summary>
-		/// get/set - The foreign key to the applicant cover letter documente template.
+		/// get/set - The foreign key to the applicant cover letter document template.
 		/// </summary>
 		public int ApplicantCoverLetterTemplateId { get; set; }
 
@@ -124,7 +124,7 @@ namespace CJG.Core.Entities
 		public virtual DocumentTemplate ApplicantCoverLetterTemplate { get; set; }
 
 		/// <summary>
-		/// get/set - The foreign key to the applicant schedule A documente template.
+		/// get/set - The foreign key to the applicant schedule A document template.
 		/// </summary>
 		public int ApplicantScheduleATemplateId { get; set; }
 

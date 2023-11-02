@@ -1,6 +1,7 @@
-﻿@using CJG.Web.External.Areas.Ext.Controllers
-
-@model CJG.Web.External.Areas.Ext.Models.ApplicationStartViewModel
+﻿@model CJG.Web.External.Areas.Ext.Models.ApplicationStartViewModel
+@{
+    ViewBag.Title = "Start a new application";
+}
 
 <div ng-controller="GrantSelectionView" ng-init="init()" 
      ng-grant-application-id="@ViewBag.GrantApplicationId" 
@@ -17,20 +18,19 @@
         <div class="main" role="main">
             <div ng-show="isNewApplication">
                 <div ng-show="isDuplication">
-                    <h1 class="header--large">Duplicate <span class="text--lowercase">a</span> new application</h1>
+                    <h1 class="header--large sentence--case">Duplicate <span class="text--lowercase">a</span> new application</h1>
                 </div>
                 <div ng-show="!isDuplication">
-                    <h1 class="header--large">Start <span class="text--lowercase">a</span> new application</h1>
+                    <h1 class="header--large sentence--case">Start <span class="text--lowercase">a</span> new application</h1>
                 </div>                
-                <div class="notice notice--icon">
-                    <div>
-                        <p><strong>Before you start:</strong> Employers or authorized employees of the applicant employer must submit their application on their own behalf, using their Business BCeID.</p>
-                        <p>Employers are not permitted to share their BCeID user login ID and third parties (e.g. training providers, fee-based service providers) cannot apply on an employer’s behalf.</p>
-                    </div>
+                <div>
+                    
+                    <p>Please fill in each section of this form. This will help us assess your application quickly.</p>
+                    <p><p><strong>Before you start:</strong> Only employers or their authorized employees may submit an application using their Business BCeID. Employers may not share their BCeID user login ID. Other people (e.g., training providers, fee-based service providers) cannot apply on an employer’s behalf.</p>
                 </div>
             </div>
             <div ng-show="!isNewApplication">
-                <h1 class="header--large">Edit Grant Selection</h1>
+                <h1 class="header--large">Grant selection</h1>
             </div>
 
             <div ng-if="alert.message" class="row row--alert">

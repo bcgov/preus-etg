@@ -6,12 +6,10 @@ namespace CJG.Web.External.Areas.Ext.Models
 {
 	public class GrantApplicationListDetailsViewModel
 	{
-		#region Properties
 		public int Id { get; set; }
 		public string FileNumber { get; set; }
 		public string FileName { get; set; }
 
-		public object Openingtimes { get; set; }
 		public bool ShowTrainingDate { get; set; }
 		public string TrainingProgramStartDate { get; set; }
 
@@ -39,12 +37,11 @@ namespace CJG.Web.External.Areas.Ext.Models
 		public string GrantStreamName { get; set; }
 		public string GrantProgramDescriptor { get; set; }
 		public string RowVersion { get; set; }
-		#endregion
 
-		#region Constructors
 		public GrantApplicationListDetailsViewModel(GrantApplication grantApplication)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
 
 			Id = grantApplication.Id;
 			FileNumber = grantApplication.FileNumber;
@@ -110,14 +107,11 @@ namespace CJG.Web.External.Areas.Ext.Models
 									ApplicationStateExternal.ClaimReturned,
 									ApplicationStateExternal.AmendClaim,
 									ApplicationStateExternal.ReportCompletion);
-			ShowViewGrantFilesLink = grantApplication.ApplicationStateExternal.In(
-								ApplicationStateExternal.Closed);
+			ShowViewGrantFilesLink = grantApplication.ApplicationStateExternal.In(ApplicationStateExternal.Closed);
 
 		}
-		#endregion
 
-		#region Methods
-		void SetStatusInfo(ApplicationStateExternal status)
+		private void SetStatusInfo(ApplicationStateExternal status)
 		{
 			switch (status)
 			{
@@ -147,6 +141,5 @@ namespace CJG.Web.External.Areas.Ext.Models
 				case ApplicationStateExternal.ReturnedUnassessed: StatusCssClass = "warning"; StatusText = "RETURNED TO APPLICANT UNASSESSED"; break;
 			}
 		}
-		#endregion
 	}
 }

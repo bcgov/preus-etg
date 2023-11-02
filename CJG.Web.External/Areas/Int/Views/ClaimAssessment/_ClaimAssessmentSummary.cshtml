@@ -81,7 +81,7 @@
     <div class="form__group last-item">
         <div class="form__label">Eligibility Assessment Notes to File:</div>
         <div class="form__control">
-            <textarea ng-model="claim.EligibilityAssessmentNotes" ng-disabled="claim.CanEdit == false" maxlength="2000"></textarea>
+            <textarea ng-model="claim.EligibilityAssessmentNotes" ng-disabled="claim.CanEdit == false" maxlength="2000" ng-change="flagNotesUpdated()"></textarea>
             <span class="pull-right">{{2000 - claim.EligibilityAssessmentNotes.length}} chars left</span>
         </div>
     </div>
@@ -91,7 +91,7 @@
     <div class="form__group last-item">
         <div class="form__label">Reimbursement Assessment Notes to File:</div>
         <div class="form__control">
-            <textarea ng-model="claim.ReimbursementAssessmentNotes" ng-disabled="!claim.CanEdit" maxlength="2000"></textarea>
+            <textarea ng-model="claim.ReimbursementAssessmentNotes" ng-disabled="!claim.CanEdit" maxlength="2000" ng-change="flagNotesUpdated()"></textarea>
             <span class="pull-right">{{2000 - claim.ReimbursementAssessmentNotes.length}} chars left</span>
         </div>
     </div>
@@ -105,7 +105,7 @@
         </div>
         <div class="form__control">
             <p class="label--required-reason">An explanation to applicant is required for claim approval, denial, and return to applicant actions</p>
-            <textarea ng-model="claim.ClaimAssessmentNotes" ng-disabled="!claim.CanEdit" maxlength="2000"></textarea>
+            <textarea ng-model="claim.ClaimAssessmentNotes" ng-disabled="!claim.CanEdit" maxlength="2000" ng-change="flagNotesUpdated()"></textarea>
             <span class="pull-right ">{{2000 - claim.ClaimAssessmentNotes.length}} chars left</span>
             <div class="clearfix"></div>
             <a class="btn btn--primary btn--save-claim-notes pull-right margin-top" ng-click="saveNotes()" ng-if="claim.CanEdit">Save Notes</a>

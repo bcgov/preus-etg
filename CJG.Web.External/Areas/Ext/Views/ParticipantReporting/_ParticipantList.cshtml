@@ -16,18 +16,18 @@
                 <th ng-if="model.ParticipantsEditable">Action</th>
             </tr>
         </thead>
-        <tbody ng-repeat="invitation in model.ParticipantInvitations">
-            <tr>
+        <tbody>
+            <tr ng-repeat="invitation in model.ParticipantInvitations">
                 <td><strong style="white-space: nowrap">{{$index + 1}}</strong></td>
-                <td ng-if="invitation.ParticipantInvitationStatus > 0">{{invitation.LastName}}</td>
-                <td ng-if="invitation.ParticipantInvitationStatus > 0">{{invitation.FirstName}}</td>
-                <td ng-if="invitation.ParticipantInvitationStatus == 0" colspan="2">
+                <td ng-if="invitation.ParticipantInvitationStatus == 0" colspan="3">
                     <a ng-click="showParticipantDialog(invitation)">Add participant details</a>
                 </td>
-                <td class="email--address"><a href="mailto:{{invitation.EmailAddress}}">{{invitation.EmailAddress}}</a></td>
+                <td ng-if="invitation.ParticipantInvitationStatus > 0">{{invitation.LastName}}</td>
+                <td ng-if="invitation.ParticipantInvitationStatus > 0">{{invitation.FirstName}}</td>
+                <td ng-if="invitation.ParticipantInvitationStatus > 0" class="email--address"><a href="mailto:{{invitation.EmailAddress}}">{{invitation.EmailAddress}}</a></td>
                 <td>{{invitation.Outcome}}</td>
                 <td><span ng-if="invitation.ParticipantInvitationStatus > 0">{{invitation.Status}}</span></td>
-                <td class="actions">
+                <td class="actions" style="width: 150px;">
                     <button class="btn btn--primary" style="height: 40px;" ng-if="invitation.ParticipantInvitationStatus == 1" ng-click="sendParticipantInvite(invitation)">Send</button>
                     <button class="btn btn--primary" style="height: 40px;" ng-if="invitation.ParticipantInvitationStatus == 2" ng-click="sendParticipantInvite(invitation)">Resend</button>
                     <button class="btn btn--secondary" ng-if="invitation.ParticipantInvitationStatus == 1 || invitation.ParticipantInvitationStatus == 2" ng-click="removeParticipantInvite(invitation)">Remove</button>
@@ -65,8 +65,8 @@
                     <span ng-if="!participant.Approved">Ineligible</span>
                 </td>
                 <td>{{participant.PrimaryCity}}</td>
-                <td ng-class="{ 'table--datacell-late' : participant.IsLate }" style="min-width: 170px !important;">
-                    {{toPST(participant.DateAdded, 'YYYY-MM-DD HH:mm')}} <strong ng-if="participant.IsLate">Late</strong>
+                <td style="min-width: 170px !important;">
+                    {{toPST(participant.DateAdded, 'YYYY-MM-DD HH:mm')}}
                 </td>
                 <td class="wrapper--include-checkbox" ng-if="model.ParticipantsEditable">
                     <div ng-if="participant.ClaimReported">

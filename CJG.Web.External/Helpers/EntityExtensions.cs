@@ -64,15 +64,7 @@ namespace CJG.Web.External.Helpers
 		/// <returns></returns>
 		public static string GetFileName(this GrantApplication application)
 		{
-			switch (application.GetProgramType())
-			{
-				case (ProgramTypes.WDAService):
-					return application.ProgramDescription?.Description ?? "Program Name";
-				case (ProgramTypes.EmployerGrant):
-					return application.TrainingPrograms.FirstOrDefault()?.CourseTitle ?? "Training Program Name";
-				default:
-					return "";
-			}
+			return application.TrainingPrograms.FirstOrDefault()?.CourseTitle ?? "Training Program Name";
 		}
 
 		/// <summary>

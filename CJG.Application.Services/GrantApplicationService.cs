@@ -192,6 +192,28 @@ namespace CJG.Application.Services
 		}
 
 		/// <summary>
+		/// Update the specified GrantApplication in the datasource.
+		/// </summary>
+		/// <param name="grantApplication"></param>
+		/// <returns></returns>
+		public GrantApplication UpdateWithNoPermissionCheck(GrantApplication grantApplication)
+		{
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
+
+			var accountType = _httpContext.User.GetAccountType();
+			if (accountType == AccountTypes.Internal)
+			{
+				_noteService.GenerateUpdateNote(grantApplication);
+			}
+
+			_dbContext.Update(grantApplication);
+			CommitTransaction();
+
+			return grantApplication;
+		}
+
+		/// <summary>
 		/// Delete the specified grant application from the datasource.
 		/// </summary>
 		/// <param name="grantApplication"></param>
@@ -337,7 +359,7 @@ namespace CJG.Application.Services
 				throw new ArgumentNullException(nameof(grantApplication));
 
 			if (!_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.SubmitChangeRequest))
-				throw new NotAuthorizedException("The delivery dates cannot be changed at this time.");
+				throw new NotAuthorizedException("The training dates cannot be changed at this time.");
 
 			_grantAgreementService.UpdateAgreement(grantApplication);
 
@@ -345,11 +367,11 @@ namespace CJG.Application.Services
 			var originalEndDate = OriginalValue(grantApplication, ga => ga.EndDate);
 
 			if (grantApplication.StartDate != originalStartDate)
-				_noteService.AddDateChangedNote(grantApplication, "Delivery Start Date", originalStartDate,
+				_noteService.AddDateChangedNote(grantApplication, "Training Start Date", originalStartDate,
 					grantApplication.StartDate);
 
 			if (grantApplication.EndDate != originalEndDate)
-				_noteService.AddDateChangedNote(grantApplication, "Delivery End Date", originalEndDate,
+				_noteService.AddDateChangedNote(grantApplication, "Training End Date", originalEndDate,
 					grantApplication.EndDate);
 
 			_dbContext.Update(grantApplication);
@@ -794,11 +816,14 @@ namespace CJG.Application.Services
 					query = query.Where(ga => ga.AssessorId == null);
 			}
 
-			if (filter.OnlyShowPriorityRegionExceptions)
-				query = query.Where(ga => ga.PrioritizationScoreBreakdown != null && ga.PrioritizationScoreBreakdown.RegionalName == "");
+			if (filter.OnlyShowPriorityRegionExceptions == PriorityExceptionsMode.OnlyShowExceptions)
+				query = query.Where(ga => ga.PrioritizationScoreBreakdown != null
+				                          && ga.PrioritizationScoreBreakdown.RegionalName == null || ga.PrioritizationScoreBreakdown.RegionalName == "");
 
-			if (!filter.OnlyShowPriorityRegionExceptions)
-				query = query.Where(ga => ga.PrioritizationScoreBreakdown == null || (ga.PrioritizationScoreBreakdown != null && ga.PrioritizationScoreBreakdown.RegionalName != ""));
+			if (filter.OnlyShowPriorityRegionExceptions == PriorityExceptionsMode.OnlyShowNonExceptions)
+				query = query.Where(ga => ga.PrioritizationScoreBreakdown == null
+										  || (ga.PrioritizationScoreBreakdown != null
+											  && (ga.PrioritizationScoreBreakdown.RegionalName != null && ga.PrioritizationScoreBreakdown.RegionalName != "")));
 
 			var total = query.Count();
 			if (filter.OrderBy?.Any(x => x.Contains(nameof(GrantApplication.StateChanges))) ?? false)
@@ -931,6 +956,26 @@ namespace CJG.Application.Services
 							    || x.FileNumber != null && x.FileNumber.Contains(search)
 							    || x.TrainingPrograms.FirstOrDefault().CourseTitle.Contains(search)
 								|| x.ApplicantFirstName.Contains(search) || x.ApplicantLastName.Contains(search))
+				).OrderBy(x => x.FileNumber);
+
+			return filtered;
+		}
+
+		public IOrderedQueryable<GrantApplication> GetGrantApplicationsBySIN(string sin, string search)
+		{
+			var grantProgramId = GetDefaultGrantProgramId();
+			var grantApplications =
+				_dbContext.GrantApplications
+					.AsNoTracking()
+					.Where(ga => ga.ParticipantForms.Any(pf => pf.SIN == sin) && ga.ApplicationStateInternal != ApplicationStateInternal.Draft)
+					.OrderBy(o => o.FileNumber);
+
+			var filtered = grantApplications
+				.Where(x => x.GrantOpening.GrantStream.GrantProgramId == grantProgramId
+				            && (string.IsNullOrEmpty(search)
+				                || x.FileNumber != null && x.FileNumber.Contains(search)
+				                || x.TrainingPrograms.FirstOrDefault().CourseTitle.Contains(search)
+				                || x.ApplicantFirstName.Contains(search) || x.ApplicantLastName.Contains(search))
 				).OrderBy(x => x.FileNumber);
 
 			return filtered;

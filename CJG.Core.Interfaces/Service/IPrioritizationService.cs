@@ -9,7 +9,7 @@ namespace CJG.Core.Interfaces.Service
 	{
 		PrioritizationThreshold GetThresholds();
 		void UpdateThresholds(PrioritizationThreshold threshold);
-		void SetRegionException(GrantApplication grantApplication, int prioritizationRegionId);
+		string SetRegionException(GrantApplication grantApplication, int prioritizationRegionId);
 
 		PrioritizationScoreBreakdown GetBreakdown(GrantApplication grantApplication);
 		IEnumerable<PrioritizationRegion> GetPrioritizationRegions();

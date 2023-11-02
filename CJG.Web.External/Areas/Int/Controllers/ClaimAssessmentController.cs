@@ -28,26 +28,19 @@ namespace CJG.Web.External.Areas.Int.Controllers
 	[RouteArea("Int")]
 	public class ClaimAssessmentController : BaseController
 	{
-		#region Variables
 		private const int MaxLengthOfErrorMessage = 64;
-		private readonly IStaticDataService _staticDataService;
-		private readonly IGrantProgramService _grantProgramService;
 		private readonly IGrantStreamService _grantStreamService;
 		private readonly IGrantApplicationService _grantApplicationService;
-		private readonly IGrantOpeningService _grantOpeningService;
 		private readonly IAttachmentService _attachmentService;
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IUserManagerAdapter _userManager;
 		private readonly ITrainingProviderSettings _trainingProviderSettings;
 		private readonly IClaimService _claimService;
-		private readonly IReportRateService _reportRateService;
 		private readonly IClaimEligibleCostService _claimEligibleCostService;
 		private readonly IEligibleExpenseTypeService _eligibleExpenseTypeService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
-		/// Creates a new instance of a ClaimController object.
+		/// Creates a new instance of a ClaimAssessmentController object.
 		/// </summary>
 		/// <param name="controllerService"></param>
 		/// <param name="grantProgramService"></param>
@@ -64,38 +57,26 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <param name="eligibleExpenseTypeService"></param>
 		public ClaimAssessmentController(
 			IControllerService controllerService,
-			IGrantProgramService grantProgramService,
-			IGrantStreamService grantStreamService,
 			IGrantApplicationService grantApplicationService,
-			IGrantOpeningService grantOpeningService,
 			IAttachmentService attachmentService,
 			IAuthorizationService authorizationService,
 			IUserManagerAdapter userManager,
 			ITrainingProviderSettings trainingProviderSettings,
 			IClaimService claimService,
-			IReportRateService reportRateService,
 			IClaimEligibleCostService claimEligibleCostService,
 			IEligibleExpenseTypeService eligibleExpenseTypeService
 		   ) : base(controllerService.Logger)
 		{
-			_staticDataService = controllerService.StaticDataService;
-			_grantProgramService = grantProgramService;
-			_grantStreamService = grantStreamService;
 			_grantApplicationService = grantApplicationService;
-			_grantOpeningService = grantOpeningService;
 			_attachmentService = attachmentService;
 			_userManager = userManager;
 			_authorizationService = authorizationService;
 			_trainingProviderSettings = trainingProviderSettings;
 			_claimService = claimService;
-			_reportRateService = reportRateService;
 			_claimEligibleCostService = claimEligibleCostService;
 			_eligibleExpenseTypeService = eligibleExpenseTypeService;
 		}
-		#endregion
 
-		#region Endpoints
-		#region Claim Assessment
 		/// <summary>
 		/// Return a view for claim assessment.
 		/// </summary>
@@ -479,9 +460,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 			return new PartialViewResult() { ViewData = viewData, ViewName = "_ClaimAssessmentDetail" };
 		}
-		#endregion
 
-		#region Attachments
 		/// <summary>
 		/// Get the claim attachments for the specified claim.
 		/// </summary>
@@ -620,7 +599,5 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
-		#endregion
-		#endregion
 	}
 }

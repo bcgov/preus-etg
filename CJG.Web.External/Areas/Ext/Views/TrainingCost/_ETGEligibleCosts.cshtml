@@ -66,42 +66,42 @@
     </table>
     <table>
         <tbody>
-            <tr>
-                <td><b>Totals</b></td>
-                <td></td>
-                <td></td>
-                <td class="num-col">
-                    <b>{{model.TotalEstimatedCost | currency}}</b>
-                </td>
-                <td></td>
-                <td></td>
-                <td ng-if="model.IsEditable" style="width: 76px;" class="col-small"></td>
-                <td ng-if="model.IsEditable" style="width: 86px;" class="col-small"></td>
-            </tr>
-            <tr ng-if="model.ShouldDisplayEmployerContribution">
-                <td>Employer Contribution</td>
-                <td></td>
-                <td></td>
-                <td class="num-col" ng-if="model.ShouldDisplayEmployerContribution">
-                    <b>{{model.TotalEmployer | currency}}</b>
-                </td>
-                <td></td>
-                <td></td>
-                <td ng-if="model.IsEditable" style="width: 76px;" class="col-small"></td>
-                <td ng-if="model.IsEditable" style="width: 86px;" class="col-small"></td>
-            </tr>
-            <tr>
-                <td>Requested Government Contribution</td>
-                <td></td>
-                <td></td>
-                <td class="num-col num-col__total-gov-contribution">
-                    <b>{{model.TotalRequest | currency}}</b>
-                </td>
-                <td></td>
-                <td></td>
-                <td ng-if="model.IsEditable" style="width: 76px;" class="col-small"></td>
-                <td ng-if="model.IsEditable" style="width: 86px;" class="col-small"></td>
-            </tr>
+        <tr>
+            <td><b>Totals</b></td>
+            <td></td>
+            <td></td>
+            <td class="num-col">
+                <b>{{model.TotalEstimatedCost | currency}}</b>
+            </td>
+            <td></td>
+            <td></td>
+            <td ng-if="model.IsEditable" style="width: 76px;" class="col-small"></td>
+            <td ng-if="model.IsEditable" style="width: 86px;" class="col-small"></td>
+        </tr>
+        <tr ng-if="model.ShouldDisplayEmployerContribution">
+            <td>Employer Contribution</td>
+            <td></td>
+            <td></td>
+            <td class="num-col" ng-if="model.ShouldDisplayEmployerContribution">
+                <b>{{model.TotalEmployer | currency}}</b>
+            </td>
+            <td></td>
+            <td></td>
+            <td ng-if="model.IsEditable" style="width: 76px;" class="col-small"></td>
+            <td ng-if="model.IsEditable" style="width: 86px;" class="col-small"></td>
+        </tr>
+        <tr>
+            <td>Requested Government Contribution</td>
+            <td></td>
+            <td></td>
+            <td class="num-col num-col__total-gov-contribution">
+                <b>{{model.TotalRequest | currency}}</b>
+            </td>
+            <td></td>
+            <td></td>
+            <td ng-if="model.IsEditable" style="width: 76px;" class="col-small"></td>
+            <td ng-if="model.IsEditable" style="width: 86px;" class="col-small"></td>
+        </tr>
         </tbody>
     </table>
 </div>

@@ -13,7 +13,7 @@ namespace CJG.Core.Interfaces.Service
 		TrainingProviderInventory Update(TrainingProviderInventory TrainingProviderInventory);
 		void Delete(int id, ref string MsgType, ref string MsgText);
 		TrainingProviderInventory GetTrainingProviderFromInventory(string name);
-		PageList<TrainingProviderInventory> GetInventory(int page, int quantity, string search, bool? isActive = null);
+		PageList<TrainingProviderInventory> GetInventory(int page, int quantity, string search, bool? isActive = null, bool? isRisk = null);
 		IEnumerable<TrainingProviderInventory> GetActiveTrainingProvidersFromInventory();
 		bool IsTrainingProviderInventoryUsedInApplications(int vestedTrainingProviderId);
 	}

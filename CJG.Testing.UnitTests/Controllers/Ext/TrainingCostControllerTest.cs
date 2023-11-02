@@ -1,4 +1,7 @@
-﻿using CJG.Application.Business.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Web.Mvc;
+using CJG.Application.Business.Models;
 using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
@@ -8,10 +11,6 @@ using CJG.Web.External.Areas.Ext.Models.TrainingCosts;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Web;
-using System.Web.Mvc;
 using Newtonsoft.Json;
 
 namespace CJG.Testing.UnitTests.Controllers.Ext
@@ -173,12 +172,13 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 			var grantApplication = EntityHelper.CreateGrantApplicationWithCosts(user);
 			helper.GetMock<IGrantApplicationService>().Setup(m => m.Get(It.IsAny<int>())).Returns(grantApplication);
 			var mockGrantStreamService = helper.GetMock<IGrantStreamService>();
+			var mockGrantApplicationService = helper.GetMock<IGrantApplicationService>();
 			var eligibleExpenseType = EntityHelper.CreateEligibleExpenseType();
 			var eligibleExpenseTypes = new[] { eligibleExpenseType };
 			helper.GetMock<IGrantApplicationService>().Setup(m => m.Get<EligibleExpenseType>(It.IsAny<int>())).Returns(eligibleExpenseType);
 			mockGrantStreamService.Setup(m => m.GetAutoIncludeActiveEligibleExpenseTypes(It.IsAny<int>())).Returns(eligibleExpenseTypes);
 
-			var data = new TrainingCostViewModel(grantApplication, identity, mockGrantStreamService.Object);
+			var data = new TrainingCostViewModel(grantApplication, identity, mockGrantStreamService.Object, mockGrantApplicationService.Object);
 			var controller = helper.Create();
 
 			var jsonData = JsonConvert.SerializeObject(data);
@@ -208,8 +208,9 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 			var grantApplication = EntityHelper.CreateGrantApplication(user);
 			helper.GetMock<IGrantApplicationService>().Setup(m => m.Get(It.IsAny<int>())).Returns(grantApplication);
 			var mockGrantStreamService = helper.GetMock<IGrantStreamService>();
+			var mockGrantApplicationService = helper.GetMock<IGrantApplicationService>();
 
-			var data = new TrainingCostViewModel(grantApplication, identity, mockGrantStreamService.Object);
+			var data = new TrainingCostViewModel(grantApplication, identity, mockGrantStreamService.Object, mockGrantApplicationService.Object);
 			var controller = helper.CreateWithModel(data);
 
 			// Act
@@ -241,8 +242,9 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 			var grantApplication = EntityHelper.CreateGrantApplication(user);
 			helper.GetMock<IGrantApplicationService>().Setup(m => m.Get(It.IsAny<int>())).Throws<NotAuthorizedException>();
 			var mockGrantStreamService = helper.GetMock<IGrantStreamService>();
+			var mockGrantApplicationService = helper.GetMock<IGrantApplicationService>();
 
-			var data = new TrainingCostViewModel(grantApplication, identity, mockGrantStreamService.Object);
+			var data = new TrainingCostViewModel(grantApplication, identity, mockGrantStreamService.Object, mockGrantApplicationService.Object);
 			var controller = helper.Create();
 
 			// Act
@@ -271,8 +273,9 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 			var grantApplication = EntityHelper.CreateGrantApplication(user);
 			helper.GetMock<IGrantApplicationService>().Setup(m => m.Get(It.IsAny<int>())).Throws<NoContentException>();
 			var mockGrantStreamService = helper.GetMock<IGrantStreamService>();
+			var mockGrantApplicationService = helper.GetMock<IGrantApplicationService>();
 
-			var data = new TrainingCostViewModel(grantApplication, identity, mockGrantStreamService.Object);
+			var data = new TrainingCostViewModel(grantApplication, identity, mockGrantStreamService.Object, mockGrantApplicationService.Object);
 			var controller = helper.Create();
 
 			// Act

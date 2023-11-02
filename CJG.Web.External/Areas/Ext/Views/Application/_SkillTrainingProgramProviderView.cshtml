@@ -1,5 +1,5 @@
 ﻿<div class="form__group">
-    <div class="form__label">Training Title:</div>
+    <div class="form__label">Training title:</div>
     <div class="form__control">
         {{program.CourseTitle}}
     </div>
@@ -17,7 +17,7 @@
     </div>
 </div>
 <div class="form__group">
-    <div class="form__label">Primary Delivery method:</div>
+    <div class="form__label">Primary delivery method:</div>
     <div class="form__control">
         <ul ng-if="program.DeliveryMethods != null && program.DeliveryMethods.length > 0">
 
@@ -40,13 +40,13 @@
     </div>
 </div>
 <div class="form__group">
-    <div class="form__label">Skills Development:</div>
+    <div class="form__label">Skills development:</div>
     <div class="form__control">
         {{program.SkillLevel.Caption}}
     </div>
 </div>
 <div class="form__group">
-    <div class="form__label">Essential Skills Type:</div>
+    <div class="form__label">Essential skills type:</div>
     <div class="form__control">
         {{program.ServiceLineBreakdown}}
     </div>
@@ -60,13 +60,13 @@
     </div>
 </div>
 <div class="form__group">
-    <div class="form__label">Total Cost:</div>
+    <div class="form__label">Total cost:</div>
     <div class="form__control">
         {{program.TotalCost | currency : '$' : 2}}
     </div>
 </div>
 <div class="heading-group">
-    <h4 class="light">> Training Provider: {{program.AssociatedProvider.Name}}</h4>
+    <h4 class="light">> Training provider: {{program.AssociatedProvider.Name}}</h4>
 </div>
 
 <div class="form--readonly">
@@ -122,7 +122,7 @@
 </div>
 
 <div class="form__group">
-    <div class="form__label">Training Provider address:</div>
+    <div class="form__label">Training provider address:</div>
     <div class="form__control">
         {{program.AssociatedProvider.AddressLine1TrainingProvider}}<br />
         <div ng-if="program.AssociatedProvider.AddressLine2TrainingProvider != null">

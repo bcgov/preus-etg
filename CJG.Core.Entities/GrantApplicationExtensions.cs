@@ -98,7 +98,13 @@ namespace CJG.Core.Entities
 		public static bool RequiresNumParticipantsMatchNumApprovedParticipants(this GrantApplication grantApplication)
 		{
 			return grantApplication.RequireAllParticipantsBeforeSubmission && 
-				   grantApplication.TrainingCost.AgreedParticipants != grantApplication.ParticipantForms.Where(w => w.Approved.HasValue && w.Approved.Value).Count();
+				   grantApplication.TrainingCost.AgreedParticipants != grantApplication.ParticipantForms.Count(p => p.Approved.HasValue && p.Approved.Value);
+		}
+
+		public static bool HasRequiredParticipants(this GrantApplication grantApplication)
+		{
+			var totalParticipants = grantApplication.ParticipantForms.Count;
+			return totalParticipants >= grantApplication.TrainingCost.EstimatedParticipants;
 		}
 
 		/// <summary>
@@ -130,14 +136,10 @@ namespace CJG.Core.Entities
 		/// <returns></returns>
 		public static IEnumerable<TrainingProvider> GetOriginalTrainingProviders(this GrantApplication grantApplication)
 		{
-			var programs = grantApplication.TrainingPrograms.SelectMany(p => p.TrainingProviders.Where(tp => tp.TrainingProviderState == TrainingProviderStates.Complete && tp.OriginalTrainingProviderId == null)).ToList();
-
-			if (grantApplication.GetProgramType() == ProgramTypes.WDAService)
-			{
-				var providers = grantApplication.TrainingProviders.Where(tp => tp.TrainingProviderState == TrainingProviderStates.Complete && tp.OriginalTrainingProviderId == null);
-				programs.AddRange(providers);
-			}
-
+			var programs = grantApplication.TrainingPrograms
+				.SelectMany(p => p.TrainingProviders.Where(tp => tp.TrainingProviderState == TrainingProviderStates.Complete
+				                                                 && tp.OriginalTrainingProviderId == null))
+				.ToList();
 			return programs.Distinct();
 		}
 
@@ -173,9 +175,10 @@ namespace CJG.Core.Entities
 		public static IEnumerable<TrainingProvider> GetPreviousChangeRequest(this GrantApplication grantApplication)
 		{
 			var original = grantApplication.GetOriginalTrainingProviders();
-			var prior = original.Select(tp => tp.GetPrior()).Where(tp => tp != null);
+			var prior = original.Select(tp => tp.GetPrior()).Where(tp => tp != null).ToList();
 
-			if (!prior.Any()) return new List<TrainingProvider>();
+			if (!prior.Any())
+				return new List<TrainingProvider>();
 
 			// Only want the requested training providers in the last request date.
 			var lastRequestDate = prior.Max(tp => tp.DateAdded);
@@ -189,15 +192,7 @@ namespace CJG.Core.Entities
 		/// <returns></returns>
 		public static bool CanApproveChangeRequest(this GrantApplication grantApplication)
 		{
-			var programType = grantApplication.GetProgramType();
-			if (programType == ProgramTypes.EmployerGrant)
-			{
-				return grantApplication.GetChangeRequests().Any(tp => tp.TrainingProviderState == TrainingProviderStates.Requested);
-			}
-
-			// All requested training providers must be either approved or denied.  At least one must be approved.
-			var changeRequests = grantApplication.GetChangeRequests();
-			return changeRequests.All(tp => tp.TrainingProviderState.In(TrainingProviderStates.RequestApproved, TrainingProviderStates.RequestDenied)) && changeRequests.Any(tp => tp.TrainingProviderState == TrainingProviderStates.RequestApproved);
+			return grantApplication.GetChangeRequests().Any(tp => tp.TrainingProviderState == TrainingProviderStates.Requested);
 		}
 
 		/// <summary>
@@ -207,14 +202,7 @@ namespace CJG.Core.Entities
 		/// <returns></returns>
 		public static bool CanDenyChangeRequest(this GrantApplication grantApplication)
 		{
-			var programType = grantApplication.GetProgramType();
-			if (programType == ProgramTypes.EmployerGrant)
-			{
-				return grantApplication.GetChangeRequests().Any();
-			}
-
-			// All requested training providers must be in the RequestDenied state.
-			return grantApplication.GetChangeRequests().All(tp => tp.TrainingProviderState == TrainingProviderStates.RequestDenied);
+			return grantApplication.GetChangeRequests().Any();
 		}
 
 		/// <summary>
@@ -232,39 +220,16 @@ namespace CJG.Core.Entities
 				return false;
 			}
 
-			switch (grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId)
-			{
-				case ProgramTypes.WDAService:
-					// These totals are not valid, however they will support the initial testing for v01.09.00.
-					var minPrograms = 0; // grantApplication.GrantOpening.GrantStream.ProgramConfiguration.EligibleExpenseTypes.Where(eet => eet.ServiceCategory.ServiceTypeId == ServiceTypes.SkillsTraining).Sum(eet => eet.ServiceCategory.MinPrograms);
-					var minProviders = grantApplication.GrantOpening.GrantStream.ProgramConfiguration
-						.EligibleExpenseTypes.Where(eet => eet.IsActive
-						                                   && eet.ServiceCategory.ServiceTypeId == ServiceTypes.EmploymentServicesAndSupports
-						                                   && eet.MinProviders > 0)
-						.Sum(eet => eet.MinProviders);
-
-					return grantApplication.GrantOpening.State != GrantOpeningStates.Closed
-							&& grantApplication.TrainingCost.TrainingCostState == TrainingCostStates.Complete
-							&& grantApplication.ProgramDescription?.DescriptionState == ProgramDescriptionStates.Complete
-							&& grantApplication.TrainingPrograms.All(tp => tp.TrainingProgramState == TrainingProgramStates.Complete && tp.TrainingProvider != null && tp.TrainingProvider.TrainingProviderState == TrainingProviderStates.Complete)
-							&& grantApplication.TrainingPrograms.Count >= minPrograms
-							&& grantApplication.TrainingProviders.All(tp => tp.TrainingProviderState == TrainingProviderStates.Complete)
-							&& grantApplication.TrainingProviders.Count >= minProviders
-							&& grantApplication.EligibilityConfirmed()
-							&& grantApplication.EmploymentServicesAndSupportsConfirmed()
-							&& grantApplication.SkillsTrainingConfirmed()
-							&& grantApplication.HasValidDates(grantApplication.GrantOpening.TrainingPeriod.StartDate, grantApplication.GrantOpening.TrainingPeriod.EndDate);
-
-				case ProgramTypes.EmployerGrant:
-				default:
-					return !grantApplication.GrantOpening.State.In(GrantOpeningStates.Unscheduled, GrantOpeningStates.Closed)
-						&& grantApplication.TrainingCost.TrainingCostState == TrainingCostStates.Complete
-						&& grantApplication.TrainingPrograms.Count() == 1
-						&& grantApplication.TrainingPrograms.FirstOrDefault(tp => tp.TrainingProgramState == TrainingProgramStates.Complete && tp.TrainingProviders.Count() == 1 && tp.TrainingProviders.First().TrainingProviderState == TrainingProviderStates.Complete) != null
-						&& grantApplication.EligibilityConfirmed()
-						&& grantApplication.HasValidDates(grantApplication.GrantOpening.TrainingPeriod.StartDate, grantApplication.GrantOpening.TrainingPeriod.EndDate)
-						&& grantApplication.HasValidBusinessCase();
-			}
+			return !grantApplication.GrantOpening.State.In(GrantOpeningStates.Unscheduled, GrantOpeningStates.Closed)
+				&& grantApplication.TrainingCost.TrainingCostState == TrainingCostStates.Complete
+				&& grantApplication.TrainingPrograms.Count == 1
+				&& grantApplication.TrainingPrograms.FirstOrDefault(tp => tp.TrainingProgramState == TrainingProgramStates.Complete
+				                                                          && tp.TrainingProviders.Count == 1
+				                                                          && tp.TrainingProviders.First().TrainingProviderState == TrainingProviderStates.Complete) != null
+				&& grantApplication.EligibilityConfirmed()
+				&& grantApplication.HasValidDates(grantApplication.GrantOpening.TrainingPeriod.StartDate, grantApplication.GrantOpening.TrainingPeriod.EndDate)
+				&& grantApplication.HasValidBusinessCase()
+				&& grantApplication.HasRequiredParticipants();
 		}
 
 		/// <summary>
@@ -274,21 +239,12 @@ namespace CJG.Core.Entities
 		/// <returns></returns>
 		public static bool IsPIFSubmittable(this GrantApplication grantApplication)
 		{
-			switch (grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId)
-			{
-				case (ProgramTypes.WDAService):
-					return grantApplication.GrantOpening.State != GrantOpeningStates.Closed
-							&& grantApplication.TrainingCost.GetMaxParticipants() >= 1
-							&& grantApplication.ProgramDescription?.DescriptionState == ProgramDescriptionStates.Complete
-							&& grantApplication.TrainingPrograms.Count >= 1
-							&& grantApplication.SkillsTrainingConfirmed();
-				case (ProgramTypes.EmployerGrant):
-				default:
-					return !grantApplication.GrantOpening.State.In(GrantOpeningStates.Unscheduled, GrantOpeningStates.Closed)
-						&& grantApplication.TrainingCost.GetMaxParticipants() >= 1
-						&& grantApplication.TrainingPrograms.FirstOrDefault(tp => tp.TrainingProgramState == TrainingProgramStates.Complete && tp.TrainingProviders.Count() == 1 && tp.TrainingProviders.First().TrainingProviderState == TrainingProviderStates.Complete) != null
-						&& grantApplication.TrainingPrograms.Count() == 1;
-			}
+			return !grantApplication.GrantOpening.State.In(GrantOpeningStates.Unscheduled, GrantOpeningStates.Closed)
+				&& grantApplication.TrainingCost.GetMaxParticipants() >= 1
+				&& grantApplication.TrainingPrograms.FirstOrDefault(tp => tp.TrainingProgramState == TrainingProgramStates.Complete
+				                                                          && tp.TrainingProviders.Count == 1
+				                                                          && tp.TrainingProviders.First().TrainingProviderState == TrainingProviderStates.Complete) != null
+				&& grantApplication.TrainingPrograms.Count == 1;
 		}
 
 		/// <summary>
@@ -305,16 +261,7 @@ namespace CJG.Core.Entities
 			if (earliestTrainingProgram == null)
 				return AppDateTime.Now;
 
-			switch (grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId)
-			{
-				case ProgramTypes.WDAService:
-					return earliestTrainingProgram.StartDate.AddDays(8);
-
-				case ProgramTypes.EmployerGrant:
-					return earliestTrainingProgram.StartDate.AddDays(-5);
-			}
-
-			return AppDateTime.Now;
+			return earliestTrainingProgram.StartDate.AddDays(-5);
 		}
 
 		/// <summary>

@@ -201,6 +201,8 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
     $scope.model.TotalEmployer = trainingCostTotal - ratedAmount;
     $scope.model.TotalRequest = ratedAmount;
 
+    $scope.model.RequestExceedsAllowed = ratedAmount + $scope.model.CurrentFiscalGovernmentContributions > $scope.model.MaximumFiscalGovernmentContributions;
+
     calculateESSTotal();
 
     checkTravelExpenseRequirements();

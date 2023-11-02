@@ -462,6 +462,7 @@ namespace CJG.Application.Services
 					where applicationStates.Contains(ga.ApplicationStateInternal)
 					      && ga.GrantOpening.GrantStream.GrantProgramId == defaultGrantProgramId
 					      && ga.GrantOpening.TrainingPeriod.FiscalYearId == grantApplication.GrantOpening.TrainingPeriod.FiscalYearId
+						  && ga.PaymentRequests.Any() 
 					      && enteredSiNs.Contains(pf.SIN)
 					select new {pc, pf}
 					into pg
@@ -476,7 +477,11 @@ namespace CJG.Application.Services
 
 		public IEnumerable<ParticipantForm> GetParticipantFormsBySIN(string sin)
 		{
-			return _dbContext.ParticipantForms.Where(w => w.SIN == sin);
+			var defaultProgramId = GetDefaultGrantProgramId();
+			return _dbContext.ParticipantForms
+				.Include(pf => pf.GrantApplication)
+				.Where(pf => pf.GrantApplication.GrantOpening.GrantStream.GrantProgramId == defaultProgramId)
+				.Where(w => w.SIN == sin);
 		}
 	}
 }

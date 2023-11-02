@@ -154,51 +154,11 @@ namespace CJG.Web.External.Areas.Part.Models
             if (model == null) throw new ArgumentNullException();
             ValidationResult result = ValidationResult.Success;
 
-            if (model.CanadaRefugee.GetValueOrDefault() && String.IsNullOrWhiteSpace(FromCountry))
+            if (model.CanadaRefugee.GetValueOrDefault() && string.IsNullOrWhiteSpace(FromCountry))
             {
                 result = new ValidationResult("The Country field is required.");
             }
             return result;
         }
-
-        public static ValidationResult ValidateLastHighSchoolName(string LastHighSchoolName, ValidationContext context)
-        {
-            ParticipantInfoStep3ViewModel model = context.ObjectInstance as ParticipantInfoStep3ViewModel;
-            if (model == null) throw new ArgumentNullException();
-            ValidationResult result = ValidationResult.Success;
-
-            if (model.EducationLevel != 1 && string.IsNullOrEmpty(LastHighSchoolName))
-            {
-                result = new ValidationResult("Name of last high school is required.");
-            }
-            return result;
-        }
-
-        public static ValidationResult ValidateLastHighSchoolCity(string LastHighSchoolCity, ValidationContext context)
-        {
-            ParticipantInfoStep3ViewModel model = context.ObjectInstance as ParticipantInfoStep3ViewModel;
-            if (model == null) throw new ArgumentNullException();
-            ValidationResult result = ValidationResult.Success;
-
-            if (model.EducationLevel != 1 && string.IsNullOrEmpty(LastHighSchoolCity))
-            {
-                result = new ValidationResult("City of last high school is required.");
-            }
-            return result;
-        }
-
-		//public static ValidationResult ValidateEitherVisibileMinorityorIndigenous(int? VisibleMinority, ValidationContext context)
-		//{
-		//	ParticipantInfoStep3ViewModel model = context.ObjectInstance as ParticipantInfoStep3ViewModel;
-		//	if (model == null) throw new ArgumentNullException();
-		//	ValidationResult result = ValidationResult.Success;
-
-		//	if (model.VisibleMinority == 1 && model.PersonAboriginal == 1)
-		//	{
-		//		result = new ValidationResult("Both Indigenous and Visible Minority cannot be marked Yes");
-		//	}
-
-		//	return result;
-		//}
 	}
 }

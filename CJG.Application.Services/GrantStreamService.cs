@@ -1,11 +1,11 @@
-﻿using CJG.Core.Entities;
-using CJG.Core.Interfaces.Service;
-using CJG.Infrastructure.Entities;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces.Service;
+using CJG.Infrastructure.Entities;
+using NLog;
 
 namespace CJG.Application.Services
 {
@@ -14,7 +14,6 @@ namespace CJG.Application.Services
 	/// </summary>
 	public class GrantStreamService : Service, IGrantStreamService
 	{
-		#region Constructors
 		/// <summary>
 		/// 
 		/// </summary>
@@ -24,9 +23,7 @@ namespace CJG.Application.Services
 		public GrantStreamService(IDataContext context, HttpContextBase httpContext, ILogger logger) : base(context, httpContext, logger)
 		{
 		}
-		#endregion
 
-		#region Methods
 		public IEnumerable<GrantStream> GetAll()
 		{
 			var defaultGrantProgramId = GetDefaultGrantProgramId();
@@ -121,6 +118,7 @@ namespace CJG.Application.Services
 				}
 				_dbContext.ProgramConfigurations.Remove(grantStream.ProgramConfiguration);
 			}
+
 			if (grantStream.GrantStreamEligibilityQuestions != null)
 			{
 				foreach(var question in grantStream.GrantStreamEligibilityQuestions.ToArray())
@@ -309,6 +307,5 @@ namespace CJG.Application.Services
 		{
 			return _dbContext.GrantStreams.Any(gs => gs.Id == grantStreamId && gs.GrantOpenings.Any(go => go.GrantApplications.Any()));
 		}
-		#endregion
 	}
 }

@@ -69,7 +69,7 @@
 <div class="form__group" ng-if="model.SelectedDeliveryMethodIds != 3 &&
                  model.SelectedDeliveryMethodIds != null &&
                  model.SelectedDeliveryMethodIds != 0">
-    <h3 class="subheader--body">Address of Training Location</h3>
+    <h3 class="subheader--body">Address of training location</h3>
 
     <div class="form__group form__group--radio-inline">
         <div ng-validation="errors.IsCanadianAddress">
@@ -144,7 +144,7 @@
         </div>
     </div>
 </div>
-<h3 class="subheader--body">Address of Training Provider</h3>
+<h3 class="subheader--body">Address of training provider</h3>
 
 <div class="form__group form__group--radio-inline">
     <div ng-validation="errors.IsCanadianAddressTrainingProvider">
@@ -221,12 +221,16 @@
 
 <div ng-show="model.RegionIdTrainingProvider !== 'BC'">
     <div class="form__group">
-        <div class="label-wrapper"><label class="form__label">The ETG may consider training delivered by training providers not based in B.C. under exceptional circumstances only. Please explain why you have selected a training provider not based in B.C. <abbr title="Required">*</abbr></label></div>
+        <div class="label-wrapper">
+            <label class="form__label">
+                The ETG may consider training delivered by training providers not based in B.C. under exceptional circumstances only. Please explain why you have selected a training provider not based in B.C. <abbr title="Required">*</abbr>
+            </label>
+        </div>
         <div class="control-wrapper form-control"><textarea id="OutOfProvinceLocationRationale" type="text" class="input--full textarea--short" ng-model="model.OutOfProvinceLocationRationale" ng-validation></textarea></div>
     </div>
 </div>
 
-<h3 class="subheader--body">Training Provider Contact</h3>
+<h3 class="subheader--body">Training provider contact</h3>
 <p>Enter the contact information for your training provider.</p>
 
 <div class="form__group">
@@ -280,9 +284,9 @@
 </div>
 
 <div class="form__group">
-    <h3 class="subheader--body">Alternative Training Options</h3>
+    <h3 class="subheader--body">Alternative training options</h3>
     <div class="notice notice--icon">
-        <p>Please share details of alternative B.C.-based training providers and/or courses that you considered (<u>at minimum please include links to the other courses that you considered</u>). These details are used to determine whether costs are reasonable and that the chosen training demonstrates high value for money. In the absence of alternative training provider information submitted in this section by the applicant, the ETG may consider similar training found online that may or may not be fully comparable to the specific training chosen by the applicant. For more details about how we determine value for money see our <a href="https://www.workbc.ca/find-loans-and-grants/industry-and-employers/bc-employer-training-grant/frequently-asked-questions" target="_blank">FAQs</a>.</p>
+        <p>Please describe any other B.C.-based training providers and/or courses that you looked into, and provide links to the training. This will help us decide if the costs are reasonable and if the training offers high value for money. If you don’t provide this information, we may compare the training you chose with similar training that we find online, although it may not be exactly the same. For more details about how we determine value for money, please see our <a href="https://www.workbc.ca/find-loans-and-grants/industry-and-employers/bc-employer-training-grant/frequently-asked-questions" target="_blank">FAQs</a>.</p>
     </div>
     <div class="form__control">
         <textarea class="input--full textarea--medium"
@@ -293,9 +297,9 @@
 </div>
 
 <div class="form__group">
-    <h3 class="subheader--body">Choice of Training Provider</h3>
+    <h3 class="subheader--body">Choice of training provider</h3>
     <div class="notice notice--icon">
-        <p>Please describe why the chosen training provider is best positioned to meet the needs of your business and deliver improved job-related skills for participants. In other words, why did you choose this trainer and not one of your alternatives listed above?</p>
+        <p>Why did you choose your trainer and not one of the others you listed? Describe why the training provider you chose is the best one to meet the needs of your business and improve the job-related skills of participants.</p>
     </div>
     <div class="form__control">
         <textarea class="input--full textarea--medium"

@@ -205,15 +205,14 @@ namespace CJG.Application.Services
 		/// <returns></returns>
 		public Note GenerateUpdateNote(GrantApplication grantApplication)
 		{
-			if (_httpContext.User.GetAccountType() == AccountTypes.External) return null;
-			var tracker = new EntityChanges(_dbContext.Context);
-			if (tracker.IsChanged)
-			{
-				var note = AddSystemNote(grantApplication, tracker.ToString());
-				return note;
-			}
+			if (_httpContext.User.GetAccountType() == AccountTypes.External)
+				return null;
 
-			return null;
+			var tracker = new EntityChanges(_dbContext.Context);
+			if (!tracker.IsChanged)
+				return null;
+
+			return AddSystemNote(grantApplication, tracker.ToString());
 		}
 
 		/// <summary>

@@ -1,9 +1,3 @@
-using CJG.Core.Entities;
-using CJG.Core.Interfaces;
-using CJG.Core.Interfaces.Service;
-using CJG.Infrastructure.Entities;
-using NLog;
-using Stateless;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -11,8 +5,14 @@ using System.Data.Entity.Validation;
 using System.Dynamic;
 using System.Linq;
 using System.Web;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces;
+using CJG.Core.Interfaces.Service;
+using CJG.Infrastructure.Entities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using NLog;
+using Stateless;
 
 namespace CJG.Application.Services
 {
@@ -21,7 +21,6 @@ namespace CJG.Application.Services
 	/// </summary>
 	public class ApplicationWorkflowStateMachine : Service
 	{
-		#region Variables
 		GrantApplication _grantApplication;
 		ApplicationStateInternal _originalState;
 
@@ -109,7 +108,6 @@ namespace CJG.Application.Services
 
 		private readonly StateMachine<ApplicationStateInternal, ApplicationWorkflowTrigger>.TriggerWithParameters<Claim>
 			_initiateClaimAmendmentTrigger;
-		#endregion
 
 		#region Constructors
 		public ApplicationWorkflowStateMachine(
@@ -408,11 +406,11 @@ namespace CJG.Application.Services
 
 					var breakdown = _prioritizationService.GetBreakdown(_grantApplication);
 					_grantApplication.PrioritizationScoreBreakdown = breakdown;
-					_grantApplication.PrioritizationScore = breakdown.GetTotalScore();
-
+					_grantApplication.PrioritizationScore = breakdown?.GetTotalScore() ?? 0;
 					LogStateChanges();
 
-					if (_grantApplication.PrioritizationScoreBreakdown.HasRegionalException())
+					if (_grantApplication.PrioritizationScoreBreakdown != null
+					    &&_grantApplication.PrioritizationScoreBreakdown.HasRegionalException())
 						_noteService.AddWorkflowNote(_grantApplication, "Priority list region lookup Exception. Postal Code not found in region list.");
 
 					UpdateGrantApplication();
@@ -1226,6 +1224,8 @@ namespace CJG.Application.Services
 			claim.AssessorId = _httpContext.User.GetUserId();
 			claim.LockParticipants();
 
+			claim.IsFinalClaim = true;
+
 			_grantApplication.ApplicationStateExternal = ApplicationStateExternal.ClaimApproved;
 
 			_grantOpeningService.AdjustFinancialStatements(_grantApplication, _originalState, ApplicationWorkflowTrigger.ApproveClaim);
@@ -1233,6 +1233,8 @@ namespace CJG.Application.Services
 			LogStateChanges(stateChangeReason: claim.ClaimAssessmentNotes, suffix: $" for claim {claim.ClaimNumber}");
 
 			UpdateGrantApplication();
+
+			//OnCloseClaimReporting();
 		}
 
 		private void OnDenyClaim(Claim claim)
@@ -1320,8 +1322,6 @@ namespace CJG.Application.Services
 			_grantApplication.DisableParticipantReporting();
 
 			_grantOpeningService.AdjustFinancialStatements(_grantApplication, _originalState, ApplicationWorkflowTrigger.CloseClaimReporting);
-
-			_grantApplication.DisableParticipantReporting();
 
 			LogStateChanges();
 			UpdateGrantApplication();

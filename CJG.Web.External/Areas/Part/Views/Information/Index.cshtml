@@ -1,12 +1,12 @@
 ﻿@model CJG.Web.External.Areas.Part.Models.ParticipantInfoViewModel
 @{
-    ViewBag.Title = "Participant Information Form";
+    ViewBag.Title = "Participant information";
 }
 
 <div ng-controller="ParticipantInformationView" ng-session-duration="@Model.ParticipantInfoStep1ViewModel.TimeoutPeriod">
     <div class="form-section">
         <div class="float-left">
-            <h1 class="header__title">Participant Information Form</h1>
+            <h1 class="header__title sentence--case">Participant information</h1>
         </div>
     </div>
     <div ng-if="alert.message" class="row row--alert">

@@ -43,9 +43,9 @@
     </div>
 
     <div ng-show="model.GrantOpeningId && currentTrainingPeriod">
-        <h2>Delivery Dates</h2>
+        <h2>Training dates</h2>
         <div class="form__group form__group--date">
-            <label class="form__label">Delivery Start Date:<abbr title="Required">*</abbr></label>
+            <label class="form__label">Training start date:<abbr title="Required">*</abbr></label>
             <span ng-if="model.GrantProgramId != 2"><p>{{getDescription()}}</p></span>
             <span ng-if="model.GrantProgramId == 2"><p>Training cannot already have started at the time of application.</p></span>
             <div class="form__control--flexible">
@@ -55,7 +55,7 @@
             </div>
         </div>
         <div class="form__group form__group--date">
-            <label class="form__label">Delivery End Date:<abbr title="Required">*</abbr></label>
+            <label class="form__label">Training end date:<abbr title="Required">*</abbr></label>
             <div class="form__control--flexible">
                 <div class="control-wrapper" ng-validation="errors.EndDate">
                     <datedropdown ng-model="model.DeliveryEndDate" ng-year="model.DeliveryEndYear" ng-month="model.DeliveryEndMonth" ng-day="model.DeliveryEndDay" ng-min-date="currentTrainingPeriod.StartDate" ng-max-date="currentTrainingPeriod.MaxEndDate" ng-default-month="'Month'" ng-default-day="'Day'" ng-default-year="'Year'" ng-editing="true"></datedropdown>

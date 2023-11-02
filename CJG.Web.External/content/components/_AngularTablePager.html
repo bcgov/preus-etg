@@ -10,6 +10,7 @@
         </span>
     </span>
     <span>entries</span>
+    
     <span class="pull-right" ng-if="$ctrl.pageSearch">
         <span>Search:</span>
         <span class="control-wrapper">
@@ -18,6 +19,23 @@
                    ng-model="$ctrl.ngKeyword"
                    ng-model-options="{ debounce: 750 }"
                    ng-change="$ctrl.updateItems()" />
+        </span>
+    </span>
+
+    <span class="pull-right" style="margin-right: 1em;" ng-if="$ctrl.riskFlag">
+        <label for="risk-flag">Risk:</label>
+        <span class="control-wrapper">
+            <span class="wrapper--dropdown selectmenu">
+                <select id="risk-flag"
+                        class="input--small"
+                        ng-model="$ctrl.ngRiskFlag"
+                        ng-model-options="{ debounce: 750 }"
+                        ng-change="$ctrl.updateItems()">
+                    <option value="">--</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+            </span>
         </span>
     </span>
 </div>
