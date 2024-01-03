@@ -43,16 +43,13 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// Creates a new instance of a ClaimAssessmentController object.
 		/// </summary>
 		/// <param name="controllerService"></param>
-		/// <param name="grantProgramService"></param>
 		/// <param name="grantStreamService"></param>
 		/// <param name="grantApplicationService"></param>
-		/// <param name="grantOpeningService"></param>
 		/// <param name="attachmentService"></param>
 		/// <param name="authorizationService"></param>
 		/// <param name="userManager"></param>
 		/// <param name="trainingProviderSettings"></param>
 		/// <param name="claimService"></param>
-		/// <param name="reportRateService"></param>
 		/// <param name="claimEligibleCostService"></param>
 		/// <param name="eligibleExpenseTypeService"></param>
 		public ClaimAssessmentController(
@@ -64,7 +61,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			ITrainingProviderSettings trainingProviderSettings,
 			IClaimService claimService,
 			IClaimEligibleCostService claimEligibleCostService,
-			IEligibleExpenseTypeService eligibleExpenseTypeService
+			IEligibleExpenseTypeService eligibleExpenseTypeService,
+			IGrantStreamService grantStreamService
 		   ) : base(controllerService.Logger)
 		{
 			_grantApplicationService = grantApplicationService;
@@ -75,6 +73,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_claimService = claimService;
 			_claimEligibleCostService = claimEligibleCostService;
 			_eligibleExpenseTypeService = eligibleExpenseTypeService;
+			_grantStreamService = grantStreamService;
 		}
 
 		/// <summary>
