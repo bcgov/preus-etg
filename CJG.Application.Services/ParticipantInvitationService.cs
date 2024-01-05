@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Web;
 using CJG.Core.Entities;
+using CJG.Core.Entities.Extensions;
 using CJG.Core.Interfaces.Service;
 using CJG.Core.Interfaces.Service.Settings;
 using CJG.Infrastructure.Entities;
@@ -43,6 +45,19 @@ namespace CJG.Application.Services
 		{
 			if (participantInvitation == null)
 				throw new ArgumentNullException(nameof(participantInvitation));
+
+			if (participantInvitation.GrantApplication.HasBeenReturnedToDraft())
+			{
+				var pifInvitationNotificationType = _notificationService.GetPIFInvitationNotificationType();
+
+				var invitationNotifications = _dbContext.NotificationQueue
+					.Where(p => p.EmailRecipients == participantInvitation.EmailAddress)
+					.Where(p => p.GrantApplicationId == participantInvitation.GrantApplicationId)
+					.Where(p => p.NotificationType.Id == pifInvitationNotificationType.Id)
+					.ToList();
+
+				_dbContext.NotificationQueue.RemoveRange(invitationNotifications);
+			}
 
 			participantInvitation.IndividualKey = Guid.NewGuid();
 			participantInvitation.FirstName = null;

@@ -1294,6 +1294,7 @@ namespace CJG.Testing.Core
 					HeadOfficeAddress = new Address("1234 St", "", "Victoria", "V9V9V9", new Region("BC", "British Columbia", new Country("CAN", "Canada"))),
 					Naics = naics,
 					NaicsId = naics.Id,
+					BusinessDescription = "Description of business",
 					RowVersion = Convert.FromBase64String("AgQGCAoMDhASFA==")
 				},
 					new Address("1234 St", "", "Victoria", "V9V9V9",

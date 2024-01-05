@@ -28,9 +28,9 @@
                 <td>{{invitation.Outcome}}</td>
                 <td><span ng-if="invitation.ParticipantInvitationStatus > 0">{{invitation.Status}}</span></td>
                 <td class="actions" style="width: 150px;">
-                    <button class="btn btn--primary" style="height: 40px;" ng-if="invitation.ParticipantInvitationStatus == 1" ng-click="sendParticipantInvite(invitation)">Send</button>
-                    <button class="btn btn--primary" style="height: 40px;" ng-if="invitation.ParticipantInvitationStatus == 2" ng-click="sendParticipantInvite(invitation)">Resend</button>
-                    <button class="btn btn--secondary" ng-if="invitation.ParticipantInvitationStatus == 1 || invitation.ParticipantInvitationStatus == 2" ng-click="removeParticipantInvite(invitation)">Remove</button>
+                    <button class="btn btn--primary" style="height: 40px;" ng-if="invitation.CanSend" ng-click="sendParticipantInvite(invitation)">Send</button>
+                    <button class="btn btn--primary" style="height: 40px;" ng-if="invitation.CanResend" ng-click="sendParticipantInvite(invitation)">Resend</button>
+                    <button class="btn btn--secondary" ng-if="invitation.CanRemove" ng-click="removeParticipantInvite(invitation)">Remove</button>
                 </td>
             </tr>
         </tbody>

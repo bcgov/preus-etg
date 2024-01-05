@@ -1908,6 +1908,7 @@ namespace CJG.Application.Services
 
 			trainingCost.RecalculateEstimatedCosts();
 			trainingCost.RecalculateAgreedCosts();
+
 			if (!isInternal)
 			{
 				if (trainingCost.EstimatedParticipants > 0 && trainingCost.TotalEstimatedReimbursement > 0)
@@ -1921,8 +1922,11 @@ namespace CJG.Application.Services
 			}
 
 			// Agreed commitment cannot exceed 10% unless user is a Director or Assessor
-			if (trainingCost.DoesAgreedCommitmentExceedEstimatedContribution() && !_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCostOverride))
-				throw new InvalidOperationException("You may not increase the assessed total government contribution more than 10% over the estimated total government contribution.");
+			if (isInternal)
+			{
+				if (trainingCost.DoesAgreedCommitmentExceedEstimatedContribution() && !_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCostOverride))
+					throw new InvalidOperationException("You may not increase the assessed total government contribution more than 10% over the estimated total government contribution.");
+			}
 
 			// If the applicant is working on a current claim, update it with the latest changes made to the agreed costs.
 			var claim = grantApplication.GetCurrentClaim();
@@ -2134,8 +2138,11 @@ namespace CJG.Application.Services
 			}
 
 			// Agreed commitment cannot exceed 10% unless user is a Director or Assessor
-			if (trainingCost.DoesAgreedCommitmentExceedEstimatedContribution() && !_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCostOverride))
-				throw new InvalidOperationException("You may not increase the assessed total government contribution more than 10% over the estimated total government contribution.");
+			if (isInternal)
+			{
+				if (trainingCost.DoesAgreedCommitmentExceedEstimatedContribution() && !_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCostOverride))
+					throw new InvalidOperationException("You may not increase the assessed total government contribution more than 10% over the estimated total government contribution.");
+			}
 
 			// If the applicant is working on a current claim, update it with the latest changes made to the agreed costs.
 			var claim = grantApplication.GetCurrentClaim();
