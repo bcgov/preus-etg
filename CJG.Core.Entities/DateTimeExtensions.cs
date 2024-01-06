@@ -73,17 +73,5 @@ namespace CJG.Core.Entities
 		{
 			return value.ToLocalMorning().ToString("yyyy-MM-dd");
 		}
-
-		/// <summary>
-		/// A quick way to compare two dates to see if they are equal to the second.
-		/// </summary>
-		/// <param name="date"></param>
-		/// <param name="compare"></param>
-		/// <returns></returns>
-		[Obsolete("Method is unused")]
-		public static bool AreEqualToTheSecond(this DateTime date, DateTime compare)
-		{
-			return date.Year == compare.Year && date.Month == compare.Month && date.Day == compare.Day && date.Hour == compare.Hour && date.Minute == compare.Minute && date.Second == compare.Second;
-		}
 	}
 }
