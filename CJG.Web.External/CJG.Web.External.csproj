@@ -1316,6 +1316,7 @@
     <Compile Include="Areas\Int\Models\Notifications\NotificationTriggerViewModel.cs" />
     <Compile Include="Areas\Int\Models\Notifications\NotificationTypeViewModel.cs" />
     <Compile Include="Areas\Int\Models\Notifications\NotificationQueueViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Organizations\OrganizationBusinessLicensesModel.cs" />
     <Compile Include="Areas\Int\Models\Organizations\OrganizationGrantFileHistoryDataTableModel.cs" />
     <Compile Include="Areas\Int\Models\Organizations\OrganizationGrantFileHistoryViewModel.cs" />
     <Compile Include="Areas\Int\Models\Organizations\OrganizationProfileUserViewModel.cs" />

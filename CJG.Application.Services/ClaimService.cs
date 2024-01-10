@@ -1,23 +1,19 @@
-﻿using CJG.Application.Business.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using CJG.Application.Business.Models;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Entities;
 using CJG.Infrastructure.Identity;
 using NLog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace CJG.Application.Services
 {
-	/// <summary>
-	/// <typeparamref name="ClaimService"/> class, provides service methods related to <typeparamref name="Claim"/> objects.
-	/// </summary>
 	public class ClaimService : Service, IClaimService
 	{
-		#region Variables
 		private readonly IGrantAgreementService _grantAgreementService;
 		private readonly IUserService _userService;
 		private readonly INotificationService _notificationService;
@@ -25,9 +21,6 @@ namespace CJG.Application.Services
 		private readonly IPrioritizationService _prioritizationService;
 		private readonly INoteService _noteService;
 		private readonly IFiscalYearService _fiscalYearService;
-		#endregion
-
-		#region Constructors
 
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="ClaimService"/> and initializes the specified properties.
@@ -62,9 +55,7 @@ namespace CJG.Application.Services
 			_grantAgreementService = grantAgreementService;
 			_fiscalYearService = fiscalYearService;
 		}
-		#endregion
 
-		#region Methods
 		#region Claims
 		/// <summary>
 		/// Create and add a new <typeparamref name="Claim"/> to the datastore linked to a grant application.
@@ -1173,7 +1164,6 @@ namespace CJG.Application.Services
 													   _httpContext,
 													   _logger);
 		}
-		#endregion
 		#endregion
 	}
 }

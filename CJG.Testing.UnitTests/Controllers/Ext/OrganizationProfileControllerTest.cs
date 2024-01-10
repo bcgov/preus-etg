@@ -1,4 +1,9 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Testing.Core;
@@ -9,13 +14,6 @@ using CJG.Web.External.Models.Shared;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Helpers;
-using System.Web.Mvc;
-using CJG.Web.External.Areas.Ext.Models.Attachments;
 using Newtonsoft.Json;
 
 namespace CJG.Testing.UnitTests.Controllers.Ext

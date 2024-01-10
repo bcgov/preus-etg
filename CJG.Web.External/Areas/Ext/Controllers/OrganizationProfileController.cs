@@ -78,6 +78,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
 				var createOrganizationProfile = currentUser.Organization == null || _organizationService.GetOrganizationProfileAdminUserId(currentUser.Organization.Id) == 0;
 				var userCanEditOrganizationProfile = currentUser.Organization != null || createOrganizationProfile;
+				var previouslySubmittedApplications = _organizationService.SubmittedGrantApplications(currentUser.OrganizationId);
 
 				if (_userService.SyncOrganizationFromBCeIDAccount(currentUser))
 					_authenticationService.Refresh(currentUser);
@@ -88,6 +89,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					CreateOrganizationProfile = createOrganizationProfile,
 					IsOrganizationProfileAdministrator = currentUser.IsOrganizationProfileAdministrator || model.CreateOrganizationProfile,
 					CanEditOrganizationProfile = userCanEditOrganizationProfile,
+					HasPreviouslySubmittedApplications = previouslySubmittedApplications > 0,
 					RequiresBusinessLicenseDocuments = _organizationService.RequiresBusinessLicenseDocuments(currentUser.OrganizationId)
 				};
 			}

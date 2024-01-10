@@ -111,9 +111,10 @@
                     <div class="form__control">
                         <div ng-if="businessInfo.BusinessLicenseDocumentAttachments">
                             <div style="margin-bottom: 5px;" ng-repeat="attachment in businessInfo.BusinessLicenseDocumentAttachments">
-                                <a class="link" ng-click="downloadBusinessLicense(attachment.Id)">{{attachment.FileName}}</a>
+                                <a class="link" ng-click="downloadBusinessLicense(attachment.Id)">{{ attachment.FileName }}</a>
+                                <span style="font-size: 0.925em; margin-left: 10px;">Uploaded: {{ toPST(attachment.DateAdded) }}</span>
                                 <br/>
-                                {{attachment.Description}}
+                                {{ attachment.Description }}
                             </div>
                         </div>
                     </div>

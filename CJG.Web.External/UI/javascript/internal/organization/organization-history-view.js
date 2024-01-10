@@ -37,13 +37,29 @@ app.controller('OrganizationHistory', function ($scope, $attrs, $controller, $ti
   }
 
   /**
+   * Make AJAX request to load organization history data.
+   * @function loadOrganizationHistory
+   * @returns {Promise}
+   **/
+  function loadOrganizationBusinessLicenses() {
+    return $scope.load({
+      url: '/Int/Organization/History/BusinessLicenses/' + $attrs.orgId,
+      set: 'businessLicenses'
+    })
+    .then(function () {
+    })
+    .catch(angular.noop);
+  }
+
+  /**
    * Fetch all the data for the form.
    * @function init
    * @returns {Promise}
    **/
   function init() {
     return Promise.all([
-      loadOrganizationHistory()
+      loadOrganizationHistory(),
+      loadOrganizationBusinessLicenses()
     ]);
   }
 
@@ -175,6 +191,67 @@ app.controller('OrganizationHistory', function ($scope, $attrs, $controller, $ti
       })
       .catch(angular.noop);
   };
+
+
+  /**
+ * Mark the attachment for post or put.
+ * @function uploadAttachment
+ * @param {any} attachment
+ * @returns {Promise}
+ */
+  function uploadAttachment(attachment) {
+    return $scope.load({
+      url: '/Int/Organization/History/BusinessLicenses/License',
+      method: attachment.Id != 0 ? 'PUT' : 'POST',
+      set: 'model',
+      dataType: 'file',
+      data: function () {
+        var model = {
+          organizationId: $scope.model.OrgId ,
+          file: attachment.File,
+          attachments: JSON.stringify(attachment)
+        };
+        return model;
+      }
+    }).then(function () {
+      loadOrganizationBusinessLicenses();
+    }).catch(angular.noop);
+  }
+  /**
+   * Open modal file uploader popup and then add the new file to the model.
+   * @function addAttachment
+   * @returns {void}
+   **/
+  $scope.addAttachment = function () {
+    return $scope.attachmentDialog('Add Business License Document', {
+      Id: 0,
+      FileName: '',
+      Description: '',
+      File: {}
+    }).then(function (attachment) {
+      uploadAttachment(attachment);
+    }).catch(angular.noop);
+  }
+
+  ///**
+  // * Open modal file uploader popup and then add the new file to the model.
+  // * @function addAttachment
+  // * @returns {void}
+  // **/
+  //$scope.addAttachment = function (attachmentType = 0) {
+  //  return $scope.attachmentDialog('Add Attachment', {
+  //      Id: 0,
+  //      FileName: '',
+  //      Description: '',
+  //      AttachmentType: attachmentType,
+  //      File: {}
+  //    }, false)
+  //    .then(function (attachment) {
+  //      $scope.model.Attachments.push(attachment);
+  //      $scope.section.attachments.push(attachment);
+  //    })
+  //    .catch(angular.noop);
+  //}
 
   init();
 });

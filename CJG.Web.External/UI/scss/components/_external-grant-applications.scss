@@ -14,7 +14,6 @@
   position: relative;
 }
 
-
 .header-logo__link:hover {
   text-decoration: none;
 }
@@ -126,4 +125,14 @@
 
 .program-information-openings .no-wrap {
   white-space: nowrap;
+}
+
+
+.organization-profile {
+  table.business-license-documents {
+      th {
+          text-align: left;
+
+      }
+  }
 }

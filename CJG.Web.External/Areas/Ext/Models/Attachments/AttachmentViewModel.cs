@@ -19,7 +19,8 @@ namespace CJG.Web.External.Areas.Ext.Models.Attachments
 
 		public AttachmentViewModel(Attachment attachment)
 		{
-			if (attachment == null) throw new ArgumentNullException(nameof(attachment));
+			if (attachment == null)
+				throw new ArgumentNullException(nameof(attachment));
 
 			Id = attachment.Id;
 			RowVersion = Convert.ToBase64String(attachment.RowVersion);

@@ -27,59 +27,106 @@
         </div>
         <hr />
         <h1 id="organizationName">{{model.LegalName}} | Doing Business As: {{model.DoingBusinessAs}}</h1>
-        <div class="form__label">
-            <strong>YTD Requested:</strong> {{model.YTDRequested | currency : '$' : 2}}
-        </div>
-        <div class="form__label">
-            <strong>YTD Approved:</strong> {{model.YTDApproved | currency : '$' : 2}}
-        </div>
-        <div class="form__label">
-            <strong>YTD Paid:</strong> {{model.YTDPaid | currency : '$' : 2}}
-        </div>
-        <br />
-        <div class="form__group form__group--radio-inline">
-            <div class="form__label">
-                Flag Organization as a risk?
-            </div>
-            <div ng-validation="errors.RiskFlag" ng-if="model.AllowDeleteOrganization">
-                <div class="form-item">
-                    <input type="radio" id="risk-flag-yes" ng-value="true" ng-model="model.RiskFlag" name="model.RiskFlag">
-                    <label for="risk-flag-yes">Yes</label>
+        
+        <div>
+            <div class="one-quarter-width">
+                <div class="form__label">
+                    <strong>YTD Requested:</strong> {{model.YTDRequested | currency : '$' : 2}}
                 </div>
-                <div class="form-item">
-                    <input type="radio" id="risk-flag-no" ng-value="false" ng-model="model.RiskFlag" name="model.RiskFlag">
-                    <label for="risk-flag-no">No</label>
+                <div class="form__label">
+                    <strong>YTD Approved:</strong> {{model.YTDApproved | currency : '$' : 2}}
+                </div>
+                <div class="form__label">
+                    <strong>YTD Paid:</strong> {{model.YTDPaid | currency : '$' : 2}}
                 </div>
             </div>
-            <div ng-validation="errors.RiskFlag" ng-if="!model.AllowDeleteOrganization">
-                <div class="form-item">
-                    <input type="radio" id="risk-flag-yes" ng-value="true" ng-model="model.RiskFlag" name="model.RiskFlag" disabled="disabled">
-                    <label for="risk-flag-yes">Yes</label>
+            <div class="three-quarter-width">
+                <div class="form__group form__group--radio-inline">
+                    <div class="form__label">
+                        Flag Organization as a risk?
+                    </div>
+                    <div ng-validation="errors.RiskFlag" ng-if="model.AllowDeleteOrganization">
+                        <div class="form-item">
+                            <input type="radio" id="risk-flag-yes" ng-value="true" ng-model="model.RiskFlag" name="model.RiskFlag">
+                            <label for="risk-flag-yes">Yes</label>
+                        </div>
+                        <div class="form-item">
+                            <input type="radio" id="risk-flag-no" ng-value="false" ng-model="model.RiskFlag" name="model.RiskFlag">
+                            <label for="risk-flag-no">No</label>
+                        </div>
+                    </div>
+                    <div ng-validation="errors.RiskFlag" ng-if="!model.AllowDeleteOrganization">
+                        <div class="form-item">
+                            <input type="radio" id="risk-flag-yes" ng-value="true" ng-model="model.RiskFlag" name="model.RiskFlag" disabled="disabled">
+                            <label for="risk-flag-yes">Yes</label>
+                        </div>
+                        <div class="form-item">
+                            <input type="radio" id="risk-flag-no" ng-value="false" ng-model="model.RiskFlag" name="model.RiskFlag" disabled="disabled">
+                            <label for="risk-flag-no">No</label>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-item">
-                    <input type="radio" id="risk-flag-no" ng-value="false" ng-model="model.RiskFlag" name="model.RiskFlag" disabled="disabled">
-                    <label for="risk-flag-no">No</label>
-                </div>
-            </div>
-        </div>
-
-        <div class="form__group block--training-provider-history__note">
-            <label class="form__label">
-                Notes:
-            </label>
-            <div class="form__control padding-bottom-20">
-                <textarea ng-model="model.Notes"
+                <div class="form__group block--training-provider-history__note">
+                    <label class="form__label">
+                        Notes:
+                    </label>
+                    <div class="form__control padding-bottom-20">
+                        <textarea ng-model="model.Notes"
                           ng-class="{'has-error': $ctrl.getError()}"
                           maxlength="2000" class="input--full copy-box--med"></textarea>
-                <span class="char-count-status">{{(2000 - model.Notes.length)}} chars left</span>
+                        <span class="char-count-status">{{(2000 - model.Notes.length)}} chars left</span>
+                    </div>
+                </div>
             </div>
-            <button type="button" class="pull-left btn btn--secondary" ng-disabled="checkNotesDiff()" ng-click="resetNote()">Reset Notes</button>
-            <button type="button" class="pull-right btn btn--primary" ng-click="updateOrg()">Save</button>
+            <div class="clearfix"> </div>
+            <button type="button" class="pull-right btn btn--primary" style="margin-left: 10px;" ng-click="updateOrg()">Save</button>
+            <button type="button" class="pull-right btn btn--secondary" ng-disabled="checkNotesDiff()" ng-click="resetNote()">Reset Notes</button>
         </div>
     </div>
-
     <hr />
+    
+	<div class="panel-section-content">
+        <h2>Business License Documents</h2>
+        <div>
+			<p>Accepted file types: PDF, JPG, JPEG, PNG, GIF.</p>
+		</div>
+        
+        <div ng-if="businessLicenses.BusinessLicenseDocumentAttachments.length == 0">
+            <p>There are currently no business license documents.</p>
+        </div>
+        <div>
+			<div class="form__group" ng-if="businessLicenses.BusinessLicenseDocumentAttachments.length > 0">
+                <table style="width:100%;">
+                    <tr>
+                        <th></th>
+                        <th style="text-align: left">File</th>
+                        <th style="text-align: left">Description</th>
+                        <th style="text-align: left">Date Added</th>
+                    </tr>
+                    <tr ng-repeat="attachment in businessLicenses.BusinessLicenseDocumentAttachments">
+                        <td style="width:10%;vertical-align:top">{{$index + 1}}</td>
+                        <td style="width: 30%; vertical-align: top;">
+                            <a href="/Int/Organization/History/BusinessLicense/Download/{{ businessLicenses.OrgId }}/{{ attachment.Id }}">{{ attachment.FileName }}</a>
+                        </td>
+                        <td style="width: 30%; vertical-align: top; word-wrap: break-word; word-break: break-all;">
+                            {{attachment.Description}}
+                        </td>
+                        <td style="width: 10%; vertical-align: top; word-wrap: break-word; word-break: break-all;">
+                            {{ toPST(attachment.DateAdded, 'YYYY-MM-DD HH:mm') }}
+                        </td>
+                    </tr>
+                </table>
+			</div>
+			<button class="btn btn--secondary" style="margin-left: 10px;" ng-click="addAttachment(1)" data-disableonsubmit="false">Add Business License</button>
+        </div>
 
+		<div id="grant-application-attachment"></div>
+	</div>
+    
+    <hr />
+    
+    <h2>Application History</h2>
+    <br/>
     <div class="wrapper--intake-queue-datatable">
         <pager ng-if="model.OrgId" ng-filter="getOrganizationHistory" ng-page-size="[100, 50, 25]">
             <table class="form__group--data-grid">

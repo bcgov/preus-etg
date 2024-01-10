@@ -21,6 +21,7 @@ namespace CJG.Core.Interfaces.Service
 		void ClearOrganizationOldNaicsCode(int orgId);
 		int NotSubmittedGrantApplications(int orgId);
 		int NotSubmittedGrantApplicationsForUser(int orgId, Guid userBCeID);
+		int SubmittedGrantApplications(int orgId);
 		bool RequiresBusinessLicenseDocuments(int orgId);
 		PageList<Organization> GetOrganizationList(int page, int quantity, string search, bool? isActive = null, bool? isRisk = null);
 		dynamic GetOrganizationYTD(int organizationId);
