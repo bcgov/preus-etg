@@ -1,5 +1,6 @@
 @inherits CJG.Web.External.Views.Shared.SiteMinderViewPage
 
+@using System.Web;
 @using CJG.Application.Services
 @using CJG.Infrastructure.Identity
 @using CJG.Web.External.Areas.Int.Controllers
@@ -101,7 +102,7 @@
         if (Html.IsDebugBuild() && sym)
         {
             <li>@Html.ActionLink("Debug", nameof(DebugController.Index), typeof(DebugController))</li>
-            <li style="color: #6a83a9; font-size: 0.8em; padding-left: 3em;">System Date: <b>@GetAppDateTime()</b></li>
+            <li class="debug-date">System Date: <strong><a href="@Url.Action("AppDateTimeView", "Debug")" style="color: #6a83a9">@GetAppDateTime()</a></strong></li>
         }
     }
     else
