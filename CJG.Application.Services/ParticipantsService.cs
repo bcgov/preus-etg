@@ -106,8 +106,6 @@ namespace CJG.Application.Services
 				participants.Add(participantsModel);
 			}
 
-			//participants = new List<GroupedParticipantsModel>(participants);
-
 			return new PageList<GroupedParticipantsModel>(page, quantity, total, participants);
 		}
 	}
