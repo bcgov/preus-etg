@@ -16,10 +16,10 @@ using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-    /// <summary>
-    /// IntakeController class, provides endpoints to select and search for grant applications.
-    /// </summary>
-    [RouteArea("Int")]
+	/// <summary>
+	/// ParticipantsController class, provides endpoints to get participant information
+	/// </summary>
+	[RouteArea("Int")]
 	[Authorize(Roles = "Assessor, System Administrator, Director, Financial Clerk")]
 	public class ParticipantsController : BaseController
 	{
@@ -73,8 +73,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 					LastApplicationDateTime = pf.LastApplicationDateTime,
 					FileNumber = pf.FileNumber,
 					CourseName = pf.CourseName,
-					EmployerName = pf.EmployerName,
-                    PaidToDate = pf.PaidToDate
+					EmployerName = pf.EmployerName
 				});
 			}
 			catch (Exception ex)
