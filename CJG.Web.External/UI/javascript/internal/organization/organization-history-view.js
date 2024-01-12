@@ -207,7 +207,7 @@ app.controller('OrganizationHistory', function ($scope, $attrs, $controller, $ti
       dataType: 'file',
       data: function () {
         var model = {
-          organizationId: $scope.model.OrgId ,
+          organizationId: $scope.model.OrgId,
           file: attachment.File,
           attachments: JSON.stringify(attachment)
         };

@@ -8,7 +8,8 @@ namespace CJG.Web.External.Areas.Int.Models.Organizations
 {
 	public class OrganizationBusinessLicensesModel : BaseViewModel
 	{
-		public int OrgId { get; set; }
+		public int OrganizationId { get; set; }
+		public bool CanAddBusinessLicenses { get; set; }
 		public IEnumerable<AttachmentViewModel> BusinessLicenseDocumentAttachments { get; set; }
 
 		public OrganizationBusinessLicensesModel()
@@ -17,7 +18,8 @@ namespace CJG.Web.External.Areas.Int.Models.Organizations
 
 		public OrganizationBusinessLicensesModel(Organization organization)
 		{
-			OrgId = organization.Id;
+			OrganizationId = organization.Id;
+			CanAddBusinessLicenses = false;
 			BusinessLicenseDocumentAttachments = organization.BusinessLicenseDocuments.Select(a => new AttachmentViewModel(a));
 		}
 	}

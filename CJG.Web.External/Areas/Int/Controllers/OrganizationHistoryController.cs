@@ -7,7 +7,6 @@ using System.Web.Mvc;
 using CJG.Application.Services;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
-using CJG.Web.External.Areas.Ext.Models;
 using CJG.Web.External.Areas.Int.Models.Organizations;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
@@ -38,6 +37,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <param name="grantApplicationService"></param>
 		/// <param name="grantProgramService"></param>
 		/// <param name="userService"></param>
+		/// <param name="attachmentService"></param>
 		public OrganizationHistoryController(
 			IControllerService controllerService,
 			IOrganizationService organizationService,
@@ -215,7 +215,11 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			try
 			{
 				var organization = _organizationService.Get(organizationId);
-				model = new OrganizationBusinessLicensesModel(organization);
+				var allowLicenseUploads = User.IsInRole("Director") || User.IsInRole("Assessor");
+				model = new OrganizationBusinessLicensesModel(organization)
+				{
+					CanAddBusinessLicenses = allowLicenseUploads
+				};
 			}
 			catch (Exception ex)
 			{
