@@ -106,7 +106,7 @@
                     <tr ng-repeat="attachment in businessLicenses.BusinessLicenseDocumentAttachments">
                         <td style="width: 10%; vertical-align: top">{{$index + 1}}</td>
                         <td style="width: 30%; vertical-align: top;">
-                            <a href="/Int/Organization/History/BusinessLicense/Download/{{ businessLicenses.OrgId }}/{{ attachment.Id }}">{{ attachment.FileName }}</a>
+                            <a href="/Int/Organization/History/BusinessLicense/Download/{{ businessLicenses.OrganizationId }}/{{ attachment.Id }}">{{ attachment.FileName }}</a>
                         </td>
                         <td style="width: 30%; vertical-align: top; word-wrap: break-word; word-break: break-all;">
                             {{attachment.Description}}
