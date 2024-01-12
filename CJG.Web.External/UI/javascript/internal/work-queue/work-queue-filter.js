@@ -45,8 +45,7 @@ app.controller('WorkQueueFilter', function ($scope, $attrs, $controller, $timeou
         { Id: 19, Caption: 'Change Returned' },
         { Id: 17, Caption: 'Change for Approval' },
         { Id: 18, Caption: 'Change for Denial' },
-        { Id: 20, Caption: 'Change Request Denied' },
-        { Id: 9, Caption: 'Change Request Approved' }
+        { Id: 20, Caption: 'Change Request Denied' }
       ]
     },
     {

@@ -49,7 +49,9 @@ app.controller('WorkQueueFilters', function ($scope, $attrs, $controller, $timeo
    * @returns {object} If the attribute was found it will be returned, otherwise returns a new attribute {}.
    */
   function findAttribute(filter, key) {
-    if (!filter || !Array.isArray(filter.Attributes)) return;
+    if (!filter || !Array.isArray(filter.Attributes))
+      return;
+
     return filter.Attributes.find(function (item) {
       return item.Key === key;
     }) || { Id: 0, Key: key, Value: null, Operator: 0 };

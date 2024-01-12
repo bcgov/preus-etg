@@ -7,17 +7,13 @@ namespace CJG.Web.External.Areas.Int.Models.WorkQueue
 {
 	public class WorkQueueUserFiltersViewModel : BaseViewModel
 	{
-		#region Properties
 		public IEnumerable<WorkQueueUserFilterViewModel> Filters { get; set; }
-		#endregion
 
-		#region Constructors
 		public WorkQueueUserFiltersViewModel() { }
 
 		public WorkQueueUserFiltersViewModel(IEnumerable<InternalUserFilter> filters)
 		{
-			this.Filters = filters?.Select(f => new WorkQueueUserFilterViewModel(f));
+			Filters = filters?.Select(f => new WorkQueueUserFilterViewModel(f));
 		}
-		#endregion
 	}
 }
