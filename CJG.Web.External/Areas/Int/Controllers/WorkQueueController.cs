@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using CJG.Application.Services;
+using CJG.Application.Services.ExcelExport;
+using CJG.Application.Services.ExcelExport.Models;
+using CJG.Core.Entities;
 using CJG.Core.Entities.Helpers;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
+using CJG.Web.External.Areas.Int.Models.WorkQueue;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
@@ -25,6 +29,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		private readonly IFiscalYearService _fiscalYearService;
 		private readonly IGrantProgramService _grantProgramService;
 		private readonly IGrantStreamService _grantStreamService;
+		private readonly IExcelExportService _excelExportService;
 
 		public WorkQueueController(
 			IControllerService controllerService,
@@ -33,7 +38,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			IInternalUserFilterService internalUserFilterService,
 			IFiscalYearService fiscalYearService,
 			IGrantProgramService grantProgramService,
-			IGrantStreamService grantStreamService
+			IGrantStreamService grantStreamService,
+			IExcelExportService excelExportService
 		   ) : base(controllerService.Logger)
 		{
 			_grantApplicationService = grantApplicationService;
@@ -42,14 +48,21 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_fiscalYearService = fiscalYearService;
 			_grantProgramService = grantProgramService;
 			_grantStreamService = grantStreamService;
+			_excelExportService = excelExportService;
 		}
 
 		[HttpGet]
 		[Route("Work/Queue/View", Name = nameof(WorkQueueView))]
 		public ActionResult WorkQueueView()
 		{
-			var userId = User.GetUserId();
-			return View(userId);
+			var userId = User.GetUserId().GetValueOrDefault();
+
+			var model = new WorkQueueUserModel
+			{
+				UserId = userId,
+				CanExport = User.IsInRole("Director")
+			};
+			return View(model);
 		}
 
 		[HttpGet]
@@ -139,9 +152,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[HttpPost]
 		[ValidateRequestHeader]
 		[Route("Work/Queue")]
-		public JsonResult GetGrantApplications(Models.WorkQueue.WorkQueueFilterViewModel filter)
+		public JsonResult GetGrantApplications(WorkQueueFilterViewModel filter)
 		{
-			var model = new PageList<Models.WorkQueue.GrantApplicationViewModel>();
+			var model = new PageList<GrantApplicationViewModel>();
 			try
 			{
 				int.TryParse(Request.QueryString["page"], out int pageNumber);
@@ -153,7 +166,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				model.Page = applications.Page;
 				model.Quantity = applications.Quantity;
 				model.Total = applications.Total;
-				model.Items = applications.Items.Select(a => new Models.WorkQueue.GrantApplicationViewModel(a));
+				model.Items = applications.Items.Select(a => new GrantApplicationViewModel(a));
 			}
 			catch (Exception ex)
 			{
@@ -163,7 +176,51 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			return Json(model);
 		}
 
-		#region Filters
+		[HttpGet]
+		[Route("Applications/Export")]
+		public ActionResult ExportApplicationsToExcel(WorkQueueFilterViewModel filter)
+		{
+			// Suppress weird 'null's coming through. Possibly gone - leaving in case. 
+			if (filter.Applicant == "null")
+				filter.Applicant = null;
+
+			if (filter.FileNumber == "null")
+				filter.FileNumber = null;
+
+			if (filter.TrainingPeriodCaption == "null")
+				filter.TrainingPeriodCaption = null;
+
+			try
+			{
+				var query = filter.GetFilter(User);
+				var applications = _grantApplicationService.GetGrantApplications(1, 1, query, true);
+				var exportItems = applications.Items.Select(a => new WorkQueueExportModel
+				{
+					FileNumber = a.FileNumber,
+					Applicant = a.OrganizationLegalName,
+					DateSubmitted = a.DateSubmitted.Value,
+					StartDate = a.StartDate,
+					PrioritizationScore = a.PrioritizationScore,
+					Status = a.ApplicationStateInternal.GetDescription(),
+					StatusChanged = a.StateChanges.OrderByDescending(s => s.DateAdded).FirstOrDefault().ChangedDate.ToLocalTime(),
+					GrantStreamName = a.GrantOpening.GrantStream.Name,
+					IsRisk = a.Organization.RiskFlag ? "Yes" : "No",
+					RequestedGovernmentContribution = $"{a.TrainingCost?.TotalEstimatedCost ?? 0m:C}"
+				});
+
+				var excelOutput = _excelExportService.GetExcelContent(exportItems, "Grant Applications");
+
+				var fileDownloadName = $"GrantApplication_{AppDateTime.Now:yyyy-MM-dd_HH-mm}.xlsx";
+
+				return File(excelOutput, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileDownloadName);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, filter);
+				return Json(filter, JsonRequestBehavior.AllowGet);
+			}
+		}
+
 		/// <summary>
 		/// Get a view to edit or add the specified filter.
 		/// </summary>
@@ -185,11 +242,11 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[Route("Work/Queue/Filters")]
 		public JsonResult GetFilters()
 		{
-			var model = new Models.WorkQueue.WorkQueueUserFiltersViewModel();
+			var model = new WorkQueueUserFiltersViewModel();
 			try
 			{
 				var filters = _internalUserFilterService.GetForUser();
-				model = new Models.WorkQueue.WorkQueueUserFiltersViewModel(filters);
+				model = new WorkQueueUserFiltersViewModel(filters);
 			}
 			catch (Exception ex)
 			{
@@ -207,13 +264,13 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[ValidateRequestHeader]
 		[AuthorizeAction(Privilege.IA1)]
 		[Route("Work/Queue/Filter")]
-		public JsonResult AddFilter(Models.WorkQueue.WorkQueueUserFilterViewModel model)
+		public JsonResult AddFilter(WorkQueueUserFilterViewModel model)
 		{
 			try
 			{
 				var filter = model.GetFilter(User);
 				_internalUserFilterService.Add(filter);
-				model = new Models.WorkQueue.WorkQueueUserFilterViewModel(filter);
+				model = new WorkQueueUserFilterViewModel(filter);
 			}
 			catch (Exception ex)
 			{
@@ -226,14 +283,14 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Update the specified filter.
 		/// </summary>
-		/// <param name="filterParameters"></param>
+		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[PreventSpam]
 		[AuthorizeAction(Privilege.IA1)]
 		[ValidateRequestHeader]
 		[Route("Work/Queue/Filter")]
-		public JsonResult UpdateFilter(Models.WorkQueue.WorkQueueUserFilterViewModel model)
+		public JsonResult UpdateFilter(WorkQueueUserFilterViewModel model)
 		{
 			try
 			{
@@ -262,7 +319,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				}
 
 				_internalUserFilterService.Update(filter);
-				model = new Models.WorkQueue.WorkQueueUserFilterViewModel(filter);
+				model = new WorkQueueUserFilterViewModel(filter);
 			}
 			catch (Exception ex)
 			{
@@ -275,14 +332,14 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Delete the specified filter.
 		/// </summary>
-		/// <param name="id"></param>
+		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[PreventSpam]
 		[AuthorizeAction(Privilege.IA1)]
 		[ValidateRequestHeader]
 		[Route("Work/Queue/Filter/Delete")]
-		public JsonResult DeleteFilter(Models.WorkQueue.WorkQueueUserFilterViewModel model)
+		public JsonResult DeleteFilter(WorkQueueUserFilterViewModel model)
 		{
 			try
 			{
@@ -296,6 +353,5 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 			return Json(model);
 		}
-		#endregion
 	}
 }

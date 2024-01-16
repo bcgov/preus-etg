@@ -1,41 +1,41 @@
-﻿@model int
+﻿@model CJG.Web.External.Areas.Int.Models.WorkQueue.WorkQueueUserModel
 @{
 	ViewBag.Title = "Grant Files";
 }
 
-<div ng-controller="WorkQueue" user-id="@Model" class="internal-application">
+<div ng-controller="WorkQueue" user-id="@Model.UserId" can-export="@Model.CanExport" class="internal-application">
 	<div>
-		<div class="application-header internal-application-header">
-			<h2>Grant Files</h2>
+        <div class="application-header internal-application-header">
+            <h2>Grant Files</h2>
 
-			<div class="form__group">
-				<div class="form__control" ng-if="showMyFiles()" style="vertical-align: bottom;">
-					<button class="btn btn--secondary" ng-click="selectMyFiles($event)">My Files</button>
-				</div>
-				<div class="form__control">
-					<div class="selectmenu">
-						<select ng-model="filter.AssessorId" ng-options="item.Key as item.Value for item in assessors" ng-change="changeAssessor()" ng-keypress="search($event)">
-							<option value="">All Assessors</option>
-						</select>
-					</div>
-				</div>
-				<div class="form__control margin-left-10" ng-show="showAssigned()" style="vertical-align: bottom;">
-					<button class="btn btn--secondary" ng-click="toggleAssigned($event)">{{ filter.IsAssigned ? 'All Assigned' : filter.IsAssigned === false ? 'Not Assigned' : 'All' }}</button>
-				</div>
-				<div class="form__control margin-left-10">
-					<div class="selectmenu">
-						<select ng-model="filter.FiscalYearId" ng-options="item.Key as item.Value for item in fiscalYears" ng-change="loadTrainingPeriods()" ng-keypress="search($event)">
-							<option value="">All Fiscal Periods</option>
-						</select>
-					</div>
-				</div>
-				<div class="form__control margin-left-10">
-					<div class="selectmenu input--medium">
-						<select ng-model="filter.GrantProgramId" ng-options="item.Key as item.Value for item in grantPrograms" class="input--medium" ng-change="loadGrantStreams()" ng-keypress="search($event)">
-							<option value="">All Grant Programs</option>
-						</select>
-					</div>
-				</div>
+            <div class="form__group">
+                <div class="form__control" ng-if="showMyFiles()" style="vertical-align: bottom;">
+                    <button class="btn btn--secondary" ng-click="selectMyFiles($event)">My Files</button>
+                </div>
+                <div class="form__control">
+                    <div class="selectmenu">
+                        <select ng-model="filter.AssessorId" ng-options="item.Key as item.Value for item in assessors" ng-change="changeAssessor()" ng-keypress="search($event)">
+                            <option value="">All Assessors</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form__control margin-left-10" ng-show="showAssigned()" style="vertical-align: bottom;">
+                    <button class="btn btn--secondary" ng-click="toggleAssigned($event)">{{ filter.IsAssigned ? 'All Assigned' : filter.IsAssigned === false ? 'Not Assigned' : 'All' }}</button>
+                </div>
+                <div class="form__control margin-left-10">
+                    <div class="selectmenu">
+                        <select ng-model="filter.FiscalYearId" ng-options="item.Key as item.Value for item in fiscalYears" ng-change="loadTrainingPeriods()" ng-keypress="search($event)">
+                            <option value="">All Fiscal Periods</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form__control margin-left-10">
+                    <div class="selectmenu input--medium">
+                        <select ng-model="filter.GrantProgramId" ng-options="item.Key as item.Value for item in grantPrograms" class="input--medium" ng-change="loadGrantStreams()" ng-keypress="search($event)">
+                            <option value="">All Grant Programs</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="form__control margin-left-10">
                     <div class="selectmenu input--medium">
                         <select ng-model="filter.GrantStreamId" ng-options="item.Key as item.Value for item in grantStreams" class="input--medium" ng-change="loadTrainingPeriods()" ng-keypress="search($event)">
@@ -50,14 +50,15 @@
                         </select>
                     </div>
                 </div>
-				<div class="form__control margin-left-10">
-					<button class="btn btn--primary" ng-click="applyFilter()">Apply Filter</button>
-				</div>
-				<div class="form__control margin-left-10">
-					<button class="btn btn--secondary" ng-click="clearFilter()">Clear</button>
-				</div>
-			</div>
-		</div>
+                <div class="form__control margin-left-10">
+                    <button class="btn btn--primary" ng-click="applyFilter()">Apply Filter</button>
+                    <a ng-if="section.canExportToExcel" href="@Url.Action("ExportApplicationsToExcel")?{{ filterAsQueryString }}" class="btn btn--primary">Export</a>
+                </div>
+                <div class="form__control margin-left-10">
+                    <button class="btn btn--secondary" ng-click="clearFilter()">Clear</button>
+                </div>
+            </div>
+        </div>
 
 		<div class="application-body internal-application-body">
 

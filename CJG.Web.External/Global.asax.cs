@@ -3,31 +3,28 @@ using System.Configuration;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
-using Autofac;
+using System.Net;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using CJG.Infrastructure.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using NLog;
-using System.Web;
+using Autofac;
 using CJG.Core.Entities;
 using CJG.Core.Entities.Attributes;
 using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
-using System.Net;
+using CJG.Infrastructure.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using NLog;
 
 namespace CJG.Web.External
 {
-	/// <summary>
-	/// <typeparamref name="MvcApplication"/> class, provides a way to configuration the application.
-	/// </summary>
-	public class MvcApplication : HttpApplication
+    /// <summary>
+    /// <typeparamref name="MvcApplication"/> class, provides a way to configuration the application.
+    /// </summary>
+    public class MvcApplication : HttpApplication
 	{
-		#region Variables
-		static readonly Logger logger = LogManager.GetCurrentClassLogger();
-		#endregion
+		private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-		#region Methods
 		/// <summary>
 		/// Register and configuration the application.
 		/// </summary>
@@ -39,7 +36,7 @@ namespace CJG.Web.External
 			FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			MvcHandler.DisableMvcResponseHeader = true;
-			logger.Info("CJG Web Application Starting");
+			Logger.Info("CJG Web Application Starting");
 
 			// Makes it possible for Windows Authentication to work along side Form-based authentication.
 			System.Security.Claims.ClaimsPrincipal.PrimaryIdentitySelector =
@@ -75,13 +72,12 @@ namespace CJG.Web.External
 		{
 			var exception = Server.GetLastError();
 
-			logger.Fatal(exception, "Caught unhandled exception: {0} - {1}", exception.Message, exception);
+			Logger.Fatal(exception, "Caught unhandled exception: {0} - {1}", exception.Message, exception);
 
-			if(IsDevelopmentMode())
+			if (IsDevelopmentMode())
 			{
 				Response.Write("<h2>Application Error</h2>\n");
-				Response.Write(
-					"<p>" + exception.GetAllMessages() + "</p>\n");
+				Response.Write("<p>" + exception.GetAllMessages() + "</p>\n");
 				Response.Write("<p>" + exception + "</p>\n");
 			}
 
@@ -132,16 +128,16 @@ namespace CJG.Web.External
 		public override void Init()
 		{
 			base.Init();
-			this.AcquireRequestState += showRouteValues;
+			AcquireRequestState += ShowRouteValues;
 		}
 
-		protected void showRouteValues(object sender, EventArgs e)
+		protected void ShowRouteValues(object sender, EventArgs e)
 		{
 			var context = HttpContext.Current;
 			if (context == null)
 				return;
+
 			var routeData = RouteTable.Routes.GetRouteData(new HttpContextWrapper(context));
 		}
-		#endregion
 	}
 }

@@ -6,7 +6,8 @@ app.controller('WorkQueue', function ($scope, $attrs, $controller, $timeout, Uti
     onRefresh: function () {
       return loadApplications().catch(angular.noop);
     },
-    userId: parseInt($attrs.userId)
+    userId: parseInt($attrs.userId),
+    canExportToExcel: $attrs.canExport
   };
 
   $scope.quantities = [10, 25, 50, 100];
@@ -20,6 +21,8 @@ app.controller('WorkQueue', function ($scope, $attrs, $controller, $timeout, Uti
     Quantity: $scope.quantities[0],
     OrderBy: []
   };
+  $scope.filterAsQueryString = '';
+
   $scope.current = {
     FiscalYearId: 0,
     GrantProgramId: 0
@@ -147,6 +150,7 @@ app.controller('WorkQueue', function ($scope, $attrs, $controller, $timeout, Uti
     })
       .then(function () {
         return $timeout(function () {
+          $scope.updateFilterQuery();
           setupPage(page, quantity);
         });
       });
@@ -159,16 +163,16 @@ app.controller('WorkQueue', function ($scope, $attrs, $controller, $timeout, Uti
    **/
   function init() {
     return Promise.all([
-      loadSetting().then(function () {
-        return Promise.all([
-          $scope.loadGrantStreams(),
-          loadFiscalYears()
-        ]);
-      }),
-      loadAssessors(),
-      loadGrantPrograms()
-    ])
-      .then(function () {
+        loadSetting().then(function() {
+          return Promise.all([
+            $scope.loadGrantStreams(),
+            loadFiscalYears()
+          ]);
+        }),
+        loadAssessors(),
+        loadGrantPrograms()
+      ])
+      .then(function() {
         return loadApplications($scope.filter.Page, $scope.filter.Quantity);
       })
       .catch(angular.noop);
@@ -286,7 +290,8 @@ app.controller('WorkQueue', function ($scope, $attrs, $controller, $timeout, Uti
    * @returns {void}
    **/
   $scope.changeAssessor = function () {
-    if ($scope.filter.AssessorId) $scope.filter.IsAssigned = null;
+    if ($scope.filter.AssessorId)
+      $scope.filter.IsAssigned = null;
   }
   /**
    * Clear the filter.
@@ -319,12 +324,20 @@ app.controller('WorkQueue', function ($scope, $attrs, $controller, $timeout, Uti
    * @returns {Promise}
    */
   $scope.applyFilter = function (page, quantity, force) {
-    if (!page) page = $scope.filter.Page;
-    if (!quantity) quantity = $scope.filter.Quantity;
-    if (typeof (force) === 'undefined') force = false;
+    $scope.updateFilterQuery();
 
-    if (force || filterChanged()) $scope.cache = [];
+    if (!page)
+      page = $scope.filter.Page;
 
+    if (!quantity)
+      quantity = $scope.filter.Quantity;
+
+    if (typeof (force) === 'undefined')
+      force = false;
+
+    if (force || filterChanged())
+      $scope.cache = [];
+    
     return loadApplications(page, quantity)
       .then(function () {
         $scope.current = {
@@ -417,8 +430,21 @@ app.controller('WorkQueue', function ($scope, $attrs, $controller, $timeout, Uti
    * @returns {Promise}
    */
   $scope.search = function ($event) {
-    if ($event.keyCode === 13) return $scope.applyFilter();
+    $scope.updateFilterQuery();
+
+    if ($event.keyCode === 13)
+      return $scope.applyFilter();
+
     return Promise.resolve();
+  }
+
+  $scope.updateFilterQuery = function() {
+    var queryFilter = '';
+    for (const [key, value] of Object.entries($scope.filter)) {
+      if (value != null)
+        queryFilter = queryFilter + `${key}=${value}&`;
+    }
+    $scope.filterAsQueryString = queryFilter;
   }
 
   /**

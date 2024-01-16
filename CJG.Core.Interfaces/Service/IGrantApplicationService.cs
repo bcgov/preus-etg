@@ -26,6 +26,7 @@ namespace CJG.Core.Interfaces.Service
 		decimal GetApplicationsCostByFiscal(GrantApplication grantApplication);
 
 		PageList<GrantApplication> GetGrantApplications(int page, int quantity, ApplicationFilter filter);
+		PageList<GrantApplication> GetGrantApplications(int page, int quantity, ApplicationFilter filter, bool bypassPaging = false);
 		IOrderedQueryable<GrantApplication> GetGrantApplications(int trainingProviderInventoryId, string search);
 		IOrderedQueryable<GrantApplication> GetGrantApplicationsForOrg(int orgId, int grantProgramId, string search);
 		IOrderedQueryable<GrantApplication> GetGrantApplicationsBySIN(string sin, string search);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Web;
 using CJG.Application.Business.Models;
 using CJG.Core.Entities;
@@ -759,11 +760,22 @@ namespace CJG.Application.Services
 		/// <returns></returns>
 		public PageList<GrantApplication> GetGrantApplications(int page, int quantity, ApplicationFilter filter)
 		{
+			return GetGrantApplications(page, quantity, filter, false);
+		}
+
+		public PageList<GrantApplication> GetGrantApplications(int page, int quantity, ApplicationFilter filter, bool bypassPaging = false)
+		{
 			if (page <= 0)
 				page = 1;
 
 			if (quantity <= 0 || quantity > 100)
 				quantity = 10;
+
+			if (bypassPaging)
+			{
+				page = 1;
+				quantity = 100000;
+			}
 
 			var query = _dbContext.GrantApplications.Where(ga => true);
 
