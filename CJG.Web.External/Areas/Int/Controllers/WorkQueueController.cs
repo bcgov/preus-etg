@@ -205,7 +205,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 					StatusChanged = a.StateChanges.OrderByDescending(s => s.DateAdded).FirstOrDefault().ChangedDate.ToLocalTime(),
 					GrantStreamName = a.GrantOpening.GrantStream.Name,
 					IsRisk = a.Organization.RiskFlag ? "Yes" : "No",
-					RequestedGovernmentContribution = $"{a.TrainingCost?.TotalEstimatedCost ?? 0m:C}"
+					RequestedGovernmentContribution = $"{a.TrainingCost?.TotalEstimatedReimbursement ?? 0m:C}"
 				});
 
 				var excelOutput = _excelExportService.GetExcelContent(exportItems, "Grant Applications");
