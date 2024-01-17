@@ -24,14 +24,14 @@ namespace CJG.Application.Services.ExcelExport
 
 			CreateExcelHeaders<T>(ws);
 
-			ws.Cell("A2").InsertData(items.ToList());
-			ws.Columns().AdjustToContents(5d, 50d);
+			ws.Cell("A2").InsertData(items);
+			ws.ColumnsUsed().AdjustToContents(5d, 50d);
 
-			ws.Rows().Cells().Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
-			ws.Rows().AdjustToContents();
+			ws.RowsUsed().CellsUsed().Style.Alignment.Vertical = XLAlignmentVerticalValues.Top;
+			ws.RowsUsed().AdjustToContents();
 
 			wb.SaveAs(stream);
-
+			
 			return stream.ToArray();
 		}
 
