@@ -198,8 +198,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				{
 					FileNumber = a.FileNumber,
 					Applicant = a.OrganizationLegalName,
-					DateSubmitted = a.DateSubmitted.Value,
-					StartDate = a.StartDate,
+					DateSubmitted = a.DateSubmitted.Value.ToLocalTime(),
+					StartDate = a.StartDate.ToLocalTime(),
 					PrioritizationScore = a.PrioritizationScore,
 					Status = a.ApplicationStateInternal.GetDescription(),
 					StatusChanged = a.StateChanges.OrderByDescending(s => s.DateAdded).FirstOrDefault().ChangedDate.ToLocalTime(),
