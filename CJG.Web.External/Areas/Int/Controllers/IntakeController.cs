@@ -1,6 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
 using CJG.Web.External.Areas.Int.Models;
@@ -16,10 +16,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
     [AuthorizeAction(Privilege.IA4)]
 	public class IntakeController : BaseController
 	{
-		private readonly IStaticDataService _staticDataService;
-		private readonly IGrantOpeningService _grantOpeningService;
-		private readonly IGrantProgramService _grantProgramService;
-		private readonly IGrantStreamService _grantStreamService;
+		private readonly IntakeManagementBuilder _intakeManagementBuilder;
 
 		/// <summary>
 		/// Creates a new instance of a IntakeController object.
@@ -28,53 +25,30 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <param name="grantOpeningService"></param>
 		/// <param name="grantProgramService"></param>
 		/// <param name="grantStreamService"></param>
+		/// <param name="trainingPeriodService"></param>
+		/// <param name="financeInformationService"></param>
 		public IntakeController(
 			IControllerService controllerService,
 			IGrantOpeningService grantOpeningService,
 			IGrantProgramService grantProgramService,
-			IGrantStreamService grantStreamService) : base(controllerService.Logger)
+			IGrantStreamService grantStreamService,
+			ITrainingPeriodService trainingPeriodService,
+			IFinanceInformationService financeInformationService
+		) : base(controllerService.Logger)
 		{
-			_staticDataService = controllerService.StaticDataService;
-			_grantOpeningService = grantOpeningService;
-			_grantProgramService = grantProgramService;
-			_grantStreamService = grantStreamService;
+			_intakeManagementBuilder = new IntakeManagementBuilder(controllerService.StaticDataService, grantProgramService, grantStreamService, grantOpeningService, trainingPeriodService, financeInformationService);
 		}
 
 		/// <summary>
 		/// Gets intake management related data.
 		/// </summary>
-		/// <param name="grantProgramId"></param>
+		/// <param name="fiscalYearId"></param>
 		/// <param name="grantStreamId"></param>
-		/// <param name="trainingPeriodId"></param>
 		/// <returns>ActionResult</returns>
 		[HttpGet]
-		public ActionResult IntakeManagementDashboard(int? grantProgramId, int? grantStreamId, int? trainingPeriodId)
+		public ActionResult IntakeManagementDashboard(int? fiscalYearId, int? grantStreamId, int? budgetTypeId)
 		{
-			var intakeManagementModel = new IntakeManagementBuilder(_staticDataService, _grantProgramService, _grantStreamService, _grantOpeningService)
-					.Build(grantProgramId, grantStreamId, trainingPeriodId);
-
-			ValidateIntakeModel(intakeManagementModel);
-
-			return View(intakeManagementModel);
-		}
-
-		/// <summary>
-		/// Gets intake management related data.  
-		/// </summary>
-		/// <param name="grantProgramId"></param>
-		/// <param name="grantStreamId"></param>
-		/// <param name="trainingPeriodId"></param>
-		/// <param name="navigate"></param>
-		/// <returns>ActionResult</returns>
-		[HttpPost]
-		public ActionResult IntakeManagementDashboard(int? grantProgramId, int? grantStreamId, int? trainingPeriodId, string navigate)
-		{
-			Enum.TryParse(navigate, true, out IntakeManagementViewModel.NavigationCommand navigationCommand);
-
-			ModelState.Clear();
-
-			var intakeManagementModel = new IntakeManagementBuilder(_staticDataService, _grantProgramService, _grantStreamService, _grantOpeningService)
-					.Build(grantProgramId, grantStreamId, trainingPeriodId, navigationCommand);
+			var intakeManagementModel = _intakeManagementBuilder.Build(fiscalYearId, grantStreamId, budgetTypeId);
 
 			ValidateIntakeModel(intakeManagementModel);
 
@@ -95,6 +69,15 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 			if (!model.GrantStreams.Any())
 				this.SetAlert("There are currently no active Grant Streams for the chosen Grant Program.", AlertType.Warning, false);
+		}
+
+		[HttpPost]
+		public ActionResult SaveIntakeRates(IntakeManagementViewModel model)
+		{
+			if (ModelState.IsValid)
+				_intakeManagementBuilder.SaveRates(model);
+
+			return RedirectToAction("IntakeManagementDashboard", new { fiscalYearId = model.FiscalYearId, grantStreamId = model.GrantStreamId, budgetTypeId = model.BudgetTypeId });
 		}
 	}
 }

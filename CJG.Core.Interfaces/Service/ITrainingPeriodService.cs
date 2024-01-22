@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CJG.Application.Business.Models;
 using CJG.Core.Entities;
 
 namespace CJG.Core.Interfaces.Service
@@ -12,5 +13,7 @@ namespace CJG.Core.Interfaces.Service
 		TrainingPeriod Update(TrainingPeriod trainingPeriod);
 		TrainingPeriod ToggleStatus(TrainingPeriod trainingPeriod);
 		void Delete(TrainingPeriod trainingPeriod);
+		void SaveBudgetRates(TrainingBudgetModel trainingBudget);
+		TrainingBudgetModel GetBudget(TrainingPeriod trainingPeriod, TrainingPeriodBudgetType budgetType);
 	}
 }

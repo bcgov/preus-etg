@@ -325,6 +325,23 @@ namespace CJG.Application.Services
 		}
 
 		/// <summary>
+		/// Get the Grant Opening for the specified Grant Stream Id and Training period Id.
+		/// </summary>
+		/// <param name="grantStreamId"></param>
+		/// <param name="trainingPeriodId"></param>
+		/// <returns></returns>
+		public GrantOpening GetGrantOpeningWithApplications(int grantStreamId, int trainingPeriodId)
+		{
+			return _dbContext.GrantOpenings
+				.Include(g => g.GrantApplications)
+				.AsNoTracking()
+				.Where(x => x.TrainingPeriod.Id == trainingPeriodId && x.GrantStreamId == grantStreamId)
+				.OrderBy(go => go.GrantStream.Name)
+				.ThenBy(go => go.TrainingPeriod.StartDate)
+				.FirstOrDefault();
+		}
+
+		/// <summary>
 		/// Get all the Grant Openings for the specified Grant Opening States.
 		/// </summary>
 		/// <param name="filterStates"></param>

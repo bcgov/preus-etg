@@ -211,8 +211,10 @@
     <Compile Include="ExcelExport\ExcelExportService.cs" />
     <Compile Include="ExcelExport\IExcelExportService.cs" />
     <Compile Include="ExcelExport\Models\WorkQueueExportModel.cs" />
+    <Compile Include="FinanceInformationService.cs" />
     <Compile Include="Helpers\DbFunctions.cs" />
     <Compile Include="Helpers\TestService.cs" />
+    <Compile Include="IFinanceInformationService.cs" />
     <Compile Include="IPrincipalExtensions.cs" />
     <Compile Include="Notifications\NotificationViewModel.cs" />
     <Compile Include="ParticipantEmploymentStatusService.cs" />

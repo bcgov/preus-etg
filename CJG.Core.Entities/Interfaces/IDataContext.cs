@@ -65,7 +65,6 @@ namespace CJG.Infrastructure.Entities
 		#endregion
 
 		#region Administrative
-
 		DbSet<FiscalYear> FiscalYears { get; }
 		DbSet<TrainingPeriod> TrainingPeriods { get; }
 		DbSet<GrantProgram> GrantPrograms { get; }
@@ -92,6 +91,7 @@ namespace CJG.Infrastructure.Entities
 		DbSet<ProgramConfiguration> ProgramConfigurations { get; }
 		DbSet<ProgramNotification> ProgramNotifications { get; }
 		DbSet<ProgramNotificationRecipient> ProgramNotificationRecipients { get; }
+		DbSet<TrainingPeriodBudgetRate> TrainingPeriodBudgetRates { get; }
 		#endregion
 
 		#region Grant Applications

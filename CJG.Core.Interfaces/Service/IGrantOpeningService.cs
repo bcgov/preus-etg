@@ -23,6 +23,7 @@ namespace CJG.Core.Interfaces.Service
 		IEnumerable<GrantOpening> GetPublishedGrantOpenings(DateTime forThisDate);
 		bool AssociatedWithAGrantStream(GrantStream grantStream);
 		GrantOpening GetGrantOpening(int grantStreamId, int trainingPeriodId);
+		GrantOpening GetGrantOpeningWithApplications(int grantStreamId, int trainingPeriodId);
 		IEnumerable<GrantOpening> GetGrantOpeningsInStates(IEnumerable<GrantOpeningStates> filterStates);
 		bool CanDeleteGrantOpening(GrantOpening grantOpening);
 		List<int> MakeReservation(GrantApplication grantApplication);
