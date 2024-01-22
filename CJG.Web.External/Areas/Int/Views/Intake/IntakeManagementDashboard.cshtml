@@ -60,7 +60,7 @@
     
 @using (Html.BeginForm("SaveIntakeRates", "Intake", FormMethod.Post))
 {
-    if (Model.GrantStreams.Any())
+    if (Model.GrantStreams.Any() && Model.TrainingPeriods.Any())
     {
         <div class="table--horizontal-wrapper budget-overview-container">
             @Html.HiddenFor(m => m.FiscalYearId)
@@ -109,33 +109,42 @@
                 @foreach (var state in Model.StateNames)
                 {
                     var summedIntakes = Model.TrainingPeriods.SelectMany(s => s.GrantOpeningIntakes.Where(g => g.Key == state.Key)).ToList();
-                    var fiscalTotalCount = summedIntakes.Select(s => s.Value).Sum(i => i.Number);
-                    var fiscalTotalValue = summedIntakes.Select(s => s.Value).Sum(i => i.Value);
+                    var fiscalTotalCount = summedIntakes.Select(s => s.Value).Where(v => v.ValueIsMoney).Sum(i => i.Number);
+                    var fiscalTotalValue = summedIntakes.Select(s => s.Value).Where(v => v.ValueIsMoney).Sum(i => i.Value);
+                    bool valueIsMoney = true;
                     <tr>
                         <th colspan="1" class="indent-cell fixed-column">@state.Value</th>
                         @foreach (var trainingPeriod in Model.TrainingPeriods)
                         {
+                            valueIsMoney = @trainingPeriod.GrantOpeningIntakes[state.Key].ValueIsMoney;
                             <td class="text-align-right" colspan="1">
+                            @if (valueIsMoney)
+                            {
                                 @trainingPeriod.GrantOpeningIntakes[state.Key].Number
+                            }
                             </td>
                             <td class="text-align-right" colspan="1">
                                 @if (@trainingPeriod.GrantOpeningIntakes[state.Key].ValueIsMoney)
                                 {
                                     @trainingPeriod.GrantOpeningIntakes[state.Key].Value.ToDollarCurrencyString(0)
-                                    ;
                                 }
                                 else
                                 {
                                     @trainingPeriod.GrantOpeningIntakes[state.Key].Value.ToPercentString(1)
-                                    ;
                                 }
                             </td>
                         }
                         <td class="text-align-right" colspan="1">
-                            @fiscalTotalCount
+                            @if(valueIsMoney)
+                            { 
+                                @fiscalTotalCount
+                            }
                         </td>
                         <td class="text-align-right" colspan="1">
-                            @fiscalTotalValue.ToDollarCurrencyString(0)
+                            @if(valueIsMoney)
+                            { 
+                                @fiscalTotalValue.ToDollarCurrencyString(0)
+                            }
                         </td>
                     </tr>
                 }

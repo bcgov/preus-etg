@@ -197,14 +197,12 @@ namespace CJG.Web.External.Helpers
 
 			//Forecasted Expenditure would be the amount that we have already committed, plus the value of all the work awaiting assessment / under assessment,
 			var forecastValue = newApplications.Value + pendingApplications.Value + underApplications.Value + committed.Value;
+			intakeModels.Add(25, GetIntakeModelInline("Forecasted Expenditure *", 0, forecastValue));
 
 			var budget = grantOpening?.IntakeTargetAmt ?? 0;
-
-
-			intakeModels.Add(25, GetIntakeModelInline("Forecasted Expenditure *", 0, forecastValue));
 			// should be based off of forecasted expenditure vs budget
 			var overUnderDollars = forecastValue - budget;
-			var overUnderPercent = budget > 0 ? forecastValue / budget : 0;
+			var overUnderPercent = budget > 0 ? overUnderDollars / budget : 0;
 			intakeModels.Add(30, GetIntakeModelInline("Over/Under $", 0, overUnderDollars));
 			intakeModels.Add(31, GetIntakeModelInline("Over/Under %", 0, overUnderPercent, false));
 
