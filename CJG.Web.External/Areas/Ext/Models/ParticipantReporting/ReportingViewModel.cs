@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using CJG.Application.Services;
 using CJG.Core.Entities;
+using CJG.Core.Entities.Extensions;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Models.Shared;
 
@@ -96,10 +97,10 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 				.Select(pf => new ParticipantViewModel(pf, ShowEligibility, currentClaim))
 				.ToArray();
 
+			var applicationHasBeenReturnedToDraft = grantApplication.HasBeenReturnedToDraft();
             ParticipantInvitations = grantApplication.ParticipantInvitations
                 .OrderBy(pi => pi.DateAdded)
-                //.ThenBy(pi => pi.FirstName)
-                .Select(pi => new ParticipantInvitationModel(pi))
+                .Select(pi => new ParticipantInvitationModel(pi, applicationHasBeenReturnedToDraft))
                 .ToList();
 
             ParticipantWarnings = GetParticipantWarnings(grantApplication, participantService);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Web;
 using CJG.Application.Business.Models;
 using CJG.Core.Entities;
@@ -759,11 +760,22 @@ namespace CJG.Application.Services
 		/// <returns></returns>
 		public PageList<GrantApplication> GetGrantApplications(int page, int quantity, ApplicationFilter filter)
 		{
+			return GetGrantApplications(page, quantity, filter, false);
+		}
+
+		public PageList<GrantApplication> GetGrantApplications(int page, int quantity, ApplicationFilter filter, bool bypassPaging = false)
+		{
 			if (page <= 0)
 				page = 1;
 
 			if (quantity <= 0 || quantity > 100)
 				quantity = 10;
+
+			if (bypassPaging)
+			{
+				page = 1;
+				quantity = 100000;
+			}
 
 			var query = _dbContext.GrantApplications.Where(ga => true);
 
@@ -1908,6 +1920,7 @@ namespace CJG.Application.Services
 
 			trainingCost.RecalculateEstimatedCosts();
 			trainingCost.RecalculateAgreedCosts();
+
 			if (!isInternal)
 			{
 				if (trainingCost.EstimatedParticipants > 0 && trainingCost.TotalEstimatedReimbursement > 0)
@@ -1921,8 +1934,11 @@ namespace CJG.Application.Services
 			}
 
 			// Agreed commitment cannot exceed 10% unless user is a Director or Assessor
-			if (trainingCost.DoesAgreedCommitmentExceedEstimatedContribution() && !_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCostOverride))
-				throw new InvalidOperationException("You may not increase the assessed total government contribution more than 10% over the estimated total government contribution.");
+			if (isInternal)
+			{
+				if (trainingCost.DoesAgreedCommitmentExceedEstimatedContribution() && !_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCostOverride))
+					throw new InvalidOperationException("You may not increase the assessed total government contribution more than 10% over the estimated total government contribution.");
+			}
 
 			// If the applicant is working on a current claim, update it with the latest changes made to the agreed costs.
 			var claim = grantApplication.GetCurrentClaim();
@@ -2134,8 +2150,11 @@ namespace CJG.Application.Services
 			}
 
 			// Agreed commitment cannot exceed 10% unless user is a Director or Assessor
-			if (trainingCost.DoesAgreedCommitmentExceedEstimatedContribution() && !_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCostOverride))
-				throw new InvalidOperationException("You may not increase the assessed total government contribution more than 10% over the estimated total government contribution.");
+			if (isInternal)
+			{
+				if (trainingCost.DoesAgreedCommitmentExceedEstimatedContribution() && !_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditTrainingCostOverride))
+					throw new InvalidOperationException("You may not increase the assessed total government contribution more than 10% over the estimated total government contribution.");
+			}
 
 			// If the applicant is working on a current claim, update it with the latest changes made to the agreed costs.
 			var claim = grantApplication.GetCurrentClaim();

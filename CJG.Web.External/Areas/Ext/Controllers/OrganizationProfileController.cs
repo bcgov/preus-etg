@@ -78,6 +78,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
 				var createOrganizationProfile = currentUser.Organization == null || _organizationService.GetOrganizationProfileAdminUserId(currentUser.Organization.Id) == 0;
 				var userCanEditOrganizationProfile = currentUser.Organization != null || createOrganizationProfile;
+				var previouslySubmittedApplications = _organizationService.SubmittedGrantApplications(currentUser.OrganizationId);
 
 				if (_userService.SyncOrganizationFromBCeIDAccount(currentUser))
 					_authenticationService.Refresh(currentUser);
@@ -88,6 +89,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					CreateOrganizationProfile = createOrganizationProfile,
 					IsOrganizationProfileAdministrator = currentUser.IsOrganizationProfileAdministrator || model.CreateOrganizationProfile,
 					CanEditOrganizationProfile = userCanEditOrganizationProfile,
+					HasPreviouslySubmittedApplications = previouslySubmittedApplications > 0,
 					RequiresBusinessLicenseDocuments = _organizationService.RequiresBusinessLicenseDocuments(currentUser.OrganizationId)
 				};
 			}
@@ -145,8 +147,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			// Have to clear the default validation state since the address sub-model doesn't come over with the ajax 'datatype' set to 'file'.
 			ModelState.Clear();
 
-			var address = JsonConvert.DeserializeObject<AddressViewModel>(model.HeadOfficeAddressBlob);
-			model.HeadOfficeAddress = address;
+			model.HeadOfficeAddress = JsonConvert.DeserializeObject<AddressViewModel>(model.HeadOfficeAddressBlob);
 			model.BusinessLicenseDocumentAttachments = GetBusinessAttachmentsToValidate(attachments);
 			model.BusinessWebsite = PrefixBusinessWebsite(model);
 
@@ -201,6 +202,9 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 		private List<AttachmentViewModel> GetBusinessAttachmentsToValidate(string attachments)
 		{
+			if (string.IsNullOrWhiteSpace(attachments))
+				return new List<AttachmentViewModel>();
+
 			var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
 			var currentOrganization = currentUser.Organization;
 			var currentBusinessDocs = currentOrganization?.BusinessLicenseDocuments.Select(a => new AttachmentViewModel(a)).ToList();

@@ -114,6 +114,17 @@
   }
 }
 
+.queue-filter {
+  .form-item {
+    list-style: none;
+    margin-bottom: 1em;
+  }
+
+  .input--medium {
+    padding-left: 5px !important;
+  }
+}
+
 @-webkit-keyframes ngdialog-flyin {
   0% {
     opacity: 0;

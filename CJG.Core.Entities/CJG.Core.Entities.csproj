@@ -123,6 +123,7 @@
     <Compile Include="ClassificationOfInstructionalProgram.cs" />
     <Compile Include="DenialReason.cs" />
     <Compile Include="ExpectedParticipantOutcome.cs" />
+    <Compile Include="Extensions\GrantApplicationStateExtensions.cs" />
     <Compile Include="GrantStreamEligibilityAnswer.cs" />
     <Compile Include="GrantStreamEligibilityQuestion.cs" />
     <Compile Include="IPrincipalExtensions.cs" />
@@ -242,6 +243,8 @@
     <Compile Include="StateExtensions.cs" />
     <Compile Include="TempData.cs" />
     <Compile Include="TrainingCostExtensions.cs" />
+    <Compile Include="TrainingPeriodBudgetRate.cs" />
+    <Compile Include="TrainingPeriodBudgetType.cs" />
     <Compile Include="TrainingProgramExtensions.cs" />
     <Compile Include="TrainingProgramStates.cs" />
     <Compile Include="TrainingCostStates.cs" />
@@ -326,6 +329,7 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

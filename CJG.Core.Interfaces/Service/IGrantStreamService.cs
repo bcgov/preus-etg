@@ -19,6 +19,7 @@ namespace CJG.Core.Interfaces.Service
 		IEnumerable<EligibleExpenseType> GetAllEligibleExpenseTypes(int grantStreamId);
 		IEnumerable<GrantStream> GetGrantStreams(int? year, int? program);
 		IEnumerable<GrantStreamEligibilityQuestion> GetGrantStreamQuestions(int grantStreamId);
+		GrantStreamEligibilityQuestion GetOldGrowthGrantStreamQuestion();
 		GrantStreamEligibilityQuestion GetGrantStreamQuestion(int id);
 		GrantStreamEligibilityQuestion UpdateGrantStreamQuestion(GrantStreamEligibilityQuestion question);
 		IEnumerable<GrantStreamEligibilityQuestion> UpdateGrantStreamQuestions(IEnumerable<GrantStreamEligibilityQuestion> questions);

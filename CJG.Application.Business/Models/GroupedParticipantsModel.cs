@@ -12,7 +12,6 @@ namespace CJG.Application.Business.Models
 		public string FileNumber { get; set; }
 		public string CourseName { get; set; }
 		public string EmployerName { get; set; }
-		public decimal PaidToDate { get; set; }
 
 		public DateTime LastApplicationDateTime { get; set; }
 	}

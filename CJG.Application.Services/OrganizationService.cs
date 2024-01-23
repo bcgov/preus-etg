@@ -96,6 +96,27 @@ namespace CJG.Application.Services
 			_dbContext.Commit();
 		}
 
+		public bool RequiresBusinessLicenseDocuments(int orgId)
+		{
+			var organization = Get(orgId);
+			if (organization == null)
+				return false;
+
+			var businessLicenseExpiry = AppDateTime.UtcNow.AddMonths(-12);
+			return !organization.BusinessLicenseDocuments.Any(bl => bl.DateAdded >= businessLicenseExpiry || bl.DateUpdated >= businessLicenseExpiry);
+		}
+
+		public int NotSubmittedGrantApplications(int orgId)
+		{
+			var defaultGrantProgramId = GetDefaultGrantProgramId();
+			var applicationCount = _dbContext.GrantApplications
+				.Where(x => x.OrganizationId == orgId && (x.ApplicationStateExternal == ApplicationStateExternal.Complete || x.ApplicationStateExternal == ApplicationStateExternal.Incomplete))
+				.Where(x => x.GrantOpening.GrantStream.GrantProgram.Id == defaultGrantProgramId)
+				.Count();
+
+			return applicationCount;
+		}
+
 		public int NotSubmittedGrantApplicationsForUser(int orgId, Guid userBCeID)
 		{
 			var defaultGrantProgramId = GetDefaultGrantProgramId();
@@ -113,24 +134,14 @@ namespace CJG.Application.Services
 			return applicationCount;
 		}
 
-		public bool RequiresBusinessLicenseDocuments(int orgId)
-		{
-			var organization = Get(orgId);
-			if (organization == null)
-				return false;
-
-			var businessLicenseExpiry = AppDateTime.UtcNow.AddMonths(-12);
-			return !organization.BusinessLicenseDocuments.Any(bl => bl.DateAdded >= businessLicenseExpiry || bl.DateUpdated >= businessLicenseExpiry);
-		}
-
-		public int NotSubmittedGrantApplications(int orgId)
+		public int SubmittedGrantApplications(int orgId)
 		{
 			var defaultGrantProgramId = GetDefaultGrantProgramId();
 
 			var applicationCount = _dbContext.GrantApplications
-				.Where(x => x.OrganizationId == orgId && (x.ApplicationStateExternal == ApplicationStateExternal.Complete || x.ApplicationStateExternal == ApplicationStateExternal.Incomplete))
 				.Where(x => x.GrantOpening.GrantStream.GrantProgram.Id == defaultGrantProgramId)
-				.Count();
+				.Where(x => x.OrganizationId == orgId)
+				.Count(x => x.ApplicationStateExternal >= ApplicationStateExternal.Submitted);
 
 			return applicationCount;
 		}

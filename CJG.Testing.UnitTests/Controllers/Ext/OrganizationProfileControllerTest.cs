@@ -1,4 +1,9 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Testing.Core;
@@ -9,11 +14,7 @@ using CJG.Web.External.Models.Shared;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using Newtonsoft.Json;
 
 namespace CJG.Testing.UnitTests.Controllers.Ext
 {
@@ -149,13 +150,21 @@ namespace CJG.Testing.UnitTests.Controllers.Ext
 			var model = new OrganizationProfileViewNewModel();
 			Utilities.MapProperties(user.Organization, model);
 			model.HeadOfficeAddress = new AddressViewModel(user.Organization.HeadOfficeAddress);
+			model.HeadOfficeAddressBlob = JsonConvert.SerializeObject(model.HeadOfficeAddress);
 			model.RowVersion = Convert.ToBase64String(user.Organization.RowVersion);
+			model.Naics3Id = user.Organization.NaicsId;
+			model.Naics2Id = user.Organization.NaicsId;
+			model.Naics1Id = user.Organization.NaicsId;
+			// Need to stub out the attachments to stop this test from failing.
+			//model.BusinessLicenseDocumentAttachments = new List<AttachmentViewModel>();
 			var result = controller.UpdateOrganization(model, new HttpPostedFileBase[0], string.Empty);
 
 			// Assert
 			result.Should().NotBeNull().And.BeOfType<JsonResult>();
 			result.Data.Should().NotBeNull().And.BeOfType<OrganizationProfileViewNewModel>();
+			
 			var data = result.Data as OrganizationProfileViewNewModel;
+			Assert.AreEqual(data.ValidationErrors.Count, 0);
 			data.RowVersion.Should().Be(Convert.ToBase64String(user.Organization.RowVersion));
 			helper.GetMock<IUserService>().Verify(m => m.Update(It.IsAny<User>()), Times.Once);
 		}

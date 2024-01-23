@@ -14,16 +14,14 @@ namespace CJG.Core.Interfaces.Service
 		User RegisterUser(User newUser);
 		void Update(User user);
 		List<int> GetBCeIDUsers();
+
 		User GetBCeIDUser(Guid userGuid);
-
 		User GetBCeIDUser(Guid userGuid, Guid requester, BCeIDAccountTypeCodes requesterAccountType);
-
 		User GetBCeIDUser(string userId);
-
 		User GetBCeIDUser(string userId, Guid requester, BCeIDAccountTypeCodes requesterAccountType);
-
 		User GetIDIRUser(Guid userGuid);
 		User GetIDIRUser(string idir);
+
 		AccountTypes GetAccountType();
 		bool UpdateUserFromBCeIDAccount(User currentUser = null);
 		bool SyncUserFromBCeIDAccount(User user);

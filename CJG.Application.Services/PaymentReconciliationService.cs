@@ -1,17 +1,18 @@
-﻿using CJG.Core.Entities;
-using CJG.Core.Entities.Helpers;
-using CJG.Core.Interfaces;
-using CJG.Core.Interfaces.Service;
-using CJG.Infrastructure.Entities;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
+using CJG.Core.Entities;
+using CJG.Core.Entities.Helpers;
+using CJG.Core.Interfaces;
+using CJG.Core.Interfaces.Service;
+using CJG.Infrastructure.Entities;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using NLog;
 
 namespace CJG.Application.Services
 {

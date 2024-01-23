@@ -108,6 +108,7 @@ namespace CJG.Infrastructure.EF
 		public virtual DbSet<UnderRepresentedPopulation> UnderRepresentedPopulations { get; set; }
 		public virtual DbSet<VulnerableGroup> VulnerableGroups { get; set; }
 		public virtual DbSet<ParticipantEmploymentStatus> ParticipantEmploymentStatuses { get; set; }
+		public virtual DbSet<TrainingPeriodBudgetRate> TrainingPeriodBudgetRates { get; set; }
 		#endregion
 
 		#region Grant Applications
@@ -267,6 +268,19 @@ namespace CJG.Infrastructure.EF
 			modelBuilder.Entity<IdentityUserRole>().HasKey(r => new { r.RoleId, r.UserId }).ToTable("ApplicationUserRoles");
 			modelBuilder.Entity<IdentityUserLogin>().HasKey<string>(l => l.UserId).ToTable("ApplicationUserLogins");
 			modelBuilder.Entity<IdentityUserClaim>().HasKey<int>(l => l.Id).ToTable("ApplicationUserClaims");
+
+			modelBuilder.Entity<TrainingPeriodBudgetRate>()
+				.Property(t => t.RefusalRate)
+				.HasPrecision(9, 4);
+			modelBuilder.Entity<TrainingPeriodBudgetRate>()
+				.Property(t => t.WithdrawnRate)
+				.HasPrecision(9, 4);
+			modelBuilder.Entity<TrainingPeriodBudgetRate>()
+				.Property(t => t.ApprovedSlippageRate)
+				.HasPrecision(9, 4);
+			modelBuilder.Entity<TrainingPeriodBudgetRate>()
+				.Property(t => t.ClaimedSlippageRate)
+				.HasPrecision(9, 4);
 
 			modelBuilder.Entity<ApplicationRole>()
 				.HasMany(tp => tp.ApplicationClaims)

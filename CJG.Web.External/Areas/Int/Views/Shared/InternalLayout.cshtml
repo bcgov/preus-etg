@@ -24,7 +24,7 @@
     <script src="~/Scripts/angular-1.7.8/ng-loading-overlay.min.js"></script>
     <script src="https://cdn.tiny.cloud/1/ne7sj6l952t6973w2yrbbavskqrlkl5nvz89j0h11endvj03/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="~/Scripts/angular-1.7.8/tinymce.min.js"></script>
-    <script src="~/js/internal.js"></script>
+    <script src="~/js/internal.js?v=@ViewBag.Version.ToString()"></script>
     @RenderSection("Scripts", required: false)
     <script>
         window.version = '@ViewBag.Version.ToString()';

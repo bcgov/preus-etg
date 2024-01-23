@@ -16,7 +16,7 @@
                 </h2>
             </div>
         </div>
-        <div class="details-block">
+        <div class="details-block organization-profile">
             <div ng-if="alert.message" class="row row--alert">
                 <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
             </div>
@@ -196,16 +196,24 @@
                         <p ng-if="model.CanEditOrganizationProfile">Accepted file types: PDF, JPG, JPEG, PNG, GIF.</p>
 
                         <div ng-if="model.BusinessLicenseDocumentAttachments">
-                            <table style="width: 100%;">
+                            <table style="width: 100%;" class="business-license-documents">
+                                <tr>
+                                    <th>Document</th>
+                                    <th>Date Uploaded</th>
+                                    <th></th>
+                                </tr>
                                 <tr ng-repeat="attachment in model.BusinessLicenseDocumentAttachments">
-                                    <td style="width: 60%; vertical-align: top; word-wrap: break-word; word-break: break-all;">
+                                    <td style="width: 50%; vertical-align: top; word-wrap: break-word; word-break: break-all;">
                                         <a ng-if="attachment.Id" target="_blank" href="/Ext/Organization/BusinessLicense/Download/{{attachment.Id}}">{{attachment.FileName}}</a>
                                         <span ng-if="!attachment.Id">{{attachment.FileName}}</span>
                                         <br/>
-                                        {{attachment.Description}}
+                                        {{ attachment.Description }}
                                     </td>
-                                    <td style="width: 40%; vertical-align: top">
-                                        <button class="btn btn--secondary pull-right margin-left-10" ng-if="model.CanEditOrganizationProfile" ng-click="removeAttachment($index)">Remove</button>
+                                    <td>
+                                        {{ toPST(attachment.DateAdded) }}
+                                    </td>
+                                    <td style="width: 20%; vertical-align: top">
+                                        <button class="btn btn--secondary pull-right margin-left-10" ng-if="model.CanEditOrganizationProfile && model.HasPreviouslySubmittedApplications == false || attachment.Id <= 0" ng-click="removeAttachment($index)">Remove</button>
                                         @*<button class="btn btn--secondary pull-right margin-left-10" ng-if="model.IsOrganizationProfileAdministrator" ng-click="changeAttachment(attachment)">Change</button>*@
                                     </td>
                                 </tr>

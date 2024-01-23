@@ -101,6 +101,8 @@ namespace CJG.Infrastructure.EF
 		public DbSet<ProgramConfiguration> ProgramConfigurations => _context.ProgramConfigurations;
 		public DbSet<ProgramNotification> ProgramNotifications => _context.ProgramNotifications;
 		public DbSet<ProgramNotificationRecipient> ProgramNotificationRecipients => _context.ProgramNotificationRecipients;
+		public DbSet<TrainingPeriodBudgetRate> TrainingPeriodBudgetRates => _context.TrainingPeriodBudgetRates;
+
 		#endregion
 
 		#region Grant Applications

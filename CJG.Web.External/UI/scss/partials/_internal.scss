@@ -34,6 +34,21 @@ $int-header-height: 32px;
     width: 100%;
     z-index: 15;
   }
+
+  .debug-date {
+    color: #6a83a9;
+    font-size: 0.8em;
+    position: absolute;
+    top: 3em;
+    right: 1em;
+    background-color: #fff;
+
+    a {
+      display: inline-block;
+      padding: 0;
+      color: #6a83a9;
+    }
+  }
   // Accordion override for internal pages
   .panel-bar.k-panelbar {
     .k-state-active {

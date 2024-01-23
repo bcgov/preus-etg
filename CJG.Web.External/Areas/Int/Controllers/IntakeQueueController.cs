@@ -18,15 +18,12 @@ namespace CJG.Web.External.Areas.Int.Controllers
 	[Authorize(Roles = "Assessor, System Administrator, Director, Financial Clerk")]
 	public class IntakeQueueController : BaseController
 	{
-		#region Variables
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IFiscalYearService _fiscalYearService;
 		private readonly IGrantProgramService _grantProgramService;
 		private readonly IGrantStreamService _grantStreamService;
-		#endregion
 
-		#region Constructors
 		public IntakeQueueController(
 			IControllerService controllerService,
 			IGrantApplicationService grantApplicationService,
@@ -42,9 +39,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_grantProgramService = grantProgramService;
 			_grantStreamService = grantStreamService;
 		}
-		#endregion
 
-		#region Endpoints
 		[HttpGet]
 		[Route("Intake/Queue/View")]
 		public ActionResult IntakeQueueView()
@@ -245,7 +240,5 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 			return Json(model);
 		}
-
-		#endregion
 	}
 }

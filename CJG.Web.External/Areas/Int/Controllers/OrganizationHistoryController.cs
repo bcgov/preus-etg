@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
+using System.Web;
 using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
 using CJG.Web.External.Areas.Int.Models.Organizations;
@@ -24,6 +27,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IUserService _userService;
 		private readonly IGrantProgramService _grantProgramService;
+		private readonly IAttachmentService _attachmentService;
 
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="OrganizationHistoryController"/> object.
@@ -33,17 +37,20 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <param name="grantApplicationService"></param>
 		/// <param name="grantProgramService"></param>
 		/// <param name="userService"></param>
+		/// <param name="attachmentService"></param>
 		public OrganizationHistoryController(
 			IControllerService controllerService,
 			IOrganizationService organizationService,
 			IGrantApplicationService grantApplicationService,
 			IGrantProgramService grantProgramService,
-			IUserService userService) : base(controllerService.Logger)
+			IUserService userService,
+			IAttachmentService attachmentService) : base(controllerService.Logger)
 		{
 			_organizationService = organizationService;
 			_grantApplicationService = grantApplicationService;
 			_userService = userService;
 			_grantProgramService = grantProgramService;
+			_attachmentService = attachmentService;
 		}
 
 		/// <summary>
@@ -188,6 +195,97 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				_organizationService.UpdateOrganization(organization);
 
 				model.RowVersion = Convert.ToBase64String(organization.RowVersion);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
+		/// Get the business license listing for an organization
+		/// </summary>
+		/// <param name="organizationId"></param>
+		/// <returns></returns>
+		[HttpGet, Route("History/BusinessLicenses/{organizationId}")]
+		public JsonResult GetOrganizationBusinessLicenses(int organizationId)
+		{
+			var model = new OrganizationBusinessLicensesModel();
+			try
+			{
+				var organization = _organizationService.Get(organizationId);
+				var allowLicenseUploads = User.IsInRole("Director") || User.IsInRole("Assessor");
+				model = new OrganizationBusinessLicensesModel(organization)
+				{
+					CanAddBusinessLicenses = allowLicenseUploads
+				};
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
+		/// Adds specified attachment
+		/// </summary>
+		/// <param name="organizationId"></param>
+		/// <param name="file"></param>
+		/// <param name="attachments"></param>
+		/// <returns></returns>
+		[HttpPost]
+		[PreventSpam]
+		[ValidateRequestHeader]
+		[Route("History/BusinessLicenses/License")]
+		public ActionResult AddBusinessLicense(int organizationId, HttpPostedFileBase file, string attachments)
+		{
+			var model = new BaseViewModel();
+			try
+			{
+				var organization = _organizationService.Get(organizationId);
+
+				var attachmentViewModel = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.Attachments.UpdateAttachmentViewModel>(attachments);
+
+				//organization.BusinessLicenseDocuments.Add(attachment);
+
+				var attachment = file.UploadFile(attachmentViewModel.Description, attachmentViewModel.FileName);
+
+				if (attachmentViewModel.Id == 0)
+				{
+					organization.BusinessLicenseDocuments.Add(attachment);
+					_attachmentService.Add(attachment, true);
+				}
+
+				//_claimService.AddReceipt(claimId, claimVersion, attachment);
+				//var claim = _claimService.Get(claimId, claimVersion);
+				model = new OrganizationBusinessLicensesModel(organization);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		/// <summary>
+		/// Downloads specified attachment
+		/// </summary>
+		/// <param name="organizationId"></param>
+		/// <param name="attachmentId"></param>
+		/// <returns></returns>
+		[HttpGet]
+		[PreventSpam]
+		[Route("History/BusinessLicense/Download/{organizationId}/{attachmentId}")]
+		public ActionResult DownloadAttachment(int organizationId, int attachmentId)
+		{
+			var model = new BaseViewModel();
+			try
+			{
+				var organization = _organizationService.Get(organizationId);
+				var attachment = _attachmentService.Get(attachmentId);
+				return File(attachment.AttachmentData, MediaTypeNames.Application.Octet, $"{attachment.FileName}");
 			}
 			catch (Exception ex)
 			{

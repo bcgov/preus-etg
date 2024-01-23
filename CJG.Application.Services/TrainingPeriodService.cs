@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using CJG.Application.Business.Models;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Entities;
@@ -103,6 +104,49 @@ namespace CJG.Application.Services
 			_dbContext.TrainingPeriods.Remove(entity);
 
 			CommitTransaction();
+		}
+
+		public void SaveBudgetRates(TrainingBudgetModel trainingBudget)
+		{
+			var budgetEntry = _dbContext.TrainingPeriodBudgetRates
+				.Where(b => b.TrainingPeriod.Id == trainingBudget.TrainingPeriodId)
+				.Where(b => b.BudgetType == trainingBudget.BudgetType)
+				.FirstOrDefault();
+
+			if (budgetEntry == null)
+			{
+				var tp = _dbContext.TrainingPeriods.Find(trainingBudget.TrainingPeriodId);
+				budgetEntry = new TrainingPeriodBudgetRate
+				{
+					TrainingPeriod = tp,
+					BudgetType = trainingBudget.BudgetType
+				};
+
+				_dbContext.TrainingPeriodBudgetRates.Add(budgetEntry);
+			}
+
+			budgetEntry.WithdrawnRate = trainingBudget.WithdrawnRate / 100;
+			budgetEntry.RefusalRate = trainingBudget.RefusalRate / 100;
+			budgetEntry.ApprovedSlippageRate = trainingBudget.ApprovedSlippageRate / 100;
+			budgetEntry.ClaimedSlippageRate = trainingBudget.ClaimedSlippageRate / 100;
+
+			_dbContext.SaveChanges();
+		}
+
+		public TrainingBudgetModel GetBudget(TrainingPeriod trainingPeriod, TrainingPeriodBudgetType budgetType)
+		{
+			var budgetEntry = _dbContext.TrainingPeriodBudgetRates
+				                  .Where(b => b.TrainingPeriod.Id == trainingPeriod.Id)
+				                  .Where(b => b.BudgetType == budgetType)
+				                  .FirstOrDefault() ?? new TrainingPeriodBudgetRate();
+
+			return new TrainingBudgetModel
+			{
+				WithdrawnRate = budgetEntry.WithdrawnRate,
+				RefusalRate = budgetEntry.RefusalRate,
+				ApprovedSlippageRate = budgetEntry.ApprovedSlippageRate,
+				ClaimedSlippageRate = budgetEntry.ClaimedSlippageRate
+			};
 		}
 	}
 }

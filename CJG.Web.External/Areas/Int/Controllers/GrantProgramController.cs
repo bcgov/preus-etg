@@ -1,4 +1,10 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Web.Mvc;
+using System.Web.UI;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
@@ -8,24 +14,17 @@ using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
-using System.Web.Mvc;
-using System.Web.UI;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	/// <summary>
-	/// <paramtyperef name="GrantProgramController"/> class, provides endpoints to manage grant programs.
-	/// </summary>
-	[AuthorizeAction(Privilege.GM1, Privilege.SM)]
+    /// <summary>
+    /// <paramtyperef name="GrantProgramController"/> class, provides endpoints to manage grant programs.
+    /// </summary>
+    [AuthorizeAction(Privilege.GM1, Privilege.SM)]
 	[RouteArea("Int")]
 	[RoutePrefix("Admin/Grant")]
 	public class GrantProgramController : BaseController
 	{
-		#region Variables
 		private readonly IStaticDataService _staticDataService;
 		private readonly IGrantProgramService _grantProgramService;
 		private readonly IGrantStreamService _grantStreamService;
@@ -42,9 +41,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		private readonly IFiscalYearService _fiscalYearService;
 		private readonly IUserService _userService;
 		private readonly IDenialReasonService _denialReasonService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a <paramtyperef name="GrantProgramController"/> object.
 		/// </summary>
@@ -100,9 +97,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_userService = userService;
 			_denialReasonService = denialReasonService;
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
 		/// Returns the Grant Program Management Dashboard View.
 		/// </summary>
@@ -509,6 +504,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[Route("Program/User/Guidance")]
 		public JsonResult UpdateUserGuidance(Models.GrantPrograms.GrantProgramViewModel model)
 		{
+			// NOTE - this doesn't seem to be used within the application.
 			try
 			{
 				if (ModelState.IsValid)
@@ -659,6 +655,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 					var programConfiguration = _programConfigurationService.Get(model.ProgramConfigurationId.Value);
 					grantProgram.ProgramConfigurationId = programConfiguration.Id;
 					grantProgram.ProgramConfiguration = programConfiguration;
+
+					grantProgram.ProgramConfiguration.UserGuidanceCostEstimates = model.ProgramConfiguration.UserGuidanceCostEstimates;
+					grantProgram.ProgramConfiguration.UserGuidanceClaims = model.ProgramConfiguration.UserGuidanceClaims;
 
 					// Add or update each expense type within the Program Configuration.
 					foreach (var item in model.ProgramConfiguration.EligibleExpenseTypes)
@@ -1443,7 +1442,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 			return Json(model);
 		}
-		#endregion
 		#endregion
 	}
 }

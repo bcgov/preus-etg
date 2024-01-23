@@ -30,6 +30,7 @@ namespace CJG.Application.Services
 			
 			var participantForms = _dbContext.ParticipantForms
 				.Include(pf => pf.GrantApplication)
+				.Include(pf => pf.GrantApplication.Organization)
 				.AsNoTracking()
 				.Where(pf => pf.GrantApplication.GrantOpening.GrantStream.GrantProgramId == defaultProgramId)
 				.Where(pf => pf.GrantApplication.FileNumber != null)
@@ -46,20 +47,49 @@ namespace CJG.Application.Services
 				                                                || searchTerms.Any(t => pf.MiddleName.Contains(t))
 																|| searchTerms.Any(t => pf.LastName.Contains(t)));
 			}
+
 			var total = participantForms.Count();
+			var orderByParts = filter.GetOrderByParts("SIN", true);
+
+			// Have to sort here to avoid performance issues
+			switch (orderByParts.PropertyName)
+			{
+				case "SIN":
+					participantForms = participantForms.OrderByDynamic(pf => pf.SIN, orderByParts.IsAscending);
+					break;
+
+				case "ParticipantLastName":
+					participantForms = participantForms.OrderByDynamic(pf => pf.LastName, orderByParts.IsAscending);
+					break;
+
+				case "ParticipantFirstName":
+					participantForms = participantForms.OrderByDynamic(pf => pf.FirstName, orderByParts.IsAscending);
+					break;
+
+				case "FileNumber":
+					participantForms = participantForms.OrderByDynamic(pf => pf.GrantApplication.FileNumber, orderByParts.IsAscending);
+					break;
+
+				case "CourseName":
+					participantForms = participantForms.OrderByDynamic(pf => pf.GrantApplication.TrainingPrograms.FirstOrDefault().CourseTitle, orderByParts.IsAscending);
+					break;
+
+				case "EmployerName":
+					participantForms = participantForms.OrderByDynamic(pf => pf.GrantApplication.Organization.LegalName, orderByParts.IsAscending);
+					break;
+
+				case "LastApplicationDateTime":
+					participantForms = participantForms.OrderByDynamic(pf => pf.DateAdded, orderByParts.IsAscending);
+					break;
+			}
+
+			participantForms = participantForms
+					.Skip((page - 1) * quantity)
+					.Take(quantity);
 
 			var participants = new List<GroupedParticipantsModel>();
-
 			foreach (var participantForm in participantForms)
 			{
-				var courseName = participantForm.GrantApplication.TrainingPrograms.FirstOrDefault()?.CourseTitle ?? "--";
-
-				var paidToDate = participantForm.ParticipantCosts
-					.Where(w => w.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimApproved ||
-					            w.ClaimEligibleCost.Claim.ClaimState == ClaimState.PaymentRequested ||
-					            w.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimPaid)
-					.Sum(s => s.AssessedReimbursement);
-
 				var participantsModel = new GroupedParticipantsModel
 				{
 					SIN = participantForm.SIN,
@@ -68,23 +98,13 @@ namespace CJG.Application.Services
 					ParticipantMiddleName = participantForm.MiddleName,
 					ParticipantLastName = participantForm.LastName,
 					FileNumber = participantForm.GrantApplication.FileNumber,
-					CourseName = courseName,
+					CourseName = participantForm.GrantApplication.TrainingPrograms.FirstOrDefault()?.CourseTitle ?? "--",
 					EmployerName = participantForm.GrantApplication.Organization.LegalName,
-					PaidToDate = paidToDate,
 					LastApplicationDateTime = participantForm.DateAdded,
 				};
 
 				participants.Add(participantsModel);
 			}
-
-			var orderBy = filter.OrderBy != null && filter.OrderBy.Length > 0 ? filter.OrderBy : new[] { $"{nameof(GroupedParticipantsModel.SIN)} ASC" };
-
-			participants = new List<GroupedParticipantsModel>(
-				participants.AsQueryable()
-					.OrderByProperty(orderBy)
-					.Skip((page - 1) * quantity)
-					.Take(quantity)
-			);
 
 			return new PageList<GroupedParticipantsModel>(page, quantity, total, participants);
 		}

@@ -1,18 +1,18 @@
-﻿using CJG.Core.Interfaces.Service;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
 using CJG.Web.External.Areas.Int.Models.Organizations;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	[AuthorizeAction(Privilege.AM2, Privilege.AM3, Privilege.AM5)]
+    [AuthorizeAction(Privilege.AM2, Privilege.AM3, Privilege.AM5)]
 	[RouteArea("Int")]
 	[RoutePrefix("Admin")]
 	public class OrganizationProfileController : BaseController

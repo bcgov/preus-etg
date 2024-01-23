@@ -74,6 +74,7 @@
     <Compile Include="Models\PaymentRequestPDFModel.cs" />
     <Compile Include="Models\ServiceLineListModel.cs" />
     <Compile Include="Models\DocumentTemplate\GrantApplicationTemplateModel.cs" />
+    <Compile Include="Models\TrainingBudgetModel.cs" />
     <Compile Include="Models\TrainingCostModel.cs" />
     <Compile Include="Models\UserGrantProgramPreferenceModel.cs" />
     <Compile Include="Models\GrantProgramApplicantModel.cs" />

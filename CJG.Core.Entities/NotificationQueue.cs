@@ -202,5 +202,30 @@ namespace CJG.Core.Entities
 			Organization = grantApplication.Organization;
 			State = NotificationState.Queued;
 		}
+
+		public NotificationQueue Clone()
+		{
+			var clone = new NotificationQueue();
+
+			clone.State = NotificationState.Queued;
+			clone.BatchNumber = BatchNumber + "-RS"; // Resend identifier
+			clone.DateAdded = AppDateTime.UtcNow;
+
+			clone.NotificationType = NotificationType;
+
+			clone.EmailSender = EmailSender;
+			clone.EmailRecipients = EmailRecipients;
+			clone.EmailSubject = EmailSubject;
+			clone.EmailBody = EmailBody;
+
+			clone.GrantApplicationId = GrantApplicationId;
+			clone.GrantApplication = GrantApplication;
+			clone.OrganizationId = OrganizationId;
+			clone.Organization = Organization;
+
+			clone.SendDate = SendDate;
+
+			return clone;
+		}
 	}
 }

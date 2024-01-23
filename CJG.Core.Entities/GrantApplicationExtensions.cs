@@ -863,7 +863,7 @@ namespace CJG.Core.Entities
 		}
 
 		/// <summary>
-		/// reverts program descripion section status to incomplete and clear naics code
+		/// reverts program description section status to incomplete and clear naics code
 		/// </summary>
 		/// <param name="programDescription"></param>
 		public static void ClearNaics(this ProgramDescription programDescription)

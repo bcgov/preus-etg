@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CJG.Core.Entities.Helpers
@@ -83,6 +84,27 @@ namespace CJG.Core.Entities.Helpers
 			IsAssigned = null;
 			Applicant = null;
 			OnlyShowPriorityRegionExceptions = PriorityExceptionsMode.IgnoreExceptionFiltering;
+		}
+
+		public (string PropertyName, bool IsAscending) GetOrderByParts(string defaultProperty, bool defaultAscending = true)
+		{
+			if (OrderBy == null)
+				return (defaultProperty, defaultAscending);
+
+			if (!OrderBy.Any())
+				return (defaultProperty, defaultAscending);
+
+			// Should be "Name" or "Name asc" or "Name desc"
+			var orderByString = OrderBy.First();
+			if (string.IsNullOrWhiteSpace(orderByString))
+				return (defaultProperty, defaultAscending);
+
+			var parts = orderByString.Split(' ');
+			var property = parts[0];
+			var direction = parts.Length > 1 ? parts[1] : "asc";
+			var isAscending = direction != "desc";
+			
+			return (property, isAscending);
 		}
 	}
 

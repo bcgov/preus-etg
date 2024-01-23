@@ -1,243 +1,324 @@
-﻿using CJG.Core.Entities;
-using CJG.Core.Interfaces.Service;
-using CJG.Web.External.Areas.Int.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CJG.Application.Business.Models;
+using CJG.Application.Services;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces.Service;
+using CJG.Web.External.Areas.Int.Models;
 
 namespace CJG.Web.External.Helpers
 {
-	/// <summary>
-	/// IntakeManagementBuilder class, provides methods to initialize GrantApplication Intake.
-	/// </summary>
-	public class IntakeManagementBuilder
-    {
-        #region Variables
-        private readonly IStaticDataService _staticDataService;
-        private readonly IGrantProgramService _grantProgramService;
-        private readonly IGrantStreamService _grantStreamService;
-        private readonly IGrantOpeningService _grantOpeningService;
-        #endregion
+    /// <summary>
+    /// IntakeManagementBuilder class, provides methods to initialize GrantApplication Intake.
+    /// </summary>
+    public class IntakeManagementBuilder
+	{
+		private readonly IStaticDataService _staticDataService;
+		private readonly IGrantProgramService _grantProgramService;
+		private readonly IGrantStreamService _grantStreamService;
+		private readonly IGrantOpeningService _grantOpeningService;
+		private readonly ITrainingPeriodService _trainingPeriodService;
+		private readonly IFinanceInformationService _financeInformationService;
 
-        #region Constructors
-        public IntakeManagementBuilder(IStaticDataService staticDataService, IGrantProgramService grantProgramService, IGrantStreamService grantStreamService, IGrantOpeningService grantOpeningService)
-        {
-            _staticDataService = staticDataService;
-            _grantProgramService = grantProgramService;
-            _grantStreamService = grantStreamService;
-            _grantOpeningService = grantOpeningService;
-        }
-        #endregion
+		public IntakeManagementBuilder(IStaticDataService staticDataService, IGrantProgramService grantProgramService, IGrantStreamService grantStreamService, IGrantOpeningService grantOpeningService, ITrainingPeriodService trainingPeriodService, IFinanceInformationService financeInformationService)
+		{
+			_staticDataService = staticDataService;
+			_grantProgramService = grantProgramService;
+			_grantStreamService = grantStreamService;
+			_grantOpeningService = grantOpeningService;
+			_trainingPeriodService = trainingPeriodService;
+			_financeInformationService = financeInformationService;
+		}
 
-        #region Methods
-        public IntakeManagementViewModel Build(int? grantProgramId = null, int? grantStreamId = null, int? trainingPeriodId = null)
-        {
-	        var defaultGrantProgramId = _grantProgramService.GetDefaultGrantProgramId();
-            return Build(grantProgramId ?? defaultGrantProgramId, grantStreamId, trainingPeriodId, IntakeManagementViewModel.NavigationCommand.None);
-        }
+		public IntakeManagementViewModel Build(int? fiscalYearId, int? grantStreamId, int? budgetTypeId)
+		{
+			var fiscalYears = _staticDataService
+				.GetFiscalYears()
+				.Select(fy => new KeyValuePair<int, string>(fy.Id, fy.Caption))
+				.ToList();
 
-        public IntakeManagementViewModel Build(int? grantProgramId, int? grantStreamId, int? trainingPeriodId, IntakeManagementViewModel.NavigationCommand navigationCommand)
-        {
-            TrainingPeriod[] trainingPeriods = new TrainingPeriod[0];
+			if (!fiscalYearId.HasValue)
+				fiscalYearId = _staticDataService.GetFiscalYear(0).Id;
+
+			var grantProgramId = _grantProgramService.GetDefaultGrantProgramId();
 
 			var grantPrograms = GetAllGrantPrograms().ToList();
-			var grantStreams = GetActiveGrantStreams(grantProgramId ?? 0).ToList();
+			var grantStreams = GetActiveGrantStreams(grantProgramId).ToList();
+			var budgetTypes = GetBudgetTypes();
 			grantStreamId = GetDefaultGrantStreamId(grantStreams, grantStreamId);
 
-			if (trainingPeriodId.HasValue)
-            {
-                int numberToShift;
-                switch (navigationCommand)
-                {
-                    case IntakeManagementViewModel.NavigationCommand.Next:
-                        numberToShift = 1;
-                        break;
-                    case IntakeManagementViewModel.NavigationCommand.Previous:
-                        numberToShift = -1;
-                        break;
-                    default:
-                        numberToShift = 0;
-                        break;
-                }
+			var oldGrowthKnockoutChecked = budgetTypeId == (int)TrainingPeriodBudgetType.OldGrowthBudget;
 
-                try
-                {
-	                trainingPeriods = GetTrainingPeriods(grantStreamId.Value, trainingPeriodId.Value, numberToShift, 1);
+			var trainingPeriods = _trainingPeriodService.GetAllFor(fiscalYearId.Value, grantProgramId, grantStreamId.Value);
+			var periods = trainingPeriods.Select(x => LoadPeriod(x, grantStreamId.Value, oldGrowthKnockoutChecked)).ToList();
+
+			return new IntakeManagementViewModel
+			{
+				TrainingPeriods = periods,
+				FiscalYearId = fiscalYearId,
+				FiscalYears = fiscalYears,
+				GrantPrograms = grantPrograms,
+				GrantStreams = grantStreams,
+				GrantProgramId = grantProgramId,
+				GrantStreamId = grantStreamId,
+				BudgetTypes = budgetTypes,
+				BudgetTypeId = budgetTypeId,
+			};
+		}
+
+		private IEnumerable<KeyValuePair<int, string>> GetAllGrantPrograms()
+		{
+			return _grantProgramService.GetAll()
+				.Select(x => new KeyValuePair<int, string>(x.Id, x.Name))
+				.OrderBy(x => x.Value);
+		}
+
+		private IEnumerable<KeyValuePair<int, string>> GetActiveGrantStreams(int grantProgramId)
+		{
+			return _grantStreamService.GetAll()
+				.Where(x => x.GrantProgramId == grantProgramId && x.IsActive)
+				.Select(x => new KeyValuePair<int, string>(x.Id, x.Name))
+				.OrderBy(x => x.Value);
+		}
+
+		private IEnumerable<KeyValuePair<int, string>> GetBudgetTypes()
+		{
+			return new List<KeyValuePair<int, string>>
+			{
+				new KeyValuePair<int, string>((int)TrainingPeriodBudgetType.BaseBudget, TrainingPeriodBudgetType.BaseBudget.GetDescription()),
+				new KeyValuePair<int, string>((int)TrainingPeriodBudgetType.OldGrowthBudget, TrainingPeriodBudgetType.OldGrowthBudget.GetDescription())
+			};
+		}
+
+		private IntakeManagementViewModel.TrainingPeriodViewModel LoadPeriod(TrainingPeriod trainingPeriod, int grantStreamId, bool filterOldGrowthApplication)
+		{
+			var grantOpening = _grantOpeningService.GetGrantOpeningWithApplications(grantStreamId, trainingPeriod.Id);
+			var grantApplicationsInOpening = grantOpening?.GrantApplications ?? new List<GrantApplication>();
+
+			var oldGrowthQuestionId = _grantStreamService.GetOldGrowthGrantStreamQuestion()?.Id ?? 0;
+			var grantApplications = new List<GrantApplication>();
+
+            if (filterOldGrowthApplication)
+            {
+                grantApplications = grantApplicationsInOpening
+                    .Where(g => g.GrantStreamEligibilityAnswers.Any(a => a.GrantStreamEligibilityQuestionId == oldGrowthQuestionId && a.EligibilityAnswer))
+                    .ToList();
+            }
+
+            if (!filterOldGrowthApplication)
+            {
+                grantApplications = grantApplicationsInOpening
+                    .Where(g => !g.GrantStreamEligibilityAnswers.Any(a => a.GrantStreamEligibilityQuestionId == oldGrowthQuestionId && a.EligibilityAnswer))
+                    .ToList();
+            }
+
+			var grantIntakes = LoadGrantOpeningIntakes(grantOpening, grantApplications);
+			var intakeTotalApplications = grantIntakes.Values.Sum(a => a.Number);
+			var intakeTotalAmount = grantIntakes.Values.Sum(a => a.Value);
+			var budgetType = filterOldGrowthApplication ? TrainingPeriodBudgetType.OldGrowthBudget : TrainingPeriodBudgetType.BaseBudget;
+			var trainingPeriodBudget = _trainingPeriodService.GetBudget(trainingPeriod, budgetType);
+			var trainingPeriodViewModel = new IntakeManagementViewModel.TrainingPeriodViewModel
+			{
+				Id = trainingPeriod.Id,
+				FiscalYearName = trainingPeriod.FiscalYear.Caption,
+				TrainingPeriodName = trainingPeriod.Caption,
+				StartDate = trainingPeriod.StartDate,
+				EndDate = trainingPeriod.EndDate,
+				Status = grantOpening?.State.ToString(),
+				GrantOpeningIntakes = grantIntakes,
+				TotalApplicationsIntake = intakeTotalApplications,
+				TotalApplicationsIntakeAmt = intakeTotalAmount,
+				RefusalRate = trainingPeriodBudget.RefusalRate * 100,
+				WithdrawnRate = trainingPeriodBudget.WithdrawnRate * 100,
+				SlippageApprovedAmount = trainingPeriodBudget.ApprovedSlippageRate * 100,
+				SlippageClaimedAmount = trainingPeriodBudget.ClaimedSlippageRate * 100
+			};
+
+			return trainingPeriodViewModel;
+		}
+
+		private Dictionary<int, IntakeManagementViewModel.GrantOpeningIntakeViewModel> LoadGrantOpeningIntakes(GrantOpening grantOpening, List<GrantApplication> grantApplications)
+		{
+			var intakeModels = new Dictionary<int, IntakeManagementViewModel.GrantOpeningIntakeViewModel>
+			{
+				{
+					1, GetIntakeModelFor(grantApplications, "New", CommitmentType.Requested, new List<ApplicationStateInternal> { ApplicationStateInternal.New })
+				},
+				{
+					2, GetIntakeModelFor(grantApplications, "Pending Assessment", CommitmentType.Requested, new List<ApplicationStateInternal> { ApplicationStateInternal.PendingAssessment })
+				},
+				{
+					3, GetIntakeModelFor(grantApplications, "Under Assessment", CommitmentType.Requested, new List<ApplicationStateInternal> { ApplicationStateInternal.UnderAssessment, ApplicationStateInternal.ReturnedToAssessment })
+				},
+				{
+					4, GetIntakeModelFor(grantApplications, "Denied", CommitmentType.Requested, new List<ApplicationStateInternal> { ApplicationStateInternal.ApplicationDenied })
+				},
+				{
+					5, GetIntakeModelFor(grantApplications, "Withdrawn", CommitmentType.Requested, new List<ApplicationStateInternal> { ApplicationStateInternal.ApplicationWithdrawn })
+				},
+				{
+					6, GetIntakeModelFor(grantApplications, "Cancelled by Applicant", CommitmentType.Agreed, new List<ApplicationStateInternal> { ApplicationStateInternal.CancelledByAgreementHolder })
+				},
+				{
+					7, GetIntakeModelFor(grantApplications, "Cancelled by Ministry", CommitmentType.Agreed, new List<ApplicationStateInternal> { ApplicationStateInternal.CancelledByMinistry })
+				},
+				{
+					8, GetIntakeModelFor(grantApplications, "Returned Unassessed", CommitmentType.Requested, new List<ApplicationStateInternal> { ApplicationStateInternal.ReturnedUnassessed })
+				},
+				{
+					9, GetIntakeModelForYTD(grantApplications, "YTD Paid")
+				},
+				{
+					10, GetIntakeModelForSubmittedClaims(grantApplications, "Claim Received")
+				},
+				{
+					11, GetIntakeModelFor(grantApplications, "Claim Not Yet Received", CommitmentType.Agreed, new List<ApplicationStateInternal> { ApplicationStateInternal.AgreementAccepted })
+				},
+				{
+					12, GetIntakeModelFor(grantApplications, "Commitments", CommitmentType.Agreed, new List<ApplicationStateInternal>
+					{
+						ApplicationStateInternal.AgreementAccepted,
+						ApplicationStateInternal.NewClaim,
+						ApplicationStateInternal.ClaimAssessEligibility,
+						ApplicationStateInternal.ClaimAssessReimbursement,
+						ApplicationStateInternal.ClaimApproved,
+						ApplicationStateInternal.ClaimReturnedToApplicant,
+						ApplicationStateInternal.CompletionReporting,
+						ApplicationStateInternal.Closed
+					})
 				}
-				catch (ApplicationException ex) { }
-            }
-            else
-            {
-	            try
-	            {
-				    trainingPeriods = GetTrainingPeriods(grantStreamId.Value, AppDateTime.UtcNow, 1);
-	            }
-	            catch (ApplicationException ex) { }
-            }
+			};
 
-			var periods = trainingPeriods.Select(x => LoadPeriod(x, grantStreamId.Value)).ToList();
-            var middleIndex = (periods.Count - 1) / 2;
+			var newApplications = intakeModels[1];
+			var pendingApplications = intakeModels[2];
+			var underApplications = intakeModels[3];
+			var committed = intakeModels[12];
 
-            return new IntakeManagementViewModel
-            {
-                TrainingPeriods = periods,
-                GrantPrograms = grantPrograms,
-                GrantStreams = grantStreams,
-                GrantProgramId = grantProgramId,
-                GrantStreamId = grantStreamId,
-                TrainingPeriodId = periods.Count > 0 ? periods[middleIndex]?.Id : null
-            };
-        }
+			//Forecasted Expenditure would be the amount that we have already committed, plus the value of all the work awaiting assessment / under assessment,
+			var forecastValue = newApplications.Value + pendingApplications.Value + underApplications.Value + committed.Value;
+			intakeModels.Add(25, GetIntakeModelInline("Forecasted Expenditure *", 0, forecastValue));
 
-        private IEnumerable<KeyValuePair<int, string>> GetAllGrantPrograms()
-        {
-            return _grantProgramService.GetAll()
-                .Select(x => new KeyValuePair<int, string>(x.Id, x.Name))
-                .OrderBy(x => x.Value);
-        }
+			var budget = grantOpening?.IntakeTargetAmt ?? 0;
+			// should be based off of forecasted expenditure vs budget
+			var overUnderDollars = forecastValue - budget;
+			var overUnderPercent = budget > 0 ? overUnderDollars / budget : 0;
+			intakeModels.Add(30, GetIntakeModelInline("Over/Under $", 0, overUnderDollars));
+			intakeModels.Add(31, GetIntakeModelInline("Over/Under %", 0, overUnderPercent, false));
 
-        private IEnumerable<KeyValuePair<int, string>> GetActiveGrantStreams(int grantProgramId)
-        {
-            return _grantStreamService.GetAll()
-                .Where(x => x.GrantProgramId == grantProgramId && x.IsActive)
-                .Select(x => new KeyValuePair<int, string>(x.Id, x.Name))
-                .OrderBy(x => x.Value);
-        }
+			return intakeModels
+				.OrderBy(i => i.Key)
+				.ToDictionary(i => i.Key, i => i.Value);
+		}
 
-        private IntakeManagementViewModel.TrainingPeriodViewModel LoadPeriod(TrainingPeriod trainingPeriod, int grantStreamId)
-        {
-            var grantOpening = _grantOpeningService.GetGrantOpening(grantStreamId, trainingPeriod.Id);
+		private static IntakeManagementViewModel.GrantOpeningIntakeViewModel GetIntakeModelFor(IEnumerable<GrantApplication> grantApplications, string intakeGroupName, CommitmentType commitmentType, IEnumerable<ApplicationStateInternal> internalStates)
+		{
+			var applicationsWithStatus = grantApplications
+				.Where(g => internalStates.Contains(g.ApplicationStateInternal))
+				.ToList();
 
-            var trainingPeriodViewModel = new IntakeManagementViewModel.TrainingPeriodViewModel
-            {
-                Id = trainingPeriod.Id,
-                FiscalYearName = trainingPeriod.FiscalYear.Caption,
-                TrainingPeriodName = trainingPeriod.Caption,
-                StartDate = trainingPeriod.StartDate,
-                EndDate = trainingPeriod.EndDate,
-                Status = grantOpening?.State.ToString(),
-                GrantOpeningIntakes = LoadGrantOpeningIntakes(grantOpening),
-                IntakeTargetAmt = grantOpening?.IntakeTargetAmt ?? 0
-            };
+			var count = applicationsWithStatus.Count;
+			var total = applicationsWithStatus.Sum(ga => commitmentType == CommitmentType.Requested ? ga.GetEstimatedReimbursement() : ga.GetAgreedCommitment());
 
-            trainingPeriodViewModel.TotalApplicationsIntake =
-                trainingPeriodViewModel.GrantOpeningIntakes.Where(x => !x.Value.StateName.Equals("Reductions")).Sum(x => x.Value.Number);
+			return new IntakeManagementViewModel.GrantOpeningIntakeViewModel(intakeGroupName, count, total);
+		}
 
-            trainingPeriodViewModel.TotalApplicationsIntakeAmt =
-                trainingPeriodViewModel.GrantOpeningIntakes.Sum(x => x.Value.Value);
+		private IntakeManagementViewModel.GrantOpeningIntakeViewModel GetIntakeModelForYTD(IEnumerable<GrantApplication> grantApplications, string intakeGroupName, bool valueIsMoney = true)
+		{
+			//var applicationsWithStatus = grantApplications
+			//	.Where(g => internalStates.Contains(g.ApplicationStateInternal))
+			//	.ToList();
 
-            trainingPeriodViewModel.OverUnderAmt = trainingPeriodViewModel.TotalApplicationsIntakeAmt -
-                                                   trainingPeriodViewModel.IntakeTargetAmt;
+			var ytdInfo = _financeInformationService.GetYearToDatePaidFor(grantApplications);
 
-            trainingPeriodViewModel.OverUnderPerc = trainingPeriodViewModel.OverUnderAmt != 0 ? (decimal?)(trainingPeriodViewModel.OverUnderAmt / trainingPeriodViewModel.IntakeTargetAmt) : null;
+			var count = 0;
+			var total = ytdInfo.TotalPaid;
 
-            trainingPeriodViewModel.CurrentReservations = grantOpening?.GrantOpeningFinancial.CurrentReservations;
+			return new IntakeManagementViewModel.GrantOpeningIntakeViewModel(intakeGroupName, count, total, valueIsMoney);
+		}
 
-            return trainingPeriodViewModel;
-        }
+		private IntakeManagementViewModel.GrantOpeningIntakeViewModel GetIntakeModelInline(string intakeGroupName, int count, decimal total, bool valueIsMoney = true)
+		{
+			return new IntakeManagementViewModel.GrantOpeningIntakeViewModel(intakeGroupName, count, total, valueIsMoney);
+		}
 
-        private static Dictionary<int, IntakeManagementViewModel.GrantOpeningIntakeViewModel> LoadGrantOpeningIntakes(GrantOpening grantOpening)
-        {
-            var openingIntakes = grantOpening?.GrantOpeningIntake;
-            var openingFinancials = grantOpening?.GrantOpeningFinancial;
+		private static IntakeManagementViewModel.GrantOpeningIntakeViewModel GetIntakeModelForSubmittedClaims(IEnumerable<GrantApplication> grantApplications, string intakeGroupName)
+		{
+			var applicationClaimStates = new List<ApplicationStateInternal>
+			{
+				ApplicationStateInternal.AgreementAccepted,
+				ApplicationStateInternal.NewClaim,
+				ApplicationStateInternal.ClaimAssessEligibility,
+				ApplicationStateInternal.ClaimAssessReimbursement,
+				ApplicationStateInternal.ClaimApproved,
+				ApplicationStateInternal.ClaimReturnedToApplicant,
+				ApplicationStateInternal.CompletionReporting,
+				ApplicationStateInternal.Closed
+			};
 
-            return new Dictionary<int, IntakeManagementViewModel.GrantOpeningIntakeViewModel>
-            {
-                {
-                    1, new IntakeManagementViewModel.GrantOpeningIntakeViewModel("New", openingIntakes?.NewCount ?? 0, openingIntakes?.NewAmt ?? 0)
-                },
-                {
-                    2, new IntakeManagementViewModel.GrantOpeningIntakeViewModel("Pending Assessment", openingIntakes?.PendingAssessmentCount ?? 0, openingIntakes?.PendingAssessmentAmt ?? 0)
-                },
-                {
-                    3, new IntakeManagementViewModel.GrantOpeningIntakeViewModel("Under Assessment", openingIntakes?.UnderAssessmentCount ?? 0, openingIntakes?.UnderAssessmentAmt ?? 0)
-                },
-                {
-                    4, new IntakeManagementViewModel.GrantOpeningIntakeViewModel("Denied", openingIntakes?.DeniedCount ?? 0, openingIntakes?.DeniedAmt ?? 0)
-                },
-                {
-                    5, new IntakeManagementViewModel.GrantOpeningIntakeViewModel("Withdrawn", openingIntakes?.WithdrawnCount ?? 0, openingIntakes?.WithdrawnAmt ?? 0)
-                },
-                {
-                    6, new IntakeManagementViewModel.GrantOpeningIntakeViewModel("Reductions", 0, openingIntakes?.ReductionsAmt ?? 0)
-                },
-                {
-                    7, new IntakeManagementViewModel.GrantOpeningIntakeViewModel("Commitments", openingFinancials?.AssessedCommitmentsCount ?? 0, openingFinancials?.AssessedCommitments ?? 0)
-                }
-            };
-        }
+            var claimsForApplications = grantApplications
+                .Where(g => applicationClaimStates.Contains(g.ApplicationStateInternal))
+                .SelectMany(g => g.Claims)
+                .Where(c => c.ClaimState.In(ClaimState.ClaimApproved, ClaimState.PaymentRequested, ClaimState.ClaimPaid, ClaimState.AmountReceived))
+                .ToList();
 
-        public int GetDefaultGrantStreamId(IEnumerable<KeyValuePair<int, string>> grantStreams, int? grantStreamId)
-        {
-            KeyValuePair<int, string> result;
-            return (result = grantStreams.FirstOrDefault(o => o.Key == grantStreamId)).Equals(default(KeyValuePair<int, string>)) &&
-                   (result = grantStreams.FirstOrDefault()).Equals(default(KeyValuePair<int, string>)) ?
-                   0 : result.Key;
-        }
+            var singleAmendable = claimsForApplications
+	            .Where(c => c.ClaimTypeId == ClaimTypes.SingleAmendableClaim)
+	            .ToList();
 
-        public TrainingPeriod[] GetTrainingPeriods(int grantStreamId, DateTime currentDate, int numberToTake)
-        {
-            List<TrainingPeriod> trainingPeriods;
-            int index = SearchTrainingPeriodIndex(x => x.StartDate < currentDate && x.EndDate > currentDate, grantStreamId, 0, out trainingPeriods);
-            return FilterTrainingPeriods(trainingPeriods, index, numberToTake);
-        }
+            var notSingleAmendable = claimsForApplications
+	            .Where(c => c.ClaimTypeId != ClaimTypes.SingleAmendableClaim)
+	            .ToList();
 
-        public TrainingPeriod[] GetTrainingPeriods(int grantStreamId, int trainingPeriodId, int numberToShift, int numberToTake)
-        {
-            List<TrainingPeriod> trainingPeriods;
-            int index = SearchTrainingPeriodIndex(x => x.Id == trainingPeriodId, grantStreamId, numberToShift, out trainingPeriods);
-            return FilterTrainingPeriods(trainingPeriods, index, numberToTake);
-        }
+            // Sum the two claim types, SingleAmendableClaim and the rest.
+            decimal totalPaid = !singleAmendable.Any() ? 0 : singleAmendable.Sum(q => q.TotalAssessedReimbursement
+                                                                                      - (q.GrantApplication.PaymentRequests.Where(o => o.ClaimVersion != q.ClaimVersion).Sum(o => o.PaymentAmount)));
 
-        internal int SearchTrainingPeriodIndex(Func<TrainingPeriod, bool> selectPeriod, int grantStreamId, int numberToShift, out List<TrainingPeriod> trainingPeriods)
-        {
-            trainingPeriods = _staticDataService.GetTrainingPeriods(grantStreamId).OrderBy(x => x.StartDate).ToList();
+            totalPaid += !notSingleAmendable.Any() ? 0 : notSingleAmendable.Sum(q => q.TotalAssessedReimbursement);
 
-            if (trainingPeriods == null || !trainingPeriods.Any())
-                throw new ApplicationException("Cannot find any training periods.");
+			var count = claimsForApplications.Count;
+			var total = totalPaid;
 
-            var foundIndexedPeriod = trainingPeriods.Select((x, ind) => new { Index = ind, Value = x }).FirstOrDefault(x => selectPeriod(x.Value));
+			return new IntakeManagementViewModel.GrantOpeningIntakeViewModel(intakeGroupName, count, total);
+		}
 
-            return foundIndexedPeriod?.Index + numberToShift ?? 0;
-        }
+		public int GetDefaultGrantStreamId(IEnumerable<KeyValuePair<int, string>> grantStreams, int? grantStreamId)
+		{
+			KeyValuePair<int, string> result;
+			return (result = grantStreams.FirstOrDefault(o => o.Key == grantStreamId)).Equals(default(KeyValuePair<int, string>)) &&
+				   (result = grantStreams.FirstOrDefault()).Equals(default(KeyValuePair<int, string>)) ?
+				   0 : result.Key;
+		}
 
-        internal static TrainingPeriod[] FilterTrainingPeriods(List<TrainingPeriod> trainingPeriods, int fromTrainingPeriodIndex, int numberToTake)
-        {
-            if (trainingPeriods == null)
-                throw new ArgumentNullException(nameof(trainingPeriods));
+		public void SaveRates(IntakeManagementViewModel model)
+		{
+			if (!model.TrainingPeriods.Any())
+				return;
 
-            if (fromTrainingPeriodIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(fromTrainingPeriodIndex), fromTrainingPeriodIndex, "Training period index should be greater than zero.");
+			var budgetType = TrainingPeriodBudgetType.BaseBudget;
+			if (model.BudgetTypeId != null)
+				budgetType = (TrainingPeriodBudgetType)model.BudgetTypeId;
 
-            if (numberToTake <= 0)
-                throw new ArgumentOutOfRangeException(nameof(numberToTake), fromTrainingPeriodIndex, "Training periods to take should be greater than zero.");
+			foreach (var trainingPeriod in model.TrainingPeriods)
+			{
+				var budgetModel = new TrainingBudgetModel
+				{
+					TrainingPeriodId = trainingPeriod.Id,
+					BudgetType = budgetType,
+					RefusalRate = trainingPeriod.RefusalRate,
+					WithdrawnRate = trainingPeriod.WithdrawnRate,
+					ApprovedSlippageRate = trainingPeriod.SlippageApprovedAmount,
+					ClaimedSlippageRate = trainingPeriod.SlippageClaimedAmount
+				};
 
-            var numPeriodsToTake = numberToTake * 2 + 1;
+				_trainingPeriodService.SaveBudgetRates(budgetModel);
+			}
+		}
+	}
 
-			// Find start index of training periods list
-            var startIndex = fromTrainingPeriodIndex - numberToTake;
-            if (startIndex < 0)
-            {
-                startIndex = 0;
-            }
-            else if (startIndex > trainingPeriods.Count - numPeriodsToTake)
-            {
-                startIndex = trainingPeriods.Count - numPeriodsToTake;
-            }
-
-			// Find end index of training periods list
-            var endIndex = fromTrainingPeriodIndex + numberToTake;
-            if (endIndex < numPeriodsToTake - 1)
-            {
-                endIndex = numPeriodsToTake - 1;
-            }
-            else if (endIndex > trainingPeriods.Count - 1)
-            {
-                endIndex = trainingPeriods.Count - 1;
-            }
-
-            return trainingPeriods.Where((x, ind) => ind >= startIndex && ind <= endIndex).ToArray();
-        }
-        #endregion
-    }
+	internal enum CommitmentType
+	{
+		Requested,
+		Agreed
+	}
 }

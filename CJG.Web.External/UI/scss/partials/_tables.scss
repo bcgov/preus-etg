@@ -1096,3 +1096,25 @@ th.table--font-size-16 {
     text-align: center;
   }
 }
+
+.with-backing-colors {
+  .form-table-heading {
+    .form-table-cell {
+      background-color: #fff;
+    }
+  }
+
+  .form-table-row {
+    background-color: #aaa;
+
+    .form-table-cell {
+      background-color: #fff;
+    }
+
+    &:nth-child(2n+2) {
+      .form-table-cell {
+        background-color: #efefef;
+      }
+    }
+  }
+}

@@ -60,7 +60,7 @@
             </div>
 
             <div ng-if="model.UseInvitations">
-                <p>You have indicated that there will be {{model.MaxParticipantsAllowed}} participants. To change the number of participants, return to the <a href="@Url.Action("TrainingCostView", "TrainingCost", new { id = ViewBag.GrantApplicationId })">Training Cost</a> section of your application.</p>
+                <p>You have indicated that there will be {{model.MaxParticipantsAllowed}} {{model.MaxParticipantsAllowed == 1 ? 'participant' : 'participants' }}. To change the number of participants, return to the <a href="@Url.Action("TrainingCostView", "TrainingCost", new { id = ViewBag.GrantApplicationId })">Training Cost</a> section of your application.</p>
                 <p>Please enter participant details below. By clicking “Send”, participants will receive an email invitation to complete a Participant Information Form (PIF). <strong style="padding-left: 0.25em;">Please note:</strong> Participants must complete their own PIFs. Employers who complete PIFs on behalf of participants will have their applications denied.</p>
                 
                 <div class="notice notice--icon">

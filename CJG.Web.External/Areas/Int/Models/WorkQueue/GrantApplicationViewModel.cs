@@ -21,14 +21,16 @@ namespace CJG.Web.External.Areas.Int.Models.WorkQueue
 		public string GrantStreamName { get; set; }
 		public bool RiskFlag { get; set; }
 		public int OrgId { get; set; }
+		public decimal RequestedGovernmentContribution { get; set; }
 
 		public GrantApplicationViewModel() { }
 
 		public GrantApplicationViewModel(GrantApplication grantApplication)
-		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
+        {
+            if (grantApplication == null)
+                throw new ArgumentNullException(nameof(grantApplication));
 
-			Id = grantApplication.Id;
+            Id = grantApplication.Id;
 			RowVersion = Convert.ToBase64String(grantApplication.RowVersion);
 			FileNumber = grantApplication.FileNumber;
 			AssessorId = grantApplication.AssessorId;
@@ -42,6 +44,7 @@ namespace CJG.Web.External.Areas.Int.Models.WorkQueue
 			GrantStreamName = grantApplication.GrantOpening.GrantStream.Name;
 			RiskFlag = grantApplication.Organization.RiskFlag;
 			OrgId = grantApplication.Organization.Id;
+			RequestedGovernmentContribution = grantApplication.TrainingCost.TotalEstimatedReimbursement;
 		}
 	}
 }

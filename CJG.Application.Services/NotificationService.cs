@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -186,17 +186,21 @@ namespace CJG.Application.Services
 		/// <summary>
 		/// Attempts to send an email for the specified notification.
 		/// This function does not update the datasource, you will need to call CommitTransaction().
+		/// If a Notification that has been previously sent is passed in, it will be cloned and send instead.
 		/// </summary>
 		/// <param name="notification"></param>
 		/// <param name="test"></param>
 		/// <returns>Whether it was successfully sent.</returns>
 		public bool SendNotification(NotificationQueue notification, bool test = false)
 		{
-			if (notification == null) throw new ArgumentNullException(nameof(notification));
+			if (notification == null)
+				throw new ArgumentNullException(nameof(notification));
+
 			var sent = false;
 
 			var setting = _settingService.Get("EnableEmails")?.Value ?? "true";
 			var settingsEnableEmails = string.Compare(setting, "true", true) == 0;
+
 			if (test
 				|| (_notificationSettings.EnableEmails
 				&& settingsEnableEmails
@@ -209,6 +213,13 @@ namespace CJG.Application.Services
 					if (String.IsNullOrEmpty(notification.EmailRecipients))
 						throw new InvalidOperationException("Within the Training or Support environments the AppSetting 'ExternalUserOverrideEmail' must be set to a valid email address.");
 #endif
+					// If we're sending a sent notification, we want to clone the existing notification and send that instead.
+					if (notification.State == NotificationState.Sent)
+					{
+						var resendNotification = notification.Clone();
+						return SendNotification(resendNotification, test);
+					}
+
 					_emailSender.Send(notification.EmailRecipients, notification.EmailSubject, notification.EmailBody, notification.Organization.LegalName, notification.EmailSender);
 					notification.State = NotificationState.Sent;
 					notification.ErrorMessage = null;

@@ -152,6 +152,27 @@
   }
 }
 
+.one-quarter-width {
+  position: relative;
+
+  @include media-breakpoint-up(md) {
+    width: 25%;
+    float: left;
+    vertical-align: top;
+  }
+}
+
+.three-quarter-width {
+  position: relative;
+
+  @include media-breakpoint-up(md) {
+    width: 75%;
+    float: left;
+    vertical-align: top;
+  }
+}
+
+
 .text-transform-none {
   text-transform: none;
 }

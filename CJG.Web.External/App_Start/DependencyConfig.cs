@@ -1,4 +1,7 @@
-﻿using Autofac;
+﻿using System;
+using System.Web;
+using System.Web.Mvc;
+using Autofac;
 using Autofac.Extras.AggregateService;
 using Autofac.Integration.Mvc;
 using CJG.Core.Interfaces.Service;
@@ -8,15 +11,12 @@ using CJG.Infrastructure.Identity;
 using CJG.Web.External.Helpers;
 using Microsoft.AspNet.Identity;
 using NLog;
-using System;
-using System.Web;
-using System.Web.Mvc;
 
 namespace CJG.Web.External
 {
-	public class DependencyConfig
+    public class DependencyConfig
 	{
-		static readonly ILogger _logger = LogManager.GetCurrentClassLogger();
+		private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
 		public static void Configure(ContainerBuilder builder, System.Reflection.Assembly assembly)
 		{
@@ -52,7 +52,7 @@ namespace CJG.Web.External
 
 		public static void RegisterObjects(ContainerBuilder builder)
 		{
-			builder.RegisterInstance(_logger).As<ILogger>().SingleInstance();
+			builder.RegisterInstance(Logger).As<ILogger>().SingleInstance();
 		}
 
 		public static void RegisterIdentity(ContainerBuilder builder)

@@ -206,6 +206,13 @@ namespace CJG.Application.Services
 			return _dbContext.GrantStreamEligibilityQuestions.AsNoTracking().First(x => x.Id == id);
 		}
 
+		public GrantStreamEligibilityQuestion GetOldGrowthGrantStreamQuestion()
+		{
+			return _dbContext.GrantStreamEligibilityQuestions
+				.AsNoTracking()
+				.FirstOrDefault(x => x.EligibilityQuestion.Contains("downturn in the forest sector"));
+		}
+
 		/// <summary>
 		/// Update a grant stream question to the datasource.
 		/// </summary>

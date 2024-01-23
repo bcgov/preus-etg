@@ -30,11 +30,15 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 
 		public List<KeyValuePair<int, string>> ExpectedOutcomes { get; set; }
 
+		public bool CanSend { get; set; }
+		public bool CanResend { get; set; }
+		public bool CanRemove { get; set; }
+
 		public ParticipantInvitationModel()
 		{
 		}
 
-		public ParticipantInvitationModel(ParticipantInvitation invitation)
+		public ParticipantInvitationModel(ParticipantInvitation invitation, bool applicationHasBeenReturnedToDraft)
 		{
 			Id = invitation.GrantApplication.Id;
 			RowVersion = Convert.ToBase64String(invitation.GrantApplication.RowVersion);
@@ -51,17 +55,24 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 			Outcome = invitation.ExpectedParticipantOutcome.GetDescription();
 			Status = invitation.ParticipantInvitationStatus.GetDescription();
 
-			var expectedOutcomes = new List<KeyValuePair<int, string>> {
-						new KeyValuePair<int, string>(0, "Please select expected training outcome"),
-						GetExpectedItem(ExpectedParticipantOutcome.IncreasedJobSecurity),
-						GetExpectedItem(ExpectedParticipantOutcome.IncreasedPay),
-						GetExpectedItem(ExpectedParticipantOutcome.Promotion),
-						GetExpectedItem(ExpectedParticipantOutcome.MoveFromPartTimeToFullTime),
-						GetExpectedItem(ExpectedParticipantOutcome.MoveFromTransitionalToPermanent),
-						GetExpectedItem(ExpectedParticipantOutcome.NoOutcome)
-					};
+			var expectedOutcomes = new List<KeyValuePair<int, string>>
+			{
+				new KeyValuePair<int, string>(0, "Please select expected training outcome"),
+				GetExpectedItem(ExpectedParticipantOutcome.IncreasedJobSecurity),
+				GetExpectedItem(ExpectedParticipantOutcome.IncreasedPay),
+				GetExpectedItem(ExpectedParticipantOutcome.Promotion),
+				GetExpectedItem(ExpectedParticipantOutcome.MoveFromPartTimeToFullTime),
+				GetExpectedItem(ExpectedParticipantOutcome.MoveFromTransitionalToPermanent),
+				GetExpectedItem(ExpectedParticipantOutcome.NoOutcome)
+			};
 					
 			ExpectedOutcomes = expectedOutcomes;
+
+			CanSend = invitation.ParticipantInvitationStatus == ParticipantInvitationStatus.NotSent;
+			CanResend = invitation.ParticipantInvitationStatus == ParticipantInvitationStatus.Sent;
+			CanRemove = (applicationHasBeenReturnedToDraft && invitation.ParticipantInvitationStatus == ParticipantInvitationStatus.Completed)
+			            || invitation.ParticipantInvitationStatus == ParticipantInvitationStatus.NotSent
+			            || invitation.ParticipantInvitationStatus == ParticipantInvitationStatus.Sent;
 
 			var participantForm = invitation.ParticipantForm;
 			if (invitation.ParticipantInvitationStatus == ParticipantInvitationStatus.Completed && participantForm != null)

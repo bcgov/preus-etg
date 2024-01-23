@@ -18,6 +18,7 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 		public bool IsOrganizationProfileAdministrator { get; set; }
 		public bool CreateOrganizationProfile { get; set; }
 		public bool CanEditOrganizationProfile { get; set; }
+		public bool HasPreviouslySubmittedApplications { get; set; }
 
 		public string BackURL { get; set; }
 
@@ -123,9 +124,14 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 			HeadOfficeAddress = organization.HeadOfficeAddress != null ? new AddressViewModel(organization.HeadOfficeAddress) : new AddressViewModel();
 			OrganizationTypeId = organization.OrganizationTypeId ?? (int)OrganizationTypeCodes.Default;
 
-			var adminUserInfo = organization.Users.Where(u => u.IsOrganizationProfileAdministrator)
-												  .Select(u => new { AdminUserName = u.FirstName + " " + u.LastName, AdminUserEmailAddress = u.EmailAddress })
-												  .FirstOrDefault();
+			var adminUserInfo = organization.Users
+				.Where(u => u.IsOrganizationProfileAdministrator)
+				.Select(u => new
+				{
+					AdminUserName = $"{u.FirstName} {u.LastName}",
+					AdminUserEmailAddress = u.EmailAddress
+				})
+				.FirstOrDefault();
 			AdminUserName = adminUserInfo?.AdminUserName;
 			AdminUserEmailAddress = adminUserInfo?.AdminUserEmailAddress;
 

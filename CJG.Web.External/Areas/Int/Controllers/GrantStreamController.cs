@@ -1,4 +1,9 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Web.Mvc;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
@@ -7,18 +12,13 @@ using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using HtmlAgilityPack;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-	/// <summary>
-	/// <paramtyperef name="GrantStreamController"/> class, provides endpoints to manage grant streams.
-	/// </summary>
-	[AuthorizeAction(Privilege.GM1, Privilege.SM)]
+    /// <summary>
+    /// <paramtyperef name="GrantStreamController"/> class, provides endpoints to manage grant streams.
+    /// </summary>
+    [AuthorizeAction(Privilege.GM1, Privilege.SM)]
 	[RouteArea("Int")]
 	[RoutePrefix("Admin/Grant")]
 	public class GrantStreamController : BaseController
@@ -716,6 +716,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 						var programConfiguration = _programConfigurationService.Get(model.ProgramConfigurationId);
 						grantStream.ProgramConfigurationId = programConfiguration.Id;
 						grantStream.ProgramConfiguration = programConfiguration;
+
+						grantStream.ProgramConfiguration.UserGuidanceCostEstimates = model.ProgramConfiguration.UserGuidanceCostEstimates;
+						grantStream.ProgramConfiguration.UserGuidanceClaims = model.ProgramConfiguration.UserGuidanceClaims;
 
 						// Add or update each expense type within the Program Configuration.
 						foreach (var item in model.ProgramConfiguration.EligibleExpenseTypes)
