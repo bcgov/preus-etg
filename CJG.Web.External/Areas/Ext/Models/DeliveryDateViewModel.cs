@@ -27,6 +27,7 @@ namespace CJG.Web.External.Areas.Ext.Models
 		{
 
 		}
+
 		public DeliveryDateViewModel(GrantApplication grantApplication)
 		{
 			if (grantApplication == null)

@@ -18,6 +18,9 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 		public string CourseTitle { get; set; }
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
+		public DateTime MinStartDate { get; set; }
+		public DateTime MaxStartDate { get; set; }
+		public DateTime MinEndDate { get; set; }
 		public DateTime MaxEndDate { get; set; }
 		public int? InDemandOccupationId { get; set; }
 		public int SkillLevelId { get; set; }
@@ -61,7 +64,11 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 			Utilities.MapProperties(trainingProgram, this);
 			StartDate = trainingProgram.StartDate.ToLocalMorning();
 			EndDate = trainingProgram.EndDate.ToLocalMidnight();
+
+			MinStartDate = trainingProgram.GrantApplication.GrantOpening.TrainingPeriod.StartDate;
+			MaxStartDate = trainingProgram.GrantApplication.GrantOpening.TrainingPeriod.EndDate;
 			MaxEndDate = trainingProgram.GrantApplication.GrantOpening.TrainingPeriod.EndDate.AddYears(1);
+
 			SelectedDeliveryMethodIds = trainingProgram.DeliveryMethods.Select(dm => dm.Id).ToArray();
 			SelectedUnderRepresentedGroupIds = trainingProgram.UnderRepresentedGroups.Select(dm => dm.Id).ToArray();
 			CanEdit = true;

@@ -15,7 +15,6 @@ namespace CJG.Core.Entities
 	/// </summary>
 	public class GrantApplication : EntityBase
 	{
-		#region Properties
 		/// <summary>
 		/// get/set - Primary key uses IDENTITY.
 		/// </summary>
@@ -592,9 +591,7 @@ namespace CJG.Core.Entities
 		[Required]
 		[DefaultValue(false)]
 		public bool RequireAllParticipantsBeforeSubmission { get; set; }
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a GrantApplication object.
 		/// </summary>
@@ -627,9 +624,7 @@ namespace CJG.Core.Entities
 			this.CopyOrganization(applicationAdministrator.Organization);
 			this.AddApplicationAdministrator(applicationAdministrator);
 		}
-		#endregion
 
-		#region Methods
 		/// <summary>
 		/// Validate this GrantApplication object.
 		/// </summary>
@@ -663,9 +658,15 @@ namespace CJG.Core.Entities
 			var trainingPrograms = context.Set<TrainingProgram>()
 					.Include(x => x.DeliveryMethods)
 					.Include(tp => tp.TrainingProviders)
-					.Where(x => x.GrantApplicationId == Id).ToArray();
-			var trainingProviders = context.Set<TrainingProvider>().Where(tp => tp.GrantApplicationId == Id).ToArray();
-			var grantAgreement = GrantAgreement ?? context.Set<GrantAgreement>().SingleOrDefault(x => x.GrantApplicationId == Id);
+					.Where(x => x.GrantApplicationId == Id)
+					.ToArray();
+
+			var trainingProviders = context.Set<TrainingProvider>()
+				.Where(tp => tp.GrantApplicationId == Id)
+				.ToArray();
+
+			var grantAgreement = GrantAgreement ?? context.Set<GrantAgreement>()
+				                     .SingleOrDefault(x => x.GrantApplicationId == Id);
 
 			// Must fall within TrainingPeriod.StartDate and TrainingPeriod.EndDate.
 			var trainingPeriodStartDate = GrantOpening.TrainingPeriod.StartDate;
@@ -734,7 +735,7 @@ namespace CJG.Core.Entities
 				if (ApplicationStateInternal == ApplicationStateInternal.OfferIssued && grantAgreement == null)
 					yield return new ValidationResult("Grant application requires a grant agreement before an offer can be issued.", new[] { nameof(GrantAgreement) });
 				// Before state can be New is must have a FileNumber.
-				else if (ApplicationStateInternal == ApplicationStateInternal.New && String.IsNullOrEmpty(FileNumber))
+				else if (ApplicationStateInternal == ApplicationStateInternal.New && string.IsNullOrEmpty(FileNumber))
 					yield return new ValidationResult("Grant application must have a file number to identify it.", new[] { nameof(FileNumber) });
 
 				// Validate the external state transitions.
@@ -833,7 +834,7 @@ namespace CJG.Core.Entities
 					{
 						var reason = lastStateChange.Reason ?? this.GetCurrentClaim()?.ClaimAssessmentNotes;
 
-						if (String.IsNullOrWhiteSpace(reason))
+						if (string.IsNullOrWhiteSpace(reason))
 							yield return new ValidationResult("Please provide a reason for returning the claim to the applicant.", new[] { nameof(ApplicationStateInternal) });
 					}
 				}
@@ -882,6 +883,5 @@ namespace CJG.Core.Entities
 			if (HasRequestedAdditionalFunding == true && String.IsNullOrEmpty(DescriptionOfFundingRequested))
 				yield return new ValidationResult("If you have received or requested additional funding you must include a description of the funding request.", new[] { nameof(DescriptionOfFundingRequested) });
 		}
-		#endregion
 	}
 }

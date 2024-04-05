@@ -44,10 +44,18 @@ app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $tim
     },
     maxTrainingPeriodDate: null
   };
-  if (typeof ($scope.assessors) === 'undefined') $scope.assessors = [];
-  if (typeof ($scope.riskClassifications) === 'undefined') $scope.riskClassifications = [];
-  if (typeof ($scope.deliveryPartners) === 'undefined') $scope.deliveryPartners = [];
-  if (typeof ($scope.deliveryPartnerServices) === 'undefined') $scope.deliveryPartnerServices = [];
+
+  if (typeof ($scope.assessors) === 'undefined')
+    $scope.assessors = [];
+
+  if (typeof ($scope.riskClassifications) === 'undefined')
+    $scope.riskClassifications = [];
+
+  if (typeof ($scope.deliveryPartners) === 'undefined')
+    $scope.deliveryPartners = [];
+
+  if (typeof ($scope.deliveryPartnerServices) === 'undefined')
+    $scope.deliveryPartnerServices = [];
 
   angular.extend(this, $controller('Section', { $scope: $scope, $attrs: $attrs }));
 
@@ -119,11 +127,6 @@ app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $tim
     });
   }
 
-  /**
-   * Make AJAX request for summary data
-   * @function loadSummary
-   * @returns {void}
-   **/
   function loadSummary() {
     return $scope.load({
       url: '/Int/Application/Summary/' + $scope.parent.grantApplicationId,
@@ -134,11 +137,6 @@ app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $tim
       });
   }
 
-  /**
-   * Initialize the data for the form
-   * @function init
-   * @returns {void{
-   **/
   $scope.init = function() {
     return Promise.all([
       loadAssessors(),
@@ -149,6 +147,17 @@ app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $tim
     ]).then(function() {
       loadSummary();
     }).catch(angular.noop);
+  }
+
+  $scope.$watch('model.DeliveryStartDate', function (newValue, oldValue) {
+    if (newValue === oldValue)
+      return;
+
+    $scope.recalculateEndDate();
+  });
+
+  $scope.recalculateEndDate = function () {
+    $scope.section.maxTrainingPeriodDate = getTrainingPeriodMaxDate();
   }
 
   /**
@@ -213,10 +222,22 @@ app.controller('ApplicationSummary', function ($scope, $attrs, $controller, $tim
    * @return {Date}
    **/
   function getTrainingPeriodMaxDate() {
-    if (Utils.isDate($scope.model.TrainingPeriodStartDate)) {
-      return new Date($scope.model.TrainingPeriodStartDate.getFullYear() + 1, $scope.model.TrainingPeriodStartDate.getMonth(), $scope.model.TrainingPeriodStartDate.getDay());
+    if (moment.isMoment($scope.model.DeliveryStartDate) && $scope.model.DeliveryStartDate.isValid()) {
+      const startDate = $scope.model.DeliveryStartDate;
+      return new Date(startDate.year() + 1, startDate.month(), startDate.day());
     }
-    return;
+
+    if (Utils.isDate($scope.model.DeliveryStartDate)) {
+      const startDate = $scope.model.DeliveryStartDate;
+      return new Date(startDate.getFullYear() + 1, startDate.getMonth(), startDate.getDay());
+    }
+
+    if (Utils.isDate($scope.model.TrainingPeriodStartDate)) {
+      const startDate = $scope.model.TrainingPeriodStartDate;
+      return new Date(startDate.getFullYear() + 1, startDate.getMonth(), startDate.getDay());
+    }
+
+    return null;
   }
 
   /**

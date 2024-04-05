@@ -15,5 +15,4 @@ app.controller('ChangeProgramDatesView', function ($scope, $attrs, $controller, 
   };
 
   angular.extend(this, $controller('Section', { $scope: $scope, $attrs: $attrs }));
-
 });

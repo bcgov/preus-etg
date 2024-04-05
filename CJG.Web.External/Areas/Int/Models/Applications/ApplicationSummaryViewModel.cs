@@ -72,14 +72,19 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 		{
 			if (grantApplication == null)
 				throw new ArgumentNullException(nameof(grantApplication));
+
 			if (deliveryPartnerService == null)
 				throw new ArgumentNullException(nameof(deliveryPartnerService));
+
 			if (authorizationService == null)
 				throw new ArgumentNullException(nameof(authorizationService));
+
 			if (grantApplicationService == null)
 				throw new ArgumentNullException(nameof(grantApplicationService));
+
 			if (riskClassificationService == null)
 				throw new ArgumentNullException(nameof(riskClassificationService));
+
 			if (user == null)
 				throw new ArgumentNullException(nameof(user));
 
