@@ -30,6 +30,6 @@
     <div ng-show="$ctrl.ngModel.Reason && $ctrl.ngModel.ShowReason">
         <br />
         <h4>{{$ctrl.ngModel.ReasonHeading}}</h4>
-        <p ng-show="$ctrl.ngModel.Reason" class="alert alert--warning"><em>{{$ctrl.ngModel.Reason}}</em></p>
+        <p ng-show="$ctrl.ngModel.Reason" class="alert alert--warning title--reason" ng-bind-html="$ctrl.ngModel.Reason"></p>
     </div>
 </div>

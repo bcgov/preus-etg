@@ -57,24 +57,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			return View(SidebarViewModelFactory.Create(grantApplication, ControllerContext));
 		}
 
-		//[HttpGet]
-		//[Route("Application/Details/Breakdown/{grantApplicationId}")]
-		//public ActionResult CreateBreakdown(int grantApplicationId)
-		//{
-		//	ViewBag.GrantApplicationId = grantApplicationId;
-		//	var grantApplication = _grantApplicationService.Get(grantApplicationId);
-
-		//	var priorityBreakdown = _prioritizationService.GetBreakdown(grantApplication);
-
-		//	// Clear up Breakdown + Answers here before assigning in case we need to recalculate it.
-		//	grantApplication.PrioritizationScoreBreakdown = priorityBreakdown;
-		//	grantApplication.PrioritizationScore = priorityBreakdown.GetTotalScore();
-
-		//	_grantApplicationService.Update(grantApplication);
-
-		//	return RedirectToAction("ApplicationDetailsView", new { grantApplicationId });
-		//}
-
 		/// <summary>
 		/// Get the data for the ApplicationDetailsView.
 		/// </summary>
