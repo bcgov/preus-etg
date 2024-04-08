@@ -1,24 +1,20 @@
-﻿using CJG.Core.Entities;
+﻿using System;
+using System.Linq;
+using System.Web.Mvc;
+using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Areas.Ext.Models;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.Linq;
-using System.Web.Mvc;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
-	/// <summary>
-	/// HomeController class, MVC controller provides the home page interaction for the external site.
-	/// </summary>
-	[ExternalFilter]
+    [ExternalFilter]
 	[RouteArea("Ext")]
 	public class HomeController : BaseController
 	{
-		#region Variables
 		private readonly ISiteMinderService _siteMinderService;
 		private readonly IUserService _userService;
 		private readonly IGrantApplicationService _grantApplicationService;
@@ -26,9 +22,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		private readonly IGrantOpeningService _grantOpeningService;
 		private readonly IOrganizationService _organizationService;
 		private readonly IProgramDescriptionService _programDescriptionService;
-		#endregion
-
-		#region Constructors
 
 		/// <summary>
 		/// Creates a new instance of a HomeController object.
@@ -55,9 +48,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			_organizationService = organizationService;
 			_programDescriptionService = programDescriptionService;
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
 		/// The default page for the external user.
 		/// </summary>
@@ -130,7 +121,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			try
 			{
 				var currentUser = _userService.GetUser(_siteMinderService.CurrentUserGuid);
-				var grantApplications = _grantApplicationService.GetGrantApplications(currentUser, page, quantity, x => (x.DateUpdated ?? x.DateAdded));
+				var grantApplications = _grantApplicationService.GetGrantApplications(currentUser, page, quantity, x => x.DateUpdated ?? x.DateAdded);
 				var result = new
 				{
 					RecordsFiltered = grantApplications.Items.Count(),
@@ -146,31 +137,32 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
 
-		/// <summary>
-		/// Returns the grant programs.
-		/// </summary>
-		/// <returns></returns>
 		[HttpGet, Route("Home/Grant/Programs")]
 		public JsonResult GetGrantPrograms()
 		{
 			var model = new BaseViewModel();
 			try
 			{
-				var result = _grantProgramService.GetImplementedGrantPrograms().Select(t => new
-				{
-					t.Id,
-					t.Name,
-					Message = t.ShowMessage ? t.Message : "",
-					t.EligibilityDescription,
-					GrantOpenings = _grantOpeningService.GetGrantOpenings(t)
-					   .Where(o => o.State == GrantOpeningStates.Published || o.State == GrantOpeningStates.Open)
-					   .ToList()
-					   .Select(x => new
-					   {
-						   StartDate = x.TrainingPeriod.StartDate.ToStringLocalTime(),
-						   EndDate = x.TrainingPeriod.EndDate.ToStringLocalTime()
-					   }).Distinct().OrderBy(x => x.StartDate).ToList()
-				}).OrderBy(x => x.Name).ToArray();
+				var result = _grantProgramService.GetImplementedGrantPrograms()
+					.Select(t => new
+					{
+						t.Id,
+						t.Name,
+						Message = t.ShowMessage ? t.Message : "",
+						t.EligibilityDescription,
+						GrantOpenings = _grantOpeningService.GetGrantOpenings(t)
+							.Where(o => o.State == GrantOpeningStates.Published || o.State == GrantOpeningStates.Open)
+							.ToList()
+							.Select(x => new
+							{
+								StartDate = x.TrainingPeriod.StartDate.ToStringLocalTime(),
+								EndDate = x.TrainingPeriod.EndDate.ToStringLocalTime()
+							}).Distinct()
+							.OrderBy(x => x.StartDate)
+							.ToList()
+					}).OrderBy(x => x.Name)
+					.ToArray();
+
 				return Json(result, JsonRequestBehavior.AllowGet);
 			}
 			catch (Exception ex)
@@ -180,7 +172,5 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
-
-		#endregion
 	}
 }
