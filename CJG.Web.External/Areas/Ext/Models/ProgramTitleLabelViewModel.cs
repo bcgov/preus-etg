@@ -1,13 +1,12 @@
-﻿using CJG.Core.Entities;
-using CJG.Web.External.Helpers;
-using System;
+﻿using System;
 using System.Linq;
+using CJG.Core.Entities;
+using CJG.Web.External.Helpers;
 
 namespace CJG.Web.External.Areas.Ext.Models
 {
 	public class ProgramTitleLabelViewModel
 	{
-		#region Properties
 		public string FileNumber { get; set; }
 		public string FileName { get; set; }
 		public DateTime? StartDate { get; set; }
@@ -21,36 +20,35 @@ namespace CJG.Web.External.Areas.Ext.Models
 		public bool ShowReason { get; set; }
 		public string ReasonHeading { get; set; }
 		public string Reason { get; set; }
-		#endregion
 
-		#region Constructors
 		public ProgramTitleLabelViewModel()
 		{
 		}
 
 		public ProgramTitleLabelViewModel(GrantApplication grantApplication, bool showReason = true)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
 
-			this.FileNumber = grantApplication.FileNumber;
-			this.FileName = grantApplication.GetFileName();
-			this.StartDate = grantApplication.TrainingPrograms.Any() ? grantApplication.StartDate.ToLocalTime() : (DateTime?)null;
-			this.DateSubmitted = grantApplication.DateSubmitted?.ToLocalTime(); 
-			this.ApplicationStateExternal = grantApplication.ApplicationStateExternal;
-			this.GrantProgramName = grantApplication.GrantOpening.GrantStream.GrantProgram.Name;
-			this.GrantStreamName = grantApplication.GrantOpening.GrantStream.Name;
-			this.GrantOpeningDate = grantApplication.GrantOpening.OpeningDate.ToLocalTime();
-			this.GrantAgreementStartDate = grantApplication.GrantAgreement?.StartDate.AddDays(5).ToLocalTime();
+			FileNumber = grantApplication.FileNumber;
+			FileName = grantApplication.GetFileName();
+			StartDate = grantApplication.TrainingPrograms.Any() ? grantApplication.StartDate.ToLocalTime() : (DateTime?)null;
+			DateSubmitted = grantApplication.DateSubmitted?.ToLocalTime(); 
+			ApplicationStateExternal = grantApplication.ApplicationStateExternal;
+			GrantProgramName = grantApplication.GrantOpening.GrantStream.GrantProgram.Name;
+			GrantStreamName = grantApplication.GrantOpening.GrantStream.Name;
+			GrantOpeningDate = grantApplication.GrantOpening.OpeningDate.ToLocalTime();
+			GrantAgreementStartDate = grantApplication.GrantAgreement?.StartDate.AddDays(5).ToLocalTime();
 
-			this.ShowReason = showReason;
+			ShowReason = showReason;
 
 			switch (grantApplication.ApplicationStateExternal)
 			{
 				case ApplicationStateExternal.CancelledByAgreementHolder:
-					this.CancelText = "by you";
+					CancelText = "by you";
 					break;
 				case ApplicationStateExternal.CancelledByMinistry:
-					this.CancelText = "by the Ministry";
+					CancelText = "by the Ministry";
 					break;
 			}
 
@@ -64,10 +62,9 @@ namespace CJG.Web.External.Areas.Ext.Models
 				ApplicationStateInternal.ClaimReturnedToApplicant,
 				ApplicationStateInternal.ClaimDenied))
 			{
-				this.ReasonHeading = $"{grantApplication.ApplicationStateExternal.GetDescription()} Reason";
-				this.Reason = grantApplication.GetReason(grantApplication.ApplicationStateInternal);
+				ReasonHeading = $"{grantApplication.ApplicationStateExternal.GetDescription()} Reason";
+				Reason = grantApplication.GetReason(grantApplication.ApplicationStateInternal);
 			}
 		}
-		#endregion
 	}
 }
