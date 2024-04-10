@@ -227,11 +227,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			return Json(viewModel, JsonRequestBehavior.AllowGet);
 		}
 
-		/// <summary>
-		/// Update the alternate contact information in the datasource.
-		/// </summary>
-		/// <param name="model"></param>
-		/// <returns></returns>
 		[HttpPut]
 		[ValidateRequestHeader]
 		[PreventSpam]
@@ -248,6 +243,38 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					var invitation = _participantInvitationService.GetInvitation(grantApplication.Id, model.InvitationId);
 
 					_participantInvitationService.RemoveParticipantInvitation(invitation);
+
+					viewModel = new ReportingViewModel(grantApplication, _participantService, this.HttpContext);
+				}
+				else
+				{
+					HandleModelStateValidation(model);
+				}
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+
+			return Json(viewModel, JsonRequestBehavior.AllowGet);
+		}
+
+		[HttpPut]
+		[ValidateRequestHeader]
+		[PreventSpam]
+		[Route("Reporting/Participant/RemoveParticipantNotInvitation")]
+		public JsonResult RemoveParticipantNotInvitation(ParticipantInvitationModel model)
+		{
+			var viewModel = new ReportingViewModel();
+
+			try
+			{
+				if (ModelState.IsValid)
+				{
+					var grantApplication = _grantApplicationService.Get(model.Id);
+					var invitation = _participantInvitationService.GetInvitation(grantApplication.Id, model.InvitationId);
+
+					_participantInvitationService.RemoveParticipantNotInvitation(invitation);
 
 					viewModel = new ReportingViewModel(grantApplication, _participantService, this.HttpContext);
 				}

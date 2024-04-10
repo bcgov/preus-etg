@@ -78,6 +78,39 @@ namespace CJG.Application.Services
 			return participantInvitation;
 		}
 
+		public ParticipantInvitation RemoveParticipantNotInvitation(ParticipantInvitation participantInvitation)
+		{
+			if (participantInvitation == null)
+				throw new ArgumentNullException(nameof(participantInvitation));
+
+			if (participantInvitation.GrantApplication.ApplicationStateInternal == ApplicationStateInternal.Draft
+			     || participantInvitation.GrantApplication.HasBeenReturnedToDraft())
+			{
+				var pifInvitationNotificationType = _notificationService.GetPIFInvitationNotificationType();
+
+				var invitationNotifications = _dbContext.NotificationQueue
+					.Where(p => p.EmailRecipients == participantInvitation.EmailAddress)
+					.Where(p => p.GrantApplicationId == participantInvitation.GrantApplicationId)
+					.Where(p => p.NotificationType.Id == pifInvitationNotificationType.Id)
+					.ToList();
+
+				_dbContext.NotificationQueue.RemoveRange(invitationNotifications);
+			}
+
+			participantInvitation.ParticipantInvitationStatus = ParticipantInvitationStatus.NotSent;
+
+			if (participantInvitation.ParticipantForm != null)
+			{
+				participantInvitation.GrantApplication.ParticipantForms.Remove(participantInvitation.ParticipantForm);
+				_dbContext.ParticipantForms.Remove(participantInvitation.ParticipantForm);
+			}
+
+			_dbContext.Update(participantInvitation);
+			_dbContext.Commit();
+
+			return participantInvitation;
+		}
+
 		public ParticipantInvitation SendParticipantInvitation(ParticipantInvitation participantInvitation)
 		{
 			if (participantInvitation == null)
