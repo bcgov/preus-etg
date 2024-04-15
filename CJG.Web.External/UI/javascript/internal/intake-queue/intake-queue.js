@@ -3,7 +3,8 @@ app.controller('IntakeQueue', function ($scope, $attrs, $controller, $timeout, U
     name: 'IntakeQueue',
     onRefresh: function () {
       return loadApplications().catch(angular.noop);
-    }
+    },
+    canReturnUnassessed: $attrs.canReturnUnassessed
   };
 
   $scope.quantities = [10, 25, 50, 100];
@@ -247,9 +248,14 @@ app.controller('IntakeQueue', function ($scope, $attrs, $controller, $timeout, U
    * @returns {Promise}
    */
   $scope.applyFilter = function (page, quantity, force) {
-    if (!page) page = 1;
-    if (!quantity) quantity = $scope.filter.Quantity;
-    if (typeof (force) === 'undefined') force = false;
+    if (!page)
+      page = 1;
+
+    if (!quantity)
+      quantity = $scope.filter.Quantity;
+
+    if (typeof (force) === 'undefined')
+      force = false;
 
     if (force || filterChanged()) $scope.cache = [];
 
@@ -340,6 +346,26 @@ app.controller('IntakeQueue', function ($scope, $attrs, $controller, $timeout, U
       url: '/Int/Intake/Queue/Begin/Assessment/' + application.Id + '/' + application.AssessorId + '?rowVersion=' + encodeURIComponent(application.RowVersion),
       method: 'PUT'
     })
+      .then(function () {
+        return $scope.applyFilter(1, $scope.filter.Quantity, true);
+      })
+      .catch(angular.noop);
+  }
+
+  /**
+   * Return the application without assessing it.
+   * @function returnUnassessed
+   * @param {object} application - The application.
+   * @returns {Promise}
+   */
+  $scope.returnUnassessed = function (application) {
+    return $scope.confirmDialog('Return to Applicant Unassessed?', '<p>Are you sure you wish to return Application #' + application.FileNumber + ' Unassessed to the applicant?')
+      .then(function () {
+        return $scope.ajax({
+          url: '/Int/Intake/Queue/Return/Application/' + application.Id + '?rowVersion=' + encodeURIComponent(application.RowVersion),
+          method: 'PUT'
+        });
+      })
       .then(function () {
         return $scope.applyFilter(1, $scope.filter.Quantity, true);
       })

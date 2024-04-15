@@ -1365,6 +1365,7 @@
     <Compile Include="Areas\Int\Models\WDAServices\ServiceLineViewModel.cs" />
     <Compile Include="Areas\Int\Models\WDAServices\WDAServiceViewModel.cs" />
     <Compile Include="Areas\Int\Models\WorkQueue\GrantApplicationViewModel.cs" />
+    <Compile Include="Areas\Int\Models\IntakeQueue\IntakeQueueUserModel.cs" />
     <Compile Include="Areas\Int\Models\WorkQueue\WorkQueueFilterAttributeViewModel.cs" />
     <Compile Include="Areas\Int\Models\WorkQueue\WorkQueueUserFiltersViewModel.cs" />
     <Compile Include="Areas\Int\Models\WorkQueue\WorkQueueFilterViewModel.cs" />

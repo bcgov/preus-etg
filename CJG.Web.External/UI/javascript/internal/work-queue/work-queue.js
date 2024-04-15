@@ -139,8 +139,12 @@ app.controller('WorkQueue', function ($scope, $attrs, $controller, $timeout, Uti
    * @returns {Promise}
    **/
   function loadApplications(page, quantity) {
-    if (!page) page = 1;
-    if (!quantity) quantity = $scope.quantities[0];
+    if (!page)
+      page = 1;
+
+    if (!quantity)
+      quantity = $scope.quantities[0];
+
     return $scope.load({
       url: '/Int/Work/Queue?page=' + page + '&quantity=' + quantity,
       method: 'POST',
