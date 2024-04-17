@@ -193,14 +193,8 @@ namespace CJG.Core.Entities
 		public static void RecalculateEstimatedCost(this EligibleCost eligibleCost)
 		{
 			eligibleCost.EstimatedParticipantCost = eligibleCost.CalculateEstimatedParticipantCost();
-			eligibleCost.EstimatedReimbursement = eligibleCost.CalculateEstimatedReimbursement();
-			eligibleCost.EstimatedEmployerContribution = eligibleCost.CalculateEstimatedEmployerContribution();
-
-			if (eligibleCost.TrainingCost.GrantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
-			{
-				eligibleCost.EstimatedReimbursement = CapitalizeEstimatedReimbursement(eligibleCost);
-				eligibleCost.EstimatedEmployerContribution = eligibleCost.EstimatedCost - eligibleCost.EstimatedReimbursement;
-			}
+			eligibleCost.EstimatedReimbursement = CapitalizeEstimatedReimbursement(eligibleCost);
+			eligibleCost.EstimatedEmployerContribution = eligibleCost.EstimatedCost - eligibleCost.EstimatedReimbursement;
 		}
 
 		/// <summary>
@@ -533,25 +527,18 @@ namespace CJG.Core.Entities
 		public static void RecalculateEstimatedCosts(this TrainingCost trainingCost)
 		{
 			foreach (var item in trainingCost.EligibleCosts)
-			{
 				item.RecalculateEstimatedCost();
-			}
 
+			var maxParticipantsOnCosts = trainingCost.EligibleCosts.Max(c => c.EstimatedParticipants);
 			trainingCost.TotalEstimatedCost = trainingCost.EligibleCosts.Sum(ec => ec.EstimatedCost);
 
-			if (trainingCost.GrantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
-			{
-				var maxReimbursementAmount = trainingCost.GrantApplication.MaxReimbursementAmt;
-				var rate = trainingCost.GrantApplication.ReimbursementRate;
+			var maxReimbursementAmount = trainingCost.GrantApplication.MaxReimbursementAmt;
+			var rate = trainingCost.GrantApplication.ReimbursementRate;
 
-				var perParticipantCost = CalculatePerParticipantCost(Math.Round(trainingCost.TotalEstimatedCost * (decimal)rate, 2), trainingCost.EstimatedParticipants);
-				var estimatedReimbursement = perParticipantCost >= maxReimbursementAmount ? maxReimbursementAmount : perParticipantCost;
-				trainingCost.TotalEstimatedReimbursement = estimatedReimbursement * trainingCost.EstimatedParticipants;
-			}
-			else
-			{
-				trainingCost.TotalEstimatedReimbursement = trainingCost.EligibleCosts.Sum(ec => ec.EstimatedReimbursement);
-			}
+			var perParticipantCost = CalculatePerParticipantCost(Math.Round(trainingCost.TotalEstimatedCost * (decimal)rate, 2), trainingCost.EstimatedParticipants);
+			var estimatedReimbursement = perParticipantCost >= maxReimbursementAmount ? maxReimbursementAmount : perParticipantCost;
+			trainingCost.TotalEstimatedReimbursement = estimatedReimbursement * trainingCost.EstimatedParticipants;
+			//trainingCost.TotalEstimatedReimbursement = estimatedReimbursement * maxParticipantsOnCosts;
 		}
 
 		/// <summary>

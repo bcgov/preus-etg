@@ -531,7 +531,7 @@ namespace CJG.Core.Entities
 		/// Reset all the assessment values on the claim back to zero.
 		/// </summary>
 		/// <param name="claim"></param>
-		public static void ResetAssessement(this Claim claim)
+		public static void ResetAssessment(this Claim claim)
 		{
 			foreach (var claimEligibleCost in claim.EligibleCosts)
 			{
@@ -577,7 +577,9 @@ namespace CJG.Core.Entities
 		/// <returns></returns>
 		public static bool HasPriorApprovedClaim(this Claim claim)
 		{
-			return claim.GrantApplication.Claims.Count() <= 1 ? false : claim.GrantApplication.Claims.Any(c => c.IsApproved() && c.ClaimVersion < claim.ClaimVersion);
+			return claim.GrantApplication.Claims.Count() <= 1
+				? false
+				: claim.GrantApplication.Claims.Any(c => c.IsApproved() && c.ClaimVersion < claim.ClaimVersion);
 		}
 
 		/// <summary>
@@ -599,9 +601,16 @@ namespace CJG.Core.Entities
 		/// <returns></returns>
 		private static bool IsSameEligibleCost(ClaimEligibleCost claimEligibleCost, ClaimEligibleCost compare)
 		{
-			if (claimEligibleCost == null) throw new ArgumentNullException(nameof(claimEligibleCost));
-			if (compare == null) return false;
-			return claimEligibleCost.Id == compare.Id || claimEligibleCost.SourceId == compare.Id || (claimEligibleCost.EligibleCostId != null && claimEligibleCost.EligibleCostId == compare.EligibleCostId) || IsSameEligibleCost(claimEligibleCost, compare.Source);
+			if (claimEligibleCost == null)
+				throw new ArgumentNullException(nameof(claimEligibleCost));
+
+			if (compare == null)
+				return false;
+
+			return claimEligibleCost.Id == compare.Id
+			       || claimEligibleCost.SourceId == compare.Id
+			       || (claimEligibleCost.EligibleCostId != null && claimEligibleCost.EligibleCostId == compare.EligibleCostId)
+			       || IsSameEligibleCost(claimEligibleCost, compare.Source);
 		}
 
 		/// <summary>
@@ -612,9 +621,11 @@ namespace CJG.Core.Entities
 		public static decimal AmountPaidOrOwing(this Claim claim)
 		{
 			if (claim.ClaimTypeId == ClaimTypes.SingleAmendableClaim)
-				return claim.TotalAssessedReimbursement - claim.GrantApplication.PaymentRequests.Where(o => o.ClaimVersion != claim.ClaimVersion).Sum(o => o.PaymentAmount);
-			else
-				return claim.TotalAssessedReimbursement;
+				return claim.TotalAssessedReimbursement - claim.GrantApplication.PaymentRequests
+					       .Where(o => o.ClaimVersion != claim.ClaimVersion)
+					       .Sum(o => o.PaymentAmount);
+
+			return claim.TotalAssessedReimbursement;
 		}
 
 		/// <summary>
@@ -666,7 +677,7 @@ namespace CJG.Core.Entities
 		/// <summary>
 		/// Calculate the total amount assessed for this line item breakdown.
 		/// </summary>
-		/// <param name="claimEligibleCost"></param>
+		/// <param name="claimBreakdownCost"></param>
 		/// <returns></returns>
 		public static decimal GetTotalAssessed(this ClaimBreakdownCost claimBreakdownCost)
 		{
@@ -729,9 +740,10 @@ namespace CJG.Core.Entities
 		/// <returns></returns>
 		public static bool HasNumberOfParticipantsChanged(this Claim claim)
 		{
-			if (claim == null) throw new ArgumentNullException(nameof(claim));
+			if (claim == null)
+				throw new ArgumentNullException(nameof(claim));
 
-			// If there are any expense lines that are incorrectly totalled, then return true.
+			// If there are any expense lines that are incorrectly totaled, then return true.
 			var count = claim.GrantApplication.ParticipantForms.Count(pf => !pf.IsExcludedFromClaim);
 			return claim.EligibleCosts.Any(ec => ec.EligibleExpenseType.ExpenseType.Id == ExpenseTypes.NotParticipantLimited && ec.ClaimParticipants < count);
 		}
@@ -743,7 +755,9 @@ namespace CJG.Core.Entities
 		/// <returns></returns>
 		public static int MaxClaimParticipants(this ClaimEligibleCost claimEligibleCost)
 		{
-			return claimEligibleCost.EligibleCost?.AgreedMaxParticipants ?? claimEligibleCost.Source?.AssessedParticipants ?? claimEligibleCost.AssessedParticipants;
+			return claimEligibleCost.EligibleCost?.AgreedMaxParticipants
+			       ?? claimEligibleCost.Source?.AssessedParticipants
+			       ?? claimEligibleCost.AssessedParticipants;
 		}
 
 		/// <summary>
@@ -754,7 +768,10 @@ namespace CJG.Core.Entities
 		public static void UpdateUpToMaxClaimParticipants(this ClaimEligibleCost claimEligibleCost, int numberOfParticipants)
 		{
 			var maxClaimParticipants = claimEligibleCost.MaxClaimParticipants();
-			claimEligibleCost.ClaimParticipants = numberOfParticipants > maxClaimParticipants ? maxClaimParticipants : numberOfParticipants;
+
+			claimEligibleCost.ClaimParticipants = numberOfParticipants > maxClaimParticipants
+				? maxClaimParticipants
+				: numberOfParticipants;
 		}
 	}
 }

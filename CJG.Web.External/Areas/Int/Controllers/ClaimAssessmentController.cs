@@ -28,7 +28,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 	[RouteArea("Int")]
 	public class ClaimAssessmentController : BaseController
 	{
-		private const int MaxLengthOfErrorMessage = 64;
 		private readonly IGrantStreamService _grantStreamService;
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IAttachmentService _attachmentService;

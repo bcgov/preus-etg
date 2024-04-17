@@ -126,10 +126,11 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 
 			ShouldDisplayEmployerContribution = grantApplication.ReimbursementRate != 1;
 			ShouldDisplayESSSummary = grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.WDAService;
+
 			UserGuidanceCostEstimates =
-				grantApplication.GrantOpening.GrantStream.ProgramConfiguration?.GrantPrograms.Count == 0 ?
-				grantApplication.GrantOpening.GrantStream.ProgramConfiguration.UserGuidanceCostEstimates
-				: grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramConfiguration.UserGuidanceCostEstimates;
+				grantApplication.GrantOpening.GrantStream.ProgramConfiguration?.GrantPrograms.Count == 0
+					? grantApplication.GrantOpening.GrantStream.ProgramConfiguration.UserGuidanceCostEstimates
+					: grantApplication.GrantOpening.GrantStream.GrantProgram.ProgramConfiguration.UserGuidanceCostEstimates;
 
 			var maxUploadSize = int.Parse(ConfigurationManager.AppSettings["MaxUploadSizeInBytes"]);
 			MaxUploadSize = maxUploadSize / 1024 / 1024;
@@ -147,10 +148,23 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 			trainingCost.EstimatedParticipants = EstimatedParticipants.Value;
 
 			// Remove any eligible cost that exists in the datasource but not in the updated training cost.
-			var currentCostIds = EligibleCosts.Select(x => x.Id).ToArray();
-			var removeEligibleCosts = trainingCost.EligibleCosts.Where(ec => !currentCostIds.Contains(ec.Id)).ToArray();
-			var currentBreakdownIds = EligibleCosts.SelectMany(t => t.Breakdowns).Select(t => t.Id);
-			var removeEligibleCostBreakdownIds = trainingCost.EligibleCosts.SelectMany(t => t.Breakdowns).Where(t => !currentBreakdownIds.Contains(t.Id)).Select(b => b.Id).Distinct().ToArray();
+			var currentCostIds = EligibleCosts.Select(x => x.Id)
+				.ToArray();
+
+			var removeEligibleCosts = trainingCost.EligibleCosts
+				.Where(ec => !currentCostIds.Contains(ec.Id))
+				.ToArray();
+
+			var currentBreakdownIds = EligibleCosts
+				.SelectMany(t => t.Breakdowns)
+				.Select(t => t.Id);
+
+			var removeEligibleCostBreakdownIds = trainingCost.EligibleCosts
+				.SelectMany(t => t.Breakdowns)
+				.Where(t => !currentBreakdownIds.Contains(t.Id))
+				.Select(b => b.Id)
+				.Distinct()
+				.ToArray();
 
 			// Remove eligible costs.
 			foreach (var remove in removeEligibleCosts)
@@ -177,9 +191,12 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 						eligibleCost.EstimatedParticipants = cost.EstimatedParticipants;
 						break;
 				}
+
 				eligibleCost.EstimatedParticipantCost = cost.EstimatedParticipantCost;
 				eligibleCost.EstimatedCost = cost.EstimatedCost;
-				eligibleCost.ExpenseExplanation = eligibleCost.EligibleExpenseType.RequireExplanation() ? cost.ExpenseExplanation : null;
+				eligibleCost.ExpenseExplanation = eligibleCost.EligibleExpenseType.RequireExplanation()
+					? cost.ExpenseExplanation
+					: null;
 
 				foreach (var breakdown in cost.Breakdowns)
 				{
@@ -212,6 +229,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingCosts
 			trainingCost.RecalculateAgreedCosts();
 
 			grantApplicationService.UpdateTrainingCosts(grantApplication);
+
 			return grantApplication;
 		}
 
