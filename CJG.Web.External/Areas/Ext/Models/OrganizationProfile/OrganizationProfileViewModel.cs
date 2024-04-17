@@ -204,6 +204,23 @@ namespace CJG.Web.External.Areas.Ext.Models.OrganizationProfile
 			RowVersion = Convert.ToBase64String(organization.RowVersion);
 		}
 
+		public void UpdateOrganizationAddressOnApplications(IUserService userService, ISiteMinderService siteMinderService, IApplicationAddressService applicationAddressService)
+		{
+			if (userService == null) throw
+				new ArgumentNullException(nameof(userService));
+
+			if (siteMinderService == null)
+				throw new ArgumentNullException(nameof(siteMinderService));
+
+			if (applicationAddressService == null)
+				throw new ArgumentNullException(nameof(applicationAddressService));
+
+			var currentUser = userService.GetUser(siteMinderService.CurrentUserGuid);
+			var organization = currentUser.Organization;
+
+			applicationAddressService.UpdateBusinessAddressesOnApplications(organization);
+		}
+
 		public void UpdateOrganizationBusinessLicenses(IUserService userService, ISiteMinderService siteMinderService, IAttachmentService attachmentService,
 			HttpPostedFileBase[] files, IEnumerable<UpdateAttachmentViewModel> data)
 		{

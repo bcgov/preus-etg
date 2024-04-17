@@ -133,5 +133,140 @@ namespace CJG.Application.Services
 				_dbContext.ApplicationAddresses.Remove(address);
 			}
 		}
+
+		public void UpdateBusinessAddressesOnApplications(Organization organization)
+		{
+			var defaultGrantProgramId = GetDefaultGrantProgramId();
+
+			var organizationApplications = _dbContext.GrantApplications
+				.Where(ga => ga.GrantOpening.GrantStream.GrantProgram.Id == defaultGrantProgramId)
+				.Where(ga => ga.OrganizationId == organization.Id)
+				.Where(ga => ValidStatesForAddressUpdate.Contains(ga.ApplicationStateInternal))
+				.ToList();
+
+			var applicationOrganizationAddresses = organizationApplications
+				.Select(ga => ga.OrganizationAddress)
+				.ToList();
+
+			if (!applicationOrganizationAddresses.Any())
+				return;
+
+			var headOfficeAddress = organization.HeadOfficeAddress;
+			var addressChanged = false;
+
+			foreach (var address in applicationOrganizationAddresses)
+			{
+				if (!ApplicationAddress.IsAddressDifferent(headOfficeAddress, address))
+					continue;
+
+				address.AddressLine1 = headOfficeAddress.AddressLine1;
+				address.AddressLine2 = headOfficeAddress.AddressLine2;
+				address.City = headOfficeAddress.City;
+				address.PostalCode = headOfficeAddress.PostalCode;
+				address.Region = headOfficeAddress.Region;
+				address.Country = headOfficeAddress.Country;
+				address.DateUpdated = AppDateTime.Now;
+
+				addressChanged = true;
+			}
+
+			if (!addressChanged)
+				return;
+
+			_dbContext.SaveChanges();
+		}
+
+		public void UpdateUserAddressesOnApplications(User user, Organization organization)
+		{
+			var defaultGrantProgramId = GetDefaultGrantProgramId();
+
+			var organizationApplications = _dbContext.GrantApplications
+				.Where(ga => ga.GrantOpening.GrantStream.GrantProgram.Id == defaultGrantProgramId)
+				.Where(ga => ga.OrganizationId == organization.Id)
+				.Where(ga => ValidStatesForAddressUpdate.Contains(ga.ApplicationStateInternal))
+				.ToList();
+
+			var userApplications = organizationApplications
+				.Where(oa => oa.IsApplicationAdministrator(user))
+				.ToList();
+
+			if (!userApplications.Any())
+				return;
+
+			var physicalAddress = user.PhysicalAddress;
+			var mailingAddress = user.MailingAddress;
+			var bothAddressesTheSame = physicalAddress.Id == mailingAddress.Id;
+
+			var addressChanged = false;
+
+			foreach (var application in userApplications)
+			{
+				var physicalAddressHasChanged = ApplicationAddress.IsAddressDifferent(physicalAddress, application.ApplicantPhysicalAddress);
+				var mailingAddressHasChanged = ApplicationAddress.IsAddressDifferent(mailingAddress, application.ApplicantMailingAddress);
+
+				if (!physicalAddressHasChanged && !mailingAddressHasChanged)
+					continue;
+
+				if (physicalAddressHasChanged)
+				{
+					application.ApplicantPhysicalAddress.AddressLine1 = physicalAddress.AddressLine1;
+					application.ApplicantPhysicalAddress.AddressLine2 = physicalAddress.AddressLine2;
+					application.ApplicantPhysicalAddress.City = physicalAddress.City;
+					application.ApplicantPhysicalAddress.PostalCode = physicalAddress.PostalCode;
+					application.ApplicantPhysicalAddress.RegionId = physicalAddress.RegionId;
+					application.ApplicantPhysicalAddress.CountryId = physicalAddress.CountryId;
+					application.ApplicantPhysicalAddress.DateUpdated = AppDateTime.Now;
+				}
+
+				if (mailingAddressHasChanged)
+				{
+					var mailingAddressToUse = bothAddressesTheSame ? physicalAddress : mailingAddress;
+					var needToAddNewAddress = !bothAddressesTheSame && application.ApplicantPhysicalAddress.Id == application.ApplicantMailingAddress.Id;
+
+					if (needToAddNewAddress)
+						application.ApplicantMailingAddress = new ApplicationAddress();
+
+					application.ApplicantMailingAddress.AddressLine1 = mailingAddressToUse.AddressLine1;
+					application.ApplicantMailingAddress.AddressLine2 = mailingAddressToUse.AddressLine2;
+					application.ApplicantMailingAddress.City = mailingAddressToUse.City;
+					application.ApplicantMailingAddress.PostalCode = mailingAddressToUse.PostalCode;
+					application.ApplicantMailingAddress.RegionId = mailingAddressToUse.RegionId;
+					application.ApplicantMailingAddress.CountryId = mailingAddressToUse.CountryId;
+					application.ApplicantMailingAddress.DateUpdated = AppDateTime.Now;
+				}
+
+				addressChanged = true;
+			}
+
+			if (!addressChanged)
+				return;
+
+			_dbContext.SaveChanges();
+		}
+
+		private static List<ApplicationStateInternal> ValidStatesForAddressUpdate
+		{
+			get
+			{
+				var validStates = new List<ApplicationStateInternal>
+				{
+					ApplicationStateInternal.New,
+					ApplicationStateInternal.PendingAssessment,
+					ApplicationStateInternal.UnderAssessment,
+					ApplicationStateInternal.OfferIssued,
+					ApplicationStateInternal.RecommendedForApproval,
+					ApplicationStateInternal.AgreementAccepted,
+					ApplicationStateInternal.OfferIssued,
+					ApplicationStateInternal.ChangeRequest,
+					ApplicationStateInternal.ChangeForApproval,
+					ApplicationStateInternal.NewClaim,
+					ApplicationStateInternal.ClaimAssessEligibility,
+					ApplicationStateInternal.ClaimApproved,
+					ApplicationStateInternal.ClaimAssessReimbursement
+				};
+
+				return validStates;
+			}
+		}
 	}
 }

@@ -55,5 +55,61 @@ namespace CJG.Testing.UnitTests.Entities
 			_address.PostalCode = "SW1W 0NY";
 			Assert.AreEqual(true, ApplicationAddress.IsPostalCodeValid(_address), "UK Postal Code is ok");
 		}
+
+		[TestMethod, TestCategory("ApplicationAddress"), TestCategory("Validate")]
+		public void HasAddressChanged()
+		{
+			var oldAddress = new ApplicationAddress
+			{
+				AddressLine1 = "1 Smith St",
+				AddressLine2 = "Apt 2",
+				City = "TestVille",
+				RegionId = "BC",
+				PostalCode = "V91 5G2",
+				CountryId = "CA",
+			};
+
+			var newAddress = GetNewApplicationAddress();
+			Assert.IsFalse(ApplicationAddress.IsAddressDifferent(oldAddress, newAddress), "Address should be the same");
+
+			newAddress = GetNewApplicationAddress();
+			newAddress.AddressLine1 = "2 Smith St";
+			Assert.IsTrue(ApplicationAddress.IsAddressDifferent(oldAddress, newAddress), "Address should be different");
+
+			newAddress = GetNewApplicationAddress();
+			newAddress.AddressLine2 = "Suite 8";
+			Assert.IsTrue(ApplicationAddress.IsAddressDifferent(oldAddress, newAddress), "Address should be different");
+
+			newAddress = GetNewApplicationAddress();
+			newAddress.City = "Vancouver";
+			Assert.IsTrue(ApplicationAddress.IsAddressDifferent(oldAddress, newAddress), "Address should be different");
+
+			newAddress = GetNewApplicationAddress();
+			newAddress.PostalCode = "V72 4G5";
+			Assert.IsTrue(ApplicationAddress.IsAddressDifferent(oldAddress, newAddress), "Address should be different");
+
+			newAddress = GetNewApplicationAddress();
+			newAddress.RegionId = "BA";
+			Assert.IsTrue(ApplicationAddress.IsAddressDifferent(oldAddress, newAddress), "Address should be different");
+
+			newAddress = GetNewApplicationAddress();
+			newAddress.CountryId = "US";
+			Assert.IsTrue(ApplicationAddress.IsAddressDifferent(oldAddress, newAddress), "Address should be different");
+		}
+
+		private static ApplicationAddress GetNewApplicationAddress()
+		{
+			var newAddress = new ApplicationAddress
+			{
+				AddressLine1 = "1 Smith St",
+				AddressLine2 = "Apt 2",
+				City = "TestVille",
+				RegionId = "BC",
+				PostalCode = "V91 5G2",
+				CountryId = "CA",
+			};
+
+			return newAddress;
+		}
 	}
 }
