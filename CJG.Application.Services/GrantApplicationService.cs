@@ -303,31 +303,29 @@ namespace CJG.Application.Services
 
 			var businessContactRoles = _dbContext.BusinessContactRoles.Where(bcr => bcr.GrantApplicationId == grantApplication.Id);
 			foreach (var businessContactRole in businessContactRoles)
-			{
 				_dbContext.BusinessContactRoles.Remove(businessContactRole);
-			}
 
 			var stateChanges = _dbContext.GrantApplicationStateChanges.Where(sc => sc.GrantApplicationId == grantApplication.Id);
 			foreach (var stateChange in stateChanges)
-			{
 				_dbContext.GrantApplicationStateChanges.Remove(stateChange);
-			}
 
 			var notifications = _dbContext.NotificationQueue.Where(o => o.GrantApplicationId == grantApplication.Id);
 			foreach (var notification in notifications)
-			{
 				_dbContext.NotificationQueue.Remove(notification);
-			}
 
-			var attachmentIds = grantApplication.Attachments.Select(a => a.Id).ToArray();
-			var attachments = _dbContext.Attachments.Where(a => attachmentIds.Contains(a.Id)).Include(a => a.Versions);
+			var attachmentIds = grantApplication.Attachments
+				.Select(a => a.Id)
+				.ToArray();
+			var attachments = _dbContext.Attachments
+				.Where(a => attachmentIds.Contains(a.Id))
+				.Include(a => a.Versions);
+
 			foreach (var attachment in attachments)
 			{
 				var versions = _dbContext.VersionedAttachments.Where(va => va.AttachmentId == attachment.Id);
 				foreach (var version in versions)
-				{
 					_dbContext.VersionedAttachments.Remove(version);
-				}
+
 				_dbContext.Attachments.Remove(attachment);
 			}
 
@@ -335,11 +333,14 @@ namespace CJG.Application.Services
 			foreach (var answer in answers)
 				_dbContext.GrantStreamEligibilityAnswers.Remove(answer);
 
+			var participantInvitations = _dbContext.ParticipantInvitations.Where(p => p.GrantApplicationId == grantApplication.Id);
+			foreach (var participantInvitation in participantInvitations)
+				_dbContext.ParticipantInvitations.Remove(participantInvitation);
+
 			var participantForms = _dbContext.ParticipantForms.Where(p => p.GrantApplicationId == grantApplication.Id);
 			foreach (var participantForm in participantForms)
 				_dbContext.ParticipantForms.Remove(participantForm);
 
-			
 			grantApplication.NotificationQueue.Clear();
 			grantApplication.DeliveryPartnerServices.Clear();
 
