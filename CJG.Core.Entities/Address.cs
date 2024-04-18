@@ -8,8 +8,8 @@ namespace CJG.Core.Entities
     /// <summary>
     /// <typeparamref name="Address"/> class, provides the ORM with a way to manage address information for users and organizations.
     /// </summary>
-    public class Address : EntityBase, IAmAnAddress
-	{
+    public class Address : EntityBase
+    {
         #region Properties
         /// <summary>
         /// get/set - The primary key uses IDENTITY.

@@ -9,8 +9,9 @@ namespace CJG.Core.Entities
 	/// <typeparamref name="ApplicationAddress"/> class, provides the ORM a way to manage address information for grant applications.
 	/// All addresses need to be captured at the instant in time the contractual documents are created.
 	/// </summary>
-	public class ApplicationAddress : EntityBase, IAmAnAddress
+	public class ApplicationAddress : EntityBase
 	{
+		#region Properties
 		/// <summary>
 		/// get/set - The primary key uses IDENTITY.
 		/// </summary>
@@ -67,7 +68,9 @@ namespace CJG.Core.Entities
 		/// </summary>
 		[ForeignKey(nameof(CountryId))]
 		public virtual Country Country { get; set; }
+		#endregion
 
+		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="ApplicationAddress"/> object.
 		/// </summary>
@@ -85,13 +88,14 @@ namespace CJG.Core.Entities
 			if (address != null)
 				CopyAddress(address);
 		}
-
 		public ApplicationAddress(ApplicationAddress address)
 		{
 			if (address != null)
 				CopyAddress(address);
 		}
+		#endregion
 
+		#region Methods
 		/// <summary>
 		/// Copy the address properties into this application address object.
 		/// </summary>
@@ -199,28 +203,6 @@ namespace CJG.Core.Entities
 			       && PostalCode == address.PostalCode
 			       && Country == address.Country;
 		}
-
-		public static bool IsAddressDifferent(IAmAnAddress original, IAmAnAddress update)
-		{
-			if (original.AddressLine1 != update.AddressLine1)
-				return true;
-
-			if (original.AddressLine2 != update.AddressLine2)
-				return true;
-
-			if (original.City != update.City)
-				return true;
-
-			if (original.PostalCode != update.PostalCode)
-				return true;
-
-			if (original.RegionId != update.RegionId)
-				return true;
-
-			if (original.CountryId != update.CountryId)
-				return true;
-
-			return false;
-		}
+		#endregion
 	}
 }

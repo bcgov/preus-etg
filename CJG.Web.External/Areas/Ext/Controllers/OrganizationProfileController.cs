@@ -30,15 +30,13 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		private readonly IOrganizationService _organizationService;
 		private readonly INaIndustryClassificationSystemService _naIndustryClassificationSystemService;
 		private readonly IAttachmentService _attachmentService;
-		private readonly IApplicationAddressService _applicationAddressService;
 
 		public OrganizationProfileController(
 			IControllerService controllerService,
 			IAuthenticationService authenticationService,
 			IOrganizationService organizationService,
 			INaIndustryClassificationSystemService naIndustryClassificationSystem,
-			IAttachmentService attachmentService,
-			IApplicationAddressService applicationAddressService) : base(controllerService.Logger)
+			IAttachmentService attachmentService) : base(controllerService.Logger)
 		{
 			_authenticationService = authenticationService;
 			_userService = controllerService.UserService;
@@ -47,7 +45,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			_organizationService = organizationService;
 			_naIndustryClassificationSystemService = naIndustryClassificationSystem;
 			_attachmentService = attachmentService;
-			_applicationAddressService = applicationAddressService;
 		}
 
 		/// <summary>
@@ -169,8 +166,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				{
 					model.UpdateOrganization(_userService, _siteMinderService, _organizationService);
 					model.UpdateOrganizationBusinessLicenses(_userService, _siteMinderService, _attachmentService, files, attachmentsModel);
-
-					model.UpdateOrganizationAddressOnApplications(_userService, _siteMinderService, _applicationAddressService);
 
 					this.SetAlert("Organization Profile has been updated successfully.", AlertType.Success, true);
 					model.RedirectURL = Url.Action("OrganizationProfileView");

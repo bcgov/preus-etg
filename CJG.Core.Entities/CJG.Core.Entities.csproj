@@ -126,7 +126,6 @@
     <Compile Include="Extensions\GrantApplicationStateExtensions.cs" />
     <Compile Include="GrantStreamEligibilityAnswer.cs" />
     <Compile Include="GrantStreamEligibilityQuestion.cs" />
-    <Compile Include="IAmAnAddress.cs" />
     <Compile Include="IPrincipalExtensions.cs" />
     <Compile Include="NotificationTriggerTypes.cs" />
     <Compile Include="Helpers\NotificationTypeFilter.cs" />

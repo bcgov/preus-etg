@@ -500,7 +500,9 @@ namespace CJG.Core.Entities
 				throw new ArgumentNullException(nameof(user));
 
 			if (user.PhysicalAddress == null)
-				throw new InvalidOperationException("Applicant must have a physical address.");
+			{
+				throw new InvalidOperationException($"Applicant must have a physical address.");
+			}
 
 			grantApplication.ApplicantBCeID = user.BCeIDGuid;
 			grantApplication.ApplicantSalutation = user.Salutation;

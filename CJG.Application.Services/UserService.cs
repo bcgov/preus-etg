@@ -1,14 +1,14 @@
-﻿using System;
+﻿using CJG.Application.Business.Models;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces.Service;
+using CJG.Infrastructure.Entities;
+using NLog;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Web;
-using CJG.Application.Business.Models;
-using CJG.Core.Entities;
-using CJG.Core.Interfaces.Service;
-using CJG.Infrastructure.Entities;
-using NLog;
 
 namespace CJG.Application.Services
 {
@@ -17,10 +17,14 @@ namespace CJG.Application.Services
 	/// </summary>
 	public class UserService : Service, IUserService
 	{
+		#region Variables
 		private readonly IBCeIDService _bceIdService;
 		private readonly ISiteMinderService _siteMinderService;
 		private readonly IStaticDataService _staticDataService;
 
+		#endregion
+
+		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="UserService"/> class.
 		/// </summary>
@@ -41,6 +45,9 @@ namespace CJG.Application.Services
 		{
 		}
 
+		#endregion
+
+		#region Methods
 		/// <summary>
 		/// Create a new user profile in the datasource from BCeID.
 		/// </summary>
@@ -92,8 +99,7 @@ namespace CJG.Application.Services
 		public void UpdateUserDetails(int userId, UserProfileDetailModel userProfileDetails, bool standAloneTransaction = true)
 		{
 			var user = _dbContext.Users.Find(userId);
-			if (user == null)
-				throw new NoContentException(nameof(user));
+			if (user == null) throw new NoContentException(nameof(user));
 
 			userProfileDetails.BindBusinessUserToEntity(user);
 
@@ -180,10 +186,7 @@ namespace CJG.Application.Services
 				model.Title = currentUser.JobTitle;
 			}
 
-			model.Provinces = _staticDataService.GetProvinces()
-				.Select(x => new KeyValuePair<string, string>(x.Id.ToString(CultureInfo.InvariantCulture), x.Name))
-				.ToArray();
-
+			model.Provinces = _staticDataService.GetProvinces().Select(x => new KeyValuePair<string, string>(x.Id.ToString(CultureInfo.InvariantCulture), x.Name)).ToArray();
 			return model;
 		}
 
@@ -500,5 +503,6 @@ namespace CJG.Application.Services
 		{
 			return _dbContext.Users.AsNoTracking().Where(o => o.OrganizationId == organizationId).ToArray();
 		}
+		#endregion
 	}
 }
