@@ -333,13 +333,14 @@ namespace CJG.Application.Services
 			foreach (var answer in answers)
 				_dbContext.GrantStreamEligibilityAnswers.Remove(answer);
 
+			var participantForms = _dbContext.ParticipantForms.Where(p => p.GrantApplicationId == grantApplication.Id);
+
+			foreach (var participantForm in participantForms)
+				_dbContext.ParticipantForms.Remove(participantForm);
+
 			var participantInvitations = _dbContext.ParticipantInvitations.Where(p => p.GrantApplicationId == grantApplication.Id);
 			foreach (var participantInvitation in participantInvitations)
 				_dbContext.ParticipantInvitations.Remove(participantInvitation);
-
-			var participantForms = _dbContext.ParticipantForms.Where(p => p.GrantApplicationId == grantApplication.Id);
-			foreach (var participantForm in participantForms)
-				_dbContext.ParticipantForms.Remove(participantForm);
 
 			grantApplication.NotificationQueue.Clear();
 			grantApplication.DeliveryPartnerServices.Clear();
