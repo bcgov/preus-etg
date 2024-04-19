@@ -412,7 +412,9 @@ namespace CJG.Core.Entities
 			}
 
 			// If a MemberOfUnderRepresentedGroup then must have UnderRepresentedGroups.
-			var trainingProgram = context.Set<TrainingProgram>().Include(t => t.UnderRepresentedGroups).FirstOrDefault(x => x.Id == Id);
+			var trainingProgram = context.Set<TrainingProgram>()
+				.Include(t => t.UnderRepresentedGroups)
+				.FirstOrDefault(x => x.Id == Id);
 
 			if (MemberOfUnderRepresentedGroup.HasValue &&
 				MemberOfUnderRepresentedGroup.Value &&
@@ -421,11 +423,11 @@ namespace CJG.Core.Entities
 				yield return new ValidationResult("You must select under represented groups that apply.", new[] { nameof(UnderRepresentedGroups) });
 
 			// If ExpectedQualifications provided then must have TitleOfQualification.
-			if (!new[] { 1, 5 }.Contains((ExpectedQualification == null ? ExpectedQualificationId : ExpectedQualification.Id)) && String.IsNullOrEmpty(TitleOfQualification))
+			if (!new[] { 1, 5 }.Contains((ExpectedQualification == null ? ExpectedQualificationId : ExpectedQualification.Id)) && string.IsNullOrEmpty(TitleOfQualification))
 				yield return new ValidationResult("If you a have expected qualifications you must include the title of the qualification.", new[] { nameof(TitleOfQualification) });
 
 			// If HasRequestedAdditionalFunding then must have DescriptionOfFundingRequested.
-			if (HasRequestedAdditionalFunding && String.IsNullOrEmpty(DescriptionOfFundingRequested))
+			if (HasRequestedAdditionalFunding && string.IsNullOrEmpty(DescriptionOfFundingRequested))
 				yield return new ValidationResult("If you have received or requested additional funding you must include a description of the funding request.", new[] { nameof(DescriptionOfFundingRequested) });
 
 			if (EligibleCostBreakdownId.HasValue && EligibleCostBreakdownId.Value != 0 || Id == 0 && GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.WDAService)

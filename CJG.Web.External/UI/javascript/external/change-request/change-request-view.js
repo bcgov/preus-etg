@@ -143,16 +143,15 @@ app.controller('ChangeRequestView', function ($scope, $attrs, $controller, $time
    **/
   $scope.showChangeProgramDates = function (trainingProgram) {
     return ngDialog.openConfirm({
-      template: '/Ext/Agreement/Change/Program/Dates/View',
-      data: {
-        title: 'Change Program Dates',
-        model: trainingProgram,
-        DeliveryStartDate: $scope.model.ScheduleA.DeliveryDate.StartDate,
-        DeliveryEndDate: $scope.model.ScheduleA.DeliveryDate.EndDate
-
-      }
-    })
-      .then(function (model) {
+        template: '/Ext/Agreement/Change/Program/Dates/View',
+        data: {
+          title: 'Change Program Dates',
+          model: trainingProgram,
+          DeliveryStartDate: $scope.model.ScheduleA.DeliveryDate.StartDate,
+          DeliveryEndDate: $scope.model.ScheduleA.DeliveryDate.EndDate
+        }
+      })
+      .then(function(model) {
         $scope.sync(model, $scope.model);
       })
       .catch(angular.noop);
@@ -241,10 +240,10 @@ app.controller('ChangeRequestView', function ($scope, $attrs, $controller, $time
    * @function getTrainingPeriodMaxDate
    * @return {Date}
    **/
-  $scope.getTrainingPeriodMaxDate= function() {
+  $scope.getTrainingPeriodMaxDate = function () {
     if (Utils.isDate($scope.model.GrantOpeningTrainingPeriodStartDate)) {
       return new Date($scope.model.GrantOpeningTrainingPeriodStartDate.getFullYear() + 1, $scope.model.GrantOpeningTrainingPeriodStartDate.getMonth(), $scope.model.GrantOpeningTrainingPeriodStartDate.getDay());
     }
-    return;
+    return null;
   }
 });

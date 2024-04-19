@@ -1,6 +1,10 @@
 .grant-summary {
   @include clearfix;
   margin-bottom: gap(2);
+
+  .title--reason {
+      font-style: italic;
+  }
 }
 
 .grant-summary__filename {

@@ -68,15 +68,21 @@ namespace CJG.Application.Services
 		/// <returns>Number of answers deleted.</returns>
 		public int DeleteAnswersFor(int[] participantFormIds, int[] questionIds = null)
 		{
-			if (participantFormIds == null) throw new ArgumentNullException(nameof(participantFormIds));
-			if (questionIds == null) questionIds = new int[0];
+			if (participantFormIds == null)
+				throw new ArgumentNullException(nameof(participantFormIds));
 
-			var questions = _dbContext.ParticipantCompletionReportAnswers.Where(pcra => participantFormIds.Contains(pcra.ParticipantFormId) && (!questionIds.Any() || questionIds.Contains(pcra.QuestionId)));
+			if (questionIds == null)
+				questionIds = new int[0];
+
+			var questions = _dbContext.ParticipantCompletionReportAnswers
+				.Where(pcra => participantFormIds.Contains(pcra.ParticipantFormId) && (!questionIds.Any() || questionIds.Contains(pcra.QuestionId)));
+
 			foreach (var question in questions)
 			{
 				question.MultAnswers.Clear();
 				_dbContext.ParticipantCompletionReportAnswers.Remove(question);
 			}
+
 			return _dbContext.CommitTransaction();
 		}
 
@@ -244,9 +250,12 @@ namespace CJG.Application.Services
 
 			// Now get the participants who answered that question
 			var reportParticipants = _dbContext.ParticipantCompletionReportAnswers
-				.AsNoTracking().Where(pcra => pcra.QuestionId == questionId)
+				.AsNoTracking()
+				.Where(pcra => pcra.QuestionId == questionId)
 				.Select(pcra => pcra.ParticipantFormId)
-				.Where(pcra => participantsOnClaim.Contains(pcra)).OrderBy(pcra => pcra).ToArray();
+				.Where(pcra => participantsOnClaim.Contains(pcra))
+				.OrderBy(pcra => pcra)
+				.ToArray();
 
 			return Enumerable.SequenceEqual(participantsOnClaim, reportParticipants);
 		}

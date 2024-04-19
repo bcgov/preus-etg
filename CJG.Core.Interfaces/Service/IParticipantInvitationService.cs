@@ -6,6 +6,7 @@ namespace CJG.Core.Interfaces.Service
 	{
 		ParticipantInvitation UpdateParticipantInvitation(ParticipantInvitation participantInvitation);
 		ParticipantInvitation RemoveParticipantInvitation(ParticipantInvitation participantInvitation);
+		ParticipantInvitation RemoveParticipantNotInvitation(ParticipantInvitation participantInvitation);
 		ParticipantInvitation SendParticipantInvitation(ParticipantInvitation participantInvitation);
 		ParticipantInvitation GetInvitation(int grantApplicationId, int invitationId);
 

@@ -38,8 +38,8 @@
                             <div class="control-wrapper" ng-validation="errors.EndDate">
                                 <datedropdown ng-model="ngDialogData.model.EndDate"
                                               ng-text="ngDialogData.model.EndDate"
-                                              ng-min-date="ngDialogData.model.GrantOpeningTrainingPeriodStartDate"
-                                              ng-max-date="getTrainingPeriodMaxDate"
+                                              ng-min-date="ngDialogData.model.StartDate"
+                                              ng-max-date="ngDialogData.model.MaxEndDate"
                                               ng-editing="true"></datedropdown>
                             </div>
                         </div>

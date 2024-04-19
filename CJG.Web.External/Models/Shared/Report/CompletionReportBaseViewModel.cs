@@ -20,14 +20,21 @@ namespace CJG.Web.External.Models.Shared.Reports
 
 		public CompletionReportBaseViewModel(GrantApplication grantApplication, ICompletionReportService completionReportService)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
-			if (completionReportService == null) throw new ArgumentNullException(nameof(completionReportService));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
+
+			if (completionReportService == null)
+				throw new ArgumentNullException(nameof(completionReportService));
 
 			GrantApplicationId = grantApplication.Id;
 			ProgramName = grantApplication.GrantOpening.GrantStream.GrantProgram.Name;
 
 			var completionReportGroups = completionReportService.GetCompletionReportGroups(grantApplication.Id).ToArray();
-			var participants = grantApplication.ParticipantForms.OrderBy(o => o.LastName).ToArray();
+			var participants = grantApplication.ParticipantForms
+				.Where(o => o.Approved == true)
+				.OrderBy(o => o.LastName)
+				.ToArray();
+
 			var filteredParticipants = new List<ParticipantForm>();
 			var list = new List<CompletionReportGroupDetailsViewModel>();
 
@@ -44,6 +51,7 @@ namespace CJG.Web.External.Models.Shared.Reports
 					case Constants.CompletionReportCWRGPage1:
 						item = new CompletionReportGroupDetailsViewModel(grantApplication, group, participants);
 						break;
+
 					default:
 						item = new CompletionReportGroupDetailsViewModel(grantApplication, group, filteredParticipants);
 						break;
@@ -63,8 +71,14 @@ namespace CJG.Web.External.Models.Shared.Reports
 				list.Add(item);
 			}
 
-			Participants = participants.Select(o => new CompletionReportParticipantDetailsViewModel(o)).ToArray();
-			FilteredParticipants = filteredParticipants.Select(o => new CompletionReportParticipantDetailsViewModel(o)).ToArray();
+			Participants = participants
+				.Select(o => new CompletionReportParticipantDetailsViewModel(o))
+				.ToArray();
+
+			FilteredParticipants = filteredParticipants
+				.Select(o => new CompletionReportParticipantDetailsViewModel(o))
+				.ToArray();
+
 			CompletionReportGroups = list.ToArray();
 		}
 	}

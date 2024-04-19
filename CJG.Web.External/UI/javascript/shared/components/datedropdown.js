@@ -140,8 +140,8 @@ app.component('datedropdown', {
 
     function genYears() {
       var years = [];
-      var start = $ctrl.ngMinDate ? $ctrl.ngMinDate.getFullYear() : new Date().getFullYear();
-      var end = $ctrl.ngMaxDate ? $ctrl.ngMaxDate.getFullYear() : new Date().getFullYear();
+      var start = $ctrl.ngMinDate ? new Date($ctrl.ngMinDate).getFullYear() : new Date().getFullYear();
+      var end = $ctrl.ngMaxDate ? new Date($ctrl.ngMaxDate).getFullYear() : new Date().getFullYear();
       for (let i = start; i <= end; i++) {
         years.push(i);
       }

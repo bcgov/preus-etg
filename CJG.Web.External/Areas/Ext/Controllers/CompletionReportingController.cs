@@ -23,7 +23,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 	[ExternalFilter]
 	public class CompletionReportingController : BaseController
 	{
-		#region Variables
 		private const int FinalCompletionReportStepETG = 4;
 
 		private readonly IGrantApplicationService _grantApplicationService;
@@ -32,9 +31,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		private readonly INaIndustryClassificationSystemService _naIndustryClassificationSystemService;
 		private readonly INationalOccupationalClassificationService _nationalOccupationalClassificationService;
 		private readonly ICommunityService _communityService;
-		#endregion
-
-		#region Constructors
 
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="CompletionReportingController"/> object.
@@ -62,10 +58,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			_nationalOccupationalClassificationService = nationalOccupationalClassificationService;
 			_communityService = communityService;
 		}
-		#endregion
 
-		#region Endpoints
-		#region Completion Reporting
 		/// <summary>
 		/// Return a view to report a completion report.
 		/// </summary>
@@ -217,6 +210,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			var employerAnswers = new List<EmployerCompletionReportAnswer>();
 			var completionReportGroupId = model.Id;
 			var doNotIncludeParticipants = new int[0];
+			var ineligibleParticipantForms = new int[0];
 			var participantFormsForReport = new int[0];
 			var participantIdsForStep = new int[0];
 
@@ -225,16 +219,31 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 			if (completionReportGroupId == 1)
 			{
-				var participants = grantApplication.ParticipantForms;
-				participantFormsForReport = participants.Select(pf => pf.Id).ToArray();
+				participantFormsForReport = grantApplication.ParticipantForms
+					.Where(p => p.Approved == true)
+					.Select(pf => pf.Id)
+					.ToArray();
+
+				ineligibleParticipantForms = grantApplication.ParticipantForms
+					.Where(p => p.Approved == false)
+					.Select(pf => pf.Id)
+					.ToArray();
 			}
 			else if (claimType == ClaimTypes.SingleAmendableClaim && claim != null)
 			{
-				participantFormsForReport = claim.EligibleCosts.SelectMany(ec => ec.ParticipantCosts.Select(pc => pc.ParticipantForm.Id)).Distinct().Where(peId => !doNotIncludeParticipants.Contains(peId)).ToArray();
+				participantFormsForReport = claim.EligibleCosts
+					.SelectMany(ec => ec.ParticipantCosts.Select(pc => pc.ParticipantForm.Id))
+					.Distinct()
+					.Where(peId => !doNotIncludeParticipants.Contains(peId))
+					.ToArray();
 			}
 			else
 			{
-				participantFormsForReport = grantApplication.ParticipantForms.Where(pf => !pf.IsExcludedFromClaim && !doNotIncludeParticipants.Contains(pf.Id)).Select(pe => pe.Id).ToArray();
+				participantFormsForReport = grantApplication.ParticipantForms
+					.Where(p => p.Approved == true)
+					.Where(pf => !pf.IsExcludedFromClaim && !doNotIncludeParticipants.Contains(pf.Id))
+					.Select(pe => pe.Id)
+					.ToArray();
 			}
 
 			switch (completionReportGroupId)
@@ -271,9 +280,13 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 										ParticipantFormId = participantAnswer.ParticipantFormId ?? 0,
 										OtherAnswer = participantAnswer.StringAnswer ?? string.Empty
 									});
+
 									if (completionReportGroupId == 2)
 									{
-										var participant = grantApplication.ParticipantForms.FirstOrDefault(o => o.Id == participantAnswer.ParticipantFormId);
+										var participant = grantApplication.ParticipantForms
+											.Where(p => p.Approved == true)
+											.FirstOrDefault(o => o.Id == participantAnswer.ParticipantFormId);
+
 										participant.NocId = null;
 										participant.NaicsId = null;
 										participant.EmployerName = null;
@@ -286,6 +299,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 						}
 					}
 					break;
+
 				case 4:
 					foreach (var question in model.Questions)
 					{
@@ -314,7 +328,10 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			if (completionReportGroupId == 1)
 			{
 				// exclude any participants that didn't answer in the affirmative from those on the claim
-				participantIdsForStep = participantFormsForReport.ToList().Where(id => !doNotIncludeParticipants.Contains(id)).ToArray();
+				participantIdsForStep = participantFormsForReport
+					.ToList()
+					.Where(id => !doNotIncludeParticipants.Contains(id))
+					.ToArray();
 
 				// Delete any answers for these participants that are currently saved.
 				_completionReportService.DeleteAnswersFor(doNotIncludeParticipants);
@@ -322,11 +339,17 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				// Delete saved answer it they originally were not included.
 				var questionIds = questions.Select(q => q.Id).ToArray();
 				_completionReportService.DeleteAnswersFor(participantFormsForReport, questionIds);
+
+				// Also delete any answers for participants that are not Eligible
+				_completionReportService.DeleteAnswersFor(ineligibleParticipantForms, questionIds);
 			}
 			else if (completionReportGroupId == 5)
 			{
 				// exclude any participants that didn't answer in the affirmative from those on the claim
-				participantIdsForStep = participantFormsForReport.ToList().Where(id => !doNotIncludeParticipants.Contains(id)).ToArray();
+				participantIdsForStep = participantFormsForReport
+					.ToList()
+					.Where(id => !doNotIncludeParticipants.Contains(id))
+					.ToArray();
 			}
 			else
 			{
@@ -355,6 +378,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 							});
 						}
 						break;
+
 					case 2:
 						{
 							var participant = grantApplication.ParticipantForms.FirstOrDefault(o => o.Id == participantId);
@@ -372,6 +396,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 							});
 							break;
 						}
+
 					case Core.Entities.Constants.CompletionStepWithMultipleQuestions:
 						{
 							foreach (var question in model.Questions)
@@ -388,9 +413,13 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 							}
 							break;
 						}
+
 					case 5:
 						{
-							var participant = grantApplication.ParticipantForms.FirstOrDefault(o => o.Id == participantId);
+							var participant = grantApplication.ParticipantForms
+								.Where(p => p.Approved == true)
+								.FirstOrDefault(o => o.Id == participantId);
+
 							foreach (var question in model.Questions)
 							{
 								var eligibleCostBreakdowns = participant.EligibleCostBreakdowns.Select(o => o.Id).ToArray();
@@ -422,12 +451,17 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				if (claimType == ClaimTypes.SingleAmendableClaim && claim != null)
 				{
 					// need to get all of the participants on the final claim
-					var participantsOnClaim = claim.EligibleCosts.SelectMany(ec => ec.ParticipantCosts.Select(pc => pc.ParticipantFormId)).Distinct().Where(peId => !doNotIncludeParticipants.Contains(peId)).OrderBy(peId => peId).ToArray();
+					var participantsOnClaim = claim.EligibleCosts
+						.SelectMany(ec => ec.ParticipantCosts
+							.Select(pc => pc.ParticipantFormId))
+						.Distinct()
+						.Where(peId => !doNotIncludeParticipants.Contains(peId))
+						.OrderBy(peId => peId)
+						.ToArray();
 					allParticipantsHaveCompletedReport = _completionReportService.AllParticipantsHaveCompletedReport(participantsOnClaim, completionReport.Id, Core.Entities.Constants.CompletionReportETGPage1);
 				}
 				else
 				{
-
 					allParticipantsHaveCompletedReport = _completionReportService.AllParticipantsHaveCompletedReport(participantIdsForStep, completionReport.Id, Core.Entities.Constants.CompletionReportETGPage1);
 				}
 
@@ -729,7 +763,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				return Json(model, JsonRequestBehavior.AllowGet);
 			}
 		}
-		#endregion
 
 		#region Complete Report Details
 		/// <summary>
@@ -809,7 +842,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			return Json(communities, JsonRequestBehavior.AllowGet);
 		}
 
-		#endregion
 		#endregion
 	}
 }

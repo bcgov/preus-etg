@@ -319,6 +319,7 @@
     <Content Include="images\icons\icon--unlocked.svg" />
     <Content Include="images\icons\risk-flag.png" />
     <Content Include="images\icons\spin.gif" />
+    <Content Include="images\logo--funding_partner.png" />
     <Content Include="js\common.js" />
     <Content Include="js\external.js" />
     <Content Include="js\internal.js" />
@@ -368,7 +369,6 @@
     <Content Include="images\icons\icon-denied.png" />
     <Content Include="images\icons\icon-warning.png" />
     <Content Include="images\icons\info-blue.svg" />
-    <Content Include="images\icons\logo--funding_partner.svg" />
     <Content Include="images\icons\menu-close.svg" />
     <Content Include="images\icons\menu.svg" />
     <Content Include="images\icons\select-button.svg" />
@@ -1365,6 +1365,7 @@
     <Compile Include="Areas\Int\Models\WDAServices\ServiceLineViewModel.cs" />
     <Compile Include="Areas\Int\Models\WDAServices\WDAServiceViewModel.cs" />
     <Compile Include="Areas\Int\Models\WorkQueue\GrantApplicationViewModel.cs" />
+    <Compile Include="Areas\Int\Models\IntakeQueue\IntakeQueueUserModel.cs" />
     <Compile Include="Areas\Int\Models\WorkQueue\WorkQueueFilterAttributeViewModel.cs" />
     <Compile Include="Areas\Int\Models\WorkQueue\WorkQueueUserFiltersViewModel.cs" />
     <Compile Include="Areas\Int\Models\WorkQueue\WorkQueueFilterViewModel.cs" />

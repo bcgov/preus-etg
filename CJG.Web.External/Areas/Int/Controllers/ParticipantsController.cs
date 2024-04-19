@@ -141,7 +141,15 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 				foreach (var p in participantForms)
 				{
-					var reimbursement = p.ParticipantCosts.Sum(s => s.AssessedReimbursement);
+					var newClaimReimbursements = p.ParticipantCosts
+						.Where(c => c.ClaimEligibleCost.Claim.ClaimState == ClaimState.Unassessed)
+						.Sum(c => c.ClaimReimbursement);
+
+					var assessedReimbursements = p.ParticipantCosts
+						.Where(c => c.ClaimEligibleCost.Claim.ClaimState != ClaimState.Unassessed)
+						.Sum(s => s.AssessedReimbursement);
+
+					var reimbursement = newClaimReimbursements + assessedReimbursements;
 					var amtPaid = p.ParticipantCosts
 						.Where(w => w.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimApproved ||
 						            w.ClaimEligibleCost.Claim.ClaimState == ClaimState.PaymentRequested ||

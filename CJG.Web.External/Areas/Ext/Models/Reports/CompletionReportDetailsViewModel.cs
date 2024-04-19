@@ -13,12 +13,16 @@ namespace CJG.Web.External.Areas.Ext.Models.Reports
 		{
 		}
 
-		public CompletionReportDetailsViewModel(GrantApplication grantApplication, ICompletionReportService completionReportService) : base(grantApplication, completionReportService)
+		public CompletionReportDetailsViewModel(GrantApplication grantApplication, ICompletionReportService completionReportService)
+			: base(grantApplication, completionReportService)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
-			if (completionReportService == null) throw new ArgumentNullException(nameof(completionReportService));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
 
-			this.ProgramTitleLabel = new ProgramTitleLabelViewModel(grantApplication);
+			if (completionReportService == null)
+				throw new ArgumentNullException(nameof(completionReportService));
+
+			ProgramTitleLabel = new ProgramTitleLabelViewModel(grantApplication);
 		}
 	}
 }

@@ -120,6 +120,19 @@ app.controller('ParticipantReportingView', function($scope, $attrs, $controller,
     }).catch(angular.noop);
   }
 
+  $scope.removeParticipantNotInvite = function (participant) {
+    return $scope.confirmDialog('Remove Participant', '<p>Remove ' + participant.FirstName + ' ' + participant.LastName + ' from this application?</p>  <p>Removing a participant deletes their information. You will only be reimbursed for participants who completed training and submit their PIF.</p>')
+      .then(function () {
+        return $scope.load({
+          url: '/Ext/Reporting/Participant/RemoveParticipantNotInvitation',
+          method: 'PUT',
+          data: participant,
+          set: 'model'
+        });
+      })
+      .catch(angular.noop);
+  }
+
   /**
    * Fetch all the data for the form.
    * @function init
@@ -205,6 +218,7 @@ app.controller('ParticipantReportingView', function($scope, $attrs, $controller,
 
     return $scope.model.Participants.filter(p => p.ExpectedOutcome === 0).length === 0;
   }
+
   /**
    * Shows confirmation prompt and deletes participant form.
    * @function removeParticipant

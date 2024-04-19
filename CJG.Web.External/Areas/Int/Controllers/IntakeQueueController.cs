@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using CJG.Core.Entities.Helpers;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Identity;
+using CJG.Web.External.Areas.Int.Models.IntakeQueue;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
@@ -44,7 +45,12 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[Route("Intake/Queue/View")]
 		public ActionResult IntakeQueueView()
 		{
-			return View();
+			var model = new IntakeQueueUserModel
+			{
+				CanReturnUnassessed = User.IsInRole("Director")
+			};
+
+			return View(model);
 		}
 
 		[HttpGet]
@@ -194,7 +200,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
 
-				if (String.IsNullOrWhiteSpace(rowVersion)) throw new InvalidOperationException($"The parameter '{nameof(rowVersion)}' cannot be null, empty or whitespace.");
+				if (string.IsNullOrWhiteSpace(rowVersion))
+					throw new InvalidOperationException($"The parameter '{nameof(rowVersion)}' cannot be null, empty or whitespace.");
+
 				grantApplication.RowVersion = Convert.FromBase64String(rowVersion.Replace(" ", "+"));
 				_grantApplicationService.SelectForAssessment(grantApplication);
 
@@ -227,9 +235,45 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				var grantApplication = _grantApplicationService.Get(grantApplicationId);
 
-				if (String.IsNullOrWhiteSpace(rowVersion)) throw new InvalidOperationException($"The parameter '{nameof(rowVersion)}' cannot be null, empty or whitespace.");
+				if (string.IsNullOrWhiteSpace(rowVersion))
+					throw new InvalidOperationException($"The parameter '{nameof(rowVersion)}' cannot be null, empty or whitespace.");
+
 				grantApplication.RowVersion = Convert.FromBase64String(rowVersion.Replace(" ", "+"));
 				_grantApplicationService.BeginAssessment(grantApplication, assessorId);
+
+				model = new Models.IntakeQueue.GrantApplicationViewModel(grantApplication);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+
+			}
+			return Json(model);
+		}
+
+		/// <summary>
+		/// Return the specified grant application without assigning, or assessing it
+		/// </summary>
+		/// <param name="grantApplicationId"></param>
+		/// <param name="rowVersion"></param>
+		/// <returns></returns>
+		[HttpPut]
+		[PreventSpam]
+		[ValidateRequestHeader]
+		[AuthorizeAction(Privilege.IA1)]
+		[Route("Intake/Queue/Return/Application/{grantApplicationId}")]
+		public JsonResult ReturnApplicationUnassessed(int grantApplicationId, string rowVersion)
+		{
+			var model = new Models.IntakeQueue.GrantApplicationViewModel();
+			try
+			{
+				var grantApplication = _grantApplicationService.Get(grantApplicationId);
+
+				if (string.IsNullOrWhiteSpace(rowVersion))
+					throw new InvalidOperationException($"The parameter '{nameof(rowVersion)}' cannot be null, empty or whitespace.");
+
+				grantApplication.RowVersion = Convert.FromBase64String(rowVersion.Replace(" ", "+"));
+				_grantApplicationService.ReturnUnassessed(grantApplication);
 
 				model = new Models.IntakeQueue.GrantApplicationViewModel(grantApplication);
 			}

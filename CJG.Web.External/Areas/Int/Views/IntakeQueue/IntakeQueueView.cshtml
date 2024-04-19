@@ -1,9 +1,10 @@
 ﻿@using CJG.Core.Entities
+@model CJG.Web.External.Areas.Int.Models.IntakeQueue.IntakeQueueUserModel
 @{
 	ViewBag.Title = "Intake Queue";
 }
 
-<div ng-controller="IntakeQueue" class="internal-application">
+<div ng-controller="IntakeQueue" can-return-unassessed="@Model.CanReturnUnassessed" class="internal-application">
 	<div>
 		<div class="application-header internal-application-header">
 			<h2>Intake Queue</h2>
@@ -45,8 +46,6 @@
 				</div>
 			</div>
 		</div>
-        
-		
 
         <div class="application-body internal-application-body">
 			<div ng-if="alert.message" class="row row--alert">
@@ -88,6 +87,9 @@
 					<div class="form-table-cell width-200px">
 						Select or Assign for Assessment
 					</div>
+					<div class="form-table-cell width-200px" ng-if="section.canReturnUnassessed">
+                        Return to Applicant Unassessed
+					</div>
 				</div>
 				<div ng-repeat="application in model.Items" class="form-table-row">
 					<div class="form-table-cell width-100px">
@@ -117,6 +119,11 @@
 								<select ng-model="application.AssessorId" ng-options="item.Key as item.Value for item in assessors"></select>
 							</div>
 							<button class="btn btn--secondary" ng-click="beginAssessment(application)" ng-disabled="!application.AssessorId">Assign</button>
+						</div>
+					</div>
+					<div class="form-table-cell width-200px" ng-if="section.canReturnUnassessed">
+                        <div ng-show="application.ApplicationStateInternal === @((int)ApplicationStateInternal.New) && section.canReturnUnassessed">
+							<button class="btn btn--secondary" ng-click="returnUnassessed(application)">Return</button>
 						</div>
 					</div>
 				</div>

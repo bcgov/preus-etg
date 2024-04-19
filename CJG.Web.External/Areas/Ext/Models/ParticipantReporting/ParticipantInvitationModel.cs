@@ -32,7 +32,8 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 
 		public bool CanSend { get; set; }
 		public bool CanResend { get; set; }
-		public bool CanRemove { get; set; }
+		public bool CanRemoveInvitation { get; set; }
+		public bool CanRemovePIF { get; set; }
 
 		public ParticipantInvitationModel()
 		{
@@ -70,9 +71,12 @@ namespace CJG.Web.External.Areas.Ext.Models.ParticipantReporting
 
 			CanSend = invitation.ParticipantInvitationStatus == ParticipantInvitationStatus.NotSent;
 			CanResend = invitation.ParticipantInvitationStatus == ParticipantInvitationStatus.Sent;
-			CanRemove = (applicationHasBeenReturnedToDraft && invitation.ParticipantInvitationStatus == ParticipantInvitationStatus.Completed)
-			            || invitation.ParticipantInvitationStatus == ParticipantInvitationStatus.NotSent
-			            || invitation.ParticipantInvitationStatus == ParticipantInvitationStatus.Sent;
+			CanRemoveInvitation = (applicationHasBeenReturnedToDraft && invitation.ParticipantInvitationStatus == ParticipantInvitationStatus.Completed)
+			                      || invitation.ParticipantInvitationStatus == ParticipantInvitationStatus.NotSent
+			                      || invitation.ParticipantInvitationStatus == ParticipantInvitationStatus.Sent;
+
+			var applicationInDraftState = invitation.GrantApplication.ApplicationStateInternal == ApplicationStateInternal.Draft || applicationHasBeenReturnedToDraft;
+			CanRemovePIF = applicationInDraftState && invitation.ParticipantInvitationStatus == ParticipantInvitationStatus.Completed;
 
 			var participantForm = invitation.ParticipantForm;
 			if (invitation.ParticipantInvitationStatus == ParticipantInvitationStatus.Completed && participantForm != null)

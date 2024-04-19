@@ -1,17 +1,16 @@
-﻿using CJG.Application.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Models.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CJG.Web.External.Areas.Ext.Models.Reports
 {
-	public class CompletionReportQuestionViewModel : BaseViewModel
+    public class CompletionReportQuestionViewModel : BaseViewModel
 	{
-		#region Properties
 		public int CompletionReportId { get; set; }
 		public string Question { get; set; }
 		public string Description { get; set; }
@@ -34,9 +33,7 @@ namespace CJG.Web.External.Areas.Ext.Models.Reports
 
 		public ICollection<CompletionReportAnswerViewModel> Level1Answers { get; set; } = new List<CompletionReportAnswerViewModel>();
 		public ICollection<CompletionReportAnswerViewModel> Level2Answers { get; set; } = new List<CompletionReportAnswerViewModel>();
-		#endregion
 
-		#region Constructors
 		public CompletionReportQuestionViewModel()
 		{
 		}
@@ -85,6 +82,7 @@ namespace CJG.Web.External.Areas.Ext.Models.Reports
 						}
 						break;
 					}
+
 				case CompletionReportQuestionTypes.MultipleChoice:
 				case CompletionReportQuestionTypes.Freeform:
 				case CompletionReportQuestionTypes.CommunityList:
@@ -98,7 +96,7 @@ namespace CJG.Web.External.Areas.Ext.Models.Reports
 							Level = 1
 						});
 
-						switch (this.GroupId)
+						switch (GroupId)
 						{
 							case Core.Entities.Constants.CompletionStepWithMultipleQuestions:
 								{
@@ -192,6 +190,7 @@ namespace CJG.Web.External.Areas.Ext.Models.Reports
 						}
 						break;
 					}
+
 				case CompletionReportQuestionTypes.MultipleCheckbox:
 					{
 						var answers = grantApplication.ParticipantCompletionReportAnswers.Where(o => o.QuestionId == completionReportQuestion.Id);
@@ -285,6 +284,5 @@ namespace CJG.Web.External.Areas.Ext.Models.Reports
 			this.Level2Options = level2Options.ToArray();
 			this.TableHeadings = this.AnswerTableHeadings?.Split(',') ?? new string[] { };
 		}
-		#endregion
 	}
 }

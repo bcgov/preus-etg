@@ -16,12 +16,13 @@ namespace CJG.Web.External.Models.Shared.Reports
 		{
 		}
 
-		public CompletionReportGroupDetailsViewModel(GrantApplication grantApplication,
-			CompletionReportGroup completionReportGroup,
-			IEnumerable<ParticipantForm> participants)
+		public CompletionReportGroupDetailsViewModel(GrantApplication grantApplication, CompletionReportGroup completionReportGroup, IEnumerable<ParticipantForm> participants)
 		{
-			if (grantApplication == null) throw new ArgumentNullException(nameof(grantApplication));
-			if (completionReportGroup == null) throw new ArgumentNullException(nameof(completionReportGroup));
+			if (grantApplication == null)
+				throw new ArgumentNullException(nameof(grantApplication));
+
+			if (completionReportGroup == null)
+				throw new ArgumentNullException(nameof(completionReportGroup));
 
 			Utilities.MapProperties(completionReportGroup, this);
 			Questions = completionReportGroup.Questions

@@ -9,7 +9,6 @@ namespace CJG.Application.Business.Models
 {
 	public class UserProfileDetailModel
 	{
-		#region Properties
 		[Required(ErrorMessage = "Position/Title is required")]
 		public string Title { get; set; }
 
@@ -102,15 +101,13 @@ namespace CJG.Application.Business.Models
 		public bool Subscribe { get; set; }
 		public string PhysicalCountryId { get; set; } = "CA";
 		public string MailingCountryId { get; set; } = "CA";
-		#endregion
 
-		#region Constructors
 		public UserProfileDetailModel() { }
 
 		public UserProfileDetailModel(User user)
 		{
-			if (user == null) throw new ArgumentNullException(nameof(user));
-
+			if (user == null)
+				throw new ArgumentNullException(nameof(user));
 
 			Title = user.JobTitle;
 			user.PhoneNumber = $"({PhoneAreaCode}) {PhoneExchange}-{PhoneNumber}";
@@ -138,9 +135,7 @@ namespace CJG.Application.Business.Models
 				MailingAddressSameAsBusiness = true;
 			}
 		}
-		#endregion
 
-		#region Methods
 		public void BindBusinessUserToEntity(User user)
 		{
 			user.JobTitle = Title;
@@ -167,6 +162,5 @@ namespace CJG.Application.Business.Models
 				user.MailingAddress = user.PhysicalAddress;
 			}
 		}
-		#endregion
 	}
 }

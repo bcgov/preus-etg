@@ -30,7 +30,8 @@
                 <td class="actions" style="width: 150px;">
                     <button class="btn btn--primary" style="height: 40px;" ng-if="invitation.CanSend" ng-click="sendParticipantInvite(invitation)">Send</button>
                     <button class="btn btn--primary" style="height: 40px;" ng-if="invitation.CanResend" ng-click="sendParticipantInvite(invitation)">Resend</button>
-                    <button class="btn btn--secondary" ng-if="invitation.CanRemove" ng-click="removeParticipantInvite(invitation)">Remove</button>
+                    <button class="btn btn--secondary" ng-if="invitation.CanRemoveInvitation" ng-click="removeParticipantInvite(invitation)">Remove</button>
+                    <button class="btn btn--secondary" ng-if="invitation.CanRemovePIF" ng-click="removeParticipantNotInvite(invitation)">Remove</button>
                 </td>
             </tr>
         </tbody>

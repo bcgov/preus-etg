@@ -32,11 +32,8 @@
                     Schedule A - Grant Services
                 </span>
                 <div class="ng-hide">
-                    <div ng-show="model.ScheduleA.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                    <div>
                         @Html.Partial("_EmployerGrantScheduleA")
-                    </div>
-                    <div ng-show="model.ScheduleA.ProgramType == @((int)ProgramTypes.WDAService)">
-                        @Html.Partial("_WDAServiceScheduleA")
                     </div>
                 </div>
             </li>

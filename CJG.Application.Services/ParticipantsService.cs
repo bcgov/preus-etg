@@ -43,9 +43,12 @@ namespace CJG.Application.Services
 			if (!string.IsNullOrWhiteSpace(filter.Participant))
 			{
 				var searchTerms = filter.Participant.Split(new []{ ' ' }, StringSplitOptions.RemoveEmptyEntries);
-				participantForms = participantForms.Where(pf => searchTerms.Any(t => pf.FirstName.Contains(t))
-				                                                || searchTerms.Any(t => pf.MiddleName.Contains(t))
-																|| searchTerms.Any(t => pf.LastName.Contains(t)));
+				foreach (var term in searchTerms)
+				{
+					participantForms = participantForms.Where(pf => pf.FirstName.Contains(term)
+					                                                || pf.MiddleName.Contains(term)
+					                                                || pf.LastName.Contains(term));
+				}
 			}
 
 			var total = participantForms.Count();

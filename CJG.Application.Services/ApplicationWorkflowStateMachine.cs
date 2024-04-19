@@ -1240,7 +1240,7 @@ namespace CJG.Application.Services
 		private void OnDenyClaim(Claim claim)
 		{
 			claim.DateAssessed = AppDateTime.UtcNow;
-			claim.ResetAssessement();
+			claim.ResetAssessment();
 			claim.Assessor = _userService.GetInternalUser(_httpContext.User.GetUserId().Value);
 			claim.AssessorId = _httpContext.User.GetUserId();
 			claim.ClaimState = ClaimState.ClaimDenied;
@@ -1260,7 +1260,7 @@ namespace CJG.Application.Services
 		private void OnReturnClaimToApplicant(Claim claim, string reason, IClaimService service)
 		{
 			service.RemoveEligibleCostsAddedByAssessor(claim);
-			claim.ResetAssessement();
+			claim.ResetAssessment();
 			claim.DateSubmitted = null;
 			var numberOfParticipants = claim.GrantApplication.ParticipantForms.Count(p => !p.IsExcludedFromClaim);
 			foreach (var claimEligibleCost in claim.EligibleCosts)
