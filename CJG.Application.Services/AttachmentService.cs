@@ -1,10 +1,10 @@
-﻿using CJG.Core.Entities;
+﻿using System;
+using System.Linq;
+using System.Web;
+using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Entities;
 using NLog;
-using System;
-using System.Linq;
-using System.Web;
 
 namespace CJG.Application.Services
 {
@@ -13,14 +13,10 @@ namespace CJG.Application.Services
 	/// </summary>
 	public class AttachmentService : Service, IAttachmentService
 	{
-		#region Variables
-		#endregion
-
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="AttachmentService"/> object, and initializes it.
 		/// </summary>
-		/// <param name="httpContext"></param>
+		/// <param name="dbContext"></param>
 		/// <param name="httpContext"></param>
 		/// <param name="logger"></param>
 		public AttachmentService(
@@ -29,9 +25,7 @@ namespace CJG.Application.Services
 			ILogger logger) : base(dbContext, httpContext, logger)
 		{
 		}
-		#endregion
 
-		#region Methods
 		/// <summary>
 		/// Get the attachment for the specified 'id'.
 		/// </summary>
@@ -53,9 +47,7 @@ namespace CJG.Application.Services
 			var grantApplication = Get<GrantApplication>(grantApplicationId);
 
 			if (!_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.ViewApplication))
-			{
 				throw new NotAuthorizedException($"User does not have permission to view application '{grantApplicationId}'.");
-			}
 
 			return Get<Attachment>(attachmentId);
 		}
@@ -72,9 +64,7 @@ namespace CJG.Application.Services
 			var businessLicense = organization.BusinessLicenseDocuments.FirstOrDefault(bl => bl.Id == attachmentId);
 
 			if (businessLicense == null)
-			{
 				throw new NotAuthorizedException("User does not have permission to view the requested business license.");
-			}
 
 			return Get<Attachment>(attachmentId);
 		}
@@ -87,7 +77,8 @@ namespace CJG.Application.Services
 		/// <returns></returns>
 		public Attachment Update(Attachment attachment, bool commit = false)
 		{
-			if (attachment == null) throw new ArgumentNullException(nameof(attachment));
+			if (attachment == null)
+				throw new ArgumentNullException(nameof(attachment));
 
 			var existingAttachment = Get<Attachment>(attachment.Id);
 			existingAttachment.RowVersion = attachment.RowVersion ?? existingAttachment.RowVersion;
@@ -96,6 +87,7 @@ namespace CJG.Application.Services
 
 			if (commit)
 				_dbContext.CommitTransaction();
+
 			return existingAttachment;
 		}
 
@@ -114,6 +106,7 @@ namespace CJG.Application.Services
 
 			if (commit)
 				_dbContext.CommitTransaction();
+
 			return attachment;
 		}
 
@@ -133,6 +126,5 @@ namespace CJG.Application.Services
 			_dbContext.Attachments.Remove(attachment);
 			_dbContext.CommitTransaction();
 		}
-		#endregion
 	}
 }

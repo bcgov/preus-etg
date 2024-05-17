@@ -442,18 +442,28 @@ namespace CJG.Application.Services
 
 		public IDictionary<string, decimal> GetParticipantYTD(GrantApplication grantApplication)
 		{
-			var enteredSiNs = grantApplication.ParticipantForms.Select(x => x.SIN).ToList();
 			var defaultGrantProgramId = GetDefaultGrantProgramId();
+
+			var enteredSiNs = grantApplication.ParticipantForms
+				.Select(x => x.SIN)
+				.ToList();
+
 			var applicationStates = new[]
 			{
-				ApplicationStateInternal.AgreementAccepted, ApplicationStateInternal.ChangeRequest,
-				ApplicationStateInternal.ChangeForApproval, ApplicationStateInternal.ChangeForDenial,
-				ApplicationStateInternal.ChangeReturned, ApplicationStateInternal.ChangeRequestDenied,
+				ApplicationStateInternal.AgreementAccepted,
+				ApplicationStateInternal.ChangeRequest,
+				ApplicationStateInternal.ChangeForApproval,
+				ApplicationStateInternal.ChangeForDenial,
+				ApplicationStateInternal.ChangeReturned,
+				ApplicationStateInternal.ChangeRequestDenied,
 				ApplicationStateInternal.NewClaim,
-				ApplicationStateInternal.ClaimAssessEligibility, ApplicationStateInternal.ClaimReturnedToApplicant,
-				ApplicationStateInternal.ClaimDenied, ApplicationStateInternal.ClaimApproved,
+				ApplicationStateInternal.ClaimAssessEligibility,
+				ApplicationStateInternal.ClaimReturnedToApplicant,
+				ApplicationStateInternal.ClaimDenied,
+				ApplicationStateInternal.ClaimApproved,
 				ApplicationStateInternal.Closed,
-				ApplicationStateInternal.ClaimAssessReimbursement, ApplicationStateInternal.CompletionReporting
+				ApplicationStateInternal.ClaimAssessReimbursement,
+				ApplicationStateInternal.CompletionReporting
 			};
 
 			var queryParticipantCost = (from pc in _dbContext.ParticipantCosts
