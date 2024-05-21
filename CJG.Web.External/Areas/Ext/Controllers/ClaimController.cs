@@ -181,7 +181,9 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 		private List<ParticipantWarningModel> GetParticipantWarnings(GrantApplication grantApplication, IParticipantService participantService)
 		{
-			var participantSinList = grantApplication.ParticipantForms.Select(pf => new { ParticipantFormId = pf.Id, pf.SIN }).ToList();
+			var participantSinList = grantApplication.ParticipantForms
+				.Select(pf => new { ParticipantFormId = pf.Id, pf.SIN })
+				.ToList();
 
 			var warnings = new List<ParticipantWarningModel>();
 
