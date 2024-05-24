@@ -20,15 +20,12 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
           component: angular.toJson($scope.model)
         };
       }
-
-    //  data: function () {
-    //    return $scope.model;
-    //  }
     },
     onSave: function () {
       window.location = '/Ext/Application/Overview/View/' + $scope.section.grantApplicationId;
     },
-    grantApplicationId: $attrs.ngGrantApplicationId
+    grantApplicationId: $attrs.ngGrantApplicationId,
+    ParticipantCountMet: null
   }
 
   angular.extend(this, $controller('Section', { $scope: $scope, $attrs: $attrs }));
@@ -47,6 +44,7 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
     })
       .then(function (response) {
         calculateESSTotal();
+        checkClaimedParticipantsExceedDeclared();
       });
   }
 
@@ -205,7 +203,21 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
 
     calculateESSTotal();
 
+    checkClaimedParticipantsExceedDeclared();
     checkTravelExpenseRequirements();
+  }
+
+  function checkClaimedParticipantsExceedDeclared() {
+    const declaredParticipants = $scope.model.EstimatedParticipants;
+    var claimedParticipants = 0;
+
+    $scope.model.EligibleCosts.forEach(function (cost) {
+      const costParticipants = parseInt(cost.EstimatedParticipants);
+      if (costParticipants > 0)
+        claimedParticipants += costParticipants;
+    });
+
+    $scope.section.ParticipantCountMet = claimedParticipants >= declaredParticipants;
   }
 
   function checkTravelExpenseRequirements() {
