@@ -113,11 +113,12 @@ namespace CJG.Web.External.Helpers
                     .ToList();
             }
 
-			var grantIntakes = LoadGrantOpeningIntakes(grantOpening, grantApplications);
+            var budgetType = filterOldGrowthApplication ? TrainingPeriodBudgetType.OldGrowthBudget : TrainingPeriodBudgetType.BaseBudget;
+            var trainingPeriodBudget = _trainingPeriodService.GetBudget(trainingPeriod, budgetType);
+
+            var grantIntakes = LoadGrantOpeningIntakes(grantOpening, grantApplications, trainingPeriodBudget);
 			var intakeTotalApplications = grantIntakes.Values.Sum(a => a.Number);
 			var intakeTotalAmount = grantIntakes.Values.Sum(a => a.Value);
-			var budgetType = filterOldGrowthApplication ? TrainingPeriodBudgetType.OldGrowthBudget : TrainingPeriodBudgetType.BaseBudget;
-			var trainingPeriodBudget = _trainingPeriodService.GetBudget(trainingPeriod, budgetType);
 			var trainingPeriodViewModel = new IntakeManagementViewModel.TrainingPeriodViewModel
 			{
 				Id = trainingPeriod.Id,
@@ -138,7 +139,7 @@ namespace CJG.Web.External.Helpers
 			return trainingPeriodViewModel;
 		}
 
-		private Dictionary<int, IntakeManagementViewModel.GrantOpeningIntakeViewModel> LoadGrantOpeningIntakes(GrantOpening grantOpening, List<GrantApplication> grantApplications)
+		private Dictionary<int, IntakeManagementViewModel.GrantOpeningIntakeViewModel> LoadGrantOpeningIntakes(GrantOpening grantOpening, List<GrantApplication> grantApplications, TrainingBudgetModel trainingPeriodBudget)
 		{
 			var intakeModels = new Dictionary<int, IntakeManagementViewModel.GrantOpeningIntakeViewModel>
 			{
@@ -195,14 +196,20 @@ namespace CJG.Web.External.Helpers
 			var underApplications = intakeModels[3];
 			var committed = intakeModels[12];
 
-			//Forecasted Expenditure would be the amount that we have already committed, plus the value of all the work awaiting assessment / under assessment,
-			var forecastValue = newApplications.Value + pendingApplications.Value + underApplications.Value + committed.Value;
-			intakeModels.Add(25, GetIntakeModelInline("Forecasted Expenditure *", 0, forecastValue));
+			var approvedAmount = intakeModels[11].Value;
+			var claimedAmount = intakeModels[12].Value - approvedAmount;
+
+			var approvedSlippage = trainingPeriodBudget.ApprovedSlippageRate * approvedAmount;
+			var claimedSlippage = trainingPeriodBudget.ClaimedSlippageRate * claimedAmount;
+
+			var forecastExpenditure = approvedAmount + claimedAmount - approvedSlippage - claimedSlippage;
+
+			intakeModels.Add(25, GetIntakeModelInline("Forecasted Expenditure", 0, forecastExpenditure));
 
 			var budget = grantOpening?.IntakeTargetAmt ?? 0;
-			// should be based off of forecasted expenditure vs budget
-			var overUnderDollars = forecastValue - budget;
+			var overUnderDollars = forecastExpenditure - budget;
 			var overUnderPercent = budget > 0 ? overUnderDollars / budget : 0;
+
 			intakeModels.Add(30, GetIntakeModelInline("Over/Under $", 0, overUnderDollars));
 			intakeModels.Add(31, GetIntakeModelInline("Over/Under %", 0, overUnderPercent, false));
 
@@ -225,13 +232,9 @@ namespace CJG.Web.External.Helpers
 
 		private IntakeManagementViewModel.GrantOpeningIntakeViewModel GetIntakeModelForYTD(IEnumerable<GrantApplication> grantApplications, string intakeGroupName, bool valueIsMoney = true)
 		{
-			//var applicationsWithStatus = grantApplications
-			//	.Where(g => internalStates.Contains(g.ApplicationStateInternal))
-			//	.ToList();
-
 			var ytdInfo = _financeInformationService.GetYearToDatePaidFor(grantApplications);
 
-			var count = 0;
+			var count = ytdInfo.NumberOfApplications;
 			var total = ytdInfo.TotalPaid;
 
 			return new IntakeManagementViewModel.GrantOpeningIntakeViewModel(intakeGroupName, count, total, valueIsMoney);
@@ -246,20 +249,13 @@ namespace CJG.Web.External.Helpers
 		{
 			var applicationClaimStates = new List<ApplicationStateInternal>
 			{
-				ApplicationStateInternal.AgreementAccepted,
-				ApplicationStateInternal.NewClaim,
-				ApplicationStateInternal.ClaimAssessEligibility,
-				ApplicationStateInternal.ClaimAssessReimbursement,
-				ApplicationStateInternal.ClaimApproved,
-				ApplicationStateInternal.ClaimReturnedToApplicant,
-				ApplicationStateInternal.CompletionReporting,
-				ApplicationStateInternal.Closed
+				ApplicationStateInternal.NewClaim
 			};
 
             var claimsForApplications = grantApplications
                 .Where(g => applicationClaimStates.Contains(g.ApplicationStateInternal))
                 .SelectMany(g => g.Claims)
-                .Where(c => c.ClaimState.In(ClaimState.ClaimApproved, ClaimState.PaymentRequested, ClaimState.ClaimPaid, ClaimState.AmountReceived))
+                .Where(c => c.ClaimState.In(ClaimState.Unassessed, ClaimState.ClaimApproved, ClaimState.PaymentRequested, ClaimState.ClaimPaid, ClaimState.AmountReceived))
                 .ToList();
 
             var singleAmendable = claimsForApplications
@@ -271,10 +267,14 @@ namespace CJG.Web.External.Helpers
 	            .ToList();
 
             // Sum the two claim types, SingleAmendableClaim and the rest.
-            decimal totalPaid = !singleAmendable.Any() ? 0 : singleAmendable.Sum(q => q.TotalAssessedReimbursement
-                                                                                      - (q.GrantApplication.PaymentRequests.Where(o => o.ClaimVersion != q.ClaimVersion).Sum(o => o.PaymentAmount)));
+            decimal totalPaid = !singleAmendable.Any()
+	            ? 0
+	            : singleAmendable.Sum(q => q.TotalClaimReimbursement
+	                                       - (q.GrantApplication.PaymentRequests
+		                                       .Where(o => o.ClaimVersion != q.ClaimVersion)
+		                                       .Sum(o => o.PaymentAmount)));
 
-            totalPaid += !notSingleAmendable.Any() ? 0 : notSingleAmendable.Sum(q => q.TotalAssessedReimbursement);
+            totalPaid += !notSingleAmendable.Any() ? 0 : notSingleAmendable.Sum(q => q.TotalClaimReimbursement);
 
 			var count = claimsForApplications.Count;
 			var total = totalPaid;
