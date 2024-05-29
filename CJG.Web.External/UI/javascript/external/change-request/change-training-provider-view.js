@@ -27,7 +27,7 @@ app.controller('ChangeTrainingProviderView', function ($scope, $attrs, $controll
           $scope.model.BusinessCaseDocument.Index = files.length - 1;
         }
 
-        //Code related to Canada-Post Integration
+        // Code related to Canada-Post Integration
         if (document.getElementById("AddressLine1") != null) {
           $scope.model.TrainingAddress.AddressLine1 = document.getElementById("AddressLine1").value;
           $scope.model.TrainingAddress.AddressLine2 = document.getElementById("AddressLine2").value;
@@ -231,9 +231,10 @@ app.controller('ChangeTrainingProviderView', function ($scope, $attrs, $controll
     $scope.model.ProofOfInstructorQualifications = $scope.ProviderTypes.find(function (element) {
       return element.Id == $scope.model.TrainingProviderTypeId;
     }).ProofOfInstructorQualifications;
-    $scope.model.CourseOutline = $scope.ProviderTypes.find(function (element) {
-      return element.Id == $scope.model.TrainingProviderTypeId;
-    }).CourseOutline;
+    //$scope.model.CourseOutline = $scope.ProviderTypes.find(function (element) {
+    //  return element.Id == $scope.model.TrainingProviderTypeId;
+    //}).CourseOutline;
+    $scope.model.CourseOutline = 1;
   }
 
   /**

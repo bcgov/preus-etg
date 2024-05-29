@@ -966,7 +966,7 @@ namespace CJG.Application.Services
 		{
 			_grantApplication.ApplicationStateExternal = ApplicationStateExternal.ChangeRequestSubmitted;
 
-			LogStateChanges(reason, reason);
+			LogStateChanges(reason, reason, addReason: true);
 
 			var changeRequests = _grantApplication.GetChangeRequests();
 			var requested = changeRequests.Where(tp => tp.TrainingProviderState == TrainingProviderStates.Requested);

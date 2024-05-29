@@ -25,6 +25,8 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingProviders
 		public bool CanValidateTrainingProvider { get; set; }
 		public ProgramTypes ProgramType { get; set; }
 
+		public string ChangeRequestReason { get; set; }
+
 		public int[] SelectedDeliveryMethodIds { get; set; }
 		public int MaxUploadSizeKB { get; set; }
 
@@ -73,30 +75,19 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingProviders
 			if (trainingProvider.BusinessCaseDocument != null)
 				BusinessCaseDocument = new AttachmentViewModel(trainingProvider.BusinessCaseDocument);
 
-			TrainingTrainerDetailsListViewModel = new TrainingTrainerDetailsListViewModel(trainingProvider);
-
 			if (trainingProvider.TrainingAddress != null)
 				TrainingLocationListViewModel = new AddressViewModel(trainingProvider.TrainingAddress);
 
 			if (trainingProvider.TrainingProviderAddress != null)
 				TrainingProviderLocationListViewModel = new AddressViewModel(trainingProvider.TrainingProviderAddress);
 
-			TrainingOutsideBcListViewModel = new TrainingOutsideBCListViewModel(trainingProvider);
-
 			OutOfProvinceLocationRationale = trainingProvider.OutOfProvinceLocationRationale;
-
 			ProgramType = grantApplication.GetProgramType();
+			SelectedDeliveryMethodIds = trainingProvider.TrainingProgram?.DeliveryMethods?.Select(dm => dm.Id).ToArray();
+			ChangeRequestReason = trainingProvider.ChangeRequestReason;
 
-			if (grantApplication.GetProgramType() == ProgramTypes.WDAService && trainingProvider.TrainingPrograms.Count == 0)
-			{
-				// Handle Employment Assistance Service Provider case internally
-				SelectedDeliveryMethodIds = trainingProvider.GrantApplication.TrainingPrograms?.FirstOrDefault()
-					?.DeliveryMethods.Select(dm => dm.Id).ToArray();
-			}
-			else
-			{
-				SelectedDeliveryMethodIds = trainingProvider.TrainingProgram?.DeliveryMethods?.Select(dm => dm.Id).ToArray();
-			}
+			TrainingTrainerDetailsListViewModel = new TrainingTrainerDetailsListViewModel(trainingProvider);
+			TrainingOutsideBcListViewModel = new TrainingOutsideBCListViewModel(trainingProvider);
 		}
 	}
 }
