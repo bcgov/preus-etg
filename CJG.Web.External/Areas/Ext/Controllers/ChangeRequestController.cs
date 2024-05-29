@@ -411,21 +411,24 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				if (model.TrainingProviderAddress.RegionId.ToLower() != "bc" && string.IsNullOrWhiteSpace(model.OutOfProvinceLocationRationale))
 					ModelState.AddModelError("OutOfProvinceLocationRationale", "Non B.C. based provider rationale is required");
 
-				if (model.TrainingProviderTypeId.HasValue)
-				{
-					var trainingProvider = _trainingProviderService.Get(model.Id);
-					var trainingProviderType = _trainingProviderService.Get<TrainingProviderType>(model.TrainingProviderTypeId);
-					if (trainingProviderType.CourseOutline == 1)
-					{
-						if (string.IsNullOrWhiteSpace(model.CourseOutlineDocument.FileName) || files?.Length < model.CourseOutlineDocument.Index)
-							ModelState.AddModelError("CourseOutlineDocument", "Course outline document is required.");
-					}
-					if (trainingProviderType.ProofOfInstructorQualifications == 1)
-					{
-						if (string.IsNullOrWhiteSpace(model.ProofOfQualificationsDocument.FileName) || files?.Length < model.ProofOfQualificationsDocument.Index)
-							ModelState.AddModelError("ProofOfQualificationsDocument", "Proof of qualifications document is required.");
-					}
-				}
+				//if (model.TrainingProviderTypeId.HasValue)
+				//{
+				//	var trainingProvider = _trainingProviderService.Get(model.Id);
+				//	var trainingProviderType = _trainingProviderService.Get<TrainingProviderType>(model.TrainingProviderTypeId);
+				//	if (trainingProviderType.CourseOutline == 1)
+				//	{
+				//		if (string.IsNullOrWhiteSpace(model.CourseOutlineDocument.FileName) || files?.Length < model.CourseOutlineDocument.Index)
+				//			ModelState.AddModelError("CourseOutlineDocument", "Course outline document is required.");
+				//	}
+				//	if (trainingProviderType.ProofOfInstructorQualifications == 1)
+				//	{
+				//		if (string.IsNullOrWhiteSpace(model.ProofOfQualificationsDocument.FileName) || files?.Length < model.ProofOfQualificationsDocument.Index)
+				//			ModelState.AddModelError("ProofOfQualificationsDocument", "Proof of qualifications document is required.");
+				//	}
+				//}
+
+				if (string.IsNullOrWhiteSpace(model.CourseOutlineDocument.FileName) || files?.Length < model.CourseOutlineDocument.Index)
+					ModelState.AddModelError("CourseOutlineDocument", "Course outline document is required.");
 
 				if (ModelState.IsValid)
 				{
