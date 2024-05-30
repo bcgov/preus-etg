@@ -7,7 +7,7 @@ using CJG.Web.External.Areas.Ext.Models;
 
 namespace CJG.Web.External.Areas.Int.Models
 {
-    public class ClaimListViewModel : ClaimListSharedViewModel
+	public class ClaimListViewModel : ClaimListSharedViewModel
 	{
 		public IEnumerable<ClaimViewModel> ClaimViewModels { get; set; }
 
@@ -24,19 +24,19 @@ namespace CJG.Web.External.Areas.Int.Models
 
 			var claims = grantApplication.Claims
 				.Where(c => c.ClaimState.In(
-					            ClaimState.Unassessed,
-					            ClaimState.ClaimApproved,
-					            ClaimState.ClaimDenied,
-					            ClaimState.ClaimAmended,
-					            ClaimState.PaymentRequested,
-					            ClaimState.AmountOwing,
-					            ClaimState.ClaimPaid,
-					            ClaimState.AmountReceived)
-				            || c.ClaimState.In(ClaimState.Incomplete, ClaimState.Complete) && c.GrantApplication.ApplicationStateInternal == ApplicationStateInternal.ClaimReturnedToApplicant
-				            || c.ClaimState.In(ClaimState.Complete) && c.GrantApplication.ApplicationStateInternal.In(ApplicationStateInternal.CancelledByMinistry)
-				            || (c.ClaimState.In(ClaimState.Incomplete)
-				                && c.DateSubmitted.HasValue
-				                && grantApplication.ApplicationStateInternal != ApplicationStateInternal.ClaimReturnedToApplicant)
+								ClaimState.Unassessed,
+								ClaimState.ClaimApproved,
+								ClaimState.ClaimDenied,
+								ClaimState.ClaimAmended,
+								ClaimState.PaymentRequested,
+								ClaimState.AmountOwing,
+								ClaimState.ClaimPaid,
+								ClaimState.AmountReceived)
+							|| c.ClaimState.In(ClaimState.Incomplete, ClaimState.Complete) && c.GrantApplication.ApplicationStateInternal == ApplicationStateInternal.ClaimReturnedToApplicant
+							|| c.ClaimState.In(ClaimState.Complete) && c.GrantApplication.ApplicationStateInternal.In(ApplicationStateInternal.CancelledByMinistry)
+							|| (c.ClaimState.In(ClaimState.Incomplete)
+								&& c.DateSubmitted.HasValue
+								&& grantApplication.ApplicationStateInternal != ApplicationStateInternal.ClaimReturnedToApplicant)
 				);
 
 			ClaimViewModels = claims.Select(c => new ClaimViewModel(c)).ToArray();

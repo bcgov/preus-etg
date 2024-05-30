@@ -187,7 +187,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// Reassign the assessor on the grant application.
 		/// </summary>
 		/// <param name="model"></param>
-		/// <param name="newAssessorId"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[PreventSpam]
@@ -238,7 +237,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Update the claim information in the datasource.
 		/// </summary>
-		/// <param name="viewModel"></param>
+		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[ValidateRequestHeader]
@@ -456,7 +455,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, e.GetAllMessages()).HttpStatusCodeResultWithAlert(Response, AlertType.Error);
 			}
 
-			return new PartialViewResult() { ViewData = viewData, ViewName = "_ClaimAssessmentDetail" };
+			return new PartialViewResult { ViewData = viewData, ViewName = "_ClaimAssessmentDetail" };
 		}
 
 		/// <summary>

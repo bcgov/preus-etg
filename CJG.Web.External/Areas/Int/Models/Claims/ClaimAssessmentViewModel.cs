@@ -1,19 +1,17 @@
-﻿using CJG.Core.Entities;
-using System.Security.Principal;
-using CJG.Application.Services;
-using System;
-using CJG.Web.External.Models.Shared;
-using CJG.Web.External.Helpers;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
+using CJG.Application.Services;
+using CJG.Core.Entities;
 using CJG.Infrastructure.Identity;
+using CJG.Web.External.Helpers;
+using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Int.Models.Claims
 {
-	public class ClaimAssessmentViewModel : BaseViewModel
+    public class ClaimAssessmentViewModel : BaseViewModel
 	{
-		#region Properties
-		#region Claim
 		public int Version { get; set; }
 		public string RowVersion { get; set; }
 		public ClaimTypes ClaimType { get; set; }
@@ -32,7 +30,6 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 
 		public int ParticipantsWithCostsAssigned { get; set; }
 		public int ParticipantsReported { get; set; }
-		#endregion
 
 		#region Application
 		public string GrantApplicationRowVersion { get; set; }
@@ -83,83 +80,83 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 		public bool HasPriorApprovedClaim { get; set; }
 
 		public WorkflowViewModel Workflow { get; set; }
-		#endregion
 
-		#region Constructors
 		public ClaimAssessmentViewModel()
 		{
 		}
 
 		public ClaimAssessmentViewModel(Claim claim, IPrincipal user, Func<string, string> GetWorkflowUrl)
 		{
-			if (claim == null) throw new ArgumentNullException(nameof(claim));
-			if (user == null) throw new ArgumentNullException(nameof(user));
+			if (claim == null)
+				throw new ArgumentNullException(nameof(claim));
 
-			this.Id = claim.Id;
-			this.Version = claim.ClaimVersion;
-			this.RowVersion = Convert.ToBase64String(claim.RowVersion);
-			this.ClaimState = claim.ClaimState;
-			this.ClaimStatus = claim.ClaimState.GetDescription();
-			this.ClaimNumber = claim.ClaimNumber;
-			this.ClaimType = claim.ClaimTypeId;
-			this.IsFinalClaim = claim.IsFinalClaim;
-			this.DateSubmitted = claim.DateSubmitted.HasValue ? claim.DateSubmitted.Value.ToLocalTime() : (DateTime?)null;
-			this.DateAssessed = claim.DateAssessed.HasValue ? claim.DateAssessed.Value.ToLocalTime() : (DateTime?)null;
-			this.MaximumParticipants = claim.GrantApplication.TrainingCost.AgreedParticipants;
-			this.AgreedMaxCommittment = claim.GrantApplication.TrainingCost.AgreedCommitment;
-			this.TotalClaimReimbursement = claim.TotalClaimReimbursement;
-			this.TotalAssessedReimbursement = claim.TotalAssessedReimbursement;
+			if (user == null)
+				throw new ArgumentNullException(nameof(user));
 
-			this.ParticipantsWithCostsAssigned = claim.ParticipantsWithEligibleCosts();
-			this.ParticipantsReported = claim.GrantApplication.ParticipantForms.Count();
+			Id = claim.Id;
+			Version = claim.ClaimVersion;
+			RowVersion = Convert.ToBase64String(claim.RowVersion);
+			ClaimState = claim.ClaimState;
+			ClaimStatus = claim.ClaimState.GetDescription();
+			ClaimNumber = claim.ClaimNumber;
+			ClaimType = claim.ClaimTypeId;
+			IsFinalClaim = claim.IsFinalClaim;
+			DateSubmitted = claim.DateSubmitted.HasValue ? claim.DateSubmitted.Value.ToLocalTime() : (DateTime?)null;
+			DateAssessed = claim.DateAssessed.HasValue ? claim.DateAssessed.Value.ToLocalTime() : (DateTime?)null;
+			MaximumParticipants = claim.GrantApplication.TrainingCost.AgreedParticipants;
+			AgreedMaxCommittment = claim.GrantApplication.TrainingCost.AgreedCommitment;
+			TotalClaimReimbursement = claim.TotalClaimReimbursement;
+			TotalAssessedReimbursement = claim.TotalAssessedReimbursement;
 
-			this.ClaimAssessmentNotes = claim.ClaimAssessmentNotes;
-			this.ReimbursementAssessmentNotes = claim.ReimbursementAssessmentNotes;
-			this.EligibilityAssessmentNotes = claim.EligibilityAssessmentNotes;
+			ParticipantsWithCostsAssigned = claim.ParticipantsWithEligibleCosts();
+			ParticipantsReported = claim.GrantApplication.ParticipantForms.Count();
 
-			this.GrantApplicationRowVersion = Convert.ToBase64String(claim.GrantApplication.RowVersion);
-			this.FileNumber = claim.GrantApplication.FileNumber;
-			this.FileName = claim.GrantApplication.GetFileName();
-			this.StartDate = claim.GrantApplication.StartDate.ToLocalTime();
-			this.EndDate = claim.GrantApplication.EndDate.ToLocalTime();
-			this.GrantAgreementStartDate = claim.GrantApplication.GrantAgreement.StartDate.ToLocalTime();
-			this.ReimbursementRate = claim.GrantApplication.ReimbursementRate;
-			this.ApplicationStateExternal = claim.GrantApplication.ApplicationStateExternal;
-			this.ApplicationInternalStatus = this.ApplicationStateExternal.GetDescription();
-			this.AssessorId = claim.GrantApplication.AssessorId;
-			this.Assessor = claim.GrantApplication.AssessorId == null ? null : new InternalUserViewModel(claim.GrantApplication.Assessor);
+			ClaimAssessmentNotes = claim.ClaimAssessmentNotes;
+			ReimbursementAssessmentNotes = claim.ReimbursementAssessmentNotes;
+			EligibilityAssessmentNotes = claim.EligibilityAssessmentNotes;
 
-			this.ProgramType = claim.GrantApplication.GetProgramType();
-			this.GrantProgram = claim.GrantApplication.GrantOpening.GrantStream.GrantProgram.Name;
-			this.GrantStream = claim.GrantApplication.GrantOpening.GrantStream.Name;
-			this.GrantOpeningState = claim.GrantApplication.GrantOpening.State;
-			this.TrainingPeriodStartDate = claim.GrantApplication.GrantOpening.TrainingPeriod.StartDate.ToLocalTime();
-			this.TrainingPeriodEndDate = claim.GrantApplication.GrantOpening.TrainingPeriod.EndDate.ToLocalTime();
+			GrantApplicationRowVersion = Convert.ToBase64String(claim.GrantApplication.RowVersion);
+			FileNumber = claim.GrantApplication.FileNumber;
+			FileName = claim.GrantApplication.GetFileName();
+			StartDate = claim.GrantApplication.StartDate.ToLocalTime();
+			EndDate = claim.GrantApplication.EndDate.ToLocalTime();
+			GrantAgreementStartDate = claim.GrantApplication.GrantAgreement.StartDate.ToLocalTime();
+			ReimbursementRate = claim.GrantApplication.ReimbursementRate;
+			ApplicationStateExternal = claim.GrantApplication.ApplicationStateExternal;
+			ApplicationInternalStatus = ApplicationStateExternal.GetDescription();
+			AssessorId = claim.GrantApplication.AssessorId;
+			Assessor = claim.GrantApplication.AssessorId == null ? null : new InternalUserViewModel(claim.GrantApplication.Assessor);
 
-			this.ApplicantName = $"{claim.GrantApplication.ApplicantFirstName} {claim.GrantApplication.ApplicantLastName}";
-			this.OrganizationLegalName = claim.GrantApplication.OrganizationLegalName;
+			ProgramType = claim.GrantApplication.GetProgramType();
+			GrantProgram = claim.GrantApplication.GrantOpening.GrantStream.GrantProgram.Name;
+			GrantStream = claim.GrantApplication.GrantOpening.GrantStream.Name;
+			GrantOpeningState = claim.GrantApplication.GrantOpening.State;
+			TrainingPeriodStartDate = claim.GrantApplication.GrantOpening.TrainingPeriod.StartDate.ToLocalTime();
+			TrainingPeriodEndDate = claim.GrantApplication.GrantOpening.TrainingPeriod.EndDate.ToLocalTime();
 
-			this.CanEdit = user.CanPerformAction(claim.GrantApplication, ApplicationWorkflowTrigger.EditClaim);
-			this.CanUnlock = user.HasPrivilege(Privilege.AM4);
-			this.CanReassign = user.CanPerformAction(claim.GrantApplication, ApplicationWorkflowTrigger.ReassignAssessor);
-			this.HasPriorApprovedClaim = claim.HasPriorApprovedClaim();
+			ApplicantName = $"{claim.GrantApplication.ApplicantFirstName} {claim.GrantApplication.ApplicantLastName}";
+			OrganizationLegalName = claim.GrantApplication.OrganizationLegalName;
 
-			switch (this.ProgramType)
+			CanEdit = user.CanPerformAction(claim.GrantApplication, ApplicationWorkflowTrigger.EditClaim);
+			CanUnlock = user.HasPrivilege(Privilege.AM4);
+			CanReassign = user.CanPerformAction(claim.GrantApplication, ApplicationWorkflowTrigger.ReassignAssessor);
+			HasPriorApprovedClaim = claim.HasPriorApprovedClaim();
+
+			switch (ProgramType)
 			{
 				case (ProgramTypes.EmployerGrant):
-					this.TrainingProvider = claim.GrantApplication.TrainingPrograms.FirstOrDefault().TrainingProvider.Name;
-					this.DeliveryPartner = claim.GrantApplication.DeliveryPartner?.Caption;
-					this.Participants = claim.GrantApplication.ParticipantForms.Select(p => new ParticipantViewModel(p)).ToArray();
+					TrainingProvider = claim.GrantApplication.TrainingPrograms.FirstOrDefault().TrainingProvider.Name;
+					DeliveryPartner = claim.GrantApplication.DeliveryPartner?.Caption;
+					Participants = claim.GrantApplication.ParticipantForms.Select(p => new ParticipantViewModel(p)).ToArray();
 					break;
 				case (ProgramTypes.WDAService):
-					this.Participants = claim.ParticipantForms.Select(pf => new ParticipantViewModel(pf)).ToArray();
+					Participants = claim.ParticipantForms.Select(pf => new ParticipantViewModel(pf)).ToArray();
 					break;
 			}
 
-			this.AmountPaidOrOwing = claim.ClaimTypeId == ClaimTypes.SingleAmendableClaim ? claim.AmountPaidOrOwing() : claim.GrantApplication.AmountPaidOrOwing();
+			AmountPaidOrOwing = claim.ClaimTypeId == ClaimTypes.SingleAmendableClaim ? claim.AmountPaidOrOwing() : claim.GrantApplication.AmountPaidOrOwing();
 
-			this.Workflow = new WorkflowViewModel(claim, user, GetWorkflowUrl);
+			Workflow = new WorkflowViewModel(claim, user, GetWorkflowUrl);
 		}
-		#endregion
 	}
 }
