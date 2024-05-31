@@ -199,29 +199,33 @@ namespace CJG.Application.Services
 			{
 				switch (trigger)
 				{
-					case (ApplicationWorkflowTrigger.SubmitApplication):
-					case (ApplicationWorkflowTrigger.WithdrawClaim):
-					case (ApplicationWorkflowTrigger.AcceptGrantAgreement):
-					case (ApplicationWorkflowTrigger.RejectGrantAgreement):
-					case (ApplicationWorkflowTrigger.SubmitChangeRequest):
-					case (ApplicationWorkflowTrigger.SubmitCompletionReport):
+					case ApplicationWorkflowTrigger.SubmitApplication:
+					case ApplicationWorkflowTrigger.WithdrawClaim:
+					case ApplicationWorkflowTrigger.AcceptGrantAgreement:
+					case ApplicationWorkflowTrigger.RejectGrantAgreement:
+					case ApplicationWorkflowTrigger.SubmitChangeRequest:
+					case ApplicationWorkflowTrigger.SubmitCompletionReport:
 						return isApplicationAdministrator;
-					case (ApplicationWorkflowTrigger.SubmitClaim):
+
+					case ApplicationWorkflowTrigger.SubmitClaim:
 						return isApplicationAdministrator
 							&& (claimType == Core.Entities.ClaimTypes.SingleAmendableClaim && grantApplication.ParticipantForms.Any() || claimType == Core.Entities.ClaimTypes.MultipleClaimsWithoutAmendments)
 							&& currentClaim != null
 							&& currentClaim.ClaimState == ClaimState.Complete;
-					case (ApplicationWorkflowTrigger.CancelAgreementHolder):
+					case ApplicationWorkflowTrigger.CancelAgreementHolder:
 						return isApplicationAdministrator && !hasSubmittedAClaim && !hasApprovedClaim;
-					case (ApplicationWorkflowTrigger.EditParticipants):
+
+					case ApplicationWorkflowTrigger.EditParticipants:
 						if (grantApplication.CanReportParticipants)
 							return true;
 						else if (claimType == Core.Entities.ClaimTypes.MultipleClaimsWithoutAmendments)
 							return isApplicationAdministrator && !(currentClaim?.ClaimState.In(ClaimState.Unassessed) ?? false);
 						else
 							return isApplicationAdministrator && (currentClaim?.ClaimState.In(ClaimState.Incomplete, ClaimState.Complete) ?? true);
-					case (ApplicationWorkflowTrigger.WithdrawApplication):
+
+					case ApplicationWorkflowTrigger.WithdrawApplication:
 						return isApplicationAdministrator && grantApplication.ApplicationStateExternal.In(ApplicationStateExternal.Submitted);
+
 					default:
 						return false;
 				}
@@ -232,16 +236,20 @@ namespace CJG.Application.Services
 
 			switch (trigger)
 			{
-				case (ApplicationWorkflowTrigger.ViewApplication):
+				case ApplicationWorkflowTrigger.ViewApplication:
 					return isApplicationAdministrator || user.HasPrivilege(Privilege.IA1);
-				case (ApplicationWorkflowTrigger.ReassignAssessor):
+
+				case ApplicationWorkflowTrigger.ReassignAssessor:
 					return user.HasPrivilege(Privilege.AM2, Privilege.AM3, Privilege.AM5);
-				case (ApplicationWorkflowTrigger.ViewClaim):
+
+				case ApplicationWorkflowTrigger.ViewClaim:
 					return isApplicationAdministrator || user.HasPrivilege(Privilege.IA1);
-				case (ApplicationWorkflowTrigger.AddNote):
-				case (ApplicationWorkflowTrigger.DeleteNote):
+
+				case ApplicationWorkflowTrigger.AddNote:
+				case ApplicationWorkflowTrigger.DeleteNote:
 					return user.HasPrivilege(Privilege.AM1);
-				case (ApplicationWorkflowTrigger.EditSummary):
+
+				case ApplicationWorkflowTrigger.EditSummary:
 					switch (grantApplication.ApplicationStateInternal)
 					{
 						case (ApplicationStateInternal.Draft):
@@ -693,43 +701,52 @@ namespace CJG.Application.Services
 					}
 
 				// State change actions.
-				case (ApplicationWorkflowTrigger.SelectForAssessment):
-				case (ApplicationWorkflowTrigger.RemoveFromAssessment):
-				case (ApplicationWorkflowTrigger.BeginAssessment):
+				case ApplicationWorkflowTrigger.SelectForAssessment:
+				case ApplicationWorkflowTrigger.RemoveFromAssessment:
+				case ApplicationWorkflowTrigger.BeginAssessment:
 					return user.HasPrivilege(Privilege.AM1, Privilege.AM2);
 
 				case ApplicationWorkflowTrigger.ReturnUnderAssessmentToDraft:
 					return user.HasPrivilege(Privilege.AM4);
 
-				case (ApplicationWorkflowTrigger.RecommendForApproval):
-				case (ApplicationWorkflowTrigger.RecommendForDenial):
-				case (ApplicationWorkflowTrigger.RecommendChangeForApproval):
-				case (ApplicationWorkflowTrigger.RecommendChangeForDenial):
+				case ApplicationWorkflowTrigger.RecommendForApproval:
+				case ApplicationWorkflowTrigger.RecommendForDenial:
+				case ApplicationWorkflowTrigger.RecommendChangeForApproval:
+				case ApplicationWorkflowTrigger.RecommendChangeForDenial:
 					return user.HasPrivilege(Privilege.AM4) || (user.HasPrivilege(Privilege.AM2) && isAssessor);
-				case (ApplicationWorkflowTrigger.ReturnToAssessment):
+
+				case ApplicationWorkflowTrigger.ReturnToAssessment:
 					return !grantApplication.ApplicationStateInternal.In(ApplicationStateInternal.ApplicationDenied)
 						? user.HasPrivilege(Privilege.AM4) || user.HasPrivilege(Privilege.AM3) && isAssessor && !hasApprovedClaim
 						: user.HasPrivilege(Privilege.AM3);
-				case (ApplicationWorkflowTrigger.IssueOffer):
-				case (ApplicationWorkflowTrigger.WithdrawOffer):
-				case (ApplicationWorkflowTrigger.DenyApplication):
-				case (ApplicationWorkflowTrigger.CancelAgreementMinistry):
+
+				case ApplicationWorkflowTrigger.IssueOffer:
+				case ApplicationWorkflowTrigger.WithdrawOffer:
+				case ApplicationWorkflowTrigger.DenyApplication:
+				case ApplicationWorkflowTrigger.CancelAgreementMinistry:
 					return user.HasPrivilege(Privilege.AM4) || ((user.HasPrivilege(Privilege.AM3) && isAssessor) && !hasApprovedClaim);
+
 				case ApplicationWorkflowTrigger.ReverseAgreementCancelledByMinistry:
 					return user.HasPrivilege(Privilege.AM4);
+
 				case ApplicationWorkflowTrigger.ReturnWithdrawnOfferToAssessment:
 					return user.HasPrivilege(Privilege.AM4);
+
 				case ApplicationWorkflowTrigger.ReturnOfferToAssessment:
 					return user.HasPrivilege(Privilege.AM4);
-				case (ApplicationWorkflowTrigger.ReturnChangeToAssessment):
+
+				case ApplicationWorkflowTrigger.ReturnChangeToAssessment:
 					return user.HasPrivilege(Privilege.AM4) || (user.HasPrivilege(Privilege.AM2) && isAssessor);
-				case (ApplicationWorkflowTrigger.ApproveChangeRequest):
-				case (ApplicationWorkflowTrigger.DenyChangeRequest):
+
+				case ApplicationWorkflowTrigger.ApproveChangeRequest:
+				case ApplicationWorkflowTrigger.DenyChangeRequest:
 					return user.HasPrivilege(Privilege.AM4);
-				case (ApplicationWorkflowTrigger.SelectClaimForAssessment):
+
+				case ApplicationWorkflowTrigger.SelectClaimForAssessment:
 					return user.HasPrivilege(Privilege.AM1, Privilege.AM2, Privilege.AM3, Privilege.AM5);
-				case (ApplicationWorkflowTrigger.RemoveClaimFromAssessment):
-				case (ApplicationWorkflowTrigger.ReturnClaimToApplicant):
+
+				case ApplicationWorkflowTrigger.RemoveClaimFromAssessment:
+				case ApplicationWorkflowTrigger.ReturnClaimToApplicant:
 					switch (grantApplication.ApplicationStateInternal)
 					{
 						case (ApplicationStateInternal.ClaimAssessReimbursement):
@@ -737,9 +754,14 @@ namespace CJG.Application.Services
 						default:
 							return user.HasPrivilege(Privilege.AM2, Privilege.AM5) && isAssessor;
 					}
-				case (ApplicationWorkflowTrigger.AssessReimbursement):
+
+				case ApplicationWorkflowTrigger.ReverseClaimReturnedToApplicant:
+					return user.HasPrivilege(Privilege.AM4);
+
+				case ApplicationWorkflowTrigger.AssessReimbursement:
 					return user.HasPrivilege(Privilege.AM2) && isAssessor;
-				case (ApplicationWorkflowTrigger.DenyClaim):
+
+				case ApplicationWorkflowTrigger.DenyClaim:
 					switch (grantApplication.ApplicationStateInternal)
 					{
 						case (ApplicationStateInternal.ClaimAssessReimbursement):
@@ -747,21 +769,28 @@ namespace CJG.Application.Services
 						default:
 							return user.HasPrivilege(Privilege.AM2, Privilege.AM5) && isAssessor;
 					}
-				case (ApplicationWorkflowTrigger.AmendClaim):
+
+				case ApplicationWorkflowTrigger.AmendClaim:
 					return claimType == Core.Entities.ClaimTypes.SingleAmendableClaim && ((isApplicationAdministrator && (currentClaim?.ClaimState.In(ClaimState.ClaimDenied) ?? false))
 						|| (user.HasPrivilege(Privilege.AM2, Privilege.AM5) && isAssessor && !(currentClaim?.ClaimState.In(ClaimState.Incomplete, ClaimState.Complete, ClaimState.Unassessed) ?? true))
 						|| (user.HasPrivilege(Privilege.AM3) && !(currentClaim?.ClaimState.In(ClaimState.Incomplete, ClaimState.Complete, ClaimState.Unassessed) ?? true)));
-				case (ApplicationWorkflowTrigger.AssessEligibility):
-				case (ApplicationWorkflowTrigger.ApproveClaim):
+
+				case ApplicationWorkflowTrigger.AssessEligibility:
+				case ApplicationWorkflowTrigger.ApproveClaim:
 					return user.HasPrivilege(Privilege.AM5) && isAssessor;
-				case (ApplicationWorkflowTrigger.ReturnUnfundedApplications):
+
+				case ApplicationWorkflowTrigger.ReturnUnfundedApplications:
 					return user.HasPrivilege(Privilege.GM1);
-				case (ApplicationWorkflowTrigger.ReturnUnassessed):
+
+				case ApplicationWorkflowTrigger.ReturnUnassessed:
 					return user.HasPrivilege(Privilege.GM1);
+
 				case ApplicationWorkflowTrigger.ReturnUnassessedToNew:
 					return user.HasPrivilege(Privilege.AM4);
+
 				case (ApplicationWorkflowTrigger.CloseClaimReporting):
 					return (user.HasPrivilege(Privilege.AM3) || (user.HasPrivilege(Privilege.AM2, Privilege.AM5) && isAssessor)) && hasSubmittedAClaim;
+
 				case (ApplicationWorkflowTrigger.Close):
 				case (ApplicationWorkflowTrigger.EnableClaimReporting):
 				case (ApplicationWorkflowTrigger.EnableCompletionReporting):

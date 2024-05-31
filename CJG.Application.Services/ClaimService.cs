@@ -1089,6 +1089,17 @@ namespace CJG.Application.Services
 			CreateWorkflowStateMachine(claim.GrantApplication).ReturnClaimToApplicant(claim, claim.ClaimAssessmentNotes, this);
 		}
 
+		/// <summary>
+		/// Return the specified returned claim to new.
+		/// </summary>
+		/// <param name="claim"></param>
+		public void ReturnClaimToNew(Claim claim)
+		{
+			if (claim == null)
+				throw new ArgumentNullException(nameof(claim));
+
+			CreateWorkflowStateMachine(claim.GrantApplication).ReturnClaimToNew(claim, this);
+		}
 
 		/// <summary>
 		/// Initialize the Claim Amendment for the specified grant application.

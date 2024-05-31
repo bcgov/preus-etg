@@ -123,6 +123,15 @@ namespace CJG.Web.External.Areas.Int.Models
 						});
 						break;
 
+					case ApplicationWorkflowTrigger.ReverseClaimReturnedToApplicant:
+						buttons.Add(new ApplicationActionButton
+						{
+							Caption = "Return Claim to New",
+							Value = "ReturnClaimToNew",
+							Url = getWorkflowUrl("ReturnClaimToNew")
+						});
+						break;
+
 					case ApplicationWorkflowTrigger.SelectClaimForAssessment:
 						buttons.Add(new ApplicationActionButton
 						{

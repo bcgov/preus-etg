@@ -106,6 +106,9 @@ namespace CJG.Application.Services
 		private readonly StateMachine<ApplicationStateInternal, ApplicationWorkflowTrigger>.TriggerWithParameters<Claim, string, IClaimService>
 			_returnClaimToApplicantTrigger;
 
+		private readonly StateMachine<ApplicationStateInternal, ApplicationWorkflowTrigger>.TriggerWithParameters<Claim, IClaimService>
+			_returnClaimToNewTrigger;
+
 		private readonly StateMachine<ApplicationStateInternal, ApplicationWorkflowTrigger>.TriggerWithParameters<Claim>
 			_initiateClaimAmendmentTrigger;
 
@@ -160,6 +163,7 @@ namespace CJG.Application.Services
 			_approveClaimTrigger = _stateMachine.SetTriggerParameters<Claim>(ApplicationWorkflowTrigger.ApproveClaim);
 			_denyClaimTrigger = _stateMachine.SetTriggerParameters<Claim>(ApplicationWorkflowTrigger.DenyClaim);
 			_returnClaimToApplicantTrigger = _stateMachine.SetTriggerParameters<Claim, string, IClaimService>(ApplicationWorkflowTrigger.ReturnClaimToApplicant);
+			_returnClaimToNewTrigger = _stateMachine.SetTriggerParameters<Claim, IClaimService>(ApplicationWorkflowTrigger.ReverseClaimReturnedToApplicant);
 			_initiateClaimAmendmentTrigger = _stateMachine.SetTriggerParameters<Claim>(ApplicationWorkflowTrigger.AmendClaim);
 
 			ConfigureStateTransitions();
@@ -266,6 +270,7 @@ namespace CJG.Application.Services
 			_stateMachine.Configure(ApplicationStateInternal.NewClaim)
 				.OnEntryFrom(_submitClaimTrigger, claim => OnSubmitClaim(claim))
 				.OnEntryFrom(_removeClaimFromAssessmentTrigger, claim => OnRemoveClaimFromAssessment(claim))
+				.OnEntryFrom(_returnClaimToNewTrigger, (claim, service) => OnReturnClaimToNew(claim, service))
 				.Permits(_grantApplication.ApplicationStateInternal);
 
 			_stateMachine.Configure(ApplicationStateInternal.ClaimReturnedToApplicant)
@@ -1296,6 +1301,41 @@ namespace CJG.Application.Services
 			UpdateGrantApplication();
 		}
 
+		private void OnReturnClaimToNew(Claim claim, IClaimService service)
+		{
+			try
+			{
+				claim.DateSubmitted = AppDateTime.UtcNow;
+				claim.ClaimState = ClaimState.Unassessed;
+
+				_grantApplication.ApplicationStateExternal = ApplicationStateExternal.ClaimSubmitted;
+				_grantOpeningService.AdjustFinancialStatements(_grantApplication, _originalState, ApplicationWorkflowTrigger.ReverseClaimReturnedToApplicant);
+
+				// Close participant reporting on claim submission
+				_grantApplication.DisableApplicantParticipantReporting();
+				_grantApplication.DisableParticipantReporting();
+
+				var validationResults = _grantOpeningService.Validate(claim).ToList();
+				if (validationResults.Any())
+					throw new DbEntityValidationException(validationResults.GetErrorMessages(Environment.NewLine));
+
+				// Associated participants with claim.
+				_grantApplication.ParticipantForms.Where(pf => !pf.IsExcludedFromClaim).ForEach(pf =>
+				{
+					claim.ParticipantForms.Add(pf);
+					pf.ClaimReported = true;
+				});
+
+				LogStateChanges($"Applicant submitted claim number {claim.ClaimNumber}", stateChangeReason: "Reversed 'Claim Returned to Applicant'", addReason: false);
+
+				UpdateGrantApplication();
+			}
+			catch (NotificationException e)
+			{
+				_logger.Error(e, "Notification failed for grant application Id: {0}", _grantApplication?.Id);
+			}
+		}
+
 		private void OnInitiateClaimAmendment(Claim claim)
 		{
 			try
@@ -1585,11 +1625,17 @@ namespace CJG.Application.Services
 
 		public void ReturnClaimToApplicant(Claim claim, string reason, IClaimService service)
 		{
-			if (String.IsNullOrWhiteSpace(reason))
+			if (string.IsNullOrWhiteSpace(reason))
 				throw new InvalidOperationException("You must provide a reason to return the claim the the applicant.");
 
 			CanPerformTrigger(ApplicationWorkflowTrigger.ReturnClaimToApplicant);
 			_stateMachine.Fire(_returnClaimToApplicantTrigger, claim, reason, service);
+		}
+
+		public void ReturnClaimToNew(Claim claim, IClaimService service)
+		{
+			CanPerformTrigger(ApplicationWorkflowTrigger.ReverseClaimReturnedToApplicant);
+			_stateMachine.Fire(_returnClaimToNewTrigger, claim, service);
 		}
 
 		public void ReturnChangeToAssessment(string reason = null)

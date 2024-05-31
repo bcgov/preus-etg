@@ -837,6 +837,7 @@ namespace CJG.Application.Services
 					break;
 
 				case ApplicationWorkflowTrigger.SubmitClaim:
+				case ApplicationWorkflowTrigger.ReverseClaimReturnedToApplicant:
 					if (claim.ClaimTypeId == ClaimTypes.SingleAmendableClaim)
 					{
 						if (!hasPriorApprovedClaim || claim.ClaimVersion == 1)

@@ -60,6 +60,7 @@ namespace CJG.Core.Interfaces.Service
 		void ApproveClaim(Claim claim);
 		void DenyClaim(Claim claim);
 		void ReturnClaimToApplicant(Claim claim);
+		void ReturnClaimToNew(Claim claim);
 		void InitiateClaimAmendment(Claim claim);
 		void CloseClaimReporting(GrantApplication grantApplication);
 		void EnableClaimReporting(GrantApplication grantApplication);
