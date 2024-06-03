@@ -43,7 +43,9 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		{
 			ViewBag.GrantApplicationId = grantApplicationId;
 			var grantApplication = _grantApplicationService.Get(grantApplicationId);
-			return View(SidebarViewModelFactory.Create(grantApplication, ControllerContext));
+			var sidebarViewModel = SidebarViewModelFactory.Create(grantApplication, ControllerContext);
+
+			return View(sidebarViewModel);
 		}
 
 		/// <summary>

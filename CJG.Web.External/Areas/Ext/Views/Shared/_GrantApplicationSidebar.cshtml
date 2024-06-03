@@ -1,4 +1,4 @@
-﻿@using CJG.Core.Entities
+@using CJG.Core.Entities
 @using CJG.Web.External.Areas.Ext.Controllers
 @using CJG.Web.External.Areas.Ext.Models
 
@@ -204,7 +204,6 @@
             </div>
         }
     </div>
-
     @if (!Model.GrantApplication.ApplicationStateExternal.In(
         ApplicationStateExternal.Incomplete,
         ApplicationStateExternal.Complete,
@@ -212,7 +211,7 @@
         ApplicationStateExternal.AgreementRejected,
         ApplicationStateExternal.AgreementWithdrawn,
         ApplicationStateExternal.ApplicationDenied,
-        ApplicationStateExternal.CancelledByAgreementHolder,
+        ApplicationStateExternal.CancelledByAgreementHolder, 
         ApplicationStateExternal.CancelledByMinistry))
     {
         <div class="sidebar__container">
@@ -292,12 +291,15 @@
                                                 Model.SideBarLinks[SidebarLinkType.ViewParticipantList].IsHighlighted ? highlightAttributes : null)
                     </div>
                 }
-
+                
                 @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.ViewClaim) && Model.GrantApplication.Claims?.Count > 0) //RR7
                 {
                     <div>
                         @{
-                            var claim = Model.GrantApplication.Claims.OrderByDescending(c => c.Id).ThenByDescending(v => v.ClaimVersion).FirstOrDefault();
+                            var claim = Model.GrantApplication.Claims
+                                .OrderByDescending(c => c.Id)
+                                .ThenByDescending(v => v.ClaimVersion)
+                                .FirstOrDefault();
                         }
 
                         @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ViewClaim].Title, nameof(ClaimController.DetailsView), nameof(ClaimController).Replace("Controller", ""),
@@ -351,5 +353,32 @@
                 }
             </div>
         </div>
-    }    
+    }
+    @if (Model.GrantApplication.ApplicationStateExternal.In(ApplicationStateExternal.CancelledByMinistry))
+    {
+        <div class="sidebar__container">
+            <h5 class="sidebar__heading">Links</h5>
+            <div class="sidebar__content ">
+                @{ var highlightAttributes = new { style = "font-weight:bold; color: red" }; }
+                
+                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.ApplicationView)) //RR4
+                {
+                    <div>
+                        @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ApplicationView].Title, nameof(ApplicationViewController.ApplicationDetailsView), "ApplicationView",
+                            new { grantApplicationId = Model.GrantApplication.Id },
+                            Model.SideBarLinks[SidebarLinkType.ApplicationView].IsHighlighted ? highlightAttributes : null)
+                    </div>
+                }
+
+                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.GrantFiles)) //RR1
+                {
+                    <div>
+                        @Html.ActionLink("View Claim", nameof(ReportingController.GrantFileView), nameof(ReportingController).Replace("Controller", ""),
+                            new { grantApplicationId = Model.GrantApplication.Id },
+                            Model.SideBarLinks[SidebarLinkType.GrantFiles].IsHighlighted ? highlightAttributes : null)
+                    </div>
+                }
+            </div>
+        </div>
+    }
 </div>

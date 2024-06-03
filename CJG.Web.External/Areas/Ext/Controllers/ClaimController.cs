@@ -26,7 +26,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
     [RouteArea("Ext")]
 	public class ClaimController : BaseController
 	{
-		#region Variables
 		private readonly ISiteMinderService _siteMinderService;
 		private readonly IUserService _userService;
 		private readonly IGrantApplicationService _grantApplicationService;
@@ -37,9 +36,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		private readonly ISettingService _settingService;
 		private readonly IClaimEligibleCostService _claimEligibleCostService;
 		private readonly IParticipantService _participantService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a <paramtyperef name="ClaimController"/> object.
 		/// </summary>
@@ -71,7 +68,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			_claimEligibleCostService = claimEligibleCostService;
 			_participantService = participantService;
 		}
-		#endregion
 
 		#region Endpoints
 		#region Claim Reporting View
