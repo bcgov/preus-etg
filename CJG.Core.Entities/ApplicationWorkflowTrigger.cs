@@ -374,5 +374,10 @@ namespace CJG.Core.Entities
 		[Description("Return Claim to New")]
 		ReverseClaimReturnedToApplicant = 100,
 
+		/// <summary>
+		/// ReverseClaimDenied - Director has reversed the Claim Denied action.
+		/// </summary>
+		[Description("Reverse Claim Denied")]
+		ReverseClaimDenied = 101
 	}
 }

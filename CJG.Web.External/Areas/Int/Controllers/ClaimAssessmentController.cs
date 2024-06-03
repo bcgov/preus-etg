@@ -550,8 +550,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Downloads specified attachment
 		/// </summary>
-		/// <param name="grantApplicationId"></param>
+		/// <param name="claimVersion"></param>
 		/// <param name="attachmentId"></param>
+		/// <param name="claimId"></param>
 		/// <returns></returns>
 		[HttpGet]
 		[Route("Claim/Attachment/Download/{claimId}/{claimVersion}/{attachmentId}")]
@@ -561,7 +562,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			try
 			{
 				var attachment = _claimService.GetAttachment(claimId, claimVersion, attachmentId);
-				return File(attachment.AttachmentData, System.Net.Mime.MediaTypeNames.Application.Octet, $"{attachment.FileName}{attachment.FileExtension}");
+				return File(attachment.AttachmentData, System.Net.Mime.MediaTypeNames.Application.Octet, attachment.FileName);
 			}
 			catch (Exception ex)
 			{
@@ -573,8 +574,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Deletes specified attachment
 		/// </summary>
-		/// <param name="grantApplicationId"></param>
+		/// <param name="claimVersion"></param>
 		/// <param name="attachmentId"></param>
+		/// <param name="claimId"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[PreventSpam]

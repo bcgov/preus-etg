@@ -109,6 +109,9 @@ namespace CJG.Application.Services
 		private readonly StateMachine<ApplicationStateInternal, ApplicationWorkflowTrigger>.TriggerWithParameters<Claim, IClaimService>
 			_returnClaimToNewTrigger;
 
+		private readonly StateMachine<ApplicationStateInternal, ApplicationWorkflowTrigger>.TriggerWithParameters<Claim, IClaimService>
+			_reverseClaimDeniedTrigger;
+
 		private readonly StateMachine<ApplicationStateInternal, ApplicationWorkflowTrigger>.TriggerWithParameters<Claim>
 			_initiateClaimAmendmentTrigger;
 
@@ -164,6 +167,7 @@ namespace CJG.Application.Services
 			_denyClaimTrigger = _stateMachine.SetTriggerParameters<Claim>(ApplicationWorkflowTrigger.DenyClaim);
 			_returnClaimToApplicantTrigger = _stateMachine.SetTriggerParameters<Claim, string, IClaimService>(ApplicationWorkflowTrigger.ReturnClaimToApplicant);
 			_returnClaimToNewTrigger = _stateMachine.SetTriggerParameters<Claim, IClaimService>(ApplicationWorkflowTrigger.ReverseClaimReturnedToApplicant);
+			_reverseClaimDeniedTrigger = _stateMachine.SetTriggerParameters<Claim, IClaimService>(ApplicationWorkflowTrigger.ReverseClaimDenied);
 			_initiateClaimAmendmentTrigger = _stateMachine.SetTriggerParameters<Claim>(ApplicationWorkflowTrigger.AmendClaim);
 
 			ConfigureStateTransitions();
@@ -271,6 +275,7 @@ namespace CJG.Application.Services
 				.OnEntryFrom(_submitClaimTrigger, claim => OnSubmitClaim(claim))
 				.OnEntryFrom(_removeClaimFromAssessmentTrigger, claim => OnRemoveClaimFromAssessment(claim))
 				.OnEntryFrom(_returnClaimToNewTrigger, (claim, service) => OnReturnClaimToNew(claim, service))
+				.OnEntryFrom(_reverseClaimDeniedTrigger, (claim, service) => OnReverseClaimDenied(claim, service))
 				.Permits(_grantApplication.ApplicationStateInternal);
 
 			_stateMachine.Configure(ApplicationStateInternal.ClaimReturnedToApplicant)
@@ -1336,6 +1341,32 @@ namespace CJG.Application.Services
 			}
 		}
 
+		private void OnReverseClaimDenied(Claim claim, IClaimService service)
+		{
+			try
+			{
+				claim.DateAssessed = AppDateTime.UtcNow;
+
+				claim.CopyClaimValuesToAssessed();
+				claim.ClaimState = ClaimState.Unassessed;
+				claim.UnlockParticipants();
+
+				_grantApplication.DisableParticipantReporting();
+				_grantApplication.ApplicationStateExternal = ApplicationStateExternal.ClaimSubmitted;
+
+				_grantOpeningService.AdjustFinancialStatements(_grantApplication, _originalState, ApplicationWorkflowTrigger.ReverseClaimDenied);
+
+				LogStateChanges($"Claim number {claim.ClaimNumber} Denial reversed", stateChangeReason: "Reversed 'Claim Denied'", addReason: false);
+
+				UpdateGrantApplication();
+
+			}
+			catch (NotificationException e)
+			{
+				_logger.Error(e, "Notification failed for grant application Id: {0}", _grantApplication?.Id);
+			}
+		}
+
 		private void OnInitiateClaimAmendment(Claim claim)
 		{
 			try
@@ -1636,6 +1667,12 @@ namespace CJG.Application.Services
 		{
 			CanPerformTrigger(ApplicationWorkflowTrigger.ReverseClaimReturnedToApplicant);
 			_stateMachine.Fire(_returnClaimToNewTrigger, claim, service);
+		}
+
+		public void ReverseClaimDenied(Claim claim, IClaimService service)
+		{
+			CanPerformTrigger(ApplicationWorkflowTrigger.ReverseClaimDenied);
+			_stateMachine.Fire(_reverseClaimDeniedTrigger, claim, service);
 		}
 
 		public void ReturnChangeToAssessment(string reason = null)

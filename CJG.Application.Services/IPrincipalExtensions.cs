@@ -758,6 +758,9 @@ namespace CJG.Application.Services
 				case ApplicationWorkflowTrigger.ReverseClaimReturnedToApplicant:
 					return user.HasPrivilege(Privilege.AM4);
 
+				case ApplicationWorkflowTrigger.ReverseClaimDenied:
+					return user.HasPrivilege(Privilege.AM4);
+
 				case ApplicationWorkflowTrigger.AssessReimbursement:
 					return user.HasPrivilege(Privilege.AM2) && isAssessor;
 

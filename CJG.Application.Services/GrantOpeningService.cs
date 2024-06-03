@@ -912,6 +912,24 @@ namespace CJG.Application.Services
 					}
 					break;
 
+				case ApplicationWorkflowTrigger.ReverseClaimDenied:
+					if (claim.ClaimTypeId == ClaimTypes.SingleAmendableClaim)
+					{
+						if (!hasPriorApprovedClaim || claim.ClaimVersion == 1)
+						{
+							IncreaseFinancialCurrentClaims(grantOpening, claim.TotalClaimReimbursement);
+							DecreaseFinancialOutstandingCommitments(grantOpening, claim.GrantApplication.TrainingCost.AgreedCommitment);
+							DecreaseFinancialClaimsDenied(grantOpening, claim.TotalClaimReimbursement);
+						}
+					}
+					else if (claim.ClaimTypeId == ClaimTypes.MultipleClaimsWithoutAmendments)
+					{
+						grantOpening.GrantOpeningFinancial.CurrentClaims += claim.TotalClaimReimbursement; // IncreaseFinancialCurrentClaims
+						grantOpening.GrantOpeningFinancial.OutstandingCommitments -= claim.TotalClaimReimbursement; // DecreaseFinancialOutstandingCommitments
+						grantOpening.GrantOpeningFinancial.ClaimsDenied -= claim.TotalClaimReimbursement; // DecreaseFinancialClaimsDenied
+					}
+					break;
+
 				case ApplicationWorkflowTrigger.ReturnClaimToApplicant:
 					if (claim.ClaimTypeId == ClaimTypes.SingleAmendableClaim)
 					{
@@ -1081,6 +1099,12 @@ namespace CJG.Application.Services
 		{
 			grantOpening.GrantOpeningFinancial.ClaimsDeniedCount += 1;
 			grantOpening.GrantOpeningFinancial.ClaimsDenied += increase;
+		}
+
+		private void DecreaseFinancialClaimsDenied(GrantOpening grantOpening, decimal decrease)
+		{
+			grantOpening.GrantOpeningFinancial.ClaimsDeniedCount -= 1;
+			grantOpening.GrantOpeningFinancial.ClaimsDenied -= decrease;
 		}
 
 		private void ZeroAssessedClaimValues(Claim claim)

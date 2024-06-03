@@ -26,11 +26,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
     [RouteArea("Ext")]
 	public class ClaimController : BaseController
 	{
-		private readonly ISiteMinderService _siteMinderService;
-		private readonly IUserService _userService;
 		private readonly IGrantApplicationService _grantApplicationService;
-		private readonly ITrainingProgramService _trainingProgramService;
-		private readonly ITrainingProviderSettings _trainingProviderSettings;
 		private readonly IAttachmentService _attachmentService;
 		private readonly IClaimService _claimService;
 		private readonly ISettingService _settingService;
@@ -42,35 +38,28 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// </summary>
 		/// <param name="controllerService"></param>
 		/// <param name="grantApplicationService"></param>
-		/// <param name="trainingProgramService"></param>
-		/// <param name="trainingProviderSettings"></param>
 		/// <param name="attachmentService"></param>
 		/// <param name="claimService"></param>
+		/// <param name="claimEligibleCostService"></param>
+		/// <param name="settingService"></param>
+		/// <param name="participantService"></param>
 		public ClaimController(
 			IControllerService controllerService,
 			IGrantApplicationService grantApplicationService,
-			ITrainingProgramService trainingProgramService,
-			ITrainingProviderSettings trainingProviderSettings,
 			IAttachmentService attachmentService,
 			IClaimService claimService,
 			IClaimEligibleCostService claimEligibleCostService,
 			ISettingService settingService,
 			IParticipantService participantService) : base(controllerService.Logger)
 		{
-			_userService = controllerService.UserService;
-			_siteMinderService = controllerService.SiteMinderService;
-			_trainingProgramService = trainingProgramService;
 			_grantApplicationService = grantApplicationService;
 			_attachmentService = attachmentService;
 			_claimService = claimService;
-			_trainingProviderSettings = trainingProviderSettings;
 			_settingService = settingService;
 			_claimEligibleCostService = claimEligibleCostService;
 			_participantService = participantService;
 		}
 
-		#region Endpoints
-		#region Claim Reporting View
 		/// <summary>
 		/// Return a view to report a claim.
 		/// </summary>
@@ -270,7 +259,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <summary>
 		/// Update the attachments (delete/update/create) for the specified grant application.
 		/// </summary>
-		/// <param name="grantApplicationId"></param>
+		/// <param name="claimVersion"></param>
 		/// <param name="files"></param>
 		/// <param name="attachments"></param>
 		/// <returns></returns>
@@ -417,7 +406,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			}
 			return Json(model);
 		}
-		#endregion
 
 		#region Claim Review View
 		/// <summary>
@@ -549,9 +537,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		public ActionResult DetailsView(int claimId, int claimVersion)
 		{
 			if (_settingService.Get("EnableClaimsOn")?.GetValue<DateTime>() > AppDateTime.Now)
-			{
-				return RedirectToAction(nameof(HomeController.Index), nameof(HomeController).Replace("Controller", ""));
-			}
+				return RedirectToAction("Index", "Home");
 
 			var claim = _claimService.Get(claimId, claimVersion);
 
@@ -691,7 +677,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			jsonResult.MaxJsonLength = int.MaxValue;
 			return jsonResult;
 		}
-		#endregion
 		#endregion
 	}
 

@@ -132,6 +132,15 @@ namespace CJG.Web.External.Areas.Int.Models
 						});
 						break;
 
+					case ApplicationWorkflowTrigger.ReverseClaimDenied:
+						buttons.Add(new ApplicationActionButton
+						{
+							Caption = "Reverse Denied Claim",
+							Value = "ReverseClaimDenied",
+							Url = getWorkflowUrl("ReverseClaimDenied")
+						});
+						break;
+
 					case ApplicationWorkflowTrigger.SelectClaimForAssessment:
 						buttons.Add(new ApplicationActionButton
 						{

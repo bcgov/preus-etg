@@ -506,23 +506,32 @@ namespace CJG.Core.Entities
 
 		/// <summary>
 		/// Sets the ParticipantEnrollment.ClaimReported flag to 'true' for all participants.
-		/// This ensures they are note removed in subsequent claim amendments.
+		/// This ensures they are not removed in subsequent claim amendments.
 		/// </summary>
 		/// <param name="claim"></param>
 		public static void LockParticipants(this Claim claim)
 		{
 			foreach (var eligibleCost in claim.EligibleCosts)
 			{
-				if (claim.GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.WDAService)
+				foreach (var participantCost in eligibleCost.ParticipantCosts)
 				{
-					claim.GrantApplication.ParticipantForms.ToList().ForEach(pf => pf.ClaimReported = true);
+					participantCost.ParticipantForm.ClaimReported = true;
 				}
-				else
+			}
+		}
+
+		/// <summary>
+		/// Sets the ParticipantEnrollment.ClaimReported flag to 'false' for all participants.
+		/// This ensures they are not removed in subsequent claim amendments.
+		/// </summary>
+		/// <param name="claim"></param>
+		public static void UnlockParticipants(this Claim claim)
+		{
+			foreach (var eligibleCost in claim.EligibleCosts)
+			{
+				foreach (var participantCost in eligibleCost.ParticipantCosts)
 				{
-					foreach (var participantCost in eligibleCost.ParticipantCosts)
-					{
-						participantCost.ParticipantForm.ClaimReported = true;
-					}
+					participantCost.ParticipantForm.ClaimReported = false;
 				}
 			}
 		}

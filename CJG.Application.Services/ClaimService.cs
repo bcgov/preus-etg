@@ -1102,6 +1102,18 @@ namespace CJG.Application.Services
 		}
 
 		/// <summary>
+		/// Reverse the specified denied claim to new.
+		/// </summary>
+		/// <param name="claim"></param>
+		public void ReverseClaimDenied(Claim claim)
+		{
+			if (claim == null)
+				throw new ArgumentNullException(nameof(claim));
+
+			CreateWorkflowStateMachine(claim.GrantApplication).ReverseClaimDenied(claim, this);
+		}
+
+		/// <summary>
 		/// Initialize the Claim Amendment for the specified grant application.
 		/// </summary>
 		/// <param name="claim"></param>
