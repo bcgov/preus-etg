@@ -8,7 +8,6 @@ using CJG.Application.Business.Models;
 using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
-using CJG.Core.Interfaces.Service.Settings;
 using CJG.Web.External.Areas.Ext.Models;
 using CJG.Web.External.Areas.Ext.Models.Attachments;
 using CJG.Web.External.Areas.Ext.Models.Claims;
@@ -191,7 +190,11 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					.Where(opf => opf.GrantApplication.GrantOpening.TrainingPeriod.FiscalYearId == grantApplicationFiscal)
 					.Where(opf => applicationClaimStatuses.Contains(opf.GrantApplication.ApplicationStateInternal)))
 				{
-					var totalPastCosts = form.ParticipantCosts.Sum(c => c.AssessedReimbursement);
+					var totalPastCosts = form.ParticipantCosts
+						.Where(pf => pf.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimApproved ||
+						             pf.ClaimEligibleCost.Claim.ClaimState == ClaimState.PaymentRequested ||
+						             pf.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimPaid)
+						.Sum(pf => pf.AssessedReimbursement);
 					participantPayments += totalPastCosts;
 				}
 
