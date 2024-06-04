@@ -378,6 +378,12 @@ namespace CJG.Core.Entities
 		/// ReverseClaimDenied - Director has reversed the Claim Denied action.
 		/// </summary>
 		[Description("Reverse Claim Denied")]
-		ReverseClaimDenied = 101
+		ReverseClaimDenied = 101,
+
+		/// <summary>
+		/// ReverseClaimApproved - Director has reversed the Claim Approve action.
+		/// </summary>
+		[Description("Reverse Claim Approved")]
+		ReverseClaimApproved = 102
 	}
 }

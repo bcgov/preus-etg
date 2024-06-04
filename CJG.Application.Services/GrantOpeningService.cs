@@ -8,6 +8,7 @@ using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Web;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 
 namespace CJG.Application.Services
 {
@@ -927,6 +928,30 @@ namespace CJG.Application.Services
 						grantOpening.GrantOpeningFinancial.CurrentClaims += claim.TotalClaimReimbursement; // IncreaseFinancialCurrentClaims
 						grantOpening.GrantOpeningFinancial.OutstandingCommitments -= claim.TotalClaimReimbursement; // DecreaseFinancialOutstandingCommitments
 						grantOpening.GrantOpeningFinancial.ClaimsDenied -= claim.TotalClaimReimbursement; // DecreaseFinancialClaimsDenied
+					}
+					break;
+
+				case ApplicationWorkflowTrigger.ReverseClaimApproved:
+					if (claim.ClaimTypeId == ClaimTypes.SingleAmendableClaim)
+					{
+						if (!hasPriorApprovedClaim || claim.ClaimVersion == 1)
+						{
+							IncreaseFinancialCurrentClaims(grantOpening, claim.TotalClaimReimbursement);
+							DecreaseFinancialAssessedClaims(grantOpening, claim.TotalAssessedReimbursement);
+						}
+						else
+						{
+							// Get the previously approved claim.
+							var priorApprovedClaim = claim.GetPriorApprovedClaim();
+							IncreaseFinancialAssessedClaims(grantOpening, priorApprovedClaim.TotalAssessedReimbursement);
+							DecreaseFinancialAssessedClaims(grantOpening, claim.TotalAssessedReimbursement);
+						}
+					}
+					else if (claim.ClaimTypeId == ClaimTypes.MultipleClaimsWithoutAmendments)
+					{
+						grantOpening.GrantOpeningFinancial.OutstandingCommitments -= claim.TotalClaimReimbursement - claim.TotalAssessedReimbursement; // DecreaseFinancialOutstandingCommitments
+						grantOpening.GrantOpeningFinancial.CurrentClaims += claim.TotalClaimReimbursement; // IncreaseFinancialCurrentClaims
+						grantOpening.GrantOpeningFinancial.ClaimsAssessed -= claim.TotalAssessedReimbursement; // DecreaseFinancialAssessedClaims
 					}
 					break;
 

@@ -56,7 +56,6 @@ namespace CJG.Application.Services
 			_fiscalYearService = fiscalYearService;
 		}
 
-		#region Claims
 		/// <summary>
 		/// Create and add a new <typeparamref name="Claim"/> to the datastore linked to a grant application.
 		/// This will always create the first version of the specific claim number if no claims exist.
@@ -487,7 +486,6 @@ namespace CJG.Application.Services
 
 			return claim;
 		}
-		#endregion
 
 		#region ClaimEligibleCosts
 
@@ -1062,7 +1060,7 @@ namespace CJG.Application.Services
 
 			CreateWorkflowStateMachine(claim.GrantApplication).ApproveClaim(claim);
 			if (claim.IsFinalClaim)
-				this.CloseClaimReporting(claim.GrantApplication);
+				CloseClaimReporting(claim.GrantApplication);
 		}
 
 		/// <summary>
@@ -1111,6 +1109,18 @@ namespace CJG.Application.Services
 				throw new ArgumentNullException(nameof(claim));
 
 			CreateWorkflowStateMachine(claim.GrantApplication).ReverseClaimDenied(claim, this);
+		}
+
+		/// <summary>
+		/// Reverse the specified approved claim to new.
+		/// </summary>
+		/// <param name="claim"></param>
+		public void ReverseClaimApproved(Claim claim)
+		{
+			if (claim == null)
+				throw new ArgumentNullException(nameof(claim));
+
+			CreateWorkflowStateMachine(claim.GrantApplication).ReverseClaimApproved(claim, this);
 		}
 
 		/// <summary>

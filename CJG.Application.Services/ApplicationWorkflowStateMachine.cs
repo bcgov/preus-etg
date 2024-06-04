@@ -112,10 +112,12 @@ namespace CJG.Application.Services
 		private readonly StateMachine<ApplicationStateInternal, ApplicationWorkflowTrigger>.TriggerWithParameters<Claim, IClaimService>
 			_reverseClaimDeniedTrigger;
 
+		private readonly StateMachine<ApplicationStateInternal, ApplicationWorkflowTrigger>.TriggerWithParameters<Claim, IClaimService>
+			_reverseClaimApprovedTrigger;
+
 		private readonly StateMachine<ApplicationStateInternal, ApplicationWorkflowTrigger>.TriggerWithParameters<Claim>
 			_initiateClaimAmendmentTrigger;
 
-		#region Constructors
 		public ApplicationWorkflowStateMachine(
 			GrantApplication grantApplication,
 			IDataContext dbContext,
@@ -168,6 +170,7 @@ namespace CJG.Application.Services
 			_returnClaimToApplicantTrigger = _stateMachine.SetTriggerParameters<Claim, string, IClaimService>(ApplicationWorkflowTrigger.ReturnClaimToApplicant);
 			_returnClaimToNewTrigger = _stateMachine.SetTriggerParameters<Claim, IClaimService>(ApplicationWorkflowTrigger.ReverseClaimReturnedToApplicant);
 			_reverseClaimDeniedTrigger = _stateMachine.SetTriggerParameters<Claim, IClaimService>(ApplicationWorkflowTrigger.ReverseClaimDenied);
+			_reverseClaimApprovedTrigger = _stateMachine.SetTriggerParameters<Claim, IClaimService>(ApplicationWorkflowTrigger.ReverseClaimApproved);
 			_initiateClaimAmendmentTrigger = _stateMachine.SetTriggerParameters<Claim>(ApplicationWorkflowTrigger.AmendClaim);
 
 			ConfigureStateTransitions();
@@ -276,6 +279,7 @@ namespace CJG.Application.Services
 				.OnEntryFrom(_removeClaimFromAssessmentTrigger, claim => OnRemoveClaimFromAssessment(claim))
 				.OnEntryFrom(_returnClaimToNewTrigger, (claim, service) => OnReturnClaimToNew(claim, service))
 				.OnEntryFrom(_reverseClaimDeniedTrigger, (claim, service) => OnReverseClaimDenied(claim, service))
+				.OnEntryFrom(_reverseClaimApprovedTrigger, (claim, service) => OnReverseClaimApproved(claim, service))
 				.Permits(_grantApplication.ApplicationStateInternal);
 
 			_stateMachine.Configure(ApplicationStateInternal.ClaimReturnedToApplicant)
@@ -313,9 +317,6 @@ namespace CJG.Application.Services
 				.Permits(_grantApplication.ApplicationStateInternal);
 		}
 
-		#endregion
-
-		#region Methods
 		/// <summary>
 		/// Update the current grant application.
 		/// </summary>
@@ -335,13 +336,13 @@ namespace CJG.Application.Services
 		/// <param name="trigger"></param>
 		private void CanPerformTrigger(ApplicationWorkflowTrigger trigger)
 		{
-			if (!_httpContext.User.CanPerformAction(_grantApplication, trigger))
-			{
-				if (!_grantApplication.ApplicationStateInternal.GetValidWorkflowTriggers().Contains(trigger))
-					throw new NotAuthorizedException($"The action '{trigger.GetDescription()}' is not valid for the current application state '{_grantApplication.ApplicationStateInternal.GetDescription()}'.");
+			if (_httpContext.User.CanPerformAction(_grantApplication, trigger))
+				return;
 
-				throw new NotAuthorizedException($"User is not authorized to perform the action '{trigger.GetDescription()}'.");
-			}
+			if (!_grantApplication.ApplicationStateInternal.GetValidWorkflowTriggers().Contains(trigger))
+				throw new NotAuthorizedException($"The action '{trigger.GetDescription()}' is not valid for the current application state '{_grantApplication.ApplicationStateInternal.GetDescription()}'.");
+
+			throw new NotAuthorizedException($"User is not authorized to perform the action '{trigger.GetDescription()}'.");
 		}
 
 		#region State Change Events
@@ -1367,6 +1368,42 @@ namespace CJG.Application.Services
 			}
 		}
 
+		private void OnReverseClaimApproved(Claim claim, IClaimService service)
+		{
+			try
+			{
+				var priorAmendedClaim = _dbContext.Claims
+					.Where(c => c.Id == claim.Id && c.ClaimState == ClaimState.ClaimAmended)
+					.OrderByDescending(c => c.ClaimVersion)
+					.Take(1)
+					.FirstOrDefault();
+
+				if (claim.ClaimTypeId == ClaimTypes.SingleAmendableClaim && priorAmendedClaim != null)
+				{
+					priorAmendedClaim.ClaimState = ClaimState.ClaimApproved;
+					_dbContext.Entry(priorAmendedClaim).State = EntityState.Modified;
+				}
+
+				claim.DateAssessed = AppDateTime.UtcNow;
+				claim.ClaimState = ClaimState.Unassessed;
+				claim.UnlockParticipants();
+
+				claim.IsFinalClaim = false;
+
+				_grantApplication.ApplicationStateExternal = ApplicationStateExternal.ClaimSubmitted;
+
+				_grantOpeningService.AdjustFinancialStatements(_grantApplication, _originalState, ApplicationWorkflowTrigger.ReverseClaimApproved);
+
+				LogStateChanges($"Claim number {claim.ClaimNumber} Approval reversed", stateChangeReason: "Reversed 'Claim Approved'", addReason: false);
+
+				UpdateGrantApplication();
+			}
+			catch (NotificationException e)
+			{
+				_logger.Error(e, "Notification failed for grant application Id: {0}", _grantApplication?.Id);
+			}
+		}
+
 		private void OnInitiateClaimAmendment(Claim claim)
 		{
 			try
@@ -1675,6 +1712,12 @@ namespace CJG.Application.Services
 			_stateMachine.Fire(_reverseClaimDeniedTrigger, claim, service);
 		}
 
+		public void ReverseClaimApproved(Claim claim, IClaimService service)
+		{
+			CanPerformTrigger(ApplicationWorkflowTrigger.ReverseClaimApproved);
+			_stateMachine.Fire(_reverseClaimApprovedTrigger, claim, service);
+		}
+
 		public void ReturnChangeToAssessment(string reason = null)
 		{
 			CanPerformTrigger(ApplicationWorkflowTrigger.ReturnChangeToAssessment);
@@ -1927,7 +1970,6 @@ namespace CJG.Application.Services
 					_notificationService.HandleWorkflowNotification(_grantApplication, grantProgramNotificationType);
 			}
 		}
-		#endregion
 		#endregion
 	}
 }
