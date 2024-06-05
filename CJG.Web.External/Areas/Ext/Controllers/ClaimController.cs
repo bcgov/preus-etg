@@ -545,7 +545,13 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			var claim = _claimService.Get(claimId, claimVersion);
 
 			// Must be in one of the accepted states to view.
-			if (claim.GrantApplication.ApplicationStateExternal != ApplicationStateExternal.ClaimSubmitted)
+			var allowedStates = new List<ApplicationStateExternal>
+			{
+				ApplicationStateExternal.ClaimSubmitted,
+				ApplicationStateExternal.CancelledByMinistry
+			};
+
+			if (!allowedStates.Contains(claim.GrantApplication.ApplicationStateExternal))
 			{
 				this.SetAlert("The claim view page is not available when in the current state.", AlertType.Warning, true);
 				return RedirectToAction(nameof(HomeController.Index), nameof(HomeController).Replace("Controller", ""));
@@ -557,6 +563,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			ViewBag.Reporting = false;
 			ViewBag.ReviewAndSubmit = false;
 			ViewBag.GrantProgramCode = claim.GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramCode;
+
 			return View(SidebarViewModelFactory.Create(claim.GrantApplication, ControllerContext));
 		}
 
