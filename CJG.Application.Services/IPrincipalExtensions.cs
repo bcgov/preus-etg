@@ -1,10 +1,10 @@
-﻿using CJG.Core.Entities;
-using CJG.Infrastructure.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
+using CJG.Core.Entities;
+using CJG.Infrastructure.Identity;
 
 namespace CJG.Application.Services
 {
@@ -21,13 +21,12 @@ namespace CJG.Application.Services
 		public static int? GetUserId(this IPrincipal user)
 		{
 			var cp = user as ClaimsPrincipal;
-
 			if (cp == null)
 				return null;
 
 			var identifier = cp.FindFirst(AppClaimTypes.UserId)?.Value;
 
-			if (String.IsNullOrEmpty(identifier))
+			if (string.IsNullOrEmpty(identifier))
 				return null;
 
 			int id;
@@ -46,13 +45,12 @@ namespace CJG.Application.Services
 		public static Guid? GetBCeIdGuid(this IPrincipal user)
 		{
 			var cp = user as ClaimsPrincipal;
-
 			if (cp == null)
 				return null;
 
 			var identifier = cp.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-			if (String.IsNullOrEmpty(identifier))
+			if (string.IsNullOrEmpty(identifier))
 				return null;
 
 			Guid guid;
@@ -71,7 +69,6 @@ namespace CJG.Application.Services
 		public static string GetUserName(this IPrincipal user)
 		{
 			var cp = user as ClaimsPrincipal;
-
 			if (cp == null)
 				return null;
 
@@ -126,7 +123,10 @@ namespace CJG.Application.Services
 		/// <returns></returns>
 		public static IEnumerable<Privilege> GetPrivileges(this IPrincipal user)
 		{
-			return ((ClaimsIdentity)user.Identity).Claims.Where(c => c.Type == AppClaimTypes.Privilege).Select(x => (Privilege)Enum.Parse(typeof(Privilege), x.Value)).ToList();
+			return ((ClaimsIdentity)user.Identity).Claims
+				.Where(c => c.Type == AppClaimTypes.Privilege)
+				.Select(x => (Privilege)Enum.Parse(typeof(Privilege), x.Value))
+				.ToList();
 		}
 
 		/// <summary>
@@ -831,6 +831,7 @@ namespace CJG.Application.Services
 		{
 			if (trainingProvider == null)
 				throw new ArgumentNullException(nameof(trainingProvider));
+
 			var grantApplication = trainingProvider.GetGrantApplication();
 
 			// The user hasn't been identified.

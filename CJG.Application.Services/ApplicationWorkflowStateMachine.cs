@@ -320,9 +320,10 @@ namespace CJG.Application.Services
 		/// <summary>
 		/// Update the current grant application.
 		/// </summary>
-		private void UpdateGrantApplication()
+		private void UpdateGrantApplication(bool handleWorkFlowNotifications = true)
 		{
-			HandleWorkflowNotifications();
+			if (handleWorkFlowNotifications)
+				HandleWorkflowNotifications();
 
 			_dbContext.SetModified(_grantApplication);
 			_dbContext.CommitTransaction();
@@ -1334,7 +1335,7 @@ namespace CJG.Application.Services
 
 				LogStateChanges($"Applicant submitted claim number {claim.ClaimNumber}", stateChangeReason: "Reversed 'Claim Returned to Applicant'", addReason: false);
 
-				UpdateGrantApplication();
+				UpdateGrantApplication(handleWorkFlowNotifications: false);
 			}
 			catch (NotificationException e)
 			{
@@ -1359,7 +1360,7 @@ namespace CJG.Application.Services
 
 				LogStateChanges($"Claim number {claim.ClaimNumber} Denial reversed", stateChangeReason: "Reversed 'Claim Denied'", addReason: false);
 
-				UpdateGrantApplication();
+				UpdateGrantApplication(handleWorkFlowNotifications: false);
 
 			}
 			catch (NotificationException e)
@@ -1396,7 +1397,7 @@ namespace CJG.Application.Services
 
 				LogStateChanges($"Claim number {claim.ClaimNumber} Approval reversed", stateChangeReason: "Reversed 'Claim Approved'", addReason: false);
 
-				UpdateGrantApplication();
+				UpdateGrantApplication(handleWorkFlowNotifications: false);
 			}
 			catch (NotificationException e)
 			{
