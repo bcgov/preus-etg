@@ -25,15 +25,12 @@ namespace CJG.Web.External.Areas.Int.Controllers
 	[Authorize(Roles = "Assessor, System Administrator, Director, Financial Clerk")]
 	public class TrainingProviderController : BaseController
 	{
-		#region Variables
 		private readonly IStaticDataService _staticDataService;
 		private readonly IAttachmentService _attachmentService;
 		private readonly ITrainingProviderService _trainingProviderService;
 		private readonly ITrainingProviderInventoryService _trainingProviderInventoryService;
 		private readonly IApplicationAddressService _applicationAddressService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a TrainingProviderController object, and initializes it with the specified services.
 		/// </summary>
@@ -55,9 +52,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_trainingProviderInventoryService = trainingProviderInventoryService;
 			_applicationAddressService = applicationAddressService;
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
 		/// Get the specified training provider.
 		/// </summary>
@@ -261,18 +256,25 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				var attachment = _attachmentService.Get(attachmentId);
 
 				var files = new List<int>();
-				if (trainingProvider.CourseOutlineDocumentId.HasValue) files.Add(trainingProvider.CourseOutlineDocumentId.Value);
-				if (trainingProvider.ProofOfQualificationsDocumentId.HasValue) files.Add(trainingProvider.ProofOfQualificationsDocumentId.Value);
-				if (trainingProvider.BusinessCaseDocumentId.HasValue) files.Add(trainingProvider.BusinessCaseDocumentId.Value);
+				if (trainingProvider.CourseOutlineDocumentId.HasValue)
+					files.Add(trainingProvider.CourseOutlineDocumentId.Value);
 
-				if (!files.Contains(attachment.Id)) throw new InvalidOperationException($"AttachmentId {attachmentId} is not valid for Training Provider {trainingProviderId}");
+				if (trainingProvider.ProofOfQualificationsDocumentId.HasValue)
+					files.Add(trainingProvider.ProofOfQualificationsDocumentId.Value);
 
-				return File(attachment.AttachmentData, MediaTypeNames.Application.Octet, $"{attachment.FileName}{attachment.FileExtension}");
+				if (trainingProvider.BusinessCaseDocumentId.HasValue)
+					files.Add(trainingProvider.BusinessCaseDocumentId.Value);
+
+				if (!files.Contains(attachment.Id))
+					throw new InvalidOperationException($"AttachmentId {attachmentId} is not valid for Training Provider {trainingProviderId}");
+
+				return File(attachment.AttachmentData, MediaTypeNames.Application.Octet, attachment.FileName);
 			}
 			catch (Exception ex)
 			{
 				HandleAngularException(ex, model);
 			}
+
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
 
@@ -391,7 +393,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
-		#endregion
 
 		#region Dropdowns
 

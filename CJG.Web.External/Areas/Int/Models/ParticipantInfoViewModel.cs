@@ -21,6 +21,12 @@ namespace CJG.Web.External.Areas.Int.Models
 		public ParticipantEmploymentInfoViewModel EmployerInfo { get; set; }
 		public List<ParticipantTrainingHistory> TrainingHistory { get; set; }
 
+		public ParticipantInfoViewModel()
+		{
+			ContactInfo = new ParticipantContactInfoViewModel();
+			EmployerInfo = new ParticipantEmploymentInfoViewModel();
+		}
+
 		public ParticipantInfoViewModel(ParticipantForm participant,
 										INationalOccupationalClassificationService nationalOccupationalClassificationService,
 										IUserService userService,
@@ -71,12 +77,6 @@ namespace CJG.Web.External.Areas.Int.Models
 					TrainingHistory.Add(new ParticipantTrainingHistory(t, reimbursement, amtPaid, p));
 				}
 			}
-		}
-
-		public ParticipantInfoViewModel()
-		{
-			ContactInfo = new ParticipantContactInfoViewModel();
-			EmployerInfo = new ParticipantEmploymentInfoViewModel();
 		}
 	}
 }

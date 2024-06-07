@@ -1,17 +1,10 @@
-﻿@using CJG.Core.Entities
 <div ng-controller="ClaimAttachments" ng-init="init()">
-    <h2>{{claim.ProgramType == @((int)ProgramTypes.EmployerGrant) ? 'View Attachments' : 'View Receipts and Supporting Documentation' }}</h2>
+    <h2>View Attachments</h2>
 
     <div ng-if="claim.CanEditClaim">
-        <p ng-if="claim.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+        <p>
             Attach all receipts, paid invoices or other valid proof of payments that relate to the actual training costs you have entered for each
             eligible expense type. For each attachment, enter a description to identify what part of your claim it supports.
-        </p>
-        <p ng-if="claim.ProgramType == @((int)ProgramTypes.WDAService)">
-            Your assessor may request you to attach documentation to support your claim.
-        </p>
-        <p ng-if="claim.ProgramType == @((int)ProgramTypes.WDAService)">
-            For each attachment, enter a description to identify what part of your claim it supports.
         </p>
         <p>
             Accepted file types: PDF, JPG, JPEG, PNG, GIF. Maximum file size is {{attachment.MaxUploadSize}} MB.

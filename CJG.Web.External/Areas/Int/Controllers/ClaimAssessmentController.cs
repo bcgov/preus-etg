@@ -187,7 +187,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// Reassign the assessor on the grant application.
 		/// </summary>
 		/// <param name="model"></param>
-		/// <param name="newAssessorId"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[PreventSpam]
@@ -238,7 +237,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Update the claim information in the datasource.
 		/// </summary>
-		/// <param name="viewModel"></param>
+		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[ValidateRequestHeader]
@@ -456,7 +455,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, e.GetAllMessages()).HttpStatusCodeResultWithAlert(Response, AlertType.Error);
 			}
 
-			return new PartialViewResult() { ViewData = viewData, ViewName = "_ClaimAssessmentDetail" };
+			return new PartialViewResult { ViewData = viewData, ViewName = "_ClaimAssessmentDetail" };
 		}
 
 		/// <summary>
@@ -551,8 +550,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Downloads specified attachment
 		/// </summary>
-		/// <param name="grantApplicationId"></param>
+		/// <param name="claimVersion"></param>
 		/// <param name="attachmentId"></param>
+		/// <param name="claimId"></param>
 		/// <returns></returns>
 		[HttpGet]
 		[Route("Claim/Attachment/Download/{claimId}/{claimVersion}/{attachmentId}")]
@@ -562,7 +562,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			try
 			{
 				var attachment = _claimService.GetAttachment(claimId, claimVersion, attachmentId);
-				return File(attachment.AttachmentData, System.Net.Mime.MediaTypeNames.Application.Octet, $"{attachment.FileName}{attachment.FileExtension}");
+				return File(attachment.AttachmentData, System.Net.Mime.MediaTypeNames.Application.Octet, attachment.FileName);
 			}
 			catch (Exception ex)
 			{
@@ -574,8 +574,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Deletes specified attachment
 		/// </summary>
-		/// <param name="grantApplicationId"></param>
+		/// <param name="claimVersion"></param>
 		/// <param name="attachmentId"></param>
+		/// <param name="claimId"></param>
 		/// <returns></returns>
 		[HttpPut]
 		[PreventSpam]

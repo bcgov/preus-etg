@@ -170,6 +170,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[HttpPut]
 		[PreventSpam]
 		[ValidateRequestHeader]
+		[ValidateInput(false)]   // We're expecting HTML, so this needs to be here.
 		[Route("Application/Summary")]
 		public JsonResult UpdateSummary(string summary, System.Web.HttpPostedFileBase file)
 		{

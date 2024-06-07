@@ -8,7 +8,6 @@ using CJG.Application.Business.Models;
 using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces.Service;
-using CJG.Core.Interfaces.Service.Settings;
 using CJG.Web.External.Areas.Ext.Models;
 using CJG.Web.External.Areas.Ext.Models.Attachments;
 using CJG.Web.External.Areas.Ext.Models.Claims;
@@ -26,55 +25,40 @@ namespace CJG.Web.External.Areas.Ext.Controllers
     [RouteArea("Ext")]
 	public class ClaimController : BaseController
 	{
-		#region Variables
-		private readonly ISiteMinderService _siteMinderService;
-		private readonly IUserService _userService;
 		private readonly IGrantApplicationService _grantApplicationService;
-		private readonly ITrainingProgramService _trainingProgramService;
-		private readonly ITrainingProviderSettings _trainingProviderSettings;
 		private readonly IAttachmentService _attachmentService;
 		private readonly IClaimService _claimService;
 		private readonly ISettingService _settingService;
 		private readonly IClaimEligibleCostService _claimEligibleCostService;
 		private readonly IParticipantService _participantService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a <paramtyperef name="ClaimController"/> object.
 		/// </summary>
 		/// <param name="controllerService"></param>
 		/// <param name="grantApplicationService"></param>
-		/// <param name="trainingProgramService"></param>
-		/// <param name="trainingProviderSettings"></param>
 		/// <param name="attachmentService"></param>
 		/// <param name="claimService"></param>
+		/// <param name="claimEligibleCostService"></param>
+		/// <param name="settingService"></param>
+		/// <param name="participantService"></param>
 		public ClaimController(
 			IControllerService controllerService,
 			IGrantApplicationService grantApplicationService,
-			ITrainingProgramService trainingProgramService,
-			ITrainingProviderSettings trainingProviderSettings,
 			IAttachmentService attachmentService,
 			IClaimService claimService,
 			IClaimEligibleCostService claimEligibleCostService,
 			ISettingService settingService,
 			IParticipantService participantService) : base(controllerService.Logger)
 		{
-			_userService = controllerService.UserService;
-			_siteMinderService = controllerService.SiteMinderService;
-			_trainingProgramService = trainingProgramService;
 			_grantApplicationService = grantApplicationService;
 			_attachmentService = attachmentService;
 			_claimService = claimService;
-			_trainingProviderSettings = trainingProviderSettings;
 			_settingService = settingService;
 			_claimEligibleCostService = claimEligibleCostService;
 			_participantService = participantService;
 		}
-		#endregion
 
-		#region Endpoints
-		#region Claim Reporting View
 		/// <summary>
 		/// Return a view to report a claim.
 		/// </summary>
@@ -181,7 +165,9 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 		private List<ParticipantWarningModel> GetParticipantWarnings(GrantApplication grantApplication, IParticipantService participantService)
 		{
-			var participantSinList = grantApplication.ParticipantForms.Select(pf => new { ParticipantFormId = pf.Id, pf.SIN }).ToList();
+			var participantSinList = grantApplication.ParticipantForms
+				.Select(pf => new { ParticipantFormId = pf.Id, pf.SIN })
+				.ToList();
 
 			var warnings = new List<ParticipantWarningModel>();
 
@@ -204,7 +190,11 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					.Where(opf => opf.GrantApplication.GrantOpening.TrainingPeriod.FiscalYearId == grantApplicationFiscal)
 					.Where(opf => applicationClaimStatuses.Contains(opf.GrantApplication.ApplicationStateInternal)))
 				{
-					var totalPastCosts = form.ParticipantCosts.Sum(c => c.AssessedReimbursement);
+					var totalPastCosts = form.ParticipantCosts
+						.Where(pf => pf.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimApproved ||
+						             pf.ClaimEligibleCost.Claim.ClaimState == ClaimState.PaymentRequested ||
+						             pf.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimPaid)
+						.Sum(pf => pf.AssessedReimbursement);
 					participantPayments += totalPastCosts;
 				}
 
@@ -272,7 +262,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <summary>
 		/// Update the attachments (delete/update/create) for the specified grant application.
 		/// </summary>
-		/// <param name="grantApplicationId"></param>
+		/// <param name="claimVersion"></param>
 		/// <param name="files"></param>
 		/// <param name="attachments"></param>
 		/// <returns></returns>
@@ -419,7 +409,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			}
 			return Json(model);
 		}
-		#endregion
 
 		#region Claim Review View
 		/// <summary>
@@ -551,14 +540,18 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		public ActionResult DetailsView(int claimId, int claimVersion)
 		{
 			if (_settingService.Get("EnableClaimsOn")?.GetValue<DateTime>() > AppDateTime.Now)
-			{
-				return RedirectToAction(nameof(HomeController.Index), nameof(HomeController).Replace("Controller", ""));
-			}
+				return RedirectToAction("Index", "Home");
 
 			var claim = _claimService.Get(claimId, claimVersion);
 
 			// Must be in one of the accepted states to view.
-			if (claim.GrantApplication.ApplicationStateExternal != ApplicationStateExternal.ClaimSubmitted)
+			var allowedStates = new List<ApplicationStateExternal>
+			{
+				ApplicationStateExternal.ClaimSubmitted,
+				ApplicationStateExternal.CancelledByMinistry
+			};
+
+			if (!allowedStates.Contains(claim.GrantApplication.ApplicationStateExternal))
 			{
 				this.SetAlert("The claim view page is not available when in the current state.", AlertType.Warning, true);
 				return RedirectToAction(nameof(HomeController.Index), nameof(HomeController).Replace("Controller", ""));
@@ -570,6 +563,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			ViewBag.Reporting = false;
 			ViewBag.ReviewAndSubmit = false;
 			ViewBag.GrantProgramCode = claim.GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramCode;
+
 			return View(SidebarViewModelFactory.Create(claim.GrantApplication, ControllerContext));
 		}
 
@@ -693,7 +687,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			jsonResult.MaxJsonLength = int.MaxValue;
 			return jsonResult;
 		}
-		#endregion
 		#endregion
 	}
 

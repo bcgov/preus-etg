@@ -14,7 +14,7 @@
                     </div>
                     <div class="control-wrapper">
                         <div class="form__control">
-                            <textarea type="text" class="input--full" ng-model="model.ChangeRequestReason" maxlength="500" ng-validation rows="3" />
+                            <textarea type="text" class="input--full" ng-model="model.ChangeRequestReason" maxlength="500" ng-validation rows="3"></textarea>
                         </div>
                     </div>
                 </div>
@@ -61,7 +61,7 @@
                         </div>
                     </div>
                 </div>
-                <div ng-if="model.CourseOutline">
+                <div>
                     <div class="form__group">
                         <label class="form__label">Course outline including defined instructional objectives, delivery method and assessment methods <abbr title="Required">*</abbr></label>
                         <p>One file of the following type may be attached: PDF, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}} MB.</p>
@@ -81,8 +81,8 @@
                     </div>
                 </div>
                 <div class="form__group" ng-show="model.SelectedDeliveryMethodIds != 3 &&
-                 model.SelectedDeliveryMethodIds != null &&
-                 model.SelectedDeliveryMethodIds != 0">
+                     model.SelectedDeliveryMethodIds != null &&
+                     model.SelectedDeliveryMethodIds != 0">
                     <h3 class="subheader--body">Address of Training Location</h3>
                     <div class="form__group form__group--radio-inline">
                         <div>
@@ -272,6 +272,18 @@
                         </div>
                     </div>
                 </div>
+            
+                <div ng-show="model.TrainingProviderAddress.RegionId !== 'BC'">
+                    <div class="form__group">
+                        <div class="label-wrapper">
+                            <label class="form__label">
+                                The ETG may consider training delivered by training providers not based in B.C. under exceptional circumstances only. Please explain why you have selected a training provider not based in B.C. <abbr title="Required">*</abbr>
+                            </label>
+                        </div>
+                        <div class="control-wrapper form-control"><textarea id="OutOfProvinceLocationRationale" type="text" class="input--full textarea--short" ng-model="model.OutOfProvinceLocationRationale" ng-validation="errors.OutOfProvinceLocationRationale"></textarea></div>
+                    </div>
+                </div>
+
                 <h3 class="subheader--body">Training Provider Contact</h3>
                 <p>Enter the contact information for your training provider.</p>
 

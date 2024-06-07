@@ -1,34 +1,31 @@
-﻿using CJG.Core.Entities;
+﻿using System;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using CJG.Core.Entities;
 using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Areas.Ext.Models;
+using CJG.Web.External.Areas.Ext.Models.Agreements;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using Newtonsoft.Json;
-using System;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using CJG.Web.External.Areas.Ext.Models.Agreements;
 
 namespace CJG.Web.External.Areas.Ext.Controllers
 {
-	/// <summary>
-	/// ChangeRequestController class, provides a controller for grant agreement management.
-	/// </summary>
-	[RouteArea("Ext")]
+    /// <summary>
+    /// ChangeRequestController class, provides a controller for grant agreement management.
+    /// </summary>
+    [RouteArea("Ext")]
 	[ExternalFilter]
 	public class ChangeRequestController : BaseController
 	{
-		#region Variables
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly ITrainingProgramService _trainingProgramService;
 		private readonly ITrainingProviderService _trainingProviderService;
 		private readonly IApplicationAddressService _applicationAddressService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a ChangeRequestController object.
 		/// </summary>
@@ -50,9 +47,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			_trainingProviderService = trainingProviderService;
 			_applicationAddressService = applicationAddressService;
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
 		/// Submit the current change request.
 		/// </summary>
@@ -321,26 +316,28 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				if (model.ContactPhone.Length < 10)
 					ModelState.AddModelError("ContactPhone", "Contact phone number is required.");
 
-				if (model.TrainingProviderTypeId.HasValue)
-				{
-					var originalTrainingProvider = _trainingProviderService.Get(model.OriginalTrainingProviderId);
-					var trainingProviderType = _trainingProviderService.Get<TrainingProviderType>(model.TrainingProviderTypeId);
-					if (trainingProviderType.CourseOutline == 1)
-					{
-						if (string.IsNullOrWhiteSpace(model.CourseOutlineDocument.FileName) || files.Length < model.CourseOutlineDocument.Index)
-						{
-							ModelState.AddModelError("CourseOutlineDocument", "Course outline document is required.");
-						}
-					}
+				if (model.TrainingProviderAddress.RegionId.ToLower() != "bc" && string.IsNullOrWhiteSpace(model.OutOfProvinceLocationRationale))
+					ModelState.AddModelError("OutOfProvinceLocationRationale", "Non B.C. based provider rationale is required");
 
-					if (trainingProviderType.ProofOfInstructorQualifications == 1)
-					{
-						if (string.IsNullOrWhiteSpace(model.ProofOfQualificationsDocument.FileName) || files.Length < model.ProofOfQualificationsDocument.Index)
-						{
-							ModelState.AddModelError("ProofOfQualificationsDocument", "Proof of qualifications document is required.");
-						}
-					}
-				}
+				//if (model.TrainingProviderTypeId.HasValue)
+				//{
+				//	var originalTrainingProvider = _trainingProviderService.Get(model.OriginalTrainingProviderId);
+				//	var trainingProviderType = _trainingProviderService.Get<TrainingProviderType>(model.TrainingProviderTypeId);
+				//	if (trainingProviderType.CourseOutline == 1)
+				//	{
+				//		if (string.IsNullOrWhiteSpace(model.CourseOutlineDocument.FileName) || files.Length < model.CourseOutlineDocument.Index)
+				//			ModelState.AddModelError("CourseOutlineDocument", "Course outline document is required.");
+				//	}
+
+				//	if (trainingProviderType.ProofOfInstructorQualifications == 1)
+				//	{
+				//		if (string.IsNullOrWhiteSpace(model.ProofOfQualificationsDocument.FileName) || files.Length < model.ProofOfQualificationsDocument.Index)
+				//			ModelState.AddModelError("ProofOfQualificationsDocument", "Proof of qualifications document is required.");
+				//	}
+				//}
+
+				if (string.IsNullOrWhiteSpace(model.CourseOutlineDocument.FileName))
+					ModelState.AddModelError("CourseOutlineDocument", "Course outline document is required.");
 
 				if (ModelState.IsValid)
 				{
@@ -383,7 +380,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		[Route("Agreement/Change/Training/Provider")]
 		public JsonResult UpdateTrainingProvider(HttpPostedFileBase[] files, string provider)
 		{
-			var viewModel = new AgreementOverviewViewModel();
+				var viewModel = new AgreementOverviewViewModel();
 
 			try
 			{
@@ -407,28 +404,31 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 				if (model.TrainingOutsideBC == true && string.IsNullOrWhiteSpace(model.BusinessCase) && (string.IsNullOrWhiteSpace(model.BusinessCaseDocument.FileName) || files?.Length < model.BusinessCaseDocument.Index))
 					ModelState.AddModelError("BusinessCase", "Business case is required when training is outside BC.");
+
 				if (model.ContactPhone.Length < 10)
 					ModelState.AddModelError("ContactPhone", "Contact phone number is required.");
 
-				if (model.TrainingProviderTypeId.HasValue)
-				{
-					var trainingProvider = _trainingProviderService.Get(model.Id);
-					var trainingProviderType = _trainingProviderService.Get<TrainingProviderType>(model.TrainingProviderTypeId);
-					if (trainingProviderType.CourseOutline == 1)
-					{
-						if (string.IsNullOrWhiteSpace(model.CourseOutlineDocument.FileName) || files?.Length < model.CourseOutlineDocument.Index)
-						{
-							ModelState.AddModelError("CourseOutlineDocument", "Course outline document is required.");
-						}
-					}
-					if (trainingProviderType.ProofOfInstructorQualifications == 1)
-					{
-						if (string.IsNullOrWhiteSpace(model.ProofOfQualificationsDocument.FileName) || files?.Length < model.ProofOfQualificationsDocument.Index)
-						{
-							ModelState.AddModelError("ProofOfQualificationsDocument", "Proof of qualifications document is required.");
-						}
-					}
-				}
+				if (model.TrainingProviderAddress.RegionId.ToLower() != "bc" && string.IsNullOrWhiteSpace(model.OutOfProvinceLocationRationale))
+					ModelState.AddModelError("OutOfProvinceLocationRationale", "Non B.C. based provider rationale is required");
+
+				//if (model.TrainingProviderTypeId.HasValue)
+				//{
+				//	var trainingProvider = _trainingProviderService.Get(model.Id);
+				//	var trainingProviderType = _trainingProviderService.Get<TrainingProviderType>(model.TrainingProviderTypeId);
+				//	if (trainingProviderType.CourseOutline == 1)
+				//	{
+				//		if (string.IsNullOrWhiteSpace(model.CourseOutlineDocument.FileName) || files?.Length < model.CourseOutlineDocument.Index)
+				//			ModelState.AddModelError("CourseOutlineDocument", "Course outline document is required.");
+				//	}
+				//	if (trainingProviderType.ProofOfInstructorQualifications == 1)
+				//	{
+				//		if (string.IsNullOrWhiteSpace(model.ProofOfQualificationsDocument.FileName) || files?.Length < model.ProofOfQualificationsDocument.Index)
+				//			ModelState.AddModelError("ProofOfQualificationsDocument", "Proof of qualifications document is required.");
+				//	}
+				//}
+
+				if (string.IsNullOrWhiteSpace(model.CourseOutlineDocument.FileName) || files?.Length < model.CourseOutlineDocument.Index)
+					ModelState.AddModelError("CourseOutlineDocument", "Course outline document is required.");
 
 				if (ModelState.IsValid)
 				{
@@ -692,7 +692,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			}
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
-		#endregion
 		#endregion
 	}
 }

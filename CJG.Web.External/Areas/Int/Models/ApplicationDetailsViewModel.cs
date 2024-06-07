@@ -133,9 +133,10 @@ namespace CJG.Web.External.Areas.Int.Models
 				|| user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EnableApplicantReportingOfParticipants)
 				|| user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EnableParticipantReporting);
 
-			ShowClaims = grantApplication.Claims.Any() && grantApplication.HasSubmittedAClaim();
+			ShowClaims = ((grantApplication.Claims.Any() && grantApplication.HasSubmittedAClaim())
+			              || (grantApplication.Claims.Any() && grantApplication.ApplicationStateInternal == ApplicationStateInternal.CancelledByMinistry));
 
-			IsAssessor = user.GetUserId() == grantApplication.AssessorId;
+            IsAssessor = user.GetUserId() == grantApplication.AssessorId;
 			UnderAssessment = grantApplication?.ApplicationStateInternal.In(ApplicationStateInternal.New,
 																			ApplicationStateInternal.PendingAssessment,
 																			ApplicationStateInternal.UnderAssessment,

@@ -16,7 +16,6 @@ namespace CJG.Web.External.Areas.Ext.Models.ChangeRequest
 {
 	public class RequestedTrainingProviderViewModel : BaseViewModel
 	{
-		#region Properties
 		public string RowVersion { get; set; }
 
 		public int OriginalTrainingProviderId { get; set; }
@@ -39,6 +38,8 @@ namespace CJG.Web.External.Areas.Ext.Models.ChangeRequest
 		public ApplicationAddressViewModel TrainingProviderAddress { get; set; }
 
 		public bool? TrainingOutsideBC { get; set; }
+
+		public string OutOfProvinceLocationRationale { get; set; }
 
 		public string BusinessCase { get; set; }
 
@@ -75,9 +76,7 @@ namespace CJG.Web.External.Areas.Ext.Models.ChangeRequest
 		public ProgramTypes ProgramType { get; set; }
 
 		public int[] SelectedDeliveryMethodIds { get; set; }
-		#endregion
 
-		#region Constructors
 		public RequestedTrainingProviderViewModel() { }
 
 		public RequestedTrainingProviderViewModel(TrainingProvider originalTrainingProvider)
@@ -113,13 +112,13 @@ namespace CJG.Web.External.Areas.Ext.Models.ChangeRequest
 				: new List<int>()
 					.ToArray();
 
-			MaxUploadSize = int.Parse(ConfigurationManager.AppSettings["MaxUploadSizeInBytes"]);
+			var maxUploadSize = int.Parse(ConfigurationManager.AppSettings["MaxUploadSizeInBytes"]);
+			MaxUploadSize = maxUploadSize / 1024 / 1024;
+
 			if (originalTrainingProvider.TrainingProgram?.GrantApplication != null)
 				ProgramType = originalTrainingProvider.TrainingProgram.GrantApplication.GetProgramType();
 		}
-		#endregion
 
-		#region Methods
 		public TrainingProvider MapProperties(HttpPostedFileBase[] files, ITrainingProviderService trainingProviderService, IApplicationAddressService applicationAddressService)
 		{
 			if (trainingProviderService == null)
@@ -249,7 +248,5 @@ namespace CJG.Web.External.Areas.Ext.Models.ChangeRequest
 
 			return applicationAddressService.VerifyOrCreateRegion(trainingAddress.OtherRegion, trainingAddress.CountryId);
 		}
-
-		#endregion
 	}
 }

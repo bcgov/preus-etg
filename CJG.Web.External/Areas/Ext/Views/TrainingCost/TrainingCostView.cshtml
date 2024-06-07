@@ -220,9 +220,13 @@
             Your organization has gone over the maximum allowable amount that can be applied for per employer per fiscal year ({{ model.MaximumFiscalGovernmentContributions | currency : '$' : 0 }}). Please adjust your costs.
         </div>
 
+        <div class="alert alert--error notice--icon" ng-if="section.ParticipantCountMet == false">
+            The number of Participants do not match the number of Participants under Training Costs. You must submit training costs for each Participant or adjust the number of Participants taking training.
+        </div>
+
         <div class="button-group" ng-if="!EnableEdit && !EnableEditBreakdown">
             @Html.Button("Cancel", new { @class = "btn btn--secondary", onclick = "window.location='" + Url.Action("ApplicationOverviewView", "Application", new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'" })
-            <button id="btnDone" name="btnDone" class="btn btn--primary btn--forward" ng-click="save()" ng-disabled="model.RequestExceedsAllowed">Done</button>
+            <button id="btnDone" name="btnDone" class="btn btn--primary btn--forward" ng-click="save()" ng-disabled="model.RequestExceedsAllowed || section.ParticipantCountMet != true">Done</button>
         </div>
     </div>
 </div>

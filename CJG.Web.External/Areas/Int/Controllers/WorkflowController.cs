@@ -584,6 +584,63 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 		[PreventSpam]
 		[ValidateRequestHeader]
+		[HttpPut, Route("Workflow/Return/Claim/To/New", Name = "ReturnClaimToNew")]
+		public JsonResult ReturnClaimToNew(WorkflowViewModel model)
+		{
+			try
+			{
+				var claim = _claimService.Get(model.ClaimWorkflowViewModel.Id, model.ClaimWorkflowViewModel.ClaimVersion);
+				claim.RowVersion = Convert.FromBase64String(model.ClaimWorkflowViewModel.RowVersion);
+				_claimService.ReturnClaimToNew(claim);
+				model = new WorkflowViewModel(claim, User, x => Url.RouteUrl(x));
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model);
+		}
+
+		[PreventSpam]
+		[ValidateRequestHeader]
+		[HttpPut, Route("Workflow/Return/Claim/From/Denied", Name = "ReverseClaimDenied")]
+		public JsonResult ReverseClaimDenied(WorkflowViewModel model)
+		{
+			try
+			{
+				var claim = _claimService.Get(model.ClaimWorkflowViewModel.Id, model.ClaimWorkflowViewModel.ClaimVersion);
+				claim.RowVersion = Convert.FromBase64String(model.ClaimWorkflowViewModel.RowVersion);
+				_claimService.ReverseClaimDenied(claim);
+				model = new WorkflowViewModel(claim, User, x => Url.RouteUrl(x));
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model);
+		}
+
+		[PreventSpam]
+		[ValidateRequestHeader]
+		[HttpPut, Route("Workflow/Return/Claim/From/Approved", Name = "ReverseClaimApproved")]
+		public JsonResult ReverseClaimApproved(WorkflowViewModel model)
+		{
+			try
+			{
+				var claim = _claimService.Get(model.ClaimWorkflowViewModel.Id, model.ClaimWorkflowViewModel.ClaimVersion);
+				claim.RowVersion = Convert.FromBase64String(model.ClaimWorkflowViewModel.RowVersion);
+				_claimService.ReverseClaimApproved(claim);
+				model = new WorkflowViewModel(claim, User, x => Url.RouteUrl(x));
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model);
+		}
+
+		[PreventSpam]
+		[ValidateRequestHeader]
 		[HttpPut, Route("Workflow/Assess/Reimbursement", Name = "AssessReimbursement")]
 		public JsonResult AssessReimbursement(WorkflowViewModel model)
 		{

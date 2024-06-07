@@ -1,7 +1,4 @@
-﻿using CJG.Core.Entities;
-using CJG.Infrastructure.Entities;
-using CJG.Infrastructure.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
@@ -10,20 +7,18 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Web;
+using CJG.Core.Entities;
+using CJG.Infrastructure.Entities;
+using CJG.Infrastructure.Identity;
 
 namespace CJG.Infrastructure.EF
 {
 	public class DataContext : IDataContext
 	{
-		#region Variables
 		private readonly CJGContext _context;
-		#endregion
 
-		#region Properties
 		public DbChangeTracker ChangeTracker => _context.ChangeTracker;
-
 		public Database Database => _context.Database;
-
 		public DbContext Context => _context;
 
 		public HttpContextBase HttpContext
@@ -102,7 +97,6 @@ namespace CJG.Infrastructure.EF
 		public DbSet<ProgramNotification> ProgramNotifications => _context.ProgramNotifications;
 		public DbSet<ProgramNotificationRecipient> ProgramNotificationRecipients => _context.ProgramNotificationRecipients;
 		public DbSet<TrainingPeriodBudgetRate> TrainingPeriodBudgetRates => _context.TrainingPeriodBudgetRates;
-
 		#endregion
 
 		#region Grant Applications
@@ -124,7 +118,6 @@ namespace CJG.Infrastructure.EF
 		public DbSet<DenialReason> DenialReasons => _context.DenialReasons;
 		public DbSet<PrioritizationScoreBreakdown> PrioritizationScoreBreakdowns => _context.PrioritizationScoreBreakdowns;
 		public DbSet<PrioritizationScoreBreakdownAnswer> PrioritizationScoreBreakdownAnswers => _context.PrioritizationScoreBreakdownAnswers;
-
 		#endregion
 
 		#region Training Providers
@@ -199,14 +192,11 @@ namespace CJG.Infrastructure.EF
 		public DbSet<AccountCode> AccountCodes => _context.AccountCodes;
 		public DbSet<ReconciliationReport> ReconciliationReports => _context.ReconciliationReports;
 		public DbSet<ReconciliationPayment> ReconciliationPayments => _context.ReconciliationPayments;
-
 		public DbSet<ClaimParticipant> ClaimParticipants => _context.ClaimParticipants; // throw new NotImplementedException();
 		#endregion
 
 		#region CIPSCodes
 		public DbSet<ClassificationOfInstructionalProgram> ClassificationOfInstructionalPrograms=> _context.ClassificationOfInstructionalPrograms;
-		#endregion
-
 		#endregion
 
 		#region Constructors
@@ -314,15 +304,18 @@ namespace CJG.Infrastructure.EF
 				// Get all the updated entries and update their DateAdded or DateUpdated based on their state.
 				foreach (var entry in _context.ChangeTracker.Entries().Where(e => !(new[] { EntityState.Unchanged }).Contains(e.State))) {
 					UpdateRowVersion(entry);
-					if (typeof(EntityBase).IsAssignableFrom(entry.Entity.GetType())) {
-						switch (entry.State) {
-							case (EntityState.Added):
-								((EntityBase)entry.Entity).DateAdded = AppDateTime.UtcNow;
-								break;
-							case (EntityState.Modified):
-								((EntityBase)entry.Entity).DateUpdated = AppDateTime.UtcNow;
-								break;
-						}
+
+					if (!typeof(EntityBase).IsAssignableFrom(entry.Entity.GetType()))
+						continue;
+
+					switch (entry.State) {
+						case EntityState.Added:
+							((EntityBase)entry.Entity).DateAdded = AppDateTime.UtcNow;
+							break;
+
+						case EntityState.Modified:
+							((EntityBase)entry.Entity).DateUpdated = AppDateTime.UtcNow;
+							break;
 					}
 				}
 			}
@@ -363,6 +356,7 @@ namespace CJG.Infrastructure.EF
 					var result = update();
 					_context.SaveChanges();
 					transaction.Commit();
+
 					return result;
 				} catch {
 					transaction.Rollback();
@@ -379,10 +373,11 @@ namespace CJG.Infrastructure.EF
 		public void UpdateRowVersion(DbEntityEntry entry)
 		{
 			// Only entries that have been modified need to be handled.
-			if (entry.State == EntityState.Modified) {
-				var obj = entry.Entity as EntityBase;
-				entry.OriginalValues[nameof(EntityBase.RowVersion)] = obj.RowVersion;
-			}
+			if (entry.State != EntityState.Modified)
+				return;
+
+			var obj = entry.Entity as EntityBase;
+			entry.OriginalValues[nameof(EntityBase.RowVersion)] = obj.RowVersion;
 		}
 
 		/// <summary>

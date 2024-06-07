@@ -123,6 +123,35 @@ namespace CJG.Web.External.Areas.Int.Models
 						});
 						break;
 
+					case ApplicationWorkflowTrigger.ReverseClaimReturnedToApplicant:
+						buttons.Add(new ApplicationActionButton
+						{
+							Caption = "Return Claim to New",
+							Value = "ReturnClaimToNew",
+							Url = getWorkflowUrl("ReturnClaimToNew")
+						});
+						break;
+
+					case ApplicationWorkflowTrigger.ReverseClaimDenied:
+						buttons.Add(new ApplicationActionButton
+						{
+							Caption = "Reverse Denied Claim",
+							Value = "ReverseClaimDenied",
+							Url = getWorkflowUrl("ReverseClaimDenied")
+						});
+						break;
+
+					case ApplicationWorkflowTrigger.ReverseClaimApproved:
+						buttons.Add(new ApplicationActionButton
+						{
+							Caption = "Reverse Approved Claim",
+							Value = "ReverseClaimApproved",
+							IsDisabled = claim.PaymentRequests.Any(),
+							Information = "Not able to reverse Approval since payment has been requested",
+							Url = getWorkflowUrl("ReverseClaimApproved")
+						});
+						break;
+
 					case ApplicationWorkflowTrigger.SelectClaimForAssessment:
 						buttons.Add(new ApplicationActionButton
 						{

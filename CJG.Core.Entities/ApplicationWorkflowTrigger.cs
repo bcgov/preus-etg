@@ -367,5 +367,23 @@ namespace CJG.Core.Entities
 		/// </summary>
 		[Description("Reverse Cancelled by Ministry")]
 		ReverseAgreementCancelledByMinistry = 71,
+
+		/// <summary>
+		/// ReverseClaimReturnedToApplicant - Director has reversed the Return Claim To Application action.
+		/// </summary>
+		[Description("Return Claim to New")]
+		ReverseClaimReturnedToApplicant = 100,
+
+		/// <summary>
+		/// ReverseClaimDenied - Director has reversed the Claim Denied action.
+		/// </summary>
+		[Description("Reverse Claim Denied")]
+		ReverseClaimDenied = 101,
+
+		/// <summary>
+		/// ReverseClaimApproved - Director has reversed the Claim Approve action.
+		/// </summary>
+		[Description("Reverse Claim Approved")]
+		ReverseClaimApproved = 102
 	}
 }

@@ -19,7 +19,7 @@
                     <a href="/Ext/Claim/Details/View/{{claim.ClaimId}}/{{claim.ClaimVersion}}">View Claim</a>
                 </td>
                 <td ng-if="claim.ClaimState != @((int)CJG.Core.Entities.ClaimState.Unassessed)">
-                    <a href="/Ext/Claim/assessment/View/{{claim.ClaimId}}/{{claim.ClaimVersion}}">View Claim Assessment</a>
+                    <a href="/Ext/Claim/Assessment/View/{{claim.ClaimId}}/{{claim.ClaimVersion}}">View Claim Assessment</a>
                 </td>
                 <td>{{toPST(claim.DateSubmitted)}}</td>
                 <td ng-if="claim.DateAssessed">{{toPST(claim.DateAssessed)}}</td>

@@ -442,37 +442,34 @@ namespace CJG.Application.Services
 
 		public IDictionary<string, decimal> GetParticipantYTD(GrantApplication grantApplication)
 		{
-			var enteredSiNs = grantApplication.ParticipantForms.Select(x => x.SIN).ToList();
 			var defaultGrantProgramId = GetDefaultGrantProgramId();
-			var applicationStates = new[]
-			{
-				ApplicationStateInternal.AgreementAccepted, ApplicationStateInternal.ChangeRequest,
-				ApplicationStateInternal.ChangeForApproval, ApplicationStateInternal.ChangeForDenial,
-				ApplicationStateInternal.ChangeReturned, ApplicationStateInternal.ChangeRequestDenied,
-				ApplicationStateInternal.NewClaim,
-				ApplicationStateInternal.ClaimAssessEligibility, ApplicationStateInternal.ClaimReturnedToApplicant,
-				ApplicationStateInternal.ClaimDenied, ApplicationStateInternal.ClaimApproved,
-				ApplicationStateInternal.Closed,
-				ApplicationStateInternal.ClaimAssessReimbursement, ApplicationStateInternal.CompletionReporting
-			};
 
-			var queryParticipantCost = (from pc in _dbContext.ParticipantCosts
-					join pf in _dbContext.ParticipantForms on pc.ParticipantFormId equals pf.Id
-					join ga in _dbContext.GrantApplications on pf.GrantApplicationId equals ga.Id
-					where applicationStates.Contains(ga.ApplicationStateInternal)
-					      && ga.GrantOpening.GrantStream.GrantProgramId == defaultGrantProgramId
-					      && ga.GrantOpening.TrainingPeriod.FiscalYearId == grantApplication.GrantOpening.TrainingPeriod.FiscalYearId
-						  && ga.PaymentRequests.Any() 
-					      && enteredSiNs.Contains(pf.SIN)
-					select new {pc, pf}
-					into pg
-					select pg)
+			var enteredSins = grantApplication.ParticipantForms
+				.Select(x => x.SIN)
 				.ToList();
 
-			return queryParticipantCost
-				.GroupBy(o => o.pf.SIN)
-				.Select(o => new { Amount = o.Sum(b => b.pc.AssessedReimbursement), SIN = o.Key })
-				.ToDictionary(x => x.SIN, x => x.Amount);
+			var yearToDateBySin = new Dictionary<string, decimal>();
+
+			foreach (var sin in enteredSins)
+			{
+				var pifsBySin = GetParticipantFormsBySIN(sin)
+					.Where(w => w.GrantApplication.FileNumber != null)
+					.Where(w => w.GrantApplication.GrantOpening.GrantStream.GrantProgramId == defaultGrantProgramId)
+					.Where(w => w.GrantApplication.GrantOpening.TrainingPeriod.FiscalYearId == grantApplication.GrantOpening.TrainingPeriod.FiscalYearId);
+
+				foreach (var pif in pifsBySin)
+				{
+					var amountPaid = pif.ParticipantCosts
+						.Where(pf => pf.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimApproved ||
+						             pf.ClaimEligibleCost.Claim.ClaimState == ClaimState.PaymentRequested ||
+						             pf.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimPaid)
+						.Sum(pf => pf.AssessedReimbursement);
+
+					yearToDateBySin.Add(sin, amountPaid);
+				}
+			}
+
+			return yearToDateBySin;
 		}
 
 		public IEnumerable<ParticipantForm> GetParticipantFormsBySIN(string sin)

@@ -12,7 +12,6 @@ namespace CJG.Application.Services
 			if (!grantApplications.Any())
 				return (0, 0);
 
-
 			var applicationClaims = grantApplications
 				.SelectMany(ga => ga.Claims)
 				.Where(q => q.ClaimState
@@ -20,7 +19,8 @@ namespace CJG.Application.Services
 				.ToList();
 
 			// Sum the two claim types, SingleAmendableClaim and the rest.
-			var singleAmendablePayments = applicationClaims.Where(c => c.ClaimTypeId == ClaimTypes.SingleAmendableClaim)
+			var singleAmendablePayments = applicationClaims
+				.Where(c => c.ClaimTypeId == ClaimTypes.SingleAmendableClaim)
 				.Sum(q => q.TotalAssessedReimbursement
 				          - q.GrantApplication.PaymentRequests
 					          .Where(o => o.ClaimVersion != q.ClaimVersion)
@@ -30,10 +30,14 @@ namespace CJG.Application.Services
 				.Where(c => c.ClaimTypeId == ClaimTypes.MultipleClaimsWithoutAmendments)
 				.Sum(q => q.TotalAssessedReimbursement);
 
-			var numberOfApplication = grantApplications.Count();
+			var applicationsWithClaims = applicationClaims
+				.Select(c => c.GrantApplicationId)
+				.Distinct()
+				.Count();
+
 			var totalPaid = singleAmendablePayments + totalAmendablePayments;
 
-			return (numberOfApplication, totalPaid);
+			return (applicationsWithClaims, totalPaid);
 		}
 	}
 }

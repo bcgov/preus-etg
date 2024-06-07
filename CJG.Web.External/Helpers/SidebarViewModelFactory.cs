@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -188,7 +188,8 @@ namespace CJG.Web.External.Helpers
 
 					AllowedExternalStates = new[]
 					{
-						ApplicationStateExternal.ClaimSubmitted
+						ApplicationStateExternal.ClaimSubmitted,
+						ApplicationStateExternal.CancelledByMinistry
 					},
 					AllowedPaths = new[]
 					{
@@ -313,16 +314,19 @@ namespace CJG.Web.External.Helpers
 
 		public SidebarViewModel Build(GrantApplication grantApplication, string path)
 		{
-			var model = new SidebarViewModel(grantApplication,
-				_links.Where(x =>
-						x.AllowedPaths != null && x.AllowedPaths.Contains(path, StringComparer.InvariantCultureIgnoreCase) &&
-						(
-							x.AllowedExternalStates.Contains(grantApplication.ApplicationStateExternal)
-								? x.AndConditionFunc == null || x.AndConditionFunc(grantApplication)
-								: x.OrConditionFunc != null && x.OrConditionFunc(grantApplication)
-						)
+			var sidebarLinkViewModels = _links.Where(x =>
+					x.AllowedPaths != null
+					&& x.AllowedPaths.Contains(path, StringComparer.InvariantCultureIgnoreCase)
+					&&
+					(
+						x.AllowedExternalStates.Contains(grantApplication.ApplicationStateExternal)
+							? x.AndConditionFunc == null || x.AndConditionFunc(grantApplication)
+							: x.OrConditionFunc != null && x.OrConditionFunc(grantApplication)
 					)
-					.ToDictionary(x => x.LinkType, x => SetHighlighted(x.ViewModel, x.ContainerPath, path)));
+				)
+				.ToDictionary(x => x.LinkType, x => SetHighlighted(x.ViewModel, x.ContainerPath, path));
+
+			var model = new SidebarViewModel(grantApplication, sidebarLinkViewModels);
 			model.CurrentPath = path; // Temp debug - remove later
 			model.ShowClaimInformation = ShowClaimInformation(path);
 			return model;

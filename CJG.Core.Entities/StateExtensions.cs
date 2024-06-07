@@ -20,49 +20,49 @@ namespace CJG.Core.Entities
 		{
 			switch (state)
 			{
-				case (ApplicationStateExternal.NotStarted):
-				case (ApplicationStateExternal.Incomplete):
-				case (ApplicationStateExternal.Complete):
+				case ApplicationStateExternal.NotStarted:
+				case ApplicationStateExternal.Incomplete:
+				case ApplicationStateExternal.Complete:
 					return ApplicationStateInternal.Draft;
-				case (ApplicationStateExternal.Submitted):
+				case ApplicationStateExternal.Submitted:
 					return ApplicationStateInternal.New;
-				case (ApplicationStateExternal.ApplicationWithdrawn):
+				case ApplicationStateExternal.ApplicationWithdrawn:
 					return ApplicationStateInternal.ApplicationWithdrawn;
-				case (ApplicationStateExternal.Approved):
-				case (ApplicationStateExternal.AmendClaim):
-				case (ApplicationStateExternal.ChangeRequestApproved):
+				case ApplicationStateExternal.Approved:
+				case ApplicationStateExternal.AmendClaim:
+				case ApplicationStateExternal.ChangeRequestApproved:
 					return ApplicationStateInternal.AgreementAccepted;
-				case (ApplicationStateExternal.ApplicationDenied):
+				case ApplicationStateExternal.ApplicationDenied:
 					return ApplicationStateInternal.ApplicationDenied;
-				case (ApplicationStateExternal.CancelledByMinistry):
+				case ApplicationStateExternal.CancelledByMinistry:
 					return ApplicationStateInternal.CancelledByMinistry;
-				case (ApplicationStateExternal.CancelledByAgreementHolder):
+				case ApplicationStateExternal.CancelledByAgreementHolder:
 					return ApplicationStateInternal.CancelledByAgreementHolder;
-				case (ApplicationStateExternal.AcceptGrantAgreement):
+				case ApplicationStateExternal.AcceptGrantAgreement:
 					return ApplicationStateInternal.OfferIssued;
-				case (ApplicationStateExternal.ChangeRequestSubmitted):
+				case ApplicationStateExternal.ChangeRequestSubmitted:
 					return ApplicationStateInternal.ChangeRequest;
-				case (ApplicationStateExternal.ChangeRequestDenied):
+				case ApplicationStateExternal.ChangeRequestDenied:
 					return ApplicationStateInternal.ChangeRequestDenied;
-				case (ApplicationStateExternal.NotAccepted):
+				case ApplicationStateExternal.NotAccepted:
 					return ApplicationStateInternal.Unfunded;
-				case (ApplicationStateExternal.AgreementWithdrawn):
+				case ApplicationStateExternal.AgreementWithdrawn:
 					return ApplicationStateInternal.OfferWithdrawn;
-				case (ApplicationStateExternal.ClaimSubmitted):
+				case ApplicationStateExternal.ClaimSubmitted:
 					return ApplicationStateInternal.NewClaim;
-				case (ApplicationStateExternal.ClaimReturned):
+				case ApplicationStateExternal.ClaimReturned:
 					return ApplicationStateInternal.ClaimReturnedToApplicant;
-				case (ApplicationStateExternal.ClaimDenied):
+				case ApplicationStateExternal.ClaimDenied:
 					return ApplicationStateInternal.ClaimDenied;
-				case (ApplicationStateExternal.ClaimApproved):
+				case ApplicationStateExternal.ClaimApproved:
 					return ApplicationStateInternal.ClaimApproved;
-				case (ApplicationStateExternal.AgreementRejected):
+				case ApplicationStateExternal.AgreementRejected:
 					return ApplicationStateInternal.AgreementRejected;
-				case (ApplicationStateExternal.Closed):
+				case ApplicationStateExternal.Closed:
 					return ApplicationStateInternal.Closed;
-				case (ApplicationStateExternal.ReportCompletion):
+				case ApplicationStateExternal.ReportCompletion:
 					return ApplicationStateInternal.CompletionReporting;
-				case (ApplicationStateExternal.ReturnedUnassessed):
+				case ApplicationStateExternal.ReturnedUnassessed:
 					return ApplicationStateInternal.ReturnedUnassessed;
 				default:
 					throw new InvalidOperationException($"There is no internal state associated with the specified external state '{state.ToString("g")}'.");
@@ -79,51 +79,51 @@ namespace CJG.Core.Entities
 		{
 			switch (state)
 			{
-				case (ApplicationStateInternal.Draft):
+				case ApplicationStateInternal.Draft:
 					return ApplicationStateExternal.Incomplete;
-				case (ApplicationStateInternal.New):
-				case (ApplicationStateInternal.PendingAssessment):
-				case (ApplicationStateInternal.UnderAssessment):
-				case (ApplicationStateInternal.ReturnedToAssessment):
-				case (ApplicationStateInternal.RecommendedForApproval):
-				case (ApplicationStateInternal.RecommendedForDenial):
+				case ApplicationStateInternal.New:
+				case ApplicationStateInternal.PendingAssessment:
+				case ApplicationStateInternal.UnderAssessment:
+				case ApplicationStateInternal.ReturnedToAssessment:
+				case ApplicationStateInternal.RecommendedForApproval:
+				case ApplicationStateInternal.RecommendedForDenial:
 					return ApplicationStateExternal.Submitted;
-				case (ApplicationStateInternal.OfferIssued):
+				case ApplicationStateInternal.OfferIssued:
 					return ApplicationStateExternal.AcceptGrantAgreement;
-				case (ApplicationStateInternal.OfferWithdrawn):
+				case ApplicationStateInternal.OfferWithdrawn:
 					return ApplicationStateExternal.AgreementWithdrawn;
-				case (ApplicationStateInternal.AgreementAccepted):
+				case ApplicationStateInternal.AgreementAccepted:
 					return ApplicationStateExternal.Approved;
-				case (ApplicationStateInternal.ApplicationDenied):
+				case ApplicationStateInternal.ApplicationDenied:
 					return ApplicationStateExternal.ApplicationDenied;
-				case (ApplicationStateInternal.Unfunded):
+				case ApplicationStateInternal.Unfunded:
 					return ApplicationStateExternal.NotAccepted;
-				case (ApplicationStateInternal.AgreementRejected):
+				case ApplicationStateInternal.AgreementRejected:
 					return ApplicationStateExternal.AgreementRejected;
-				case (ApplicationStateInternal.ApplicationWithdrawn):
+				case ApplicationStateInternal.ApplicationWithdrawn:
 					return ApplicationStateExternal.ApplicationWithdrawn;
-				case (ApplicationStateInternal.CancelledByMinistry):
+				case ApplicationStateInternal.CancelledByMinistry:
 					return ApplicationStateExternal.CancelledByMinistry;
-				case (ApplicationStateInternal.CancelledByAgreementHolder):
+				case ApplicationStateInternal.CancelledByAgreementHolder:
 					return ApplicationStateExternal.CancelledByAgreementHolder;
-				case (ApplicationStateInternal.ChangeRequest):
-				case (ApplicationStateInternal.ChangeForApproval):
-				case (ApplicationStateInternal.ChangeForDenial):
-				case (ApplicationStateInternal.ChangeReturned):
+				case ApplicationStateInternal.ChangeRequest:
+				case ApplicationStateInternal.ChangeForApproval:
+				case ApplicationStateInternal.ChangeForDenial:
+				case ApplicationStateInternal.ChangeReturned:
 					return ApplicationStateExternal.ChangeRequestSubmitted;
-				case (ApplicationStateInternal.ChangeRequestDenied):
+				case ApplicationStateInternal.ChangeRequestDenied:
 					return ApplicationStateExternal.ChangeRequestDenied;
-				case (ApplicationStateInternal.NewClaim):
-				case (ApplicationStateInternal.ClaimAssessEligibility):
-				case (ApplicationStateInternal.ClaimAssessReimbursement):
+				case ApplicationStateInternal.NewClaim:
+				case ApplicationStateInternal.ClaimAssessEligibility:
+				case ApplicationStateInternal.ClaimAssessReimbursement:
 					return ApplicationStateExternal.ClaimSubmitted;
-				case (ApplicationStateInternal.ClaimReturnedToApplicant):
+				case ApplicationStateInternal.ClaimReturnedToApplicant:
 					return ApplicationStateExternal.ClaimReturned;
-				case (ApplicationStateInternal.ClaimDenied):
+				case ApplicationStateInternal.ClaimDenied:
 					return ApplicationStateExternal.ClaimDenied;
-				case (ApplicationStateInternal.ClaimApproved):
+				case ApplicationStateInternal.ClaimApproved:
 					return ApplicationStateExternal.ClaimApproved;
-				case (ApplicationStateInternal.CompletionReporting):
+				case ApplicationStateInternal.CompletionReporting:
 					return ApplicationStateExternal.ReportCompletion;
 				case ApplicationStateInternal.Closed:
 					return ApplicationStateExternal.Closed;
@@ -184,11 +184,11 @@ namespace CJG.Core.Entities
 			{ ApplicationStateInternal.NewClaim, new[] {                    ApplicationWorkflowTrigger.ViewApplication, ApplicationWorkflowTrigger.EditApplication, ApplicationWorkflowTrigger.AddRemoveTrainingProvider,   ApplicationWorkflowTrigger.EditTrainingProvider,                                                        ApplicationWorkflowTrigger.EditTrainingProgram, ApplicationWorkflowTrigger.EditTrainingCosts, ApplicationWorkflowTrigger.EditTrainingCostOverride, ApplicationWorkflowTrigger.EditSummary,  ApplicationWorkflowTrigger.EditApplicationAttachments,  ApplicationWorkflowTrigger.EditApplicant, ApplicationWorkflowTrigger.EditProgramDescription, ApplicationWorkflowTrigger.EditApplicantContact, ApplicationWorkflowTrigger.ChangeApplicantContactButton, ApplicationWorkflowTrigger.ValidateTrainingProvider,                                                   ApplicationWorkflowTrigger.ReassignAssessor, ApplicationWorkflowTrigger.CancelAgreementMinistry,                                                                                                    ApplicationWorkflowTrigger.ViewParticipants, ApplicationWorkflowTrigger.EditParticipants, ApplicationWorkflowTrigger.EnableApplicantReportingOfParticipants,                                            ApplicationWorkflowTrigger.ViewClaim, ApplicationWorkflowTrigger.EditClaim,     ApplicationWorkflowTrigger.WithdrawClaim, ApplicationWorkflowTrigger.SelectClaimForAssessment,                                                                                                                                              ApplicationWorkflowTrigger.GeneratePaymentRequest, ApplicationWorkflowTrigger.HoldPaymentRequests, ApplicationWorkflowTrigger.EnableParticipantReporting, ApplicationWorkflowTrigger.UpdateParticipants } },
 			{ ApplicationStateInternal.ClaimAssessEligibility, new[] {      ApplicationWorkflowTrigger.ViewApplication, ApplicationWorkflowTrigger.EditApplication, ApplicationWorkflowTrigger.AddRemoveTrainingProvider,   ApplicationWorkflowTrigger.EditTrainingProvider,                                                        ApplicationWorkflowTrigger.EditTrainingProgram, ApplicationWorkflowTrigger.EditTrainingCosts, ApplicationWorkflowTrigger.EditTrainingCostOverride, ApplicationWorkflowTrigger.EditSummary,  ApplicationWorkflowTrigger.EditApplicationAttachments,  ApplicationWorkflowTrigger.EditApplicant, ApplicationWorkflowTrigger.EditProgramDescription, ApplicationWorkflowTrigger.EditApplicantContact, ApplicationWorkflowTrigger.ChangeApplicantContactButton, ApplicationWorkflowTrigger.ValidateTrainingProvider,                                                   ApplicationWorkflowTrigger.ReassignAssessor, ApplicationWorkflowTrigger.CancelAgreementMinistry,                                                                                                    ApplicationWorkflowTrigger.ViewParticipants, ApplicationWorkflowTrigger.EditParticipants, ApplicationWorkflowTrigger.EnableApplicantReportingOfParticipants,                                            ApplicationWorkflowTrigger.ViewClaim, ApplicationWorkflowTrigger.EditClaim,     ApplicationWorkflowTrigger.WithdrawClaim, ApplicationWorkflowTrigger.ReturnClaimToApplicant, ApplicationWorkflowTrigger.DenyClaim, ApplicationWorkflowTrigger.RemoveClaimFromAssessment, ApplicationWorkflowTrigger.AssessReimbursement,    ApplicationWorkflowTrigger.GeneratePaymentRequest, ApplicationWorkflowTrigger.HoldPaymentRequests, ApplicationWorkflowTrigger.EnableParticipantReporting, ApplicationWorkflowTrigger.UpdateParticipants } },
 			{ ApplicationStateInternal.ClaimAssessReimbursement, new[] {    ApplicationWorkflowTrigger.ViewApplication, ApplicationWorkflowTrigger.EditApplication, ApplicationWorkflowTrigger.AddRemoveTrainingProvider,   ApplicationWorkflowTrigger.EditTrainingProvider,                                                        ApplicationWorkflowTrigger.EditTrainingProgram, ApplicationWorkflowTrigger.EditTrainingCosts, ApplicationWorkflowTrigger.EditTrainingCostOverride, ApplicationWorkflowTrigger.EditSummary,  ApplicationWorkflowTrigger.EditApplicationAttachments,  ApplicationWorkflowTrigger.EditApplicant, ApplicationWorkflowTrigger.EditProgramDescription, ApplicationWorkflowTrigger.EditApplicantContact, ApplicationWorkflowTrigger.ChangeApplicantContactButton, ApplicationWorkflowTrigger.ValidateTrainingProvider,                                                   ApplicationWorkflowTrigger.ReassignAssessor, ApplicationWorkflowTrigger.CancelAgreementMinistry,                                                                                                    ApplicationWorkflowTrigger.ViewParticipants, ApplicationWorkflowTrigger.EditParticipants, ApplicationWorkflowTrigger.EnableApplicantReportingOfParticipants,                                            ApplicationWorkflowTrigger.ViewClaim, ApplicationWorkflowTrigger.EditClaim,     ApplicationWorkflowTrigger.WithdrawClaim, ApplicationWorkflowTrigger.ReturnClaimToApplicant, ApplicationWorkflowTrigger.DenyClaim, ApplicationWorkflowTrigger.ApproveClaim, ApplicationWorkflowTrigger.AssessEligibility,                   ApplicationWorkflowTrigger.GeneratePaymentRequest, ApplicationWorkflowTrigger.HoldPaymentRequests, ApplicationWorkflowTrigger.EnableParticipantReporting, ApplicationWorkflowTrigger.UpdateParticipants } },
-			{ ApplicationStateInternal.ClaimReturnedToApplicant, new[] {    ApplicationWorkflowTrigger.ViewApplication, ApplicationWorkflowTrigger.EditApplication, ApplicationWorkflowTrigger.AddRemoveTrainingProvider,   ApplicationWorkflowTrigger.EditTrainingProvider, ApplicationWorkflowTrigger.AddOrRemoveTrainingProgram, ApplicationWorkflowTrigger.EditTrainingProgram, ApplicationWorkflowTrigger.EditTrainingCosts, ApplicationWorkflowTrigger.EditTrainingCostOverride, ApplicationWorkflowTrigger.EditSummary,  ApplicationWorkflowTrigger.EditApplicationAttachments,  ApplicationWorkflowTrigger.EditApplicant, ApplicationWorkflowTrigger.EditProgramDescription, ApplicationWorkflowTrigger.EditApplicantContact, ApplicationWorkflowTrigger.ChangeApplicantContactButton, ApplicationWorkflowTrigger.ValidateTrainingProvider,                                                   ApplicationWorkflowTrigger.ReassignAssessor, ApplicationWorkflowTrigger.CancelAgreementMinistry,                                                    ApplicationWorkflowTrigger.SubmitChangeRequest, ApplicationWorkflowTrigger.ViewParticipants, ApplicationWorkflowTrigger.EditParticipants, ApplicationWorkflowTrigger.EnableApplicantReportingOfParticipants,                                            ApplicationWorkflowTrigger.ViewClaim, ApplicationWorkflowTrigger.EditClaim, ApplicationWorkflowTrigger.SubmitClaim, ApplicationWorkflowTrigger.CloseClaimReporting,                                                                                                                                                         ApplicationWorkflowTrigger.GeneratePaymentRequest, ApplicationWorkflowTrigger.HoldPaymentRequests } },
-			{ ApplicationStateInternal.ClaimDenied, new[] {                 ApplicationWorkflowTrigger.ViewApplication, ApplicationWorkflowTrigger.EditApplication, ApplicationWorkflowTrigger.AddRemoveTrainingProvider,   ApplicationWorkflowTrigger.EditTrainingProvider, ApplicationWorkflowTrigger.AddOrRemoveTrainingProgram, ApplicationWorkflowTrigger.EditTrainingProgram, ApplicationWorkflowTrigger.EditTrainingCosts, ApplicationWorkflowTrigger.EditTrainingCostOverride, ApplicationWorkflowTrigger.EditSummary,  ApplicationWorkflowTrigger.EditApplicationAttachments,  ApplicationWorkflowTrigger.EditApplicant, ApplicationWorkflowTrigger.EditProgramDescription, ApplicationWorkflowTrigger.EditApplicantContact, ApplicationWorkflowTrigger.ChangeApplicantContactButton, ApplicationWorkflowTrigger.ValidateTrainingProvider,                                                   ApplicationWorkflowTrigger.ReassignAssessor, ApplicationWorkflowTrigger.CancelAgreementMinistry,                                                    ApplicationWorkflowTrigger.SubmitChangeRequest, ApplicationWorkflowTrigger.ViewParticipants, ApplicationWorkflowTrigger.EditParticipants, ApplicationWorkflowTrigger.EnableApplicantReportingOfParticipants, ApplicationWorkflowTrigger.CreateClaim,    ApplicationWorkflowTrigger.ViewClaim, ApplicationWorkflowTrigger.EditClaim, ApplicationWorkflowTrigger.SubmitClaim, ApplicationWorkflowTrigger.CloseClaimReporting, ApplicationWorkflowTrigger.AmendClaim,                                                                                                                  ApplicationWorkflowTrigger.GeneratePaymentRequest, ApplicationWorkflowTrigger.HoldPaymentRequests } },
-			{ ApplicationStateInternal.ClaimApproved, new[] {               ApplicationWorkflowTrigger.ViewApplication, ApplicationWorkflowTrigger.EditApplication,                                                         ApplicationWorkflowTrigger.EditTrainingProvider,                                                        ApplicationWorkflowTrigger.EditTrainingProgram,                                                                                                    ApplicationWorkflowTrigger.EditSummary,  ApplicationWorkflowTrigger.EditApplicationAttachments,  ApplicationWorkflowTrigger.EditApplicant, ApplicationWorkflowTrigger.EditProgramDescription, ApplicationWorkflowTrigger.EditApplicantContact, ApplicationWorkflowTrigger.ChangeApplicantContactButton, ApplicationWorkflowTrigger.ValidateTrainingProvider,                                                   ApplicationWorkflowTrigger.ReassignAssessor, ApplicationWorkflowTrigger.CancelAgreementMinistry,                                                    ApplicationWorkflowTrigger.SubmitChangeRequest, ApplicationWorkflowTrigger.ViewParticipants, ApplicationWorkflowTrigger.EditParticipants, ApplicationWorkflowTrigger.EnableApplicantReportingOfParticipants, ApplicationWorkflowTrigger.CreateClaim,    ApplicationWorkflowTrigger.ViewClaim, ApplicationWorkflowTrigger.EditClaim, ApplicationWorkflowTrigger.SubmitClaim, ApplicationWorkflowTrigger.CloseClaimReporting, ApplicationWorkflowTrigger.AmendClaim,                                                                                                                  ApplicationWorkflowTrigger.GeneratePaymentRequest, ApplicationWorkflowTrigger.HoldPaymentRequests } },
+			{ ApplicationStateInternal.ClaimReturnedToApplicant, new[] {    ApplicationWorkflowTrigger.ViewApplication, ApplicationWorkflowTrigger.EditApplication, ApplicationWorkflowTrigger.AddRemoveTrainingProvider,   ApplicationWorkflowTrigger.EditTrainingProvider, ApplicationWorkflowTrigger.AddOrRemoveTrainingProgram, ApplicationWorkflowTrigger.EditTrainingProgram, ApplicationWorkflowTrigger.EditTrainingCosts, ApplicationWorkflowTrigger.EditTrainingCostOverride, ApplicationWorkflowTrigger.EditSummary,  ApplicationWorkflowTrigger.EditApplicationAttachments,  ApplicationWorkflowTrigger.EditApplicant, ApplicationWorkflowTrigger.EditProgramDescription, ApplicationWorkflowTrigger.EditApplicantContact, ApplicationWorkflowTrigger.ChangeApplicantContactButton, ApplicationWorkflowTrigger.ValidateTrainingProvider,                                                   ApplicationWorkflowTrigger.ReassignAssessor, ApplicationWorkflowTrigger.CancelAgreementMinistry,                                                    ApplicationWorkflowTrigger.SubmitChangeRequest, ApplicationWorkflowTrigger.ViewParticipants, ApplicationWorkflowTrigger.EditParticipants, ApplicationWorkflowTrigger.EnableApplicantReportingOfParticipants,                                            ApplicationWorkflowTrigger.ViewClaim, ApplicationWorkflowTrigger.EditClaim, ApplicationWorkflowTrigger.SubmitClaim, ApplicationWorkflowTrigger.CloseClaimReporting,                                                                                                                                                         ApplicationWorkflowTrigger.GeneratePaymentRequest, ApplicationWorkflowTrigger.HoldPaymentRequests, ApplicationWorkflowTrigger.ReverseClaimReturnedToApplicant } },
+			{ ApplicationStateInternal.ClaimDenied, new[] {                 ApplicationWorkflowTrigger.ViewApplication, ApplicationWorkflowTrigger.EditApplication, ApplicationWorkflowTrigger.AddRemoveTrainingProvider,   ApplicationWorkflowTrigger.EditTrainingProvider, ApplicationWorkflowTrigger.AddOrRemoveTrainingProgram, ApplicationWorkflowTrigger.EditTrainingProgram, ApplicationWorkflowTrigger.EditTrainingCosts, ApplicationWorkflowTrigger.EditTrainingCostOverride, ApplicationWorkflowTrigger.EditSummary,  ApplicationWorkflowTrigger.EditApplicationAttachments,  ApplicationWorkflowTrigger.EditApplicant, ApplicationWorkflowTrigger.EditProgramDescription, ApplicationWorkflowTrigger.EditApplicantContact, ApplicationWorkflowTrigger.ChangeApplicantContactButton, ApplicationWorkflowTrigger.ValidateTrainingProvider,                                                   ApplicationWorkflowTrigger.ReassignAssessor, ApplicationWorkflowTrigger.CancelAgreementMinistry,                                                    ApplicationWorkflowTrigger.SubmitChangeRequest, ApplicationWorkflowTrigger.ViewParticipants, ApplicationWorkflowTrigger.EditParticipants, ApplicationWorkflowTrigger.EnableApplicantReportingOfParticipants, ApplicationWorkflowTrigger.CreateClaim,    ApplicationWorkflowTrigger.ViewClaim, ApplicationWorkflowTrigger.EditClaim, ApplicationWorkflowTrigger.SubmitClaim, ApplicationWorkflowTrigger.CloseClaimReporting, ApplicationWorkflowTrigger.AmendClaim,                                                                                                                  ApplicationWorkflowTrigger.GeneratePaymentRequest, ApplicationWorkflowTrigger.HoldPaymentRequests, ApplicationWorkflowTrigger.ReverseClaimDenied } },
+			{ ApplicationStateInternal.ClaimApproved, new[] {               ApplicationWorkflowTrigger.ViewApplication, ApplicationWorkflowTrigger.EditApplication,                                                         ApplicationWorkflowTrigger.EditTrainingProvider,                                                        ApplicationWorkflowTrigger.EditTrainingProgram,                                                                                                    ApplicationWorkflowTrigger.EditSummary,  ApplicationWorkflowTrigger.EditApplicationAttachments,  ApplicationWorkflowTrigger.EditApplicant, ApplicationWorkflowTrigger.EditProgramDescription, ApplicationWorkflowTrigger.EditApplicantContact, ApplicationWorkflowTrigger.ChangeApplicantContactButton, ApplicationWorkflowTrigger.ValidateTrainingProvider,                                                   ApplicationWorkflowTrigger.ReassignAssessor, ApplicationWorkflowTrigger.CancelAgreementMinistry,                                                    ApplicationWorkflowTrigger.SubmitChangeRequest, ApplicationWorkflowTrigger.ViewParticipants, ApplicationWorkflowTrigger.EditParticipants, ApplicationWorkflowTrigger.EnableApplicantReportingOfParticipants, ApplicationWorkflowTrigger.CreateClaim,    ApplicationWorkflowTrigger.ViewClaim, ApplicationWorkflowTrigger.EditClaim, ApplicationWorkflowTrigger.SubmitClaim, ApplicationWorkflowTrigger.CloseClaimReporting, ApplicationWorkflowTrigger.AmendClaim,                                                                                                                  ApplicationWorkflowTrigger.GeneratePaymentRequest, ApplicationWorkflowTrigger.HoldPaymentRequests, ApplicationWorkflowTrigger.ReverseClaimApproved } },
 			{ ApplicationStateInternal.Closed, new[] {                      ApplicationWorkflowTrigger.ViewApplication, ApplicationWorkflowTrigger.EditApplication,                                                                                                                                                                                                                                                                                                                    ApplicationWorkflowTrigger.EditSummary,                                                          ApplicationWorkflowTrigger.EditApplicant, ApplicationWorkflowTrigger.EditProgramDescription, ApplicationWorkflowTrigger.EditApplicantContact, ApplicationWorkflowTrigger.ChangeApplicantContactButton,                                                                                                        ApplicationWorkflowTrigger.ReassignAssessor,                                                                                                                                                        ApplicationWorkflowTrigger.ViewParticipants,                                                                                                                                                            ApplicationWorkflowTrigger.ViewClaim,                                           ApplicationWorkflowTrigger.EnableClaimReporting, ApplicationWorkflowTrigger.EnableCompletionReporting,                                                                                                                                      ApplicationWorkflowTrigger.GeneratePaymentRequest, ApplicationWorkflowTrigger.HoldPaymentRequests } },
-			{ ApplicationStateInternal.CompletionReporting, new[] {         ApplicationWorkflowTrigger.ViewApplication, ApplicationWorkflowTrigger.EditApplication,                                                                                                                                                                                                                                                                                                                    ApplicationWorkflowTrigger.EditSummary,  ApplicationWorkflowTrigger.EditApplicationAttachments,  ApplicationWorkflowTrigger.EditApplicant, ApplicationWorkflowTrigger.EditProgramDescription, ApplicationWorkflowTrigger.EditApplicantContact, ApplicationWorkflowTrigger.ChangeApplicantContactButton,                                                                                                        ApplicationWorkflowTrigger.ReassignAssessor,                                                                                                                                                        ApplicationWorkflowTrigger.ViewParticipants,                                                                                                                                                            ApplicationWorkflowTrigger.ViewClaim, ApplicationWorkflowTrigger.EditClaim,     ApplicationWorkflowTrigger.EnableClaimReporting, ApplicationWorkflowTrigger.Close, ApplicationWorkflowTrigger.SubmitCompletionReport,                                                                                                       ApplicationWorkflowTrigger.GeneratePaymentRequest, ApplicationWorkflowTrigger.HoldPaymentRequests } }
+			{ ApplicationStateInternal.CompletionReporting, new[] {         ApplicationWorkflowTrigger.ViewApplication, ApplicationWorkflowTrigger.EditApplication,                                                                                                                                                                                                                                                                                                                    ApplicationWorkflowTrigger.EditSummary,  ApplicationWorkflowTrigger.EditApplicationAttachments,  ApplicationWorkflowTrigger.EditApplicant, ApplicationWorkflowTrigger.EditProgramDescription, ApplicationWorkflowTrigger.EditApplicantContact, ApplicationWorkflowTrigger.ChangeApplicantContactButton,                                                                                                        ApplicationWorkflowTrigger.ReassignAssessor,                                                                                                                                                        ApplicationWorkflowTrigger.ViewParticipants,                                                                                                                                                            ApplicationWorkflowTrigger.ViewClaim, ApplicationWorkflowTrigger.EditClaim,     ApplicationWorkflowTrigger.EnableClaimReporting, ApplicationWorkflowTrigger.Close, ApplicationWorkflowTrigger.SubmitCompletionReport,                                                                                                       ApplicationWorkflowTrigger.GeneratePaymentRequest, ApplicationWorkflowTrigger.HoldPaymentRequests, ApplicationWorkflowTrigger.ReverseClaimApproved } }
 		}.ToImmutableDictionary();
 
 		/// <summary>
@@ -273,6 +273,9 @@ namespace CJG.Core.Entities
 			{ ApplicationWorkflowTrigger.SelectClaimForAssessment, ApplicationStateInternal.ClaimAssessEligibility },
 			{ ApplicationWorkflowTrigger.RemoveClaimFromAssessment, ApplicationStateInternal.NewClaim },
 			{ ApplicationWorkflowTrigger.ReturnClaimToApplicant, ApplicationStateInternal.ClaimReturnedToApplicant },
+			{ ApplicationWorkflowTrigger.ReverseClaimReturnedToApplicant, ApplicationStateInternal.NewClaim },
+			{ ApplicationWorkflowTrigger.ReverseClaimDenied, ApplicationStateInternal.NewClaim },
+			{ ApplicationWorkflowTrigger.ReverseClaimApproved, ApplicationStateInternal.NewClaim },
 			{ ApplicationWorkflowTrigger.AssessReimbursement, ApplicationStateInternal.ClaimAssessReimbursement },
 			{ ApplicationWorkflowTrigger.AssessEligibility, ApplicationStateInternal.ClaimAssessEligibility },
 			{ ApplicationWorkflowTrigger.ApproveClaim, ApplicationStateInternal.ClaimApproved },
@@ -333,7 +336,7 @@ namespace CJG.Core.Entities
 			{ ApplicationStateInternal.ClaimReturnedToApplicant, new[] { ApplicationStateInternal.CancelledByMinistry, ApplicationStateInternal.NewClaim, ApplicationStateInternal.ChangeRequest, ApplicationStateInternal.CompletionReporting } },
 			{ ApplicationStateInternal.ClaimDenied, new[] { ApplicationStateInternal.CancelledByMinistry, ApplicationStateInternal.NewClaim, ApplicationStateInternal.AgreementAccepted, ApplicationStateInternal.ChangeRequest, ApplicationStateInternal.CompletionReporting } },
 			{ ApplicationStateInternal.ClaimApproved, new[] { ApplicationStateInternal.CancelledByMinistry, ApplicationStateInternal.NewClaim, ApplicationStateInternal.AgreementAccepted, ApplicationStateInternal.ChangeRequest, ApplicationStateInternal.CompletionReporting } },
-			{ ApplicationStateInternal.CompletionReporting, new [] { ApplicationStateInternal.AgreementAccepted, ApplicationStateInternal.CancelledByMinistry, ApplicationStateInternal.Closed } },
+			{ ApplicationStateInternal.CompletionReporting, new [] { ApplicationStateInternal.AgreementAccepted, ApplicationStateInternal.CancelledByMinistry, ApplicationStateInternal.Closed, ApplicationStateInternal.NewClaim } },
 			{ ApplicationStateInternal.Closed, new [] { ApplicationStateInternal.CompletionReporting, ApplicationStateInternal.AgreementAccepted } }
 		}.ToImmutableDictionary();
 
@@ -404,7 +407,7 @@ namespace CJG.Core.Entities
 			{ ApplicationStateExternal.ClaimDenied, new[] { ApplicationStateExternal.CancelledByMinistry, ApplicationStateExternal.ChangeRequestSubmitted, ApplicationStateExternal.ClaimSubmitted, ApplicationStateExternal.AmendClaim, ApplicationStateExternal.ReportCompletion, ApplicationStateExternal.Approved } },
 			{ ApplicationStateExternal.ClaimApproved, new[] { ApplicationStateExternal.CancelledByMinistry, ApplicationStateExternal.ChangeRequestSubmitted, ApplicationStateExternal.ClaimSubmitted, ApplicationStateExternal.AmendClaim, ApplicationStateExternal.Closed, ApplicationStateExternal.ReportCompletion, ApplicationStateExternal.Approved } },
 			{ ApplicationStateExternal.Closed, new [] { ApplicationStateExternal.ReportCompletion, ApplicationStateExternal.AmendClaim, ApplicationStateExternal.Approved } },
-			{ ApplicationStateExternal.ReportCompletion, new [] { ApplicationStateExternal.Closed, ApplicationStateExternal.AmendClaim, ApplicationStateExternal.Approved, ApplicationStateExternal.ClaimApproved } },
+			{ ApplicationStateExternal.ReportCompletion, new [] { ApplicationStateExternal.Closed, ApplicationStateExternal.AmendClaim, ApplicationStateExternal.Approved, ApplicationStateExternal.ClaimApproved, ApplicationStateExternal.ClaimSubmitted } },
 			{ ApplicationStateExternal.AmendClaim, new[] { ApplicationStateExternal.ClaimSubmitted, ApplicationStateExternal.ReportCompletion, ApplicationStateExternal.ChangeRequestSubmitted } }
 		}.ToImmutableDictionary();
 
@@ -491,7 +494,7 @@ namespace CJG.Core.Entities
 		/// <returns></returns>
 		public static ApplicationStateInternal[] GetInternalStatesForSummary()
 		{
-			return new ApplicationStateInternal[]
+			return new[]
 			{
 					ApplicationStateInternal.AgreementAccepted,
 					ApplicationStateInternal.ChangeForApproval,
