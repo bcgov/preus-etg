@@ -369,13 +369,20 @@
                             Model.SideBarLinks[SidebarLinkType.ApplicationView].IsHighlighted ? highlightAttributes : null)
                     </div>
                 }
-
-                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.GrantFiles)) //RR1
+                
+                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.ViewClaim) && Model.GrantApplication.Claims?.Count > 0) //RR7
                 {
                     <div>
-                        @Html.ActionLink("View Claim", nameof(ReportingController.GrantFileView), nameof(ReportingController).Replace("Controller", ""),
-                            new { grantApplicationId = Model.GrantApplication.Id },
-                            Model.SideBarLinks[SidebarLinkType.GrantFiles].IsHighlighted ? highlightAttributes : null)
+                        @{
+                            var claim = Model.GrantApplication.Claims
+                                .OrderByDescending(c => c.Id)
+                                .ThenByDescending(v => v.ClaimVersion)
+                                .FirstOrDefault();
+                        }
+
+                        @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ViewClaim].Title, nameof(ClaimController.DetailsView), nameof(ClaimController).Replace("Controller", ""),
+                            new { claimId = claim.Id, claimVersion = claim.ClaimVersion },
+                            Model.SideBarLinks[SidebarLinkType.ViewClaim].IsHighlighted ? highlightAttributes : null)
                     </div>
                 }
             </div>

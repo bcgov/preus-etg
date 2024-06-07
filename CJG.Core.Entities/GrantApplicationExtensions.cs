@@ -1232,7 +1232,10 @@ namespace CJG.Core.Entities
 		/// <returns></returns>
 		public static Claim GetCurrentClaim(this GrantApplication grantApplication)
 		{
-			return grantApplication.Claims.OrderByDescending(c => c.Id).ThenByDescending(c => c.ClaimVersion).FirstOrDefault();
+			return grantApplication.Claims
+				.OrderByDescending(c => c.Id)
+				.ThenByDescending(c => c.ClaimVersion)
+				.FirstOrDefault();
 		}
 		/// <summary>
 		/// Get the most recent prior claim that was approved.
