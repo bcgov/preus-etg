@@ -4,11 +4,7 @@
 name: Deploy DEV
 
 on:
-  workflow_run:
-    workflows:
-      - CI
-    types:
-      - completed
+  workflow_dispatch
 
 jobs:
   cd:
