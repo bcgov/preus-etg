@@ -465,7 +465,12 @@ namespace CJG.Application.Services
 						             pf.ClaimEligibleCost.Claim.ClaimState == ClaimState.ClaimPaid)
 						.Sum(pf => pf.AssessedReimbursement);
 
-					yearToDateBySin.Add(sin, amountPaid);
+					if (!yearToDateBySin.ContainsKey(sin))
+						yearToDateBySin.Add(sin, 0);
+
+					var currentTotal = yearToDateBySin[sin];
+
+					yearToDateBySin[sin] = amountPaid + currentTotal;
 				}
 			}
 
