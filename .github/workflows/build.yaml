@@ -21,7 +21,7 @@ jobs:
         nuget restore "${{github.workspace}}\ETG.sln"
     - name: MSBuild .NET framework
       run: |
-        msbuild.exe "${{github.workspace}}\ETG.sln" /p:platform="Any CPU" /p:configuration="Release"
+        msbuild.exe "${{github.workspace}}\ETG.sln" /p:platform="Any CPU" /p:configuration="Release" /p:VSToolsPath=""
 #    - name: Test .NET
 #      run: dotnet test --no-build --verbosity normal
     - name: Publish .NET
