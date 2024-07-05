@@ -15,7 +15,7 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
     - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.5
+      uses: NuGet/setup-nuget@v2.0.0
     - name: NuGet Restore
       run: |
         nuget restore "${{github.workspace}}\ETG.sln"
