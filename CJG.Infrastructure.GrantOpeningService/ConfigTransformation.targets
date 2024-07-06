@@ -1,5 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Web\Microsoft.Web.Publishing.Tasks.dll" />
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.Publish"/>
+
   <Target Name="SetTransformAppConfigDestination" BeforeTargets="PrepareForBuild" Condition="exists('app.$(Configuration).config')">
     <PropertyGroup>
       <!-- Force build process to use the transformed configuration file from now on. -->
