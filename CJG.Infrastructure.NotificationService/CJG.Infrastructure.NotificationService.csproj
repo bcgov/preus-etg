@@ -263,6 +263,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Web\Microsoft.Web.Publishing.Tasks.dll" />
   <Import Project="ConfigTransformation.targets" />
 </Project>
