@@ -21,12 +21,10 @@ jobs:
       uses: NuGet/setup-nuget@v2.0.0
     - name: NuGet Restore
       run: |
-        nuget restore "${{github.workspace}}\ETG.sln" -verbosity detailed
+        nuget restore "${{github.workspace}}\ETG.sln"
     - name: MSBuild .NET framework
       run: |
         msbuild.exe "${{github.workspace}}\ETG.sln" /p:platform="Any CPU" /p:configuration="Release"
-#    - name: Test .NET
-#      run: dotnet test --no-build --verbosity normal
     - name: Publish .NET
       run: dotnet publish "ETG.sln" -o ./Publish -c Release --no-self-contained
     - name: Use Node.js
