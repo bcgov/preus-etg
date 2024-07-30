@@ -203,7 +203,7 @@ namespace CJG.Application.Services
 		/// </summary>
 		/// <param name="claim"></param>
 		/// <param name="overrideRates">Whether to override the reimbursement rates.  This is only allowed if the user has the AM4 privilege.</param>
-		public Claim Update(Claim claim, bool overrideRates = false)
+		public Claim Update(Claim claim, bool overrideRates = false, bool bypassExternalNoteCreation = false)
 		{
 			if (claim == null)
 				throw new ArgumentNullException(nameof(claim));
@@ -216,11 +216,15 @@ namespace CJG.Application.Services
 			claim.RecalculateAssessedCosts(overrideRates);
 
 			_dbContext.Update(claim);
+
 			var accountType = _httpContext.User.GetAccountType();
+
 			if (accountType == AccountTypes.Internal)
-			{
 				_noteService.GenerateUpdateNote(claim.GrantApplication);
-			}
+
+			if (!bypassExternalNoteCreation && accountType == AccountTypes.External && claim.GrantApplication.ApplicationStateInternal == ApplicationStateInternal.ClaimReturnedToApplicant)
+				_noteService.GenerateUpdateNote(claim.GrantApplication, true);
+
 			_dbContext.CommitTransaction();
 
 			return claim;

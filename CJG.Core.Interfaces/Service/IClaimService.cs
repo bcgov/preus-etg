@@ -15,7 +15,7 @@ namespace CJG.Core.Interfaces.Service
 		int GetCurrentClaimVersion(int id);
 		Claim AddNewClaim(GrantApplication grantApplication);
 		Claim CreateNewClaimVersion(GrantApplication grantApplication);
-		Claim Update(Claim claim, bool overrideRates = false);
+		Claim Update(Claim claim, bool overrideRates = false, bool bypassExternalNoteCreation = false);
 
 		IEnumerable<Claim> GetClaims(int id);
 		IEnumerable<Claim> GetClaims(ClaimState state);

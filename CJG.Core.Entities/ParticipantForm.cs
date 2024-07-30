@@ -582,7 +582,6 @@ namespace CJG.Core.Entities
 		/// </summary>
 		public ExpectedParticipantOutcome? ExpectedParticipantOutcome { get; set; }
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="ParticipantForm"/> object.
 		/// </summary>
@@ -603,9 +602,7 @@ namespace CJG.Core.Entities
 			GrantApplication = grantApplication ?? throw new ArgumentNullException(nameof(grantApplication));
 			GrantApplicationId = grantApplication.Id;
 		}
-		#endregion
 
-		#region Methods
 		/// <summary>
 		/// Validates this ParticipantForm property values.
 		/// </summary>
@@ -640,10 +637,7 @@ namespace CJG.Core.Entities
 			}
 
 			foreach (var validation in base.Validate(validationContext))
-			{
 				yield return validation;
-			}
 		}
-		#endregion
 	}
 }

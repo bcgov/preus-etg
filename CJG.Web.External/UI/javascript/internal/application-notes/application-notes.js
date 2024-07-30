@@ -220,6 +220,7 @@ app.controller('ApplicationNotes', function ($scope, $attrs, $controller, $timeo
         var changeContentArray = JSON.parse(note.Content);
         changeContentArray.forEach(function (content) {
           result += '<div class="change-tracking"><label>' + content.name + ' (' + content.state + '):</label>';
+
           if (content.state === 'modified') {
             result += '<ul class="list-style-none">';
             content.changes.forEach(function (element) {
@@ -234,6 +235,27 @@ app.controller('ApplicationNotes', function ($scope, $attrs, $controller, $timeo
                 default:
                   result += '<li>&nbsp;' + element.name + ": changed from '" + element.oldValue + "' to '" + element.newValue + "'</li>";
                   break;
+              }
+            });
+            result += '</ul>';
+          }
+
+          if (content.state === 'added') {
+            result += '<ul class="list-style-none">';
+            content.changes.forEach(function (element) {
+              if (element.name === 'Attachment') {
+                switch (element.state) {
+                  case ('Added'):
+                    result += '<li>&nbsp;' + element.name + ": added '" + element.newValue + "'</li>";
+                    break;
+                  case ('Deleted'):
+                    result += '<li>&nbsp;' + element.name + ": removed '" + element.oldValue + "'</li>";
+                    break;
+                  case ('Modified'):
+                default:
+                  result += '<li>&nbsp;' + element.name + ": changed from '" + element.oldValue + "' to '" + element.newValue + "'</li>";
+                  break;
+                }
               }
             });
             result += '</ul>';

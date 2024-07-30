@@ -131,8 +131,10 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			{
 				HandleAngularException(ex, model);
 			}
+
 			var jsonResult = Json(model, JsonRequestBehavior.AllowGet);
 			jsonResult.MaxJsonLength = int.MaxValue;
+
 			return jsonResult;
 		}
 
@@ -396,10 +398,10 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				//save the participant attendance info, update the Attended property
 				var participantsAttended = claimModel.Participants.ToDictionary(d => d.Id, d => d.Attended);
 
-				_participantService.ReportAttendance(participantsAttended);
+				_participantService.ReportAttendance(claimEligibleCost.Claim.GrantApplication, participantsAttended);
 
 				//reset all claim amounts and costs
-				_claimEligibleCostService.ResetClaimAmounts(claimEligibleCost.Claim);				
+				_claimEligibleCostService.ResetClaimAmounts(claimEligibleCost.Claim);
 
 				model = new ClaimReportViewModel(claimEligibleCost.Claim, User);
 			}

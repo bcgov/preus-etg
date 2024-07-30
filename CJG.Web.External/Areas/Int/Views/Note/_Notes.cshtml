@@ -20,6 +20,7 @@
                 <div class="notes-list__caption"><abbr title={{note.NoteTypeDescription}}>{{note.NoteTypeCaption}}</abbr></div>
                 <div class="notes-list__date">{{toPST(note.DateAdded, 'YYYY-MM-DD h:mm:ss a')}}</div>
                 <div class="notes-list__owner" ng-if="note.CreatorName">{{note.CreatorName}}</div>
+                <div class="notes-list__owner" ng-if="!note.CreatorName">Applicant</div>
                 <div class="notes-list__content" ng-bind-html="note.Content | unsafe"></div>
                 <div class="notes-list__attachment" ng-if="note.AttachmentId">
                     <a class="link" title="download" ng-click="downloadAttachment($event, note.Id, note.AttachmentId)">{{note.AttachmentFileName}}</a>

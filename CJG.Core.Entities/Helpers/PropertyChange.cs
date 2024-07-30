@@ -6,14 +6,11 @@ namespace CJG.Core.Entities.Helpers
 {
 	public struct PropertyChange
 	{
-		#region Properties
 		public string Name { get; }
 		public object OldValue { get; }
 		public object NewValue { get; }
-		public EntityState State { get; } 
-		#endregion
+		public EntityState State { get; }
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a PropertyChange object and initializes it.
 		/// </summary>
@@ -23,18 +20,21 @@ namespace CJG.Core.Entities.Helpers
 		/// <param name="state"></param>
 		public PropertyChange(string name, object oldValue, object newValue, EntityState state = EntityState.Modified)
 		{
-			if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Argument 'name' is required and cannot be null, empty or whitespace.");
+			if (string.IsNullOrWhiteSpace(name))
+				throw new ArgumentException("Argument 'name' is required and cannot be null, empty or whitespace.");
 
-			if (oldValue?.GetType() == typeof(DateTime) || oldValue?.GetType() == typeof(DateTime?)) oldValue = ((DateTime)oldValue).ToLocalTime().ToString("yyyy-MM-dd");
-			if (newValue?.GetType() == typeof(DateTime) || newValue?.GetType() == typeof(DateTime?)) newValue = ((DateTime)newValue).ToLocalTime().ToString("yyyy-MM-dd");
-			this.Name = SplitCamelCase(name);
-			this.OldValue = oldValue;
-			this.NewValue = newValue;
-			this.State = state;
+			if (oldValue?.GetType() == typeof(DateTime) || oldValue?.GetType() == typeof(DateTime?))
+				oldValue = ((DateTime)oldValue).ToLocalTime().ToString("yyyy-MM-dd");
+
+			if (newValue?.GetType() == typeof(DateTime) || newValue?.GetType() == typeof(DateTime?))
+				newValue = ((DateTime)newValue).ToLocalTime().ToString("yyyy-MM-dd");
+
+			Name = SplitCamelCase(name);
+			OldValue = oldValue;
+			NewValue = newValue;
+			State = state;
 		}
-		#endregion
 
-		#region Methods
 		public override string ToString()
 		{
 			var oldValue = this.OldValue == null ? "null" : $"\"{this.OldValue.ToString().Replace("\"", "\\\"").Replace("\n", "").Replace("\r", "")}\"";
@@ -46,6 +46,5 @@ namespace CJG.Core.Entities.Helpers
 		{
 			return Regex.Replace(value, "([A-Z])", " $1", RegexOptions.Compiled).Trim();
 		}
-		#endregion
 	}
 }
