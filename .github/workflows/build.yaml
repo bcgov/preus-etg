@@ -19,10 +19,8 @@ jobs:
       uses: microsoft/setup-msbuild@v2
       
     - name: Setup NuGet
-      uses: NuGet/setup-nuget@v2.0.0
-      
-    - name: NuGet Restore
-      run: |
+      uses: NuGet/setup-nuget@v2.0.0    
+    - run: | 
         nuget restore "${{github.workspace}}\ETG.sln"      
         
     - name: Configure Node.js
@@ -53,3 +51,7 @@ jobs:
         with:
           name: ef
           path: CJG.Infrastructure.EF/bin/Release
+
+  nodejs-tasks:
+    needs: setup
+    runs-on: etg-ci
