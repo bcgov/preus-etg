@@ -1,48 +1,55 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+# Build/CI pipeline for ETG application
 
-name: CI
-
+name: Build ETG
+run-name: Run by ${{ github.actor }}
 on: workflow_dispatch
-
 env:
-  NUGET_CERT_REVOCATION_MODE: offline
-
+  NUGET_CERT_REVOCATION_MODE: offline # Bypass cert validation during NuGet Restore
+  BUILD_CONFIGURATION: TEST
+  HTTP_PROXY: ${{ secrets.HTTP_PROXY }}
+  NO_PROXY: ${{ secrets.NO_PROXY }}
 jobs:
-  build:
-
+  setup:
     runs-on: etg-ci
-
     steps:
+    - name: Checkout Repository
     - uses: actions/checkout@v3
+  
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
+      
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v2.0.0
+      
     - name: NuGet Restore
       run: |
-        nuget restore "${{github.workspace}}\ETG.sln"
-    - name: MSBuild .NET framework
-      run: |
-        msbuild.exe "${{github.workspace}}\ETG.sln" /p:platform="Any CPU" /p:configuration="Release"
-    - name: Publish .NET
-      run: dotnet publish "ETG.sln" -o ./Publish -c Release --no-self-contained
-    - name: Use Node.js
-      uses: actions/setup-node@v3
+        nuget restore "${{github.workspace}}\ETG.sln"      
+        
+    - name: Configure Node.js
+      uses: actions/setup-node@v4
       with:
         node-version: '12.16.1'
-    - run: npm install
-      working-directory: "CJG.Web.External/UI"
-    - run: npm run build
-      working-directory: "CJG.Web.External/UI"
-#    - run: npm test
-    - name: Upload artifacts - frontend
-      uses: actions/upload-artifact@v3
-      with:
-        name: web
-        path: CJG.Web.External/UI/obj/Release/Package/PackageTmp
-    - name: Upload artifacts - backend
-      uses: actions/upload-artifact@v3
-      with:
-        name: ef
-        path: CJG.Infrastructure.EF/bin/Release
+        registry-url: 'https://registry.npmjs.org/'
+    - run: npm config set strict-ssl false
+    - run: npm config set proxy $HTTP_PROXY
+    - run: npm config set https-proxy $HTTP_PROXY
+
+  build-dotnet:
+    needs: setup
+    runs-on: etg-ci
+    steps:
+      - name: MSBuild .NET framework
+        run: |
+          msbuild.exe "${{github.workspace}}\ETG.sln" /p:platform="Any CPU" /p:configuration="TEST"
+        
+      - name: Upload artifacts - frontend
+        uses: actions/upload-artifact@v3
+        with:
+          name: web
+          path: CJG.Web.External/UI/obj/Release/Package/PackageTmp
+          
+      - name: Upload artifacts - backend
+        uses: actions/upload-artifact@v3
+        with:
+          name: ef
+          path: CJG.Infrastructure.EF/bin/Release
