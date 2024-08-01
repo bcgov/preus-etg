@@ -125,7 +125,9 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 			ApplicationStateExternal = claim.GrantApplication.ApplicationStateExternal;
 			ApplicationInternalStatus = ApplicationStateExternal.GetDescription();
 			AssessorId = claim.GrantApplication.AssessorId;
-			Assessor = claim.GrantApplication.AssessorId == null ? null : new InternalUserViewModel(claim.GrantApplication.Assessor);
+			Assessor = claim.GrantApplication.AssessorId == null
+				? null
+				: new InternalUserViewModel(claim.GrantApplication.Assessor);
 
 			ProgramType = claim.GrantApplication.GetProgramType();
 			GrantProgram = claim.GrantApplication.GrantOpening.GrantStream.GrantProgram.Name;
@@ -142,17 +144,9 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 			CanReassign = user.CanPerformAction(claim.GrantApplication, ApplicationWorkflowTrigger.ReassignAssessor);
 			HasPriorApprovedClaim = claim.HasPriorApprovedClaim();
 
-			switch (ProgramType)
-			{
-				case (ProgramTypes.EmployerGrant):
-					TrainingProvider = claim.GrantApplication.TrainingPrograms.FirstOrDefault().TrainingProvider.Name;
-					DeliveryPartner = claim.GrantApplication.DeliveryPartner?.Caption;
-					Participants = claim.GrantApplication.ParticipantForms.Select(p => new ParticipantViewModel(p)).ToArray();
-					break;
-				case (ProgramTypes.WDAService):
-					Participants = claim.ParticipantForms.Select(pf => new ParticipantViewModel(pf)).ToArray();
-					break;
-			}
+			TrainingProvider = claim.GrantApplication.TrainingPrograms.FirstOrDefault()?.TrainingProvider.Name;
+			DeliveryPartner = claim.GrantApplication.DeliveryPartner?.Caption;
+			Participants = claim.GrantApplication.ParticipantForms.Select(p => new ParticipantViewModel(p)).ToArray();
 
 			AmountPaidOrOwing = claim.ClaimTypeId == ClaimTypes.SingleAmendableClaim ? claim.AmountPaidOrOwing() : claim.GrantApplication.AmountPaidOrOwing();
 

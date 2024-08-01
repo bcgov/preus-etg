@@ -1,15 +1,13 @@
-﻿using CJG.Core.Entities;
-using CJG.Web.External.Models.Shared;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CJG.Core.Entities;
+using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Int.Models.Claims
 {
 	public class ClaimAssessmentDetailsViewModel : BaseViewModel
 	{
-		#region Properties
-		#region Claim
 		public int Version { get; set; }
 		public string RowVersion { get; set; }
 		public ProgramTypes ProgramType { get; set; }
@@ -27,10 +25,7 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 
 		public int ParticipantsWithCostsAssigned { get; set; }
 		public int ParticipantsReported { get; set; }
-		#endregion
-		#endregion
 
-		#region Constructors
 		public ClaimAssessmentDetailsViewModel()
 		{
 		}
@@ -39,24 +34,23 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 		{
 			if (claim == null) throw new ArgumentNullException(nameof(claim));
 
-			this.Id = claim.Id;
-			this.Version = claim.ClaimVersion;
-			this.RowVersion = Convert.ToBase64String(claim.RowVersion);
-			this.ClaimType = claim.ClaimTypeId;
-			this.IsFinalClaim = claim.IsFinalClaim;
-			this.MaximumParticipants = claim.GrantApplication.TrainingCost.AgreedParticipants;
-			this.AgreedMaxCost = claim.GrantApplication.TrainingCost.TotalAgreedMaxCost;
-			this.AgreedMaxCommittment = claim.GrantApplication.TrainingCost.AgreedCommitment;
-			this.TotalClaimReimbursement = claim.TotalClaimReimbursement;
-			this.TotalAssessedReimbursement = claim.TotalAssessedReimbursement;
-			this.EligibleCosts = claim.EligibleCosts.Select(ec => new ClaimEligibleCostViewModel(ec)).ToArray();
+			Id = claim.Id;
+			Version = claim.ClaimVersion;
+			RowVersion = Convert.ToBase64String(claim.RowVersion);
+			ClaimType = claim.ClaimTypeId;
+			IsFinalClaim = claim.IsFinalClaim;
+			MaximumParticipants = claim.GrantApplication.TrainingCost.AgreedParticipants;
+			AgreedMaxCost = claim.GrantApplication.TrainingCost.TotalAgreedMaxCost;
+			AgreedMaxCommittment = claim.GrantApplication.TrainingCost.AgreedCommitment;
+			TotalClaimReimbursement = claim.TotalClaimReimbursement;
+			TotalAssessedReimbursement = claim.TotalAssessedReimbursement;
+			EligibleCosts = claim.EligibleCosts.Select(ec => new ClaimEligibleCostViewModel(ec)).ToArray();
 
-			this.ParticipantsWithCostsAssigned = claim.ParticipantsWithEligibleCosts();
-			this.ParticipantsReported = claim.GrantApplication.ParticipantForms.Count();
+			ParticipantsWithCostsAssigned = claim.ParticipantsWithEligibleCosts();
+			ParticipantsReported = claim.GrantApplication.ParticipantForms.Count();
 
-			this.ProgramType = claim.GrantApplication.GetProgramType();
-			this.ReimbursementRate = claim.GrantApplication.ReimbursementRate;
+			ProgramType = claim.GrantApplication.GetProgramType();
+			ReimbursementRate = claim.GrantApplication.ReimbursementRate;
 		}
-		#endregion
 	}
 }

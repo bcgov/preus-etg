@@ -1335,6 +1335,8 @@
     <Compile Include="Areas\Int\Models\Participants\ParticipantApplicationModel.cs" />
     <Compile Include="Areas\Int\Models\Participants\ParticipantsFilterViewModel.cs" />
     <Compile Include="Areas\Int\Models\ParticipantTrainingHistory.cs" />
+    <Compile Include="Areas\Int\Models\ParticipantWarningModel.cs" />
+    <Compile Include="Areas\Int\Models\ParticipantWarnings.cs" />
     <Compile Include="Areas\Int\Models\Prioritization\GrantApplicationViewModel.cs" />
     <Compile Include="Areas\Int\Models\Prioritization\PrioritizationFilterViewModel.cs" />
     <Compile Include="Areas\Int\Models\Prioritization\PrioritizationScoresViewModel.cs" />
