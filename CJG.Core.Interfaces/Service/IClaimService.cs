@@ -1,6 +1,6 @@
-﻿using CJG.Application.Business.Models;
+﻿using System.Collections.Generic;
+using CJG.Application.Business.Models;
 using CJG.Core.Entities;
-using System.Collections.Generic;
 
 namespace CJG.Core.Interfaces.Service
 {

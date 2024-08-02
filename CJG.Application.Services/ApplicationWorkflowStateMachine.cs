@@ -21,8 +21,8 @@ namespace CJG.Application.Services
 	/// </summary>
 	public class ApplicationWorkflowStateMachine : Service
 	{
-		GrantApplication _grantApplication;
-		ApplicationStateInternal _originalState;
+		private readonly GrantApplication _grantApplication;
+		private readonly ApplicationStateInternal _originalState;
 
 		private readonly INotificationService _notificationService;
 		private readonly IGrantOpeningService _grantOpeningService;
@@ -31,7 +31,7 @@ namespace CJG.Application.Services
 		private readonly INoteService _noteService;
 		private readonly IUserService _userService;
 
-		StateMachine<ApplicationStateInternal, ApplicationWorkflowTrigger> _stateMachine;
+		private StateMachine<ApplicationStateInternal, ApplicationWorkflowTrigger> _stateMachine;
 
 		// Create parametrized triggers
 		private readonly StateMachine<ApplicationStateInternal, ApplicationWorkflowTrigger>.TriggerWithParameters<InternalUser>
@@ -983,9 +983,9 @@ namespace CJG.Application.Services
 			var changeRequests = _grantApplication.GetChangeRequests();
 			var requested = changeRequests.Where(tp => tp.TrainingProviderState == TrainingProviderStates.Requested);
 
-			var changes = new List<string>();
-			foreach (var request in requested)
-				changes.Add(string.Join(Environment.NewLine, request.GetChangeRequestDifferences()));
+			var changes = requested
+				.Select(request => string.Join(Environment.NewLine, request.GetChangeRequestDifferences()))
+				.ToList();
 
 			if (changes.Any())
 			{
@@ -1034,9 +1034,16 @@ namespace CJG.Application.Services
 				if (!_grantApplication.CanApproveChangeRequest())
 					throw new InvalidOperationException("At least one requested training provider must be in approval.");
 
-				var changeRequests = _grantApplication.GetChangeRequests();
-				changeRequests.Where(tp => tp.TrainingProviderState.In(TrainingProviderStates.Requested, TrainingProviderStates.RequestApproved)).ForEach(request => request.TrainingProviderState = TrainingProviderStates.Complete);
-				changeRequests.Where(tp => tp.TrainingProviderState.In(TrainingProviderStates.RequestDenied)).ForEach(request => request.TrainingProviderState = TrainingProviderStates.Denied);
+				var changeRequests = _grantApplication.GetChangeRequests().ToList();
+
+				changeRequests
+					.Where(tp => tp.TrainingProviderState.In(TrainingProviderStates.Requested, TrainingProviderStates.RequestApproved))
+					.ForEach(request => request.TrainingProviderState = TrainingProviderStates.Complete);
+
+				changeRequests
+					.Where(tp => tp.TrainingProviderState.In(TrainingProviderStates.RequestDenied))
+					.ForEach(request => request.TrainingProviderState = TrainingProviderStates.Denied);
+
 				_grantApplication.ApplicationStateExternal = ApplicationStateExternal.ChangeRequestApproved;
 				_grantAgreementService.GenerateDocuments(_grantApplication);
 
@@ -1082,7 +1089,7 @@ namespace CJG.Application.Services
 			try
 			{
 				if (!_grantApplication.CanDenyChangeRequest())
-					throw new InvalidOperationException($"All requested training providers must be for denial before denying the change request.");
+					throw new InvalidOperationException("All requested training providers must be for denial before denying the change request.");
 
 				var changeRequests = _grantApplication.GetChangeRequests();
 				changeRequests.ForEach(request => request.TrainingProviderState = TrainingProviderStates.Denied);
@@ -1119,18 +1126,18 @@ namespace CJG.Application.Services
 				_grantApplication.DisableApplicantParticipantReporting();
 				_grantApplication.DisableParticipantReporting();
 
-				var validationResults = _grantOpeningService.Validate(claim);
+				var validationResults = _grantOpeningService.Validate(claim).ToList();
 				if (validationResults.Any())
-				{
 					throw new DbEntityValidationException(validationResults.GetErrorMessages(Environment.NewLine));
-				}
 
 				// Associated participants with claim.
-				_grantApplication.ParticipantForms.Where(pf => !pf.IsExcludedFromClaim).ForEach(pf =>
-				{
-					claim.ParticipantForms.Add(pf);
-					pf.ClaimReported = true;
-				});
+				_grantApplication.ParticipantForms
+					.Where(pf => !pf.IsExcludedFromClaim)
+					.ForEach(pf =>
+					{
+						claim.ParticipantForms.Add(pf);
+						pf.ClaimReported = true;
+					});
 
 				LogStateChanges($"Applicant submitted claim number {claim.ClaimNumber}", addReason: false);
 
@@ -1175,7 +1182,6 @@ namespace CJG.Application.Services
 
 			LogStateChanges(reason, reason, suffix: $"\nClaim {claim.ClaimNumber} withdrawn by applicant");
 
-			// Remove the participants from the claim.
 			RemoveParticipantsFromClaim(claim);
 
 			UpdateGrantApplication();
@@ -1198,7 +1204,7 @@ namespace CJG.Application.Services
 
 		private void OnAssessClaimReimbursement(Claim claim)
 		{
-			_grantApplication.RemoveAssignedAssessor();
+			//_grantApplication.RemoveAssignedAssessor();
 
 			LogStateChanges(suffix: $" for claim {claim.ClaimNumber}");
 			UpdateGrantApplication();
@@ -1206,8 +1212,8 @@ namespace CJG.Application.Services
 
 		private void OnAssessClaimEligibility(Claim claim)
 		{
-			if (_originalState == ApplicationStateInternal.ClaimAssessReimbursement)
-				_grantApplication.RemoveAssignedAssessor();
+			//if (_originalState == ApplicationStateInternal.ClaimAssessReimbursement)
+			//	_grantApplication.RemoveAssignedAssessor();
 
 			LogStateChanges(suffix: $" for claim {claim.ClaimNumber}");
 			UpdateGrantApplication();
@@ -1274,18 +1280,7 @@ namespace CJG.Application.Services
 			service.RemoveEligibleCostsAddedByAssessor(claim);
 			claim.ResetAssessment();
 			claim.DateSubmitted = null;
-			var numberOfParticipants = claim.GrantApplication.ParticipantForms.Count(p => !p.IsExcludedFromClaim);
-			foreach (var claimEligibleCost in claim.EligibleCosts)
-			{
-				if (claimEligibleCost.EligibleExpenseType.ExpenseTypeId == ExpenseTypes.NotParticipantLimited
-					&& claim.GrantApplication.GetProgramType() == ProgramTypes.WDAService)
-				{
-					if (numberOfParticipants != claimEligibleCost.ClaimParticipants)
-					{
-						claimEligibleCost.UpdateUpToMaxClaimParticipants(numberOfParticipants);
-					}
-				}
-			}
+
 			claim.RecalculateClaimedCosts();
 			claim.RecalculateAssessedCosts();
 			claim.ClaimState = ClaimState.Incomplete;
@@ -1302,7 +1297,6 @@ namespace CJG.Application.Services
 
 			LogStateChanges(noteLogReason, claim.ClaimAssessmentNotes, $" for claim {claim.ClaimNumber}", addReason: false);
 
-			// Remove participants from the claim.
 			RemoveParticipantsFromClaim(claim);
 
 			UpdateGrantApplication();
