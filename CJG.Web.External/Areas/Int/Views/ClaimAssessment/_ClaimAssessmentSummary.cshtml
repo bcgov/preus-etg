@@ -17,7 +17,6 @@
                 </div>
                 <button class="btn btn--primary" ng-disabled="!claim.CanReassign" ng-click="reassign()">Reassign</button>
             </div>
-
         </div>
     </div>
 
@@ -60,12 +59,12 @@
             <div class="form__label">Applicant:</div>
             <div class="form__control">
                 {{claim.ApplicantName}}<br/>
-                {{claim.OrganizationLegalName}}
+                <a href="/Int/Organization/History/View/{{claim.OrganizationId}}" target="_self">{{claim.OrganizationLegalName}}</a>
             </div>
         </div>
     </div>
 
-    <div class="block--row-group" ng-if="claim.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+    <div class="block--row-group">
         <div class="form__group">
             <div class="form__label">Training Provider:</div>
             <div class="form__control">{{claim.TrainingProvider}}</div>

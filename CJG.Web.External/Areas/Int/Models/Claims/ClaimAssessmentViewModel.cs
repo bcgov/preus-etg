@@ -68,6 +68,7 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 		#region Applicant
 		public string ApplicantName { get; set; }
 		public string OrganizationLegalName { get; set; }
+		public int OrganizationId { get; set; }
 		#endregion
 
 		public string ClaimAssessmentNotes { get; set; }
@@ -138,6 +139,7 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 
 			ApplicantName = $"{claim.GrantApplication.ApplicantFirstName} {claim.GrantApplication.ApplicantLastName}";
 			OrganizationLegalName = claim.GrantApplication.OrganizationLegalName;
+			OrganizationId = claim.GrantApplication.OrganizationId;
 
 			CanEdit = user.CanPerformAction(claim.GrantApplication, ApplicationWorkflowTrigger.EditClaim);
 			CanUnlock = user.HasPrivilege(Privilege.AM4);
