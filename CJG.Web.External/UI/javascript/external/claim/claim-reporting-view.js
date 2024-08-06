@@ -10,7 +10,7 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
     save: {
       url: '/Ext/Claim/Cost',
       method: 'PUT',
-      data: function () {
+      data: function() {
         $scope.EligibleCostSuccessMessage = '';
         $scope.EligibleCostSummaryMessage = '';
 
@@ -23,14 +23,13 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
       },
       backup: true
     },
-    onSave: function (event, data) {
+    onSave: function(event, data) {
       if ($scope.redirectToReview) {
-        return $timeout(function () {
-          let claimReviewUrl = '/Ext/Claim/Reporting/Review/View/' + $scope.section.claimId + '/' + $scope.section.claimVersion;
-          window.location = claimReviewUrl;
-        }, 1500);
-      }
-      else {
+        return $timeout(function() {
+            let claimReviewUrl = '/Ext/Claim/Reporting/Review/View/' + $scope.section.claimId + '/' + $scope.section.claimVersion;
+            window.location = claimReviewUrl;
+          }, 1500);
+      } else {
         $scope.IsValid = false;
         $scope.EligibleCostSuccessMessage = "Claimed costs saved successfully.";
         angular.element("html, body").animate({ scrollTop: $('h2').offset().top }, 300);
@@ -39,7 +38,7 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
     },
     grantApplicationId: $attrs.ngGrantApplicationId,
     claimId: $attrs.ngClaimId,
-    claimVersion: $attrs.ngClaimVersion
+    claimVersion: $attrs.ngClaimVersion,
   };
 
   $scope.$on('updateAttachments', function (event, data) {
@@ -54,6 +53,7 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
   $scope.allowSubmitButton = false;
 
   $scope.totalAttachments = 0;
+  $scope.ApplicantNotesSuccessMessage = '';
 
   angular.extend(this, $controller('ParentSection', { $scope: $scope, $attrs: $attrs }));
 
@@ -593,6 +593,24 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
   $scope.saveAndReview = function () {
     $scope.redirectToReview = true;
     $scope.save();
+  }
+
+  $scope.saveApplicantNotes = function () {
+    $scope.ApplicantNotesSuccessMessage = '';
+
+    return $scope.ajax({
+        url: '/Ext/Claim/ApplicantNotes',
+        method: 'PUT',
+        data: function() {
+          return $scope.model.Claim;
+        },
+      }).catch(angular.noop)
+      .then(function () {
+        $scope.ApplicantNotesSuccessMessage = "Applicant notes saved successfully.";
+        angular.element("html, body").animate({ scrollTop: $('h2').offset().top }, 300);
+
+        $scope.loadClaim();
+      });
   }
 
   $scope.saveAttendance = function () {

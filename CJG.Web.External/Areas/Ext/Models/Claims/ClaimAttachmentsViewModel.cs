@@ -11,7 +11,6 @@ namespace CJG.Web.External.Areas.Ext.Models.Claims
     public class ClaimAttachmentsViewModel : BaseViewModel
 	{
 		public int ClaimVersion { get; set; }
-		public bool IsWDAService { get; set; }
 		public string Title { get; set; }
 		public int MaxUploadSize { get; set; }
 		public int MaximumNumberOfAttachmentsAllowed { get; set; }
@@ -33,7 +32,6 @@ namespace CJG.Web.External.Areas.Ext.Models.Claims
 
 			Id = claim.Id;
 			ClaimVersion = claim.ClaimVersion;
-			IsWDAService = false;
 			Title = "Proof of Payment Documents";
 			MaxUploadSize = maxUploadSize / 1024 / 1024;
 			MaximumNumberOfAttachmentsAllowed = Constants.MaximumNumberOfAttachmentsPerClaim;

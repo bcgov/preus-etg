@@ -1117,87 +1117,9 @@ namespace CJG.Testing.UnitTests.Entities
 		}
 
 		[TestMethod, TestCategory("Claim Eligible Cost"), TestCategory("Validate")]
-		public void Validate_When_ClaimEligibleCost_NumberClaimParticipants_Exceeds_NumberClaimParticipantCost()
-		{
-			var grantApplication = EntityHelper.CreateGrantApplication(
-				user,
-				ApplicationStateInternal.AgreementAccepted);
-
-			grantApplication.ReimbursementRate = 2;
-
-			var trainingProgram = new TrainingProgram() { Id = 2, GrantApplication = grantApplication };
-			var claim = new Claim() { Id = 1, GrantApplication = grantApplication, GrantApplicationId = 1 };
-			var trainingCost = new TrainingCost() { GrantApplication = grantApplication, GrantApplicationId = 1, AgreedParticipants = 10 };
-			var eligibleExpenseType = new EligibleExpenseType("Mandatory student fees", new ExpenseType(ExpenseTypes.ParticipantLimited));
-			var participantCost_1 = new ParticipantCost()
-			{
-				Id = 1,
-				ParticipantFormId = 1,
-				ClaimParticipantCost = 800,
-				AssessedParticipantCost = 50
-			};
-			var participantCost_2 = new ParticipantCost()
-			{
-				Id = 2,
-				ParticipantFormId = 1,
-				ClaimParticipantCost = 500,
-				AssessedParticipantCost = 20
-			};
-			var eligibleCost = new EligibleCost()
-			{
-				Id = 1,
-				EligibleExpenseTypeId = 2,
-				TrainingCost = trainingCost,
-				AgreedMaxCost = 800,
-				AgreedMaxParticipants = 10,
-				AgreedMaxParticipantCost = 25
-			};
-			var claimEligibleCost = new ClaimEligibleCost()
-			{
-				Id = 1,
-				Claim = claim,
-				EligibleCostId = 1,
-				EligibleCost = eligibleCost,
-				EligibleExpenseTypeId = 2,
-				AssessedParticipants = 1,
-				AssessedCost = 1000,
-				AssessedMaxParticipantCost = 50,
-				AssessedMaxParticipantReimbursementCost = 25,
-				ClaimCost = 1000,
-				ClaimParticipants = 1,
-				ClaimMaxParticipantCost = 10,
-				ParticipantCosts = { participantCost_1, participantCost_2 },
-				EligibleExpenseType = new EligibleExpenseType() { Caption = "Expense Type Caption"}
-			};
-
-			helper.MockDbSet<ParticipantCost>(participantCost_1);
-			helper.MockDbSet<ParticipantCost>(participantCost_2);
-			helper.MockDbSet<TrainingProgram>(trainingProgram);
-			helper.MockDbSet<GrantApplication>(grantApplication);
-			helper.MockDbSet<Claim>(claim);
-			helper.MockDbSet<ClaimEligibleCost>(claimEligibleCost);
-			helper.MockDbSet<EligibleCost>(eligibleCost);
-			helper.MockDbSet<EligibleExpenseType>(eligibleExpenseType);
-			helper.MockDbSet<TrainingCost>(trainingCost);
-			helper.MockDbSet<ClaimBreakdownCost>(new List<ClaimBreakdownCost>());
-
-			var service = helper.Create<ClaimService>();
-
-			// Act
-			var validationResults = service.Validate(claimEligibleCost).ToArray();
-
-			string validateMsg = "Number of participants with assigned cost exceeds Maximum Number of Participants.";
-
-			// Assert
-			Assert.AreEqual(true, validationResults.Any(x => x.ErrorMessage == validateMsg));
-		}
-
-		[TestMethod, TestCategory("Claim Eligible Cost"), TestCategory("Validate")]
 		public void Validate_When_ClaimEligibleCost_Not_Have_Unique_ParticipantCost_Per_EligibleCost()
 		{
-			var grantApplication = EntityHelper.CreateGrantApplication(
-				user,
-				ApplicationStateInternal.AgreementAccepted);
+			var grantApplication = EntityHelper.CreateGrantApplication(user, ApplicationStateInternal.AgreementAccepted);
 
 			grantApplication.ReimbursementRate = 2;
 

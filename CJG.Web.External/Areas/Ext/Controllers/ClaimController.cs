@@ -70,16 +70,14 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		public ActionResult ClaimReportView(int grantApplicationId)
 		{
 			if (_settingService.Get("EnableClaimsOn")?.GetValue<DateTime>() > AppDateTime.Now)
-			{
-				return RedirectToAction(nameof(HomeController.Index), nameof(HomeController).Replace("Controller", ""));
-			}
+				return RedirectToAction("Index", "Home");
 
 			var grantApplication = _grantApplicationService.Get(grantApplicationId);
 
 			if (!User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditClaim) && !User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.CreateClaim))
 			{
 				this.SetAlert("The Claim is not in a valid state for management.", AlertType.Error, true);
-				return RedirectToAction(nameof(ReportingController.GrantFileView), "Reporting", new { grantApplicationId = grantApplication.Id });
+				return RedirectToAction("GrantFileView", "Reporting", new { grantApplicationId = grantApplication.Id });
 			}
 
 			var claim = grantApplication.GetCurrentClaim();
@@ -264,6 +262,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <summary>
 		/// Update the attachments (delete/update/create) for the specified grant application.
 		/// </summary>
+		/// <param name="claimId"></param>
 		/// <param name="claimVersion"></param>
 		/// <param name="files"></param>
 		/// <param name="attachments"></param>
@@ -380,6 +379,31 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		}
 
 		/// <summary>
+		/// Update the claim applicant notes
+		/// </summary>
+		/// <param name="claimModel"></param>
+		/// <returns></returns>
+		[HttpPut]
+		[PreventSpam]
+		[ValidateRequestHeader]
+		[Route("Claim/ApplicantNotes")]
+		public JsonResult UpdateClaimApplicantNotes(ClaimModel claimModel)
+		{
+			var model = new ClaimReportViewModel();
+			try
+			{
+				var claim = _claimService.Get(claimModel.Id);
+				_claimService.UpdateApplicantNote(claim, claimModel.ApplicantNotes);
+				model = new ClaimReportViewModel(claim, User);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model);
+		}
+
+		/// <summary>
 		/// Update the claim with the list of eligible claim costs.
 		/// </summary>
 		/// <param name="claimModel"></param>
@@ -453,7 +477,9 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 			claim.ClaimState = ClaimState.Unassessed;
 			claim.DateSubmitted = AppDateTime.UtcNow;
-			var results = _claimService.Validate(claim);
+			var results = _claimService.Validate(claim)
+				.ToList();
+
 			if (results.Any())
 			{
 				preventSubmit = true;
@@ -466,7 +492,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			ViewBag.PreventSubmit = preventSubmit;
 			ViewBag.ClaimId = claimId;
 			ViewBag.ClaimVersion = claimVersion;
-			ViewBag.ShowWDADescription = claim.GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.WDAService;
+
 			return View();
 		}
 
@@ -661,7 +687,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			ViewBag.GrantApplicationId = claim.GrantApplicationId;
 			ViewBag.ClaimId = claimId;
 			ViewBag.ClaimVersion = claimVersion;
-			ViewBag.ShowWDADescription = claim.GrantApplication.GrantOpening.GrantStream.GrantProgram.ProgramTypeId == ProgramTypes.WDAService;
+
 			return View();
 		}
 

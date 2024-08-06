@@ -74,6 +74,7 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 		public string ClaimAssessmentNotes { get; set; }
 		public string ReimbursementAssessmentNotes { get; set; }
 		public string EligibilityAssessmentNotes { get; set; }
+		public string ApplicantNotes { get; set; }
 
 		public bool CanEdit { get; set; }
 		public bool CanUnlock { get; set; }
@@ -115,6 +116,7 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 			ClaimAssessmentNotes = claim.ClaimAssessmentNotes;
 			ReimbursementAssessmentNotes = claim.ReimbursementAssessmentNotes;
 			EligibilityAssessmentNotes = claim.EligibilityAssessmentNotes;
+			ApplicantNotes = claim.ApplicantNotes;
 
 			GrantApplicationRowVersion = Convert.ToBase64String(claim.GrantApplication.RowVersion);
 			FileNumber = claim.GrantApplication.FileNumber;

@@ -33,6 +33,7 @@ namespace CJG.Application.Business.Models
 		public string ClaimAssessmentNotes { get; set; }
 		public string ReimbursementAssessmentNotes { get; set; }
 		public string EligibilityAssessmentNotes { get; set; }
+		public string ApplicantNotes { get; set; }
 
 		public string RowVersion { get; set; }
 
@@ -64,6 +65,7 @@ namespace CJG.Application.Business.Models
 					.Select(s => new ParticipantFormModel(s))
 					.OrderBy(o => o.Name)
 					.ToList();
+
 				Attended = claim.GrantApplication.ParticipantForms
 					.Where(c => c.Approved.HasValue && c.Approved.Value && c.Attended.HasValue && c.Attended.Value)
 					.Select(s => new ParticipantFormModel(s))
@@ -75,11 +77,12 @@ namespace CJG.Application.Business.Models
 					.Select(s => new ParticipantFormModel(s))
 					.OrderBy(o => o.Name)
 					.ToList();
+
 				Attended = Participants;
 			}
 
 			CountAttended = Attended.Count;
-			CountParticipants = Participants.Count();
+			CountParticipants = Participants.Count;
 
 			MaximumParticipants = claim.GrantApplication.TrainingCost.AgreedParticipants;
 			DateAssessed = claim.DateAssessed?.ToLocalMorning();
@@ -87,6 +90,7 @@ namespace CJG.Application.Business.Models
 			RowVersion = Convert.ToBase64String(claim.RowVersion);
 			EligibilityAssessmentNotes = claim.EligibilityAssessmentNotes;
 			ReimbursementAssessmentNotes = claim.ReimbursementAssessmentNotes;
+			ApplicantNotes = claim.ApplicantNotes;
 			ClaimState = claim.ClaimState;
 			ClaimStateText = claim.ClaimState.GetDescription();
 			DateSubmitted = claim.DateSubmitted;

@@ -30,6 +30,21 @@
     <div class="message-box">
         <span class="inline-help spaced-notes" ng-bind-html="model.Claim.ClaimAssessmentNotes"></span>
     </div>
+    
+    <div class="form__group">
+        <div class="row--alert" ng-if="ApplicantNotesSuccessMessage">
+            <div class="alert alert--success" role="alert" ng-bind-html="ApplicantNotesSuccessMessage"></div>
+        </div>
+
+        <label class="form__label form__label--align-top">Additional Claim Information</label>
+        <div class="form__control">
+            <textarea ng-model="model.Claim.ApplicantNotes" class="input--full" ng-disabled="!model.Claim.IsEditable" style="min-height: 9em;" maxlength="4000" placeholder="Additional information can be entered here"></textarea>
+        </div>
+    </div>
+    <div class="margin-bottom pull-right" ng-if="model.Claim.IsEditable">
+        <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-click="saveApplicantNotes()">Save information</a>
+    </div>
+    <div class="clearfix"></div>
 </div>
 
 <div class="clearfix clearfix">

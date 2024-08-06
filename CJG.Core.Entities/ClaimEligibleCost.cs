@@ -1,10 +1,10 @@
-﻿using DataAnnotationsExtensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Data.Entity;
+using System.Linq;
+using DataAnnotationsExtensions;
 
 namespace CJG.Core.Entities
 {
@@ -13,7 +13,6 @@ namespace CJG.Core.Entities
 	/// </summary>
 	public class ClaimEligibleCost : EntityBase
 	{
-		#region Properties
 		/// <summary>
 		/// get/set - Primary key uses IDENTITY
 		/// </summary>
@@ -101,7 +100,6 @@ namespace CJG.Core.Entities
 		/// </summary>
 		public decimal ClaimReimbursementCost { get; set; }
 
-		#region Assessment
 		/// <summary>
 		/// get/set - The assessed cost associated with this expense type.
 		/// </summary>
@@ -137,7 +135,6 @@ namespace CJG.Core.Entities
 		/// get/set - Flag to indicate that the eligible cost was added by the assessor after the application has been submitted
 		/// </summary>
 		public bool AddedByAssessor { get; set; } = false;
-		#endregion
 
 		/// <summary>
 		/// get - All of the participant costs associated with this claimed cost.
@@ -149,15 +146,11 @@ namespace CJG.Core.Entities
 		/// </summary>
 		public virtual ICollection<ClaimBreakdownCost> Breakdowns { get; set; } = new List<ClaimBreakdownCost>();
 
-		#endregion
-
-		#region Constructors
 		/// <summary>
 		/// Creates new instance of a <typeparamref name="ClaimEligibleCost"/> class.
 		/// </summary>
 		public ClaimEligibleCost()
 		{
-
 		}
 
 		/// <summary>
@@ -166,9 +159,9 @@ namespace CJG.Core.Entities
 		/// <param name="claim"></param>
 		public ClaimEligibleCost(Claim claim)
 		{
-			this.Claim = claim ?? throw new ArgumentNullException(nameof(claim));
-			this.ClaimId = claim.Id;
-			this.ClaimVersion = claim.ClaimVersion;
+			Claim = claim ?? throw new ArgumentNullException(nameof(claim));
+			ClaimId = claim.Id;
+			ClaimVersion = claim.ClaimVersion;
 		}
 
 		/// <summary>
@@ -178,15 +171,15 @@ namespace CJG.Core.Entities
 		/// <param name="eligibleCost"></param>
 		public ClaimEligibleCost(Claim claim, EligibleCost eligibleCost) : this(claim)
 		{
-			this.EligibleCost = eligibleCost ?? throw new ArgumentNullException(nameof(eligibleCost));
-			this.EligibleCostId = eligibleCost.Id;
-			this.EligibleExpenseType = eligibleCost.EligibleExpenseType;
-			this.EligibleExpenseTypeId = eligibleCost.EligibleExpenseTypeId;
+			EligibleCost = eligibleCost ?? throw new ArgumentNullException(nameof(eligibleCost));
+			EligibleCostId = eligibleCost.Id;
+			EligibleExpenseType = eligibleCost.EligibleExpenseType;
+			EligibleExpenseTypeId = eligibleCost.EligibleExpenseTypeId;
 
 			foreach (var breakdown in eligibleCost.Breakdowns.Where(b => b.IsEligible))
 			{
 				var claimBreakdownCost = new ClaimBreakdownCost(breakdown, this);
-				this.Breakdowns.Add(claimBreakdownCost);
+				Breakdowns.Add(claimBreakdownCost);
 			}
 
 			if (eligibleCost.EligibleExpenseType.ExpenseTypeId == ExpenseTypes.ParticipantAssigned)
@@ -206,12 +199,12 @@ namespace CJG.Core.Entities
 				foreach (var participant in participants)
 				{
 					var participantCost = new ParticipantCost(this, participant);
-					this.ParticipantCosts.Add(participantCost);
+					ParticipantCosts.Add(participantCost);
 				}
 			}
 			else if (eligibleCost.EligibleExpenseType.ExpenseTypeId == ExpenseTypes.NotParticipantLimited)
 			{
-				this.ClaimParticipants = claim.GrantApplication.ParticipantForms.Count(pf => !pf.IsExcludedFromClaim);
+				ClaimParticipants = claim.GrantApplication.ParticipantForms.Count(pf => !pf.IsExcludedFromClaim);
 			}
 		}
 
@@ -225,36 +218,34 @@ namespace CJG.Core.Entities
 			if (eligibleCost == null)
 				throw new ArgumentNullException(nameof(eligibleCost));
 
-			this.ClaimCost = eligibleCost.AssessedCost;
-			this.ClaimMaxParticipantCost = eligibleCost.AssessedMaxParticipantCost;
-			this.ClaimMaxParticipantReimbursementCost = eligibleCost.AssessedMaxParticipantReimbursementCost;
-			this.ClaimParticipantEmployerContribution = eligibleCost.AssessedParticipantEmployerContribution;
-			this.ClaimParticipants = eligibleCost.AssessedParticipants;
+			ClaimCost = eligibleCost.AssessedCost;
+			ClaimMaxParticipantCost = eligibleCost.AssessedMaxParticipantCost;
+			ClaimMaxParticipantReimbursementCost = eligibleCost.AssessedMaxParticipantReimbursementCost;
+			ClaimParticipantEmployerContribution = eligibleCost.AssessedParticipantEmployerContribution;
+			ClaimParticipants = eligibleCost.AssessedParticipants;
 
 			// We copy the assessed values because they are the new agreement limits for the line item.
-			this.AssessedCost = eligibleCost.AssessedCost;
-			this.AssessedMaxParticipantCost = eligibleCost.AssessedMaxParticipantCost;
-			this.AssessedMaxParticipantReimbursementCost = eligibleCost.AssessedMaxParticipantReimbursementCost;
-			this.AssessedParticipantEmployerContribution = eligibleCost.AssessedParticipantEmployerContribution;
-			this.AssessedParticipants = eligibleCost.AssessedParticipants;
+			AssessedCost = eligibleCost.AssessedCost;
+			AssessedMaxParticipantCost = eligibleCost.AssessedMaxParticipantCost;
+			AssessedMaxParticipantReimbursementCost = eligibleCost.AssessedMaxParticipantReimbursementCost;
+			AssessedParticipantEmployerContribution = eligibleCost.AssessedParticipantEmployerContribution;
+			AssessedParticipants = eligibleCost.AssessedParticipants;
 
-			this.EligibleCostId = eligibleCost.EligibleCostId;
-			this.EligibleCost = eligibleCost.EligibleCost;
-			this.EligibleExpenseType = eligibleCost.EligibleExpenseType;
-			this.EligibleExpenseTypeId = eligibleCost.EligibleExpenseTypeId;
+			EligibleCostId = eligibleCost.EligibleCostId;
+			EligibleCost = eligibleCost.EligibleCost;
+			EligibleExpenseType = eligibleCost.EligibleExpenseType;
+			EligibleExpenseTypeId = eligibleCost.EligibleExpenseTypeId;
 
 			// Capture the original source this line item was copied from.
-			this.SourceId = eligibleCost.Id;
-			this.Source = eligibleCost;
+			SourceId = eligibleCost.Id;
+			Source = eligibleCost;
 
 			foreach (var participantCost in eligibleCost.ParticipantCosts)
 			{
-				this.ParticipantCosts.Add(new ParticipantCost(this, participantCost));
+				ParticipantCosts.Add(new ParticipantCost(this, participantCost));
 			}
 		}
-		#endregion
 
-		#region Methods
 		/// <summary>
 		/// Validates the claim eligible cost before updating the datasource.
 		/// </summary>
@@ -270,9 +261,9 @@ namespace CJG.Core.Entities
 				yield break;
 
 			// Refresh EF cache.
-			context.Set<Claim>().Include(m => m.EligibleCosts).Where(x => x.GrantApplicationId == this.Claim.GrantApplicationId).ToList();
-			context.Set<ParticipantCost>().Where(pc => pc.ClaimEligibleCostId == this.Id);
-			var eligibleCost = this.EligibleCost ?? context.Set<EligibleCost>().SingleOrDefault(ec => ec.Id == this.EligibleCostId);
+			context.Set<Claim>().Include(m => m.EligibleCosts).Where(x => x.GrantApplicationId == Claim.GrantApplicationId).ToList();
+			context.Set<ParticipantCost>().Where(pc => pc.ClaimEligibleCostId == Id);
+			var eligibleCost = EligibleCost ?? context.Set<EligibleCost>().SingleOrDefault(ec => ec.Id == EligibleCostId);
 			//var eligibleCostExpenseType = context.Set<EligibleExpenseType>().SingleOrDefault(eet => eet.Id == this.EligibleExpenseTypeId);
 
 			// Must be associated to a Claim.
@@ -280,19 +271,19 @@ namespace CJG.Core.Entities
 			//    yield return new ValidationResult("The claim eligible cost must be associated with a claim.", new[] { nameof(this.Claim) });
 
 			// Must have a EligibleExpenseType.
-			if (this.EligibleExpenseType == null && this.EligibleExpenseTypeId == 0)
-				yield return new ValidationResult("The claim eligible cost must be associated with a eligible expense type.", new[] { nameof(this.EligibleExpenseType) });
+			if (EligibleExpenseType == null && EligibleExpenseTypeId == 0)
+				yield return new ValidationResult("The claim eligible cost must be associated with a eligible expense type.", new[] { nameof(EligibleExpenseType) });
 
 			// ClaimEligibleCost must be associated with an eligible expense if they are the first claim version.
 			// Amended Claims can have ClaimEligibleCosts that were added by the Assessor in the previous version.
-			if (eligibleCost == null && this.Source == null && !this.AddedByAssessor && this.Claim.ClaimVersion == 1)
-				yield return new ValidationResult("The claim eligible cost must be associated with an eligible expense.", new[] { nameof(this.EligibleCost) });
+			if (eligibleCost == null && Source == null && !AddedByAssessor && Claim.ClaimVersion == 1)
+				yield return new ValidationResult("The claim eligible cost must be associated with an eligible expense.", new[] { nameof(EligibleCost) });
 
 			// Maximum values are either from the prior claims assessed, or the agreed limits, or the assesed values for the new line item.
-			var rate = this.Claim.GrantApplication.ReimbursementRate;
+			var rate = Claim.GrantApplication.ReimbursementRate;
 			var maxClaimParticipants = this.MaxClaimParticipants();
-			var maxClaimCost = this.EligibleCost?.AgreedMaxCost ?? this.Source?.AssessedCost ?? this.AssessedCost;
-			var maxParticipantCost = this.EligibleCost?.AgreedMaxParticipantCost ?? this.Source?.AssessedMaxParticipantCost ?? this.AssessedMaxParticipantCost;
+			var maxClaimCost = EligibleCost?.AgreedMaxCost ?? Source?.AssessedCost ?? AssessedCost;
+			var maxParticipantCost = EligibleCost?.AgreedMaxParticipantCost ?? Source?.AssessedMaxParticipantCost ?? AssessedMaxParticipantCost;
 			var validClaimParticipantCost = this.CalculateClaimParticipantCost();
 			var validClaimParticipantReimbursement = this.CalculateClaimMaxParticipantReimbursement();
 
@@ -302,11 +293,11 @@ namespace CJG.Core.Entities
 				validClaimParticipantReimbursement = Math.Truncate(validClaimParticipantCost * (decimal)rate * 100) / 100;
 			}
 
-			var trainingCost = this.Claim.GrantApplication.TrainingCost ?? context.Set<TrainingCost>().SingleOrDefault(ec => ec.GrantApplicationId == this.Claim.GrantApplicationId);
-			var maxAssessedParticipants = this.EligibleCost?.AgreedMaxParticipants ?? this.Source?.AssessedParticipants ?? trainingCost.AgreedParticipants;
-			var maxAssessedCost = this.EligibleCost?.AgreedMaxCost ?? this.Source?.AssessedCost ?? this.Claim.GrantApplication.TrainingCost.TotalAgreedMaxCost;
+			var trainingCost = Claim.GrantApplication.TrainingCost ?? context.Set<TrainingCost>().SingleOrDefault(ec => ec.GrantApplicationId == Claim.GrantApplicationId);
+			var maxAssessedParticipants = EligibleCost?.AgreedMaxParticipants ?? Source?.AssessedParticipants ?? trainingCost.AgreedParticipants;
+			var maxAssessedCost = EligibleCost?.AgreedMaxCost ?? Source?.AssessedCost ?? Claim.GrantApplication.TrainingCost.TotalAgreedMaxCost;
 			var validAssessedParticipantCost = this.CalculateAssessedParticipantCost();
-			var maxAssessedParticipantCost = this.EligibleCost?.AgreedMaxParticipantCost ?? this.Source?.AssessedMaxParticipantCost ?? validAssessedParticipantCost;
+			var maxAssessedParticipantCost = EligibleCost?.AgreedMaxParticipantCost ?? Source?.AssessedMaxParticipantCost ?? validAssessedParticipantCost;
 			var maxAssessedParticipantReimbursement = maxAssessedParticipantCost; // Allow for 100%.
 			var totalAssessedToDate = this.GetTotalAssessed();
 			var remainingToClaimed = maxClaimCost - totalAssessedToDate;
@@ -314,7 +305,7 @@ namespace CJG.Core.Entities
 			var maxGovContribution = this.CalculateClaimReimbursement();
 			var remainingGovContribution = TrainingCostExtensions.CalculateRoundedReimbursementAmount(remainingToClaimed, rate);
 
-			if ((validAssessedParticipantCost > maxParticipantCost) && (this.EligibleExpenseTypeId == (int)ExpenseTypes.ParticipantAssigned))
+			if ((validAssessedParticipantCost > maxParticipantCost) && (EligibleExpenseTypeId == (int)ExpenseTypes.ParticipantAssigned))
 			{
 				validAssessedParticipantCost = maxParticipantCost;
 			}
@@ -322,157 +313,148 @@ namespace CJG.Core.Entities
 			// Claimed
 
 			// Cannot claim more participants than the agreed maximum amount.
-			if (this.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && this.ClaimParticipants > maxClaimParticipants)
-				yield return new ValidationResult("Number of participants claimed cannot exceed the agreed maximum number of participants.", new[] { nameof(this.ClaimParticipants) });
+			if (Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && ClaimParticipants > maxClaimParticipants)
+				yield return new ValidationResult("Number of participants claimed cannot exceed the agreed maximum number of participants.", new[] { nameof(ClaimParticipants) });
 
 			// Ensure the claimed amount does not exceed the remaining amount available.
-			if (this.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant)
+			if (Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant)
 			{
-				if (this.ClaimCost < 0 && remainingToClaimed - this.ClaimCost > maxClaimCost)
-					yield return new ValidationResult($"The negative new claim Total Cost cannot exceed the amount owing {(maxClaimCost - remainingToClaimed):C} for remaining to be claimed in {this.EligibleExpenseType.Caption}.", new[] { nameof(this.ClaimCost) });
-				else if (this.ClaimCost > remainingToClaimed)
-					yield return new ValidationResult($"The new claim Total Cost cannot exceed the remaining to be claimed amount of {remainingToClaimed:C} for {this.EligibleExpenseType.Caption}.", new[] { nameof(this.ClaimCost) });
+				if (ClaimCost < 0 && remainingToClaimed - ClaimCost > maxClaimCost)
+					yield return new ValidationResult($"The negative new claim Total Cost cannot exceed the amount owing {(maxClaimCost - remainingToClaimed):C} for remaining to be claimed in {EligibleExpenseType.Caption}.", new[] { nameof(ClaimCost) });
+				else if (ClaimCost > remainingToClaimed)
+					yield return new ValidationResult($"The new claim Total Cost cannot exceed the remaining to be claimed amount of {remainingToClaimed:C} for {EligibleExpenseType.Caption}.", new[] { nameof(ClaimCost) });
 			}
-			// CJG-736 : This logic is nolonger valid. AgreedMaximumReibursement is not calculated and enforeced at expense level.
+
+			// CJG-736 : This logic is nolonger valid. AgreedMaximumReimbursement is not calculated and enforced at expense level.
 			// Cannot exceed reimbursement limit.
-			var agreedMaximumReibursement = this.EligibleCost?.AgreedMaxReimbursement ?? this.AssessedReimbursementCost;
-			if (this.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && this.AssessedReimbursementCost > agreedMaximumReibursement)
-				yield return new ValidationResult($"The assessed government contribution cannot exceed the agreed maximum of {agreedMaximumReibursement:C}", new[] { nameof(this.AssessedReimbursementCost) });
+			var agreedMaximumReimbursement = EligibleCost?.AgreedMaxReimbursement ?? AssessedReimbursementCost;
+			if (Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && AssessedReimbursementCost > agreedMaximumReimbursement)
+				yield return new ValidationResult($"The assessed government contribution cannot exceed the agreed maximum of {agreedMaximumReimbursement:C}", new[] { nameof(AssessedReimbursementCost) });
 
 			// The sum of the breakdown cannot be greater than the agreed amount.
-			var breakdowns = context.Set<ClaimBreakdownCost>().Where(b => b.ClaimEligibleCostId == this.Id).ToArray();
-			var sumOfBreakdown = this.Breakdowns.Count() == 0 ? breakdowns.Sum(b => b.ClaimCost) : this.Breakdowns.Sum(b => b.ClaimCost);
-			if (sumOfBreakdown > (eligibleCost?.AgreedMaxCost ?? this.AssessedCost))
-				yield return new ValidationResult($"The sum of the breakdown costs cannot exceed the agreed amount {this.ClaimCost:C}.", new[] { nameof(this.ClaimCost) });
+			var breakdowns = context.Set<ClaimBreakdownCost>().Where(b => b.ClaimEligibleCostId == Id).ToArray();
+			var sumOfBreakdown = Breakdowns.Count() == 0 ? breakdowns.Sum(b => b.ClaimCost) : Breakdowns.Sum(b => b.ClaimCost);
+			if (sumOfBreakdown > (eligibleCost?.AgreedMaxCost ?? AssessedCost))
+				yield return new ValidationResult($"The sum of the breakdown costs cannot exceed the agreed amount {ClaimCost:C}.", new[] { nameof(ClaimCost) });
 
-			if (this.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && maxGovContribution > remainingGovContribution)
-				yield return new ValidationResult($"The Maximum Government Contribution cannot exceed the remaining to be claimed amount for {this.EligibleExpenseType.Caption}.", new[] { nameof(this.ClaimCost) });
+			if (Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && maxGovContribution > remainingGovContribution)
+				yield return new ValidationResult($"The Maximum Government Contribution cannot exceed the remaining to be claimed amount for {EligibleExpenseType.Caption}.", new[] { nameof(ClaimCost) });
 
-			if (this.EligibleExpenseTypeId == (int)ExpenseTypes.ParticipantAssigned)
+			if (EligibleExpenseTypeId == (int)ExpenseTypes.ParticipantAssigned)
 			{
 				// The max participant cost must be (ClaimCost / ClaimParticipants).
-				if (this.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && this.ClaimMaxParticipantCost != validClaimParticipantCost)
-					yield return new ValidationResult($"The claim max participant cost is invalid and should be {validClaimParticipantCost:C}.", new[] { nameof(this.ClaimMaxParticipantCost) });
+				if (Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && ClaimMaxParticipantCost != validClaimParticipantCost)
+					yield return new ValidationResult($"The claim max participant cost is invalid and should be {validClaimParticipantCost:C}.", new[] { nameof(ClaimMaxParticipantCost) });
 
 				// The max participant reimbursement cost must be (ClaimMaxParticipantCost * GrantApplication.ReimbursementRate).
-				if (this.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && this.ClaimMaxParticipantReimbursementCost != validClaimParticipantReimbursement)
-					yield return new ValidationResult($"The claim max participant reimbursement cost is invalid and should be {validClaimParticipantReimbursement:C}.", new[] { nameof(this.ClaimMaxParticipantReimbursementCost) });
+				if (Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && ClaimMaxParticipantReimbursementCost != validClaimParticipantReimbursement)
+					yield return new ValidationResult($"The claim max participant reimbursement cost is invalid and should be {validClaimParticipantReimbursement:C}.", new[] { nameof(ClaimMaxParticipantReimbursementCost) });
 
-				if (this.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && this.AssessedMaxParticipantReimbursementCost > maxAssessedParticipantReimbursement)
-					yield return new ValidationResult("The assessed max participant reimbursement is greater than the agreed max participant reimbursement.", new[] { nameof(this.AssessedMaxParticipantReimbursementCost) });
+				if (Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && AssessedMaxParticipantReimbursementCost > maxAssessedParticipantReimbursement)
+					yield return new ValidationResult("The assessed max participant reimbursement is greater than the agreed max participant reimbursement.", new[] { nameof(AssessedMaxParticipantReimbursementCost) });
 			}
 			// The total of the reimbursement and employer contribution must be equal to the max participant cost.
-			if (this.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && this.ClaimMaxParticipantCost != this.ClaimMaxParticipantReimbursementCost + this.ClaimParticipantEmployerContribution)
-				yield return new ValidationResult("The claim max participant cost must equal the reimbursement + employer contribution.", new[] { nameof(this.ClaimMaxParticipantReimbursementCost) });
+			if (Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && ClaimMaxParticipantCost != ClaimMaxParticipantReimbursementCost + ClaimParticipantEmployerContribution)
+				yield return new ValidationResult("The claim max participant cost must equal the reimbursement + employer contribution.", new[] { nameof(ClaimMaxParticipantReimbursementCost) });
 
 			// Each participant cost must be less than or equal to the maximum amounts.
-			if (this.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && this.ParticipantCosts.Any(pc => pc.ClaimParticipantCost > validClaimParticipantCost || pc.ClaimReimbursement > validClaimParticipantReimbursement))
+			if (Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && ParticipantCosts.Any(pc => pc.ClaimParticipantCost > validClaimParticipantCost || pc.ClaimReimbursement > validClaimParticipantReimbursement))
 			{
-				var eligibleExpenseType = context.Set<EligibleExpenseType>().FirstOrDefault(eet => eet.Id == this.EligibleExpenseTypeId);
-				yield return new ValidationResult($"You may not exceed the maximum cost or reimbursement per participant for the expense type '{eligibleExpenseType?.Caption}'.", new[] { nameof(this.ClaimMaxParticipantCost) });
+				var eligibleExpenseType = context.Set<EligibleExpenseType>().FirstOrDefault(eet => eet.Id == EligibleExpenseTypeId);
+				yield return new ValidationResult($"You may not exceed the maximum cost or reimbursement per participant for the expense type '{eligibleExpenseType?.Caption}'.", new[] { nameof(ClaimMaxParticipantCost) });
 			}
-			if (this.Claim.GrantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
+
+			if (Claim.GrantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
 			{
-				// CJG-736 This logic is nolonger applied. ClaimReimbursement could be higher.
-				//if (this.ParticipantCosts.Any(pc => pc.ClaimReimbursement > pc.CalculateClaimReimbursement()))
-				//{
-				//	var eligibleExpenseType = context.Set<EligibleExpenseType>().FirstOrDefault(eet => eet.Id == this.EligibleExpenseTypeId);
-				//	yield return new ValidationResult($"You may not exceed the maximum cost or reimbursement per participant for the expense type '{eligibleExpenseType?.Caption}'.", new[] { nameof(this.ClaimMaxParticipantCost) });
-				//}
-				if (this.ParticipantCosts.Sum(pc => pc.ClaimParticipantCost) > this.ClaimCost)
+				/// ISSUE: CJG-1590 experiencing issues here
+				if (ParticipantCosts.Sum(pc => pc.ClaimParticipantCost) > ClaimCost)
 				{
-					var eligibleExpenseType = context.Set<EligibleExpenseType>().FirstOrDefault(eet => eet.Id == this.EligibleExpenseTypeId);
-					yield return new ValidationResult($"The sum of all participant costs exceeds the Paid Amount for the expense type '{eligibleExpenseType?.Caption}'.", new[] { nameof(this.ClaimCost) });
+					var eligibleExpenseType = context.Set<EligibleExpenseType>().FirstOrDefault(eet => eet.Id == EligibleExpenseTypeId);
+					yield return new ValidationResult($"The sum of all participant costs exceeds the Paid Amount for the expense type '{eligibleExpenseType?.Caption}'.", new[] { nameof(ClaimCost) });
 				}
-				if (this.ParticipantCosts.Where(pc => pc.ClaimParticipantCost > 0).Count() > this.MaxClaimParticipants()
-					|| this.ParticipantCosts.Where(pc => pc.AssessedParticipantCost > 0).Count() > this.MaxClaimParticipants())
+				if (ParticipantCosts.Where(pc => pc.ClaimParticipantCost > 0).Count() > this.MaxClaimParticipants()
+					|| ParticipantCosts.Where(pc => pc.AssessedParticipantCost > 0).Count() > this.MaxClaimParticipants())
 				{
-					var eligibleExpenseType = context.Set<EligibleExpenseType>().FirstOrDefault(eet => eet.Id == this.EligibleExpenseTypeId);
-					yield return new ValidationResult($"Number of participants with assigned cost exceed Agreement limit for the expense type '{eligibleExpenseType?.Caption}'.", new[] { nameof(this.ClaimParticipants) });
+					var eligibleExpenseType = context.Set<EligibleExpenseType>().FirstOrDefault(eet => eet.Id == EligibleExpenseTypeId);
+					yield return new ValidationResult($"Number of participants with assigned cost exceed Agreement limit for the expense type '{eligibleExpenseType?.Caption}'.", new[] { nameof(ClaimParticipants) });
 				}
 			}
 			// Assessed
 
 			// Cannot approve more participants than the agreed maximum amount.
-			if (this.AssessedParticipants > maxAssessedParticipants)
-				yield return new ValidationResult("Number of Participants cannot exceed Agreement Number of Participants.", new[] { nameof(this.ClaimParticipants) });
+			if (AssessedParticipants > maxAssessedParticipants)
+				yield return new ValidationResult("Number of Participants cannot exceed Agreement Number of Participants.", new[] { nameof(ClaimParticipants) });
 
 			// Cannot approve more cost than the agreed maximum.
-			if (this.AssessedCost < 0)
+			if (AssessedCost < 0)
 			{
-				if (remainingToAssessed - this.AssessedCost > maxAssessedCost)
-					yield return new ValidationResult($"The negative assessed Total Cost cannot exceed the amount owing {(maxAssessedCost - remainingToAssessed):C} for remaining to be claimed in {this.EligibleExpenseType.Caption}.", new[] { nameof(this.AssessedMaxParticipantCost) });
+				if (remainingToAssessed - AssessedCost > maxAssessedCost)
+					yield return new ValidationResult($"The negative assessed Total Cost cannot exceed the amount owing {(maxAssessedCost - remainingToAssessed):C} for remaining to be claimed in {EligibleExpenseType.Caption}.", new[] { nameof(AssessedMaxParticipantCost) });
 			}
 			else
 			{
 				//CJG-736: Total Cost can be a larger number for an ETG claim, this logic is no longer applied.
-				if (this.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && this.AssessedCost > remainingToAssessed)
-					yield return new ValidationResult($"The assessed Total Cost cannot exceed the remaining to be claimed amount of {remainingToAssessed:C} for {this.EligibleExpenseType.Caption}.", new[] { nameof(this.AssessedMaxParticipantCost) });
+				if (Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && AssessedCost > remainingToAssessed)
+					yield return new ValidationResult($"The assessed Total Cost cannot exceed the remaining to be claimed amount of {remainingToAssessed:C} for {EligibleExpenseType.Caption}.", new[] { nameof(AssessedMaxParticipantCost) });
 			}
 
 			// The max participant cost must be (AssessedCost / AssessedParticipants).
-			if (this.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && this.AssessedMaxParticipantCost != validAssessedParticipantCost)
-				yield return new ValidationResult($"The assessed max participant cost is invalid and should be {validAssessedParticipantCost:C}.", new[] { nameof(this.AssessedMaxParticipantCost) });
+			if (Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && AssessedMaxParticipantCost != validAssessedParticipantCost)
+				yield return new ValidationResult($"The assessed max participant cost is invalid and should be {validAssessedParticipantCost:C}.", new[] { nameof(AssessedMaxParticipantCost) });
 
-			if (this.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && (this.AssessedMaxParticipantCost > 0 && this.AssessedMaxParticipantReimbursementCost > this.AssessedMaxParticipantCost) || (this.AssessedMaxParticipantCost < 0 && this.AssessedMaxParticipantReimbursementCost < this.AssessedMaxParticipantCost))
-				yield return new ValidationResult("The assessed max participant reimbursement must be less than or equal to the assessed max participant cost.", new[] { nameof(this.AssessedMaxParticipantReimbursementCost) });
+			if (Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && (AssessedMaxParticipantCost > 0 && AssessedMaxParticipantReimbursementCost > AssessedMaxParticipantCost) || (AssessedMaxParticipantCost < 0 && AssessedMaxParticipantReimbursementCost < AssessedMaxParticipantCost))
+				yield return new ValidationResult("The assessed max participant reimbursement must be less than or equal to the assessed max participant cost.", new[] { nameof(AssessedMaxParticipantReimbursementCost) });
 
 			// The AssessedMaxParticipantCost must equal (AssessedMaxParticipantReimbursementCost + AssessedParticipantEmployerContribution).
-			if (this.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && this.AssessedMaxParticipantCost != this.AssessedMaxParticipantReimbursementCost + this.AssessedParticipantEmployerContribution)
-				yield return new ValidationResult("The assessed max participant cost does not equal the sum of the assessed reimbursement and employer contribution.", new[] { nameof(this.AssessedMaxParticipantReimbursementCost) });
+			if (Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && AssessedMaxParticipantCost != AssessedMaxParticipantReimbursementCost + AssessedParticipantEmployerContribution)
+				yield return new ValidationResult("The assessed max participant cost does not equal the sum of the assessed reimbursement and employer contribution.", new[] { nameof(AssessedMaxParticipantReimbursementCost) });
 
 			// Each participant cost must be less than or equal to the maximum amounts.
-			if (this.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && this.ParticipantCosts.Any(pc => pc.AssessedParticipantCost > maxAssessedParticipantCost || pc.AssessedReimbursement > maxAssessedParticipantReimbursement || pc.AssessedReimbursement > this.AssessedMaxParticipantReimbursementCost))
+			if (Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant && ParticipantCosts.Any(pc => pc.AssessedParticipantCost > maxAssessedParticipantCost || pc.AssessedReimbursement > maxAssessedParticipantReimbursement || pc.AssessedReimbursement > AssessedMaxParticipantReimbursementCost))
 			{
-				var eligibleExpenseType = context.Set<EligibleExpenseType>().FirstOrDefault(eet => eet.Id == this.EligibleExpenseTypeId);
-				yield return new ValidationResult($"You may not exceed the maximum cost or reimbursement per participant for the expense type '{eligibleExpenseType?.Caption}'.", new[] { nameof(this.AssessedMaxParticipantCost) });
+				var eligibleExpenseType = context.Set<EligibleExpenseType>().FirstOrDefault(eet => eet.Id == EligibleExpenseTypeId);
+				yield return new ValidationResult($"You may not exceed the maximum cost or reimbursement per participant for the expense type '{eligibleExpenseType?.Caption}'.", new[] { nameof(AssessedMaxParticipantCost) });
 			}
 
-			if (this.Claim.ClaimTypeId == ClaimTypes.SingleAmendableClaim)
+			if (Claim.ClaimTypeId == ClaimTypes.SingleAmendableClaim)
 			{
-				if (this.AssessedCost < 0)
-					yield return new ValidationResult("The assessed cost must be greater than or equal to 0.", new[] { nameof(this.AssessedCost) });
+				if (AssessedCost < 0)
+					yield return new ValidationResult("The assessed cost must be greater than or equal to 0.", new[] { nameof(AssessedCost) });
 
-				if (this.AssessedMaxParticipantCost < 0)
-					yield return new ValidationResult("The assessed max participant cost must be greater than or equal to 0.", new[] { nameof(this.AssessedMaxParticipantCost) });
+				if (AssessedMaxParticipantCost < 0)
+					yield return new ValidationResult("The assessed max participant cost must be greater than or equal to 0.", new[] { nameof(AssessedMaxParticipantCost) });
 
-				if (this.AssessedMaxParticipantReimbursementCost < 0)
-					yield return new ValidationResult("The assessed max participant reimbursement must be greater than or equal to 0.", new[] { nameof(this.AssessedMaxParticipantReimbursementCost) });
+				if (AssessedMaxParticipantReimbursementCost < 0)
+					yield return new ValidationResult("The assessed max participant reimbursement must be greater than or equal to 0.", new[] { nameof(AssessedMaxParticipantReimbursementCost) });
 
-				if (this.ClaimCost < 0)
-					yield return new ValidationResult("The claim cost must be greater than or equal to 0.", new[] { nameof(this.ClaimCost) });
+				if (ClaimCost < 0)
+					yield return new ValidationResult("The claim cost must be greater than or equal to 0.", new[] { nameof(ClaimCost) });
 
-				if (this.ClaimMaxParticipantCost < 0)
-					yield return new ValidationResult("The claim maximum participant cost must be greater than or equal to 0.", new[] { nameof(this.ClaimMaxParticipantCost) });
+				if (ClaimMaxParticipantCost < 0)
+					yield return new ValidationResult("The claim maximum participant cost must be greater than or equal to 0.", new[] { nameof(ClaimMaxParticipantCost) });
 
-				if (this.ClaimMaxParticipantReimbursementCost < 0)
-					yield return new ValidationResult("The claim maximum reimbursement cost must be greater than or equal to 0.", new[] { nameof(this.ClaimMaxParticipantReimbursementCost) });
+				if (ClaimMaxParticipantReimbursementCost < 0)
+					yield return new ValidationResult("The claim maximum reimbursement cost must be greater than or equal to 0.", new[] { nameof(ClaimMaxParticipantReimbursementCost) });
 			}
 
 			// There must only ever be one unique participant cost for each eligible cost.  A specific participant can't have multiple costs per expense type.
 			var hasMultipleParticipantLineItems = (
-				from pc in this.ParticipantCosts
+				from pc in ParticipantCosts
 				group pc by pc.ParticipantFormId into g
 				let count = g.Count()
 				where count > 1
 				select count).Any();
+
 			if (hasMultipleParticipantLineItems)
-				yield return new ValidationResult("A single claim eligible cost must not have more than one participant cost associated to a single participant.", new[] { nameof(this.ParticipantCosts) });
+				yield return new ValidationResult("A single claim eligible cost must not have more than one participant cost associated to a single participant.", new[] { nameof(ParticipantCosts) });
 
-			//if (this.Claim.GrantApplication.GetProgramType() != ProgramTypes.EmployerGrant)
-			//{
-				// The number of claim participants must be greater than or equal to the number of participant costs assigned.
-				if (this.ParticipantCosts.Where(pc => pc.ClaimParticipantCost > 0).Count() > this.ClaimParticipants
-				|| this.ParticipantCosts.Where(pc => pc.AssessedParticipantCost > 0).Count() > this.AssessedParticipants)
-					yield return new ValidationResult("Number of participants with assigned cost exceeds Maximum Number of Participants.", new[] { nameof(this.ClaimParticipants) });
-			//}
-
-			if (this.Claim.GrantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
+			if (Claim.GrantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
 			{
-				if (this.ParticipantCosts.Sum(pc => pc.AssessedParticipantCost) > this.AssessedCost)
+				/// ISSUE: CJG-1590 experiencing issues here
+				if (ParticipantCosts.Sum(pc => pc.AssessedParticipantCost) > AssessedCost)
 				{
-					var eligibleExpenseType = context.Set<EligibleExpenseType>().FirstOrDefault(eet => eet.Id == this.EligibleExpenseTypeId);
-					yield return new ValidationResult($"The sum of all participant costs exceeds the Assessed Amount for the expense type '{eligibleExpenseType?.Caption}'.", new[] { nameof(this.AssessedCost) });
+					var eligibleExpenseType = context.Set<EligibleExpenseType>().FirstOrDefault(eet => eet.Id == EligibleExpenseTypeId);
+					yield return new ValidationResult($"The sum of all participant costs exceeds the Assessed Amount for the expense type '{eligibleExpenseType?.Caption}'.", new[] { nameof(AssessedCost) });
 				}
 			}
 
@@ -481,6 +463,5 @@ namespace CJG.Core.Entities
 				yield return validation;
 			}
 		}
-		#endregion
 	}
 }

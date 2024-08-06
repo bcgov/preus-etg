@@ -111,3 +111,15 @@
         </div>
     </div>
 </div>
+
+<div class="block--textarea-group clearfix margin-bottom">
+    <div class="form__group last-item">
+        <div class="form__label">
+            Notes from Applicant regarding Assessment:
+        </div>
+        <div class="form__control">
+            <textarea ng-model="claim.ApplicantNotes" ng-disabled="true" maxlength="4000"></textarea>
+            <span class="pull-right ">{{4000 - claim.ApplicantNotes.length}} chars left</span>
+        </div>
+    </div>
+</div>

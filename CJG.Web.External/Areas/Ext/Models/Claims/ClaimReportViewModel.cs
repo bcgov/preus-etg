@@ -18,7 +18,8 @@ namespace CJG.Web.External.Areas.Ext.Models.Claims
 
 		public ClaimReportViewModel(Claim claim, IPrincipal user) : base(claim)
 		{
-			if (claim == null) throw new ArgumentNullException(nameof(claim));
+			if (claim == null)
+				throw new ArgumentNullException(nameof(claim));
 
 			var grantApplication = claim.GrantApplication;
 			ClaimType = grantApplication.GrantOpening.GrantStream.ProgramConfiguration.ClaimTypeId;

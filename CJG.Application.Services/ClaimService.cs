@@ -741,6 +741,33 @@ namespace CJG.Application.Services
 		}
 
 		/// <summary>
+		/// Update the specified <typeparamref name="Claim"/> Applicant Notes in the datastore.
+		/// </summary>
+		/// <param name="claim"></param>
+		/// <param name="applicantNotes"></param>
+		public Claim UpdateApplicantNote(Claim claim, string applicantNotes)
+		{
+			if (claim == null)
+				throw new ArgumentNullException(nameof(claim));
+
+			if (!_httpContext.User.CanPerformAction(claim.GrantApplication, ApplicationWorkflowTrigger.EditClaim))
+				throw new NotAuthorizedException("User does not have permission to update claim notes.");
+
+			claim.ApplicantNotes = applicantNotes?.Trim();
+
+			var accountType = _httpContext.User.GetAccountType();
+
+			if (accountType == AccountTypes.External)
+				_noteService.GenerateUpdateNote(claim.GrantApplication, true);
+
+			_dbContext.Update(claim);
+			_dbContext.CommitTransaction();
+
+
+			return claim;
+		}
+
+		/// <summary>
 		/// Update the specified <typeparamref name="Claim"/> in the datastore.
 		/// </summary>
 		/// <param name="claim"></param>
