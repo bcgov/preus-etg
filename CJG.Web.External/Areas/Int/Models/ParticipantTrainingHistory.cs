@@ -11,6 +11,7 @@ namespace CJG.Web.External.Areas.Int.Models
 		public string TrainingEndDate { get; set; }
 		public string TrainingStream { get; set; }
 		public string ApplicationStatus { get; set; }
+		public string Eligibility { get; set; }
 		public string TrainingProvider { get; set; }
 		public string TrainingCourse { get; set; }
 		public string ApprovedGovtContribution { get; set; }
@@ -26,7 +27,7 @@ namespace CJG.Web.External.Areas.Int.Models
 			TrainingEndDate = trainingProgram.EndDate.ToString("yyyy-MM-dd");
 			TrainingStream = trainingProgram.GrantApplication.GrantOpening.GrantStream.Name;
 			ApplicationStatus = trainingProgram.GrantApplication.ApplicationStateInternal.GetDescription();
-
+			Eligibility = participantForm.Approved.HasValue ? participantForm.Approved.Value ? "Eligible" : "Not Eligible" : "Not set";
 			TrainingProvider = trainingProgram.TrainingProvider.Name;
 			TrainingCourse = trainingProgram.CourseTitle;
 

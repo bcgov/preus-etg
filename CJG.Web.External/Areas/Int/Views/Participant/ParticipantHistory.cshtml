@@ -11,6 +11,7 @@
                     <th class="data-grid-sub-header" ng-click="changeSorting('TrainingEndDate')"><img ng-src="{{imgSrcTrainingEndDate}}" />Training End Date</th>
                     <th class="data-grid-sub-header" ng-click="changeSorting('TrainingStream')"><img ng-src="{{imgSrcTrainingStream}}" />Training Stream</th>
                     <th class="data-grid-sub-header" ng-click="changeSorting('ApplicationStatus')"><img ng-src="{{imgSrcApplicationStatus}}" />Application Status</th>
+                    <th class="data-grid-sub-header" ng-click="changeSorting('Eligibility')" style="min-width: 100px;"><img ng-src="{{imgSrcEligibility}}" />Eligibility</th>
                     <th class="data-grid-sub-header" ng-click="changeSorting('TrainingProvider')"><img ng-src="{{imgSrcTrainingProvider}}" />Training Provider</th>
                     <th class="data-grid-sub-header" ng-click="changeSorting('TrainingCourse')"><img ng-src="{{imgSrcTrainingCourse}}" />Training Course</th>
                     <th class="data-grid-sub-header" ng-click="changeSorting('ApprovedGovtContribution')"><img ng-src="{{imgSrcApprovedGovtContribution}}" />Approved Gov't Contribution</th>
@@ -24,6 +25,7 @@
                     <td>{{trainingHistory.TrainingEndDate}}</td>
                     <td>{{trainingHistory.TrainingStream}}</td>
                     <td>{{trainingHistory.ApplicationStatus}}</td>
+                    <td>{{trainingHistory.Eligibility}}</td>
                     <td>{{trainingHistory.TrainingProvider}}</td>
                     <td>{{trainingHistory.TrainingCourse}}</td>
                     <td class="data-grid-right-data">{{trainingHistory.ApprovedGovtContribution}}</td>

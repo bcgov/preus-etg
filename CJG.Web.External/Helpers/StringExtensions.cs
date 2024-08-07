@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -147,7 +148,8 @@ namespace CJG.Web.External.Helpers
 
 		public static string FormatTextLinesToHtml(string text, int maxLengthLastLine, int maxLines)
 		{
-			if (string.IsNullOrWhiteSpace(text)) return text;
+			if (string.IsNullOrWhiteSpace(text))
+				return text;
 
 			var lines = text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
