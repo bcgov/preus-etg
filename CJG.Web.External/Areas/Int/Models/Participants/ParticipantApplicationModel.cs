@@ -11,6 +11,8 @@ namespace CJG.Web.External.Areas.Int.Models.Participants
 		public string ParticipantMiddleName { get; set; }
 		public string ParticipantFirstName { get; set; }
 		public string FileNumber { get; set; }
+		public string Status { get; set; }
+		public string Eligibility { get; set; }
 		public string CourseName { get; set; }
 		public string EmployerName { get; set; }
 		public decimal PaidToDate { get; set; }

@@ -54,6 +54,12 @@
                     <div class="form-table-cell">
                         <label class="action {{sortDirection('FileNumber')}}" ng-click="sort('FileNumber')">File Number</label>
                     </div>
+                    <div class="form-table-cell">
+                        <label class="action {{sortDirection('Status')}}" ng-click="sort('Status')">Status</label>
+                    </div>
+                    <div class="form-table-cell">
+                        <label class="action {{sortDirection('Eligibility')}}" ng-click="sort('Eligibility')">Eligibility</label>
+                    </div>
                     <div class="form-table-cell width-175px">
                         <label class="action {{sortDirection('CourseName')}}" ng-click="sort('CourseName')">Course Name</label>
                     </div>
@@ -76,6 +82,12 @@
 					</div>
                     <div class="form-table-cell">
                         {{ application.FileNumber }}
+                    </div>
+                    <div class="form-table-cell">
+                        {{ application.Status }}
+                    </div>
+                    <div class="form-table-cell">
+                        {{ application.Eligibility }}
                     </div>
                     <div class="form-table-cell">
                         <div class="width-300px form-word-wrap">{{ application.CourseName }}</div>
