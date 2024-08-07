@@ -189,8 +189,16 @@
                     <div ng-class="errors.BusinessLicenseDocumentAttachments ? 'has-error padded-error' : '' ">
                         <h4>Business Information Documents *</h4>
                         <div class="notice notice--icon" ng-if="model.CanEditOrganizationProfile">
-                            <p><strong>You must upload a copy of your current business licence</strong> if you’re operating in a location where a business licence is required. <a href="https://www.workbc.ca/media/335/download?inline=" target="_blank">Here is an example of a business licence</a>.</p>
-                            <p><strong>If a business licence is not required where you operate</strong>, you must upload alternative documentation (e.g. Notices of Assessment issued by the Canada Revenue Agency, or corporate financial statements) to demonstrate that your business has been fully operational for at least one year.</p>
+                            <p><strong>If a business license is required where you operate (e.g., required by the municipality or city/town)</strong>, you <strong>must</strong> upload: </p>
+                            <ul>
+                                <li>A copy of your current business license. Note that this is a stand-alone requirement and that alternative documentation such as corporation documents do not replace this requirement. <a href="https://www.workbc.ca/media/335/download?inline=" target="_blank">Here is an example of a business license</a>.</li>
+                            </ul>
+                            
+                            <p><strong>If a business license is not required where you operate</strong>, you <strong>must</strong> upload:</p>
+                            <ul>
+                                <li>Documentation confirming the exemption (e.g., letter from city allowing exemption for your business, cite the municipal policy/regulation allowing the exemption); and </li>
+                                <li>Documentation demonstrating that your business has been fully operational for at least one year (e.g., Current Notice of Assessment issued by the Canada Revenue Agency, or corporate financial statements).</li>
+                            </ul>
                             <p>If you have any questions, please contact <a href="mailto: ETG@gov.bc.ca">ETG@gov.bc.ca</a>.</p>
                         </div>
                         <p ng-if="model.CanEditOrganizationProfile">Accepted file types: PDF, JPG, JPEG, PNG, GIF.</p>
