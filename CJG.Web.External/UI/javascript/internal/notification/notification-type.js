@@ -36,7 +36,7 @@ app.controller('NotificationType', function ($scope, $attrs, $controller, uiTiny
     setup: function (ed) {
       ed.on('init', function (ed) {
         $('div.tox-tinymce-aux').css('z-index', '99999');
-      });     
+      });
 
       // adding variable keywords menu to toolbar
       ed.ui.registry.addMenuButton('variablekeywords', {
@@ -44,12 +44,17 @@ app.controller('NotificationType', function ($scope, $attrs, $controller, uiTiny
         text: 'Variable',
         fetch: function (callback) {
           var menuItems = [];
+          const rawKeywords = ['ClaimReturnedReason'];
+
           for (let item of $scope.VariableKeywords) {
             menuItems.push({
               type: 'menuitem',
               text: item.Value,
               onAction: function (_) {
-                ed.insertContent('@Model.' + item.Key)
+                if (rawKeywords.includes(item.Key))
+                  ed.insertContent('@Raw(Model.' + item.Key + ')');
+                else
+                  ed.insertContent('@Model.' + item.Key)
               }
             });
           }

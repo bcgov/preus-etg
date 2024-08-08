@@ -267,17 +267,18 @@ namespace CJG.Core.Entities
 		/// <typeparam name="TEntity"></typeparam>
 		/// <param name="item"></param>
 		/// <param name="name"></param>
-		/// <param name="default_value"></param>
-		public static object GetTemporaryValue<TEntity>(this TEntity item, string name, object default_value)
+		/// <param name="defaultValue"></param>
+		public static object GetTemporaryValue<TEntity>(this TEntity item, string name, object defaultValue)
 		{
 			// If we don't have a dictionary for
 			// this item yet, return the default value.
-			if (!PropertyValues.ContainsKey(item)) return default_value;
+			if (!PropertyValues.ContainsKey(item))
+				return defaultValue;
 
 			// If the value isn't in the dictionary,
 			// return the default value.
 			if (!PropertyValues[item].ContainsKey(name))
-				return default_value;
+				return defaultValue;
 
 			// Return the saved value.
 			return PropertyValues[item][name];
@@ -292,7 +293,10 @@ namespace CJG.Core.Entities
 		/// <returns></returns>
 		public static KeyValuePair<string, string>[] GetPropertiesAsKeyValuePairs<TEntity>(this TEntity item, string[] excludedProperties = null) where TEntity : Type
 		{
-			var properties = item.GetProperties().Select(p => p.Name).Where(p => excludedProperties != null ? excludedProperties.All(xp => xp != p) : true).ToArray();
+			var properties = item.GetProperties()
+				.Select(p => p.Name)
+				.Where(p => excludedProperties != null ? excludedProperties.All(xp => xp != p) : true)
+				.ToArray();
 
 			return properties.Zip(
 				properties.Select(p => Regex.Replace(p, "(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z])", " $1")).ToArray(),

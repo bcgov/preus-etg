@@ -1,8 +1,10 @@
-﻿using System;
+using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Web;
 using CJG.Core.Entities;
+using RazorEngine.Text;
 
 namespace CJG.Application.Services.Notifications
 {
@@ -109,9 +111,9 @@ namespace CJG.Application.Services.Notifications
 			IsPayment = IsReimbursementPayment(grantApplication);
 			ReimbursementPayment = GetReimbursementPayment(grantApplication);
 			ClaimDeniedReason = grantApplication.GetReason(ApplicationStateInternal.ClaimDenied);
-			ClaimReturnedReason = grantApplication.GetReason(ApplicationStateInternal.ClaimReturnedToApplicant);
+			ClaimReturnedReason = FormatTextLinesToHtml(grantApplication.GetReason(ApplicationStateInternal.ClaimReturnedToApplicant));
 			ClaimApprovedReason = grantApplication.GetCurrentClaim()?.ClaimAssessmentNotes;
-
+			
 			var changeRequests = grantApplication.GetPreviousChangeRequest().ToList();
 			if (grantApplication.ApplicationStateInternal == ApplicationStateInternal.ChangeRequestDenied)
 			{
@@ -129,6 +131,14 @@ namespace CJG.Application.Services.Notifications
 			}
 
 			SetPriorityFactors(grantApplication);
+		}
+
+		private string FormatTextLinesToHtml(string text)
+		{
+			if (string.IsNullOrWhiteSpace(text))
+				return string.Empty;
+
+			return text.Replace(Environment.NewLine, "<br />");
 		}
 
 		private void SetPriorityFactors(GrantApplication grantApplication)

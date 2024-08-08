@@ -13,7 +13,6 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 {
 	public class ApplicationPreviewModel : BaseViewModel
 	{
-		#region Properties
 		public int GrantProgramId { get; set; }
 		public ApplicationStateInternal ApplicationStateInternal { get; set; }
 
@@ -28,13 +27,7 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 			public TrainingProgram TrainingProgram;
 			public TrainingProvider TrainingProvider;
 		}
-		#endregion
 
-		#region Constructors
-
-		#endregion
-
-		#region Methods
 		public TestEntities GenerateTestEntities(IPrincipal user, IUserService userService, IGrantProgramService grantProgramService, IFiscalYearService fiscalYearService)
 		{
 			var now = AppDateTime.UtcNow;
@@ -163,7 +156,7 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 					break;
 
 				case ApplicationStateInternal.OfferIssued:
-					AddStateChange(grantApplication, ApplicationStateInternal.RecommendedForApproval, "Your application was excellent.");
+					AddStateChange(grantApplication, ApplicationStateInternal.RecommendedForApproval, "Your application was excellent.<br>And GOod.");
 					AddAgreement(grantApplication);
 					break;
 
@@ -198,10 +191,15 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 				case ApplicationStateInternal.NewClaim:
 				case ApplicationStateInternal.ClaimAssessEligibility:
 				case ApplicationStateInternal.ClaimAssessReimbursement:
-				case ApplicationStateInternal.ClaimReturnedToApplicant:
 				case ApplicationStateInternal.ClaimDenied:
 					AddParticipants(grantApplication);
 					AddClaim(grantApplication);
+					break;
+
+				case ApplicationStateInternal.ClaimReturnedToApplicant:
+					AddParticipants(grantApplication);
+					AddClaim(grantApplication);
+					SetupReturnedClaim(grantApplication);
 					break;
 
 				case ApplicationStateInternal.ClaimApproved:
@@ -237,7 +235,7 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 			grantApplication.StateChanges.Add(new GrantApplicationStateChange
 			{
 				FromState = ApplicationStateInternal.UnderAssessment,
-				ToState = ApplicationStateInternal.RecommendedForApproval,
+				ToState = state,
 				Reason = message,
 				DateAdded = AppDateTime.UtcNow
 			});
@@ -296,12 +294,25 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 			return claim;
 		}
 
+		private static Claim SetupReturnedClaim(GrantApplication grantApplication, ClaimState claimState = ClaimState.Unassessed)
+		{
+			var claim = grantApplication.Claims.First();
+
+			claim.ClaimState = ClaimState.Incomplete;
+			claim.ClaimAssessmentNotes = $"This is a multiple line{Environment.NewLine}reason for return{Environment.NewLine}{Environment.NewLine}and we should see line breaks.";
+
+			grantApplication.ApplicationStateExternal = ApplicationStateExternal.ClaimReturned;
+
+			AddStateChange(grantApplication, ApplicationStateInternal.ClaimReturnedToApplicant, claim.ClaimAssessmentNotes);
+
+			return claim;
+		}
+
 		private static void AddPaymentRequest(GrantApplication grantApplication)
 		{
 			var claim = AddClaim(grantApplication, ClaimState.ClaimApproved);
 
 			claim.PaymentRequests.Add(new PaymentRequest(grantApplication, new PaymentRequestBatch(grantApplication.GrantOpening.GrantStream.GrantProgram, "batch", PaymentBatchTypes.PaymentRequest, new InternalUser()), claim));
 		}
-		#endregion
 	}
 }
