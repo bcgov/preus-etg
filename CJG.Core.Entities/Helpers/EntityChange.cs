@@ -14,12 +14,9 @@ namespace CJG.Core.Entities.Helpers
 {
 	public class EntityChange
 	{
-		#region Variables
 		private static readonly string[] valueNames = new[] { "Caption", "Title", "Name", "FileName" };
 		private readonly DbContext _context;
-		#endregion
 
-		#region Properties
 		/// <summary>
 		/// get - The name of the entity that has been changed.
 		/// </summary>
@@ -74,9 +71,7 @@ namespace CJG.Core.Entities.Helpers
 				return new PropertyChange[0];
 			}
 		}
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of an EntityChange struct.
 		/// </summary>
@@ -103,46 +98,48 @@ namespace CJG.Core.Entities.Helpers
 			foreach (var property in entry.CurrentValues.PropertyNames.Where(p => !ignorePropertyNames.Contains(p)))
 			{
 				var propertyName = GetDisplayName(type.GetProperty(property));
-				if (entry.State == EntityState.Added && entry.CurrentValues[property] == null) continue;
-				// Test each property to see if it has changed.
-				if (entry.State == EntityState.Added || !(entry.OriginalValues[property]?.Equals(entry.CurrentValues[property]) ?? entry.OriginalValues[property] == entry.CurrentValues[property]))
-				{
-					// Check if this property is a foreign key.
-					var foreignProperty = entityProperties.FirstOrDefault(p => p.GetCustomAttribute<ForeignKeyAttribute>()?.Name == property);
-					if (foreignProperty != null)
-					{
-						var currentObject = foreignProperty.GetValue(entry.Entity);
-						if (currentObject != null)
-						{
-							if (entry.State == EntityState.Added)
-							{
-								var currentValue = GetDisplayName(currentObject) ?? GetDefaultText(currentObject) ?? GetDefaultText(currentObject, valueNames) ?? entry.CurrentValues[property];
-								this.AddChange(GetDisplayName(foreignProperty), null, currentValue);
-							}
-							else
-							{
-								var originalObject = GetEntity(context, currentObject.GetType(), entry.OriginalValues[property]);
-								var originalValue = GetDisplayName(originalObject) ?? GetDefaultText(originalObject) ?? GetDefaultText(originalObject, valueNames) ?? entry.OriginalValues[property];
-								var currentValue = GetDisplayName(currentObject) ?? GetDefaultText(currentObject) ?? GetDefaultText(currentObject, valueNames) ?? entry.CurrentValues[property];
+				if (entry.State == EntityState.Added && entry.CurrentValues[property] == null)
+					continue;
 
-								this.AddChange(GetDisplayName(foreignProperty), originalValue, currentValue);
-							}
+				// Test each property to see if it has changed.
+				if (entry.State != EntityState.Added && (entry.OriginalValues[property]?.Equals(entry.CurrentValues[property]) ?? entry.OriginalValues[property] == entry.CurrentValues[property]))
+					continue;
+
+				// Check if this property is a foreign key.
+				var foreignProperty = entityProperties.FirstOrDefault(p => p.GetCustomAttribute<ForeignKeyAttribute>()?.Name == property);
+				if (foreignProperty != null)
+				{
+					var currentObject = foreignProperty.GetValue(entry.Entity);
+					if (currentObject != null)
+					{
+						if (entry.State == EntityState.Added)
+						{
+							var currentValue = GetDisplayName(currentObject) ?? GetDefaultText(currentObject) ?? GetDefaultText(currentObject, valueNames) ?? entry.CurrentValues[property];
+							AddChange(GetDisplayName(foreignProperty), null, currentValue);
+						}
+						else
+						{
+							var originalObject = GetEntity(context, currentObject.GetType(), entry.OriginalValues[property]);
+							var originalValue = GetDisplayName(originalObject) ?? GetDefaultText(originalObject) ?? GetDefaultText(originalObject, valueNames) ?? entry.OriginalValues[property];
+							var currentValue = GetDisplayName(currentObject) ?? GetDefaultText(currentObject) ?? GetDefaultText(currentObject, valueNames) ?? entry.CurrentValues[property];
+
+							AddChange(GetDisplayName(foreignProperty), originalValue, currentValue);
 						}
 					}
-					else if ((type == typeof(Document) || type == typeof(VersionedDocument)) && property == "Body")
-					{
-						this.AddChange(propertyName, "...", "...");
-					}
-					else if ((type == typeof(Attachment) || type == typeof(VersionedAttachment)) && property == "AttachmentData")
-					{
-						var originalKB = entry.State != EntityState.Added && entry.OriginalValues[property] != null ? ((byte[])entry.OriginalValues[property]).Length / 1024 : 0;
-						var currentKB = entry.CurrentValues[property] != null ? ((byte[])entry.CurrentValues[property]).Length / 1024 : 0;
-						this.AddChange(propertyName, $"{originalKB:##.##} KB", $"{currentKB:##.##} KB");
-					}
-					else
-					{
-						this.AddChange(propertyName, entry.State == EntityState.Added ? null : entry.OriginalValues[property], entry.CurrentValues[property]);
-					}
+				}
+				else if ((type == typeof(Document) || type == typeof(VersionedDocument)) && property == "Body")
+				{
+					AddChange(propertyName, "...", "...");
+				}
+				else if ((type == typeof(Attachment) || type == typeof(VersionedAttachment)) && property == "AttachmentData")
+				{
+					var originalKB = entry.State != EntityState.Added && entry.OriginalValues[property] != null ? ((byte[])entry.OriginalValues[property]).Length / 1024 : 0;
+					var currentKB = entry.CurrentValues[property] != null ? ((byte[])entry.CurrentValues[property]).Length / 1024 : 0;
+					AddChange(propertyName, $"{originalKB:##.##} KB", $"{currentKB:##.##} KB");
+				}
+				else
+				{
+					AddChange(propertyName, entry.State == EntityState.Added ? null : entry.OriginalValues[property], entry.CurrentValues[property]);
 				}
 			}
 		}
@@ -161,9 +158,7 @@ namespace CJG.Core.Entities.Helpers
 			this.State = entry.State;
 			this.Changes = new Dictionary<string, IList<PropertyChange>>();
 		}
-		#endregion
 
-		#region Methods
 		/// <summary>
 		/// Get the property name, but check if there is a DisplayNameAttribute first.
 		/// </summary>
@@ -195,19 +190,23 @@ namespace CJG.Core.Entities.Helpers
 					if (entryType == typeof(TrainingProvider))
 					{
 						var trainingProvider = entry.Entity as TrainingProvider;
-						if (trainingProvider.TrainingAddressId == address.Id || trainingProvider.TrainingAddress == address)
-						     { return entry; }
-						else if (trainingProvider.TrainingProviderAddressId == address.Id || trainingProvider.TrainingProviderAddress == address)
-						         { return entry; }
 
+						if (trainingProvider.TrainingAddressId == address.Id || trainingProvider.TrainingAddress == address)
+							return entry;
+
+						if (trainingProvider.TrainingProviderAddressId == address.Id || trainingProvider.TrainingProviderAddress == address)
+							return entry;
 					}
 					
 					else if (entryType == typeof(GrantApplication))
 					{
 						var grantApplication = entry.Entity as GrantApplication;
-						if (grantApplication.ApplicantPhysicalAddressId == address.Id || grantApplication.ApplicantPhysicalAddress == address) return entry;
-						else if (grantApplication.ApplicantMailingAddressId == address.Id || grantApplication.ApplicantMailingAddress == address) return entry;
-						else if (grantApplication.OrganizationAddressId == address.Id || grantApplication.OrganizationAddress == address) return entry;
+						if (grantApplication.ApplicantPhysicalAddressId == address.Id || grantApplication.ApplicantPhysicalAddress == address)
+							return entry;
+						if (grantApplication.ApplicantMailingAddressId == address.Id || grantApplication.ApplicantMailingAddress == address)
+							return entry;
+						if (grantApplication.OrganizationAddressId == address.Id || grantApplication.OrganizationAddress == address)
+							return entry;
 					}
 				}
 				else if (childType == typeof(Attachment))
@@ -216,17 +215,17 @@ namespace CJG.Core.Entities.Helpers
 					if (entryType == typeof(TrainingProvider))
 					{
 						var trainingProvider = entry.Entity as TrainingProvider;
-						if (trainingProvider.CourseOutlineDocumentId == attachment.Id
-							|| trainingProvider.BusinessCaseDocumentId == attachment.Id
-							|| trainingProvider.ProofOfQualificationsDocumentId == attachment.Id) return entry;
+
+						if (trainingProvider != null && (trainingProvider.CourseOutlineDocumentId == attachment.Id
+						                                 || trainingProvider.BusinessCaseDocumentId == attachment.Id
+						                                 || trainingProvider.ProofOfQualificationsDocumentId == attachment.Id))
+							return entry;
 					}
 					else if (entryType == typeof(Claim))
 					{
 						var claim = entry.Entity as Claim;
-						if (claim.Receipts.Where(r => r.Id == attachment.Id).Count() > 0)
-						{
+						if (claim != null && claim.Receipts.Any(r => r.Id == attachment.Id))
 							return entry;
-						}
 					}
 				}
 			}
@@ -257,10 +256,13 @@ namespace CJG.Core.Entities.Helpers
 		/// <returns></returns>
 		private static string GetDisplayName(object entity)
 		{
-			if (entity == null) return null;
+			if (entity == null)
+				return null;
+
 			var entityType = entity.GetType().GetProxyType();
 			var getDisplayNameMethod = entityType.GetMethods(BindingFlags.Instance | BindingFlags.Public).FirstOrDefault(m => m.Name == "GetDisplayName" && !m.GetParameters().Any());
 			var attr = entityType.GetCustomAttribute<DisplayNameAttribute>();
+
 			return getDisplayNameMethod != null ? (string)getDisplayNameMethod.Invoke(entity, null) : attr?.DisplayName;
 		}
 
@@ -272,9 +274,12 @@ namespace CJG.Core.Entities.Helpers
 		/// <returns></returns>
 		private static string GetDefaultText(object entity)
 		{
-			if (entity == null) return null;
+			if (entity == null)
+				return null;
+
 			var entityType = entity.GetType().GetProxyType();
 			var toStringMethod = entityType.GetMethods(BindingFlags.Instance | BindingFlags.Public).FirstOrDefault(m => m.Name == "ToString" && !m.GetParameters().Any() && m.DeclaringType == entityType);
+
 			return toStringMethod != null ? (string)toStringMethod.Invoke(entity, null) : null;
 		}
 
@@ -286,9 +291,12 @@ namespace CJG.Core.Entities.Helpers
 		/// <returns></returns>
 		private static string GetDefaultText(object entity, string[] propertyNames)
 		{
-			if (entity == null) return null;
+			if (entity == null)
+				return null;
+
 			var entityType = entity.GetType().GetProxyType();
 			var textProperty = entityType.GetProperties(BindingFlags.Instance | BindingFlags.Public).FirstOrDefault(p => propertyNames.Contains(p.Name));
+
 			return textProperty != null ? (string)textProperty?.GetValue(entity) : null;
 		}
 
@@ -321,6 +329,11 @@ namespace CJG.Core.Entities.Helpers
 				else if (this.Type == typeof(TrainingProgram))
 				{
 					description = $" - {((TrainingProgram)entry.Entity).CourseTitle}";
+				}
+				else if (this.Type == typeof(ParticipantForm))
+				{
+					var participantForm = (ParticipantForm)entry.Entity;
+					description = $" - {participantForm.LastName}, {participantForm.FirstName}";
 				}
 				else if (this.Type == typeof(Document))
 				{
@@ -390,6 +403,11 @@ namespace CJG.Core.Entities.Helpers
 						description = $" - {((TrainingProgram)entry.Entity).CourseTitle}";
 					}
 				}
+				else if (this.Type == typeof(ParticipantForm))
+				{
+					var participantForm = ((ParticipantForm)entry.Entity);
+					description = $" - {participantForm.LastName}, {participantForm.FirstName}";
+				}
 				else if (this.Type == typeof(Document))
 				{
 					var document = entry.Entity as Document;
@@ -435,8 +453,10 @@ namespace CJG.Core.Entities.Helpers
 		public void AddChange(string propertyName, object oldValue, object newValue, EntityState state = EntityState.Modified)
 		{
 			var found = this.Changes.TryGetValue(propertyName, out IList<PropertyChange> changes);
-			if (!found) this.Changes.Add(propertyName, new List<PropertyChange>(new[] { new PropertyChange(propertyName, oldValue, newValue, state) }));
-			else changes.Add(new PropertyChange(propertyName, oldValue, newValue, state));
+			if (!found)
+				this.Changes.Add(propertyName, new List<PropertyChange>(new[] { new PropertyChange(propertyName, oldValue, newValue, state) }));
+			else
+				changes.Add(new PropertyChange(propertyName, oldValue, newValue, state));
 		}
 
 		/// <summary>
@@ -498,6 +518,5 @@ namespace CJG.Core.Entities.Helpers
 			if (String.IsNullOrWhiteSpace(value)) return value;
 			return Regex.Replace(value, "([A-Z])", " $1", RegexOptions.Compiled).Trim();
 		}
-		#endregion
 	}
 }

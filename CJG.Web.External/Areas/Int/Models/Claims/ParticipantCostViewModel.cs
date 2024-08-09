@@ -22,7 +22,8 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 
 		public ParticipantCostViewModel(ParticipantCost participantCost)
 		{
-			if (participantCost == null) throw new ArgumentNullException(nameof(participantCost));
+			if (participantCost == null)
+				throw new ArgumentNullException(nameof(participantCost));
 
 			Id = participantCost.Id;
 			RowVersion = Convert.ToBase64String(participantCost.RowVersion);

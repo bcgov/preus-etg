@@ -11,21 +11,19 @@ namespace CJG.Application.Services
 {
 	public class ClaimEligibleCostService : Service, IClaimEligibleCostService
 	{
-		#region Variables
 		private readonly IClaimService _claimService;
-		#endregion
+		private readonly INoteService _noteService;
 
-		#region Constructors
 		public ClaimEligibleCostService(IDataContext dbContext,
 										HttpContextBase httpContext,
 										IClaimService claimService,
+										INoteService noteService,
 										ILogger logger) : base(dbContext, httpContext, logger)
 		{
 			_claimService = claimService;
+			_noteService = noteService;
 		}
-		#endregion
 
-		#region Methods
 		/// <summary>
 		/// Get the eligible claim cost for the specified id.
 		/// </summary>
@@ -137,8 +135,6 @@ namespace CJG.Application.Services
 			if (!_httpContext.User.CanPerformAction(claim.GrantApplication, ApplicationWorkflowTrigger.EditClaim))
 				throw new NotAuthorizedException($"User does not have permission to access Grant Application '{claim.GrantApplication.Id}'.");
 
-			var isExternalUser = _httpContext.User.GetAccountType() == AccountTypes.External;
-
 			if (claim.GrantApplication.GetProgramType() == ProgramTypes.EmployerGrant)
 			{
 				//remove all existing claim costs/participant costs
@@ -151,7 +147,7 @@ namespace CJG.Application.Services
 					_dbContext.ClaimEligibleCosts.Remove(item);
 				}
 
-				_claimService.Update(claim);
+				_claimService.Update(claim, bypassExternalNoteCreation: true);
 
 				// Re-Add line items to the claim for every line item in the estimate that has an AgreedMaxCost > 0.
 				foreach (var eligibleCost in claim.GrantApplication.TrainingCost.EligibleCosts.Where(ec => ec.AgreedMaxCost > 0))
@@ -160,9 +156,9 @@ namespace CJG.Application.Services
 					var claimEligibleCost = new ClaimEligibleCost(claim, eligibleCost);
 					claim.EligibleCosts.Add(claimEligibleCost);
 				}
-				_claimService.Update(claim);
+
+				_claimService.Update(claim, bypassExternalNoteCreation: true);
 			}
 		}
-		#endregion
 	}
 }

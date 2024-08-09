@@ -13,7 +13,7 @@ app.controller('ParticipantHistory', function ($scope, $attrs, $controller, $tim
  * @returns {Promise}
  **/
   $scope.getTrainingHistory = function (pageKeyword, page, quantity) {
-    var useUrl = '/Int/Application/Participant/TrainingHistory/' + $attrs.participantId + '/' + page + '/' + quantity + '?sortby=' + $scope.sort.column + '&sortDesc=' + $scope.sort.descending + (pageKeyword ? '&search=' + pageKeyword : '');
+    var useUrl = '/Int/Application/Participant/TrainingHistory/' + $attrs.participantId + '/' + page + '/' + quantity + '?sortBy=' + $scope.sort.column + '&sortDesc=' + $scope.sort.descending + (pageKeyword ? '&search=' + pageKeyword : '');
     return $scope.ajax({
       url: useUrl
     })
@@ -44,14 +44,17 @@ app.controller('ParticipantHistory', function ($scope, $attrs, $controller, $tim
       sort.column = column;
       sort.descending = false;
     }
+
     if (sort.descending) {
-      newSortImage = sortDesc
+      newSortImage = sortDesc;
     }
+
     if (column == 'FileNumber') { $scope.imgSrcFileNumber = newSortImage; }
     if (column == 'TrainingStartDate') { $scope.imgSrcTrainingStartDate = newSortImage; }
     if (column == 'TrainingEndDate') { $scope.imgSrcTrainingEndDate = newSortImage; }
     if (column == 'TrainingStream') { $scope.imgSrcTrainingStream = newSortImage; }
     if (column == 'ApplicationStatus') { $scope.imgSrcApplicationStatus = newSortImage; }
+    if (column == 'Eligibility') { $scope.imgSrcEligibility = newSortImage; }
     if (column == 'TrainingProvider') { $scope.imgSrcTrainingProvider = newSortImage; }
     if (column == 'TrainingCourse') { $scope.imgSrcTrainingCourse = newSortImage; }
     if (column == 'ApprovedGovtContribution') { $scope.imgSrcApprovedGovtContribution = newSortImage; }
@@ -66,10 +69,10 @@ app.controller('ParticipantHistory', function ($scope, $attrs, $controller, $tim
     $scope.imgSrcTrainingEndDate = noSort;
     $scope.imgSrcTrainingStream = noSort;
     $scope.imgSrcApplicationStatus = noSort;
+    $scope.imgSrcEligibility = noSort;
     $scope.imgSrcTrainingProvider = noSort;
     $scope.imgSrcTrainingCourse = noSort;
     $scope.imgSrcApprovedGovtContribution = noSort;
     $scope.imgSrcAmountPaid = noSort;
   };
-
 });

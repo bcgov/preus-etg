@@ -129,7 +129,7 @@ namespace CJG.Core.Entities
 		public int TotalTrainingHours { get; set; }
 
 		/// <summary>
-		/// get/set - The title of the qualifiction that will be received upon completion.
+		/// get/set - The title of the qualification that will be received upon completion.
 		/// </summary>
 		[MaxLength(500)]
 		public string TitleOfQualification { get; set; }

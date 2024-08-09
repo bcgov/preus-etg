@@ -20,15 +20,12 @@ namespace CJG.Web.External.Areas.Int.Controllers
 	[RoutePrefix("Application")]
 	public class ParticipantController : BaseController
 	{
-		#region Variables
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IUserService _userService;
 		private readonly IParticipantService _participantService;
 		private readonly INationalOccupationalClassificationService _nationalOccupationalClassificationService;
 		private readonly IAttachmentService _attachmentService;
-		#endregion
 
-		#region Constructors
 		public ParticipantController(
 			IControllerService controllerService,
 			IGrantApplicationService grantApplicationService,
@@ -43,9 +40,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_nationalOccupationalClassificationService = nationalOccupationalClassificationService;
 			_attachmentService = attachmentService;
 		}
-		#endregion
 
-		#region Endpoints
 		/// <summary>
 		/// Get participants data for the specified Grant Application.
 		/// </summary>
@@ -104,17 +99,11 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		public ActionResult ParticipantInformationView(int participantId)
 		{
 			ViewBag.ParticipantId = participantId;
-			ParticipantInfoViewModel model;
-			ParticipantForm participantForm = _participantService.Get(participantId);
+			var participantForm = _participantService.Get(participantId);
 
+			var model = new ParticipantInfoViewModel();
 			if (participantForm != null)
-			{
 				model = new ParticipantInfoViewModel(participantForm, _nationalOccupationalClassificationService, _userService, _participantService);
-			}
-			else
-			{
-				model = new ParticipantInfoViewModel();
-			}
 
 #if Training || Support
 			 model.ContactInfo.SIN = string.Concat(model.ContactInfo.SIN?.Substring(0, 1), "** *** ***");
@@ -130,68 +119,19 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		}
 
 		[HttpGet]
-		[Route("Participant/TrainingHistory/{participantId}")]
-		public JsonResult LoadTrainingHistory(int participantId)
-		{
-			ViewBag.ParticipantId = participantId;
-
-			ParticipantInfoViewModel model;
-			ParticipantForm participantForm = _participantService.Get(participantId);
-
-			if (participantForm != null)
-			{
-				model = new ParticipantInfoViewModel(participantForm, _nationalOccupationalClassificationService, _userService, _participantService);
-			}
-			else
-			{
-				model = new ParticipantInfoViewModel();
-			}
-
-
-#if Training || Support
-             model.ContactInfo.SIN = string.Concat(model.ContactInfo.SIN?.Substring(0, 1), "** *** ***");
-#endif
-
-			// Mask the social insurance number for anyone without privilege IA3
-			if (!User.HasPrivilege(Privilege.IA3))
-			{
-				model.ContactInfo.SIN = string.Concat(model.ContactInfo.SIN?.Substring(0, 1), "** *** ***");
-			}
-
-			var result = new
-			{
-				RecordsFiltered = model.TrainingHistory.Count(),
-				RecordsTotal = model.TrainingHistory.Count(),
-				Data = model.TrainingHistory.OrderBy(o => o.FileNumber).ToArray()
-			};
-
-			return Json(result, JsonRequestBehavior.AllowGet);
-		}
-
-		[HttpGet]
 		[AuthorizeAction(Privilege.IA2)]
 		[Route("Participant/TrainingHistory/{participantId}/{page}/{quantity}")]
-		public JsonResult GetTrainingHistory(int participantId, int page, int quantity, string search, string sortby, bool sortDesc)
+		public JsonResult GetTrainingHistory(int participantId, int page, int quantity, string search, string sortBy, bool sortDesc)
 		{
 			ViewBag.ParticipantId = participantId;
+			var participantForm = _participantService.Get(participantId);
 
-			ParticipantInfoViewModel model;
-			ParticipantForm participantForm = _participantService.Get(participantId);
+			if (string.IsNullOrEmpty(sortBy))
+				sortBy = "FileNumber";
 
-			if (string.IsNullOrEmpty(sortby))
-			{
-				sortby = "FileNumber";
-			}
-
+			var model = new ParticipantInfoViewModel();
 			if (participantForm != null)
-			{
 				model = new ParticipantInfoViewModel(participantForm, _nationalOccupationalClassificationService, _userService, _participantService);
-			}
-			else
-			{
-				model = new ParticipantInfoViewModel();
-			}
-
 
 #if Training || Support
              model.ContactInfo.SIN = string.Concat(model.ContactInfo.SIN?.Substring(0, 1), "** *** ***");
@@ -199,16 +139,13 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 			// Mask the social insurance number for anyone without privilege IA3
 			if (!User.HasPrivilege(Privilege.IA3))
-			{
 				model.ContactInfo.SIN = string.Concat(model.ContactInfo.SIN?.Substring(0, 1), "** *** ***");
-			}
 
-			List<ParticipantTrainingHistory> trainingHistory;
-
+			//List<ParticipantTrainingHistory> trainingHistory;
 
 			// Sort
-			var prop = typeof(ParticipantTrainingHistory).GetProperty(sortby);
-			trainingHistory = sortDesc
+			var prop = typeof(ParticipantTrainingHistory).GetProperty(sortBy);
+			var trainingHistory = sortDesc
 				? model.TrainingHistory.OrderByDescending(o => prop.GetValue(o, null)).ToList()
 				: model.TrainingHistory.OrderBy(o => prop.GetValue(o, null)).ToList();
 
@@ -234,18 +171,17 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[Route("Participants")]
 		public JsonResult ApproveDenyParticipants(ParticipantListViewModel model)
 		{
-			//set the Approved property
 			try
 			{
 				if (ModelState.IsValid)
 				{
 					int grantApplicationId = model.Id;
-
-					var participantsApproved = model.ParticipantInfo.Where(w => w.ParticipantId != null).ToDictionary(d => d.ParticipantId, d => d.Approved);
+					var grantApplication = _grantApplicationService.Get(grantApplicationId);
+					var participantsApproved = model.ParticipantInfo
+						.Where(w => w.ParticipantId != null)
+						.ToDictionary(d => d.ParticipantId, d => d.Approved);
 
 					_participantService.ApproveDenyParticipants(grantApplicationId, participantsApproved);
-
-					var grantApplication = _grantApplicationService.Get(grantApplicationId);
 
 					model = new ParticipantListViewModel(grantApplication, _participantService);
 				}
@@ -261,8 +197,5 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
-
-
-		#endregion
 	}
 }

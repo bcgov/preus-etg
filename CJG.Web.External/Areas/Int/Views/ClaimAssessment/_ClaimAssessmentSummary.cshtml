@@ -17,7 +17,6 @@
                 </div>
                 <button class="btn btn--primary" ng-disabled="!claim.CanReassign" ng-click="reassign()">Reassign</button>
             </div>
-
         </div>
     </div>
 
@@ -60,12 +59,12 @@
             <div class="form__label">Applicant:</div>
             <div class="form__control">
                 {{claim.ApplicantName}}<br/>
-                {{claim.OrganizationLegalName}}
+                <a href="/Int/Organization/History/View/{{claim.OrganizationId}}" target="_self">{{claim.OrganizationLegalName}}</a>
             </div>
         </div>
     </div>
 
-    <div class="block--row-group" ng-if="claim.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+    <div class="block--row-group">
         <div class="form__group">
             <div class="form__label">Training Provider:</div>
             <div class="form__control">{{claim.TrainingProvider}}</div>
@@ -109,6 +108,18 @@
             <span class="pull-right ">{{2000 - claim.ClaimAssessmentNotes.length}} chars left</span>
             <div class="clearfix"></div>
             <a class="btn btn--primary btn--save-claim-notes pull-right margin-top" ng-click="saveNotes()" ng-if="claim.CanEdit">Save Notes</a>
+        </div>
+    </div>
+</div>
+
+<div class="block--textarea-group clearfix margin-bottom">
+    <div class="form__group last-item">
+        <div class="form__label">
+            Notes from Applicant regarding Assessment:
+        </div>
+        <div class="form__control">
+            <textarea ng-model="claim.ApplicantNotes" ng-disabled="true" maxlength="4000"></textarea>
+            <span class="pull-right ">{{4000 - claim.ApplicantNotes.length}} chars left</span>
         </div>
     </div>
 </div>

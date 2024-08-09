@@ -6,24 +6,19 @@ namespace CJG.Web.External.Areas.Ext.Models.Claims
 {
     public class ClaimReviewViewModel : BaseClaimViewModel
 	{
-		#region Properties
 		public ClaimTypes ClaimType { get; set; }
-		public bool IsWDAService { get; set; }
-		public ClaimModel Claim { get; set; } // TODO: Replace model with view model.
+		public ClaimModel Claim { get; set; }
 		public ClaimAttachmentsViewModel Attachments { get; set; }
-		public ProgramTitleLabelViewModel ProgramTitleLable { get; set; }
-		#endregion
+		public ProgramTitleLabelViewModel ProgramTitleLabel { get; set; }
 
-		#region Constructors
 		public ClaimReviewViewModel()
 		{
 		}
 
 		public ClaimReviewViewModel(Claim claim) : base(claim)
 		{
-			this.ClaimType = claim.GrantApplication.GetClaimType();
-			this.IsWDAService = claim.GrantApplication.GetProgramType() == ProgramTypes.WDAService;
-			this.Claim = new ClaimModel(claim)
+			ClaimType = claim.GrantApplication.GetClaimType();
+			Claim = new ClaimModel(claim)
 			{
 				IsEditable = false
 			};
@@ -32,17 +27,21 @@ namespace CJG.Web.External.Areas.Ext.Models.Claims
 			{
 				if (claim.ClaimState.In(ClaimState.Incomplete, ClaimState.Complete))
 				{
-					this.Claim.Participants = claim.GrantApplication.ParticipantForms.Where(pf => !pf.IsExcludedFromClaim).Select(pf => new ParticipantFormModel(pf)).ToList();
+					Claim.Participants = claim.GrantApplication.ParticipantForms
+						.Where(pf => !pf.IsExcludedFromClaim)
+						.Select(pf => new ParticipantFormModel(pf))
+						.ToList();
 				}
 				else
 				{
-					this.Claim.Participants = claim.ParticipantForms.Select(pf => new ParticipantFormModel(pf)).ToList();
+					Claim.Participants = claim.ParticipantForms
+						.Select(pf => new ParticipantFormModel(pf))
+						.ToList();
 				}
 			}
 
-			this.Attachments = new ClaimAttachmentsViewModel(claim);
-			this.ProgramTitleLable = new ProgramTitleLabelViewModel(claim.GrantApplication, false);
+			Attachments = new ClaimAttachmentsViewModel(claim);
+			ProgramTitleLabel = new ProgramTitleLabelViewModel(claim.GrantApplication, false);
 		}
-		#endregion
 	}
 }

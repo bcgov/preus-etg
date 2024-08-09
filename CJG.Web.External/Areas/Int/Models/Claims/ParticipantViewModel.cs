@@ -9,6 +9,7 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 		public string Name { get; set; }
 		public string Email { get; set; }
 		public string PhoneNumber { get; set; }
+		public bool HasClaimWarnings { get; set; }  // Set externally
 
 		public ParticipantViewModel() { }
 

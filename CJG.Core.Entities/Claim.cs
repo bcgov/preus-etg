@@ -102,6 +102,12 @@ namespace CJG.Core.Entities
 		public string ReimbursementAssessmentNotes { get; set; }
 
 		/// <summary>
+		/// get/set - The applicant/employers notes for the assessor.
+		/// </summary>
+		[MaxLength(4000)]
+		public string ApplicantNotes { get; set; }
+
+		/// <summary>
 		/// Have the Participants paid for any expenses related to training
 		/// </summary>
 		public bool? ParticipantsPaidForExpenses { get; set; }

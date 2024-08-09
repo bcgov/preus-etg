@@ -72,6 +72,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 					ParticipantFirstName = pf.ParticipantFirstName,
 					LastApplicationDateTime = pf.LastApplicationDateTime,
 					FileNumber = pf.FileNumber,
+					Status = pf.Status,
+					Eligibility = pf.Eligibility,
 					CourseName = pf.CourseName,
 					EmployerName = pf.EmployerName
 				});

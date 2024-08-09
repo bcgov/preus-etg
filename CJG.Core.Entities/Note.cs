@@ -104,7 +104,7 @@ namespace CJG.Core.Entities
 		/// <param name="attachment"></param>
 		public Note(GrantApplication grantApplication, NoteType noteType, string content, Attachment attachment = null)
 		{
-			if (String.IsNullOrEmpty(content))
+			if (string.IsNullOrEmpty(content))
 				throw new ArgumentNullException(nameof(content));
 
 			this.GrantApplication = grantApplication ?? throw new ArgumentNullException(nameof(grantApplication));

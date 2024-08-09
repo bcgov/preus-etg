@@ -221,6 +221,20 @@ app.controller('ClaimAssessmentDetails',
     calculateGrantTotal();
   }
 
+    $scope.showClaimWarning = function (participants, participantFormId) {
+      if (participants == null || participants.length <= 0)
+        return false;
+
+      if (participantFormId <= 0)
+        return false;
+
+      let participant = participants.filter(p => p.ParticipantFormId === participantFormId);
+      if (participant.length <= 0)
+        return false;
+
+      return participant[0].HasClaimWarnings === true;
+    }
+
   /**
    * Calculate Grant Total
    * @function calculateGrantTotal

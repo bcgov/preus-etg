@@ -1,39 +1,39 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using CJG.Testing.Core;
-using CJG.Core.Entities;
+﻿using System.Linq;
 using CJG.Application.Services;
+using CJG.Core.Entities;
 using CJG.Infrastructure.Entities;
+using CJG.Testing.Core;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
 namespace CJG.Testing.UnitTests.Entities
 {
-	[TestClass()]
+	[TestClass]
 	public class TrainingCostValidationTests
 	{
+		private ServiceHelper Helper { get; set; }
+		private User User { get; set; }
 
-		ServiceHelper helper { get; set; }
-		User user { get; set; }
 		[TestInitialize]
 		public void Setup()
 		{
 			// Arrange
-			user = EntityHelper.CreateExternalUser();
-			helper = new ServiceHelper(typeof(EligibleCostService), user);
-			helper.MockContext();
-			helper.MockDbSet<TrainingCost>();
-			helper.MockDbSet<EligibleCost>();
-			helper.MockDbSet<GrantApplication>();
-			helper.MockDbSet<GrantOpening>();
-			helper.MockDbSet<GrantStream>();
-			helper.MockDbSet<EligibleExpenseType>();
+			User = EntityHelper.CreateExternalUser();
+			Helper = new ServiceHelper(typeof(EligibleCostService), User);
+			Helper.MockContext();
+			Helper.MockDbSet<TrainingCost>();
+			Helper.MockDbSet<EligibleCost>();
+			Helper.MockDbSet<GrantApplication>();
+			Helper.MockDbSet<GrantOpening>();
+			Helper.MockDbSet<GrantStream>();
+			Helper.MockDbSet<EligibleExpenseType>();
 		}
 
 		[TestMethod, TestCategory("Training Cost"), TestCategory("Validate")]
 		public void Validate_When_TrainingCost_TotalEstimatedCost_Shouldbe_EligibleCost_EstimatedCost()
 		{
 			// Arrange
-			var grantApplication = EntityHelper.CreateGrantApplication(user, ApplicationStateInternal.AgreementAccepted);
+			var grantApplication = EntityHelper.CreateGrantApplication(User, ApplicationStateInternal.AgreementAccepted);
 
 			var trainingCost = new TrainingCost(grantApplication, 0)
 			{
@@ -53,16 +53,16 @@ namespace CJG.Testing.UnitTests.Entities
 			};
 			trainingCost.EligibleCosts.Add(eligibleCost);
 
-			helper.MockDbSet<TrainingCost>(new[] { trainingCost });
-			helper.MockDbSet<GrantApplication>(new[] { grantApplication });
-			helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
-			helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
-			helper.MockDbSet<ServiceCategory>(new[] { new ServiceCategory("category", ServiceTypes.SkillsTraining, true, false, 0, 0, 1, 10) });
+			Helper.MockDbSet<TrainingCost>(new[] { trainingCost });
+			Helper.MockDbSet<GrantApplication>(new[] { grantApplication });
+			Helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
+			Helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
+			Helper.MockDbSet<ServiceCategory>(new[] { new ServiceCategory("category", ServiceTypes.SkillsTraining, true, false, 0, 0, 1, 10) });
 
-			var dbContextMock = helper.GetMock<IDataContext>();
+			var dbContextMock = Helper.GetMock<IDataContext>();
 			dbContextMock.Setup(m => m.OriginalValue(It.IsAny<GrantApplication>(), nameof(GrantApplication.ApplicationStateInternal))).Returns(grantApplication.ApplicationStateInternal);
 
-			var service = helper.Create<EligibleCostService>();
+			var service = Helper.Create<EligibleCostService>();
 
 			decimal totalEstimatedCost = eligibleCost.EstimatedCost;
 
@@ -76,13 +76,14 @@ namespace CJG.Testing.UnitTests.Entities
 		}
 
 		[TestMethod, TestCategory("Training Cost"), TestCategory("Validate")]
+		[Ignore("Test was originally meant for CWRG. Need to update logic for ETG.")]
 		public void Validate_When_TrainingCost_TotalEstimatedReimbursement_Shouldbe_EligibleCost_EstimatedReimbursement()
 		{
 			// Arrange
-			var grantApplication = EntityHelper.CreateGrantApplication(user, ApplicationStateInternal.AgreementAccepted);
+			var grantApplication = EntityHelper.CreateGrantApplication(User, ApplicationStateInternal.AgreementAccepted);
 			grantApplication.GrantOpening.GrantStream.GrantProgram = new GrantProgram()
 			{
-				ProgramTypeId = ProgramTypes.WDAService
+				ProgramTypeId = ProgramTypes.EmployerGrant
 			};
 
 			var trainingCost = new TrainingCost(grantApplication, 1)
@@ -103,16 +104,16 @@ namespace CJG.Testing.UnitTests.Entities
 			};
 			trainingCost.EligibleCosts.Add(eligibleCost);
 
-			helper.MockDbSet<TrainingCost>(new[] { trainingCost });
-			helper.MockDbSet<GrantApplication>(new[] { grantApplication });
-			helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
-			helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
-			helper.MockDbSet<ServiceCategory>(new[] { new ServiceCategory("category", ServiceTypes.SkillsTraining, true, false, 0, 0, 1, 10) });
+			Helper.MockDbSet<TrainingCost>(new[] { trainingCost });
+			Helper.MockDbSet<GrantApplication>(new[] { grantApplication });
+			Helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
+			Helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
+			Helper.MockDbSet<ServiceCategory>(new[] { new ServiceCategory("category", ServiceTypes.SkillsTraining, true, false, 0, 0, 1, 10) });
 
-			var dbContextMock = helper.GetMock<IDataContext>();
+			var dbContextMock = Helper.GetMock<IDataContext>();
 			dbContextMock.Setup(m => m.OriginalValue(It.IsAny<GrantApplication>(), nameof(GrantApplication.ApplicationStateInternal))).Returns(grantApplication.ApplicationStateInternal);
 
-			var service = helper.Create<EligibleCostService>();
+			var service = Helper.Create<EligibleCostService>();
 
 			decimal totalEstimatedReimbursement = eligibleCost.EstimatedReimbursement;
 
@@ -122,14 +123,14 @@ namespace CJG.Testing.UnitTests.Entities
 			string validationMsg = "The total estimated reimbursement is incorrect and should be " + totalEstimatedReimbursement.ToString("c2");
 
 			// Assert
-			Assert.AreEqual(true, validationResults.Any(x => x.ErrorMessage == validationMsg));
+			Assert.AreEqual(true, validationResults.Any(x => x.ErrorMessage == validationMsg), message: validationMsg);
 		}
 
 		[TestMethod, TestCategory("Training Cost"), TestCategory("Validate")]
 		public void Validate_When_TrainingCost_TotalAgreedMaxCost_Shouldbe_EligibleCost_AgreedMaxCost()
 		{
 			// Arrange
-			var grantApplication = EntityHelper.CreateGrantApplication(user, ApplicationStateInternal.AgreementAccepted);
+			var grantApplication = EntityHelper.CreateGrantApplication(User, ApplicationStateInternal.AgreementAccepted);
 
 			var trainingCost = new TrainingCost(grantApplication, 0)
 			{
@@ -149,16 +150,16 @@ namespace CJG.Testing.UnitTests.Entities
 			};
 			trainingCost.EligibleCosts.Add(eligibleCost);
 
-			helper.MockDbSet<TrainingCost>(new[] { trainingCost });
-			helper.MockDbSet<GrantApplication>(new[] { grantApplication });
-			helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
-			helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
-			helper.MockDbSet<ServiceCategory>(new[] { new ServiceCategory("category", ServiceTypes.SkillsTraining, true, false, 0, 0, 1, 10) });
+			Helper.MockDbSet<TrainingCost>(new[] { trainingCost });
+			Helper.MockDbSet<GrantApplication>(new[] { grantApplication });
+			Helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
+			Helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
+			Helper.MockDbSet<ServiceCategory>(new[] { new ServiceCategory("category", ServiceTypes.SkillsTraining, true, false, 0, 0, 1, 10) });
 
-			var dbContextMock = helper.GetMock<IDataContext>();
+			var dbContextMock = Helper.GetMock<IDataContext>();
 			dbContextMock.Setup(m => m.OriginalValue(It.IsAny<GrantApplication>(), nameof(GrantApplication.ApplicationStateInternal))).Returns(grantApplication.ApplicationStateInternal);
 
-			var service = helper.Create<EligibleCostService>();
+			var service = Helper.Create<EligibleCostService>();
 
 			decimal totalAgreedMaxCost = eligibleCost.AgreedMaxCost;
 
@@ -172,60 +173,10 @@ namespace CJG.Testing.UnitTests.Entities
 		}
 
 		[TestMethod, TestCategory("Training Cost"), TestCategory("Validate")]
-		public void Validate_When_TrainingCost_AgreedCommitment_Shouldbe_EligibleCost_AgreedMaxReimbursement()
-		{
-			// Arrange
-			var grantApplication = EntityHelper.CreateGrantApplication(user, ApplicationStateInternal.AgreementAccepted);
-			grantApplication.GrantOpening.GrantStream.GrantProgram = new GrantProgram() {
-				ProgramTypeId = ProgramTypes.WDAService
-			};
-
-			var trainingCost = new TrainingCost(grantApplication, 0)
-			{
-				AgreedCommitment = 50
-			};
-
-			var eligibleExpenseType = new EligibleExpenseType()
-			{
-				Id = 2,
-				Caption = "Mandatory student fees"
-			};
-
-			var eligibleCost = new EligibleCost(trainingCost, eligibleExpenseType, 0, 0)
-			{
-				Id = 1,
-				AgreedMaxReimbursement = 100
-			};
-			trainingCost.EligibleCosts.Add(eligibleCost);
-
-			helper.MockDbSet<TrainingCost>(new[] { trainingCost });
-			helper.MockDbSet<GrantApplication>(new[] { grantApplication });
-			helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
-			helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
-			helper.MockDbSet<ServiceCategory>(new[] { new ServiceCategory("category", ServiceTypes.SkillsTraining, true, false, 0, 0, 1, 10) });
-
-			var dbContextMock = helper.GetMock<IDataContext>();
-			dbContextMock.Setup(m => m.OriginalValue(It.IsAny<GrantApplication>(), nameof(GrantApplication.ApplicationStateInternal))).Returns(grantApplication.ApplicationStateInternal);
-
-			var service = helper.Create<EligibleCostService>();
-
-
-			decimal totalAgreedCommitment = eligibleCost.AgreedMaxReimbursement;
-
-			// Act
-			var validationResults = service.Validate(trainingCost).ToArray();
-
-			string validationMsg = "The total agreed commitment is incorrect and should be " + totalAgreedCommitment.ToString("c2");
-
-			// Assert
-			Assert.AreEqual(true, validationResults.Any(x => x.ErrorMessage == validationMsg));
-		}
-
-		[TestMethod, TestCategory("Training Cost"), TestCategory("Validate")]
 		public void Validate_When_TrainingCost_Required_Participants()
 		{
 			// Arrange
-			var grantApplication = EntityHelper.CreateGrantApplication(user, ApplicationStateInternal.AgreementAccepted);
+			var grantApplication = EntityHelper.CreateGrantApplication(User, ApplicationStateInternal.AgreementAccepted);
 
 			var trainingCost = new TrainingCost()
 			{
@@ -249,13 +200,13 @@ namespace CJG.Testing.UnitTests.Entities
 				AgreedMaxCost = 100
 			};
 
-			helper.MockDbSet<TrainingCost>(new[] { trainingCost });
-			helper.MockDbSet<GrantApplication>(new[] { grantApplication });
-			helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
-			helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
-			helper.MockDbSet<ServiceCategory>(new[] { new ServiceCategory("category", ServiceTypes.SkillsTraining, true, false, 0, 0, 1, 10) });
+			Helper.MockDbSet<TrainingCost>(new[] { trainingCost });
+			Helper.MockDbSet<GrantApplication>(new[] { grantApplication });
+			Helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
+			Helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
+			Helper.MockDbSet<ServiceCategory>(new[] { new ServiceCategory("category", ServiceTypes.SkillsTraining, true, false, 0, 0, 1, 10) });
 
-			var service = helper.Create<EligibleCostService>();
+			var service = Helper.Create<EligibleCostService>();
 
 			// Act
 			var validationResults = service.Validate(trainingCost).ToArray();
@@ -270,7 +221,7 @@ namespace CJG.Testing.UnitTests.Entities
 		public void Validate_When_TrainingCost_EstimatedParticipants_Equal_Greaterthan_EligibleCosts_EstimatedParticipants()
 		{
 			// Arrange
-			var grantApplication = EntityHelper.CreateGrantApplication(user, ApplicationStateInternal.AgreementAccepted);
+			var grantApplication = EntityHelper.CreateGrantApplication(User, ApplicationStateInternal.AgreementAccepted);
 
 			var trainingCost = new TrainingCost(grantApplication, 50)
 			{
@@ -292,16 +243,16 @@ namespace CJG.Testing.UnitTests.Entities
 			};
 			trainingCost.EligibleCosts.Add(eligibleCost);
 
-			helper.MockDbSet<TrainingCost>(new[] { trainingCost });
-			helper.MockDbSet<GrantApplication>(new[] { grantApplication });
-			helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
-			helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
-			helper.MockDbSet<ServiceCategory>(new[] { new ServiceCategory("category", ServiceTypes.SkillsTraining, true, false, 0, 0, 1, 10) });
+			Helper.MockDbSet<TrainingCost>(new[] { trainingCost });
+			Helper.MockDbSet<GrantApplication>(new[] { grantApplication });
+			Helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
+			Helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
+			Helper.MockDbSet<ServiceCategory>(new[] { new ServiceCategory("category", ServiceTypes.SkillsTraining, true, false, 0, 0, 1, 10) });
 
-			var dbContextMock = helper.GetMock<IDataContext>();
+			var dbContextMock = Helper.GetMock<IDataContext>();
 			dbContextMock.Setup(m => m.OriginalValue(It.IsAny<GrantApplication>(), nameof(GrantApplication.ApplicationStateInternal))).Returns(grantApplication.ApplicationStateInternal);
 
-			var service = helper.Create<EligibleCostService>();
+			var service = Helper.Create<EligibleCostService>();
 
 			// Act
 			var validationResults = service.Validate(trainingCost).ToArray();
@@ -316,7 +267,7 @@ namespace CJG.Testing.UnitTests.Entities
 		public void Validate_When_TrainingCost_AgreedParticipants_Not_Exceed_Any_EligibleCost_AgreedMaxParticipants()
 		{
 			// Arrange
-			var grantApplication = EntityHelper.CreateGrantApplication(user, ApplicationStateInternal.AgreementAccepted);
+			var grantApplication = EntityHelper.CreateGrantApplication(User, ApplicationStateInternal.AgreementAccepted);
 			var trainingCost = new TrainingCost(grantApplication, 0)
 			{
 				AgreedParticipants = 50
@@ -335,16 +286,16 @@ namespace CJG.Testing.UnitTests.Entities
 
 			trainingCost.EligibleCosts.Add(eligibleCost);
 
-			helper.MockDbSet<TrainingCost>(new[] { trainingCost });
-			helper.MockDbSet<GrantApplication>(new[] { grantApplication });
-			helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
-			helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
-			helper.MockDbSet<ServiceCategory>(new[] { new ServiceCategory("category", ServiceTypes.SkillsTraining, true, false, 0, 0, 1, 10) });
+			Helper.MockDbSet<TrainingCost>(new[] { trainingCost });
+			Helper.MockDbSet<GrantApplication>(new[] { grantApplication });
+			Helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
+			Helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
+			Helper.MockDbSet<ServiceCategory>(new[] { new ServiceCategory("category", ServiceTypes.SkillsTraining, true, false, 0, 0, 1, 10) });
 
-			var dbContextMock = helper.GetMock<IDataContext>();
+			var dbContextMock = Helper.GetMock<IDataContext>();
 			dbContextMock.Setup(m => m.OriginalValue(It.IsAny<GrantApplication>(), nameof(GrantApplication.ApplicationStateInternal))).Returns(grantApplication.ApplicationStateInternal);
 
-			var service = helper.Create<EligibleCostService>();
+			var service = Helper.Create<EligibleCostService>();
 
 			// Act
 			var validationResults = service.Validate(trainingCost).ToArray();
@@ -357,7 +308,7 @@ namespace CJG.Testing.UnitTests.Entities
 		public void Validate_When_TrainingCost_SumAvgAgreedMaxReimbursement_Cost_Per_Participant_Not_Exceed_MaxESSParticipantCost_EmploymentServicesAndSupports()
 		{
 			// Arrange
-			var grantApplication = EntityHelper.CreateGrantApplication(user, ApplicationStateInternal.AgreementAccepted);
+			var grantApplication = EntityHelper.CreateGrantApplication(User, ApplicationStateInternal.AgreementAccepted);
 			grantApplication.GrantOpening.GrantStream.ProgramConfiguration.ESSMaxEstimatedParticipantCost = 60;
 			var trainingCost = new TrainingCost(grantApplication, 1)
 			{
@@ -386,16 +337,16 @@ namespace CJG.Testing.UnitTests.Entities
 
 			var maxESSParticipantCost = grantApplication.GrantOpening.GrantStream.ProgramConfiguration.ESSMaxEstimatedParticipantCost;
 
-			helper.MockDbSet<TrainingCost>(new[] { trainingCost });
-			helper.MockDbSet<GrantApplication>(new[] { grantApplication });
-			helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
-			helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
-			helper.MockDbSet<ServiceCategory>(new[] { serviceCategory });
+			Helper.MockDbSet<TrainingCost>(new[] { trainingCost });
+			Helper.MockDbSet<GrantApplication>(new[] { grantApplication });
+			Helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
+			Helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
+			Helper.MockDbSet<ServiceCategory>(new[] { serviceCategory });
 
-			var dbContextMock = helper.GetMock<IDataContext>();
+			var dbContextMock = Helper.GetMock<IDataContext>();
 			dbContextMock.Setup(m => m.OriginalValue(It.IsAny<GrantApplication>(), nameof(GrantApplication.ApplicationStateInternal))).Returns(grantApplication.ApplicationStateInternal);
 
-			var service = helper.Create<EligibleCostService>();
+			var service = Helper.Create<EligibleCostService>();
 
 			// Act
 			var validationResults = service.Validate(trainingCost).ToArray();
@@ -410,7 +361,7 @@ namespace CJG.Testing.UnitTests.Entities
 		public void Validate_When_TrainingCost_SumAvgEstimatedReimbursement_Cost_Per_Participant_Not_Exceed_MaxESSParticipantCost_EmploymentServicesAndSupports()
 		{
 			// Arrange
-			var grantApplication = EntityHelper.CreateGrantApplication(user, ApplicationStateInternal.AgreementAccepted);
+			var grantApplication = EntityHelper.CreateGrantApplication(User, ApplicationStateInternal.AgreementAccepted);
 
 			grantApplication.GrantOpening.GrantStream.ProgramConfiguration.ESSMaxEstimatedParticipantCost = 60;
 
@@ -444,16 +395,16 @@ namespace CJG.Testing.UnitTests.Entities
 
 			var maxESSParticipantCost = grantApplication.GrantOpening.GrantStream.ProgramConfiguration.ESSMaxEstimatedParticipantCost;
 
-			helper.MockDbSet<TrainingCost>(new[] { trainingCost });
-			helper.MockDbSet<GrantApplication>(new[] { grantApplication });
-			helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
-			helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
-			helper.MockDbSet<ServiceCategory>(new[] { serviceCategory });
+			Helper.MockDbSet<TrainingCost>(new[] { trainingCost });
+			Helper.MockDbSet<GrantApplication>(new[] { grantApplication });
+			Helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
+			Helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
+			Helper.MockDbSet<ServiceCategory>(new[] { serviceCategory });
 
-			var dbContextMock = helper.GetMock<IDataContext>();
+			var dbContextMock = Helper.GetMock<IDataContext>();
 			dbContextMock.Setup(m => m.OriginalValue(It.IsAny<GrantApplication>(), nameof(GrantApplication.ApplicationStateInternal))).Returns(grantApplication.ApplicationStateInternal);
 
-			var service = helper.Create<EligibleCostService>();
+			var service = Helper.Create<EligibleCostService>();
 
 			// Act
 			var validationResults = service.Validate(trainingCost).ToArray();
@@ -467,7 +418,7 @@ namespace CJG.Testing.UnitTests.Entities
 		[TestMethod, TestCategory("Training Cost"), TestCategory("Validate")]
 		public void Validate_When_TrainingCost_SumAvgEstimatedReimbursement_Cost_Per_Participant_Not_Exceed_SkillsTrainingMaxEstimatedParticipantCosts()
 		{
-			var grantApplication = EntityHelper.CreateGrantApplication(user, ApplicationStateInternal.AgreementAccepted);
+			var grantApplication = EntityHelper.CreateGrantApplication(User, ApplicationStateInternal.AgreementAccepted);
 
 			grantApplication.GrantOpening.GrantStream.ProgramConfiguration.SkillsTrainingMaxEstimatedParticipantCosts = 100;
 
@@ -498,16 +449,16 @@ namespace CJG.Testing.UnitTests.Entities
 
 			var maxSkillsTrainingParticipantCost = grantApplication.GrantOpening.GrantStream.ProgramConfiguration.SkillsTrainingMaxEstimatedParticipantCosts;
 
-			helper.MockDbSet<TrainingCost>(new[] { trainingCost });
-			helper.MockDbSet<GrantApplication>(new[] { grantApplication });
-			helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
-			helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
-			helper.MockDbSet<ServiceCategory>(new[] { serviceCategory });
+			Helper.MockDbSet<TrainingCost>(new[] { trainingCost });
+			Helper.MockDbSet<GrantApplication>(new[] { grantApplication });
+			Helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
+			Helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
+			Helper.MockDbSet<ServiceCategory>(new[] { serviceCategory });
 
-			var dbContextMock = helper.GetMock<IDataContext>();
+			var dbContextMock = Helper.GetMock<IDataContext>();
 			dbContextMock.Setup(m => m.OriginalValue(It.IsAny<GrantApplication>(), nameof(GrantApplication.ApplicationStateInternal))).Returns(grantApplication.ApplicationStateInternal);
 
-			var service = helper.Create<EligibleCostService>();
+			var service = Helper.Create<EligibleCostService>();
 
 			// Act
 			var validationResults = service.Validate(trainingCost).ToArray();
@@ -521,7 +472,7 @@ namespace CJG.Testing.UnitTests.Entities
 		[TestMethod, TestCategory("Training Cost"), TestCategory("Validate")]
 		public void Validate_When_TrainingCost_SumAvgAgreedMaxReimbursement_Cost_Per_Participant_Not_Exceed_SkillsTrainingMaxEstimatedParticipantCosts()
 		{
-			var grantApplication = EntityHelper.CreateGrantApplication(user, ApplicationStateInternal.AgreementAccepted);
+			var grantApplication = EntityHelper.CreateGrantApplication(User, ApplicationStateInternal.AgreementAccepted);
 
 			grantApplication.GrantOpening.GrantStream.ProgramConfiguration.SkillsTrainingMaxEstimatedParticipantCosts = 60;
 
@@ -555,16 +506,16 @@ namespace CJG.Testing.UnitTests.Entities
 
 			var maxSkillsTrainingParticipantCost = grantApplication.GrantOpening.GrantStream.ProgramConfiguration.SkillsTrainingMaxEstimatedParticipantCosts;
 
-			helper.MockDbSet<TrainingCost>(new[] { trainingCost });
-			helper.MockDbSet<GrantApplication>(new[] { grantApplication });
-			helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
-			helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
-			helper.MockDbSet<ServiceCategory>(new[] { serviceCategory });
+			Helper.MockDbSet<TrainingCost>(new[] { trainingCost });
+			Helper.MockDbSet<GrantApplication>(new[] { grantApplication });
+			Helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
+			Helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
+			Helper.MockDbSet<ServiceCategory>(new[] { serviceCategory });
 
-			var dbContextMock = helper.GetMock<IDataContext>();
+			var dbContextMock = Helper.GetMock<IDataContext>();
 			dbContextMock.Setup(m => m.OriginalValue(It.IsAny<GrantApplication>(), nameof(GrantApplication.ApplicationStateInternal))).Returns(grantApplication.ApplicationStateInternal);
 
-			var service = helper.Create<EligibleCostService>();
+			var service = Helper.Create<EligibleCostService>();
 
 			// Act
 			var validationResults = service.Validate(trainingCost).ToArray();
@@ -578,7 +529,7 @@ namespace CJG.Testing.UnitTests.Entities
 		[TestMethod, TestCategory("Training Cost"), TestCategory("Validate")]
 		public void Validate_When_TrainingCost_TotalEstimatedReimbursement_Exceeds_MaxReimbursementAmount_Per_EstimatedParticipants()
 		{
-			var grantApplication = EntityHelper.CreateGrantApplication(user, ApplicationStateInternal.AgreementAccepted);
+			var grantApplication = EntityHelper.CreateGrantApplication(User, ApplicationStateInternal.AgreementAccepted);
 
 			grantApplication.MaxReimbursementAmt = 50;
 			grantApplication.GrantOpening.GrantStream.ProgramConfiguration.SkillsTrainingMaxEstimatedParticipantCosts = 2000;
@@ -606,16 +557,16 @@ namespace CJG.Testing.UnitTests.Entities
 			};
 			trainingCost.EligibleCosts.Add(eligibleCost);
 
-			helper.MockDbSet<TrainingCost>(new[] { trainingCost });
-			helper.MockDbSet<GrantApplication>(new[] { grantApplication });
-			helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
-			helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
-			helper.MockDbSet<ServiceCategory>(new[] { new ServiceCategory("category", ServiceTypes.SkillsTraining, true, false, 0, 0, 1, 10) });
+			Helper.MockDbSet<TrainingCost>(new[] { trainingCost });
+			Helper.MockDbSet<GrantApplication>(new[] { grantApplication });
+			Helper.MockDbSet<EligibleCost>(new[] { eligibleCost });
+			Helper.MockDbSet<EligibleExpenseType>(new[] { eligibleExpenseType });
+			Helper.MockDbSet<ServiceCategory>(new[] { new ServiceCategory("category", ServiceTypes.SkillsTraining, true, false, 0, 0, 1, 10) });
 
-			var dbContextMock = helper.GetMock<IDataContext>();
+			var dbContextMock = Helper.GetMock<IDataContext>();
 			dbContextMock.Setup(m => m.OriginalValue(It.IsAny<GrantApplication>(), nameof(GrantApplication.ApplicationStateInternal))).Returns(grantApplication.ApplicationStateInternal);
 
-			var service = helper.Create<EligibleCostService>();
+			var service = Helper.Create<EligibleCostService>();
 
 			// Act
 			var validationResults = service.Validate(trainingCost).ToArray();

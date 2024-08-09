@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -12,12 +11,9 @@ namespace CJG.Core.Entities.Helpers
 {
 	public class EntityChanges : IEnumerable<EntityChange>
 	{
-		#region Variables
 		private static readonly string[] valueNames = new[] { "Caption", "Title", "Name", "FileName" };
 		private readonly IDictionary<Type, IList<EntityChange>> _types = new Dictionary<Type, IList<EntityChange>>();
-		#endregion
 
-		#region Properties
 		public bool IsChanged { get { return _types.Any(); } }
 		public bool IsModified { get { return _types.Any(t => t.Value.Any(c => c.State == EntityState.Modified)); } }
 		public bool IsAdded { get { return _types.Any(t => t.Value.Any(c => c.State == EntityState.Added)); } }
@@ -29,8 +25,8 @@ namespace CJG.Core.Entities.Helpers
 			{
 				var entityType = type.GetProxyType();
 				var found = _types.TryGetValue(entityType, out IList<EntityChange> changes);
-				if (found) return changes.ToArray();
-				return new EntityChange[0];
+
+				return found ? changes.ToArray() : new EntityChange[0];
 			}
 		}
 
@@ -40,97 +36,97 @@ namespace CJG.Core.Entities.Helpers
 			{
 				var entityType = entity.GetType().GetProxyType();
 				var found = _types.TryGetValue(entityType, out IList<EntityChange> changes);
-				if (found) return changes.FirstOrDefault(c => c.Entry.Entity.Equals(entity));
-				return null;
+
+				return found ? changes.FirstOrDefault(c => c.Entry.Entity.Equals(entity)) : null;
 			}
 		}
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of an EntityChanges object and initializes it with the specified DbContext changes.
 		/// </summary>
 		/// <param name="context"></param>
 		public EntityChanges(DbContext context)
 		{
-			if (context == null) throw new ArgumentNullException(nameof(context));
+			if (context == null)
+				throw new ArgumentNullException(nameof(context));
 
-			if (context.ChangeTracker.HasChanges())
+			if (!context.ChangeTracker.HasChanges())
+				return;
+
+			var ignore = new[] { "Id", nameof(EntityBase.DateUpdated), nameof(EntityBase.DateAdded), nameof(EntityBase.RowVersion) };
+
+			// Get all the updated entries and update their DateAdded or DateUpdated based on their state.
+			foreach (var entry in context.ChangeTracker.Entries().Where(e => (new[] { EntityState.Modified, EntityState.Added, EntityState.Deleted }).Contains(e.State)))
 			{
-				var ignore = new[] { "Id", nameof(EntityBase.DateUpdated), nameof(EntityBase.DateAdded), nameof(EntityBase.RowVersion) };
-				// Get all the updated entries and update their DateAdded or DateUpdated based on their state.
-				foreach (var entry in context.ChangeTracker.Entries().Where(e => (new[] { EntityState.Modified, EntityState.Added, EntityState.Deleted }).Contains(e.State)))
+				var track = new EntityChange(context, entry, ignore); //GetDifferences(context, entry, ignore);
+				if (track.IsChanged || track.IsAdded || track.IsDeleted)
+					Add(track);
+			}
+
+			// Many-to-many relationships are not expressed in the change tracker.
+			foreach (var relationship in context.GetAddedRelationships())
+			{
+				var type = relationship.Item1.GetType().GetProxyType();
+				var entry = context.Entry(relationship.Item1);
+				var found = _types.TryGetValue(type, out IList<EntityChange> entities);
+				if (found)
 				{
-					var track = new EntityChange(context, entry, ignore); //GetDifferences(context, entry, ignore);
-					if (track.IsChanged || track.IsAdded || track.IsDeleted) Add(track);
+					var track = entities.FirstOrDefault(e => e.State == EntityState.Added) ?? entities.First();
+					track.AddChange(context.Entry(relationship.Item2), EntityState.Added);
 				}
-
-				// Many-to-many relationships are not expressed in the change tracker.
-				foreach (var relationship in context.GetAddedRelationships())
+				else
 				{
-					var type = relationship.Item1.GetType().GetProxyType();
-					var entry = context.Entry(relationship.Item1);
-					var found = _types.TryGetValue(type, out IList<EntityChange> entities);
-					if (found)
-					{
-						var track = entities.FirstOrDefault(e => e.State == EntityState.Added) ?? entities.First();
-						track.AddChange(context.Entry(relationship.Item2), EntityState.Added);
-					}
-					else
-					{
-						var track = new EntityChange(context, entry);
-						track.AddChange(context.Entry(relationship.Item2), EntityState.Added);
-						Add(track);
-					}
+					var track = new EntityChange(context, entry);
+					track.AddChange(context.Entry(relationship.Item2), EntityState.Added);
+					Add(track);
 				}
+			}
 
-				// Many-to-many relationships are not expressed in the change tracker.
-				foreach (var relationship in context.GetDeletedRelationships())
+			// Many-to-many relationships are not expressed in the change tracker.
+			foreach (var relationship in context.GetDeletedRelationships())
+			{
+				var type = relationship.Item1.GetType().GetProxyType();
+				var entry = context.Entry(relationship.Item1);
+				var found = _types.TryGetValue(type, out IList<EntityChange> entities);
+
+				var changeEntry = context.Entry(relationship.Item2);
+				var changeType = ObjectContext.GetObjectType(changeEntry.Entity.GetType());
+				var propertyName = changeType.Name;
+				var valueProperty = changeType.GetProperties(BindingFlags.Instance | BindingFlags.Public).FirstOrDefault(p => valueNames.Contains(p.Name));
+				var value = valueProperty.GetValue(changeEntry.Entity);
+
+				if (found)
 				{
-					var type = relationship.Item1.GetType().GetProxyType();
-					var entry = context.Entry(relationship.Item1);
-					var found = _types.TryGetValue(type, out IList<EntityChange> entities);
-
-					var changeEntry = context.Entry(relationship.Item2);
-					var changeType = ObjectContext.GetObjectType(changeEntry.Entity.GetType());
-					var propertyName = changeType.Name;
-					var valueProperty = changeType.GetProperties(BindingFlags.Instance | BindingFlags.Public).FirstOrDefault(p => valueNames.Contains(p.Name));
-					var value = valueProperty.GetValue(changeEntry.Entity);
-
-					if (found)
-					{
-						var track = entities.FirstOrDefault(e => e.State == EntityState.Deleted) ?? entities.First();
-						track.AddChange(propertyName, value, null, EntityState.Deleted);
-					}
-					else
-					{
-						var track = new EntityChange(context, entry);
-						track.AddChange(propertyName, value, null, EntityState.Deleted);
-						Add(track);
-					}
+					var track = entities.FirstOrDefault(e => e.State == EntityState.Deleted) ?? entities.First();
+					track.AddChange(propertyName, value, null, EntityState.Deleted);
 				}
-
-				// Many-to-many relationships are not expressed in the change tracker.
-				foreach (var relationship in context.GetModifiedRelationships())
+				else
 				{
-					var type = relationship.Item1.GetType().GetProxyType();
-					var entry = context.Entry(relationship.Item1);
-					var found = _types.TryGetValue(type, out IList<EntityChange> entities);
-					if (found)
-					{
-						var track = entities.FirstOrDefault(e => e.State == EntityState.Modified) ?? entities.First();
-						track.AddChange(context.Entry(relationship.Item2));
-					}
-					else
-					{
-						var track = new EntityChange(context, entry);
-						track.AddChange(context.Entry(relationship.Item2));
-						Add(track);
-					}
+					var track = new EntityChange(context, entry);
+					track.AddChange(propertyName, value, null, EntityState.Deleted);
+					Add(track);
+				}
+			}
+
+			// Many-to-many relationships are not expressed in the change tracker.
+			foreach (var relationship in context.GetModifiedRelationships())
+			{
+				var type = relationship.Item1.GetType().GetProxyType();
+				var entry = context.Entry(relationship.Item1);
+				var found = _types.TryGetValue(type, out IList<EntityChange> entities);
+				if (found)
+				{
+					var track = entities.FirstOrDefault(e => e.State == EntityState.Modified) ?? entities.First();
+					track.AddChange(context.Entry(relationship.Item2));
+				}
+				else
+				{
+					var track = new EntityChange(context, entry);
+					track.AddChange(context.Entry(relationship.Item2));
+					Add(track);
 				}
 			}
 		}
-		#endregion
 
 		#region Methods
 		/// <summary>
@@ -142,6 +138,7 @@ namespace CJG.Core.Entities.Helpers
 		{
 			var entityType = entity.Type;
 			var found = _types.TryGetValue(entityType, out IList<EntityChange> entities);
+
 			if (!found)
 			{
 				entities = new List<EntityChange>();
@@ -164,6 +161,7 @@ namespace CJG.Core.Entities.Helpers
 		{
 			var entityType = type.GetProxyType();
 			var found = _types.TryGetValue(entityType, out IList<EntityChange> entities);
+
 			if (!found)
 			{
 				entities = new List<EntityChange>();
@@ -196,7 +194,9 @@ namespace CJG.Core.Entities.Helpers
 		public bool HasChanged(Object entity, params string[] propertyNames)
 		{
 			var changes = this[entity];
-			if (changes == null) return false;
+			if (changes == null)
+				return false;
+
 			return propertyNames.Any(p => changes.HasChanged(p));
 		}
 
@@ -223,7 +223,9 @@ namespace CJG.Core.Entities.Helpers
 		public bool HasModified(object entity)
 		{
 			var result = this[entity];
-			if (result != null) return this[entity].State == EntityState.Modified;
+			if (result != null)
+				return this[entity].State == EntityState.Modified;
+
 			return false;
 		}
 

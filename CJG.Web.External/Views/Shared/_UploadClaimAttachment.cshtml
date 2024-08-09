@@ -3,7 +3,7 @@
 <div id="upload-claim-attachment-controller" ng-controller="UploadClaimAttachmentController">
     <input type="hidden" id="attachment-claim-url" value="@Model.ClaimBaseHref" />
     <h2>@Model.Title</h2>
-    @if (!Model.ShowWDADescription && Model.CanEdit)
+    @if (Model.CanEdit)
     {
         <div>
             <p>
@@ -15,16 +15,6 @@
             </p>
         </div>
     }
-
-    @if (Model.ShowWDADescription && Model.CanEdit)
-    {
-        <div>
-            <p>Your assessor may request you to attach documentation to support your claim.</p>
-            <p>For each attachment, enter a description to identify what part of your claim it supports.</p>
-            <p>Accepted file types: PDF, JPG, JPEG, PNG, GIF. Maximum file size is @Model.MaxUploadSize MB.</p>
-        </div>
-    }
-
     <div id="claim-attachment">
         <div class="form__group" ng-if="model.ClaimAttachments">
             <table style="width:100%;">

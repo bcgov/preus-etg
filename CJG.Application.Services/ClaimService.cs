@@ -203,24 +203,28 @@ namespace CJG.Application.Services
 		/// </summary>
 		/// <param name="claim"></param>
 		/// <param name="overrideRates">Whether to override the reimbursement rates.  This is only allowed if the user has the AM4 privilege.</param>
-		public Claim Update(Claim claim, bool overrideRates = false)
+		public Claim Update(Claim claim, bool overrideRates = false, bool bypassExternalNoteCreation = false)
 		{
 			if (claim == null)
 				throw new ArgumentNullException(nameof(claim));
 
 			if (!_httpContext.User.CanPerformAction(claim.GrantApplication, ApplicationWorkflowTrigger.EditClaim)
-				|| (overrideRates && !_httpContext.User.HasPrivilege(Privilege.AM4)))
+			    || (overrideRates && !_httpContext.User.HasPrivilege(Privilege.AM4)))
 				throw new NotAuthorizedException("User does not have permission to update claim.");
 
 			claim.RecalculateClaimedCosts();
 			claim.RecalculateAssessedCosts(overrideRates);
 
 			_dbContext.Update(claim);
+
 			var accountType = _httpContext.User.GetAccountType();
+
 			if (accountType == AccountTypes.Internal)
-			{
 				_noteService.GenerateUpdateNote(claim.GrantApplication);
-			}
+
+			if (!bypassExternalNoteCreation && accountType == AccountTypes.External && claim.GrantApplication.ApplicationStateInternal == ApplicationStateInternal.ClaimReturnedToApplicant)
+				_noteService.GenerateUpdateNote(claim.GrantApplication, true);
+
 			_dbContext.CommitTransaction();
 
 			return claim;
@@ -236,8 +240,8 @@ namespace CJG.Application.Services
 			if (grantApplication == null)
 				throw new ArgumentNullException(nameof(grantApplication));
 
-			if (!(_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.CloseClaimReporting)))
-				throw new NotAuthorizedException($"User does not have permission to close claim reporting.");
+			if (!_httpContext.User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.CloseClaimReporting))
+				throw new NotAuthorizedException("User does not have permission to close claim reporting.");
 
 			var lockReceipts = grantApplication.Claims.Where(c => c.ClaimState.In(ClaimState.ClaimApproved, ClaimState.ClaimPaid, ClaimState.PaymentRequested, ClaimState.AmountOwing, ClaimState.AmountReceived)).SelectMany(c => c.Receipts.Select(r => r.Id)).Distinct().ToArray();
 			var claims = grantApplication.Claims.Where(o => o.ClaimState.In(ClaimState.Incomplete)).ToList();
@@ -276,15 +280,12 @@ namespace CJG.Application.Services
 		/// <returns>The <typeparamref name="Claim"/> that matches the specified id and version.</returns>
 		public Claim Get(int id, int version = 0)
 		{
-			Claim claim = null;
-			if (version == 0)
-			{
-				claim = _dbContext.Claims.Where(x => x.Id == id).OrderByDescending(x => x.ClaimVersion).FirstOrDefault();
-			}
-			else
-			{
-				claim = Get<Claim>(id, version);
-			}
+			var claim = version == 0
+				? _dbContext.Claims
+					.Where(x => x.Id == id)
+					.OrderByDescending(x => x.ClaimVersion)
+					.FirstOrDefault()
+				: Get<Claim>(id, version);
 
 			if (claim == null)
 				throw new NoContentException($"User does not have permission to view this claim, or the claim does not exist.");
@@ -364,16 +365,17 @@ namespace CJG.Application.Services
 		}
 
 		/// <summary>
-		/// Get all of the approved claims for the specified grant program filterd by whether a request has been held.
+		/// Get all of the approved claims for the specified grant program filtered by whether a request has been held.
 		/// </summary>
 		/// <param name="grantProgramId"></param>
 		/// <param name="requestHold"></param>
 		/// <returns></returns>
 		private IQueryable<Claim> GetApprovedClaimsForGrantProgram(int grantProgramId, bool requestHold)
 		{
-			return _dbContext.Claims.Where(c => c.ClaimState == ClaimState.ClaimApproved &&
-															 c.GrantApplication.HoldPaymentRequests == requestHold &&
-															 c.GrantApplication.GrantOpening.GrantStream.GrantProgramId == grantProgramId);
+			return _dbContext.Claims
+				.Where(c => c.ClaimState == ClaimState.ClaimApproved
+				            && c.GrantApplication.HoldPaymentRequests == requestHold
+				            && c.GrantApplication.GrantOpening.GrantStream.GrantProgramId == grantProgramId);
 		}
 
 		/// <summary>
@@ -391,12 +393,13 @@ namespace CJG.Application.Services
 				.ToArray();
 
 			// Multiple claims are independent, so that payments are independent.
-			var multipleClams = GetApprovedClaimsForGrantProgram(grantProgramId, false)
+			var multipleClaims = GetApprovedClaimsForGrantProgram(grantProgramId, false)
 				.Where(c => c.ClaimTypeId == ClaimTypes.MultipleClaimsWithoutAmendments)
 				.ToArray();
 
 			var results = new List<Claim>(singleClaims);
-			results.AddRange(multipleClams);
+			results.AddRange(multipleClaims);
+
 			return results;
 		}
 
@@ -413,10 +416,12 @@ namespace CJG.Application.Services
 			model.FilesWithClaim = GetApprovedClaimsForGrantProgram(grantProgramId, requestHold).ToArray()
 									.Select(c => new RequestOnHoldClaimModel(c, startDate)).ToList();
 
-			model.FilesWithoutClaim = _dbContext.GrantApplications.Where(t => t.GrantOpening.GrantStream.GrantProgramId == grantProgramId &&
-																			  !t.Claims.Any(c => c.ClaimState == ClaimState.ClaimApproved) &&
-																			   t.HoldPaymentRequests == requestHold).ToArray()
-																				.Select(t => new RequestOnHoldItemModel(t)).ToList();
+			model.FilesWithoutClaim = _dbContext.GrantApplications
+				.Where(t => t.GrantOpening.GrantStream.GrantProgramId == grantProgramId
+				            && !t.Claims.Any(c => c.ClaimState == ClaimState.ClaimApproved)
+				            && t.HoldPaymentRequests == requestHold).ToArray()
+				.Select(t => new RequestOnHoldItemModel(t))
+				.ToList();
 
 			return model;
 		}
@@ -434,13 +439,13 @@ namespace CJG.Application.Services
 		/// <summary>
 		/// Get all the <typeparamref name="Claim"/>'s for the specified GrantApplication.
 		/// </summary>
-		/// <param name="grantApplicationId">The grant applciation Id.</param>
+		/// <param name="grantApplicationId">The grant application Id.</param>
 		/// <returns></returns>
 		public IEnumerable<Claim> GetClaimsForGrantApplication(int grantApplicationId)
 		{
 			var claims = _dbContext.Claims.Where(x => x.GrantApplicationId == grantApplicationId);
 
-			if (claims.Count() > 0 && !_httpContext.User.CanPerformAction(claims.First().GrantApplication, ApplicationWorkflowTrigger.ViewClaim))
+			if (claims.Any() && !_httpContext.User.CanPerformAction(claims.First().GrantApplication, ApplicationWorkflowTrigger.ViewClaim))
 				throw new NotAuthorizedException("User does not have permission to view this claim.");
 
 			return claims;
@@ -455,12 +460,11 @@ namespace CJG.Application.Services
 		{
 			try
 			{
-				var claims = _dbContext.Claims.Where(c => c.Id == id).Select(c => new { c.Id, c.ClaimVersion });
+				var claims = _dbContext.Claims
+					.Where(c => c.Id == id)
+					.Select(c => new { c.Id, c.ClaimVersion });
 
-				if (claims == null || claims.Count() == 0)
-					return 0;
-
-				return claims.Max(c => c.ClaimVersion);
+				return !claims.Any() ? 0 : claims.Max(c => c.ClaimVersion);
 			}
 			catch (Exception e)
 			{
@@ -499,9 +503,7 @@ namespace CJG.Application.Services
 			var claimEligibleCost = Get<ClaimEligibleCost>(claimEligibleCostId);
 
 			if (!_httpContext.User.CanPerformAction(claimEligibleCost.Claim?.GrantApplication, ApplicationWorkflowTrigger.ViewClaim))
-			{
 				throw new NotAuthorizedException($"User does not have permission to access Claim '{claimEligibleCost?.ClaimId}'.");
-			}
 
 			return claimEligibleCost;
 		}
@@ -557,7 +559,7 @@ namespace CJG.Application.Services
 			var claim = Get<Claim>(claimEligibleCostToUpdate.ClaimId, claimEligibleCostToUpdate.ClaimVersion);
 
 			if (!_httpContext.User.CanPerformAction(claim.GrantApplication, trigger))
-				throw new NotAuthorizedException($"User does not have permission to access Claim.");
+				throw new NotAuthorizedException("User does not have permission to access Claim.");
 
 			claimEligibleCostToUpdate.EligibleCostId = claimEligibleCost.EligibleCostId;
 			claimEligibleCostToUpdate.EligibleCost = commitTransaction ? null : claimEligibleCostToUpdate.EligibleCost;
@@ -626,7 +628,9 @@ namespace CJG.Application.Services
 			var participantForms = grantApplication.ParticipantForms;
 
 			var participantsOnClaim = (from pc in claim.EligibleCosts.SelectMany(ec => ec.ParticipantCosts)
-									   select pc.ParticipantFormId).ToArray().Distinct();
+									   select pc.ParticipantFormId)
+				.ToArray()
+				.Distinct();
 
 			var claimEligibleCost = claimEligibleCostToAdd ?? new ClaimEligibleCost(claim)
 			{
@@ -637,9 +641,7 @@ namespace CJG.Application.Services
 			foreach (var participantForm in participantForms)
 			{
 				if (!participantForm.Id.In(participantsOnClaim.ToArray<int>()))
-				{
 					continue;
-				}
 
 				claimEligibleCost.ParticipantCosts.Add(new ParticipantCost(claimEligibleCost, participantForm));
 			}
@@ -665,9 +667,7 @@ namespace CJG.Application.Services
 			var claimEligibleCost = GetClaimEligibleCost(claimEligibleCostId);
 
 			foreach (var participantCost in claimEligibleCost.ParticipantCosts.ToArray())
-			{
 				_dbContext.ParticipantCosts.Remove(participantCost);
-			}
 
 			_dbContext.ClaimEligibleCosts.Remove(claimEligibleCost);
 
@@ -688,16 +688,17 @@ namespace CJG.Application.Services
 			if (!claim.ClaimState.In(ClaimState.Incomplete, ClaimState.Complete, ClaimState.Unassessed))
 				throw new InvalidOperationException($"Cannot remove eligible costs from a claim in this state '{claim.ClaimState.GetDescription()}'.");
 
-			var eligibleCostsAddedByAssessor = claim.EligibleCosts.Where(x => x.AddedByAssessor).ToArray();
+			var eligibleCostsAddedByAssessor = claim.EligibleCosts
+				.Where(x => x.AddedByAssessor)
+				.ToArray();
 
-			for (var ic = 0; ic < eligibleCostsAddedByAssessor.Count(); ic++)
+			for (var ic = 0; ic < eligibleCostsAddedByAssessor.Length; ic++)
 			{
 				var participantCosts = eligibleCostsAddedByAssessor[ic].ParticipantCosts.ToArray();
 
 				for (var ip = 0; ip < participantCosts.Count(); ip++)
-				{
 					_dbContext.ParticipantCosts.Remove(participantCosts[ip]);
-				}
+
 				_dbContext.ClaimEligibleCosts.Remove(eligibleCostsAddedByAssessor[ic]);
 			}
 
@@ -737,6 +738,33 @@ namespace CJG.Application.Services
 				throw new NotAuthorizedException("User does not have permission to access Claim.");
 
 			return claimEligibleCost.ParticipantCosts.Count > 0 ? claimEligibleCost.ParticipantCosts : null;
+		}
+
+		/// <summary>
+		/// Update the specified <typeparamref name="Claim"/> Applicant Notes in the datastore.
+		/// </summary>
+		/// <param name="claim"></param>
+		/// <param name="applicantNotes"></param>
+		public Claim UpdateApplicantNote(Claim claim, string applicantNotes)
+		{
+			if (claim == null)
+				throw new ArgumentNullException(nameof(claim));
+
+			if (!_httpContext.User.CanPerformAction(claim.GrantApplication, ApplicationWorkflowTrigger.EditClaim))
+				throw new NotAuthorizedException("User does not have permission to update claim notes.");
+
+			claim.ApplicantNotes = applicantNotes?.Trim();
+
+			var accountType = _httpContext.User.GetAccountType();
+
+			if (accountType == AccountTypes.External)
+				_noteService.GenerateUpdateNote(claim.GrantApplication, true);
+
+			_dbContext.Update(claim);
+			_dbContext.CommitTransaction();
+
+
+			return claim;
 		}
 
 		/// <summary>
@@ -782,8 +810,8 @@ namespace CJG.Application.Services
 			{
 				foreach (var updatedParticipantCost in participantCosts)
 				{
-					var participantCostToUpdate =
-						claimEligibleCost.ParticipantCosts.FirstOrDefault(p => p.Id == updatedParticipantCost.Id) ?? new ParticipantCost(claimEligibleCost, updatedParticipantCost.ParticipantForm);
+					var participantCostToUpdate = claimEligibleCost.ParticipantCosts.FirstOrDefault(p => p.Id == updatedParticipantCost.Id)
+					                              ?? new ParticipantCost(claimEligibleCost, updatedParticipantCost.ParticipantForm);
 
 					participantCostToUpdate.ClaimParticipantCost = updatedParticipantCost.ClaimParticipantCost;
 					participantCostToUpdate.RecalculateClaimCost();
@@ -824,9 +852,7 @@ namespace CJG.Application.Services
 			var claim = Get<Claim>(claimId, claimVersion);
 
 			if (!_httpContext.User.CanPerformAction(claim.GrantApplication, ApplicationWorkflowTrigger.ViewApplication) || !claim.Receipts.Any(a => a.Id == attachmentId))
-			{
 				throw new NotAuthorizedException($"User does not have permission to view application '{claim.GrantApplicationId}'.");
-			}
 
 			return Get<Attachment>(attachmentId);
 		}
@@ -875,7 +901,6 @@ namespace CJG.Application.Services
 		/// <summary>
 		/// Add a new <typeparamref name="Attachment"/> to the specified Claim.
 		/// </summary>
-		/// <param name="id"></param>
 		/// <param name="claimId"></param>
 		/// <param name="claimVersion"></param>
 		/// <param name="attachment"></param>

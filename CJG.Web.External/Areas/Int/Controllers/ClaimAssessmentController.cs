@@ -3,6 +3,7 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
+using System.Net.Mime;
 using System.Web;
 using System.Web.Mvc;
 using CJG.Application.Services;
@@ -13,11 +14,15 @@ using CJG.Core.Interfaces.Service.Settings;
 using CJG.Infrastructure.Identity;
 using CJG.Web.External.Areas.Ext.Models;
 using CJG.Web.External.Areas.Int.Models;
+using CJG.Web.External.Areas.Int.Models.Attachments;
+using CJG.Web.External.Areas.Int.Models.Claims;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
 using CJG.Web.External.Models.Shared;
 using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
+using InternalUserViewModel = CJG.Web.External.Areas.Int.Models.Claims.InternalUserViewModel;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
@@ -29,6 +34,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 	public class ClaimAssessmentController : BaseController
 	{
 		private readonly IGrantStreamService _grantStreamService;
+		private readonly IParticipantService _participantService;
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IAttachmentService _attachmentService;
 		private readonly IAuthorizationService _authorizationService;
@@ -51,6 +57,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <param name="claimService"></param>
 		/// <param name="claimEligibleCostService"></param>
 		/// <param name="eligibleExpenseTypeService"></param>
+		/// <param name="participantService"></param>
 		public ClaimAssessmentController(
 			IControllerService controllerService,
 			IGrantApplicationService grantApplicationService,
@@ -61,7 +68,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			IClaimService claimService,
 			IClaimEligibleCostService claimEligibleCostService,
 			IEligibleExpenseTypeService eligibleExpenseTypeService,
-			IGrantStreamService grantStreamService
+			IGrantStreamService grantStreamService,
+			IParticipantService participantService
 		   ) : base(controllerService.Logger)
 		{
 			_grantApplicationService = grantApplicationService;
@@ -73,6 +81,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_claimEligibleCostService = claimEligibleCostService;
 			_eligibleExpenseTypeService = eligibleExpenseTypeService;
 			_grantStreamService = grantStreamService;
+			_participantService = participantService;
 		}
 
 		/// <summary>
@@ -115,11 +124,53 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[Route("Claim/Assessment/{claimId}/{claimVersion}")]
 		public ActionResult GetClaim(int claimId, int claimVersion)
 		{
-			var model = new Models.Claims.ClaimAssessmentViewModel();
+			var model = new ClaimAssessmentViewModel();
 			try
 			{
 				var claim = _claimService.Get(claimId, claimVersion);
-				model = new Models.Claims.ClaimAssessmentViewModel(claim, User, x => Url.RouteUrl(x));
+				model = new ClaimAssessmentViewModel(claim, User, x => Url.RouteUrl(x));
+
+				SetClaimWarnings(claim, model);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		private void SetClaimWarnings(Claim claim, ClaimAssessmentViewModel model)
+		{
+			var claimWarnings = new ParticipantWarnings(_participantService).GetParticipantWarnings(claim.GrantApplication);
+			if (!claimWarnings.Any())
+				return;
+
+			foreach (var participant in model.Participants)
+			{
+				var warning = claimWarnings.FirstOrDefault(p => p.MappedParticipantFormId == participant.ParticipantFormId);
+				if (warning == null)
+					continue;
+
+				participant.HasClaimWarnings = warning.HasWarning();
+			}
+		}
+
+		/// <summary>
+		/// Get the claim detail data for the specified id and version for the claim assessment view.
+		/// </summary>
+		/// <param name="claimId"></param>
+		/// <param name="claimVersion"></param>
+		/// <returns></returns>
+		[HttpGet]
+		[AuthorizeAction(Privilege.IA1)]
+		[Route("Claim/Assessment/Details/{claimId}/{claimVersion}")]
+		public ActionResult GetClaimDetails(int claimId, int claimVersion)
+		{
+			var model = new ClaimAssessmentDetailsViewModel();
+			try
+			{
+				var claim = _claimService.Get(claimId, claimVersion);
+				model = new ClaimAssessmentDetailsViewModel(claim);
 			}
 			catch (Exception ex)
 			{
@@ -131,7 +182,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <summary>
 		/// Get an array of assessors.
 		/// </summary>
-		/// <param name="currentAssessorId"></param>
 		/// <returns></returns>
 		[HttpGet]
 		[Route("Claim/Assessors")]
@@ -140,7 +190,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			var viewModel = new BaseViewModel();
 			try
 			{
-				var assessors = _authorizationService.GetAssessors().Select(u => new Models.Claims.InternalUserViewModel(u)).ToArray();
+				var assessors = _authorizationService.GetAssessors().Select(u => new InternalUserViewModel(u)).ToArray();
 				return Json(assessors, JsonRequestBehavior.AllowGet);
 			}
 			catch (Exception ex)
@@ -192,14 +242,14 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[PreventSpam]
 		[ValidateRequestHeader]
 		[Route("Claim/Reassign")]
-		public ActionResult ReassignAssessor(Models.Claims.ClaimAssessmentViewModel model)
+		public ActionResult ReassignAssessor(ClaimAssessmentViewModel model)
 		{
 			try
 			{
 				var claim = _claimService.Get(model.Id, model.Version);
 				claim.GrantApplication.RowVersion = Convert.FromBase64String(model.GrantApplicationRowVersion);
 				_grantApplicationService.AssignAssessor(claim.GrantApplication, model.AssessorId);
-				model = new Models.Claims.ClaimAssessmentViewModel(claim, User, x => Url.RouteUrl(x));
+				model = new ClaimAssessmentViewModel(claim, User, x => Url.RouteUrl(x));
 			}
 			catch (Exception ex)
 			{
@@ -207,31 +257,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 
 			return Json(model);
-		}
-
-
-		/// <summary>
-		/// Get the claim detail data for the specified id and version for the claim assessment view.
-		/// </summary>
-		/// <param name="claimId"></param>
-		/// <param name="claimVersion"></param>
-		/// <returns></returns>
-		[HttpGet]
-		[AuthorizeAction(Privilege.IA1)]
-		[Route("Claim/Assessment/Details/{claimId}/{claimVersion}")]
-		public ActionResult GetClaimDetails(int claimId, int claimVersion)
-		{
-			var model = new Models.Claims.ClaimAssessmentDetailsViewModel();
-			try
-			{
-				var claim = _claimService.Get(claimId, claimVersion);
-				model = new Models.Claims.ClaimAssessmentDetailsViewModel(claim);
-			}
-			catch (Exception ex)
-			{
-				HandleAngularException(ex, model);
-			}
-			return Json(model, JsonRequestBehavior.AllowGet);
 		}
 
 		/// <summary>
@@ -243,7 +268,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[ValidateRequestHeader]
 		[AuthorizeAction(Privilege.AM2, Privilege.AM4, Privilege.AM5)]
 		[Route("Claim")]
-		public ActionResult UpdateClaim(Models.Claims.ClaimAssessmentDetailsViewModel model)
+		public ActionResult UpdateClaim(ClaimAssessmentDetailsViewModel model)
 		{
 			try
 			{
@@ -280,6 +305,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 								// TODO: Might need to add to datasource.
 							});
 						}
+
 						if (ec.ParticipantCosts != null)
 						{
 							ec.ParticipantCosts.ForEach(pc =>
@@ -288,7 +314,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 								{
 									AssessedParticipantCost = pc.AssessedParticipantCost,
 									AssessedReimbursement = pc.AssessedReimbursement,
-									AssessedEmployerContribution = pc.AssessedEmployerContribution,
+									AssessedEmployerContribution = pc.AssessedEmployerContribution
 								};
 								claimEligibleCost.ParticipantCosts.Add(participantCost);
 								// TODO: Might need to add to datasource.
@@ -361,7 +387,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 				_claimService.Update(claim, User.HasPrivilege(Privilege.AM4));
 
-				model = new Models.Claims.ClaimAssessmentDetailsViewModel(claim);
+				model = new ClaimAssessmentDetailsViewModel(claim);
 			}
 			catch (Exception ex)
 			{
@@ -379,7 +405,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		[ValidateRequestHeader]
 		[AuthorizeAction(Privilege.AM2, Privilege.AM4, Privilege.AM5)]
 		[Route("Claim/Notes")]
-		public ActionResult SaveClaimNotes(Models.Claims.ClaimAssessmentViewModel model)
+		public ActionResult SaveClaimNotes(ClaimAssessmentViewModel model)
 		{
 			try
 			{
@@ -391,7 +417,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				claim.ClaimAssessmentNotes = model.ClaimAssessmentNotes;
 
 				_claimService.Update(claim);
-				model = new Models.Claims.ClaimAssessmentViewModel(claim, User, x => Url.RouteUrl(x));
+				model = new ClaimAssessmentViewModel(claim, User, x => Url.RouteUrl(x));
 			}
 			catch (Exception ex)
 			{
@@ -419,7 +445,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				var grantApplication = claim.GrantApplication;
 				var model = new ClaimOldViewModel(claim);
 
-				viewData = new ViewDataDictionary()
+				viewData = new ViewDataDictionary
 				{
 					Model = new ClaimAssessmentDetailViewModel(grantApplication, model, _trainingProviderSettings.AllowFileAttachmentExtensions)
 					{
@@ -499,7 +525,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			var model = new BaseViewModel();
 			try
 			{
-				var attachmentViewModel = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.Attachments.UpdateAttachmentViewModel>(attachments);
+				var attachmentViewModel = JsonConvert.DeserializeObject<UpdateAttachmentViewModel>(attachments);
 				var attachment = file.UploadFile(attachmentViewModel.Description, attachmentViewModel.FileName);
 				_claimService.AddReceipt(claimId, claimVersion, attachment);
 				var claim = _claimService.Get(claimId, claimVersion);
@@ -529,7 +555,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			var model = new BaseViewModel();
 			try
 			{
-				var attachmentViewModel = Newtonsoft.Json.JsonConvert.DeserializeObject<Models.Attachments.UpdateAttachmentViewModel>(attachments);
+				var attachmentViewModel = JsonConvert.DeserializeObject<UpdateAttachmentViewModel>(attachments);
 				var attachment = file.UploadFile(attachmentViewModel.Description, attachmentViewModel.FileName);
 				var existing = _attachmentService.Get(attachmentViewModel.Id);
 				existing.RowVersion = Convert.FromBase64String(attachmentViewModel.RowVersion);
@@ -562,7 +588,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			try
 			{
 				var attachment = _claimService.GetAttachment(claimId, claimVersion, attachmentId);
-				return File(attachment.AttachmentData, System.Net.Mime.MediaTypeNames.Application.Octet, attachment.FileName);
+				return File(attachment.AttachmentData, MediaTypeNames.Application.Octet, attachment.FileName);
 			}
 			catch (Exception ex)
 			{

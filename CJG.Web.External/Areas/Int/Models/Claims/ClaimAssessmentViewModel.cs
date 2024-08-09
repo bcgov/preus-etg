@@ -68,11 +68,13 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 		#region Applicant
 		public string ApplicantName { get; set; }
 		public string OrganizationLegalName { get; set; }
+		public int OrganizationId { get; set; }
 		#endregion
 
 		public string ClaimAssessmentNotes { get; set; }
 		public string ReimbursementAssessmentNotes { get; set; }
 		public string EligibilityAssessmentNotes { get; set; }
+		public string ApplicantNotes { get; set; }
 
 		public bool CanEdit { get; set; }
 		public bool CanUnlock { get; set; }
@@ -114,6 +116,7 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 			ClaimAssessmentNotes = claim.ClaimAssessmentNotes;
 			ReimbursementAssessmentNotes = claim.ReimbursementAssessmentNotes;
 			EligibilityAssessmentNotes = claim.EligibilityAssessmentNotes;
+			ApplicantNotes = claim.ApplicantNotes;
 
 			GrantApplicationRowVersion = Convert.ToBase64String(claim.GrantApplication.RowVersion);
 			FileNumber = claim.GrantApplication.FileNumber;
@@ -125,7 +128,9 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 			ApplicationStateExternal = claim.GrantApplication.ApplicationStateExternal;
 			ApplicationInternalStatus = ApplicationStateExternal.GetDescription();
 			AssessorId = claim.GrantApplication.AssessorId;
-			Assessor = claim.GrantApplication.AssessorId == null ? null : new InternalUserViewModel(claim.GrantApplication.Assessor);
+			Assessor = claim.GrantApplication.AssessorId == null
+				? null
+				: new InternalUserViewModel(claim.GrantApplication.Assessor);
 
 			ProgramType = claim.GrantApplication.GetProgramType();
 			GrantProgram = claim.GrantApplication.GrantOpening.GrantStream.GrantProgram.Name;
@@ -136,23 +141,16 @@ namespace CJG.Web.External.Areas.Int.Models.Claims
 
 			ApplicantName = $"{claim.GrantApplication.ApplicantFirstName} {claim.GrantApplication.ApplicantLastName}";
 			OrganizationLegalName = claim.GrantApplication.OrganizationLegalName;
+			OrganizationId = claim.GrantApplication.OrganizationId;
 
 			CanEdit = user.CanPerformAction(claim.GrantApplication, ApplicationWorkflowTrigger.EditClaim);
 			CanUnlock = user.HasPrivilege(Privilege.AM4);
 			CanReassign = user.CanPerformAction(claim.GrantApplication, ApplicationWorkflowTrigger.ReassignAssessor);
 			HasPriorApprovedClaim = claim.HasPriorApprovedClaim();
 
-			switch (ProgramType)
-			{
-				case (ProgramTypes.EmployerGrant):
-					TrainingProvider = claim.GrantApplication.TrainingPrograms.FirstOrDefault().TrainingProvider.Name;
-					DeliveryPartner = claim.GrantApplication.DeliveryPartner?.Caption;
-					Participants = claim.GrantApplication.ParticipantForms.Select(p => new ParticipantViewModel(p)).ToArray();
-					break;
-				case (ProgramTypes.WDAService):
-					Participants = claim.ParticipantForms.Select(pf => new ParticipantViewModel(pf)).ToArray();
-					break;
-			}
+			TrainingProvider = claim.GrantApplication.TrainingPrograms.FirstOrDefault()?.TrainingProvider.Name;
+			DeliveryPartner = claim.GrantApplication.DeliveryPartner?.Caption;
+			Participants = claim.GrantApplication.ParticipantForms.Select(p => new ParticipantViewModel(p)).ToArray();
 
 			AmountPaidOrOwing = claim.ClaimTypeId == ClaimTypes.SingleAmendableClaim ? claim.AmountPaidOrOwing() : claim.GrantApplication.AmountPaidOrOwing();
 

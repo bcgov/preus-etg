@@ -245,7 +245,7 @@ namespace CJG.Application.Services
 		/// <returns></returns>
 		public string ParseDocumentTemplate<T>(T model, string content)
 		{
-			return Engine.Razor.RunCompile(content, System.Guid.NewGuid().ToString(), null, model);
+			return Engine.Razor.RunCompile(content, Guid.NewGuid().ToString(), null, model);
 		}
 
 		/// <summary>

@@ -12,7 +12,7 @@ namespace CJG.Core.Interfaces.Service
 		ParticipantCost Update(ParticipantCost participantCost);
 
 		void ApproveDenyParticipants(int grantApplicationId, Dictionary<int?, bool?> participantApproved);
-		void ReportAttendance(Dictionary<int, bool?> participantAttended);
+		void ReportAttendance(GrantApplication grantApplication, Dictionary<int, bool?> participantAttended);
 
 		IEnumerable<ParticipantForm> GetParticipantFormsForGrantApplication(int grantApplication);
 		IEnumerable<ParticipantCost> GetParticipantCostsForClaimEligibleCost(int claimEligibleCostId);

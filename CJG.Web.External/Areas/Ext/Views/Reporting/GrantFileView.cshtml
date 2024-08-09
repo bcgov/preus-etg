@@ -12,7 +12,7 @@
 }
 
 <div class="row">
-	@Html.ActionLink("Home", nameof(HomeController.Index), nameof(HomeController).Replace("Controller", ""), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
+	@Html.ActionLink("Home", "Index", "Home", new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
 </div>
 <div id="grant-file-container" ng-controller="ReportingGrantFileView" ng-grant-application-id="@ViewBag.GrantApplicationId">
 	<div class="grant-files row">

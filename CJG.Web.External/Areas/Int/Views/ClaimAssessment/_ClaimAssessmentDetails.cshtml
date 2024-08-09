@@ -12,7 +12,6 @@
                 <section-edit-buttons ng-model="section.editing" ng-if="claim.CanEdit" ng-class="btn--primary" ng-can-save="section.canSave" ng-edit="editClaim()"></section-edit-buttons>
             </div>
         </div>
-
         <ul ng-if="model.EligibleCosts.length == 0">
             <text>
                 Selected Claim does not have Eligible Costs
@@ -368,7 +367,10 @@
                                 </tr>
 
                                 <tr class="row--assess-editable row--participant-data" ng-repeat="participantCost in eligibleCost.ParticipantCosts" ng-class="participantCost.ClaimParticipantCost < 0 ? 'no-value' : ''" ng-show="!participantCost.filter">
-                                    <td class="white-cell"><a href="/Int/Application/Participant/Info/View/{{participantCost.Participant.ParticipantFormId}}" target="_blank">{{participantCost.Participant.Name}}</a></td>
+                                    <td class="white-cell">
+                                        <span class="notice--icon" ng-if="showClaimWarning(claim.Participants, participantCost.Participant.ParticipantFormId)" title="Possible claim issues."></span>
+                                        <a href="/Int/Application/Participant/Info/View/{{participantCost.Participant.ParticipantFormId}}" target="_blank">{{participantCost.Participant.Name}}</a>
+                                    </td>
                                     <td></td>
                                     <td ng-if="!eligibleCost.AddedByAssessor" class="s-actual-participant-cost">{{participantCost.ClaimParticipantCost | currency : '$': 2}} </td>
                                     <td ng-if="!eligibleCost.AddedByAssessor" class="s-actual-employer-contribution"> {{participantCost.ClaimEmployerContribution | currency : '$': 2}}</td>

@@ -73,6 +73,14 @@ namespace CJG.Application.Services
 					participantForms = participantForms.OrderByDynamic(pf => pf.GrantApplication.FileNumber, orderByParts.IsAscending);
 					break;
 
+				case "Status":
+					participantForms = participantForms.OrderByDynamic(pf => pf.GrantApplication.ApplicationStateInternal, orderByParts.IsAscending);
+					break;
+
+				case "Eligibility":
+					participantForms = participantForms.OrderByDynamic(pf => pf.Approved, orderByParts.IsAscending);
+					break;
+
 				case "CourseName":
 					participantForms = participantForms.OrderByDynamic(pf => pf.GrantApplication.TrainingPrograms.FirstOrDefault().CourseTitle, orderByParts.IsAscending);
 					break;
@@ -101,6 +109,8 @@ namespace CJG.Application.Services
 					ParticipantMiddleName = participantForm.MiddleName,
 					ParticipantLastName = participantForm.LastName,
 					FileNumber = participantForm.GrantApplication.FileNumber,
+					Status = participantForm.GrantApplication.ApplicationStateInternal.GetDescription(),
+					Eligibility = participantForm.Approved.HasValue ? participantForm.Approved.Value ? "Eligible" : "Not Eligible" : "Not set",
 					CourseName = participantForm.GrantApplication.TrainingPrograms.FirstOrDefault()?.CourseTitle ?? "--",
 					EmployerName = participantForm.GrantApplication.Organization.LegalName,
 					LastApplicationDateTime = participantForm.DateAdded,

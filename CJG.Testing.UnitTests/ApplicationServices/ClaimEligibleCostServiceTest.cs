@@ -163,7 +163,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			// Assert
 			claimEligibleCost.ParticipantCosts.Should().NotBeEmpty().And.HaveCount(1);
 			claimEligibleCost.ParticipantCosts.First().ClaimParticipantCost.Should().Be(claimParticipantCost);
-			helper.GetMock<IClaimService>().Verify(x => x.Update(It.IsAny<Claim>(), false), Times.Once);
+			helper.GetMock<IClaimService>().Verify(x => x.Update(It.IsAny<Claim>(), false, true), Times.Once);
 		}
 
 		/// <summary>
@@ -235,7 +235,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			claimEligibleCost.ParticipantCosts.First().AssessedParticipantCost.Should().Be(assessedParticipantCost);
 			claimEligibleCost.ParticipantCosts.First().AssessedReimbursement.Should().Be(assessedReimbursement);
 			claimEligibleCost.ParticipantCosts.First().AssessedEmployerContribution.Should().Be(assessedEmployerContribution);
-			helper.GetMock<IClaimService>().Verify(x => x.Update(It.IsAny<Claim>(), false), Times.Once);
+			helper.GetMock<IClaimService>().Verify(x => x.Update(It.IsAny<Claim>(), false, true), Times.Once);
 		}
 		#endregion
 	}
