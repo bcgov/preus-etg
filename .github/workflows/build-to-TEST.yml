@@ -1,0 +1,110 @@
+# Build/CI pipeline for ETG application
+
+name: Build ETG - TEST
+run-name: Build of commit ${{ github.sha }} by ${{ github.actor }}
+on: workflow_dispatch
+env:
+  NUGET_CERT_REVOCATION_MODE: offline # Bypass cert validation during NuGet Restore
+  BUILD_CONFIGURATION: TEST
+  HTTP_PROXY: ${{ vars.HTTP_PROXY }}
+  HTTPS_PROXY: ${{ vars.HTTP_PROXY }}
+  NO_PROXY: ${{ vars.NO_PROXY }}
+jobs:
+  build:
+    runs-on: etg-ci
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Generate custom build number
+      id: build_number
+      run: |
+        $timestamp = (Get-Date).ToString("yyyyMMdd")
+        $buildNumber = "$timestamp.${env:GITHUB_RUN_NUMBER}"
+        echo "BUILD_NUMBER=$buildNumber" >> $env:GITHUB_ENV
+
+    - name: Display build number
+      run: echo "Build number is $env:BUILD_NUMBER"
+      shell: powershell
+      
+    - name: Set up NuGet
+      uses: NuGet/setup-nuget@v2.0.0    
+      
+    - name: NuGet Restore
+      run: | 
+        nuget restore "${{github.workspace}}\ETG.sln"      
+        
+    - name: Set up MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Set up npm
+      uses: actions/setup-node@v4
+      with:
+        node-version: '12.16.1'
+        registry-url: 'https://registry.npmjs.org/'
+        
+    - name: Configure npm additional options
+      run: |
+        npm config set strict-ssl false
+        npm config set proxy ${{ vars.HTTP_PROXY }}
+        npm config set https-proxy ${{ vars.HTTP_PROXY }}
+    
+    - name: Install Node.js dependencies
+      run: npm install
+      working-directory: "CJG.Web.External/UI"
+
+    - name: Run Node.js build
+      run: npm run ci-build
+      working-directory: "CJG.Web.External/UI"
+      
+    - name: Run Config-Replace script on Notification Service
+      run: |
+        $configTags = (@{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, @{tag='db-name'; val="${{ vars.DB_NAME }}"}, @{tag='db-user'; val="${{ vars.DB_USER }}"}, @{tag='db-pass'; val="${{ secrets.DB_PASSWORD }}"})        
+        ${{ vars.DB_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.NotificationService/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.NotificationService/App.config" $configTags
+      shell: powershell
+      
+    - name: Run Config-Replace script on Reporting Service
+      run: |
+        $configTags = (@{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, @{tag='db-name'; val="${{ vars.DB_NAME }}"}, @{tag='db-user'; val="${{ vars.DB_USER }}"}, @{tag='db-pass'; val="${{ secrets.DB_PASSWORD }}"})
+        ${{ vars.DB_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.ReportingService/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.ReportingService/App.config" $configTags
+      shell: powershell
+      
+    - name: Run Config-Replace script on Grant Opening Service
+      run: |
+        $configTags = (@{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, @{tag='db-name'; val="${{ vars.DB_NAME }}"}, @{tag='db-user'; val="${{ vars.DB_USER }}"}, @{tag='db-pass'; val="${{ secrets.DB_PASSWORD }}"})
+        ${{ vars.DB_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.GrantOpeningService/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.GrantOpeningService/App.config" $configTags
+      shell: powershell
+
+    - name: MSBuild .NET framework
+      run: |
+        msbuild.exe "${{github.workspace}}\ETG.sln" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:IncrementalBuild=true /P:SkipExtraFilesOnServer=True /p:platform="Any CPU" /p:configuration="${{ env.BUILD_CONFIGURATION }}"
+     
+    - name: Upload Web Application as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: drop-application
+        path: "**/CJG.Web.External/obj/${{ env.BUILD_CONFIGURATION }}/Package/PackageTmp/"
+
+    - name: Upload EF Service as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: drop-db-migration
+        path: "**/CJG.Infrastructure.EF/bin/${{ env.BUILD_CONFIGURATION }}/"
+        
+    - name: Upload Notification Service as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: drop-notification-service
+        path: "**/CJG.Infrastructure.NotificationService/bin/${{ env.BUILD_CONFIGURATION }}/"
+
+    - name: Upload Reporting Service as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: drop-reporting-service
+        path: "**/CJG.Infrastructure.ReportingService/bin/${{ env.BUILD_CONFIGURATION }}/"
+
+    - name: Upload Grant Opening Service as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: drop-grant-opening-service
+        path: "**/CJG.Infrastructure.GrantOpeningService/bin/${{ env.BUILD_CONFIGURATION }}/"
