@@ -3,7 +3,6 @@ using Autofac;
 using CJG.Application.Services;
 using CJG.Application.Services.Web;
 using CJG.Core.Interfaces.Service;
-using CJG.Core.Interfaces.Service.Settings;
 using CJG.Infrastructure.BCeID.WebService;
 using CJG.Infrastructure.EF;
 using CJG.Infrastructure.Entities;

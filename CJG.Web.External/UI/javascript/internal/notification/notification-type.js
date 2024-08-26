@@ -54,7 +54,7 @@ app.controller('NotificationType', function ($scope, $attrs, $controller, uiTiny
                 if (rawKeywords.includes(item.Key))
                   ed.insertContent('@Raw(Model.' + item.Key + ')');
                 else
-                  ed.insertContent('@Model.' + item.Key)
+                  ed.insertContent('@Model.' + item.Key);
               }
             });
           }

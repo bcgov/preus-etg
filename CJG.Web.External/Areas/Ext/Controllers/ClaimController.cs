@@ -31,6 +31,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		private readonly ISettingService _settingService;
 		private readonly IClaimEligibleCostService _claimEligibleCostService;
 		private readonly IParticipantService _participantService;
+		private readonly INoteService _noteService;
 
 		/// <summary>
 		/// Creates a new instance of a <paramtyperef name="ClaimController"/> object.
@@ -42,6 +43,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 		/// <param name="claimEligibleCostService"></param>
 		/// <param name="settingService"></param>
 		/// <param name="participantService"></param>
+		/// <param name="noteService"></param>
 		public ClaimController(
 			IControllerService controllerService,
 			IGrantApplicationService grantApplicationService,
@@ -49,7 +51,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			IClaimService claimService,
 			IClaimEligibleCostService claimEligibleCostService,
 			ISettingService settingService,
-			IParticipantService participantService) : base(controllerService.Logger)
+			IParticipantService participantService,
+			INoteService noteService) : base(controllerService.Logger)
 		{
 			_grantApplicationService = grantApplicationService;
 			_attachmentService = attachmentService;
@@ -57,6 +60,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			_settingService = settingService;
 			_claimEligibleCostService = claimEligibleCostService;
 			_participantService = participantService;
+			_noteService = noteService;
 		}
 
 		/// <summary>
@@ -421,8 +425,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 				//save the participant attendance info, update the Attended property
 				var participantsAttended = claimModel.Participants.ToDictionary(d => d.Id, d => d.Attended);
-
-				_participantService.ReportAttendance(claimEligibleCost.Claim.GrantApplication, participantsAttended);
+				
+				_participantService.ReportAttendance(claimEligibleCost.Claim.GrantApplication, participantsAttended, _noteService);
 
 				//reset all claim amounts and costs
 				_claimEligibleCostService.ResetClaimAmounts(claimEligibleCost.Claim);
