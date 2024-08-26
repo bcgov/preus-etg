@@ -116,7 +116,7 @@
                 foreach (var log in Model.Logs)
                 {
                     <tr class="@tr_class(log.Level)">
-                        <td>@String.Format("{0:yyyy-MM-dd hh:mm:ss}", log.DateAdded.ToLocalTime())</td>
+                        <td>@string.Format("{0:yyyy-MM-dd HH:mm:ss}", log.DateAdded.ToLocalTime())</td>
                         <td>@log.Level</td>
                         <td class="left">@log.Message</td>
                         <td class="left">@log.Exception</td>

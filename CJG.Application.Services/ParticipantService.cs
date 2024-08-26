@@ -13,17 +13,9 @@ namespace CJG.Application.Services
 {
 	public class ParticipantService : Service, IParticipantService
 	{
-		private readonly INoteService _noteService;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="context"></param>
-		/// <param name="httpContext"></param>
-		/// <param name="logger"></param>
-		public ParticipantService(IDataContext context, HttpContextBase httpContext, ILogger logger, INoteService noteService) : base(context, httpContext, logger)
+		public ParticipantService(IDataContext context, HttpContextBase httpContext, ILogger logger)
+			: base(context, httpContext, logger)
 		{
-			_noteService = noteService;
 		}
 
 		/// <summary>
@@ -174,7 +166,7 @@ namespace CJG.Application.Services
 			_dbContext.Commit();
 		}
 
-		public void ReportAttendance(GrantApplication grantApplication, Dictionary<int, bool?> participantAttended)
+		public void ReportAttendance(GrantApplication grantApplication, Dictionary<int, bool?> participantAttended, INoteService noteService)
 		{
 			foreach (var participant in participantAttended)
 			{
@@ -187,8 +179,8 @@ namespace CJG.Application.Services
 			}
 
 			var isExternalUser = _httpContext.User.GetAccountType() == AccountTypes.External;
-			if (isExternalUser && grantApplication.ApplicationStateInternal == ApplicationStateInternal.ClaimReturnedToApplicant)
-				_noteService.GenerateUpdateNote(grantApplication, true);
+			if (noteService != null && isExternalUser && grantApplication.ApplicationStateInternal == ApplicationStateInternal.ClaimReturnedToApplicant)
+				noteService.GenerateUpdateNote(grantApplication, true);
 
 			_dbContext.Commit();
 		}

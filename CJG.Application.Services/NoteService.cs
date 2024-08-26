@@ -1,22 +1,19 @@
-﻿using CJG.Core.Entities;
+﻿using System;
+using System.Text;
+using System.Web;
+using CJG.Core.Entities;
 using CJG.Core.Entities.Helpers;
 using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Entities;
 using NLog;
-using System;
-using System.Text;
-using System.Web;
 
 namespace CJG.Application.Services
 {
 	public class NoteService : Service, INoteService
 	{
-		#region Variables
 		private readonly IStaticDataService _staticDataService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// 
 		/// </summary>
@@ -28,9 +25,7 @@ namespace CJG.Application.Services
 		{
 			_staticDataService = staticDataService;
 		}
-		#endregion
 
-		#region Methods
 		/// <summary>
 		/// Get the note for the specified Id.
 		/// </summary>
@@ -303,7 +298,6 @@ namespace CJG.Application.Services
 		{
 			return CreateNote(grantApplication, NoteTypes.WF, message);
 		}
-		#endregion
 		#endregion
 	}
 }
