@@ -1,0 +1,38 @@
+﻿@using CJG.Core.Entities
+
+<div ng-repeat="group in model.CompletionReportGroups" ng-if="step === $index + 1">
+    <div ng-switch="group.Id">
+        <div ng-switch-when="@(Constants.CompletionStepWithMultipleQuestions)">
+            @Html.Partial("_CompletionStepWithMultipleQuestions")
+        </div>
+        <div ng-switch-when="@(Constants.CompletionReportCWRGPage2)">
+            @Html.Partial("_CompletionReportMQForParticipants")
+
+        </div>
+
+        <div ng-switch-default>
+            <div ng-repeat="question in group.Questions">
+                <div ng-switch="question.QuestionType">
+                    <div ng-switch-when="@((int)CompletionReportQuestionTypes.Default)">
+                        @Html.Partial("_CompletionReportQuestionDefault")
+                    </div>
+                    <div ng-switch-when="@((int)CompletionReportQuestionTypes.MultipleChoice)">
+                        @Html.Partial("_CompletionReportQuestionMultipleChoice")
+                    </div>
+                    <div ng-switch-when="@((int)CompletionReportQuestionTypes.Freeform)">
+                        @Html.Partial("_CompletionReportQuestionFreeform")
+                    </div>
+                    <div ng-switch-when="@((int)CompletionReportQuestionTypes.DynamicCheckbox)">
+                        @Html.Partial("_CompletionReportQuestionDynamicCheckbox")
+                    </div>
+                    <div ng-switch-when="@((int)CompletionReportQuestionTypes.NOCAndNAICSList)">
+                        @Html.Partial("_CompletionReportQuestionNOCAndNAICSList")
+                    </div>
+                    <div ng-switch-when="@((int)CompletionReportQuestionTypes.MultipleCheckbox)">
+                        @Html.Partial("_CompletionReportQuestionCheckbox")
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

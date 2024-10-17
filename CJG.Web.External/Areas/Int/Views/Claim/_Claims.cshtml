@@ -1,0 +1,63 @@
+﻿@using CJG.Core.Entities
+@using CJG.Web.External.Areas.Int.Controllers
+
+<div ng-controller="Claims" ng-if="grantFile.ShowClaims">
+    <span class="panel-section-item">
+        <span class="panel-section-title" ng-click="toggle($event)">Claims</span>
+        <span class="panel-section-buttons">
+            <span ng-if="grantFile.ShowHoldPaymentRequestButton">
+                <a class="btn btn--empty text--link" ng-click="togglePaymentRequests($event)">{{grantFile.HoldPaymentRequests ? 'Enable' : 'Hold'}} Payment Requests</a>
+            </span>
+            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            <span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+        </span>
+    </span>
+    <div class="panel-section-content" ng-if="section.show">
+        <span class="div--PaymentRequestsOnHold" ng-if="model.HoldPaymentRequests">
+            <span>Payment Requests are on Hold</span>
+        </span>
+        <div>
+            <table class="table--claims table--claims__claim-list">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="text-align--left">Submitted</th>
+                        <th class="text-align--left">Assessed</th>
+                        <th class="text-align--left">Claim Status</th>
+                        <th>Claimed</th>
+                        <th>Assessed</th>
+                        <th>Paid or <b style="color: red;">Owing</b></th>
+                        <th class="text-align--left">Document Ref.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="claimViewModel in model.ClaimViewModels">
+                        <td>
+                            <a href="@Html.Raw(HttpUtility.UrlDecode(Url.ActionUrl(nameof(ClaimAssessmentController.ClaimAssessmentView), typeof(ClaimAssessmentController), new { claimId = "{{claimViewModel.Id}}", claimVersion = "{{claimViewModel.ClaimVersion}}" })))">View</a>
+                        </td>
+                        <td class="text-align--left">{{claimViewModel.DateSubmitted }}</td>
+                        <td class="text-align--left">{{claimViewModel.DateAssessed }}</td>
+                        <td class="text-align--left">{{claimViewModel.ClaimStateDescription }}</td>
+                        <td>{{claimViewModel.TotalClaimReimbursement | currencyParentheses : "$" : 2 }}</td>
+                        <td>{{claimViewModel.TotalAssessedReimbursement | currencyParentheses : "$" : 2 }}</td>
+                        <td ng-if="claimViewModel.HasPaymentRequest"
+                            ng-style="claimViewModel.ClaimAmount < 0 && {'color': 'red', 'font-weight': 'bold'}">
+                            {{claimViewModel.ClaimAmount | currencyParentheses : "$" : 2  }}
+                        </td>
+                        <td ng-if="!claimViewModel.HasPaymentRequest"  colspan="1"></td>
+
+                        <td class="text-align--left" 
+                            ng-if="claimViewModel.HasPaymentRequest"
+                            ng-style="claimViewModel.ClaimAmount < 0 && {'color': 'red', 'font-weight': 'bold'}">
+                            {{claimViewModel.PaymentRequestDocumentNumber}}
+                        </td>
+                        <td class="text-align--left" ng-if="!claimViewModel.HasPaymentRequest" colspan="2"></td>
+                        <td colspan="2" style="text-align: center;" ng-if="claimViewModel.IsNewClaim">
+                            <button type="submit" class="btn btn--secondary" ng-disabled="!(model.HasAM1 || model.HasAM2)" ng-click="selectForAssessment(claimViewModel)">Select for Assessment</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

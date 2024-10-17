@@ -1,0 +1,216 @@
+﻿<div ng-controller="GrantProgramNotificationType">
+    <div class="dialog-header">
+        <h3>Notification Type</h3>
+    </div>
+    <div class="dialog-content">
+        <div class="modal-content">
+            <div class="form well">
+                <div>
+                    <div class="row row--alert" ng-if="alert.message">
+                        <div class="alert alert--default" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message">
+                        </div>
+                    </div>
+
+                    <div class="pull-right">
+                        <input id="IsActive" type="checkbox" ng-model="ngDialogData.model.IsActive" ng-disabled="!section.editing" />
+                        <label class="form__label margin-left-10" for="IsActive">Active</label>
+                    </div>
+                    <div class="form__group width-50">
+                        <label class="form__label" for="Caption">Name</label>
+                        <div class="form__control">
+                            {{notificationType.Caption}}
+                        </div>
+                    </div>
+                    <div class="form__group display-inline-block">
+                        <label class="form__label" for="Trigger">Trigger</label>
+                        <div class="form__control">
+                            <span>{{notificationType.NotificationTriggerCaption}}</span>
+                        </div>
+                    </div>
+
+                    <div class="form__group">
+                        <label class="form__label" for="Description">Description</label>
+                        <div class="form__control">
+                            {{notificationType.Description}}
+                        </div>
+                    </div>
+
+                    <div class="form__group tab--container">
+                        <ul class="tab--wrapper">
+                            <li class="tab--tab" ng-class="{'active': !showTemplate}" ng-click="toggleTemplate(false)">
+                                Rules
+                            </li>
+                            <li class="tab--tab" ng-class="{'active': showTemplate, 'error': errors.EmailBody}" ng-click="toggleTemplate(true)">
+                                Template
+                            </li>
+                            <li class="pull-right">
+                                <button class="btn btn--secondary" ng-click="preview()">Preview</button>
+                                <button class="btn btn--secondary" ng-click="test()">Test</button>
+                            </li>
+                        </ul>
+                        <div class="tab--content" ng-show="!showTemplate">
+                            <div class="form well form--2-col" style="overflow: hidden;">
+                                <!-- Left col -->
+                                <div class="width-30 display-inline-block">
+                                    <h3 class="width-90 tooltip tab-body-header">
+                                        Milestone Rules
+                                        <span class="tooltiptext">Milestone date rules ensure a notification is only sent once the milestone date offset is met and the milestone date expiry has not passed.</span>
+                                    </h3>
+                                    <div>
+                                        <div class="form__label">
+                                            Milestone Date Name
+                                        </div>
+                                        <div class="form__control">
+                                            <span>{{notificationType.MilestoneDateNameCaption}}</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form__label">
+                                            Milestone Offset
+                                        </div>
+                                        <div class="form__control">
+                                            {{notificationType.MilestoneDateOffset}}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form__label">
+                                            Milestone Expires
+                                        </div>
+                                        <div class="form__control">
+                                            {{notificationType.MilestoneDateExpires}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="width-30 display-inline-block">
+                                    <h3 class="width-90 tooltip tab-body-header">
+                                        Application State Rules
+                                        <span class="tooltiptext">Application state rules ensure a notification is only sent if it matches the specified states.</span>
+                                    </h3>
+                                    <div>
+                                        <div class="form__label">
+                                            Previous State
+                                        </div>
+                                        <div class="form__control">
+                                            {{notificationType.PreviousApplicationStateCaption}}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form__label">
+                                            Current State
+                                        </div>
+                                        <div class="form__control">
+                                            {{notificationType.CurrentApplicationStateCaption}}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form__label">
+                                            Approval
+                                        </div>
+                                        <div class="form__control">
+                                            {{notificationType.ApprovalRuleCaption}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Right col -->
+                                <div class="width-35 display-inline-block">
+                                    <h3 class="width-90 tooltip tab-body-header">
+                                        Reporting Rules
+                                        <span class="tooltiptext">Participant Claim and Completion reporting rules ensure the notification is only sent if the application matches the configured options.</span>
+                                    </h3>
+                                    <div>
+                                        <div class="form__label">
+                                            Participant Reporting
+                                        </div>
+                                        <div class="form__control">
+                                            {{notificationType.ParticipantReportRuleCaption}}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form__label">
+                                            Claim Reporting
+                                        </div>
+                                        <div class="form__control">
+                                            {{notificationType.ClaimReportRuleCaption}}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="form__label">
+                                            Completion Reporting
+                                        </div>
+                                        <div class="form__control">
+                                            {{notificationType.CompletionReportRuleCaption}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="width-60 display-inline-block">
+                                    <h3 class="width-90 tooltip tab-body-header">
+                                        Resend Rules
+                                        <span class="tooltiptext">
+                                            Resend rule provides a way to control whether the same notification type will be resent if the other configured conditions are met.
+                                        </span>
+                                    </h3>
+                                    <div>
+                                        <div class="form__label">
+                                            Resend
+                                        </div>
+                                        <div class="form__control">
+                                            {{notificationType.ResendRuleCaption}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="width-35 display-inline-block">
+                                    <h3 class="width-90 tooltip tab-body-header">
+                                        Recipient Rule
+                                        <span class="tooltiptext">
+                                            Who the notification will be sent to.
+                                        </span>
+                                    </h3>
+                                    <div>
+                                        <div class="form__label">
+                                            Recipient
+                                        </div>
+                                        <div class="form__control">
+                                            {{notificationType.RecipientRuleCaption}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab--content" ng-show="showTemplate">
+                            <div class="form well">
+                                <div>
+                                    <div class="form__group">
+                                        <label class="form__label" for="Subject">Subject</label>
+                                        <div class="form__control">
+                                            <input id="Subject" class="input--full" maxlength="500" ng-model="ngDialogData.model.NotificationTemplate.EmailSubject" ng-validation="errors.EmailSubject" ng-editing />
+                                        </div>
+                                    </div>
+
+                                    <div class="form__group">
+                                        <label class="form__label" ng-if="!section.editing">Body</label>
+                                        <div class="form__control">
+                                            <textarea ng-if="section.editing" ng-model="ngDialogData.model.NotificationTemplate.EmailBody"
+                                                      ui-tinymce="tinymceOptions" ng-class="{'has-error': errors.EmailBody}"></textarea>
+                                            <validation ng-model="errors.EmailBody"></validation>
+                                            <span ng-if="!section.editing" ng-bind-html="ngDialogData.model.NotificationTemplate.EmailBody">
+
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <hr />
+    <div class="modal-footer">
+        <button class="btn btn--secondary pull-left no-margin-force" ng-click="closeThisDialog()">{{section.editing ? 'Cancel' : 'Close' }}</button>
+        <button class="btn btn--primary pull-left btn--danger" ng-if="section.editing" ng-click="deleteGrantProgramNotificationType()">Delete</button>
+        <button class="btn btn--primary pull-right" ng-if="section.editing" ng-click="confirm(ngDialogData.model)">Save</button>
+    </div>
+</div>

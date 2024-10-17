@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewBag.Title = "Welcome to Skills Training Grants";
+}
+
+<div class="row">
+	<div class="main">
+		<h1>@ViewBag.Title</h1>
+		External BCeID Users log in @Html.ActionLink("here", null, "Home", new {Area = "Ext"}, null).
+		<br/>
+		<br/>
+		Internal IDIR Users log in @Html.ActionLink("here", null, "Home", new { Area = "Int" }, null).
+		<br/>
+		<br/>
+	</div>
+</div>

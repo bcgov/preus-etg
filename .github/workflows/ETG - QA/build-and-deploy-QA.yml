@@ -1,0 +1,214 @@
+# Build/CI pipeline for ETG application
+
+name: Build and Deploy to Dev/QA
+run-name: Build of commit ${{ github.sha }} by ${{ github.actor }}
+on: workflow_dispatch
+env:
+  NUGET_CERT_REVOCATION_MODE: offline # Bypass cert validation during NuGet Restore
+  HTTP_PROXY: ${{ vars.HTTP_PROXY }}
+  HTTPS_PROXY: ${{ vars.HTTP_PROXY }}
+  NO_PROXY: ${{ vars.NO_PROXY }}
+  
+jobs:
+  build:
+    environment: Dev
+    runs-on: etg-ci
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Generate custom build number
+      id: build_number
+      run: |
+        $timestamp = (Get-Date).ToString("yyyyMMdd")
+        $buildNumber = "$timestamp.${env:GITHUB_RUN_NUMBER}"
+        echo "BUILD_NUMBER=$buildNumber" >> $env:GITHUB_ENV
+
+    - name: Display build number
+      run: echo "Build number is $env:BUILD_NUMBER"
+      shell: powershell     
+     
+    - name: Set up NuGet
+      uses: NuGet/setup-nuget@v2.0.0    
+      
+    - name: NuGet Restore
+      run: | 
+        nuget restore "${{github.workspace}}\ETG.sln"      
+        
+    - name: Set up MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Set up npm
+      uses: actions/setup-node@v4
+      with:
+        node-version: '12.16.1'
+        registry-url: 'https://registry.npmjs.org/'
+      
+    - name: Configure npm additional options
+      run: |
+        npm config set strict-ssl false
+        npm config set proxy ${{ vars.HTTP_PROXY }}
+        npm config set https-proxy ${{ vars.HTTP_PROXY }}
+    
+    - name: Install Node.js dependencies
+      run: npm install
+      working-directory: "CJG.Web.External/UI"
+
+    - name: Run Node.js build
+      run: npm run ci-build
+      working-directory: "CJG.Web.External/UI"
+      
+    - name: Run Config-Replace script on Notification Service
+      run: |
+        $configTags = (@{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, @{tag='db-name'; val="${{ vars.DB_NAME }}"}, @{tag='db-user'; val="${{ vars.DB_USER }}"}, @{tag='db-pass'; val="${{ secrets.DB_PASSWORD }}"})        
+        ${{ vars.DB_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.NotificationService/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.NotificationService/App.config" $configTags
+      shell: powershell
+      
+    - name: Run Config-Replace script on Reporting Service
+      run: |
+        $configTags = (@{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, @{tag='db-name'; val="${{ vars.DB_NAME }}"}, @{tag='db-user'; val="${{ vars.DB_USER }}"}, @{tag='db-pass'; val="${{ secrets.DB_PASSWORD }}"})
+        ${{ vars.DB_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.ReportingService/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.ReportingService/App.config" $configTags
+      shell: powershell
+      
+    - name: Run Config-Replace script on Grant Opening Service
+      run: |
+        $configTags = (@{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, @{tag='db-name'; val="${{ vars.DB_NAME }}"}, @{tag='db-user'; val="${{ vars.DB_USER }}"}, @{tag='db-pass'; val="${{ secrets.DB_PASSWORD }}"})
+        ${{ vars.DB_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.GrantOpeningService/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.GrantOpeningService/App.config" $configTags
+      shell: powershell
+
+    - name: MSBuild .NET framework
+      run: |
+        msbuild.exe "${{github.workspace}}\ETG.sln" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:IncrementalBuild=true /P:SkipExtraFilesOnServer=True /p:platform="Any CPU" /p:configuration="${{ env.BUILD_CONFIGURATION }}"
+      working-directory: ${{github.workspace}}
+
+    - name: Create artifacts directory
+      run: |
+          if (-Not (Test-Path -Path "${{ github.workspace }}\artifacts")) {
+            New-Item -ItemType Directory -Path "${{ github.workspace }}\artifacts"
+          }
+      shell: powershell
+     
+    - name: Upload Web Application as artifact to GitHub
+      uses: actions/upload-artifact@v4
+      with:
+        name: drop-application
+        path: "**/CJG.Web.External/obj/${{ env.BUILD_CONFIGURATION }}/Package/PackageTmp/"
+        
+    - name: Copy Web Application to local artifacts folder
+      run: xcopy /E /I ${{ github.workspace }}\CJG.Web.External\obj\${{ env.BUILD_CONFIGURATION }}\Package\PackageTmp artifacts\CJG.Web.External\
+      shell: cmd      
+
+    - name: Upload EF Service as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: drop-db-migration
+        path: "**/CJG.Infrastructure.EF/bin/${{ env.BUILD_CONFIGURATION }}/"
+
+    - name: Copy EF to local artifacts folder
+      run: xcopy /E /I CJG.Infrastructure.EF\bin\${{ env.BUILD_CONFIGURATION }} artifacts\CJG.Infrastructure.EF\
+      shell: cmd
+        
+    - name: Upload Notification Service as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: drop-notification-service
+        path: "**/CJG.Infrastructure.NotificationService/bin/${{ env.BUILD_CONFIGURATION }}/" 
+
+    - name: Copy Notification Service to local artifacts folder
+      run: xcopy /E /I /Y CJG.Infrastructure.NotificationService\bin\${{ env.BUILD_CONFIGURATION }} "artifacts\CJG.Infrastructure.NotificationService\"
+      shell: cmd
+
+    - name: Upload Reporting Service as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: drop-reporting-service
+        path: "**/CJG.Infrastructure.ReportingService/bin/${{ env.BUILD_CONFIGURATION }}/"
+
+    - name: Copy Reporting Service to local artifacts folder
+      run: xcopy /E /I /Y CJG.Infrastructure.ReportingService\bin\${{ env.BUILD_CONFIGURATION }} artifacts\CJG.Infrastructure.ReportingService\
+      shell: cmd
+
+    - name: Upload Grant Opening Service as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: drop-grant-opening-service
+        path: "**/CJG.Infrastructure.GrantOpeningService/bin/${{ env.BUILD_CONFIGURATION }}/"
+
+    - name: Copy Reporting Service to local artifacts folder
+      run: xcopy /E /I /Y CJG.Infrastructure.GrantOpeningService\bin\${{ env.BUILD_CONFIGURATION }} artifacts\CJG.Infrastructure.GrantOpeningService\
+      shell: cmd
+
+  deploy:
+    environment: Dev
+    runs-on: etg-ci
+
+    steps:
+    
+    - name: Create staging directory
+      run: |
+        if (-Not (Test-Path -Path "artifacts")) {
+          mkdir "artifacts"          
+        } else {
+          Write-Output "Directory already exists."
+        }
+      shell: powershell
+      
+    - name: Back up DB migration program
+      run: xcopy /E /I /Y CJG.Infrastructure.EF\bin\${{ env.BUILD_CONFIGURATION }} ${{ DB_BACKUP_FOLDER}}\${{ env.BUILD_CONFIGURATION }}\Databases\
+      shell: cmd
+      
+    - name: Back up database
+      run: |
+        ${{ vars.DB_SCRIPTS_FOLDER }}\backupdatabase.ps1 "${{ vars.DB_SERVER }}" "${{ vars.DB_NAME }}" "${{ vars.DB_RELEASE_USER }}" "${{ secrets.DB_RELEASE_PASSWORD }}" "${{ vars.DB_BACKUP_FOLDER }}\${{ env.BUILD_CONFIGURATION }}\Databases" 5
+      shell: powershell
+      
+    - name: Back up DB migration program
+      run: xcopy /E /I /Y CJG.Infrastructure.EF\bin\${{ env.BUILD_CONFIGURATION }} ${{ DB_BACKUP_FOLDER}}\${{ env.BUILD_CONFIGURATION }}\Databases\
+      shell: cmd
+
+    - name: Update database (run EF migration)
+      run: migrate.exe CJG.Infrastructure.EF.dll /startupConfigurationFile=CJG.Infrastructure.EF.dll.config
+      shell: cmd      
+      
+    - name: Back up Grant Opening Service
+      run: xcopy /E /I /Y CJG.Infrastructure.GrantOpeningService\bin\${{ env.BUILD_CONFIGURATION }} ${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ env.BUILD_CONFIGURATION }}\GrantOpeningService\
+      shell: cmd
+      
+    - name: Deploy Grant Opening Service
+      run: xcopy /E /I /Y CJG.Infrastructure.GrantOpeningService\bin\${{ env.BUILD_CONFIGURATION }} ${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ env.BUILD_CONFIGURATION }}\GrantOpeningService\
+      shell: cmd
+      
+    - name: Back up Notification Service
+      run: xcopy /E /I /Y CJG.Infrastructure.NotificationService\bin\${{ env.BUILD_CONFIGURATION }} ${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ env.BUILD_CONFIGURATION }}\NotificationService\
+      shell: cmd
+      
+    - name: Deploy Notification Service
+      run: xcopy /E /I /Y CJG.Infrastructure.NotificationService\bin\${{ env.BUILD_CONFIGURATION }} ${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ env.BUILD_CONFIGURATION }}\NotificationService\
+      shell: cmd
+      
+    - name: Back up Reporting Service
+      run: xcopy /E /I /Y CJG.Infrastructure.ReportingService\bin\${{ env.BUILD_CONFIGURATION }} ${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ env.BUILD_CONFIGURATION }}\ReportingService\
+      shell: cmd
+      
+    - name: Deploy Reporting Service
+      run: xcopy /E /I /Y CJG.Infrastructure.ReportingService\bin\${{ env.BUILD_CONFIGURATION }} ${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ env.BUILD_CONFIGURATION }}\ReportingService\
+      shell: cmd
+
+    - name: Back up Web Application
+      run: xcopy /E /I /Y CJG.Infrastructure.ReportingService\bin\${{ env.BUILD_CONFIGURATION }} ${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ env.BUILD_CONFIGURATION }}\ReportingService\
+      shell: cmd
+      
+    - name: Deploy Web Application
+      run: xcopy /E /I /Y CJG.Infrastructure.ReportingService\bin\${{ env.BUILD_CONFIGURATION }} ${{ vars.WEB_FOLDER }}\${{ }}\ReportingService\
+      shell: cmd
+
+    - name: Run Config-Replace script on Offline Page
+      run: |
+        $now = Get-Date -Format "dddd MMMM dd, yyyy"
+        $maintenance_start = Get-Date -Format "h:mm tt"
+        $maintenance_duration = ${{ vars.maintenance_duration }}
+        $maintenance_end = $maintenance_start.AddMinutes($maintenance_duration)       
+        $config_values = (@{tag="maintenance-date"; val="$(maintenance_date)"}, @{tag="maintenance-start"; val="$(maintenance_start)"}, @{tag="maintenance-end"; val="$(maintenance_end)"})        
+        ${{ vars.DB_SCRIPTS_FOLDER }}\replaceoffline.ps1 "${{ vars.WEB_FOLDER }}\app_offline_template.htm" "${{ vars.WEB_FOLDER }}\${{ github.environment }}\app_offline.htm" ($config_values) $maintenance_duration
+      shell: powershell

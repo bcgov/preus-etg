@@ -1,0 +1,75 @@
+name: Deploy to ETG Test
+
+on: workflow_dispatch
+
+jobs:
+  deploy:
+    environment: Test
+    runs-on: etg-ci
+
+    steps:
+    
+    - name: Configure Offline page
+      run: |
+        $now = Get-Date -Format "dddd MMMM dd, yyyy"
+        $maintenance_start = Get-Date -Format "h:mm tt"
+        $maintenance_duration = ${{ vars.maintenance_duration }}
+        $maintenance_end = $maintenance_start.AddMinutes($maintenance_duration)       
+        $config_values = (@{tag="maintenance-date"; val="$(maintenance_date)"}, @{tag="maintenance-start"; val="$(maintenance_start)"}, @{tag="maintenance-end"; val="$(maintenance_end)"})        
+        ${{ vars.DB_SCRIPTS_FOLDER }}\replaceoffline.ps1 "${{ vars.WEB_FOLDER }}\app_offline_template.htm" "${{ vars.WEB_FOLDER }}\${{ github.environment }}\app_offline.htm" ($config_values) $maintenance_duration
+      shell: powershell
+
+    - name: Back up DB migration program
+      run: xcopy /E /I /Y CJG.Infrastructure.EF\bin\${{ env.BUILD_CONFIGURATION }} ${{ DB_BACKUP_FOLDER}}\${{ env.BUILD_CONFIGURATION }}\Databases\
+      shell: cmd
+      
+    - name: Back up database
+      run: |
+        ${{ vars.DB_SCRIPTS_FOLDER }}\backupdatabase.ps1 "${{ vars.DB_SERVER }}" "${{ vars.DB_NAME }}" "${{ vars.DB_RELEASE_USER }}" "${{ secrets.DB_RELEASE_PASSWORD }}" "${{ vars.DB_BACKUP_FOLDER }}\${{ env.BUILD_CONFIGURATION }}\Databases" 5
+      shell: powershell
+      
+    - name: Back up DB migration program
+      run: xcopy /E /I /Y CJG.Infrastructure.EF\bin\${{ env.BUILD_CONFIGURATION }} ${{ DB_BACKUP_FOLDER}}\${{ env.BUILD_CONFIGURATION }}\Databases\
+      shell: cmd
+
+    - name: Update database (run EF migration)
+      run: migrate.exe CJG.Infrastructure.EF.dll /startupConfigurationFile=CJG.Infrastructure.EF.dll.config
+      shell: cmd      
+      
+    - name: Back up Grant Opening Service
+      run: xcopy /E /I /Y CJG.Infrastructure.GrantOpeningService\bin\${{ env.BUILD_CONFIGURATION }} ${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ env.BUILD_CONFIGURATION }}\GrantOpeningService\
+      shell: cmd
+      
+    - name: Deploy Grant Opening Service
+      run: xcopy /E /I /Y CJG.Infrastructure.GrantOpeningService\bin\${{ env.BUILD_CONFIGURATION }} ${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ env.BUILD_CONFIGURATION }}\GrantOpeningService\
+      shell: cmd
+      
+    - name: Back up Notification Service
+      run: xcopy /E /I /Y CJG.Infrastructure.NotificationService\bin\${{ env.BUILD_CONFIGURATION }} ${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ env.BUILD_CONFIGURATION }}\NotificationService\
+      shell: cmd
+      
+    - name: Deploy Notification Service
+      run: xcopy /E /I /Y CJG.Infrastructure.NotificationService\bin\${{ env.BUILD_CONFIGURATION }} ${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ env.BUILD_CONFIGURATION }}\NotificationService\
+      shell: cmd
+      
+    - name: Back up Reporting Service
+      run: xcopy /E /I /Y CJG.Infrastructure.ReportingService\bin\${{ env.BUILD_CONFIGURATION }} ${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ env.BUILD_CONFIGURATION }}\ReportingService\
+      shell: cmd
+      
+    - name: Deploy Reporting Service
+      run: xcopy /E /I /Y CJG.Infrastructure.ReportingService\bin\${{ env.BUILD_CONFIGURATION }} ${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ env.BUILD_CONFIGURATION }}\ReportingService\
+      shell: cmd
+
+    - name: Back up Web Application
+      run: xcopy /E /I /Y CJG.Infrastructure.ReportingService\bin\${{ env.BUILD_CONFIGURATION }} ${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ env.BUILD_CONFIGURATION }}\ReportingService\
+      shell: cmd
+      
+    - name: Deploy Web Application
+      run: xcopy /E /I /Y CJG.Infrastructure.ReportingService\bin\${{ env.BUILD_CONFIGURATION }} ${{ vars.WEB_FOLDER }}\${{ }}\ReportingService\
+      shell: cmd
+
+    - name: GitHub Actions WebDeploy
+      uses: cschleiden/webdeploy-action@v1.1.0
+            
+        
+

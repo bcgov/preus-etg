@@ -1,0 +1,103 @@
+﻿@model CJG.Web.External.Areas.Ext.Models.ApplicationAddressViewModel
+
+<h3 class="subheader--body">Address of Training Location</h3>
+
+<div class="form__group">
+    <div class="form__control">
+
+        <div class="form-item country-radio">
+            @Html.RadioButtonFor(model => model.IsCanadianAddress, true, new { id = "IsCanadianAddressTrue", data_show = "canadian" })
+            <label for="IsCanadianAddressTrue">Canada</label>
+        </div>
+        <div class="form-item country-radio">
+            @Html.RadioButtonFor(model => model.IsCanadianAddress, false, new { id = "IsCanadianAddressFalse", data_show = "other" })
+            @*<label for="IsCanadianAddressFalse">Other Countries</label>*@
+            <label for="IsCanadianAddressFalse">Other Country</label>
+        </div>
+    </div>
+</div>
+
+<div class="form__group">
+    <div class="other-country-show field--other-country">
+
+        <label class="form__label" for="@Html.IdFor(model => model.CountryId)">Country<abbr title="Required">*</abbr></label>
+        <div class="form__control">
+            <div class="selectmenu">
+                @Html.DropDownListFor(model => model.CountryId, new SelectList(Model.Countries, "Id", "Name"),
+                DropDownListHelper.SelectValueText,
+                new { @class = "input--medium" })
+            </div>
+            <p class="text--small">
+                Select the country if your training provider is outside of Canada.
+            </p>
+            @Html.ValidationMessageFor(model => model.CountryId)
+        </div>
+    </div>
+</div>
+
+<div class="form__group">
+    <label class="form__label" for="@Html.IdFor(model => model.AddressLine1)">Address line 1 <abbr title="Required">*</abbr></label>
+    <div class="form__control">
+        @Html.TextBoxFor(model => model.AddressLine1, new { @class = "input--full" })
+        @Html.ValidationMessageFor(model => model.AddressLine1)
+    </div>
+</div>
+
+<div class="form__group">
+    <label class="form__label" for="@Html.IdFor(model => model.AddressLine2)">Address line 2</label>
+    <div class="form__control">
+        @Html.TextBoxFor(model => model.AddressLine2, new { @class = "input--full" })
+        @Html.ValidationMessageFor(model => model.AddressLine2)
+    </div>
+</div>
+
+<div class="form__group">
+    <label class="form__label" for="@Html.IdFor(model => model.City)">City <abbr title="Required">*</abbr></label>
+    <div class="form__control">
+        @Html.TextBoxFor(model => model.City, new { @class = "input--medium" })
+        @Html.ValidationMessageFor(model => model.City)
+    </div>
+</div>
+
+<div class="form__group other-country-hide">
+    <label class="form__label" for="@Html.IdFor(model => model.RegionId)">Province <abbr title="Required">*</abbr></label>
+    <div class="form__control">
+        <div class="selectmenu">
+            @Html.DropDownListFor(model => model.RegionId, new SelectList(Model.Provinces.OrderBy(x => x.Name), "Id", "Name"),
+                DropDownListHelper.SelectValueText,
+                new { @class = "input--medium" })
+        </div>
+        @Html.ValidationMessageFor(model => model.RegionId)
+    </div>
+</div>
+
+<div class="form__group other-country-hide">
+    <label class="form__label" for="@Html.IdFor(model => model.PostalCode)">Postal code <abbr title="Required">*</abbr></label>
+    <div class="form__control">
+        @Html.TextBoxFor(model => model.PostalCode, new { @class = "input--small" })
+        @Html.ValidationMessageFor(model => model.PostalCode)
+    </div>
+</div>
+
+<div class="other-country-show">
+    <div class="form__group">
+        <label for="otherCountryRegion" class="form__label">Province / State / Region *</label>
+        <div class="form__control">
+            @Html.TextBoxFor(model => model.OtherRegion, new { @class = "input--medium" })
+            @Html.ValidationMessageFor(model => model.OtherRegion)
+        </div>
+    </div>
+</div>
+
+<div class="form__group">
+
+    <div class="other-country-show">
+        <label for="otherCountryPostalCode" class="form__label">
+            Postal / Zip Code *
+        </label>
+        <div class="form__control">
+            @Html.TextBoxFor(model => model.OtherZipCode, new { @class = "input--medium" })
+            @Html.ValidationMessageFor(model => model.OtherZipCode)
+        </div>
+    </div>
+</div>

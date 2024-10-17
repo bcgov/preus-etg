@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<BCeIDUserInfo>
+  <BCeID_Luid></BCeID_Luid>
+  <Business_HubBusinessType></Business_HubBusinessType>
+  <Business_BusinessNumber></Business_BusinessNumber>
+  <Business_Guid>00000000-0000-0000-0000-000000000001</Business_Guid>
+  <Business_IncorproateionNumber></Business_IncorproateionNumber>
+  <Business_LegalName></Business_LegalName>
+  <Business_Luid></Business_Luid>
+  <Business_StatementOfRegistrationNumber></Business_StatementOfRegistrationNumber>
+  <Email>dotnet@fcvinteractive.com</Email>
+  <Telephone></Telephone>
+  <DisplayName>Test User</DisplayName>
+  <UserGuid>6756f909-b8a2-40ca-835f-6115df7d001f</UserGuid>
+  <FirstName>Test</FirstName>
+  <Initials>TU</Initials>
+  <Surname>User</Surname>
+  <UserLuid></UserLuid>
+  <AccountExpiryDate>9999-12-31</AccountExpiryDate>
+  <IsManagerDisabled>false</IsManagerDisabled>
+  <UserID>CJFTest1</UserID>
+</BCeIDUserInfo>

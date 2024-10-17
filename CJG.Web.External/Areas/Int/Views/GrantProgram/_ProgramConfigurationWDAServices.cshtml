@@ -1,0 +1,146 @@
+﻿@using CJG.Core.Entities
+<div ng-controller="GrantProgramWDAServicesConfig" class="form-section" ng-show="model.Id">
+	<span class="panel-section-item">
+		<span class="panel-section-title" ng-click="toggle($event)">WDA Services</span>
+		<span class="panel-section-buttons">
+			<span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+			<section-edit-buttons ng-model="section.editing"></section-edit-buttons>
+			<span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+		</span>
+	</span>
+
+	<div class="panel-section-content" ng-if="section.show">
+		<div class="form form-section-container">
+			<div class="form__group">
+				<div class="form__label">Claim Type:</div>
+				<div class="form__control">
+					<div class="control-group">
+						<div class="control-wrapper float-left">
+							<div class="wrapper--dropdown selectmenu input--medium" ng-if="model.State === @((int)GrantProgramStates.NotImplemented)">
+								<select ng-model="model.ProgramConfiguration.ClaimTypeId" ng-options="item.Key as item.Value for item in claimTypes" class="input--medium" ng-validation ng-editing></select>
+							</div>
+							<label ng-if="model.State === @((int)GrantProgramStates.Implemented)">{{claimTypeCaption()}}</label>
+						</div>
+						<div class="control-wrapper float-right">
+							<button class="btn btn--secondary" ng-click="syncWDAService()" ng-disabled="section.editing">Synchronize Service Descriptions</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="form__group">
+				<div class="form__label">In-Scope Services:</div>
+				<div class="form__control">
+					<table class="program-configuration-table table--padded">
+						<thead>
+							<tr class="bottom-border">
+								<th class="table--font-size-16">Service Category</th>
+								<th class="table--font-size-16">Expense Type</th>
+								<th class="table--font-size-16">Rate</th>
+								<th class="table--font-size-16">Skills Training / Provider Pairs</th>
+								<th class="table--font-size-16">ESS Providers</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat-start="serviceCategory in model.ProgramConfiguration.EligibleExpenseTypes | filter: { Delete: false } | orderBy: 'RowSequence'" class="top-border">
+								<td>
+									<input type="checkbox" ng-model="serviceCategory.IsActive" id="service-category-{{$index}}" ng-disabled="!section.editing" />
+									<label for="service-category-{{$index}}">{{serviceCategory.Caption}}</label>
+								</td>
+								<td ng-show="!serviceCategory.IsActive" colspan="5">Not in scope</td>
+								<td ng-show="serviceCategory.IsActive">
+									<div class="control-wrapper selected input--medium">
+										<select ng-model="serviceCategory.ExpenseTypeId" ng-options="item.Key as item.Value for item in expenseTypes" class="input--medium" ng-editing></select>
+									</div>
+								</td>
+								<td ng-show="serviceCategory.IsActive">
+									{{ serviceCategory.ExpenseTypeId === @((int)ExpenseTypes.AutoLimitEstimatedCosts) ? 'N/A' : rateCaption(serviceCategory.Rate) }}
+								</td>
+								<td ng-show="serviceCategory.IsActive">
+									{{ serviceCategory.ServiceTypeId === @((int)ServiceTypes.SkillsTraining) ? 'N/A' : STPCaption(serviceCategory.MinPrograms, serviceCategory.MaxPrograms) }}
+								</td>
+								<td ng-show="serviceCategory.IsActive">
+									{{ serviceCategory.ServiceTypeId === @((int)ServiceTypes.EmploymentServicesAndSupports) ? 'N/A' : ESSProvidersCaption(serviceCategory.MinProviders, serviceCategory.MaxProviders) }}
+								</td>
+								<td>
+									<div ng-show="serviceCategory.IsActive && serviceCategory.Breakdowns.length">
+										<span class="up-arrow" ng-click="reorder(model.ProgramConfiguration.EligibleExpenseTypes, $index)" ng-if="$index !== 0"></span>
+									</div>
+								</td>
+							</tr>
+							<tr ng-repeat-end ng-if="serviceCategory.IsActive && serviceCategory.Breakdowns.length">
+								<td><label class="form__label">Service Lines:</label></td>
+								<td class="top-border" colspan="5">
+									<ul style="list-style:none">
+										<li ng-repeat="item in serviceCategory.Breakdowns | filter: { Delete: false } | orderBy: 'RowSequence'">
+											<input type="checkbox" ng-model="item.IsActive" id="service-line-{{item.Id}}" ng-disabled="!section.editing" />
+											<label for="service-line-{{item.Id}}">{{item.Caption}}</label>
+										</li>
+									</ul>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div style="clear: both;"></div>
+
+			<div class="form__group">
+				<div class="form__label">Participant Average<br /> Cost Limits:</div>
+				<div class="form__control">
+					<div class="control-wrapper">
+						<div class="form__group">
+							<label class="form__label width-25">Skills Training:</label>
+							{{section.editing ? '' : '$' }}<input ng-model="model.ProgramConfiguration.SkillsTrainingMaxEstimatedParticipantCosts" class="input--small form__control width-30" ng-currency="9" ng-validation ng-editing />
+						</div>
+						<div class="form__group">
+							<label class="form__label width-25">Employment Services<br /> and Supports:</label>
+							{{section.editing ? '' : '$' }}<input ng-model="model.ProgramConfiguration.ESSMaxEstimatedParticipantCost" class="input--small form__control width-30" ng-currency="9" ng-validation ng-editing />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form form-section-container">
+			<h3 class="form__label">User Guidance</h3>
+			<p>
+				You may enter applicant guidance below for cost estimates and claim entry.  Your guidance should relate to the in-scope services you have selected above and any rules or policies that apply. </br>
+				For example, you may include instructions for Administration costs here.
+			</p>
+			<p>Please be aware that editing applicant guidance will affect all grant streams that share this configuration.</p>
+			<div class="form__group">
+				<div class="label-wrapper">
+					<label class="form__label">Cost Estimates:</label>
+					<a class="link" ng-click="preview('User Guidance for Cost Estimates:', model.ProgramConfiguration.UserGuidanceCostEstimates)" id="test-guidance-cost-estimate">Test Guidance</a>
+				</div>
+				<div class="control-wrapper">
+					<textarea type="text" ng-model="model.ProgramConfiguration.UserGuidanceCostEstimates" class="input--full textarea--medium" rows="2" maxlength="1000" ng-validation ng-editing></textarea>
+				</div>
+			</div>
+			<div class="form__group">
+				<div class="label-wrapper">
+					<label class="form__label">Claim Entry</label>
+					<a class="link" ng-click="preview('User Guidance for Claim Entry:', model.ProgramConfiguration.UserGuidanceClaims)" id="test-guidance-claim-entry">Test Guidance</a>
+				</div>
+				<div class="control-wrapper">
+					<textarea type="text" ng-model="model.ProgramConfiguration.UserGuidanceClaims" class="input--full textarea--medium" rows="2" maxlength="1000" ng-validation ng-editing></textarea>
+				</div>
+			</div>
+			<div class="form__group">
+				<div class="label-wrapper">
+					<label class="form__label">Example</label>
+				</div>
+				<div class="control-wrapper">
+					<p>
+						Web Reference:  See &lt;A href=&quot;https:&sol;&sol;www.workbc.ca&sol;Employer-Resources&sol;Canada-BC-Job-Grant&sol;Foundational-Training-Stream.aspx&quot; target=&quot;_blank&quot;&gt;Foundation Training&lt;&sol;A&gt; for more information.
+						</br></br>
+						Paragraph Marker: &nbsp; &lt;&sol;p&gt;&lt;p&gt;&nbsp;&nbsp;&lt;b&gt;Bolded Text&lt;&sol;b&gt; &nbsp; &nbsp; &lt;u&gt;Underlined Text&lt;&sol;u&gt;
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

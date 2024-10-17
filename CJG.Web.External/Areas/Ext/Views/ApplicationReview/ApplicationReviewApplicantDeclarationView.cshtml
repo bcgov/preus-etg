@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "Applicant Declaration";
+}
+
+@if (TempData["Message"] != null)
+{
+    ViewBag.Message = TempData["Message"].ToString();
+    TempData["Message"] = "";
+}
+
+<div ng-controller="ApplicationReviewApplicantDeclarationView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+    <div class="row">
+        <a class="link--back" href="{{model.PreviousStepUrl}}">Return</a>
+    </div>
+    <div class="row">
+        <div class="main">
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            <h1 class="header--large sentence--case">Submit your application</h1>
+            <p class="subheader--step">Step {{model.Steps}} of {{model.Steps}}: Applicant declaration</p>
+
+            <p>When you submit this application, we will assess it against the criteria of the {{model.GrantProgramName}} to make sure it is eligible. We will notify you by email once we decide if your application will be approved. We may contact you by email or telephone to discuss the information you provided or to ask for more information. Please respond to these requests as soon as possible. If we cannot reach you after several tries, we may cancel your application.</p>
+
+            <p>By checking the box below and submitting this application for funding (“Application”) under the {{model.GrantProgramName}} program (“{{model.GrantProgramCode}}”):</p>
+            <ul ng-bind-html="model.Body"></ul>
+
+            <div class="agreement-block">
+                <input type="checkbox" class="check-box" id="declaration-confirmed" ng-model="model.DeclarationConfirmed" />
+                <label for="declaration-confirmed">
+                    By checking this box I make this declaration.<abbr title='Required'>*</abbr>
+                </label>
+                <div ng-validation="errors.DeclarationConfirmed"></div>
+            </div>
+
+            <div>
+                <a href="/Ext/Application/DownloadResource/{{model.GrantProgramCode}}-sample-agreement">Download Sample Agreement</a>
+            </div>
+
+            <div class="button-group">
+                @Html.Button("Cancel", new { @class = "btn btn--secondary", @onclick = "window.location='" + @Url.Action("ApplicationOverviewView", "Application", new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'"})
+                <button class="btn btn--primary btn--forward" ng-click="submit()" ng-disabled="!model.DeclarationConfirmed">Submit application</button>
+            </div>
+        </div>
+
+        <div class="sidebar">
+        </div>
+    </div>
+</div>

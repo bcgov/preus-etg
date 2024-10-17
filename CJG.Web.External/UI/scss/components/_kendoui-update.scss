@@ -1,0 +1,111 @@
+.form__control {
+  display: block;
+  .k-upload {
+    background: transparent;
+    padding: 0;
+    border: none;
+    .k-upload-button {
+      margin-right: 0;
+      margin-left: 0;
+      margin-top: 0;
+    }
+  }
+  .k-dropzone {
+    padding: 0;
+  }
+}
+
+div.k-window-content:not([class*="modal"]),
+.k-window-content:not([class*="modal"]) {
+  padding: 0;
+  .well {
+    margin-bottom: 0;
+  }
+}
+
+.panel-bar__content {
+  .k-icon {
+    display: none;
+  }
+  .k-dropzone {
+    margin: 10px 0;
+    em {
+      display: none;
+    }
+  }
+  .k-upload-status {
+    display: none;
+  }
+  .k-filename {
+    margin-left: 0;
+    line-height: 1.2;
+    white-space: normal;
+  }
+}
+
+.k-upload-files {
+  line-height: inherit;
+}
+
+.k-filename {
+  max-width: 75%;
+}
+
+.custom-phone-number-field {
+  width: 110px;
+}
+
+.custom-ext-field {
+  width: 60px;
+  height: 30px;
+  .k-numeric-wrap {
+    height: 30px;
+  }
+}
+
+.layout-internal {
+  .k-numeric-wrap {
+    height: 30px;
+    border-color: color('Charcoal');
+  }
+}
+.layout-internal {
+  .js-assessed-participant-cost .k-numeric-wrap {
+    width: 80px;
+  }
+}
+
+.form__group {
+  .editable-clear-x {
+    display: none;
+  }
+}
+
+.add-new-claim-attachment-wrapper div.k-widget.k-window {
+  .k-upload {
+    ul.k-upload-files  {
+      .k-upload-pct {
+        position: relative;
+        top: 2px;
+        left: 5px;
+      }
+      .k-upload-status {
+        .k-upload-action {
+          display: none;
+        }
+        .k-i-close {
+          border: none;
+        }
+      }
+    }
+    .k-dropzone {
+      position: static;
+      .k-upload-status-total {
+        position: absolute;
+        left: 20px;
+        z-index: 10;
+        top: 50px;
+      }
+    }
+  }
+}

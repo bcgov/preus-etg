@@ -1,0 +1,85 @@
+$filter-padding: 5px 10px 6px;
+
+.filter--group {
+  .filter-btn-groups {
+    display: inline-block;
+  }
+}
+
+.filter-btn-group {
+  .custom-filter {
+    height: 20px;
+    color: color('Nero');
+    padding: $filter-padding;
+    display: inline-block;
+    background: color('White Smoke');
+    border: solid 1px color('Ghost');
+    line-height: $small-line-height;
+  }
+
+  .remove-filter {
+    position: relative;
+    top: 4.5px;
+    height: 20px;
+    width: 20px;
+    background: color('White Smoke') url('#{$icon-img-path}/icon--close.svg') 50% 50% no-repeat;
+    background-size: auto auto;
+    display: none;
+    border: solid 1px color('Ghost');
+    border-left: none;
+    padding: $filter-padding;
+    cursor: pointer;
+  }
+
+  .edit-filter {
+    position: relative;
+    height: 100%;
+    width: 28px;
+    background: color('White Smoke') url('#{$icon-img-path}/icon--config.svg') 50% 50% no-repeat;
+    background-size: auto auto;
+    display: inline-block;
+    border: solid 1px color('Ghost');
+    border-left: none;
+    padding: $filter-padding;
+    vertical-align: top;
+    left: -3px;
+    margin-left: 0px;
+  }
+
+  .edit-filter:hover {
+    background-image: url('#{$icon-img-path}/icon--config-underline.svg');
+  }
+
+  .text-filter:hover {
+    text-decoration: underline;
+  }
+
+  .text-filter:focus {
+    outline: none;
+  }
+
+  &.selected {
+    .custom-filter {
+      background-color: color('DarkGrey');
+      color: $button-primary-color;
+    }
+
+    .remove-filter {
+      display: inline-block;
+      background-color: color('DarkGrey');
+    }
+
+    .edit-filter {
+      background-color: color('DarkGrey');
+      background-image: url('#{$icon-img-path}/icon--config-reverse.svg');
+      border: 1px solid color('DarkGrey');
+    }
+
+    .text-filter {
+      color: $button-primary-color;
+      background-color: color('DarkGrey');
+      vertical-align: baseline;
+      border: 1px solid #6E6E6E;
+    }
+  }
+}

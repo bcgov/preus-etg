@@ -1,0 +1,1 @@
+require('./skills-training-view');

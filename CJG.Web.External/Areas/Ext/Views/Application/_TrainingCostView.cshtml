@@ -1,0 +1,101 @@
+﻿@using CJG.Core.Entities
+@{
+	int ShowESS = Convert.ToInt32(ViewData["showESS"]);
+}
+<br />
+<div class="form--readonly">
+    <h4>Maximum number of participants in the program: {{ !model.TrainingCost.HasOfferBeenIssued ? model.TrainingCost.EstimatedParticipants : model.TrainingCost.AgreedParticipants }}</h4>
+    <div class="table--horizontal-wrapper-wide">
+        <table class="table table--expenses">
+            <thead>
+                <tr>
+                    <th class="table-col__expense-type">Expense Type</th>
+                    <th class="num-col table-col__num-part">Number of Participants</th>
+                    <th class="num-col table-col__cost-per-part">Average Cost per Participant</th>
+                    <th class="num-col table-col__total-train-cost">Total Cost</th>
+                    <th class="num-col table-col__emp-contribution" ng-if="model.TraingingCost.ShowEmployer">Applicant Contribution</th>
+                    <th class="num-col table-col__gov-contribution" ng-if="model.ProgramType != @((int)ProgramTypes.EmployerGrant)">Requested Government Contribution</th>
+                </tr>
+            </thead>
+            <tbody ng-hide="!@ShowESS== 1 && item.TotalCost == 0 && item.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.EmploymentServicesAndSupports)" ng-repeat="item in model.TrainingCost.EstimatedCosts">
+                <tr>
+                    <td>
+                        <span>{{ item.EligibleExpenseTypeCaption }}</span>
+                    </td>
+                    <td class="num-col">
+                        <span ng-if="item.ServiceType != @((int)ServiceTypes.Administration)">
+                            {{ !item.HasOfferBeenIssued ? item.EstimatedParticipants : item.AgreedMaxParticipants}}
+                        </span>
+                    </td>
+                    <td class="num-col">
+                        <span ng-if="item.ServiceType != @((int)ServiceTypes.Administration)">
+                            {{ !item.HasOfferBeenIssued ? item.EstimatedParticipantCost : item.AgreedMaxParticipantCost | currency : '$' : 2}}
+                        </span>
+                    </td>
+                    <td class="num-col">
+                        <span>
+                            {{ item.TotalCost | currency : '$' : 2 }}
+                        </span>
+                    </td>
+                    <td class="num-col" ng-if="model.TraingingCost.ShowEmployer">
+                        <span>
+                            {{ !item.HasOfferBeenIssued ? item.EstimatedEmployerContribution : AgreedEmployerContribution | currency : '$' : 2}}
+                        </span>
+                    </td>
+                    <td class="num-col" ng-if="model.ProgramType != @((int)ProgramTypes.EmployerGrant)">
+                        <span>
+                            {{ !item.HasOfferBeenIssued ? item.EstimatedReimbursement: item.AgreedMaxReimbursement | currency : '$' : 2}}
+                        </span>
+                    </td>
+                </tr>
+                <tr ng-repeat="subrow in item.Breakdowns" style="border-bottom-color:grey !important;">
+                    <td>
+                        &#9654; <span>{{ subrow.Caption }}</span>
+                    </td>
+                    <td class="num-col"></td>
+                    <td class="num-col"></td>
+                    <td class="num-col">
+                        <span>
+                            {{subrow.TotalCost | currency : '$' : 2}}
+                        </span>
+                    </td>
+                    <td class="num-col" ng-if="model.TraingingCost.ShowEmployer"></td>
+                    <td class="num-col"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+            <tr>
+                <td style="padding:15px 15px 0px 0px;"><b>Totals</b></td>
+                <td style="padding:15px 15px 0px 0px;"><b>{{model.TrainingCost.TotalCost | currency : '$' : 2}}</b></td>
+                <td style="padding:15px 15px 0px 0px;"></td>
+                <td style="padding:15px 15px 0px 0px;"></td>
+                <td style="padding:15px 15px 0px 0px;"></td>
+                <td style="padding:15px 15px 0px 0px;"></td>
+            </tr>
+            <tr ng-if="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+                <td style="padding:15px 15px 0px 0px;">Employer Contribution</td>
+                <td style="padding:15px 15px 0px 0px;"><b>{{model.TrainingCost.TotalEmployer | currency : '$' : 2}}</b></td>
+                <td style="padding:15px 15px 0px 0px;"></td>
+                <td style="padding:15px 15px 0px 0px;"></td>
+                <td style="padding:15px 15px 0px 0px;"></td>
+                <td style="padding:15px 15px 0px 0px;"></td>
+            </tr>
+            <tr ng-if="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+                <td style="padding:15px 15px 0px 0px;">Requested Government Contribution</td>
+                <td style="padding:15px 15px 0px 0px;"><b>{{model.TrainingCost.TotalRequest | currency : '$' : 2}}</b></td>
+                <td style="padding:15px 15px 0px 0px;"></td>
+                <td style="padding:15px 15px 0px 0px;"></td>
+                <td style="padding:15px 15px 0px 0px;"></td>
+                <td style="padding:15px 15px 0px 0px;"></td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <div style="text-align:center" ng-if="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
+        <p>
+            Employment Supports total average cost per participant is {{model.TrainingCost.ESSAveragePerParticipant | currency : '$' : 0}}
+        </p>
+    </div>
+</div>

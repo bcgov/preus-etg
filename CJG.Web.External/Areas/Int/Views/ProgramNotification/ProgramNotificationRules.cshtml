@@ -1,0 +1,65 @@
+﻿<div class="form well">
+    <div>
+        <div class="form__group">
+            <div class="form__label" title="The date that this notification will be sent">Send Date:</div>
+            <div class="form__control">
+                <div class="control-wrapper">
+                    <datedropdown ng-model="model.SendDate" ng-text="toPST(model.SendDate)" ng-editing="true"></datedropdown>
+                </div>
+            </div>
+        </div>
+
+        <div class="form__group">
+            <div class="form__label">Recipients:</div>
+            <div class="form__control pull-right">
+                <input type="checkbox" class="check-box" ng-model="model.AllApplicants" ng-change="toggleAllProgramNotificationRecipient()" id="all-applicants" />
+                <label class="form__label" for="all-applicants">All Applicants</label>
+                <div ng-show="model.AllApplicants" style="float: right; margin: -3px 0 0 15px;">{{ngDialogData.applicants.NumberOfApplicants}}</div>
+            </div>
+
+            <table class="form__group--data-grid" ng-show="!model.AllApplicants">
+                <thead>
+                    <tr>
+                        <th>Grant Program</th>
+                        <th class="data-grid-center-data">Subscribers</th>
+                        <th class="data-grid-center-data">Applicants</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="grantProgram in ngDialogData.applicants.NumberOfApplicantsPerGrantProgram">
+                        <td>
+                            <div class="form__control">
+                                <label class="form__label" for="">{{grantProgram.GrantProgramName}}</label>
+                            </div>
+                        </td>
+                        <td class="data-grid-center-data">
+                            <div class="form__control">
+                                <input type="checkbox" class="input--medium" id="grantProgram-subscriber-{{grantProgram.GrantProgramId}}"
+                                       ng-checked="checkProgramNotificationRecipient(grantProgram.GrantProgramId, 'SubscriberOnly')"
+                                       ng-click="updateProgramNotificationRecipient(grantProgram.GrantProgramId, 'SubscriberOnly', 'ApplicantOnly')" />
+                                <label class="form__label" for="grantProgram-subscriber-{{grantProgram.GrantProgramId}}">&nbsp;</label>
+                            </div>
+                        </td>
+                        <td class="data-grid-center-data">
+                            <div class="form__control">
+                                <input type="checkbox" class="input--medium" id="grantProgram-applicant-{{grantProgram.GrantProgramId}}"
+                                       ng-checked="checkProgramNotificationRecipient(grantProgram.GrantProgramId, 'ApplicantOnly')"
+                                       ng-click="updateProgramNotificationRecipient(grantProgram.GrantProgramId, 'ApplicantOnly', 'SubscriberOnly')" />
+                                <label class="form__label" for="grantProgram-applicant-{{grantProgram.GrantProgramId}}">&nbsp;</label>
+                            </div>
+                        </td>
+                        <td class="data-grid-right-data">
+                            <div class="form__control">
+                                <span ng-show="checkProgramNotificationRecipient(grantProgram.GrantProgramId, 'SubscriberOnly')">{{grantProgram.NumberOfSubscribers}}</span>
+                                <span ng-show="checkProgramNotificationRecipient(grantProgram.GrantProgramId, 'ApplicantOnly')">{{grantProgram.NumberOfApplicants}}</span>
+                                <span ng-show="!checkProgramNotificationRecipient(grantProgram.GrantProgramId, 'SubscriberOnly') &&
+                                           !checkProgramNotificationRecipient(grantProgram.GrantProgramId, 'ApplicantOnly')">0</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

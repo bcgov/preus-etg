@@ -1,0 +1,75 @@
+.layout-external {
+  .grant-agreement-overview {
+    .panel-bar__content {
+      padding: 20px 0;
+    }
+
+    .form--readonly {
+      padding-left: 0;
+    }
+
+    .panel-bar__heading.k-link {
+      padding-left: 0;
+    }
+
+    .date-update-form-wrapper {
+      .main {
+        width: 100%;
+      }
+    }
+
+    .form--training-provider {
+      .form__control {
+        max-width: 100%;
+        width: 100%;
+      }
+
+      .input--medium {
+        width: 100%;
+      }
+
+      .selectmenu {
+        width: 100%;
+
+        select {
+          width: 100%;
+        }
+      }
+    }
+
+    .other-country-hide,
+    .other-country-show {
+      label {
+        width: 250px;
+        float: left;
+      }
+
+      .form__control {
+        padding-left: 20px;
+        float: left;
+      }
+    }
+
+    .other-country-hide {
+      display: flex;
+    }
+
+    .phone-areacode,
+    .phone-first-three {
+      width: 60px;
+    }
+
+    .phone-last-four {
+      width: 65px;
+    }
+
+    .form__group--tel-ext {
+      float: right;
+    }
+
+    .field--other-country {
+      // flex-direction: column;
+      width: 100%;
+    }
+  }
+}

@@ -1,0 +1,111 @@
+.label {
+  background-color: $label-bg-color-default;
+  color: $label-color-default;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+  min-width: 68px;
+  padding: 3px 8px;
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.label--acceptby {
+  background-color: $label-bg-color-danger;
+  color: $label-color-alternate;
+  text-transform: none;
+  width: 100%;
+}
+
+span.label--acceptby {
+  width: auto;
+  margin: 0 !important;
+}
+
+.label--complete {
+  background-color: $label-bg-color-complete;
+}
+
+.label--notsubmitted {
+  background-color: #ff6a00;
+}
+
+.label--incomplete {
+  background-color: $label-bg-color-incomplete;
+}
+
+.label--notstarted {
+  background-color: $label-bg-color-notstarted;
+}
+
+.label--started {
+  background-color: $label-bg-color-complete;
+}
+
+.label--unpublished {
+  background-color: $label-bg-color-unpublished;
+}
+
+.label--scheduled {
+  background-color: $label-bg-color-scheduled;
+}
+
+.label--published {
+  background-color: $label-bg-color-published;
+}
+
+.label--open {
+  background-color: $label-bg-color-open;
+}
+
+.label--closed {
+  background-color: $label-bg-color-closed;
+}
+
+.label--default {
+  background-color: $label-bg-color-default;
+}
+
+.label--primary {
+  background-color: $label-bg-color-primary;
+}
+
+.label--success {
+  background-color: $label-bg-color-success;
+}
+
+.label--info {
+  background-color: $label-bg-color-info;
+}
+
+.label--warning {
+  background-color: $label-bg-color-warning;
+}
+
+.label--danger {
+  background-color: $label-bg-color-danger;
+  color: $label-color-alternate;
+}
+
+.label--accordion {
+  padding: 6px 80px 6px 0px;
+  color: #494949;
+  box-shadow: none;
+  line-height: 1.5em;
+  display: block;
+  position: relative;
+  text-decoration: none;
+  font-size: 1.125rem;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.label--red {
+  color: #f00;
+}
+
+.label--line-through {
+  text-decoration: line-through
+}

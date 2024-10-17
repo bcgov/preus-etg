@@ -1,0 +1,183 @@
+﻿@using CJG.Web.External.Areas.Ext.Controllers
+@using CJG.Core.Entities
+@model CJG.Web.External.Areas.Ext.Models.SidebarViewModel
+@{
+    ViewBag.Title = "Application View";
+}
+
+<div ng-controller="ApplicationDetailsView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+    <div class="row">
+        <div ng-if="model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.Submitted) ||
+					model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.AgreementWithdrawn) ||
+					model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.CancelledByMinistry) ||
+					model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.ApplicationDenied) ||
+					model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.AgreementRejected) ||
+					model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.ReturnedUnassessed) ||
+					model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.CancelledByAgreementHolder)">
+            @Html.ActionLink("Return", nameof(HomeController.Index), nameof(HomeController).Replace("Controller", ""), null, new { @class = "link--back" })
+        </div>
+        <div ng-if="model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.AcceptGrantAgreement)">
+            @Html.ActionLink("Return", nameof(GrantAgreementController.AgreementReviewView), nameof(GrantAgreementController).Replace("Controller", ""), new { @grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "link--back" })
+        </div>
+        <div ng-if="!(model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.Submitted) ||
+					  model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.AgreementWithdrawn) ||
+					  model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.CancelledByMinistry) ||
+					  model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.ApplicationDenied) ||
+					  model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.AgreementRejected) ||
+					  model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.CancelledByAgreementHolder) ||
+					  model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.ReturnedUnassessed) ||
+					  model.ApplicationStateExternal == @((int)CJG.Core.Entities.ApplicationStateExternal.AcceptGrantAgreement))">
+            @Html.ActionLink("Return", nameof(ReportingController.GrantFileView), nameof(ReportingController).Replace("Controller", ""), new { @grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "link--back" })
+
+        </div>
+        <div class="main">
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            <program-title-label ng-model="model.ProgramTitleLabel"></program-title-label>
+
+            <h2>View grant application</h2>
+            <p class="notice notice--icon"
+               ng-if="model.GrantOpeningState == @((int)CJG.Core.Entities.GrantOpeningStates.Closed) && model.ApplicationStateExternal < @((int)CJG.Core.Entities.ApplicationStateExternal.Submitted)">
+                Your grant selection is no longer available. You must make a new grant selection for this application.
+            </p>
+            <div class="notice notice--icon"
+                 ng-if="model.GrantOpeningState != @((int)CJG.Core.Entities.GrantOpeningStates.Closed) && model.ApplicationStateExternal <= @((int)CJG.Core.Entities.ApplicationStateExternal.Complete)">
+
+                <p ng-if="model.ApplicationStateExternal == @((int)ApplicationStateExternal.Complete) && model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">Your application is complete.  Your earliest submission date is shown in the status block.</p>
+                <p ng-if="model.ApplicationStateExternal == @((int)ApplicationStateExternal.Complete) && !model.OrganizationCreated">You will not be able to submit your application until a member of your organization enters an organization profile using the link above.  Click the link and read the instructions now.</p>
+                <p ng-if="model.ApplicationStateExternal < @((int)ApplicationStateExternal.Complete) && model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">Complete the following information. Once complete, you can review and submit the application on or after the earliest submission date.</p>
+                <p ng-if="model.ApplicationStateExternal < @((int)ApplicationStateExternal.Complete) && model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">Complete the following information. Once complete, you can review and submit the application.</p>
+            </div>
+
+            <div class="alert--error"
+                 ng-if="model.GrantOpeningState == @((int)CJG.Core.Entities.GrantOpeningStates.Closed) && model.ApplicationStateExternal < @((int)CJG.Core.Entities.ApplicationStateExternal.Submitted)">
+                <p>Grant selection has closed.</p>
+            </div>
+
+            <div>
+                <div class="heading-group action" ng-click="showComponent($event)">
+                    <h4 class="light width-90">Applicant contact</h4>
+                    <span class="icon small up-arrow"></span>
+                </div>
+                <div>
+                    @Html.Partial("_ApplicantContactView")
+                </div>
+            </div>
+
+            <div>
+                <div class="heading-group action" ng-click="showComponent($event)">
+                    <h4 class="light width-90">Applicant</h4>
+                    <span class="icon small down-arrow"></span>
+                </div>
+                <div class="ng-hide">
+                    @Html.Partial("_ApplicantView")
+                </div>
+            </div>
+
+            <div>
+                <div class="heading-group action" ng-click="showComponent($event)">
+                    <h4 class="light width-90">Grant selection</h4>
+                    <span class="icon small down-arrow"></span>
+                </div>
+                <div class="ng-hide">
+                    @Html.Partial("_GrantSelectionView")
+                </div>
+            </div>
+
+            <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
+                <div class="heading-group action" ng-click="showComponent($event)">
+                    <h4 class="light width-90">Program description</h4>
+                    <span class="icon small down-arrow"></span>
+                </div>
+                <div class="ng-hide">
+                    @Html.Partial("_ProgramDescriptionView")
+                </div>
+            </div>
+
+            <div ng-show="model.EnableAttachments">
+                <div class="heading-group action" ng-click="showComponent($event)">
+                    <h4 class="light width-90">{{model.AttachmentsHeader}}</h4>
+                    <span class="icon small down-arrow"></span>
+                </div>
+                <div class="ng-hide">
+                    @Html.Partial("_AttachmentsView")
+                </div>
+            </div>
+            <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant) && model.EnableBusinessCase">
+                <div class="heading-group action" ng-click="showComponent($event)">
+                    <h4 class="light width-90">{{model.BusinessCaseHeader}}</h4>
+                    <span class="icon small down-arrow"></span>
+                </div>
+                <div class="ng-hide">
+                    @Html.Partial("_BusinessCaseView")
+                </div>
+            </div>
+            <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)" class="k-item k-state-default" ng-repeat="process in model.DynamicProcesses">
+                <div class="heading-group action" ng-click="showComponent($event)">
+                    <h4 class="light width-90">{{process.ServiceCategoryCaption}}</h4>
+                    <span class="icon small down-arrow"></span>
+                </div>
+                <div class="ng-hide" ng-if="process.ServiceCategoryTypeId == @((int)CJG.Core.Entities.ServiceTypes.SkillsTraining)">
+                    @Html.Partial("_SkillsTrainingDetailView")
+                </div>
+                <div class="ng-hide" ng-if="process.ServiceCategoryTypeId == @((int)CJG.Core.Entities.ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider > 0">
+                    @Html.Partial("_ServiceProviderDetailView")
+                </div>
+                <div class="ng-hide" ng-if="process.ServiceCategoryTypeId == @((int)CJG.Core.Entities.ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider == 0">
+                    @Html.Partial("_EmploymentServicesAndSupportsDetailView")
+                </div>
+            </div>
+
+            <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+                <div class="heading-group action" ng-click="showComponent($event)">
+                    <h4 class="light width-90">Training provider</h4>
+                    <span class="icon small down-arrow"></span>
+                </div>
+                <div class="ng-hide">
+                    @Html.Partial("_TrainingProviderView")
+                </div>
+            </div>
+
+            <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+                <div class="heading-group action" ng-click="showComponent($event)">
+                    <h4 class="light width-90">Training program</h4>
+                    <span class="icon small down-arrow"></span>
+                </div>
+                <div class="ng-hide">
+                    @Html.Partial("_TrainingProgramView")
+                </div>
+            </div>
+
+            <div>
+                <div class="heading-group action" ng-click="showComponent($event)">
+                    <h4 class="light width-90">Training costs</h4>
+                    <span class="icon small down-arrow"></span>
+                </div>
+                <div class="ng-hide">
+                    @Html.Partial("_TrainingCostView", new ViewDataDictionary { { "showESS", 0 } })
+                </div>
+            </div>
+
+            <div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+                <div class="heading-group action" ng-click="showComponent($event)">
+                    <h4 class="light width-90">Participants</h4>
+                    <span class="icon small down-arrow"></span>
+                </div>
+                <div class="ng-hide">
+                    @Html.Partial("_ParticipantList")
+                </div>
+            </div>
+
+            @*<div class="button-group">
+                <span ng-if="model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                    <a class="btn btn--primary" href="/Ext/Application/Duplicate/{{model.Id}}" value="Duplicate">Duplicate Application</a>
+                </span>
+            </div>*@
+        </div>
+
+        @Html.Partial("_GrantApplicationSidebar", Model)
+    </div>
+</div>

@@ -1,0 +1,40 @@
+﻿@{
+    ViewBag.Title = "Application Review";
+}
+
+<div ng-controller="ApplicationReviewESSView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+    <div class="row">
+        <a class="link--back" href="{{model.PreviousStepUrl}}">Return</a>
+    </div>
+    <div class="row">
+        <div class="main">
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            <h1>Submit Application</h1>
+            <p class="subheader--step">Step {{model.CurrentStep}} of {{model.Steps}}</p>
+            <h2>Review Employment Supports</h2>
+            <br />
+            <div ng-repeat="process in model.DynamicProcesses">
+                <div class="heading-group--no-border-bottom">
+                    <h4 class="light">{{process.ServiceCategoryCaption}}</h4>
+                    <a class="btn btn--secondary" href="/Ext/Application/{{model.Id}}/Employment/Services/Supports/View/{{process.ServiceCategoryId}}{{process.AssociatedEligibleCost != null ? '/' + process.AssociatedEligibleCost.Id : ''}}">Edit services</a>
+                </div>
+                <div ng-if="process.ServiceCategoryTypeId == @((int)CJG.Core.Entities.ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider > 0">
+                    @Html.Partial("_ServiceProviderReviewView")
+                </div>
+                <div ng-if="process.ServiceCategoryTypeId == @((int)CJG.Core.Entities.ServiceTypes.EmploymentServicesAndSupports) && process.MaxProvider == 0">
+                    @Html.Partial("_EmploymentServicesAndSupportsDetailView")
+                </div>
+            </div>
+
+            <div class="button-group">
+                @Html.ActionLink("Cancel", nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController.ApplicationOverviewView), nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController).Replace("Controller", ""), new { grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary" })
+                <a class="btn btn--primary btn--forward" value="Continue" href="{{model.NextStepUrl}}">Continue</a>
+            </div>
+        </div>
+    </div>
+</div>
+

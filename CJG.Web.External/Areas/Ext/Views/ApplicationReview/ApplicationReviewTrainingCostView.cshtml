@@ -1,0 +1,32 @@
+﻿@{
+    ViewBag.Title = "Application Review";
+}
+<div ng-controller="ApplicationReviewTrainingCostView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+    <div class="row">
+        <a class="link--back" href="{{model.PreviousStepUrl}}">Return</a>
+    </div>
+    <div class="row">
+        <div class="main">
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            <h1>Submit Application</h1>
+            <p class="subheader--step">Step {{model.CurrentStep}} of {{model.Steps}}</p>
+            <h2>Review Cost Estimate</h2>
+            <br />
+            <div class="heading-group">
+                <h4 class="light">Cost Estimate</h4>
+                <a class="btn btn--secondary" href="/Ext/Application/training/cost/view/{{model.Id}}">Edit cost estimate</a>
+            </div>
+            @Html.Partial("_TrainingCostView", new ViewDataDictionary { { "showESS", 0 } })
+
+            <div class="button-group">
+                @Html.ActionLink("Cancel", nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController.ApplicationOverviewView), nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController).Replace("Controller", ""), new { grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary" })
+                <a class="btn btn--primary btn--forward" value="Continue" href="{{model.NextStepUrl}}">Continue</a>
+            </div>
+        </div>
+
+    </div>
+</div>

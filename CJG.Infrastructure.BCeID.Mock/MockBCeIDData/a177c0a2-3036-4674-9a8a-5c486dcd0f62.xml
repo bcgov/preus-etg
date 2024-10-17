@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<User>
+  <Guid>a177c0a2-3036-4674-9a8a-5c486dcd0f62</Guid>
+  <AccountType></AccountType>
+  <FirstName>Shelly01</FirstName>
+  <LastName>Saunders</LastName>
+  <EmailAddress>Shelly.Saunders@avocette.com</EmailAddress>
+  <TelephoneNumber>1 604-662-8407</TelephoneNumber>
+  <BusinessGuid>cb32d2f3-b9db-44ba-976b-1bd85a84e0bb</BusinessGuid>
+  <Business>
+    <Guid>cb32d2f3-b9db-44ba-976b-1bd85a84e0bb</Guid>
+    <LegalName>Canada-BC Job Grant</LegalName>
+    <DoingBusinessAs>CJG Service Providers T</DoingBusinessAs>
+    <AddressId>7</AddressId>
+    <Address>
+      <Id>7</Id>
+      <AddressLine1>730 View St.</AddressLine1>
+      <AddressLine2>Suite 320</AddressLine2>
+      <City>Victoria</City>
+      <PostalCode>V8W 3Y7</PostalCode>
+      <Province>British Columbia</Province>
+      <Country>CA</Country>
+      <UnstructuredAddress></UnstructuredAddress>
+      <Businesses></Businesses>
+    </Address>
+    <Users></Users>
+  </Business>
+</User>

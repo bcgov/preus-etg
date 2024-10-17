@@ -1,0 +1,112 @@
+﻿<div ng-controller="ClaimAttachmentsView" ng-claim-id="@ViewBag.ClaimId" ng-claim-version="@ViewBag.ClaimVersion">
+    <h2 class="text--uppercase">{{model.Title}}</h2>
+    
+    <div>
+        <div class="form__group form__group--radio-inline">
+            <label class="form__label">
+                Did any participant(s) pay for any expenses included in this claim? <abbr title="Required">*</abbr>
+            </label>
+            <div class="form__control" ng-validation="errors.ParticipantsPaidForExpenses">
+                <div class="form-item">
+                    <input type="radio" id="participant-expenses-yes" ng-value="true" ng-change="toggleUploadInstructionsPaid()" ng-model="model.ParticipantsPaidForExpenses" name="model.ParticipantsPaidForExpenses">
+                    <label for="participant-expenses-yes">Yes</label>
+                </div>
+                <div class="form-item">
+                    <input type="radio" id="participant-expenses-no" ng-value="false" ng-change="toggleUploadInstructionsPaid()" ng-model="model.ParticipantsPaidForExpenses" name="model.ParticipantsPaidForExpenses">
+                    <label for="participant-expenses-no">No</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form__group form__group--radio-inline" ng-show="model.ParticipantsPaidForExpenses">
+            <label class="form__label">
+                Have you fully reimbursed the participant(s)? <abbr title="Required">*</abbr>
+            </label>
+            <div class="form__control" ng-validation="errors.ParticipantsHaveBeenReimbursed">
+                <div class="form-item">
+                    <input type="radio" id="participant-reimbursed-yes" ng-value="true" ng-change="toggleUploadInstructionsReimbursed()" ng-model="model.ParticipantsHaveBeenReimbursed" name="model.ParticipantsHaveBeenReimbursed">
+                    <label for="participant-reimbursed-yes">Yes</label>
+                </div>
+                <div class="form-item">
+                    <input type="radio" id="participant-reimbursed-no" ng-value="false" ng-change="toggleUploadInstructionsReimbursed()" ng-model="model.ParticipantsHaveBeenReimbursed" name="model.ParticipantsHaveBeenReimbursed">
+                    <label for="participant-reimbursed-no">No</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notice notice--icon" ng-show="showReimbursementWarning">
+        <p>You must fully reimburse all participants before you can submit a claim.</p>
+    </div>
+
+    <div ng-show="showInstructions">
+        <h3>Receipts</h3>
+        <div>
+            <p>The B.C. Employer Training Grant requires valid receipts <strong>and</strong> proof of payment to receive reimbursement.</p>
+            <p>A valid receipt is any document with the following:</p>
+            <ol>
+                <li>Name of approved training provider.</li>
+                <li>Transaction date (when you paid).</li>
+                <li>Training start date.</li>
+                <li>Name of approved course</li>
+                <li>Amount paid (including taxes).</li>
+                <li>Method of payment (cash, cheque or credit card).</li>
+            </ol>
+
+            <p>Proof of Payment may include the following:</p>
+            <ol>
+                <li>Cleared cheque &mdash; Provide a copy of the front and back of a cleared cheque. You can usually get a scanned image of a cleared cheque from your online bank account.</li>
+                <li>Credit card or bank statement &mdash; Provide a copy of your card or bank statement showing that payment to the training provider occurred. Cover up your card number and anything that you are not claiming as an expense. Do not cover your business name, the name of the recipient, or the amount of the relevant expense.</li>
+                <li>Credit card or debit card receipt &mdash; receipts from the training provider that show the last four digits of the credit/debit card number used to pay for training can be used as proof of payment.</li>
+            </ol>
+            
+            <p><strong>NOTE:</strong> For online credit card purchases, the receipt would be a printout or email confirming the purchase, registration, etc. The training provider’s website should give this information after payment is complete. For cash payments, additional information may be requested. The B.C. Employer Training Grant program may require additional documentation before reimbursement, regardless of the payment method. </p>
+            <div class="notice notice--icon margin-top">
+                <h4>Receipt examples:</h4>
+                <p>
+                    <a href="https://www.workbc.ca/media/323/download?inline=" target="_blank">Sales Receipt/Paid Invoice</a> 
+                    | <a href="https://www.workbc.ca/media/324/download?inline=" target="_blank">Paper Receipt</a> 
+                    | <a href=" https://www.workbc.ca/media/325/download?inline=" target="_blank">Email Receipt for Online Purchase</a></p>
+                <p><text>We accept clear photos of receipts and other documents taken with a phone</text></p>
+            </div>
+            
+            <h3>Travel Expenses</h3>
+            <p>If we approved travel expenses, you need to submit a <a href="https://www.workbc.ca/media/1812/download?inline=" target="_blank">Travel Expense Form</a>. Fill in all parts of the form that apply. You need to include receipts for flights and commercial accommodation.</p>
+            
+            <h3>Submit Your Claim</h3>
+            <div>
+                <p style="font-style: italic;">
+                    For each attachment, enter a description to identify what part of your claim it supports (for example, type “Tuition” or “Mandatory student fees” in the description of each attachment).
+                </p>
+                <p>Accepted file types: PDF, DOCX, DOC, XLSX, XLS, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}} MB.</p>
+            </div>
+            <div class="form__group" ng-if="model.Attachments.length != 0">
+                <table style="width:100%;">
+                    <thead>
+                    <tr>
+                        <th style="padding:5px 5px 5px 0;text-align:left; width:40%;" class="claim-title-font">Attachment</th>
+                        <th style="padding:5px 5px 5px 0;text-align:left; width:40%;" class="claim-title-font">Description</th>
+                        <th style="padding:5px 5px 5px 0;"></th>
+                    </tr>
+                    </thead>
+
+                    <tr ng-repeat="attachment in model.Attachments">
+                        <td style="padding:5px 5px 5px 0;width:40%;vertical-align:top;word-wrap: break-word;word-break: break-all;">
+                            <a ng-if="attachment.Id" target="_blank" href="/Ext/Claim/Attachment/Download/{{model.Id}}/{{model.ClaimVersion}}/{{attachment.Id}}">{{attachment.FileName}}</a>
+                            <span ng-if="!attachment.Id">{{attachment.FileName}}</span>
+                        </td>
+                        <td style="padding:5px 5px 5px 0;width:40%;vertical-align:top;word-wrap: break-word;word-break: break-all;">
+                            {{attachment.Description}}
+                        </td>
+                        <td style="padding:5px 5px 5px 0;vertical-align:top">
+                            <a ng-click="changeAttachment(attachment)">Edit</a>
+                            /
+                            <a ng-click="removeAttachment($index)">Remove</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <button ng-if="model.MaximumNumberOfAttachmentsAllowed > model.Attachments.length" class="btn btn--secondary" ng-click="addAttachment()" data-disableonsubmit="false">Add attachment</button>
+        </div>
+    </div>
+</div>

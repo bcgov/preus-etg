@@ -1,0 +1,74 @@
+﻿@using CJG.Core.Entities
+@{
+	ViewBag.Title = "Grant Program Management";
+}
+
+<div ng-controller="GrantProgramManagement">
+	<div class="row row--alert" ng-if="alert.message">
+		<div class="alert alert--default" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message">
+		</div>
+	</div>
+	<div class="form-section">
+		<div>
+			<h2 class="header__title">View / Edit Grant Program</h2>
+		</div>
+
+		<div class="form__group float-left" style="width: 40%;">
+			<div class="label-wrapper">
+				<label class="form__label">Select Grant Program:</label>
+			</div>
+			<div class="control-wrapper">
+				<div class="selectmenu input--full">
+					<select ng-model="section.selectedProgram" 
+                            ng-options="item as item.Caption for item in grantPrograms" 
+                            class="input--full" ng-validation="errors.selectedProgram" 
+                            ng-change="loadProgram()" ng-disabled="parent.editing">
+						<option value="">{{'&lt; Select Program &gt;'}}</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="button-group float-right">
+			<button class="btn btn--primary btn--forward"
+					ng-if="model.State === @((int)GrantProgramStates.Implemented)"
+					ng-disabled="!model.CanTerminate || section.parent.editing"
+					ng-click="terminate()"
+					title="Only possible if there are no active grant streams and no applications.">
+				Terminate
+			</button>
+			<button class="btn btn--primary btn--forward"
+					ng-if="model.State === @((int)GrantProgramStates.NotImplemented)"
+					ng-disabled="!model.CanImplement || section.parent.editing"
+					ng-click="implement()"
+					title="Requires eligibility description and account code information configured.">
+				Implement
+			</button>
+			<button class="btn btn--primary btn--forward"
+					ng-disabled="true"
+					ng-click="createProgram()">
+				Add New
+			</button>
+			<button class="btn btn--secondary btn--forward"
+					ng-if="model.CanDelete"
+					ng-click="deleteProgram()">
+				Delete
+			</button>
+		</div>
+	</div>
+
+	<div class="details-block">
+        <ul class="panel-section-list">
+            <li>@Html.Partial("~/Areas/Int/Views/GrantProgram/_ProgramDefinition.cshtml")</li>
+            <li>@Html.Partial("~/Areas/Int/Views/GrantProgram/_ProgramEligibility.cshtml")</li>
+            <li>@Html.Partial("~/Areas/Int/Views/GrantProgram/_HomePageMessage.cshtml")</li>
+            <li>@Html.Partial("~/Areas/Int/Views/GrantProgram/_DeliveryPartner.cshtml")</li>
+            <li>@Html.Partial("~/Areas/Int/Views/GrantProgram/_PaymentRequests.cshtml")</li>
+            <li>@Html.Partial("~/Areas/Int/Views/GrantProgram/_ProgramConfiguration.cshtml")</li>
+            <li>@Html.Partial("~/Areas/Int/Views/GrantProgram/_NotificationTypes.cshtml")</li>
+            <li>@Html.Partial("~/Areas/Int/Views/GrantProgram/_Notifications.cshtml")</li>
+            <li>@Html.Partial("~/Areas/Int/Views/GrantProgram/_DocumentTemplates.cshtml")</li>
+            <li>@Html.Partial("~/Areas/Int/Views/GrantProgram/_DenialReasons.cshtml")</li>
+        </ul>
+	</div>
+</div>

@@ -1,0 +1,26 @@
+﻿<div class="form__group--edit-wrapper">
+	<div class="label-wrapper" ng-if="$ctrl.label || $ctrl.ngLabel">
+		{{$ctrl.label || $ctrl.ngLabel}}
+	</div>
+	<div class="control-wrapper">
+		<ul style="list-style:none" ng-show="$ctrl.editing()">
+			<li ng-repeat="item in $ctrl.ngItems track by item[$ctrl.key]">
+				<input type="checkbox"
+					   class="form-control"
+					   id="{{$ctrl.name}}-{{$index}}"
+					   name="{{$ctrl.name}}"
+					   ng-model="item[$ctrl.flag]"
+					   ng-class="{'has-error': $ctrl.getError()}"
+					   ng-change="$ctrl.onChange(item)"
+					   ng-click="$ctrl.onClick($event, item)"
+					   ng-disabled="$ctrl.ngDisabled" />
+				<label for="{{$ctrl.name}}-{{$index}}">{{item[$ctrl.value]}}</label>
+			</li>
+		</ul>
+		<ul style="list-style:circle" ng-if="!$ctrl.editing()">
+			<li ng-repeat="item in $ctrl.ngItems track by item[$ctrl.key]" ng-if="item[$ctrl.flag]"><label>{{item[$ctrl.value]}}</label></li>
+		</ul>
+		<span ng-if="$ctrl.getError()" class="field-validation-error">{{$ctrl.getError()}}</span>
+		<ng-transclude></ng-transclude>
+	</div>
+</div>

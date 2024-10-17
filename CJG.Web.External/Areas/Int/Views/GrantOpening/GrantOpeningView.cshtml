@@ -1,0 +1,105 @@
+﻿@{
+    ViewBag.Title = "Manage Grant Openings";
+}
+<div id="manage-opening-grant">
+    <div ng-controller="GrantOpeningsView" ng-fiscal-year-id="@ViewBag.FiscalYearId" ng-grant-program-id="@ViewBag.GrantProgramId" ng-app-date="@ViewBag.AppDateTime">
+        <div ng-if="alert.message" class="row row--alert">
+            <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+        </div>
+        <div>
+            <h2 class="header__title">Manage Grant Openings</h2>
+        </div>
+        <div class="form__group-set">
+            <div class="form__group">
+                <label class="form__label">Fiscal Year</label>
+                <div class="form__control">
+                    <div class="selectmenu">
+                        <select class="form-control" ng-model="selectedFiscalYear" ng-options="item.Id as item.Caption for item in fiscalYears" ng-change="onFiscalYearChange()">
+                            <option value="" class="">&lt; Select value &gt;</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form__group">
+                <label class="form__label">Grant Program</label>
+                <div class="form__control">
+                    <div class="selectmenu">
+                        <select class="form-control" ng-model="selectedGrantProgram" ng-options="item.Id as item.Name for item in grantPrograms" ng-change="onGrantProgramChange()">
+                            <option value="" class="">&lt; Select value &gt;</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-show="showGrantStreamInformation" class="horizontal-scroll-grant-openings horizontal-scroll-grant-openings-outer">
+            <table class="table table--stream-matrix nowrap">
+                <thead>
+                <tr>
+                    <th>
+                        <b>Grant Stream</b>
+                    </th>
+                    <th>
+                        <b>Stream Totals</b>
+                    </th>
+                    <th ng-repeat="trainingPeriodHeader in model.TemplateTrainingPeriods">
+                        <b>{{trainingPeriodHeader.Caption}}</b>
+                    </th>
+                </tr>
+                </thead>
+                <tbody ng-if="model.GrantStreams.length > 0">
+                <tr ng-repeat="stream in model.GrantStreams">
+                    <td>
+                        {{stream.Name}}
+                    </td>
+                    <td class="cell-highlight text--right">
+                        {{stream.DisplayTotalTargetAmount}}
+                    </td>
+                    <td class="text--right" ng-repeat="trainingPeriod in stream.GrantStreamInformation">
+                        <div ng-switch on="trainingPeriod.DisplayMode">
+                            <div ng-switch-when="@((int) CJG.Web.External.Areas.Int.Models.GrantOpenings.DisplayMode.OpeningLocated)">@* OpeningLocated *@
+                                {{trainingPeriod.StreamTrainingPeriod.TrainingPeriodDuration}}<br/>
+                                <a ng-click="initSelectOpeningGrantModal(trainingPeriod.GrantOpeningId)">
+                                    {{trainingPeriod.DisplayTargetAmount}}
+                                </a>
+                                <br/>
+                                <text>
+                                    <span class="label {{getOpeningStateCss(trainingPeriod.OpenState)}}">{{getOpeningStateLabel(trainingPeriod.OpenState)}}</span>
+                                </text>
+                            </div>
+                            <div ng-switch-when="@((int) CJG.Web.External.Areas.Int.Models.GrantOpenings.DisplayMode.OpeningBlocked)">@* OpeningBlocked *@
+                                <br/>
+                                <span class="label label--danger">Unavailable</span>
+                            </div>
+                            <div ng-switch-when="@((int) CJG.Web.External.Areas.Int.Models.GrantOpenings.DisplayMode.None)">@* None *@
+                            </div>
+                            <div ng-switch-default> @* GM1 *@
+                                <div ng-if="stream.IsActive">
+                                    <a ng-if="trainingPeriod.StreamTrainingPeriod.IsActive" ng-click="initCreateOpeningGrantModal(trainingPeriod.StreamTrainingPeriod.Id, stream.Id)">
+                                        <span>Create</span>
+                                    </a>
+                                    <span ng-if="trainingPeriod.StreamTrainingPeriod.IsActive == false">
+                                        <b>Disabled</b>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text--right" ng-repeat="fillerCell in [].constructor(model.TemplateTrainingPeriods.length - stream.GrantStreamInformation.length) track by $index">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Total</b>
+                    </td>
+                    <td class="cell-highlight text--right">
+                        <b>{{model.DisplayGrantTotal}}</b>
+                    </td>
+                    <td class="text--right" ng-repeat="trainingPeriodFooter in model.TemplateTrainingPeriods">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

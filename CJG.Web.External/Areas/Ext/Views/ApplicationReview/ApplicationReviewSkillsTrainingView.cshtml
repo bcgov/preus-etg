@@ -1,0 +1,34 @@
+﻿@using CJG.Core.Entities
+@using CJG.Web.External.Areas.Ext.Controllers
+@{
+    ViewBag.Title = "Application Review";
+}
+
+<div ng-controller="ApplicationReviewSkillsTrainingView" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-eligible-expense-type-id="@ViewBag.EligibleExpenseTypeId">
+    <div class="row">
+        <a class="link--back" href="{{model.PreviousStepUrl}}">Return</a>
+    </div>
+    <div class="row">
+        <div class="main">
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            <h1>Submit Application</h1>
+            <p class="subheader--step">Step {{model.CurrentStep}} of {{model.Steps}}</p>
+            <h2>Review {{model.Caption}} Components</h2>
+            <div ng-repeat="process in model.DynamicProcesses">
+                <div ng-if="process.ServiceCategoryTypeId === @((int)ServiceTypes.SkillsTraining)">
+                    @Html.Partial("_SkillsTrainingReviewView")
+                </div>
+            </div>
+
+            <div class="button-group">
+                @Html.ActionLink("Cancel", nameof(ApplicationController.ApplicationOverviewView), nameof(ApplicationController).Replace("Controller", ""), new { grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary" })
+                <a class="btn btn--primary btn--forward" value="Continue" href="{{model.NextStepUrl}}">Continue</a>
+            </div>
+        </div>
+
+    </div>
+</div>

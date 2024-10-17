@@ -1,0 +1,45 @@
+﻿<span class="form__group--edit-wrapper">
+    <label class="label-wrapper" ng-if="$ctrl.label || $ctrl.ngLabel">
+        {{$ctrl.label || $ctrl.ngLabel}}
+    </label>
+    <span class="control-wrapper">
+        <span class="wrapper--dropdown selectmenu-wrapper" ng-if="$ctrl.editing()" ng-click="setDateToToday($event)">
+            <span class="selectmenu">
+                <select class="form-control input-full"
+                        name="{{$ctrl.name}}-month"
+                        ng-model="$ctrl.month"
+                        ng-options="item.key as item.value for item in $ctrl.months"
+                        ng-change="$ctrl.changeMonth()"
+                        ng-class="{'has-error': $ctrl.getError()}"
+                        ng-disabled="$ctrl.ngDisabled">
+                    <option value="" selected ng-if="$ctrl.ngDefaultMonth">{{$ctrl.ngDefaultMonth}}</option>
+                </select>
+            </span>
+            <span class="selectmenu">
+                <select class="form-control input-full"
+                        name="{{$ctrl.name}}-day"
+                        ng-model="$ctrl.day"
+                        ng-options="item for item in $ctrl.days"
+                        ng-change="$ctrl.changeDay()"
+                        ng-class="{'has-error': $ctrl.getError()}"
+                        ng-disabled="$ctrl.ngDisabled">
+                    <option value="" selected ng-if="$ctrl.ngDefaultDay">{{$ctrl.ngDefaultDay}}</option>
+                </select>
+            </span>
+            <span class="selectmenu">
+                <select class="form-control input-full"
+                        name="{{$ctrl.name}}-year"
+                        ng-model="$ctrl.year"
+                        ng-options="item for item in $ctrl.years"
+                        ng-change="$ctrl.changeYear()"
+                        ng-class="{'has-error': $ctrl.getError()}"
+                        ng-disabled="$ctrl.ngDisabled">
+                    <option value="" selected ng-if="$ctrl.ngDefaultYear">{{$ctrl.ngDefaultYear}}</option>
+                </select>
+            </span>
+        </span>
+        <text ng-if="!$ctrl.editing() && $ctrl.ngText">{{ toPST($ctrl.ngText, $ctrl.ngTextFormat) }}</text>
+        <text ng-if="!$ctrl.editing() && !$ctrl.ngText">{{ $ctrl.ngModel }}</text>
+        <span ng-if="$ctrl.getError()" class="field-validation-error">{{$ctrl.getError()}}</span>
+    </span>
+</span>

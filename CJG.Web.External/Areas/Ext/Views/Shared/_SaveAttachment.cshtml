@@ -1,0 +1,42 @@
+﻿<div id="grant-application-attachment-modal">
+    <div data-modal-title="Attachment" class="modal-content">
+        <div class="form well">
+            <div class="row--alert" ng-if="modalData.SummaryMessage">
+                <div class="alert alert--default" ng-class="'alert--' + modalData.SummaryType" role="alert" ng-bind-html="modalData.SummaryMessage">
+                </div>
+            </div>
+            <div class="form__group">
+                <div class="form__label">Name: </div>
+                <div class="form__control">
+                    <span>
+                        {{modalData.Attachment.Name}} <input type="file" name="AsyncDocumentsFiles" id="grant-application-upload" />
+                    </span>
+                </div>
+            </div>
+            <div class="form__group">
+                <div class="form__label">Description: </div>
+                <div class="form__control"><textarea ng-model="modalData.Attachment.Description"></textarea></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="form well">
+                <a class="btn btn--secondary">Cancel</a>
+                <a class="btn btn--primary pull-right save-attachment" ng-click="UploadAttachment()">Save</a>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    ul.k-upload-files {
+        display: none;
+    }
+
+    .k-upload-selected {
+        display: none !important;
+    }
+
+    .k-upload-status-total {
+        display: none !important;
+    }
+</style>
+

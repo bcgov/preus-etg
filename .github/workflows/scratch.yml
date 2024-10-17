@@ -1,0 +1,15 @@
+name: Scratch
+on: workflow_dispatch
+
+jobs:
+  scratch:
+    runs-on: etg-ci
+
+    steps:
+      - name: Copy Web Application to local artifacts folder
+        run: xcopy /E /I /Y ${{ github.workspace }}\CJG.Web.External\obj\TEST\Package\PackageTmp ${{ github.workspace }}\artifacts\CJG.Web.External\
+        shell: cmd      
+
+      - name: Copy EF to local artifacts folder
+        run: xcopy /E /I "CJG.Infrastructure.EF\bin\TEST" "artifacts\CJG.Infrastructure.EF\"
+        shell: cmd

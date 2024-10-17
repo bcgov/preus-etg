@@ -1,0 +1,49 @@
+﻿<div ng-controller="GrantProgramUserGuidance" class="form-section" ng-show="model.Id || section.editing">
+		<span class="panel-section-item">
+			<span class="panel-section-title" ng-click="toggle($event)">User Guidance</span>
+		<span class="panel-section-buttons">
+			<span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+			<section-edit-buttons ng-model="section.editing"></section-edit-buttons>
+			<span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+		</span>
+	</span>
+	
+	<div class="panel-section-content" ng-if="section.show">
+		<div class="form form-section-container">
+			<div class="form__group">
+				<p>You may enter applicant guidance below for cost estimates and claim entry.  Your guidance should relate to the in-scope services you have selected above and any rules or policies that apply.  For example, you may include instructions for Administration costs here.</p>
+
+				<div class="form__group">
+					<div class="label-wrapper">
+						<label class="form__label">Cost Estimates:</label>
+                        <a ng-click="preview('User Guidance for Cost Estimates:', model.ProgramConfiguration.UserGuidanceCostEstimates)">Test Guidance</a>
+					</div>
+					<div class="control-wrapper">
+						<textarea ng-model="model.ProgramConfiguration.UserGuidanceCostEstimates" class="input--full textarea--medium" maxlength="1000" size="5" ng-validation ng-editing></textarea>
+					</div>
+				</div>
+				<div class="form__group">
+					<div class="label-wrapper">
+						<label class="form__label">Claim Entry</label>
+						<a ng-click="preview('User Guidance for Claim Entry:', model.ProgramConfiguration.UserGuidanceClaims)">Test Guidance</a>
+					</div>
+					<div class="control-wrapper">
+						<textarea ng-model="model.ProgramConfiguration.UserGuidanceClaims" class="input--full textarea--medium" maxlength="1000" size="5" ng-validation ng-editing></textarea>
+					</div>
+				</div>
+				<div class="form__group">
+					<div class="label-wrapper">
+						<label class="form__label">Example</label>
+					</div>
+					<div class="control-wrapper">
+						<p>
+							Web Reference:  See &lt;A href=&quot;https:&sol;&sol;www.workbc.ca&sol;Employer-Resources&sol;Canada-BC-Job-Grant&sol;Foundational-Training-Stream.aspx&quot; target=&quot;_blank&quot;&gt;Foundation Training&lt;&sol;A&gt; for more information.
+							<br /><br />
+							Paragraph Marker: &nbsp; &lt;&sol;p&gt;&lt;p&gt;&nbsp;&nbsp;&lt;b&gt;Bolded Text&lt;&sol;b&gt; &nbsp; &nbsp; &lt;u&gt;Underlined Text&lt;&sol;u&gt;
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

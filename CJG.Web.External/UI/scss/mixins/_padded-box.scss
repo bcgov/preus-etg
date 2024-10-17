@@ -1,0 +1,11 @@
+@mixin padded-box($padding: gap(2), $paddingBottom: gap(2)) {
+  padding: $padding;
+
+  > *:last-child:after {
+    display: block;
+    content: ' ';
+    margin: $paddingBottom 0 ($paddingBottom * -1);
+    padding: 0;
+    height: 0;
+  }
+}

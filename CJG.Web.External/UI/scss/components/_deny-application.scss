@@ -1,0 +1,33 @@
+﻿.container--deny-application {
+  display: none;
+  .k-window & {
+    display: block;
+  }
+  .header {
+    display: none;
+  }
+  .content--deny-application {
+    .main {
+      width: 100%;
+      margin: 0;
+      padding-top: 20px;
+    }
+    label {
+      margin-bottom: 5px;
+    }
+  }
+}
+
+#modalDenyApplication {
+  .container {
+    min-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  textarea {
+    min-height: 10rem;
+  }
+  .footer--container {
+    display: none;
+  }
+}

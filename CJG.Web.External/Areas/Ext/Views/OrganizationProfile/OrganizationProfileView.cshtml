@@ -1,0 +1,331 @@
+﻿@{
+    ViewBag.Title = "Organization Profile";
+}
+
+<div class="row">
+    @Html.ActionLink("Home", "Index", "Home", null, new { @class = "link--back" })
+</div>
+
+<div class="row">
+    <div ng-controller="OrganizationProfile" class="main">
+        <div class="form-section">
+            <div>
+                <h2 class="header__title">
+                    <span ng-if="model.CanEditOrganizationProfile">{{(model.CreateOrganizationProfile ? "Enter" : "Edit")}}</span>
+                    Organization Profile
+                </h2>
+            </div>
+        </div>
+        <div class="details-block organization-profile">
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+            <div>
+                <div class="notice notice--icon" ng-if="model.CreateOrganizationProfile">
+                    <p>Members of your organization will not be able to submit grant applications until your organization profile has been created.</p>
+                </div>
+                <div class="notice notice--icon" ng-if="model.CanEditOrganizationProfile">
+                    <p>Make sure you click Save organization profile at the bottom of this form to save your changes.</p>
+                </div>
+                <div class="notice notice--icon" ng-if="!model.CanEditOrganizationProfile">
+                    <p>The organization profile below will be included in grant applications submitted by you.</p>
+                    <p>Your organization is responsible for ensuring that your profile is accurate.</p>
+                </div>
+                <div class="alert alert--warning notice--icon" ng-show="!model.CreateOrganizationProfile && model.CanEditOrganizationProfile && model.RequiresBusinessLicenseDocuments">
+                    <p>Your organization’s business information documents must be uploaded yearly. As your documents have not been uploaded or are out of date, please upload current business information below.</p>
+                </div>
+
+                <p>Your business legal and operating names are provided by BCeID and are shown below. Please check that this information is correct.</p>
+                <p>If the information is not correct, please visit <a href="https://www.bceid.ca" target="_blank">www.BCeID.ca</a> to update it.</p>
+            
+                <div class="form--2-col well well--dark">
+                    <dl class="info-list">
+                        <dt>Organization legal name</dt>
+                        <dd>{{model.LegalName}}</dd>
+                        <dt>Organization operating name</dt>
+                        <dd>{{model.DoingBusinessAs}}</dd>
+                    </dl>
+                </div>
+
+                <h3 class="subheader--body">Organization Profile</h3>
+                <p class="text--small text--uppercase" ng-if="model.CanEditOrganizationProfile">* Information must be provided</p>
+
+                @*<div class="form__group">
+                    <label class="form__label">Doing Business As</label>
+                    <div class="form__control">
+                        <input type="text" class="input--medium" ng-model="model.DoingBusinessAs" maxlength="50" ng-validation ng-editing="model.IsOrganizationProfileAdministrator" />
+                    </div>
+                </div>*@
+
+                <div class="form__group form__group--radio-inline">
+                    <label class="form__label">Organization type <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <div class="form-item" ng-repeat="type in organizationTypes" ng-if="model.CanEditOrganizationProfile">
+                            <input id="option-{{type.Key}}" type="radio" class="k-valid"
+                                   name="OrganizationTypeId"
+                                   ng-value="type.Key"
+                                   ng-model="model.OrganizationTypeId" />
+                            <label for="option-{{type.Key}}">{{type.Value}}</label>
+                        </div>
+                        <text ng-if="!model.CanEditOrganizationProfile">
+                            {{getOrganizationType()}}
+                        </text>
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <div class="form__label">Legal structure <abbr title="Required">*</abbr></div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <div class="wrapper--dropdown selectmenu input--medium" ng-validation="errors.LegalStructureId">
+                                <select ng-model="model.LegalStructureId" ng-options="item.Key as item.Value for item in legalStructures" class="input--medium" ng-editing="model.CanEditOrganizationProfile">
+                                    <option value="">{{'&lt; Select Value &gt;'}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Year established <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <input type="text" class="input--small" ng-model="model.YearEstablished" maxlength="4" ng-number ng-validation ng-editing="model.CanEditOrganizationProfile" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Number of employees worldwide (including BC) <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <input type="text" class="input--small" ng-model="model.NumberOfEmployeesWorldwide" ng-number ng-validation ng-editing="model.CanEditOrganizationProfile" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Number of employees in BC <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <input type="text" class="input--small" ng-model="model.NumberOfEmployeesInBC" ng-number ng-validation ng-editing="model.CanEditOrganizationProfile" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Money spent each year on average for training <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <input type="text" class="input--medium" ng-model="model.AnnualTrainingBudget" ng-currency ng-decimal='0' ng-validation ng-editing="model.CanEditOrganizationProfile" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Number of employees trained on average each year <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <input type="text" class="input--small" ng-model="model.AnnualEmployeesTrained" ng-number ng-validation ng-editing="model.CanEditOrganizationProfile" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">North American Industry Classification System (<b>NAICS</b>) code for your primary sector <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <div class="control-wrapper input--full"
+                             ng-class="{'selectmenu selectmenu-multiline' : model.CanEditOrganizationProfile}"
+                             ng-validation="errors.Naics1Id">
+                            <select class="form-control input--full"
+                                    ng-editing="model.CanEditOrganizationProfile"
+                                    ng-model="model.Naics1Id"
+                                    ng-options="item.Key as item.Value for item in naics1"
+                                    ng-change="changeNAICS(2)">
+                                <option value="">&lt; Select Value &gt;</option>
+                            </select>
+                        </div>
+                        <div class="control-wrapper margin-top-10 input--full"
+                             ng-class="{'selectmenu selectmenu-multiline' : model.CanEditOrganizationProfile}"
+                             ng-validation="errors.Naics2Id"
+                             ng-if="model.Naics1Id">
+                            <select class="form-control input--full"
+                                    ng-editing="model.CanEditOrganizationProfile"
+                                    ng-model="model.Naics2Id"
+                                    ng-options="item.Key as item.Value for item in naics2"
+                                    ng-change="changeNAICS(3)">
+                                <option value="">&lt; Select Value &gt;</option>
+                            </select>
+                        </div>
+                        <div class="control-wrapper margin-top-10 input--full"
+                             ng-class="{'selectmenu selectmenu-multiline' : model.CanEditOrganizationProfile}"
+                             ng-validation="errors.Naics3Id"
+                             ng-if="model.Naics2Id">
+                            <select class="form-control input--full"
+                                    ng-editing="model.CanEditOrganizationProfile"
+                                    ng-model="model.Naics3Id"
+                                    ng-options="item.Key as item.Value for item in naics3"
+                                    ng-change="changeNAICS(4)">
+                                <option value="">&lt; Select Value &gt;</option>
+                            </select>
+                        </div>
+                        <div class="control-wrapper margin-top-10 input--full"
+                             ng-class="{'selectmenu selectmenu-multiline' : model.CanEditOrganizationProfile}"
+                             ng-validation="errors.Naics4Id"
+                             ng-if="model.Naics3Id">
+                            <select class="form-control input--full"
+                                    ng-editing="model.CanEditOrganizationProfile"
+                                    ng-model="model.Naics4Id"
+                                    ng-options="item.Key as item.Value for item in naics4"
+                                    ng-change="changeNAICS(5)">
+                                <option value="">&lt; Select Value &gt;</option>
+                            </select>
+                        </div>
+                        <div class="control-wrapper margin-top-10 input--full"
+                             ng-class="{'selectmenu selectmenu-multiline' : model.CanEditOrganizationProfile}"
+                             ng-validation="errors.Naics5Id"
+                             ng-if="model.Naics4Id">
+                            <select class="form-control input--full"
+                                    ng-editing="model.CanEditOrganizationProfile"
+                                    ng-model="model.Naics5Id"
+                                    ng-options="item.Key as item.Value for item in naics5">
+                                <option value="">&lt; Select Value &gt;</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <div ng-class="errors.BusinessLicenseDocumentAttachments ? 'has-error padded-error' : '' ">
+                        <h4>Business Information Documents *</h4>
+                        <div class="notice notice--icon" ng-if="model.CanEditOrganizationProfile">
+                            <p><strong>If a business license is required where you operate (e.g., required by the municipality or city/town)</strong>, you <strong>must</strong> upload: </p>
+                            <ul>
+                                <li>A copy of your current business license. Note that this is a stand-alone requirement and that alternative documentation such as corporation documents do not replace this requirement. <a href="https://www.workbc.ca/media/335/download?inline=" target="_blank">Here is an example of a business license</a>.</li>
+                            </ul>
+                            
+                            <p><strong>If a business license is not required where you operate</strong>, you <strong>must</strong> upload:</p>
+                            <ul>
+                                <li>Documentation confirming the exemption (e.g., letter from city allowing exemption for your business, cite the municipal policy/regulation allowing the exemption); and </li>
+                                <li>Documentation demonstrating that your business has been fully operational for at least one year (e.g., Current Notice of Assessment issued by the Canada Revenue Agency, or corporate financial statements).</li>
+                            </ul>
+                            <p>If you have any questions, please contact <a href="mailto: ETG@gov.bc.ca">ETG@gov.bc.ca</a>.</p>
+                        </div>
+                        <p ng-if="model.CanEditOrganizationProfile">Accepted file types: PDF, DOCX, DOC, XLSX, XLS, JPG, JPEG, PNG, GIF.</p>
+
+                        <div ng-if="model.BusinessLicenseDocumentAttachments">
+                            <table style="width: 100%;" class="business-license-documents">
+                                <tr>
+                                    <th>Document</th>
+                                    <th>Date Uploaded</th>
+                                    <th></th>
+                                </tr>
+                                <tr ng-repeat="attachment in model.BusinessLicenseDocumentAttachments">
+                                    <td style="width: 50%; vertical-align: top; word-wrap: break-word; word-break: break-all;">
+                                        <a ng-if="attachment.Id" target="_blank" href="/Ext/Organization/BusinessLicense/Download/{{attachment.Id}}">{{attachment.FileName}}</a>
+                                        <span ng-if="!attachment.Id">{{attachment.FileName}}</span>
+                                        <br/>
+                                        {{ attachment.Description }}
+                                    </td>
+                                    <td>
+                                        {{ toPST(attachment.DateAdded) }}
+                                    </td>
+                                    <td style="width: 20%; vertical-align: top">
+                                        <button class="btn btn--secondary pull-right margin-left-10" ng-if="model.CanEditOrganizationProfile && model.HasPreviouslySubmittedApplications == false || attachment.Id <= 0" ng-click="removeAttachment($index)">Remove</button>
+                                        @*<button class="btn btn--secondary pull-right margin-left-10" ng-if="model.IsOrganizationProfileAdministrator" ng-click="changeAttachment(attachment)">Change</button>*@
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div ng-if="model.BusinessLicenseDocumentAttachments == null || model.BusinessLicenseDocumentAttachments.length === 0">
+                            <p>No business information documents have been provided.</p>
+                        </div>
+                        <div >
+                            <button class="btn btn--secondary" ng-click="addAttachment()" data-disableonsubmit="false" ng-if="model.CanEditOrganizationProfile">Add Document</button>
+                        </div>
+                    </div>
+                    <span ng-if="errors.BusinessLicenseDocumentAttachments" class="field-validation-error" ng-bind-html="errors.BusinessLicenseDocumentAttachments"></span>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Business Website (if applicable)</label>
+                    <div class="form__control">
+                        <input type="text" class="input--full" ng-model="model.BusinessWebsite" maxlength="2000" ng-validation ng-editing="model.CanEditOrganizationProfile" />
+                        <div ng-if="model.BusinessWebsite !== null && model.BusinessWebsite !== '' " class="control-wrapper form-control">
+                            <span ng-if="model.BusinessWebsite.indexOf('http') > -1  || model.BusinessWebsite.indexOf('https') > -1">
+                                <a href="{{model.BusinessWebsite}}" target="_blank" ng-model="model.BusinessWebsite">{{model.BusinessWebsite}}</a>
+                            </span>
+                            <span ng-if="!(model.BusinessWebsite.indexOf('http') > -1  || model.BusinessWebsite.indexOf('https') > -1)">
+                                <a href="http://{{model.BusinessWebsite}}" target="_blank" ng-model="model.BusinessWebsite">http://{{model.BusinessWebsite}}</a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form__group boxed__error" ng-validation="errors.BusinessDescription">
+                    <label class="form__label">Business Description <abbr title="Required">*</abbr></label>
+                    <div class="form__control" ng-if="model.CanEditOrganizationProfile">
+                        <textarea ng-model="model.BusinessDescription" class="input--full textarea--medium"
+                                ui-tinymce="tinymceOptions"></textarea>
+                    </div>
+                    <div class="form__control" ng-if="!model.CanEditOrganizationProfile">
+                        <div class="control-wrapper input--full" ng-bind-html="model.BusinessDescription | unsafe"></div>
+                    </div>
+                </div>
+
+                <h3 class="subheader--body">Head Office Mailing Address</h3>
+
+                <div class="form__group">
+                    <label class="form__label">Address line 1 <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <input type="text" class="input--medium" ng-model="model.HeadOfficeAddress.AddressLine1" ng-validation ng-editing="model.CanEditOrganizationProfile" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Address line 2</label>
+                    <div class="form__control">
+                        <input type="text" class="input--medium" ng-model="model.HeadOfficeAddress.AddressLine2" ng-editing="model.CanEditOrganizationProfile" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">City <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <input type="text" class="input--medium" ng-model="model.HeadOfficeAddress.City" ng-validation ng-editing="model.CanEditOrganizationProfile" />
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <div class="form__label">Province <abbr title="Required">*</abbr></div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <div class="wrapper--dropdown selectmenu input--medium">
+                                <select class="input--medium"
+                                        ng-model="model.HeadOfficeAddress.RegionId"
+                                        ng-options="item.Key as item.Value for item in provinces"
+                                        ng-editing="model.CanEditOrganizationProfile"
+                                        ng-validation></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label">Postal Code <abbr title="Required">*</abbr></label>
+                    <div class="form__control">
+                        <input type="text" class="input--small" ng-model="model.HeadOfficeAddress.PostalCode" maxlength="6" ng-postal ng-validation ng-editing="model.CanEditOrganizationProfile" />
+                    </div>
+                </div>
+
+                <div>
+                    <a class="btn btn--primary"
+                       ng-if="!model.CanEditOrganizationProfile"
+                       ng-href="{{model.BackURL}}">
+                        Back
+                    </a>
+                    <a class="btn btn--secondary"
+                       ng-if="model.CanEditOrganizationProfile"
+                       ng-href="{{model.BackURL}}">
+                        {{(model.CreateOrganizationProfile ? "Skip this step" : "Cancel")}}
+                    </a>
+                    <button class="btn btn--primary pull-right"
+                            ng-if="model.CanEditOrganizationProfile"
+                            ng-click="save()">
+                        {{(model.CreateOrganizationProfile ? "Create" : "Save")}} Organization Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

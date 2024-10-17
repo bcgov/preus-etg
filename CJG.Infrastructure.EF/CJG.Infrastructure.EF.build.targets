@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+
+  <UsingTask TaskName="TransformXml" AssemblyFile="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Web\Microsoft.Web.Publishing.Tasks.dll" />
+  
+  <PropertyGroup>
+    <BuildDependsOn>
+      CopyRuntimeDependencies;
+      $(BuildDependsOn);
+    </BuildDependsOn>
+  </PropertyGroup>
+
+  <!-- ********************************************************************************************
+  Target: CopyRuntimeDependencies
+  Description: Copies dependencies needed at runtime but not referenced directly in the project.
+  -->
+  <ItemGroup>
+    <Dependencies Include="..\packages\EntityFramework.6.2.0\tools\migrate.exe" />
+  </ItemGroup>
+
+  <Target Name="CopyRuntimeDependencies">
+    <Copy SourceFiles="@(Dependencies)" DestinationFolder="$(OutDir)" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="SetTransformAppConfigDestination" BeforeTargets="PrepareForBuild" Condition="exists('app.$(Configuration).config')">
+    <PropertyGroup>
+      <!-- Force build process to use the transformed configuration file from now on. -->
+      <AppConfig>$(IntermediateOutputPath)$(TargetFileName).config</AppConfig>
+    </PropertyGroup>
+    <Message Text="AppConfig transformation destination: = $(AppConfig)" />
+  </Target>
+
+  <!-- Transform the app.config after the prepare for build completes. -->
+  <Target Name="TransformAppConfig" AfterTargets="PrepareForBuild" Condition="exists('app.$(Configuration).config')">
+    <!-- Generate transformed app config in the intermediate directory -->
+    <TransformXml Source="app.config" Destination="$(AppConfig)" Transform="app.$(Configuration).config" />
+  </Target>
+
+  <Target Name="AfterPublish">
+    <PropertyGroup>
+      <DeployedConfig>$(_DeploymentApplicationDir)$(TargetName)$(TargetExt).config$(_DeploymentFileMappingExtension)</DeployedConfig>
+    </PropertyGroup>
+    <!--Publish copies the untransformed App.config to deployment directory so overwrite it-->
+    <Copy Condition="Exists('$(DeployedConfig)')" SourceFiles="$(IntermediateOutputPath)$(TargetFileName).config" DestinationFiles="$(DeployedConfig)" />
+  </Target>
+</Project>

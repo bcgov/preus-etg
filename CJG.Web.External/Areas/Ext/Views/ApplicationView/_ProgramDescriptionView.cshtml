@@ -1,0 +1,79 @@
+﻿<div class="form--readonly">
+    <div class="form__group">
+        <div class="form__label">Program Description:</div>
+        <div class="form__control">
+            {{model.ProgramDescription.Description}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Applicant Type:</div>
+        <div class="form__control">
+            {{model.ProgramDescription.ApplicantType}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Number of Participants:</div>
+        <div class="form__control">
+            {{model.ProgramDescription.EstimatedParticipants}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Employment status of participants for whom this program is intended:</div>
+        <div class="form__control">
+            <ul ng-if="model.ProgramDescription.ParticipantEmploymentStatuses != null && model.ProgramDescription.ParticipantEmploymentStatuses.length > 0">
+                <li ng-repeat="status in model.ProgramDescription.ParticipantEmploymentStatuses">
+                    {{status.Caption}}
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Vulnerable populations supported:</div>
+        <div class="form__control">
+            <ul ng-if="model.ProgramDescription.VulnerableGroups != null && model.ProgramDescription.VulnerableGroups.length > 0">
+                <li ng-repeat="vulnerable in model.ProgramDescription.VulnerableGroups">
+                    {{vulnerable.Caption}}
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Underrepresented populations supported:</div>
+        <div class="form__control">
+            <ul ng-if="model.ProgramDescription.UnderRepresentedPopulations != null && model.ProgramDescription.UnderRepresentedPopulations.length > 0">
+                <li ng-repeat="population in model.ProgramDescription.UnderRepresentedPopulations">
+                    {{population.Caption}}
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">North American Industry Classification System (NAICS) code for the sector in which the participants will be employed at the end of training:</div>
+        <div class="form__control">
+            {{model.ProgramDescription.NAICS != null ? model.ProgramDescription.NAICS.Code + "|" + model.ProgramDescription.NAICS.Description : ""}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">National Occupation Classification (NOC) for the occupations in which the participants will be employed at the end of training:</div>
+        <div class="form__control">
+
+            {{model.ProgramDescription.NOC != null ? model.ProgramDescription.NOC.Code + "|" + model.ProgramDescription.NOC.Description : ""}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Community that will benefit from the program:</div>
+        <div class="form__control">
+            <ul ng-if="model.ProgramDescription.Communities != null && model.ProgramDescription.Communities.length > 0">
+                <li ng-repeat="community in model.ProgramDescription.Communities">
+                    {{community.Caption}}
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Number of supporting employers:</div>
+        <div class="form__control">
+            {{model.ProgramDescription.SupportingEmployers}}
+        </div>
+    </div>
+</div>

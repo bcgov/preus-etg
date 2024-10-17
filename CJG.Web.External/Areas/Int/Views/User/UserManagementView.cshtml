@@ -1,0 +1,76 @@
+﻿@{
+	ViewBag.Title = "User Management";
+}
+<div ng-controller="UserManagementDashboard">
+	<div>
+		<h2>User Accounts</h2>
+	</div>
+	<div>
+		<div class="form__group">
+			<div class="form__control float-left">
+				<div>Quantity</div>
+				<div class="selectmenu">
+					<select ng-model="filter.Quantity" ng-options="item as item for item in quantities" class="input--small" ng-change="applyFilter()"></select>
+				</div>
+			</div>
+			<div class="form__control float-right">
+				<div>Search Name/Email</div>
+				<input type="text" ng-model="filter.SearchCriteria" ng-keypress="search($event)" />
+				<button class="btn btn--search" ng-click="search($event)"></button>
+			</div>
+		</div>
+		<div>
+			<table class="form-table">
+				<thead>
+					<tr class="form-table-heading display--table-row">
+						<th class="action {{sortDirection('InternalUser.FirstName')}}" ng-click="sort('InternalUser.FirstName')">First Name</th>
+						<th class="action {{sortDirection('InternalUser.LastName')}}" ng-click="sort('InternalUser.LastName')">Last Name</th>
+						<th class="action {{sortDirection('InternalUser.Salutation')}}" ng-click="sort('InternalUser.Salutation')">Salutation</th>
+						<th class="action {{sortDirection('InternalUser.IDIR')}}" ng-click="sort('InternalUser.IDIR')">IDIR</th>
+						<th class="action {{sortDirection('Role')}}" ng-click="sort('Role')">Role</th>
+						<th class="action {{sortDirection('InternalUser.Email')}}" ng-click="sort('InternalUser.Email')">E-mail Address</th>
+						<th class="action {{sortDirection('InternalUser.PhoneNumber')}}" ng-click="sort('InternalUser.PhoneNumber')">Phone Number</th>
+						<th class="action {{sortDirection('Active')}}" ng-click="sort('Active')">Active</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody class="category-table-body">
+					<tr class="form-table-row-with-hover" ng-repeat="user in model.Items">
+						<td class="form-table-cell">{{user.FirstName}}</td>
+						<td class="form-table-cell">{{user.LastName}}</td>
+						<td class="form-table-cell">{{user.Salutation}}</td>
+						<td class="form-table-cell">{{user.IDIR}}</td>
+						<td class="form-table-cell">{{user.Role}}</td>
+						<td class="form-table-cell">{{user.Email}}</td>
+						<td class="form-table-cell">{{user.PhoneNumber}}</td>
+						<td class="form-table-cell">{{user.Active ? 'True' : 'False'}}</td>
+						<td class="form-table-cell">
+							<button class="btn btn--secondary" ng-click="openUserModal(user.ApplicationUserId)">
+								Edit
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div>
+		<span ng-show="model.Total">
+			Showing {{pager.items.first}} to {{pager.items.last}} of {{pager.items.total}} entries
+		</span>
+		<div class="button-group">
+			<button class="btn btn--secondary float-left" ng-click="openUserModal()">Add User</button>
+			<div class="float-right">
+				<button class="btn btn--secondary internal-previous" ng-disabled="!pager.enablePrevious" tabindex="0" ng-click="!pager.enablePrevious || applyFilter(pager.page - 1)">Previous</button>
+				<span>
+					<button class="btn btn--secondary btn--page" tabindex="0" ng-show="pager.showFirstPage" ng-click="applyFilter(pager.showFirstPage)">{{pager.showFirstPage}}</button>
+					<span class="ellipsis" ng-show="pager.showFirstPage">…</span>
+					<button ng-repeat="page in pager.pages" class="btn btn--secondary btn--page" ng-class="{ 'btn--current' : pager.page === page }" tabindex="0" ng-click="applyFilter(page)" ng-disabled="pager.page === page">{{page}}</button>
+					<span class="ellipsis" ng-show="pager.showLastPage">…</span>
+					<button class="btn btn--secondary btn--page" tabindex="0" ng-show="pager.showLastPage" ng-click="applyFilter(pager.showLastPage)">{{pager.showLastPage}}</button>
+				</span>
+				<button class="btn btn--secondary internal-next" ng-disabled="!pager.enableNext" tabindex="0" ng-click="!pager.enableNext || applyFilter(pager.page + 1)">Next</button>
+			</div>
+		</div>
+	</div>
+</div>

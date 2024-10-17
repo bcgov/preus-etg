@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="https://gws1.test.bceid.ca/webservices/client/v9/BCeIDService.asmx?wsdl" docRef="https://gws1.test.bceid.ca/webservices/client/v9/BCeIDService.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="https://gws1.test.bceid.ca/webservices/client/v9/BCeIDService.asmx" xmlns:q1="http://www.bceid.ca/webservices/Client/V9/" binding="q1:BCeIDServiceSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="https://gws1.test.bceid.ca/webservices/client/v9/BCeIDService.asmx" xmlns:q2="http://www.bceid.ca/webservices/Client/V9/" binding="q2:BCeIDServiceSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

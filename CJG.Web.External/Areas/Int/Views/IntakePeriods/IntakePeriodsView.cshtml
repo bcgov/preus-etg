@@ -1,0 +1,98 @@
+﻿@{
+    ViewBag.Title = "Manage Intake Periods";
+}
+<div id="manage-intake-periods">
+    <div ng-controller="IntakePeriodsView" ng-fiscal-year-id="@ViewBag.FiscalYearId" ng-grant-program-id="@ViewBag.GrantProgramId" ng-grant-stream-id="@ViewBag.GrantStreamId" ng-app-date="@ViewBag.AppDateTime">
+        <div ng-if="alert.message" class="row row--alert">
+            <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+        </div>
+        <div>
+            <h2 class="header__title">Manage Intake Periods</h2>
+        </div>
+        <div class="row row--alert" ng-if="model.SummaryMessage">
+            <div class="alert alert--default" ng-class="'alert--' + model.SummaryType" role="alert" ng-bind-html="model.SummaryMessage">
+            </div>
+        </div>
+        <div class="form__group-set">
+            <div class="form__group">
+                <label class="form__label">Fiscal Year</label>
+                <div class="form__control">
+                    <div class="selectmenu">
+                        <select class="form-control" ng-model="selectedFiscalYear" ng-options="item.Id as item.Caption for item in fiscalYears" ng-change="onFiscalYearChange()">
+                            <option value="" class="">&lt; Select value &gt;</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form__group">
+                <label class="form__label">Grant Program</label>
+                <div class="form__control">
+                    <div class="selectmenu">
+                        <select class="form-control" ng-model="selectedGrantProgram" ng-options="item.Id as item.Name for item in grantPrograms" ng-change="onGrantProgramChange()">
+                            <option value="" class="">&lt; Select value &gt;</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form__group" ng-show="showGrantStreamSelection">
+                <label class="form__label">Grant Stream</label>
+                <div class="form__control">
+                    <div class="selectmenu">
+                        <select class="form-control" ng-model="selectedGrantStream" ng-options="item.Id as item.Name for item in grantStreams" ng-change="onGrantStreamChange()">
+                            <option value="" class="">&lt; Select value &gt;</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form__group" ng-show="showGrantStreamSelection">
+                <label class="form__label" for="">&nbsp;</label>
+                <div class="form__control">
+                    <button class="btn btn--primary" ng-click="refresh()" ng-show="selectedGrantStream > 0">Refresh</button>
+                    <button class="btn btn--primary" ng-click="openIntakeModal()" ng-show="selectedGrantStream > 0">Add New</button>
+                </div>
+            </div>
+
+        </div>
+        <div ng-show="showIntakePeriods">
+            <table class="table--datatable-horizontal nowrap table--intake-periods">
+                <thead>
+                    <tr>
+                        <th width="325">Intake Period</th>
+                        <th><b>Start Date</b></th>
+                        <th><b>End Date</b></th>
+                        <th><b>Status</b></th>
+                        <th class="text-align-center"><b>Actions</b></th>
+                    </tr>
+                </thead>
+                <tbody ng-if="model.TrainingPeriods.length > 0">
+                    <tr ng-repeat="trainingPeriod in model.TrainingPeriods">
+                        <td>
+                            <strong>{{trainingPeriod.Caption}}</strong>
+                        </td>
+                        <td>
+                            {{trainingPeriod.FormattedStartDate}}
+                        </td>
+                        <td>
+                            {{trainingPeriod.FormattedEndDate}}
+                        </td>
+                        <td>
+                            {{trainingPeriod.Status}}
+                        </td>
+                        <td class="text-align-center">
+                            <button class="btn btn--secondary" ng-click="openIntakeModal(trainingPeriod.Id)">Edit</button>
+                            <button class="btn btn--secondary" ng-click="openIntakeToggleModal(trainingPeriod.Id)">{{trainingPeriod.IsActive ? "Disable" : "Enable" }}</button>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody ng-if="model.TrainingPeriods.length == 0">
+                    <tr>
+                        <td colspan="5">
+                            No Intake Periods found
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

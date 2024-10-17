@@ -1,0 +1,43 @@
+﻿@using CJG.Web.External.Areas.Int.Controllers
+
+<div ng-if="amountOwing">
+    <h2 class="header__title header--small">Approved Claims for Amount Owing ({{amountOwing.length}} claims)</h2>
+    <table class="table--request-management-amount-owing" width="100%">
+        <thead>
+            <tr style="border-bottom: 1px solid black; border-top: 1px solid black">
+                <th class="text-align--left">
+                    Claim Number
+                </th>
+                <th class="text-align--left">
+                    Applicant
+                </th>
+                <th>
+                    Assessed
+                </th>
+                <th class="text-align--left">
+                    Type
+                </th>
+                <th style="color: red;">
+                    Amount Owing
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-if="!amountOwing.length">
+                <td style="text-align: center;" colspan="5">No Claims are ready for Amount Owing generation</td>
+            </tr>
+            <tr style="text-align: center" ng-repeat="item in amountOwing">
+                <td class="text-align--left">
+                    <a href="/Int/Claim/Assessment/View/{{item.ClaimId}}/{{item.ClaimVersion}}" class="link" target="_blank">{{item.ClaimNumber}}</a>
+                </td>
+                <td class="text-align--left">{{item.Applicant}}</td>
+                <td>{{item.Assessed}}</td>
+                <td class="text-align--left">
+                    <mark ng-if="item.IsAccrual">{{item.TypeName}}</mark>
+                    <span ng-if="!item.IsAccrual">{{item.TypeName}}</span>
+                </td>
+                <td style="color: red;">{{item.Amount}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

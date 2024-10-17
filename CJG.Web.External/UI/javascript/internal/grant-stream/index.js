@@ -1,0 +1,1 @@
+require('./grant-stream-view');

@@ -1,0 +1,69 @@
+﻿@using CJG.Core.Entities
+
+<div ng-controller="GrantStreamApplicationBusinessCase" class="form-section" ng-show="model.Id && model.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+    <span class="panel-section-item">
+        <span class="panel-section-title" ng-click="toggle($event)">Business Case</span>
+        <span class="panel-section-buttons">
+            <span>
+                <input type="checkbox" id="application-businesscase" ng-model="model.BusinessCaseIsEnabled" ng-click="changeBusinessCaseEnabled()" />
+                <label for="application-businesscase">Business case enabled</label>
+            </span>
+            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            <section-edit-buttons ng-model="section.editing"></section-edit-buttons>
+            <span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+        </span>
+    </span>
+    <div class="panel-section-content" ng-if="section.show">
+        <div class="form-section-container">
+            <p>
+                You may enter applicant guidance for the business case attachment that you allow for this grant stream. The guidance will show as an introduction to this section on the grant application.
+                The internal heading will be used for the grant file section for assessors.
+            </p>
+        </div>
+        <div class="form-section-container">
+            <div class="form__group">
+                <div class="label-wrapper">
+                    <label class="form__label">User Guidance:</label>
+                    <a class="link" ng-click="preview()">Test User Guidance</a>
+                </div>
+                <div class="control-wrapper">
+                    <textarea ng-model="model.BusinessCaseUserGuidance" rows="2" ng-validation ng-editing></textarea>
+                </div>
+            </div>
+            <div class="form__group">
+                <div class="label-wrapper">
+                    <label class="form__label">Template URL:</label>
+                </div>
+                <div class="control-wrapper">
+                    <input ng-model="model.BusinessCaseTemplateURL" class="input--full" ng-disabled="!model.modifingBusinessCase" ng-validation ng-editing />
+                </div>
+            </div>
+            <div class="form__group">
+                <div class="label-wrapper">
+                    <label class="form__label">Business case is mandatory:</label>
+                </div>
+                <div class="control-wrapper">
+                    <input type="radio" id="business-case-yes" ng-model="model.BusinessCaseRequired" ng-value="true" ng-disabled="!section.editing" /> <label for="business-case-yes">Yes</label>
+                    <input type="radio" id="business-case-no" ng-model="model.BusinessCaseRequired" ng-value="false" ng-disabled="!section.editing" /> <label for="business-case-no">No</label>
+                </div>
+            </div>
+
+            <div class="form__group">
+                <div class="label-wrapper">
+                    <label class="form__label">Internal Heading:</label>
+                </div>
+                <div class="control-wrapper">
+                    <input ng-model="model.BusinessCaseInternalHeader" class="input--full" ng-disabled="!model.modifingBusinessCase" ng-validation ng-editing />
+                </div>
+            </div>
+            <div class="form__group">
+                <div class="label-wrapper">
+                    <label class="form__label">External Heading:</label>
+                </div>
+                <div class="control-wrapper">
+                    <input ng-model="model.BusinessCaseExternalHeader" class="input--full" ng-disabled="!model.modifingBusinessCase" ng-validation ng-editing />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,51 @@
+﻿
+<div class="form__group">
+    <label class="form__label">
+        <span ng-bind-html="parseQuestionText(group.allQuestion.Question)"></span> <abbr title="Required">*</abbr>
+    </label>
+
+    <div class="form__group bg-color--whitesmoke padding--20" ng-show="participants.length">
+        <label class="form__label font-size--small" for="mostImportantOutcomeForAllParticipants">{{group.allQuestion.Description}}: <span class="font-weight--normal">(optional)</span></label>
+        <div class="form__control">
+            <div class="control-wrapper selectmenu">
+                <select class="form-control"
+                        ng-model="group.allAnswer"
+                        ng-options="item.Id as item.Answer for item in group.allQuestion.Level1Options"
+                        ng-change="applyToAllAnswers(group)"></select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="block--completion-report">
+    <div class="table-wrapper">
+        <pager ng-filter="getParticipants" ng-local="true">
+            <table class="form__group--data-grid">
+                <thead>
+                    <tr>
+                        <th ng-repeat="heading in group.allQuestion.TableHeadings">
+                            {{heading}}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="participant in $parent.$ctrl.ngItems" ng-show="$parent.$parent.$ctrl.showPage($index)">
+                        <td class="participant-name-panel">{{participant.FirstName}} {{participant.LastName}}</td>
+                        <td ng-repeat="question in group.Questions">
+                            <div class="form-item">
+                                <div class="form__control select--medium-small" ng-if="$index == 0 || getParticipantAnswer(group.Questions[$index - 1].Level1Answers, participant.Id).IntAnswer">
+                                    <div class="control-wrapper selectmenu">
+                                        <select class="form-control"
+                                                ng-model="getParticipantAnswer(question.Level1Answers, participant.Id).IntAnswer"
+                                                ng-options="item.Id as item.Answer for item in question.Level1Options"
+                                                ng-change="updateOutcomeReason(group, participant.Id, $index)"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </pager>
+    </div>
+</div>

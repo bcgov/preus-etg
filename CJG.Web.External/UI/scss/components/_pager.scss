@@ -1,0 +1,114 @@
+// There's !important styling from default dataTable stylesheet
+// need to override it hard way....
+.pager {
+  .paginate_button {
+    @extend .btn--secondary;
+    background: color('secondaryBtnBG') !important;
+    border: solid 1px color('secondaryBtnBorder') !important;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 4px;
+    text-align: center;
+
+    &.previous {
+      margin-left: 0;
+    }
+
+    &.next {
+      margin-right: 0;
+    }
+
+    &.current {
+      background: color('DarkGrey') !important;
+      color: color('white') !important;
+      cursor: default;
+
+      &:hover {
+        color: color('white') !important;
+      }
+    }
+
+    &:hover {
+      color: color('Charcoal') !important;
+      text-decoration: none;
+    }
+
+    &.disabled {
+      color: color('silver') !important;
+      cursor: default;
+    }
+  }
+}
+button.btn.btn--secondary.internal-next,
+button.btn.btn--secondary.internal-previous {
+  margin-left: 0;
+  height: 29px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+button.btn.btn--page.btn--secondary.btn--page:first-child,
+button.btn.btn--page.btn--secondary.btn--page:last-child,
+button.btn.btn--page.btn--secondary {
+  float: none;
+  height: 29px;
+  min-width: 35px;
+  padding-top: 0;
+  padding-bottom: 0;
+  vertical-align: bottom;
+}
+button.btn.btn--secondary {
+  height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.layout-external .btn.btn--secondary,
+.ngdialog-content .btn.btn--secondary{
+  height: 40px;
+}
+.pager--small {
+  .paginate_button {
+    height: $button-internal-height !important;
+    padding: $button-internal-padding !important;
+    font-size: $font-size-xxs;
+    line-height: 1.2;
+    border-radius: 0;
+    font-size: $font-size-default;
+    font-weight: bold;
+  }
+}
+
+
+.layout-internal {
+  .main {
+    .dataTables_wrapper {
+      .dataTables_paginate {
+        @extend .pager;
+        @extend .pager--small;
+
+        .paginate_button {
+          min-width: 0;
+        }
+      }
+    }
+  }
+}
+
+.k-window {
+  .dataTables_wrapper {
+    .dataTables_paginate {
+      @extend .pager;
+      @extend .pager--small;
+
+      .paginate_button {
+        min-width: 0;
+      }
+    }
+  }
+}
+
+.block--home-page-pager {
+  @include media-breakpoint-up(md) {
+    display: flex;
+    justify-content: space-around;
+  }
+}

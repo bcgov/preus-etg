@@ -1,0 +1,12 @@
+﻿@model Tuple<Version, string>
+@{
+    ViewBag.Title = "Version";
+}
+
+<div id="now">
+
+    <h1>@ViewBag.Title</h1>
+
+    <p><strong>Version:</strong> @Model.Item1</p>
+    <p><strong>Program:</strong> @Model.Item2</p>
+</div>

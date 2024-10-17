@@ -1,0 +1,79 @@
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+.container {
+  @include make-container();
+  @include make-container-max-widths();
+}
+
+.layout-content {
+  max-width: 100%;
+  width: 100%;
+}
+
+.row {
+  @include make-row();
+}
+
+// Success and error states
+.alert-state {
+  &:before {
+    content: '';
+    display: inline-block;
+    margin: 0 gap() 0 gap(2);
+    vertical-align: middle;
+  }
+
+  margin-top: gap();
+  min-height: gap(5);
+
+  span {
+    display: inline-block;
+    padding: gap() gap() gap() 0;
+    max-width: 80%;
+    min-height: gap(5);
+    vertical-align: middle;
+  }
+}
+
+.success-state {
+  &:before {
+    // @extend .icon-success-state;
+  }
+
+  background: color('success');
+}
+
+.error-state {
+  &:before {
+    // @extend .icon-error-state;
+  }
+
+  background: color('error');
+}
+
+.ui-helper-hidden {
+  display: none;
+}
+
+.ui-helper-hidden-accessible {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.v-bottom {
+  vertical-align: bottom;
+}
+
+abbr[title="Required"] {
+  border-bottom: none;
+  text-decoration: none;
+}

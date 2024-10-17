@@ -1,0 +1,16 @@
+﻿<div ng-controller="ApplicationBusinessCaseView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+    <div class="form--readonly">
+        <div class="form__group">
+            <div class="form__control">
+                <div ng-if="model.BusinessCaseDocument != null">
+                    <a href="/Ext/Application/Attachment/Download/{{model.GrantApplicationId}}/{{model.BusinessCaseDocument.Id}}">{{model.BusinessCaseDocument.FileName}}</a>
+                    <br />{{model.BusinessCaseDocument.Description}}
+                </div>
+                <div ng-if="model.BusinessCaseDocument == null">
+                    <span>None</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />

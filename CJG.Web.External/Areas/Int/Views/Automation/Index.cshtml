@@ -1,0 +1,53 @@
+﻿@{
+    ViewBag.Title = "Automation Configuration";
+}
+
+<div>
+    <div class="form-section">
+        <div>
+            <h2 class="header__title">@ViewBag.Title</h2>
+        </div>
+    </div>
+
+    <div class="details-block">
+        <div class="panel-section-list">
+            <div class="form-section" ng-controller="AutomationManagement">
+                <div class="panel-section-item">
+                    <div class="panel-section-title">
+                        <h3 class="display-inline-block">Settings</h3>
+                    </div>
+                    <div class="panel-section-buttons">
+                        <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+                        <section-edit-buttons ng-model="section.editing"></section-edit-buttons>
+                    </div>
+                </div>
+                <div class="panel-section-content">
+                    <div class="row row--alert" ng-if="alert.message">
+                        <div class="alert alert--default" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+                    </div>
+                    <p>The Automation section allows you to toggle automation services on or off.</p>
+    
+                    <div class="form form--2-col">
+                        <div class="col-50p">
+                            <div class="form__group">
+                                <div class="form__label">Unassessed Application Service:</div>
+                                <div class="form__control">
+                                    <div class="control-wrapper">
+                                        <div class="selectmenu">
+                                            <select ng-model="model.ReturnedToUnassessedServiceState" ng-options="item.Value as item.Key for item in model.StateOptions" class="input--medium" ng-editing></select>
+                                        </div>
+                                    </div>
+                                    <p>The service that will return Grant Applications automatically after 60 days.</p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-50p">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

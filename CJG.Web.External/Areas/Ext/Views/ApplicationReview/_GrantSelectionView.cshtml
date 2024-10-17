@@ -1,0 +1,38 @@
+﻿<div class="form--readonly">
+    <div class="form__group">
+        <div class="form__label">For training starting in period:</div>
+        <div class="form__control">
+            {{toPST(model.GrantOpeningTrainingPeriodStartDate)}}
+            to
+            {{toPST(model.GrantOpeningTrainingPeriodEndDate)}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Training start date:</div>
+        <div class="form__control">
+            {{toPST(model.StartDate)}}
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Training end date:</div>
+        <div class="form__control">
+            {{toPST(model.EndDate)}}
+        </div>
+    </div>
+    
+    <div ng-repeat="question in model.StreamEligibilityQuestions">
+        <div class="form__group">
+            <div class="form__label" ng-bind-html="question.EligibilityQuestion | unsafe"></div>
+            <div class="form__control">
+                {{ question.EligibilityAnswer ? 'Yes' : 'No' }}
+            </div>
+        </div>
+        <div class="form__group" ng-if="question.EligibilityRationaleAnswerAllowed === true && question.EligibilityAnswer === true && question.RationaleAnswer">
+            <div class="form__label" style="font-weight: normal; font-style: italic; padding-left: 1em;">{{ question.EligibilityRationaleAnswerLabel }}</div>
+            <div class="form__control form__control__with_embedded_html">
+                <div class="form__group__with_embedded_html" ng-bind-html="question.RationaleAnswer | unsafe"></div>
+            </div>
+        </div>
+    </div>
+</div>

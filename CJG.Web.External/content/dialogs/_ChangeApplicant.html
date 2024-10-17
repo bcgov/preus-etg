@@ -1,0 +1,29 @@
+﻿<div>
+	<div class="dialog-header">
+		<h3>{{ngDialogData.title}}</h3>
+	</div>
+	<div class="dialog-content">
+		<div class="modal-content">
+
+			<div class="form well">
+				<div class="form__group form__group--applicant-contact">
+					<div class="form__label">
+						Select the new applicant contact from the applicant's registered users shown below and then click Save.
+					</div>
+					<div class="form__control">
+						<div class="selectmenu">
+							<select ng-model="ngDialogData.applicantId" ng-options="item.Key as item.Value for item in ngDialogData.applicantContacts"></select>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<div class="form well">
+					<button class="btn btn--secondary" data-disableonsubmit="false" ng-click="closeThisDialog()">Cancel</button>
+					<button class="btn btn--primary pull-right save-attachment" ng-disabled="!ngDialogData.applicantId" ng-click="confirm(ngDialogData.applicantId)">Save</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

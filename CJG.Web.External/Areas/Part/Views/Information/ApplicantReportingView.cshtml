@@ -1,0 +1,75 @@
+﻿@using CJG.Web.External.Areas.Part.Controllers
+@model CJG.Web.External.Areas.Part.Models.ParticipantInfoViewModel
+@{
+    ViewBag.Title = "Participant Information Form";
+}
+@using CJG.Web.External.Areas.Ext.Controllers
+<script type="text/javascript">
+    function getViewModel() {
+        return @Html.Raw(Json.Encode(Model));
+    }
+</script>
+<input type="hidden" id="participant-session-duration" value="@System.Configuration.ConfigurationManager.AppSettings["ParticipantSessionDuration"]" />
+<div ng-controller="ParticipantInformationView" ng-init="init()">
+    <div class="form-section">
+        <div class="float-left">
+            <h1 class="header__title">Participant Reporting</h1>
+        </div>
+    </div>
+    <div>
+        <p class="subheader--step">Step 1 of @Model.ParticipantInfoStep0ViewModel.TotalSteps</p>
+        <h2 class="subheader">Participant Reporting</h2>
+        <div ng-if="alert.message" class="row row--alert">
+            <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+        </div>
+        <div class="notice notice--icon">
+            <p>You may use Participant Reporting only if you have a participant who is unable to use your participant reporting invitation to do it themselves.</p>
+            <p>
+                You must follow all steps of the procedure below to completion for each participant you report; you may not exit and return to complete reporting for a participant.
+            </p>
+        </div>
+        <dl class="info-list">
+            <dt>Training Description:</dt>
+            <dd>
+                @Model.ParticipantInfoStep1ViewModel.ProgramDescription
+            </dd>
+            <dt>Start Date:</dt>
+            <dd>
+                @Model.ParticipantInfoStep1ViewModel.ProgramStartDate.ToString("yyyy-MM-dd")
+            </dd>
+        </dl>
+        <b>Reporting Procedure:</b>
+        <p></p>
+        <p>
+            Download and print the <a href="@Url.Action(nameof(InformationController.DownloadAttachment), nameof(InformationController).Replace("Controller", ""))">Participant Consent and Information Form (from here).</a>
+        </p>
+        <p>
+            Review the form with the participant for their acceptance.
+        </p>
+        <p>
+            Ensure they understand and sign the Participant Consent form (page 1).
+        </p>
+        <p>
+            Using the Participant Information Form (pages 2 to end) collect the information required from the participant.  All parts of the form must be completed including the Social Insurance Number.
+        </p>
+        <p>
+            Double-check the form to ensure you have it completed before you continue with the remaining steps.
+        </p>
+        <p>
+            Scan the signed consent (page 1 only) and
+            <span class="link" ng-click="model.ParticipantInfoStep0ViewModel.HasConsentForm ? changeAttachment() : addAttachment()"><strong>upload it here</strong></span>.
+            <b ng-if="model.ParticipantInfoStep0ViewModel.HasConsentForm">Upload Complete</b>
+        </p>
+        <p>
+            <b>Continue by clicking <span style="text-decoration: underline">Continue with Participant Reporting</span> and complete all steps in sequence to the end.  Make sure the confirmation of completion is shown in Step 5.  If you do not complete all steps then the uploaded consent will be discarded and you will need to start again.</b>
+        </p>
+        <div>
+            <a href="/Part/Information/Applicant/Form/@Model.ParticipantInfoStep0ViewModel.InvitationKey" class="btn btn--primary" ng-disabled="!model.ParticipantInfoStep0ViewModel.HasConsentForm">Continue with Participant Reporting</a>
+            @Html.ActionLink("Cancel", nameof(ParticipantReportingController.ParticipantReportingView), nameof(ParticipantReportingController).Replace("Controller", ""), new { area = "Ext", grantApplicationId = Model.ParticipantInfoStep0ViewModel.GrantApplicationId }, new { @class = "btn btn--secondary" })
+        </div>
+        <br />
+        <p><b>To consult the Ministry on this procedure or gain understanding of the consent form please call the help desk using the Contact us link below.</b></p>
+        <p><b>Do not send personal information by email.  Always use secure destruction methods for disposing of hardcopy forms containing personal information.</b></p>
+        <p>NEXT STEP: Contact Information</p>
+    </div>
+</div>

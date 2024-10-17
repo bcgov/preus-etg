@@ -1,0 +1,199 @@
+@model CJG.Web.External.Areas.Int.Models.ParticipantContactInfoViewModel
+
+<div class="infoTable">
+    <div class="infotable-tbody">
+
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Reported Employer:</div>
+                    <div class="infoTable--data">@Model.ReportedEmployerName</div>
+                </div>
+            </div>
+
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Residency status:</div>
+                    <div class="infoTable--data">@Model.ResidencyStatus</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Name:</div>
+                    <div class="infoTable--data">@Model.FullName</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Immigrated:</div>
+                    <div class="infoTable--data">@Model.Immigrated</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="infotable-tr">
+            @*
+            <div class="infotable-td infotable-td__splitter">
+                <div class="infoTable--split-cell">
+                    <div class="display-inline-block">
+                        <div class="infoTable--label infoTable--label--narrow">Date of birth:</div>
+                        <div class="infoTable--data">@Model.DateOfBirth</div>
+                    </div>
+                    <div class="display-inline-block margin-left-10">
+                        <div class="display-inline-block font-weight-bold">Age: </div>
+                        <div class="display-inline-block">@Model.Age</div>
+                    </div>
+                </div>
+            </div>
+            *@
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Date of birth:</div>
+                    <div class="infoTable--data">@Model.DateOfBirth</div>
+                </div>
+            </div>
+
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Refugee:</div>
+                    <div class="infoTable--data">@Model.Refugee</div>
+                </div>
+            </div>
+
+        </div>
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Gender:</div>
+                    <div class="infoTable--data">@Model.Gender</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Youth in Care:</div>
+                    <div class="infoTable--data">@Model.YouthInCare</div>
+                </div>
+            </div>
+        </div>
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">SIN:</div>
+                    <div class="infoTable--data">@Model.SIN</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Person w/Disability:</div>
+                    <div class="infoTable--data">@Model.PersonWithDisability</div>
+                </div>
+            </div>
+        </div>
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Phone (Primary):</div>
+                    <div class="infoTable--data">@Model.ParticipantPrimaryPhone</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Indigenous person:</div>
+                    <div class="infoTable--data">@Model.AboriginalPerson</div>
+                </div>
+            </div>
+        </div>
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Phone (Alternate):</div>
+                    <div class="infoTable--data">@Model.AlternatePhone</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">- Indigenous Group:</div>
+                    <div class="infoTable--data">@Model.AboriginalGroup</div>
+                </div>
+            </div>
+        </div>
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Email (Personal):</div>
+                    <div class="infoTable--data">@Model.ParticipantEmail</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">- Living:</div>
+                    <div class="infoTable--data">@Model.Living</div>
+                </div>
+            </div>
+        </div>
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Residential address:</div>
+                    <div class="infoTable--data">
+                        @Model.ResidentialAddressLine1 <br />
+                        @Model.ResidentialAddressLine2
+                    </div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Visible Minority:</div>
+                    <div class="infoTable--data">
+                        @Model.VisibleMinority
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">City:</div>
+                    <div class="infoTable--data">@Model.City</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Marital Status:</div>
+                    <div class="infoTable--data">@Model.MaritalStatus</div>
+                </div>
+            </div>
+        </div>
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Postal Code:</div>
+                    <div class="infoTable--data">@Model.PostalCode</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label"># of Dependents:</div>
+                    <div class="infoTable--data">@Model.NumberOfDependents</div>
+                </div>
+            </div>
+        </div>
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Highest education:</div>
+                    <div class="infoTable--data">@Model.HighestLevelEducation</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Official Language:</div>
+                    <div class="infoTable--data">@Model.FederalOfficialLanguage</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

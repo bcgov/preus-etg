@@ -1,0 +1,92 @@
+﻿<div ng-controller="Prioritization">
+    <span class="panel-section-item">
+        <span class="panel-section-title" ng-click="toggle($event)">Prioritization</span>
+        <span class="panel-section-buttons">
+            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            <span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+        </span>
+    </span>
+    <div class="panel-section-content" ng-if="section.show">
+        <div class="pull-right">
+            <button class="btn btn--primary btn--forward" ng-show="!section.editing" ng-if="grantFile.AllowReprioritization" ng-click="recalculatePrioritization()">Recalculate Prioritization Score</button>
+        </div>
+
+        <div class="form form--2-col">
+            <div class="col-50p prioritization">
+                <div class="form__group" style="padding-bottom: 0">
+                    <div class="form__label">Industry:</div>
+                    <div class="form__control">
+                        <span ng-if="!model.IndustryName">--</span>
+                        {{model.IndustryName}} <span ng-if="model.IndustryCode">({{ model.IndustryCode }})</span>
+                    </div>
+                </div>
+                <div class="form__group" style="padding-top: 0">
+                    <div class="form__label">Industry Priority:</div>
+                    <div class="form__control">
+                        {{model.IndustryScore}} points
+                    </div>
+                </div>
+                <div class="form__group" style="padding-bottom: 0">
+                    <div class="form__label">High Opportunity Occupation Codes:</div>
+                    <div class="form__control">
+                        <span ng-if="!model.HighOpportunityOccupationCode">--</span>
+                        {{model.HighOpportunityOccupationCode}}
+                    </div>
+                </div>
+                <div class="form__group" style="padding-top: 0">
+                    <div class="form__label">High Opportunity Occupation Priority:</div>
+                    <div class="form__control">
+                        {{model.HighOpportunityOccupationScore}} points
+                    </div>
+                </div>
+                <div class="form__group" style="padding-bottom: 0">
+                    <div class="form__label">Region:</div>
+                    <div class="form__control">
+                        <span ng-if="!model.RegionalName">--</span>
+                        {{model.RegionalName}}
+                    </div>
+                </div>
+                <div class="form__group" style="padding-top: 0">
+                    <div class="form__label">Regional Priority:</div>
+                    <div class="form__control">
+                        {{model.RegionalScore}} points
+                    </div>
+                </div>
+                
+                <div class="form__group">
+                    <div class="form__label">Small Business:</div>
+                    <div class="form__control">
+                        {{model.SmallBusinessScore}} points
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">First time applicant:</div>
+                    <div class="form__control">
+                        {{model.FirstTimeApplicantScore}} points
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Eligibility Questions:</div>
+                </div>
+                <div class="form__group" ng-repeat="question in model.QuestionScores">
+                    <div class="form__label" style="font-weight: normal">
+                        <span ng-bind="question.Item1 | stripHTML | limitTo: 50"></span>
+                        <span ng-show="(question.Item1 | stripHTML).length  > 50">...</span>
+                    </div>
+                    <div class="form__control">
+                        {{question.Item2}} points
+                    </div>
+                </div>
+            </div>
+            <div class="col-50p">
+                <div class="form__group">
+                    <div class="form__label">Total Score:</div>
+                    <div class="form__control">
+                        {{model.TotalScore}} points
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

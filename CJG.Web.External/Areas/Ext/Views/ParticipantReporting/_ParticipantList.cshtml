@@ -1,0 +1,96 @@
+﻿<div class="pull-right wrapper--include-checkbox" ng-if="model.AllowIncludeAll">
+    <input type="checkbox" id="include_all_participant" ng-model="section.includeAll" ng-change="includeAll()">
+    <label class="checkbox checkbox__all" for="include_all_participant">Include All</label>
+</div>
+
+<div class="table--participants-wrapper" style="overflow-x: auto; width:100%;" ng-if="model.UseInvitations">
+    <table class="table table--open-border table--tbody-border table--participant-invitations">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Last</th>
+                <th>First</th>
+                <th>Email</th>
+                <th>Expected outcome</th>
+                <th>PIF Status</th>
+                <th ng-if="model.ParticipantsEditable">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="invitation in model.ParticipantInvitations">
+                <td><strong style="white-space: nowrap">{{$index + 1}}</strong></td>
+                <td ng-if="invitation.ParticipantInvitationStatus == 0" colspan="3">
+                    <a ng-click="showParticipantDialog(invitation)">Add participant details</a>
+                </td>
+                <td ng-if="invitation.ParticipantInvitationStatus > 0">{{invitation.LastName}}</td>
+                <td ng-if="invitation.ParticipantInvitationStatus > 0">{{invitation.FirstName}}</td>
+                <td ng-if="invitation.ParticipantInvitationStatus > 0" class="email--address"><a href="mailto:{{invitation.EmailAddress}}">{{invitation.EmailAddress}}</a></td>
+                <td>{{invitation.Outcome}}</td>
+                <td><span ng-if="invitation.ParticipantInvitationStatus > 0">{{invitation.Status}}</span></td>
+                <td class="actions" style="width: 150px;">
+                    <button class="btn btn--primary" style="height: 40px;" ng-if="invitation.CanSend" ng-click="sendParticipantInvite(invitation)">Send</button>
+                    <button class="btn btn--primary" style="height: 40px;" ng-if="invitation.CanResend" ng-click="sendParticipantInvite(invitation)">Resend</button>
+                    <button class="btn btn--secondary" ng-if="invitation.CanRemoveInvitation" ng-click="removeParticipantInvite(invitation)">Remove</button>
+                    <button class="btn btn--secondary" ng-if="invitation.CanRemovePIF" ng-click="removeParticipantNotInvite(invitation)">Remove</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="table--participants-wrapper" style="overflow-x: auto; width:100%;" ng-if="!model.UseInvitations">
+    <table class="table table--open-border table--tbody-border table--participants">
+        <thead>
+            <tr>
+                <th>Last</th>
+                <th>First</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th ng-if="model.ShowEligibility">Eligibility</th>
+                <th>Work Location</th>
+                <th>Reported on</th>
+                <th ng-if="model.ParticipantsEditable">Action</th>
+            </tr>
+        </thead>
+        <tbody ng-class="{'row--not-in-prev-claim' : (!model.ParticipantsEditable && !model.IsIncludedInClaim)}" ng-repeat="participant in model.Participants">
+            <tr>
+                <td>{{participant.LastName}}</td>
+                <td>{{participant.FirstName}}</td>
+                <td><a href="mailto:{{participant.EmailAddress}}">{{participant.EmailAddress}}</a></td>
+                <td style="min-width: 170px !important;">
+                    {{participant.PhoneNumber1}}
+                    <span ng-if="participant.PhoneExtension1">ext. {{participant.PhoneExtension1}}</span>
+                </td>
+                <td ng-if="model.ShowEligibility">
+                    <span ng-if="participant.Approved">Eligible</span>
+                    <span ng-if="!participant.Approved">Ineligible</span>
+                </td>
+                <td>{{participant.PrimaryCity}}</td>
+                <td style="min-width: 170px !important;">
+                    {{toPST(participant.DateAdded, 'YYYY-MM-DD h:mm a')}}
+                </td>
+                <td class="wrapper--include-checkbox" ng-if="model.ParticipantsEditable">
+                    <div ng-if="participant.ClaimReported">
+                        <input type="checkbox" id="include-participant-{{participant.Id}}" class="include-participant" ng-model="participant.IsIncludedInClaim" ng-change="toggleParticipant(participant)" />
+                        <label class="checkbox" for="include-participant-{{participant.Id}}">Include</label>
+                    </div>
+                    <div ng-if="!participant.ClaimReported">
+                        <a ng-click="removeParticipant(participant)" class="btn--remove confirm-link" href="#">Remove</a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td ng-if="model.ShowEligibility"></td>
+                <td colspan="6" style="text-align: right;">
+                    <div class="control-wrapper selectmenu input--large">
+                        <select class="input--large"
+                                ng-model="participant.ExpectedOutcome"
+                                ng-options="item.Key as item.Value for item in model.ExpectedOutcomes"
+                                ng-change="setExpectedTrainingOutcome(participant, participant.ExpectedOutcome, '{{participant.ExpectedOutcome}}')"></select>
+                    </div>
+                </td>
+                <td ng-if="model.ParticipantsEditable"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

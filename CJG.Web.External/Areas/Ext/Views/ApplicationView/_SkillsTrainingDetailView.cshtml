@@ -1,0 +1,13 @@
+﻿<div class="form--readonly">
+    <br />
+    <div ng-repeat="program in process.TrainingPrograms">
+        <div class="heading-group">
+            <h4 class="light"><span style="cursor: pointer;" ng-click="toggle($event)" data-toggle="show">&#9660;</span> {{program.CourseTitle}}</h4>
+        </div>
+
+        <div class="form-section-details">
+            @Html.Partial("_SkillTrainingProgramProviderView")
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,99 @@
+
+.inline-help {
+  @extend ._notice-icon;
+  font-size: $inline-help-font-size;
+  line-height: $inline-help-line-height;
+  margin: gap(1) 0;
+  padding-left: $notice-icon-width + 10;
+  &:before {
+    top: 1px;
+    left: 0;
+  }
+}
+
+.spaced-notes {
+    white-space: pre-wrap;
+}
+
+// Use this class with @extend
+._notice-icon {
+  position: relative;
+
+  &:before {
+    background: url('#{$icon-img-path}/info-blue.svg') no-repeat;
+    content: ' ';
+    display: inline-block;
+    margin-right: 5px;
+    position: absolute;
+    width: $notice-icon-width;
+    height: $notice-icon-height;
+    background-size: 15px;
+  }
+}
+
+._notice {
+  @include padded-box($notice-padding);
+  @include clearfix;
+  background-color: $notice-bg-color;
+  border: $notice-border-width solid $notice-border-color;
+  margin-bottom: $notice-margin-bottom;
+  position: relative;
+  overflow-wrap: break-word;
+  -ms-word-wrap: break-word;
+
+  &, & p {
+    color: $notice-color;
+    font-size: $notice-font-size;
+    line-height: $notice-line-height;
+  }
+
+  p {
+    margin-bottom: $notice-text-margin-bottom;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+  .notice--icon,
+  .inline-help {
+    float: left;
+  }
+
+  .inline-help {
+    margin: 0;
+  }
+}
+
+.notice {
+  @extend ._notice;
+}
+
+.notice--icon {
+  @extend ._notice-icon;
+  padding-left: $notice-icon-width + 16;
+  &:before {
+    top: 7px;
+    left: 10px;
+  }
+}
+
+.message-box {
+  @extend ._notice;
+  background-color: color('white');
+}
+
+.tox-menu.tox-collection.tox-collection--list {
+  min-width: 280px !important;
+}
+
+// .message-box {
+//   background: white;
+//   border: solid 1px #ccc;
+//   padding: 20px;
+//   margin-bottom: 20px;
+//   .inline-help {
+//     display: block;
+//     margin: 0;
+//   }
+// }

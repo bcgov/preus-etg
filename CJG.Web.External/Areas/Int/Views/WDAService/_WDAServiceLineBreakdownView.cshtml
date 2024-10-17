@@ -1,0 +1,31 @@
+﻿
+<div class="item-block" ng-class="breakdown.Selected? 'row-highlighted': ''">
+
+
+    <div class="width-5 no-border">
+        <button class="btn btn--primary" ng-if="breakdown.Id == 0" ng-click="cancelCreate(breakdown, line.ServiceLineBreakDowns)" style="margin-top: 15px;">Cancel</button>
+
+        <button class="btn btn--empty" ng-click="toggleEditServiceLineBreakdown(breakdown, 'Caption')" ng-if="!breakdown.EditingCaption && breakdown.Id != 0">Edit</button>
+        <button class="btn btn--empty" ng-click="toggleEditServiceLineBreakdown(breakdown, 'Caption')" ng-if="breakdown.EditingCaption && breakdown.Id != 0">Cancel</button>
+    </div>
+    <div class="width-55">
+        <span ng-if="!breakdown.EditingCaption" style="display: block; padding-bottom: 0px;" ng-click="selectBreakdown(breakdown, line)"> {{breakdown.Caption}}</span>
+        <input type="text" ng-model="breakdown.Caption" class="input--medium" ng-if="breakdown.EditingCaption" style="display: block;" />
+    </div>
+    <div class="width-20">
+        <button class="btn btn--empty" style="float: right;"
+                ng-click="deleteBreakdowns(breakdown, line.ServiceLineBreakDowns)"
+                ng-if="!breakdown.IsActive">
+            &lt;Delete&gt;
+        </button>
+    </div>
+    <div class="width-5">
+        @Html.CheckBoxWithCustomId(new FormControl() { Label = "&nbsp;", Model = "breakdown.IsActive", Id = "{{'breakdown_IsActive' + breakdown.Id}}" })
+    </div>
+    <div class="width-5"></div>
+    <div class="width-5">
+        <span ng-click="changeOrderByCaption(line.ServiceLineBreakDowns);" ng-if="$index == 0">&lt;sort&gt;</span>
+        <span class="up-arrow" ng-click="changeOrder(line.ServiceLineBreakDowns, breakdown);" ng-if="$index != 0"></span>
+    </div>
+
+</div>

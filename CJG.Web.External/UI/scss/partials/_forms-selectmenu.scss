@@ -1,0 +1,205 @@
+// Container used for styling the custom select, the buttom class below adds the bg gradient, corners, etc.
+.selectmenu {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  padding: 0;
+  background: $forms-selectmenu-background-color;
+
+  @include media-breakpoint-down(md) {
+    width: 100%;
+
+    select {
+      width: 100%;
+    }
+  }
+}
+
+
+// This is the native select, we're making everything but the text invisible so we can see the button styles in the wrapper
+.selectmenu select {
+  color: $forms-control-color;
+  height: $forms-selectmenu-height;
+  // width: 100%;
+  margin: 0;
+  background: none;
+  border: 1px solid transparent;
+  outline: none;
+  // Prefixed box-sizing rules necessary for older browsers
+  box-sizing: border-box;
+  // Remove select styling
+  appearance: none;
+  // Todo: Font size must the 16px or larger to prevent iOS page zoom on focus
+  font-size: 1rem;
+  padding: $forms-selectmenu-text-padding;
+  line-height: $forms-selectmenu-line-height;
+  border: $forms-border-width solid $forms-border-color;
+  border-radius: $forms-border-radius;
+
+  .layout-internal & {
+    height: 30px;
+    padding: 0px 35px 0px 5px;
+    line-height: $small-line-height;
+    font-size: $font-size-xs;
+  }
+
+  @media (max-width: 767px) {
+    font-size: 0.85rem;
+  }
+}
+
+// Custom arrow sits on top of the select
+.selectmenu::after {
+  content: '';
+  cursor: pointer;
+  position: absolute;
+  width: $forms-selectmenu-button-width;
+  height: $forms-selectmenu-button-height;
+  top: 50%;
+  right: 1px;
+  margin-top: floor(($forms-selectmenu-button-height / 2) * -1);
+  background-image: url(#{$forms-selectmenu-image-caret});
+  background-repeat: no-repeat;
+  background-size: 100%;
+  // z-index: 2;
+  // This hack make the select behind the arrow clickable in some browsers
+  pointer-events: none;
+
+  .layout-internal & {
+    width: 28px;
+    height: 28px;
+    top: 50%;
+    right: 1px;
+    margin-top: -14px;
+  }
+}
+
+.selectmenu.secondary-selectmenu::after {
+  background-image: url('#{$forms-img-path}/select-btn-alt.svg');
+}
+
+
+// Hover style
+.selectmenu:hover select {
+}
+
+// Disabled style
+.selectmenu select[disabled],
+[data-disabled="disabled"] .selectmenu::after {
+  opacity: .75;
+  pointer-events: none;
+  background: inherit;
+  color: #000;
+  -webkit-text-fill-color: #000;
+}
+
+.selectmenu.disabled::after {
+  opacity: .75;
+}
+
+.selectmenu select[disabled]::after {
+  content: none;
+  display: none;
+}
+
+
+// Focus style
+.selectmenu select:not(.k-invalid):focus {
+  outline: none;
+  background-color: transparent;
+  border-color: $forms-border-color-focus;
+}
+
+
+// Set options to normal weight
+.selectmenu option {
+  font-weight: normal;
+}
+
+/* ------------------------------------  */
+/* START OF UGLY BROWSER-SPECIFIC HACKS */
+/* ----------------------------------  */
+
+/* OPERA - Pre-Blink nix the custom arrow, go with a native select button to keep it simple. Targeted via this hack http://browserhacks.com/#hack-a3f166304aafed524566bc6814e1d5c7 */
+x:-o-prefocus,
+.selectmenu::after {
+  display: none;
+}
+
+/* IE 10/11+ - This hides native dropdown button arrow so it will have the custom appearance, IE 9 and earlier get a native select - targeting media query hack via http://browserhacks.com/#hack-28f493d247a12ab654f6c3637f6978d5 - looking for better ways to achieve this targeting */
+/* The second rule removes the odd blue bg color behind the text in the select button in IE 10/11 and sets the text color to match the focus style's - fix via http://stackoverflow.com/questions/17553300/change-ie-background-color-on-unopened-focused-select-box */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .selectmenu select::-ms-expand {
+    display: none;
+  }
+
+  .selectmenu select:focus::-ms-value {
+    background: transparent;
+    color: #222;
+  }
+}
+
+/* Firefox focus has odd artifacts around the text, this kills that. See https://developer.mozilla.org/en-US/docs/Web/CSS/:-moz-focusring */
+.selectmenu select:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 #000;
+}
+
+/* ------------------------------------  */
+/*  END OF UGLY BROWSER-SPECIFIC HACKS   */
+/* ------------------------------------  */
+
+.selectmenu-wrapper {
+  display: inline-block;
+}
+
+// Internal - xeditable issue with long select option issue fix...
+.layout-internal {
+  .editable-container {
+    width: 100%;
+
+    .form__long-select {
+      .editable-input {
+        width: 100%;
+      }
+    }
+
+    select {
+      width: 100%;
+    }
+  }
+}
+
+.selectmenu-multiline {
+  &::before {
+    content: '';
+    cursor: pointer;
+    position: absolute;
+    width: $forms-selectmenu-button-width;
+    height: 100%;
+    top: 0;
+    right: 1px;
+    pointer-events: none;
+    background: #38598A;
+  }
+
+  &::after {
+    content: '';
+    cursor: pointer;
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    top: 50%;
+    right: 13px;
+    border-style: solid;
+    border-width: 10px 7px 7px 7px;
+    border-color: #fff transparent transparent transparent;
+    background-image: none;
+    margin-top: -4px;
+  }
+
+  > select {
+    white-space: pre-wrap;
+    height: auto;
+  }
+}

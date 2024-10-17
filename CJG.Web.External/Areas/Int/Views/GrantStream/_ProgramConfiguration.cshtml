@@ -1,0 +1,7 @@
+﻿@using CJG.Core.Entities
+<div ng-if="model.ProgramType === @((int)ProgramTypes.EmployerGrant)">
+    @Html.Partial("_ProgramConfigurationEmployerGrants")
+</div>
+<div ng-if="model.ProgramType === @((int)ProgramTypes.WDAService)">
+    @Html.Partial("_ProgramConfigurationWDAServices")
+</div>

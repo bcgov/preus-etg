@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "App Date/Time";
+}
+<div id="now" ng-controller="DebugAppDateTimeController">
+    <h2>Configure Application Date & Time for Testing</h2>
+
+    <div ng-if="alert.message" class="row row--alert">
+        <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+    </div>
+    <div>
+        <div class="display-inline-block">
+            <label class="form__label">Day</label>
+            <input class="form__control input-xx-small" type="text" name="day" value="" ng-model="model.Day" />
+        </div>
+        <div class="display-inline-block">
+            <label class="form__label">Month</label>
+            <input class="form__control input-xx-small" type="text" name="month" value="" ng-model="model.Month" />
+        </div>
+        <div class="display-inline-block">
+            <label class="form__label">Year</label>
+            <input class="form__control input-xx-small" type="text" name="year" value="" ng-model="model.Year" />
+        </div>
+        <div class="display-inline-block">
+            <label class="form__label">Hour</label>
+            <input class="form__control input-xx-small" type="text" name="hour" value="" ng-model="model.Hour" />
+        </div>
+        <div class="display-inline-block">
+            <label class="form__label">Min</label>
+            <input class="form__control input-xx-small" type="text" name="minute" value="" ng-model="model.Minute" />
+        </div>
+        <div class="display-inline-block">
+            <label class="form__label">Secs</label>
+            <input class="form__control input-xx-small" type="text" name="second" value="" ng-model="model.Second" />
+        </div>
+        <div class="display-inline-block">
+            <label class="form__label">&nbsp;</label>
+            <button class="form__control btn btn--primary" type="submit" ng-click="update()">Submit</button>
+        </div>
+        <div class="display-inline-block">
+            <label class="form__label">&nbsp;</label>
+            <button class="form__control btn btn--secondary" ng-click="reset()">Reset</button>
+        </div>
+    </div>
+</div>

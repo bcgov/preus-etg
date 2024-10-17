@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CJG.Testing.IntegrationTests.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="DataDirectory" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">..\..\TestData</Value>
+    </Setting>
+    <Setting Name="ConnectionStringTemplate" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Data Source=(LocalDb)\MSSQLLocalDB;AttachDbFilename={0}\{1}.mdf;Integrated Security=True;MultipleActiveResultSets=true</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

@@ -1,0 +1,50 @@
+﻿<div ng-controller="UserManagement">
+	<div ng-if="ngDialogData.user" class="edit-model-modal">
+		<h3>{{ngDialogData.user.ApplicationUserId ? 'Edit' : 'Add'}} User</h3>
+		<hr />
+		<div ng-if="alert.message" class="row row--alert">
+			<div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+		</div>
+		<div>
+			<label>First Name</label>
+			<input type="text" ng-model="ngDialogData.user.FirstName" ng-validation="errors.FirstName" />
+		</div>
+		<div>
+			<label>Last Name</label>
+			<input type="text" ng-model="ngDialogData.user.LastName" ng-validation="errors.LastName" />
+		</div>
+		<div>
+			<label>Salutation</label>
+			<input type="text" ng-model="ngDialogData.user.Salutation" ng-validation="errors.Salutation" />
+		</div>
+		<div>
+			<label>IDIR</label>
+			<input ng-disabled="ngDialogData.user.ApplicationUserId ? true : false" type="text" ng-model="ngDialogData.user.IDIR" ng-validation="errors.IDIR" />
+		</div>
+		<div>
+			<label>Role</label>
+			<div class="selectmenu" ng-validation="errors.RoleId">
+				<select ng-model="ngDialogData.user.RoleId"
+						ng-options="item.RoleId as item.RoleName for item in roles.Roles"
+						class="input--full"></select>
+			</div>
+		</div>
+		<div>
+			<label>E-mail Address</label>
+			<input type="text" ng-model="ngDialogData.user.Email" ng-validation="errors.Email" />
+		</div>
+		<div>
+			<label>Phone Number</label>
+			<input type="text" value="" ng-model="ngDialogData.user.PhoneNumber" ng-validation="errors.PhoneNumber" />
+		</div>
+		<div>
+			<label>Active</label>
+			<div class="selectmenu" ng-validation="errors.Active">
+				<select class="input--full" type="selectmenu" ng-model="ngDialogData.user.Active" ng-options="item.Key as item.Value for item in activeOptions" />
+			</div>
+		</div>
+		<hr />
+		<button class="btn btn--secondary pull-left" ng-click="closeThisDialog()">Cancel</button>
+		<button class="btn btn--primary pull-right" ng-click="saveUser()">Save</button>
+	</div>
+</div>

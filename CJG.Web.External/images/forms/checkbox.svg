@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid" width="16" height="16" viewBox="0 0 18 18">
+  <defs>
+    <style>
+    svg {
+      padding: 1px;
+    }
+      .cls-1 {
+        stroke: #000;
+        stroke-width: 1px;
+        fill: none;
+      }
+    </style>
+  </defs>
+  <rect x="0.5" y="0.5" width="15" height="15" class="cls-1"/>
+</svg>

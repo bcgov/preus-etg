@@ -1,0 +1,29 @@
+// Change the grid settings
+$column: 60px;
+$gutter: 20px;
+$grid-columns: 12;
+
+// Default breakpoints for different orientation
+$grid-breakpoints: (
+  // Extra small screen / phone
+  xs: 0,
+  // Small screen / phone
+  sm: 600px,
+  // Medium screen / tablet
+  md: 768px,
+  // Large screen / desktop
+  lg: 992px,
+  // Extra large screen / wide desktop
+  xl: 1200px
+) !default;
+
+// Max width for component wrapper
+$container-max-widths: (
+  sm: 100%,
+  md: 100%,
+  lg: 940px
+) !default;
+
+// Toggle Display: Flex on or off for grid layouts
+// Turn this to false to make it use various fallback
+$enable-flex: false !default;

@@ -1,0 +1,57 @@
+@using CJG.Web.External.Areas.Ext.Controllers
+@using CJG.Core.Entities
+@{
+    ViewBag.Title = "Completion Report";
+}
+
+<div class="row" ng-controller="CompletionReportView" grant-application-id="@ViewBag.GrantApplicationId">
+    <div class="link--back">
+        @Html.ActionLink("Return", nameof(ReportingController.GrantFileView), typeof(ReportingController), new { grantApplicationId = ViewBag.GrantApplicationId })
+    </div>
+
+    <program-title-label ng-model="model.ProgramTitleLabel"></program-title-label>
+
+    <div class="main grant-files ext--completion-report">
+        <h2>Completion Report</h2>
+
+        <div ng-if="alert.message" class="row row--alert">
+            <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+        </div>
+
+        <div class="completion-report--steps">
+            <h3 class="step-heading">
+                <span class="subtitle">Step {{step}} of {{model.CompletionReportGroupIds.length}}</span>
+                {{title}}
+            </h3>
+            <p ng-style="description && model.CompletionReportGroupIds[0] == @(Constants.CompletionReportCWRGPage1) ? { 'font-weight' : 'bold' } : { 'font-weight' : 'inherit' }">{{description}}</p>
+
+            <p ng-if="model.CompletionReportGroupIds[0] == @(Constants.CompletionReportETGPage1)" class="text--small text--uppercase">* Information must be provided</p>
+            <p ng-if="model.CompletionReportGroupIds[0] == @(Constants.CompletionReportCWRGPage1)" class="text--small">* Response required</p>
+
+            @Html.Partial("_CompletionReportSteps")
+
+            <div class="button-group clearfix">
+                @Html.ActionLink("Cancel", nameof(ReportingController.GrantFileView), typeof(ReportingController), new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "btn btn--secondary" })
+                <div class="pull-right">
+                    <button class="btn btn--secondary" type="button"
+                            ng-click="setCompletionReportStep(-1)"
+                            ng-if="step > 1">
+                        Back
+                    </button>
+                    <button class="btn btn--primary" type="button"
+                            ng-click="gotoCompletionReportStep($event, 1)"
+                            ng-if="step < model.CompletionReportGroupIds.length"
+                            ng-disabled="!validateCompletionReportStep()">
+                        Continue
+                    </button>
+                    <button class="btn btn--primary" type="button"
+                            ng-click="saveCompletionReport($event)"
+                            ng-if="step === model.CompletionReportGroupIds.length"
+                            ng-disabled="!validateCompletionReportStep()">
+                        Submit Completion Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

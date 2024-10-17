@@ -1,0 +1,41 @@
+﻿@model CJG.Web.External.Areas.Int.Models.WDAServiceViewModel
+
+@{
+    ViewBag.Title = "Preview";
+}
+
+<h2>Preview</h2>
+
+<div>
+    @foreach (var serviceCategory in Model.ServiceCategories)
+    {
+    <div style="border-bottom: 1px solid black;">
+        <h3>@serviceCategory.Caption</h3>
+        <p>@Html.Raw(serviceCategory.Description)</p>
+
+        @if (serviceCategory.ServiceLines != null)
+        {
+        <div style="margin-left: 30px;">
+            @foreach (var serviceLine in serviceCategory.ServiceLines)
+            {
+                <div>
+                    <p>@serviceLine.Caption</p>
+                    <p>@Html.Raw(serviceLine.Description)</p>
+                </div>
+
+                if (serviceLine.ServiceLineBreakdowns != null)
+                {
+                    foreach (var breakdown in serviceLine.ServiceLineBreakdowns)
+                    {
+                        <div style="margin-left: 30px;">
+                            <p>@breakdown.Caption</p>
+                            <p>@Html.Raw(breakdown.Description)</p>
+                        </div>
+                    }
+                }
+            }
+        </div>
+        }
+    </div>
+    }
+</div>

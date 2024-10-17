@@ -1,0 +1,1 @@
+require('./training-program-view');

@@ -1,0 +1,86 @@
+.table--claims th.claim-title-font,
+.table--claims td.claim-title-font {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+table.claim-table {
+  td {
+    vertical-align: top;
+    border-bottom: 1px solid;
+    border-color: color('bodyText');
+    border-bottom-color: color('bodyText') !important;
+  }
+
+  tr:last-child {
+    td {
+      border-bottom: 0;
+    }
+  }
+}
+
+.revised-indicator {
+  font-size: 10px;
+  position: relative;
+  bottom: 5px;
+  font-weight: bold;
+}
+
+.table--claims__cost {
+  .col--ClaimCost,
+  .col--ClaimParticipants {
+    left: 10px;
+  }
+
+  td {
+    position: relative;
+
+    &:last-child {
+      .revised-indicator {
+        right: -10px;
+      }
+    }
+  }
+
+  .revised-indicator {
+    position: absolute;
+    right: 5px;
+    top: 27px;
+    bottom: auto;
+  }
+}
+
+.table--claims__participant {
+  input {
+    text-align: right;
+  }
+}
+
+.block--claim-outcome {
+  padding: $gutter $gutter $gutter 60px;
+  border: solid 1px color('Charcoal');
+  margin-bottom: $gutter;
+}
+
+.block--claim-outcome__success {
+  background: url('#{$icon-img-path}/icon-checkmark.png') 20px center no-repeat;
+}
+
+.block--claim-outcome__denied {
+  background: url('#{$icon-img-path}/icon-denied.png') 20px center no-repeat;
+}
+
+.block--claim-outcome__warning {
+  background: url('#{$icon-img-path}/icon-warning.png') 20px center no-repeat;
+}
+
+.entry--claim-line {
+  margin-left: 0px;
+  margin-bottom: 2px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #d0d0d1;
+}
+
+.entry--display-number-align-with-input {
+  padding-right:11px;
+}

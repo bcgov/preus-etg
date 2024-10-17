@@ -1,0 +1,38 @@
+﻿@using CJG.Core.Entities
+@model ApplicationStateExternal
+
+<div class="form--readonly">
+    <ul class="panel-bar k-widget k-reset k-header k-panelbar" style="margin-bottom: 0">
+        <li class="k-item k-state-default" data-state="enabled"
+            ng-repeat="program in process.TrainingPrograms">
+            <span class="k-link k-header" ng-click="toggle($event)"
+                  data-toggle="hide" style="border-top: none;">
+                <span class="panel-bar__heading--text">&#9654;</span>
+                <span class="panel-bar__heading--text" style="margin-left:30px;">
+                    {{program.CourseTitle}}
+                </span>
+                <span class="panel-bar__status" style="padding-left:318px;">
+                    <text>
+                        <span class="label {{PopulateSubSectionClass(program, 'Program')}}">
+                            {{PopulateSubSectionText(program, 'Program')}}
+                        </span>
+                    </text>
+                </span>
+                @if (Model != ApplicationStateExternal.ApplicationWithdrawn)
+                {
+                <span class="pull-right">
+                    <a class="btn btn--secondary pull-right"
+                        ng-click="edit($event)"
+                        href="/Ext/Application/{{model.Id}}/Skills/Training/View/{{process.ServiceCategoryId}}/{{program.Id}}">Edit</a>
+                    <a class="btn btn--secondary pull-right"
+                        style="width:85px;margin-right:5px;"
+                        ng-click="delete($event, program, 'Program')">Delete</a>
+                </span>
+                }
+            </span>
+            <div class="form-section-details" style="display: none;">
+                @Html.Partial("_SkillTrainingProgramProviderView")
+            </div>
+        </li>
+    </ul>
+</div>

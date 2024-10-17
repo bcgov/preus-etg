@@ -1,0 +1,23 @@
+﻿@model CJG.Web.External.Areas.Int.Models.DebugIDIRViewModel
+
+@{
+    ViewBag.Title = "Debug IDIR";
+}
+
+<div id="now">
+
+    <h1>@ViewBag.Title</h1>
+
+    @using (Html.BeginForm("IDIR", "Debug", FormMethod.Post))
+    {
+        <div>
+            @Html.LabelFor(model => model.IDIR):
+            @Html.TextBoxFor(model => model.IDIR)
+        </div>
+        <div>
+            @Html.LabelFor(model => model.Guid):
+            @Model.Guid
+        </div>
+        <input type="submit" value="Submit" />
+    }
+</div>

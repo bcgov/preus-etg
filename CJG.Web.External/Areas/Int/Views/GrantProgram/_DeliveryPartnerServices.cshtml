@@ -1,0 +1,30 @@
+﻿<div class="details-block inline-edit-block">
+	<div class="form-section">
+		<div class="form-table">
+			<div class="form-table-heading">
+				<div class="form-table-cell input--full">Caption</div>
+				<div class="form-table-cell text-center">Active</div>
+				<div class="form-table-cell text-center">Order</div>
+				<div class="form-table-cell"></div>
+			</div>
+			<div class="form-table-row" ng-repeat="item in model.DeliveryPartnerServices | orderBy: 'RowSequence'" ng-if="!item.Delete">
+				<div class="form-table-cell" style="white-space:normal; max-width:200px; overflow:hidden;">
+					<input ng-model="item.Caption" class="input--full" ng-validation="errors.DeliveryPartnerServices_{{$index}}.Caption" ng-editing />
+				</div>
+				<div class="form-table-cell text-center">
+					<input type="checkbox" ng-model="item.IsActive" id="delivery-partner-service-is-active-{{$index}}" ng-disabled="!section.editing" />
+					<label for="delivery-partner-service-is-active-{{$index}}">&nbsp;</label>
+				</div>
+				<div class="form-table-cell text-center">
+					<span class="up-arrow" ng-class="{ 'disabled': !section.editing }" ng-click="!section.editing || moveService($index);" ng-if="$index != 0"></span>
+				</div>
+				<div class="form-table-cell">
+					<button class="btn btn--secondary" ng-if="section.editing && item.CanDelete" ng-click="deleteService($index)">Delete</button>
+				</div>
+			</div>
+		</div>
+		<div class="button-group">
+			<button class="btn btn--secondary" ng-if="section.editing" ng-click="addService()">Add New</button>
+		</div>
+	</div>
+</div>

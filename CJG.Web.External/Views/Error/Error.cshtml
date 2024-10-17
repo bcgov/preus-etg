@@ -1,0 +1,30 @@
+﻿@{ 
+    if (string.IsNullOrEmpty(ViewBag.ErrorMessage))
+    {
+        ViewBag.ErrorMessage = "The page you requested does not exist, or a system error may have occurred.";
+    }
+}
+
+<h2>@ViewBag.Title (Error @ViewBag.StatusCode)</h2>
+
+<div>
+    @ViewBag.ErrorMessage
+</div>
+<br />
+<div>
+    Possible actions to avoid this error:
+    <br />
+    <ul>
+        <li>Use only the action buttons and links on the system forms to move between pages and work with your grant files.</li>
+        <li>Do not use the browser Back or Forward buttons when using the system.</li>
+        <li>Do not create and use bookmarks for your grant files.</li>
+    </ul>
+</div>
+<div>
+    If you return to the application and find this problem reoccurs, please <a href="/ContactUs/index">contact us here</a>.
+</div>
+<br />
+<div>
+    You can return to the application using the following link: <a href="https://skillstraininggrants.gov.bc.ca">https://skillstraininggrants.gov.bc.ca</a>.
+</div>
+

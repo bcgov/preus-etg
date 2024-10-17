@@ -1,0 +1,140 @@
+﻿@{
+    ViewBag.Title = "Manage Payment Requests";
+}
+
+<div ng-controller="PaymentRequestManagement" class="manage-payment-requests">
+    <div class="header--manage-payment-requests">
+        <h2 class="header__title">Payment Request Management</h2>
+    </div>
+    <div class="form__group" style="width:40%">
+        <div class="form__label">
+            Grant Program
+        </div>
+        <div class="form__control">
+            <div class="selectmenu input--medium-large">
+                <select ng-model="selectGrantProgramId" ng-options="item.Key as item.Value for item in grantPrograms" class="input--medium-large" ng-change="refresh()">
+                    <option value="">@DropDownListHelper.SelectValueText</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div ng-if="alert.message" class="row row--alert">
+        <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+    </div>
+
+    <div class="wrapper--approved-claim-header">
+        <h2 class="header__title header--small">Approved Claims</h2>
+    </div>
+    <div class="dataTables_wrapper">
+        <table class="table--approved-claims">
+            <thead>
+                <tr>
+                    <th>Click on the link to view the claims.</th>
+                    <th></th>
+                    <th class="th--requests align-right">
+                        <a class="btn--request-management-refresh" ng-click="refresh()" ng-disabled="!selectGrantProgramId">Refresh</a>
+                        <div>No. of Requests</div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="table--approved-claims__tbody">
+                <tr>
+                    <td>
+                        <a class="link"
+                           ng-class="{'disabled' : !selectGrantProgramId}"
+                           ng-click="!selectGrantProgramId || getPaymentRequestClaims()">
+                            For Payment Requests
+                        </a>
+                    </td>
+                    <td>
+                        <a class="btn--request-management-generate-payment-requests"
+                           ng-click="!selectGrantProgramId || generatePaymentRequest()"
+                           ng-disabled="!paymentRequest.length">
+                            Generate Requests
+                        </a>
+                    </td>
+                    <td class="align-right">{{paymentRequest.length}}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a class="link"
+                           ng-class="{'disabled' : !selectGrantProgramId}"
+                           ng-click="!selectGrantProgramId || getAmountOwingClaims()">
+                            For Amount Owing
+                        </a>
+                    </td>
+                    <td>
+                        <a class="btn--request-management-generate-amount-owing-requests"
+                           ng-click="!selectGrantProgramId || generateAmountOwing()"
+                           ng-disabled="!amountOwing.length">
+                            Generate Requests
+                        </a>
+                    </td>
+                    <td class="align-right">{{amountOwing.length}}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a class="link"
+                           ng-class="{'disabled' : !selectGrantProgramId}"
+                           ng-click="!selectGrantProgramId || getPaymentRequestOnHoldClaims()">
+                            With a hold on Payment Requests
+                        </a>
+                    </td>
+                    <td></td>
+                    <td class="align-right">{{paymentRequestHold.Count}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    @Html.Partial("_PaymentRequestList")
+    @Html.Partial("_AmountOwingList")
+    @Html.Partial("_PaymentRequestHoldList")
+
+    <div ng-if="selectGrantProgramId">
+        <h2 class="header__title header--small">Request Batches</h2>
+        <p>Click on the batch number to view the payments.</p>
+
+        <pager ng-filter="getPaymentRequestBatches" ng-page-size="[10, 25, 50, 100]">
+            <table class="form__group--data-grid">
+                <thead>
+                    <tr>
+                        <th>Batch</th>
+                        <th>Batch Type</th>
+                        <th>Issued Date</th>
+                        <th>Issued By</th>
+                        <th>No. of Requests</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="batch in $parent.$ctrl.ngItems" ng-class="{'tr-amount-owing-highlight' : batch.BatchType === 'Amount Owing'}">
+                        <td><a class="link" ng-click="showRequestBatch(batch.BatchId)">{{batch.Batch}}</a></td>
+                        <td>{{batch.BatchType}}</td>
+                        <td>{{batch.IssuedDate}}</td>
+                        <td>{{batch.IssuedBy}}</td>
+                        <td>{{batch.NumberOfRequests}}</td>
+                        <td>
+                            <a class="link" oncontextmenu="return false;"
+                               ng-if="batch.NumberOfPendingRequests && batch.IsPaymentRequest"
+                               ng-click="printRequestBatch('/Int/Payment/Request/Print/Payment/Request/Batch/' + batch.BatchId, 'Duplicate Request Batch')">
+                                Generate Duplicate Requests
+                            </a>
+                            <a class="link" oncontextmenu="return false;"
+                               ng-if="batch.NumberOfPendingRequests && !batch.IsPaymentRequest"
+                               ng-click="printRequestBatch('/Int/Payment/Request/Print/Amount/Owing/Batch/' + batch.BatchId, 'Duplicate Amount Owing')">
+                                Generate Duplicate Requests
+                            </a>
+                            <a class="link" oncontextmenu="return false;"
+                               ng-if="!batch.NumberOfPendingRequests"
+                               ng-click="allRequestsReconciled()">
+                                All Requests Reconciled
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </pager>
+    </div>
+</div>

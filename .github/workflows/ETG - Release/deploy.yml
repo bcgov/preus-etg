@@ -1,0 +1,59 @@
+name: Release to ETG Test
+
+on: workflow_dispatch
+
+jobs:
+  release:
+    environment: Test
+    runs-on: etg-ci
+
+    steps:
+    
+    - name: Create staging directory
+      run: |
+        if (-Not (Test-Path -Path "artifacts")) {
+          mkdir "artifacts"          
+        } else {
+          Write-Output "Directory already exists."
+        }
+      shell: powershell
+
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: drop-application
+        path: artifacts/
+
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: drop-db-migration
+        path: artifacts/
+  
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: drop-notification-service
+        path: artifacts/  # Directory to download the third artifact to
+        
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: drop-reporting-service  # Replace with the actual name of the second artifact
+        path: artifacts/  # Directory to download the second artifact to
+
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: drop-grant-opening-service  # Replace with the actual name of the third artifact
+        path: artifacts/  # Directory to download the third artifact tob
+        
+    - name: Run Config-Replace script on Offline Page
+      run: |
+        $now = Get-Date -Format "dddd MMMM dd, yyyy"
+        $maintenance_start = Get-Date -Format "h:mm tt"
+        $maintenance_duration = ${{ vars.maintenance_duration }}
+        $maintenance_end = $maintenance_start.AddMinutes($maintenance_duration)       
+        $config_values = (@{tag="maintenance-date"; val="$(maintenance_date)"}, @{tag="maintenance-start"; val="$(maintenance_start)"}, @{tag="maintenance-end"; val="$(maintenance_end)"})        
+        ${{ vars.DB_SCRIPTS_FOLDER }}\replaceoffline.ps1 "${{ vars.WEB_FOLDER }}\app_offline_template.htm" "${{ vars.WEB_FOLDER }}\${{ github.environment }}\app_offline.htm" ($config_values) $maintenance_duration
+      shell: powershell

@@ -1,0 +1,11 @@
+﻿<div ng-controller="WorkQueueFilters">
+	<div class="form__group custom-filters filter--group">
+		<div class="btn-group">
+			<div class="filter-btn-group" id="filter_{{item.Id}}" ng-repeat="item in filters" ng-class="{ 'selected' : item.Id === filter.Id }">
+				<button class="btn btn--filter text-filter" ng-click="applyFilter(item)" title="{{item.Description}}">{{item.Name}}</button>
+				<button class="btn action btn--filter action edit-filter" ng-click="editFilter(item)" title="Edit Filter"></button>
+			</div>
+		</div>
+		<button class="btn btn--filter" ng-click="addFilter()">+ New Filter</button>
+	</div>
+</div>

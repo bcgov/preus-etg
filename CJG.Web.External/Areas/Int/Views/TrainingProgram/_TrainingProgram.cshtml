@@ -1,0 +1,228 @@
+﻿<div ng-controller="TrainingProgram">
+	<span class="panel-section-item">
+		<span class="panel-section-title" ng-click="toggle($event)">{{component.Caption}}</span>
+		<span class="panel-section-buttons">
+			<span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+			<section-edit-buttons ng-model="section.editing" ng-if="component.CanEdit"></section-edit-buttons>
+			<span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+		</span>
+	</span>
+	<div class="panel-section-content" ng-if="section.show">
+		<div class="form form--2-col">
+            <div class="col-50p">
+                <div class="form__group">
+                    <div class="form__label">Course, program or certificate name:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <input ng-model="model.CourseTitle" maxlength="500" class="input--full" ng-validation ng-editing />
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Course outline:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper" ng-validation="errors.CourseOutlineDocument">
+                            <a class="link" ng-if="model.CourseOutlineDocument" ng-click="!model.CourseOutlineDocument.Id || downloadAttachment(model.CourseOutlineDocument.Id)">{{model.CourseOutlineDocument.FileName}}</a>
+                            <button ng-if="model.CourseOutlineDocument && section.editing" class="btn btn--primary pull-right" ng-click="changeAttachment('CourseOutlineDocument')">Change</button>
+                            <span ng-if="!model.CourseOutlineDocument">None</span>
+                            <button ng-if="!model.CourseOutlineDocument && section.editing" class="btn btn--primary pull-right" ng-click="addAttachment('CourseOutlineDocument')">Upload</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Link to Course Description:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper form-control">
+                            <a href="{{model.CourseLink}}" target="_blank" ng-model="model.CourseLink">{{model.CourseLink}}</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Training start date:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <datedropdown ng-model="model.StartDate" ng-text="model.StartDate" ng-min-date="model.MinStartDate" ng-max-date="model.MaxStartDate"></datedropdown>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Training end date:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <datedropdown ng-model="model.EndDate" ng-text="model.EndDate" ng-min-date="model.StartDate" ng-max-date="model.MaxEndDate"></datedropdown>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Primary Delivery Method:</div>
+                    <div class="form__control">
+                        <ul style="list-style:none" ng-validation="errors.DeliveryMethods">
+                            <li class="form-control" ng-repeat="item in section.deliveryMethods">
+                                <input type="checkbox" id="delivery-methods-{{$index}}-{{section.name}}" ng-model="item.isChecked" ng-item="item" ng-value="item.Key" ng-selected="model.SelectedDeliveryMethodIds" ng-editing />
+                                <label for="delivery-methods-{{$index}}-{{section.name}}">{{item.Value}}</label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Total training hours:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <input ng-model="model.TotalTrainingHours" maxlength="5" class="input--x-small" ng-number ng-validation ng-editing />
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Skill level:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper selectmenu input--full" ">
+                            <select ng-model="model.SkillLevelId" ng-options="item.Key as item.Value for item in skillLevels" class="input--full" ng-validation ng-editing></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="form__label">Training skill focus:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper selectmenu input--full" ">
+                            <select ng-model="model.SkillFocusId" ng-options="item.Key as item.Value for item in skillFocuses" class="input--full" ng-validation ng-editing></select>
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="model.SkillFocusId == 5">
+                    <div class="form__group">
+                        <div class="form__label">In demand occupation:</div>
+                        <div class="form__control">
+                            <div class="control-wrapper selectmenu input--full" ">
+                                <select ng-model="model.InDemandOccupationId" ng-options="item.Key as item.Value for item in inDemandOccupations" class="input--full" ng-validation ng-editing></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form__group">
+                        <div class="form__label">Training level:</div>
+                        <div class="form__control">
+                            <div class="control-wrapper selectmenu input--full" ">
+                                <select ng-model="model.TrainingLevelId" ng-options="item.Key as item.Value for item in trainingLevels" class="input--full" ng-validation ng-editing></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form__group form__group--radio-inline">
+                        <div class="form__label">
+                            Are all participants taking apprenticeship or foundation programs members from the underrepresented groups in the labour force <abbr title="Required">*</abbr>
+                        </div>
+                        <div class="form-address-group form__control">
+                            <div class="control-wrapper" ng-validation="errors.MemberOfUnderRepresentedGroup">
+                                <input type="radio" ng-model="model.MemberOfUnderRepresentedGroup" id="member-of-under-represented-group-yes-{{section.name}}" name="member-of-under-represented-group-{{section.name}}" ng-value="true" class="form__group--radio-inline" ng-editing />
+                                <label for="member-of-under-represented-group-yes-{{section.name}}">Yes</label>
+                                <input type="radio" ng-model="model.MemberOfUnderRepresentedGroup" id="member-of-under-represented-group-no-{{section.name}}" name="member-of-under-represented-group-{{section.name}}" ng-value="false" class="form__group--radio-inline" ng-editing />
+                                <label for="member-of-under-represented-group-no-{{section.name}}">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form__group" ng-if="model.MemberOfUnderRepresentedGroup === true">
+                        <div class="form__label">Participants in apprenticeship or foundation programs, are members from the underrepresented groups in the labour force:</div>
+                        <div class="form__control">
+                            <div class="control-wrapper">
+                                <ul style="list-style:none" ng-validation="errors.UnderRepresentedGroups">
+                                    <li class="form-control" ng-repeat="item in section.underRepresentedGroups">
+                                        <input type="checkbox" id="underrepresented-{{$index}}" ng-model="item.isChecked" ng-item="item" ng-value="item.Key" ng-selected="model.SelectedUnderRepresentedGroupIds" ng-editing />
+                                        <label for="underrepresented-{{$index}}">{{item.Value}}</label>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-50p">
+                <div class="form__group">
+                    <div class="form__label">Expected certificates, qualifications, or credentials:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper selectmenu input--full" ">
+                            <select ng-model="model.ExpectedQualificationId" ng-options="item.Key as item.Value for item in expectedQualifications" class="input--full" ng-validation ng-editing></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group" ng-if="model.ExpectedQualificationId != 5 && model.ExpectedQualificationId != 0 && model.ExpectedQualificationId != null">
+                    <div class="form__label">Title of certificates, qualifications or credentials:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <input ng-model="model.TitleOfQualification" maxlength="255" class="input--full" ng-validation ng-editing />
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <label class="form__label">Have you offered this type of training to employees in the past:</label>
+                    <div class="form-address-group form__control">
+                        <div class="form__group form__group--radio-inline">
+                            <div class="control-wrapper" ng-validation="errors.HasOfferedThisTypeOfTrainingBefore">
+                                <input type="radio" ng-model="model.HasOfferedThisTypeOfTrainingBefore" id="has-offered-training-before-yes-{{section.name}}" name="has-offered-training-before-{{section.name}}" ng-value="true" class="form__group--radio-inline" ng-editing />
+                                <label for="has-offered-training-before-yes-{{section.name}}">Yes</label>
+                                <input type="radio" ng-model="model.HasOfferedThisTypeOfTrainingBefore" id="has-offered-training-before-no-{{section.name}}" name="has-offered-training-before-{{section.name}}" ng-value="false" class="form__group--radio-inline" ng-editing />
+                                <label for="has-offered-training-before-no-{{section.name}}">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <label class="form__label">Have you received or requested any other government or third-party funding for this training:</label>
+                    <div class="form-address-group form__control">
+                        <div class="form__group form__group--radio-inline">
+                            <div class="control-wrapper" ng-validation="errors.HasRequestedAdditionalFunding">
+                                <input type="radio" ng-model="model.HasRequestedAdditionalFunding" id="has-requested-additional-funding-yes-{{section.name}}" name="has-requested-additional-funding-{{section.name}}" ng-value="true" class="form__group--radio-inline" ng-editing />
+                                <label for="has-requested-additional-funding-yes-{{section.name}}">Yes</label>
+                                <input type="radio" ng-model="model.HasRequestedAdditionalFunding" id="has-requested-additional-funding-no-{{section.name}}" name="has-requested-additional-funding-{{section.name}}" ng-value="false" class="form__group--radio-inline" ng-editing />
+                                <label for="has-requested-additional-funding-no-{{section.name}}">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group" ng-if="model.HasRequestedAdditionalFunding === true">
+                    <div class="form__label">Please describe funding received or requested:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper input--full">
+                            <textarea ng-model="model.DescriptionOfFundingRequested" class="input--full textarea--short" ng-validation ng-editing></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
+                    <label class="form__label">Classification of Instructional Programs (CIPS) Code:</label>
+                    <div class="form__control" ng-if="section.editing">
+                        <div class="control-wrapper selectmenu input--full">
+                            <select ng-model="model.CipsCode1Id" ng-options="item.Key as item.Value for item in CipsCode1" class="input--full" ng-change="changeCipsCode(2, model.CipsCode1Id)" ng-validation>
+                                <option value="">< Select Any ></option>
+                            </select>
+                        </div>
+                        <div class="control-wrapper selectmenu input--full" ng-if="model.CipsCode1Id">
+                            <select ng-model="model.CipsCode2Id" ng-options="item.Key as item.Value for item in programCipsCode2" class="input--full" ng-change="changeCipsCode(3, model.CipsCode2Id)" ng-validation>
+                                <option value="">< Select Any ></option>
+                            </select>
+                        </div>
+                        <div class="control-wrapper selectmenu input--full" ng-if="model.CipsCode2Id">
+                            <select ng-model="model.CipsCode3Id" ng-options="item.Key as item.Value for item in programCipsCode3" class="input--full" ng-change="changeCipsCode(4, model.CipsCode3Id)" ng-validation>
+                                <option value="">< Select Any ></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form__control" ng-if="!section.editing">
+                        <text>{{section.selectedCipsCode}}</text>
+                    </div>
+                </div>
+                
+                <div class="form__group form__group__with_html">
+                    <div class="form__label">Describe how this training is relevant to your business needs:</div>
+                    <div class="form__control collapsed__html" ng-click="previewBusinessTrainingRelevance()" title="Click to view full text">
+                        <div ng-bind-html="extraInfo.BusinessTrainingRelevance | unsafe"></div>
+                    </div>
+                </div>
+
+                <div class="form__group form__group__with_html">
+                    <div class="form__label">Describe how this training is relevant to the available job for the participant(s):</div>
+                    <div class="form__control collapsed__html" ng-click="previewParticipantTrainingRelevance()" title="Click to view full text">
+                        <div ng-bind-html="extraInfo.ParticipantTrainingRelevance | unsafe"></div>
+                    </div>
+                </div>
+            </div>
+		</div>
+	</div>
+</div>

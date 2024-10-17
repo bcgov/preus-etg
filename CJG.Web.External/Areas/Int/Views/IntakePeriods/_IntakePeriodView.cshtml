@@ -1,0 +1,73 @@
+﻿<div ng-controller="IntakePeriodView">
+    <div class="dialog-header">
+        <h3>{{ngDialogData.intakePeriod.Id ? 'Edit ' + ngDialogData.intakePeriod.Caption : 'Add Intake Period'}}</h3>
+    </div>
+    <div class="dialog-content intake-period-dialog-content">
+        <div class="modal-content">
+            <div class="edit-model-modal-inline">
+                <div class="form">
+                    <div ng-if="alert.message" class="row row--alert">
+                        <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+                    </div>
+
+                    <div ng-if="ngDialogData.intakePeriod.WarningMessage" class="row row--alert">
+                        <div class="alert alert--warning" role="alert" ng-bind-html="ngDialogData.intakePeriod.WarningMessage"></div>
+                    </div>
+                    
+                    <input type="hidden" ng-model="ngDialogData.intakePeriod.Id" ng-value="ngDialogData.intakePeriod.Id ? ngDialogData.intakePeriod.Id : ''" disabled/>
+                    <input type="hidden" ng-model="ngDialogData.intakePeriod.GrantProgramId" ng-value="ngDialogData.intakePeriod.GrantProgramId" />
+                    <input type="hidden" ng-model="ngDialogData.intakePeriod.GrantStreamId" ng-value="ngDialogData.intakePeriod.GrantStreamId" />
+                    <input type="hidden" ng-model="ngDialogData.intakePeriod.FiscalId" ng-value="ngDialogData.intakePeriod.FiscalId" />
+
+                    <div class="form__group" ng-if="ngDialogData.intakePeriod.Id <= 0">
+                        <div class="form__label">Intake Period Name</div>
+                        <div class="form__control">
+                            <div class="control-wrapper">
+                                {{ngDialogData.intakePeriod.Caption}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form__group">
+                        <div class="form__label">Start Date</div>
+                        <div class="form__control">
+                            <div class="control-wrapper">
+                                <datedropdown ng-model="ngDialogData.intakePeriod.StartDate" ng-text="ngDialogData.intakePeriod.StartDate" ng-disabled="ngDialogData.intakePeriod.StartDateDisabled" ng-editing="true" ng-min-date="ngDialogData.intakePeriod.MinimumDate" ng-max-date="ngDialogData.intakePeriod.MaximumDate" ng-default-month="'Month'" ng-default-day="'Day'" ng-default-year="'Year'"></datedropdown>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form__group">
+                        <div class="form__label">End Date</div>
+                        <div class="form__control">
+                            <div class="control-wrapper">
+                                <datedropdown ng-model="ngDialogData.intakePeriod.EndDate" ng-text="ngDialogData.intakePeriod.EndDate" ng-disabled="ngDialogData.intakePeriod.EndDateDisabled" ng-editing="true" ng-min-date="ngDialogData.intakePeriod.MinimumDate" ng-max-date="ngDialogData.intakePeriod.MaximumDate" ng-default-month="'Month'" ng-default-day="'Day'" ng-default-year="'Year'" ></datedropdown>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form__group form__group--radio-inline" ng-if="ngDialogData.intakePeriod.Id <= 0">
+                        <div ng-validation="errors.IsActive">
+                            <div class="form__label">
+                                Enabled?
+                            </div>
+                            <div class="form-item">
+                                <input type="radio" id="isactive-true" ng-value="true" ng-model="ngDialogData.intakePeriod.IsActive" name="ngDialogData.intakePeriod.IsActive">
+                                <label for="isactive-true">Yes</label>
+                            </div>
+                            <div class="form-item">
+                                <input type="radio" id="isactive-false" ng-value="false" ng-model="ngDialogData.intakePeriod.IsActive" name="ngDialogData.intakePeriod.IsActive">
+                                <label for="isactive-false">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div ng-if="ngDialogData.intakePeriod.StartDateDisabled && ngDialogData.intakePeriod.EndDateDisabled">
+                        <button class="btn btn--secondary pull-right" ng-click="closeThisDialog()">Close</button>
+                    </div>
+                    <div ng-if="ngDialogData.intakePeriod.StartDateDisabled === false || ngDialogData.intakePeriod.EndDateDisabled === false">
+                        <button class="btn btn--secondary pull-left" ng-click="closeThisDialog()">Cancel</button>
+                        <button class="btn btn--primary pull-right" ng-click="saveIntakePeriod()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

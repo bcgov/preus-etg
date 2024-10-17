@@ -1,0 +1,31 @@
+﻿@model CJG.Web.External.Areas.Int.Models.GrantPrograms.GrantProgramDocumentTemplatePreviewModel
+@{
+    ViewBag.Title = "Grant Program Document Template Preview";
+}
+
+<div ng-controller="GrantProgramDocumentTemplatePreview" ng-document-template='@Html.Raw(Json.Encode(Model))'>
+    <div class="row row--alert" ng-if="alert.message">
+        <div class="alert alert--default" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message">
+        </div>
+    </div>
+
+    <div class="pull-right">
+        <div class="form__group">
+            <div class="form__label">Application State</div>
+            <div class="form__control">
+                <div class="selectmenu" style="width: 100%;">
+                    <select style="width: 100%;"
+                            ng-model="model.ApplicationStateInternal"
+                            ng-options="item.Id as item.Caption for item in applicationStates.InternalStates"
+                            ng-change="loadDocumentTemplatePreview()"></select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="clear: both; margin-bottom: 10px;">
+        <div class="form__control" style="border: solid 1px darkgray; padding: 10px; margin-top: 10px;" ng-validation="errors.EmailBody">
+            <div ng-bind-html="model.Body"></div>
+        </div>
+    </div>
+</div>

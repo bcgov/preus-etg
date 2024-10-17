@@ -1,0 +1,98 @@
+﻿@using CJG.Core.Entities
+
+<div class="form__group form__group--radio-inline">
+    <label class="form__label" for="allParticipantsCompletedTraining">
+        {{question.Question}} <abbr title="Required" ng-if="question.IsRequired">*</abbr>
+    </label>
+    <div class="form__control">
+        <div class="form-item" ng-repeat="option in question.Level1Options">
+            <input id="option-{{option.Id}}" type="radio" class="k-valid"
+                   name="answer-{{question.Id}}"
+                   ng-value="!option.TriggersNextLevel"
+                   ng-model="question.Level1Answers[0].BoolAnswer"
+                   ng-change="triggerChildLevelAnswers(question.Level2Answers, !option.TriggersNextLevel)" />
+            <label for="option-{{option.Id}}">{{option.Answer}}</label>
+        </div>
+    </div>
+</div>
+
+<div class="block--completion-report">
+    <p ng-style="group.Id == @(Constants.CompletionReportCWRGPage1) ? { 'font-weight' : 'bold' } : { 'font-weight' : 'inherit' }">{{question.Description}}</p>
+    <div class="table-wrapper">
+        <pager ng-filter="getParticipants" ng-local="true">
+            <table class="form__group--data-grid">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="form__control">
+                                <input type="checkbox" class="input--medium pull-left"
+                                       id="select-all-{{question.Id}}"
+                                       ng-click="toggleAllAnswers(question.Level1Answers[0], question.Level2Answers)"
+                                       ng-checked="allAnswersSelected(question.Level2Answers)" />
+                                <label class="form__label" for="select-all-{{question.Id}}">
+                                    <span ng-if="question.TableHeadings.length && question.TableHeadings[0]">
+                                        {{question.TableHeadings[0]}}
+                                    </span>
+                                    <span ng-if="!question.TableHeadings.length || !question.TableHeadings[0]">
+                                        Select All
+                                    </span>
+                                </label>
+                            </div>
+                        </th>
+                        <th>
+                            <span ng-if="question.TableHeadings.length && question.TableHeadings[1]">
+                                {{question.TableHeadings[1]}}
+                            </span>
+                            <span ng-if="!question.TableHeadings.length || !question.TableHeadings[1]">
+                                Name of Participant
+                            </span>
+                        </th>
+                        <th>
+                            <span ng-if="question.TableHeadings.length && question.TableHeadings[2]">
+                                {{question.TableHeadings[2]}}
+                            </span>
+                            <span ng-if="!question.TableHeadings.length || !question.TableHeadings[2]">
+                                Reason
+                            </span>
+                            <abbr title="Required">*</abbr>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="participant in $parent.$ctrl.ngItems" ng-show="$parent.$parent.$ctrl.showPage($index)">
+                        <td>
+                            <div class="form__control">
+                                <input type="checkbox" class="input--medium" id="select-participant-{{question.Id}}-{{participant.Id}}"
+                                       ng-model="getParticipantAnswer(question.Level2Answers, participant.Id).BoolAnswer"
+                                       ng-change="triggerParentLevelAnswer(question.Level1Answers[0], getParticipantAnswer(question.Level2Answers, participant.Id).BoolAnswer)" />
+                                <label class="form__label" for="select-participant-{{question.Id}}-{{participant.Id}}">&nbsp;</label>
+                            </div>
+                        </td>
+                        <td>{{participant.FirstName}} {{participant.LastName}}</td>
+                        <td>
+                            <div class="form-item">
+                                @* (question.Id < 15) below: did not want to alter display of the original ETG completion report.
+                                    Original completion report (id=1) can be identified as having questions below 15.
+                                *@
+                                <div class="form__control ng-class: (question.Id < 15)? 'select--medium-small' : ''"
+                                     ng-if="getParticipantAnswer(question.Level2Answers, participant.Id).BoolAnswer">
+                                    <div class="control-wrapper selectmenu">
+                                        <select class="form-control"
+                                                ng-model="getParticipantAnswer(question.Level2Answers, participant.Id).IntAnswer"
+                                                ng-options="item.Id as item.Answer for item in question.Level2Options"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Appears only when 'Other' is selected in dropdown above -->
+                            <div class="margin-top-10" ng-show="answerDisplayOther(question.Level2Options, getParticipantAnswer(question.Level2Answers, participant.Id).IntAnswer)">
+                                <textarea type="text" class="input--full copy-box--small"
+                                          ng-show="getParticipantAnswer(question.Level2Answers, participant.Id).BoolAnswer"
+                                          ng-model="getParticipantAnswer(question.Level2Answers, participant.Id).StringAnswer"></textarea>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </pager>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+.expense-table th:not(:last-child) {
+  border-bottom: 1px solid black;
+  text-align: left;
+}
+
+.expense-table td:not(:last-child) {
+  border-bottom: 1px solid black;
+  border-top: 1px solid black;
+  text-align: left;
+}

@@ -1,0 +1,17 @@
+/**
+ * Usage:
+ *
+ *   background-color: color(white);
+ */
+
+@function color($color) {
+  @if map-get($colors, $color) {
+    @return map-get($colors, $color);
+  }
+  @else if map-get($semanticColors, $color) {
+    @return map-get($semanticColors, $color);
+  }
+  @else {
+    @error 'Color \'#{$color}\' could not be found';
+  }
+}

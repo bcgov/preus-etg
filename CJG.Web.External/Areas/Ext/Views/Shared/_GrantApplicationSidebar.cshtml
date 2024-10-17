@@ -1,0 +1,391 @@
+@using CJG.Core.Entities
+@using CJG.Web.External.Areas.Ext.Controllers
+@using CJG.Web.External.Areas.Ext.Models
+
+@model CJG.Web.External.Areas.Ext.Models.SidebarViewModel
+
+<div class="sidebar" ng-controller="Sidebar" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-claim-id="@ViewBag.ClaimId" ng-claim-version="@ViewBag.ClaimVersion">
+    <div class="sidebar__container">
+        @if(Model.ShowClaimInformation)
+        { 
+            <h5 class="sidebar__heading">Claim status</h5>
+            <div class="sidebar__content">
+                <strong>
+                    @switch (Model.CurrentClaim.ClaimState)
+                    {
+                        case null:
+                            <span class="label label--incomplete">NOT STARTED</span>;
+                            break;
+                        case ClaimState.Incomplete:
+                            <span class="label label--incomplete">INCOMPLETE</span>
+                            break;
+                        case ClaimState.Complete:
+                            <span class="label label--incomplete">NOT SUBMITTED</span>
+                            break;
+                        case ClaimState.Unassessed:
+                            <span class="label label--incomplete">CLAIM SUBMITTED</span>
+                            break;
+                        case ClaimState.ClaimApproved:
+                        case ClaimState.AmountOwing:
+                        case ClaimState.PaymentRequested:
+                        case ClaimState.ClaimPaid:
+                        case ClaimState.AmountReceived:
+                        case ClaimState.ClaimAmended:
+                            <span class="label label--complete">CLAIM APPROVED</span>
+                            break;
+                        case ClaimState.ClaimDenied:
+                            <span class="label label--incomplete">CLAIM DENIED</span>
+                            break;
+                    }
+                </strong>
+
+                @switch (Model.CurrentClaim.ClaimState)
+                {
+                    case ClaimState.ClaimApproved:
+                    case ClaimState.AmountOwing:
+                    case ClaimState.PaymentRequested:
+                    case ClaimState.ClaimPaid:
+                    case ClaimState.AmountReceived:
+                    case ClaimState.ClaimAmended:
+                        <div>Approved on</div>
+                        <div><strong>@Model.CurrentClaim.ClaimStateDate.FormatMorning()</strong></div>
+                        break;
+                    case ClaimState.ClaimDenied:
+                        <div>Denied on</div>
+                        <div><strong>@Model.CurrentClaim.ClaimStateDate.FormatMorning()</strong></div>
+                        break;
+                }
+
+            </div>
+        }
+        
+        @if (!Model.ShowClaimInformation)
+        { 
+        <h5 class="sidebar__heading">Application status</h5>
+        <div class="sidebar__content">
+            <strong>@Html.Partial("_ApplicationStatusLabel", Model.GrantApplication.ApplicationStateExternal)</strong>
+
+            @switch (Model.GrantApplication.ApplicationStateExternal)
+            {
+                case ApplicationStateExternal.NotStarted:
+                    <text>
+                    </text>
+                    break;
+                case ApplicationStateExternal.Complete:
+                case ApplicationStateExternal.Incomplete:
+                    <text>
+                        <div>Created on</div>
+                        <div><strong>@Model.GrantApplication.DateAdded.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.Submitted:
+                    <text>
+                        <div>Submitted on</div>
+                        <div><strong>@(Model.GrantApplication.DateSubmitted.HasValue ? Model.GrantApplication.DateSubmitted.Value.FormatMorning() : "")</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.ApplicationWithdrawn:
+                    <text>
+                        <div>Withdrawn on</div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.Approved:
+                    <text>
+                        <div>Approved on</div>
+                        <div><strong>@Model.GrantApplication.GrantAgreement.DateAccepted.Value.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.ApplicationDenied:
+                    <text>
+                        <div>Denied on</div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.CancelledByAgreementHolder:
+                    <text>
+                        <div>Cancelled on</div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.CancelledByMinistry:
+                    <text>
+                        <div>Cancelled on</div>
+                        <div><strong>@Model.GrantApplication.DateCancelled.Value.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.AcceptGrantAgreement:
+                    <text>
+                        @if (Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateInternal).ChangedDate != null)
+                        {
+                            <p />
+                            <div class="label label--acceptby">
+                                Accept by @Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateInternal).ChangedDate.AddDays(5).FormatMorning()
+                            </div>
+                            <p />
+                        }
+                        <div>Issued on</div>
+                        <div><strong>@Model.GrantApplication.GrantAgreement.DateAdded.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.ChangeRequestSubmitted:
+                    <text>
+                        <div>Submitted on</div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.ChangeRequestDenied:
+                    <text>
+                        <div>Denied on</div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.ChangeRequestApproved:
+                    <text>
+                        <div>Approved on</div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                @*case ApplicationStateExternal.ClaimSubmitted:
+                    <text>
+                        <div>Submitted on</div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
+                    </text>
+                    break;*@
+                case ApplicationStateExternal.ClaimReturned:
+                    <text>
+                        <div>Returned on</div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.ClaimDenied:
+                    <text>
+                        <div>Denied on</div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.ClaimApproved:
+                    <text>
+                        <div>Approved on</div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.Closed:
+                    <text>
+                        <div>Closed on</div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.NotAccepted:
+                    <text>
+                        <div>Returned on</div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.AgreementWithdrawn:
+                    <text>
+                        <div>Withdrawn on</div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.AgreementRejected:
+                    <text>
+                        <div>Rejected on</div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                case ApplicationStateExternal.ReturnedUnassessed:
+                    <text>
+                        <div>Returned on</div>
+                        <div><strong>@Model.GrantApplication.GetStateChange(Model.GrantApplication.ApplicationStateExternal.GetInternalState()).ChangedDate.FormatMorning()</strong></div>
+                    </text>
+                    break;
+                }
+            </div>
+        }
+    </div>
+    @if (!Model.GrantApplication.ApplicationStateExternal.In(
+        ApplicationStateExternal.Incomplete,
+        ApplicationStateExternal.Complete,
+        ApplicationStateExternal.ApplicationWithdrawn,
+        ApplicationStateExternal.AgreementRejected,
+        ApplicationStateExternal.AgreementWithdrawn,
+        ApplicationStateExternal.ApplicationDenied,
+        ApplicationStateExternal.CancelledByAgreementHolder, 
+        ApplicationStateExternal.CancelledByMinistry))
+    {
+        <div class="sidebar__container">
+            <h5 class="sidebar__heading">Links</h5>
+            <div class="sidebar__content ">
+                @{ var highlightAttributes = new { style = "font-weight:bold; color: red" }; }
+
+                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.GrantFiles)) //RR1
+                {
+                    <div>
+                        @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.GrantFiles].Title, nameof(ReportingController.GrantFileView), nameof(ReportingController).Replace("Controller", ""),
+                            new { grantApplicationId = Model.GrantApplication.Id },
+                            Model.SideBarLinks[SidebarLinkType.GrantFiles].IsHighlighted ? highlightAttributes : null)
+                    </div>
+                }
+
+                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.ReviewAgreement)) //RR1
+                {
+                    <div>
+                        @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ReviewAgreement].Title, nameof(GrantAgreementController.AgreementReviewView), nameof(GrantAgreementController).Replace("Controller", ""),
+                                      new { grantApplicationId = Model.GrantApplication.Id },
+                                      Model.SideBarLinks[SidebarLinkType.ReviewAgreement].IsHighlighted ? highlightAttributes : null)
+                    </div>
+                }
+
+                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.ChangeTrainingProvider)) //RR2
+                {
+                    <div>
+                        @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ChangeTrainingProvider].Title,
+                                      actionName: nameof(GrantAgreementController.AgreementOverviewView),
+                                      controllerName: "GrantAgreement",
+                                      protocol: null, hostName: null,
+                                      fragment: "change-provider",
+                                      routeValues: new { grantApplicationId = Model.GrantApplication.Id },
+                                      htmlAttributes: new { @class = "sidebar--request-training-provider-change" }
+                                      )
+                    </div>
+                }
+
+                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.ChangeTrainingDates)) //RR3
+                {
+                    <div>
+                        @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ChangeTrainingDates].Title,
+                                      actionName: nameof(GrantAgreementController.AgreementOverviewView),
+                                      controllerName: "GrantAgreement",
+                                      protocol: null, hostName: null,
+                                      fragment: "change-date",
+                                      routeValues: new { grantApplicationId = Model.GrantApplication.Id },
+                                      htmlAttributes: new { @class = "sidebar--change-training-dates" }
+                                      )
+                    </div>
+                }
+
+                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.ApplicationView)) //RR4
+                {
+                    <div>
+                        @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ApplicationView].Title, nameof(ApplicationViewController.ApplicationDetailsView), "ApplicationView",
+                                                new { grantApplicationId = Model.GrantApplication.Id },
+                                                Model.SideBarLinks[SidebarLinkType.ApplicationView].IsHighlighted ? highlightAttributes : null)
+                    </div>
+                }
+
+                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.AgreementOverview)) //RR5
+                {
+                    <div>
+                        @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.AgreementOverview].Title, nameof(GrantAgreementController.AgreementOverviewView), "GrantAgreement",
+                                      new { grantApplicationId = Model.GrantApplication.Id },
+                                      Model.SideBarLinks[SidebarLinkType.AgreementOverview].IsHighlighted ? highlightAttributes : null)
+                    </div>
+                }
+
+                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.ViewParticipantList)) //RR6
+                {
+                    <div>
+                        @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ViewParticipantList].Title, nameof(ParticipantReportingController.ParticipantReportingView), nameof(ParticipantReportingController).Replace("Controller", ""),
+                                                new { grantApplicationId = Model.GrantApplication.Id },
+                                                Model.SideBarLinks[SidebarLinkType.ViewParticipantList].IsHighlighted ? highlightAttributes : null)
+                    </div>
+                }
+                
+                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.ViewClaim) && Model.GrantApplication.Claims?.Count > 0) //RR7
+                {
+                    <div>
+                        @{
+                            var claim = Model.GrantApplication.Claims
+                                .OrderByDescending(c => c.Id)
+                                .ThenByDescending(v => v.ClaimVersion)
+                                .FirstOrDefault();
+                        }
+
+                        @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ViewClaim].Title, nameof(ClaimController.DetailsView), nameof(ClaimController).Replace("Controller", ""),
+                                      new { claimId = claim.Id, claimVersion = claim.ClaimVersion },
+                                      Model.SideBarLinks[SidebarLinkType.ViewParticipantList].IsHighlighted ? highlightAttributes : null)
+                    </div>
+                }
+
+                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.ViewCompletionReport)) //RR8
+                {
+                    <div>
+                        @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ViewCompletionReport].Title, nameof(CompletionReportingController.CompletionReportDetailsView), nameof(CompletionReportingController).Replace("Controller", ""),
+                                                new { grantApplicationId = Model.GrantApplication.Id },
+                                                Model.SideBarLinks[SidebarLinkType.ViewCompletionReport].IsHighlighted ? highlightAttributes : null)
+                    </div>
+                }
+
+                @if (Model.GrantApplication.ApplicationStateInternal.GetExternalState() == ApplicationStateExternal.Submitted) // ??
+                {
+                    <div>
+                        <a class="action" ng-click="withdrawApplication()">Withdraw Application</a>
+                    </div>
+                }
+                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.WithdrawClaim)) //RR7
+                {
+                    <div>
+                        <a class="action" ng-click="withdrawClaim()">Withdraw Claim</a>
+                    </div>
+                }
+
+                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.CreateNewClaim)) //RR7
+                {
+                    <div>
+                        @using (Html.BeginForm(nameof(ClaimController.AssessmentView), nameof(ClaimController).Replace("Controller", ""), FormMethod.Post, new { id = "createNewClaimForm" }))
+                        {
+                            @Html.ActionLink("Create New Claim", null, null, new { id = "createNewClaim" })
+
+                            @Html.Hidden("trainingProgramId", Model.GrantApplication.TrainingPrograms.FirstOrDefault().Id)
+                            @Html.Hidden("action", "CreateNewClaim")
+                        }
+                    </div>
+
+                    <script>
+                        $(function () {
+                            $("#createNewClaim").click(function () {
+                                $("#createNewClaimForm").submit();
+                                return false;
+                            });
+                        });
+                    </script>
+                }
+            </div>
+        </div>
+    }
+    @if (Model.GrantApplication.ApplicationStateExternal.In(ApplicationStateExternal.CancelledByMinistry))
+    {
+        <div class="sidebar__container">
+            <h5 class="sidebar__heading">Links</h5>
+            <div class="sidebar__content ">
+                @{ var highlightAttributes = new { style = "font-weight:bold; color: red" }; }
+                
+                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.ApplicationView)) //RR4
+                {
+                    <div>
+                        @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ApplicationView].Title, nameof(ApplicationViewController.ApplicationDetailsView), "ApplicationView",
+                            new { grantApplicationId = Model.GrantApplication.Id },
+                            Model.SideBarLinks[SidebarLinkType.ApplicationView].IsHighlighted ? highlightAttributes : null)
+                    </div>
+                }
+                
+                @if (Model.SideBarLinks.ContainsKey(SidebarLinkType.ViewClaim) && Model.GrantApplication.Claims?.Count > 0) //RR7
+                {
+                    <div>
+                        @{
+                            var claim = Model.GrantApplication.Claims
+                                .OrderByDescending(c => c.Id)
+                                .ThenByDescending(v => v.ClaimVersion)
+                                .FirstOrDefault();
+                        }
+
+                        @Html.ActionLink(Model.SideBarLinks[SidebarLinkType.ViewClaim].Title, nameof(ClaimController.DetailsView), nameof(ClaimController).Replace("Controller", ""),
+                            new { claimId = claim.Id, claimVersion = claim.ClaimVersion },
+                            Model.SideBarLinks[SidebarLinkType.ViewClaim].IsHighlighted ? highlightAttributes : null)
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,18 @@
+.sidebar__container {
+  margin-bottom: gap(2);
+}
+
+.sidebar__heading {
+  background-color: $sidebar-heading-bg-color;
+  color: $sidebar-heading-color;
+  font-size: $sidebar-heading-font-size;
+  font-weight: 600;
+  line-height: $sidebar-heading-line-height;
+  margin: 0;
+  padding: $sidebar-content-padding;
+}
+
+.sidebar__content {
+  background-color: $sidebar-container-bg-color;
+  padding: $sidebar-content-padding;
+}

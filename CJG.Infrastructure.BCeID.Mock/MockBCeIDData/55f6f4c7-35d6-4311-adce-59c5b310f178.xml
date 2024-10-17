@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<BCeIDUserInfo>
+  <BCeID_Luid></BCeID_Luid>
+  <Business_HubBusinessType></Business_HubBusinessType>
+  <Business_BusinessNumber></Business_BusinessNumber>
+  <Business_Guid>00000000-0000-0000-0000-000000000000</Business_Guid>
+  <Business_IncorproateionNumber></Business_IncorproateionNumber>
+  <Business_LegalName></Business_LegalName>
+  <Business_Luid></Business_Luid>
+  <Business_StatementOfRegistrationNumber></Business_StatementOfRegistrationNumber>
+  <Email>Shane.Mantle@gov.bc.ca</Email>
+  <Telephone></Telephone>
+  <DisplayName>Shane Mantle</DisplayName>
+  <UserGuid>55f6f4c7-35d6-4311-adce-59c5b310f178</UserGuid>
+  <FirstName>Shane</FirstName>
+  <Initials>SM</Initials>
+  <Surname>Mantle</Surname>
+  <UserLuid></UserLuid>
+  <AccountExpiryDate>9999-12-31</AccountExpiryDate>
+  <IsManagerDisabled>false</IsManagerDisabled>
+  <UserID>SMANTLE</UserID>
+</BCeIDUserInfo>

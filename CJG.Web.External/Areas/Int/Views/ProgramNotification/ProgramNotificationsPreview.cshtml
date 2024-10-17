@@ -1,0 +1,58 @@
+﻿@model CJG.Web.External.Areas.Int.Models.ProgramNotifications.ProgramNotificationPreviewModel
+@{
+    ViewBag.Title = "Program Notification Preview";
+}
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 200px;"></th>
+            <th style="min-width: 500px;"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <label class="form__label">
+                    <b>Name:</b>
+                </label>
+            </td>
+            <td>
+                <div class="form__control">
+                    <span>@Model.Name</span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="form__label">
+                    <b>Description:</b>
+                </label>
+            </td>
+            <td>
+                <div class="form__control">
+                    <span>@Model.Description</span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="form__label">
+                    <b>Subject:</b>
+                </label>
+            </td>
+            <td>
+                <div class="form__control">
+                    <span>@Model.Subject</span>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div class="form__control" style="border: solid 1px darkgray; padding: 10px; margin-top: 10px;">
+                    <div>@Html.Raw(Model.Body)</div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>

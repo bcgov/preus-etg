@@ -1,0 +1,218 @@
+﻿@using CJG.Web.External.Areas.Ext.Controllers
+@model CJG.Core.Entities.GrantApplication
+@{
+    ViewBag.Title = "Program Description";
+}
+<div class="row">
+    @Html.ActionLink("Return", nameof(ApplicationController.ApplicationOverviewView), typeof(ApplicationController), new { grantApplicationId = Model.Id }, new { @class = "link--back" })
+</div>
+<div ng-controller="ProgramDescriptionView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+    <div class="row" ng-show="modelLoaded">
+        <div class="main" role="main">
+            <h1>Edit Program Description</h1>
+            <p>Enter the information about your program below. When you have completed the form, click Done to move to the next step.</p>
+            <p class="text--small text--uppercase">* Information must be provided</p>
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            <div>
+                <div class="form__group">
+                    <div class="label-wrapper"><label class="form__label">Program Description <abbr title="Required">*</abbr></label></div>
+                    <p>Provide a short, high-level description of your program (300 characters maximum)</p>
+                    <div class="control-wrapper form-control"><textarea class="input--full textarea--short" ng-model="model.Description" maxlength="300" style="min-height: 6em;" ng-validation></textarea></div>
+                </div>
+                <div class="form__group">
+                    <div class="form__group">
+                        <label class="form__label">Applicant Type <abbr title="Required">*</abbr></label>
+                        <div class="form__control">
+                            <div class="selectmenu" ng-validation="errors.ApplicantOrganizationTypeId">
+                                <select class="form-control" ng-model="model.ApplicantOrganizationTypeId" ng-options="item.Key as item.Value for item in model.ApplicantOrganizationTypes">
+                                    <option value="" selected="selected">&lt; Select value &gt;</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div ng-if="model.ApplicantOrganizationTypeId == 21">
+                    <div class="form__group">
+                        <div class="label-wrapper"><label class="form__label">Enter Applicant Other Type <abbr title="Required">*</abbr></label></div>
+                        <div class="control-wrapper form-control"><input type="text" class="input--full" ng-model="model.ApplicantOrganizationTypeInfo" ng-validation></div>
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <div class="label-wrapper"><label class="form__label">Number of Participants <abbr title="Required">*</abbr></label></div>
+                    <p>Employment of participants at the end of training is a requirement of this program. Enter the number of participants to be employed at the end of the program.</p>
+                    <div class="control-wrapper form-control">
+                        <input type="text" class="input--small" ng-model="model.NumberOfParticipants" ng-init="model.NumberOfParticipants = ((model.NumberOfParticipants == 0 || !model.RowVersion) ? null: model.NumberOfParticipants)" ng-number maxlength="4" ng-validation>
+                    </div>
+                </div>
+
+                <div class="form__group form__group--checkbox-list">
+                    <div class="label-wrapper"><label class="form__label">Employment status of participants for whom this program is intended <abbr title="Required">*</abbr></label></div>
+                    <div class="form__control" style="overflow: hidden;" ng-validation="errors.SelectedParticipantEmploymentStatusIds">
+                        <ul>
+                            <li ng-repeat="item in model.ParticipantEmploymentStatuses">
+                                <div>
+                                    <input type="checkbox" id="participant-employment-statuses-{{item.Key}}" name="vulnerable-groups" ng-model="model.ParticipantEmploymentStatuses[$index].Selected" ng-checked="model.ParticipantEmploymentStatuses != null && model.ParticipantEmploymentStatuses[$index].Selected">
+                                    <label for="participant-employment-statuses-{{item.Key}}">{{item.Value}}</label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <div class="label-wrapper">
+                        <label class="form__label">Vulnerable or Underrepresented Populations</label>
+                    </div>
+                    <p>If the program is intended to support vulnerable or underrepresented groups, please identify which ones from the list below. Select all that apply.</p>
+                    <p><b>Note: Participant Information Forms will be collected and used to verify the following information.</b></p>
+                </div>
+
+                <div class="form__group form__group--checkbox-list">
+                    <div class="label-wrapper"><label class="form__label">Vulnerable</label></div>
+                    <div class="form__control" style="overflow: hidden;" ng-validation="errors.SelectedVulnerableGroupIds">
+                        <ul>
+                            <li ng-repeat="item in model.VulnerableGroups">
+                                <div>
+                                    <input type="checkbox" id="vulnerable-groups-{{item.Key}}" name="vulnerable-groups" ng-model="model.VulnerableGroups[$index].Selected" ng-checked="model.VulnerableGroups != null && model.VulnerableGroups[$index].Selected">
+                                    <label for="vulnerable-groups-{{item.Key}}">{{item.Value}}</label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form__group form__group--checkbox-list">
+                    <div class="label-wrapper"><label class="form__label">Underrepresented</label></div>
+                    <div class="form__control" style="overflow: hidden;" ng-validation="errors.SelectedUnderRepresentedPopulationIds">
+                        <ul>
+                            <li ng-repeat="item in model.UnderRepresentedPopulations">
+                                <div>
+                                    <input type="checkbox" id="under-represented-groups-{{item.Key}}" name="under-represented-groups" ng-model="model.UnderRepresentedPopulations[$index].Selected" ng-checked="model.UnderRepresentedPopulations != null && model.UnderRepresentedPopulations[$index].Selected">
+                                    <label for="under-represented-groups-{{item.Key}}">{{item.Value}}</label>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form__group form__group--radio-inline">
+                    <div class="label-wrapper"><label class="form__label">North American Industry Classification System (NAICS) code for the sector in which the participants will be employed at the end of training <abbr title="Required">*</abbr></label></div>
+                    <div class="form__control">
+                        <div class="form__group--multiselect">
+                            <div>
+                                <div class="control-wrapper selectmenu" ng-validation="errors.Naics1Id">
+                                    <select class="input--full form-control" ng-model="model.Naics1Id" ng-options="item.Key as item.Value for item in model.Naics1Codes">
+                                        <option value="" selected="selected">&lt; Select value &gt;</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div ng-show="model.Naics1Id" class="ng-hide" ng-validation="errors.Naics2Id">
+                                <div class="control-wrapper selectmenu">
+                                    <select class="input--full form-control" ng-model="model.Naics2Id" ng-options="item.Key as item.Value for item in model.Naics2Codes | filter:{Parent: model.Naics1Id} : true">
+                                        <option value="" selected="selected">&lt; Select value &gt;</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div ng-show="model.Naics2Id" class="ng-hide" ng-validation="errors.Naics3Id">
+                                <div class="control-wrapper selectmenu">
+                                    <select class="input--full form-control" ng-model="model.Naics3Id" ng-options="item.Key as item.Value for item in model.Naics3Codes | filter:{Parent: model.Naics2Id} : true">
+                                        <option value="" selected="selected">&lt; Select value &gt;</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div ng-show="model.Naics3Id" class="ng-hide" ng-validation="errors.Naics4Id">
+                                <div class="control-wrapper selectmenu">
+                                    <select class="input--full form-control" ng-model="model.Naics4Id" ng-options="item.Key as item.Value for item in model.Naics4Codes | filter:{Parent: model.Naics3Id} : true">
+                                        <option value="" selected="selected">&lt; Select value &gt;</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div ng-show="model.Naics4Id" class="ng-hide" ng-validation="errors.Naics5Id">
+                                <div class="control-wrapper selectmenu">
+                                    <select class="input--full form-control" ng-model="model.Naics5Id" ng-options="item.Key as item.Value for item in model.Naics5Codes | filter:{Parent: model.Naics4Id} : true">
+                                        <option value="" selected="selected">&lt; Select value &gt;</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form__group form__group--radio-inline">
+                    <div class="label-wrapper"><label class="form__label">National Occupation Classification (NOC) for the occupations in which the participants will be employed at the end of training <abbr title="Required">*</abbr></label></div>
+                    <div class="form__control">
+                        <div class="form__group--multiselect">
+                            <div>
+                                <div class="control-wrapper selectmenu" ng-validation="errors.Noc1Id">
+                                    <select class="input--full form-control" ng-model="model.Noc1Id" ng-options="item.Key as item.Value for item in model.Noc1Codes">
+                                        <option value="" selected="selected">&lt; Select value &gt;</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div ng-show="model.Noc1Id" class="ng-hide" ng-validation="errors.Noc2Id">
+                                <div class="control-wrapper selectmenu">
+                                    <select class="input--full form-control" ng-model="model.Noc2Id" ng-options="item.Key as item.Value for item in model.Noc2Codes | filter:{Parent: model.Noc1Id} : true">
+                                        <option value="" selected="selected">&lt; Select value &gt;</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div ng-show="model.Noc2Id" class="ng-hide" ng-validation="errors.Noc3Id">
+                                <div class="control-wrapper selectmenu">
+                                    <select class="input--full form-control" ng-model="model.Noc3Id" ng-options="item.Key as item.Value for item in model.Noc3Codes | filter:{Parent: model.Noc2Id} : true">
+                                        <option value="" selected="selected">&lt; Select value &gt;</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div ng-show="model.Noc3Id" class="ng-hide" ng-validation="errors.Noc4Id">
+                                <div class="control-wrapper selectmenu">
+                                    <select class="input--full form-control" ng-model="model.Noc4Id" ng-options="item.Key as item.Value for item in model.Noc4Codes | filter:{Parent: model.Noc3Id} : true">
+                                        <option value="" selected="selected">&lt; Select value &gt;</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div ng-show="model.Noc4Id" class="ng-hide" ng-validation="errors.Noc5Id">
+                                <div class="control-wrapper selectmenu">
+                                    <select class="input--full form-control" ng-model="model.Noc5Id" ng-options="item.Key as item.Value for item in model.Noc5Codes | filter:{Parent: model.Noc4Id} : true">
+                                        <option value="" selected="selected">&lt; Select value &gt;</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form__group form__group--multiselect">
+                    <div class="label-wrapper"><label class="form__label">Community Names <abbr title="Required">*</abbr></label></div>
+                    <div class="search-wrapper">
+                        <p>Select the communities that will benefit from the program. Hold down the Ctrl key and click to select multiple communities.</p>
+                        <div class="control-wrapper form-control">
+                            <input type="text" class="input--full" ng-model="CommunitySearch" placeholder="Search communities">
+                        </div>
+                        <div class="control-wrapper dropdown-padding-top" ng-validation="errors.SelectedCommunityIds">
+                            <select class="input--full form-control" ng-model="model.SelectedCommunityIds" multiple size="15" ng-options="item.Key as item.Value for item in model.Communities | searchCommunities: model.SelectedCommunityIds: CommunitySearch"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form__group">
+                    <div class="label-wrapper"><label class="form__label">Number of employers who are supporting this project <abbr title="Required">*</abbr></label></div>
+                    <div class="control-wrapper form-control">
+                        <input type="text" class="input--small" ng-model="model.SupportingEmployers" ng-number ng-validation maxlength="3">
+                    </div>
+                </div>
+                <p>In the next section of the application, you must attach a detailed program description and letters of support. Click Done when you have completed this part of the application.</p>
+            </div>
+            <div class="button-group">
+                @Html.Button("Cancel", new { @class = "btn btn--secondary", @onclick = "window.location='" + @Url.ActionUrl(nameof(ApplicationController.ApplicationOverviewView), typeof(ApplicationController), new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'" })
+                <button type="button" class="btn btn--primary btn--forward" ng-click="submit()">Done</button>
+            </div>
+        </div>
+    </div>
+</div>

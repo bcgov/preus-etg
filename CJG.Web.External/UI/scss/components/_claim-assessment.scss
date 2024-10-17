@@ -1,0 +1,145 @@
+.unlock-contribution,
+.cancel-claim-edit {
+  box-sizing: border-box;
+  width: 70px;
+  height: 25px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  text-indent: -9999px;
+  border: solid 1px color('Ghost');
+  background-color: color('White Smoke');
+}
+
+.unlock-contribution {
+  background-image: url('#{$icon-img-path}/icon--unlocked.svg');
+}
+
+.cancel-claim-edit {
+  background-image: url('#{$icon-img-path}/icon--locked.svg');
+}
+
+.row--participant {
+  .col--participant-name {
+    text-align: left;
+  }
+}
+
+
+.block--textarea-group {
+  width: 100%;
+  clear: both;
+
+  .form__label {
+    float: left;
+    width: 15%;
+  }
+
+  .form__control {
+    float: right;
+    width: 80%;
+
+    textarea {
+      height: 200px;
+      min-height: 0;
+    }
+  }
+}
+
+.block--claim-assessment-expense-type {
+  margin-top: 40px;
+
+  .panel-bar {
+    .panel-bar__heading {
+      .btn {
+        margin-right: 20px;
+        position: absolute;
+        right: 0;
+        top: 5px;
+      }
+    }
+  }
+
+  .reimbursement-claim-title {
+    margin-right: 20px
+  }
+
+  .reimbursement-claim-rate {
+    margin-right: 20px;
+  }
+}
+
+.table--claims__cost__agreed {
+  td, th {
+    &:nth-child(4) {
+      width: 10%;
+      text-align: right;
+
+      @media (min-width: 1400px) {
+        width: 100px;
+      }
+    }
+  }
+}
+
+.total-assessed-value-wrapper.pull-right {
+  margin-right: 20px;
+}
+
+.block--claim-assessment-add-expense-type {
+  margin: 30px 0 40px;
+
+  select {
+    height: 30px;
+  }
+
+  .btn {
+    margin: 0 0 0 20px;
+  }
+}
+
+.block--unlock-contribution {
+  margin-right: 65px;
+}
+
+.block--textarea-group__applicant-explanation {
+  .form__label {
+    position: relative;
+    top: 25px;
+  }
+
+  .label--required-reason {
+    margin-bottom: 5px;
+  }
+}
+
+.block--textarea-group {
+  .form__control {
+    .textarea--director-reason[disabled=disabled] {
+      height: auto;
+      border: none;
+
+      & + .char-count-status {
+        display: none;
+      }
+    }
+  }
+}
+
+.div--PaymentRequestsOnHold {
+  pointer-events: none;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  top: 0;
+
+  span {
+    background: red;
+    padding: 0 4px;
+    color: white;
+    font-weight: bold;
+  }
+}
+
+.block--claim-assessment-add-expense-type .label-wrapper {
+  display: none !important;
+}

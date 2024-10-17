@@ -1,0 +1,90 @@
+﻿@model CJG.Web.External.Areas.Int.Models.DebugReportingViewModel
+@{
+    ViewBag.Title = "Debug ReportingService";
+}
+@section Scripts {
+    <script src="~/Scripts/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript">
+        var $listBox = $('#@Html.IdFor(x => x.SelectedFilePaths)');
+        var $fileDownload = $('#fileDownload');
+        if ($listBox.length && $fileDownload.length) {
+            var baseUrl = $fileDownload.attr('href');
+            $listBox.on('change', function() {
+                var selectedPath = $listBox.find(":selected").val();
+                $fileDownload.attr('href', baseUrl + '?filePath=' + selectedPath);
+            });
+        }
+    </script>
+}
+<div>
+    <h1>Debug ReportingService</h1>
+
+    @using (Html.BeginForm("ReportingService", "Debug", FormMethod.Post))
+    {
+        <div class="form__group">
+            @Html.Label("Current Date:", new { @class = "form__label" })
+            <div class="form__control">
+                @Html.TextBoxFor(x => x.CurrentDate, new { @class = "input--medium" })
+            </div>
+        </div>
+
+        <div class="form__group">
+            @Html.Label("Ignore reports prepared for number of days in the past:", new { @class = "form__label" })
+            <div class="form__control">
+                @Html.TextBoxFor(x => x.NumberOfDaysBefore, new { @class = "input--medium" })
+            </div>
+        </div>
+
+        <div class="form__group">
+            @Html.Label("Process maximum number of participants at the time:", new { @class = "form__label" })
+            <div class="form__control">
+                @Html.TextBoxFor(x => x.MaxParticipants, new { @class = "input--medium" })
+            </div>
+        </div>
+
+        <div class="form__group">
+            @Html.CheckBoxFor(x => x.AddHeader, new { @class = "input--medium" })
+            <label for="@Html.IdFor(x => x.AddHeader)">Add header to CSV report file</label>
+        </div>
+
+        <button type="submit" class="btn btn--primary" id="StartReport" name="submit" value="StartReport">Start ReportingService</button>
+        <br />
+        <br />
+
+        <div class="form__group">
+
+            @if (Model.FileNames != null && Model.FileNames.Any())
+            {
+                <label class="form__label">Select a file to download:</label>
+                <div class="info-list">
+                    @Html.ListBoxFor(x => x.SelectedFilePaths, Model.FileNames, new { @class = "input--medium", style = "height: 10em;" })
+                </div>
+                <br />
+
+                <a id="fileDownload" href="@Url.Action("ReportingServiceDownload")" target="_blank" , class="btn btn--primary">Download</a>
+            }
+            else
+            {
+                <p>No reports generated</p>
+            }
+        </div>
+    }
+
+    <br />
+    @if (Model.LogRecords != null && Model.LogRecords.Any())
+    {
+        <div class="form__group">
+            <label class="form__label">Log records</label>
+            <ul class="panel-bar">
+                @foreach (var item in Model.LogRecords)
+                {
+                    <li>@item</li>
+                }
+            </ul>
+        </div>
+    }
+
+</div>
+
+
+

@@ -1,0 +1,108 @@
+﻿@{
+    ViewBag.Title = "Organization Profile Owner";
+}
+
+<div ng-controller="OrganizationProfile">
+    <div ng-if="alert.message" class="row row--alert">
+        <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+    </div>
+
+    <div class="form-section">
+        <div>
+            <h2 class="header__title">Manage Organization Profile Owners</h2>
+        </div>
+    </div>
+
+    <table class="form__group--two-level">
+        <thead>
+            <tr>
+                <th>
+                    <span>Organizations</span>
+                </th>
+                <th>
+                    <span ng-show="profile">{{profile.OrganizationName}}</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <div>
+                        <div class="form__group">
+                            <label class="form__label" style="margin: 10px 10px 5px;">
+                                Search organization name
+                            </label>
+                            <div class="form__control">
+                                <span class="control-wrapper">
+                                    <input type="text"
+                                           class="input--medium"
+                                           ng-model="keyword"
+                                           ng-change="keyword && loadOrganizations()" />
+                                </span>
+                            </div>
+                            <div class="form__control">
+                                <div class="control-wrapper">
+                                    <select size="20"
+                                            class="input--medium"
+                                            ng-model="organizationId"
+                                            ng-options="item.Key as item.Value for item in organizations"
+                                            ng-change="organizationId && loadUsers()"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td style="vertical-align: top; width: 100%;">
+                    <div ng-show="profile">
+                        <table class="form__group--data-grid">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Organization Profile Owner
+                                    </th>
+                                    <th>
+                                        User Name
+                                    </th>
+                                    <th>
+                                        Title
+                                    </th>
+                                    <th>
+                                        Telephone
+                                    </th>
+                                    <th>
+                                        BCeID Username
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-if="!profile.Users.length">
+                                    <td colspan="5" style="text-align: center;">
+                                        No registered user associated with the selected organization
+                                    </td>
+                                </tr>
+                                <tr ng-repeat="user in profile.Users">
+                                    <td>
+                                        <div class="form__control">
+                                            <input type="checkbox" class="input--medium" id="select-user-{{user.Id}}"
+                                                   ng-model="user.IsOrganizationProfileAdministrator"
+                                                   ng-click="setOrganizationProfileAdmin(user)" />
+                                            <label class="form__label" for="select-user-{{user.Id}}">&nbsp;</label>
+                                        </div>
+                                    </td>
+                                    <td>{{user.FirstName}} {{user.LastName}}</td>
+                                    <td>{{user.JobTitle}}</td>
+                                    <td>{{user.PhoneNumber}}<span ng-if="user.PhoneExtension"> - {{user.PhoneExtension}}</span></td>
+                                    <td>{{user.BCeID}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="button-group" ng-if="getOrganizationProfileAdmin()">
+        <button class="btn btn--primary btn--forward" ng-click="save($event)">Save</button>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+﻿@model CJG.Web.External.Areas.Ext.Models.SidebarViewModel
+@{
+    ViewBag.Title = "Reimbursement Claim";
+}
+
+<div class="row">
+    @Html.ActionLink("Return", "GrantFileView", "Reporting", new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
+</div>
+<div id="claim-report-container" ng-controller="ClaimReportingView" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-claim-id="@ViewBag.ClaimId" ng-claim-version="@ViewBag.ClaimVersion">
+    <div class="row">
+        <div class="main">
+            <div>
+                <program-title-label ng-model="model.ProgramTitleLabel"></program-title-label>
+
+                <h2>Reimbursement Claim</h2>
+                <div ng-if="alert.message" class="row row--alert">
+                    <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+                </div>
+                <div>
+                    @Html.Partial("_ClaimDetailsETG")
+                </div>
+
+                @Html.Partial("_ClaimAttachments")
+                
+                @if (!ViewBag.ReviewAndSubmit)
+                {
+                    <div ng-if="participantsHaveWarnings">
+                        <br />
+                        <div class="alert alert--error">
+                            There are currently issues with Participant maximum annual amounts and the claim amounts you have entered. You will not be able to submit your claim <a href="#top" style="display: inline-block; width: auto;">until these are resolved</a>.
+                        </div>
+                    </div>
+
+                    <div class="margin-bottom pull-right" ng-if="model.Claim.IsEditable && model.Claim.EligibleCosts.length > 0">
+                        <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-click="save()" ng-disabled="!IsValid">Save for later</a>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="margin-bottom pull-right" ng-if="model.Claim.IsEditable && grantFile.ReportingPeriodIsOpen && allowSubmitButton">
+                        <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-disabled="totalAttachments <= 0 || participantsHaveWarnings" ng-click="saveAndReview();">Submit my claim now</a>
+                    </div>
+                    @*<div class="margin-bottom pull-right" ng-if="grantFile.AllowReviewAndSubmit && grantFile.EnableSubmit">
+                        @Html.ActionLink("Submit my claim now", "ClaimReviewView", "Claim", new { claimId = ViewBag.ClaimId, claimVersion = ViewBag.ClaimVersion }, new { @class = "btn btn--primary" })
+                    </div>*@
+                }
+            </div>
+        </div>
+        @Html.Partial("_GrantApplicationSidebar", Model)
+    </div>
+</div>

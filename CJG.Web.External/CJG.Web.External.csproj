@@ -1,0 +1,1774 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Net.Compilers.3.1.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.3.1.1\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{368C4FCC-D480-44CD-B23C-C0053D6BAF0B}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CJG.Web.External</RootNamespace>
+    <AssemblyName>CJG.Web.External</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <MvcBuildViews>true</MvcBuildViews>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication>
+    </IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>
+    </IISExpressWindowsAuthentication>
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PublishDatabaseSettings>
+      <Objects>
+        <ObjectGroup Name="CJG-Deployment" Order="1" Enabled="False">
+          <Destination Path="" />
+          <Object Type="DbFullSql" Enabled="False">
+            <PreSource Path="Data Source=%28local%29\SQL2014%3bInitial Catalog=CJG%3bUser ID=cjg%3bPassword=cjg%3bApplication Name=EntityFramework" ScriptSchema="True" ScriptData="False" CopyAllFullTextCatalogs="False" DriDefaults="True" />
+            <Source Path="obj\Debug\AutoScripts\CJG-Deployment_SchemaOnly.sql" Transacted="True" />
+          </Object>
+        </ObjectGroup>
+      </Objects>
+    </PublishDatabaseSettings>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;Release</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.16.0.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.16.0\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="netstandard" />
+    <Reference Include="RazorEngine, Version=3.10.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Bin\RazorEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="Autofac, Version=4.9.2.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.9.2\lib\net45\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Configuration, Version=4.1.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.Configuration.4.1.0\lib\net45\Autofac.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Extras.AggregateService, Version=4.1.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.Extras.AggregateService.4.1.0\lib\net45\Autofac.Extras.AggregateService.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.Mvc5.4.0.2\lib\net45\Autofac.Integration.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DataAnnotationsExtensions, Version=5.0.1.27, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DataAnnotationsExtensions.5.0.1.27\lib\NETFramework40\DataAnnotationsExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.11.8.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.11.8\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.2\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.2\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.2\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.Configuration, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.4.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.4.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.4.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.4.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.4.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.6.5\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog.Extended, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.Extended.4.6.5\lib\net45\NLog.Extended.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.Web.4.8.3\lib\net35\NLog.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Packaging, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Packaging.6.0.0\lib\net461\System.IO.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Net.Http, Version=4.1.1.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.4.3.4\lib\net46\System.Net.Http.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.4.3.1\lib\net462\System.Runtime.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Extensions, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.Extensions.4.3.1\lib\net462\System.Runtime.Extensions.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.InteropServices" />
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.1\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.2\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Text.RegularExpressions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.RegularExpressions.4.3.1\lib\net463\System.Text.RegularExpressions.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Threading.Thread" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.7\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.7\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.7\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.7\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_Data\PDF\ETG-sample-agreement.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Int\Views\Debug\NotificationsServiceView.cshtml" />
+    <Content Include="Areas\Int\Views\Note\NoteView.cshtml" />
+    <Content Include="content\components\_AngularDateDropdown.html" />
+    <Content Include="content\components\_AngularTablePager.html" />
+    <Content Include="content\components\_AngularProgramTitleLabel.html" />
+    <Content Include="content\components\_AngularInternalStateLabel.html" />
+    <Content Include="content\components\_AngularOptions.html" />
+    <Content Include="content\components\_AngularCheckboxes.html" />
+    <Content Include="content\components\_AngularSectionEditButtons.html" />
+    <Content Include="content\components\_AngularValidation.html" />
+    <Content Include="content\components\_AngularText.html" />
+    <Content Include="content\components\_AngularTextArea.html" />
+    <Content Include="content\dialogs\_AddParticipantInvitation.html" />
+    <Content Include="content\dialogs\_ChangeAlternateContact.html" />
+    <Content Include="content\dialogs\_ApprovalReason.html" />
+    <Content Include="content\dialogs\_DenialReason.html" />
+    <Content Include="content\dialogs\_FullContent.html" />
+    <Content Include="content\dialogs\_TestNotification.html" />
+    <Content Include="content\dialogs\_ChangeApplicant.html" />
+    <Content Include="content\dialogs\_Message.html" />
+    <Content Include="content\dialogs\_ReturnToAssessmentReason.html" />
+    <Content Include="content\dialogs\_Reason.html" />
+    <Content Include="content\dialogs\_TrainingCostAttachment.html" />
+    <Content Include="content\dialogs\_TrainingProviderAttachment.html" />
+    <Content Include="content\dialogs\_ApplicationAttachments.html" />
+    <Content Include="content\dialogs\_Confirmation.html" />
+    <Content Include="content\dialogs\_Example.html" />
+    <Content Include="content\dialogs\_FinishEditing.html" />
+    <Content Include="css\styles.css" />
+    <Content Include="favicon.ico" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
+    <Content Include="images\cwrg_agreement_timeline.png" />
+    <Content Include="images\forms\select-btn-alt.svg" />
+    <Content Include="images\headerlogo.png" />
+    <Content Include="images\icons\icon--clear.svg" />
+    <Content Include="images\icons\icon--locked.svg" />
+    <Content Include="images\icons\icon--modal-close.svg" />
+    <Content Include="images\icons\icon--reset.svg" />
+    <Content Include="images\icons\icon--unlocked.svg" />
+    <Content Include="images\icons\risk-flag.png" />
+    <Content Include="images\icons\spin.gif" />
+    <Content Include="images\logo--funding_partner.png" />
+    <Content Include="js\common.js" />
+    <Content Include="js\external.js" />
+    <Content Include="js\internal.js" />
+    <Content Include="js\participant-confirmation.js" />
+    <Content Include="Maintenance.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Global.asax" />
+    <Content Include="Areas\Ext\Views\web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Helpers\404.aspx" />
+    <Content Include="Helpers\404.html" />
+    <Content Include="images\forms\checkbox-checked-disabled.svg" />
+    <Content Include="images\forms\checkbox-checked-focus.svg" />
+    <Content Include="images\forms\checkbox-checked.svg" />
+    <Content Include="images\forms\checkbox-disabled.svg" />
+    <Content Include="images\forms\checkbox-focus.svg" />
+    <Content Include="images\forms\checkbox.svg" />
+    <Content Include="images\forms\radio-checked-disabled.svg" />
+    <Content Include="images\forms\radio-checked-focus.svg" />
+    <Content Include="images\forms\radio-checked.svg" />
+    <Content Include="images\forms\radio-disabled.svg" />
+    <Content Include="images\forms\radio.svg" />
+    <Content Include="images\forms\select-btn.svg" />
+    <Content Include="images\forms\select-button.svg" />
+    <Content Include="images\forms\selectmenu-button.svg" />
+    <Content Include="images\icons\arrow-up.svg" />
+    <Content Include="images\icons\attachment.svg" />
+    <Content Include="images\icons\bc_gov_logo_transparent.png" />
+    <Content Include="images\icons\canada-bc-job-grant-logo.svg" />
+    <Content Include="images\icons\chev-blue.svg" />
+    <Content Include="images\icons\chev-white.svg" />
+    <Content Include="images\icons\chevron-left.svg" />
+    <Content Include="images\icons\chevron-right.svg" />
+    <Content Include="images\icons\download.svg" />
+    <Content Include="images\icons\reconcile.png" />
+    <Content Include="images\icons\icon--close.svg" />
+    <Content Include="images\icons\icon--config-reverse.svg" />
+    <Content Include="images\icons\icon--config.svg" />
+    <Content Include="images\icons\icon--down-arrow.svg" />
+    <Content Include="images\icons\icon--no-sort.svg" />
+    <Content Include="images\icons\icon--sort-asc.svg" />
+    <Content Include="images\icons\icon--sort-desc.svg" />
+    <Content Include="images\icons\icon--sort.svg" />
+    <Content Include="images\icons\icon-checkmark.png" />
+    <Content Include="images\icons\icon-denied.png" />
+    <Content Include="images\icons\icon-warning.png" />
+    <Content Include="images\icons\info-blue.svg" />
+    <Content Include="images\icons\menu-close.svg" />
+    <Content Include="images\icons\menu.svg" />
+    <Content Include="images\icons\select-button.svg" />
+    <Content Include="KendoUI\styles\Bootstrap\editor.png" />
+    <Content Include="KendoUI\styles\Bootstrap\imagebrowser.png" />
+    <Content Include="KendoUI\styles\Bootstrap\indeterminate.gif" />
+    <Content Include="KendoUI\styles\Bootstrap\loading-image.gif" />
+    <Content Include="KendoUI\styles\Bootstrap\loading.gif" />
+    <Content Include="KendoUI\styles\Bootstrap\loading_2x.gif" />
+    <Content Include="KendoUI\styles\Bootstrap\markers.png" />
+    <Content Include="KendoUI\styles\Bootstrap\markers_2x.png" />
+    <Content Include="KendoUI\styles\Bootstrap\slider-h.gif" />
+    <Content Include="KendoUI\styles\Bootstrap\slider-v.gif" />
+    <Content Include="KendoUI\styles\Bootstrap\sprite.png" />
+    <Content Include="KendoUI\styles\Bootstrap\sprite_2x.png" />
+    <Content Include="KendoUI\styles\Bootstrap\sprite_kpi.png" />
+    <Content Include="KendoUI\styles\Bootstrap\sprite_kpi_2x.png" />
+    <Content Include="KendoUI\styles\kendo.bootstrap.min.css" />
+    <Content Include="KendoUI\styles\kendo.common-bootstrap.min.css" />
+    <Content Include="Areas\Ext\Views\Shared\_OrganizationProfileList.cshtml" />
+    <Content Include="Areas\Ext\Views\Shared\_ApplicationStatusLabel.cshtml" />
+    <Content Include="Areas\Ext\Views\Debug\SiteMinder.cshtml" />
+    <Content Include="Areas\Int\Views\Shared\_InternalHeader.cshtml" />
+    <Content Include="Areas\Int\Views\Shared\_InternalNav.cshtml" />
+    <Content Include="Areas\Int\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Ext\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Int\Views\Shared\_SelectTrainingProvider.cshtml" />
+    <Content Include="Areas\Int\Views\Debug\GrantOpeningService.cshtml" />
+    <Content Include="Areas\Int\Views\Debug\ReportingService.cshtml" />
+    <Content Include="Areas\Int\Views\Debug\Log.cshtml" />
+    <Content Include="Areas\Int\Views\ClaimAssessment\ClaimAssessmentView.cshtml" />
+    <Content Include="Areas\Ext\Views\Claim\DetailsView.cshtml" />
+    <Content Include="Areas\Ext\Views\Reporting\_ClaimAssessmentOutcomeBlock.cshtml" />
+    <Content Include="Areas\Ext\Views\Claim\AssessmentView.cshtml" />
+    <Content Include="Areas\Ext\Views\Claim\_WithdrawClaimView.cshtml" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="Areas\Int\Views\Setting\Index.cshtml" />
+    <Content Include="Areas\Int\Views\Payment\_PaymentRequestList.cshtml" />
+    <Content Include="Areas\Int\Views\Payment\_AmountOwingList.cshtml" />
+    <Content Include="Areas\Int\Views\Payment\_PaymentRequestHoldList.cshtml" />
+    <Content Include="Areas\Int\Views\Payment\_PaymentRequestBatchPrint.cshtml" />
+    <Content Include="Areas\Int\Views\Payment\_PaymentRequestBatch.cshtml" />
+    <Content Include="Areas\Int\Views\Payment\_AmountOwingBatchPrint.cshtml" />
+    <Content Include="Areas\Ext\Views\CompletionReporting\CompletionReportDetailsView.cshtml" />
+    <Content Include="Areas\Ext\Views\CompletionReporting\_ShowCompletionReportStatus.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\GrantProgramView.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\Preview.cshtml" />
+    <Content Include="Areas\Int\Views\GrantStream\GrantStreamView.cshtml" />
+    <Content Include="Areas\Ext\Views\Home\Index.cshtml" />
+    <Content Include="Areas\Int\Views\GrantOpening\GrantOpeningView.cshtml" />
+    <Content Include="Areas\Int\Views\GrantOpening\_GrantOpeningView.cshtml" />
+    <Content Include="Areas\Ext\Views\Application\_GrantApplicationStreams.cshtml" />
+    <Content Include="Areas\Int\Views\Debug\SyncBCeIDAccounts.cshtml" />
+    <Content Include="Areas\Part\Views\Information\Index.cshtml" />
+    <Content Include="Areas\Part\Views\Information\_Step1.cshtml" />
+    <Content Include="Areas\Part\Views\Information\Form.cshtml" />
+    <Content Include="Areas\Part\Views\Information\SessionTimeout.cshtml" />
+    <Content Include="Areas\Part\Views\Information\InvitationExpired.cshtml" />
+    <Content Include="Areas\Part\Views\Information\Exit.cshtml" />
+    <Content Include="Areas\Part\Views\Information\Declined.cshtml" />
+    <Content Include="Areas\Part\Views\Information\Confirmation.cshtml" />
+    <Content Include="Areas\Part\Views\Information\_Step5.cshtml" />
+    <Content Include="Areas\Ext\Views\TrainingProgram\TrainingProgramView.cshtml" />
+    <Content Include="Areas\Ext\Views\Shared\_SaveAttachment.cshtml" />
+    <Content Include="Scripts\angular-1.7.8\angular-moment.min.js" />
+    <Content Include="Scripts\angular-1.7.8\moment-timezone-with-data.min.js" />
+    <Content Include="Scripts\angular-1.7.8\moment-timezone.min.js" />
+    <Content Include="Scripts\angular-1.7.8\moment.min.js" />
+    <Content Include="Scripts\angular-1.7.8\ng-loading-overlay.min.js" />
+    <Content Include="Scripts\angular-1.7.8\tinymce.min.js" />
+    <Content Include="Scripts\jquery-3.4.1\jquery-3.4.1.min.js" />
+    <Content Include="UI\javascript\external\agreement\grant-agreement-document-view.js" />
+    <Content Include="UI\javascript\external\agreement\grant-agreement-scheduleB-view.js" />
+    <Content Include="UI\javascript\external\agreement\grant-agreement-scheduleA-view.js" />
+    <Content Include="UI\javascript\external\agreement\grant-agreement-coverletter-view.js" />
+    <Content Include="UI\javascript\external\agreement\index.js" />
+    <Content Include="UI\javascript\external\alternate-contact\alternate-contact.js" />
+    <Content Include="UI\javascript\external\alternate-contact\index.js" />
+    <Content Include="UI\javascript\external\application-review\index.js" />
+    <Content Include="UI\javascript\external\application-view\application-details-withdraw-view.js" />
+    <Content Include="UI\javascript\external\application-view\index.js" />
+    <Content Include="UI\javascript\external\application\index.js" />
+    <Content Include="UI\javascript\external\attachments\application-business-case-view.js" />
+    <Content Include="UI\javascript\external\attachments\index.js" />
+    <Content Include="UI\javascript\external\change-request\change-program-dates-view.js" />
+    <Content Include="UI\javascript\external\change-request\change-training-provider-view.js" />
+    <Content Include="UI\javascript\external\change-request\change-service-provider-view.js" />
+    <Content Include="UI\javascript\external\change-request\change-delivery-dates-view.js" />
+    <Content Include="UI\javascript\external\change-request\index.js" />
+    <Content Include="UI\javascript\external\change-request\change-request-view.js" />
+    <Content Include="UI\javascript\external\claim\claim-withdraw-view.js" />
+    <Content Include="UI\javascript\external\claim\index.js" />
+    <Content Include="UI\javascript\external\completion-report\index.js" />
+    <Content Include="UI\javascript\external\home\index.js" />
+    <Content Include="UI\javascript\external\organization-profile\index.js" />
+    <Content Include="UI\javascript\external\participant-reporting\index.js" />
+    <Content Include="UI\javascript\external\participant-reporting\participant-reporting-view.js" />
+    <Content Include="UI\javascript\external\program-description\index.js" />
+    <Content Include="UI\javascript\external\reporting\index.js" />
+    <Content Include="UI\javascript\external\service-provider\index.js" />
+    <Content Include="UI\javascript\external\service\index.js" />
+    <Content Include="UI\javascript\external\sidebar.js" />
+    <Content Include="UI\javascript\external\skills-training\index.js" />
+    <Content Include="UI\javascript\external\training-costs\index.js" />
+    <Content Include="UI\javascript\external\training-program\index.js" />
+    <Content Include="UI\javascript\external\training-provider\index.js" />
+    <Content Include="UI\javascript\external\claim\claim-attachments-view.js" />
+    <Content Include="UI\javascript\external\attachments\application-attachments-view.js" />
+    <Content Include="Scripts\angular-1.7.8\ngDialog.min.js" />
+    <Content Include="UI\javascript\external\completion-report\completion-report-details-view.js" />
+    <Content Include="UI\javascript\external\completion-report\completion-report-view.js" />
+    <Content Include="UI\javascript\external\reporting\reporting-grant-file-view.js" />
+    <Content Include="UI\javascript\external\application-review\application-review-view.js" />
+    <Content Include="Scripts\jquery-ui-1.12.1\jquery-ui.js" />
+    <Content Include="UI\javascript\external\application-view\application-details-view.js" />
+    <Content Include="UI\javascript\external\claim\claim-assessment-view.js" />
+    <Content Include="UI\javascript\external\claim\claim-review-view.js" />
+    <Content Include="UI\javascript\external\claim\claim-details-view.js" />
+    <Content Include="UI\javascript\external\application-review\application-review-ess-view.js" />
+    <Content Include="UI\javascript\external\agreement\grant-agreement-overview.js" />
+    <Content Include="UI\javascript\external\application-review\application-review-program-view.js" />
+    <Content Include="UI\javascript\external\application-review\application-review-skills-training-view.js" />
+    <Content Include="UI\javascript\external\application-review\application-review-training-costs-view.js" />
+    <Content Include="UI\javascript\external\training-provider\training-provider-view.js" />
+    <Content Include="UI\javascript\external\agreement\grant-agreement-review.js" />
+    <Content Include="UI\javascript\external\organization-profile\organization-profile.js" />
+    <Content Include="UI\javascript\external\user-profile\index.js" />
+    <Content Include="UI\javascript\external\user-profile\user-profile-confirm-details-view.js" />
+    <Content Include="UI\javascript\external\user-profile\user-profile-create-view.js" />
+    <Content Include="UI\javascript\external\user-profile\user-profile-update-view.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-prioritization.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-notifications.js" />
+    <Content Include="UI\javascript\internal\application-details\index.js" />
+    <Content Include="UI\javascript\internal\application-notes\index.js" />
+    <Content Include="UI\javascript\internal\automation\index.js" />
+    <Content Include="UI\javascript\internal\automation\automation-management.js" />
+    <Content Include="UI\javascript\internal\batch-approval\index.js" />
+    <Content Include="UI\javascript\internal\change-request\change-program-dates-view.js" />
+    <Content Include="UI\javascript\internal\change-request\index.js" />
+    <Content Include="UI\javascript\internal\claim-assessment\index.js" />
+    <Content Include="UI\javascript\internal\claim-dashboard\index.js" />
+    <Content Include="UI\javascript\internal\community\index.js" />
+    <Content Include="UI\javascript\internal\completion-report\index.js" />
+    <Content Include="UI\javascript\internal\debug\index.js" />
+    <Content Include="UI\javascript\internal\debug\notifications-service-view.js" />
+    <Content Include="UI\javascript\internal\grant-program\grant-program-denial-reasons.js" />
+    <Content Include="UI\javascript\internal\grant-program\grant-program-document-templates.js" />
+    <Content Include="UI\javascript\internal\grant-program\index.js" />
+    <Content Include="UI\javascript\internal\grant-program\document-template-preview.js" />
+    <Content Include="UI\javascript\internal\grant-stream\grant-stream-application-business-case.js" />
+    <Content Include="UI\javascript\internal\intake-periods\intake-period-toggler.js" />
+    <Content Include="UI\javascript\internal\intake-periods\intake-period-view.js" />
+    <Content Include="UI\javascript\internal\intake-periods\index.js" />
+    <Content Include="UI\javascript\internal\intake-periods\intake-periods-view.js" />
+    <Content Include="UI\javascript\internal\participants\index.js" />
+    <Content Include="UI\javascript\internal\participants\participant-history-view.js" />
+    <Content Include="UI\javascript\internal\participants\participants-view-list.js" />
+    <Content Include="UI\javascript\internal\prioritization\prioritization-management-hoo.js" />
+    <Content Include="UI\javascript\internal\prioritization\prioritization-management-regions.js" />
+    <Content Include="UI\javascript\internal\prioritization\prioritization-management-industries.js" />
+    <Content Include="UI\javascript\internal\regional-exceptions\index.js" />
+    <Content Include="UI\javascript\internal\regional-exceptions\regional-exceptions.js" />
+    <Content Include="UI\javascript\internal\intake-queue\index.js" />
+    <Content Include="UI\javascript\internal\notification\index.js" />
+    <Content Include="UI\javascript\internal\notification\notification-type-preview.js" />
+    <Content Include="UI\javascript\internal\notification\notification-type.js" />
+    <Content Include="UI\javascript\internal\organization\index.js" />
+    <Content Include="UI\javascript\internal\organization\organization-edit.js" />
+    <Content Include="UI\javascript\internal\organization\organization-history-view.js" />
+    <Content Include="UI\javascript\internal\organization\organization-list.js" />
+    <Content Include="UI\javascript\internal\participant\index.js" />
+    <Content Include="UI\javascript\internal\participant\participant-history.js" />
+    <Content Include="UI\javascript\internal\payment-request\index.js" />
+    <Content Include="UI\javascript\internal\prioritization\index.js" />
+    <Content Include="UI\javascript\internal\prioritization\prioritization-management.js" />
+    <Content Include="UI\javascript\internal\program-notification\index.js" />
+    <Content Include="UI\javascript\internal\program-notification\program-notification-modal.js" />
+    <Content Include="UI\javascript\internal\program-notification\program-notifications-view.js" />
+    <Content Include="UI\javascript\internal\batch-approval\application-batch-approval.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-applicant-contact.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-applicant.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-attachments.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-claims.js" />
+    <Content Include="UI\javascript\internal\debug\debug-app-date-time.js" />
+    <Content Include="UI\javascript\internal\grant-agreement\index.js" />
+    <Content Include="UI\javascript\internal\payment-request\request-management-view.js" />
+    <Content Include="UI\javascript\internal\grant-agreement\grant-agreement-schedule-b.js" />
+    <Content Include="UI\javascript\internal\grant-agreement\grant-agreement-schedule-a.js" />
+    <Content Include="UI\javascript\internal\grant-agreement\grant-agreement-cover-letter.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-completion-report.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-employment-provider.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-employment-services.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-participants.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-program-costs.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-program-description.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-skills-training-program.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-skills-training-provider.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-skills-training.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-summary.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-training-program.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-training-provider.js" />
+    <Content Include="UI\javascript\internal\grant-agreement\grant-agreement-view.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-view.js" />
+    <Content Include="UI\javascript\internal\application-notes\application-notes.js" />
+    <Content Include="UI\javascript\internal\community\community-management.js" />
+    <Content Include="UI\javascript\internal\claim-assessment\claim-assessment-attachments.js" />
+    <Content Include="UI\javascript\internal\completion-report\completion-report.js" />
+    <Content Include="UI\javascript\internal\application-details\application-details-notification.js" />
+    <Content Include="UI\javascript\internal\grant-program\grant-program-notification-type.js" />
+    <Content Include="UI\javascript\internal\grant-program\grant-program-notification-types.js" />
+    <Content Include="UI\javascript\internal\grant-program\grant-program-notification.js" />
+    <Content Include="UI\javascript\internal\grant-opening\grant-opening-view.js" />
+    <Content Include="UI\javascript\internal\grant-opening\index.js" />
+    <Content Include="UI\javascript\internal\grant-stream\grant-stream-reporting.js" />
+    <Content Include="UI\javascript\internal\grant-stream\grant-stream-application-attachments.js" />
+    <Content Include="UI\javascript\internal\grant-stream\grant-stream-eligibility.js" />
+    <Content Include="UI\javascript\internal\grant-stream\grant-stream-definition.js" />
+    <Content Include="UI\javascript\internal\grant-stream\grant-stream-employer-grant-expense-types.js" />
+    <Content Include="UI\javascript\internal\grant-stream\grant-stream-payment-requests.js" />
+    <Content Include="UI\javascript\internal\grant-stream\grant-stream-wda-services-expense-types.js" />
+    <Content Include="UI\javascript\internal\grant-stream\grant-stream-view.js" />
+    <Content Include="UI\javascript\internal\grant-stream\index.js" />
+    <Content Include="UI\javascript\internal\reconciliation\index.js" />
+    <Content Include="UI\javascript\internal\reconciliation\reconcile-payment-view.js" />
+    <Content Include="UI\javascript\internal\reconciliation\reconciliation-report-view.js" />
+    <Content Include="UI\javascript\internal\reconciliation\reconciliation-reports-view.js" />
+    <Content Include="UI\javascript\internal\service-description\index.js" />
+    <Content Include="UI\javascript\internal\training-provider-inventory\index.js" />
+    <Content Include="UI\javascript\internal\training-provider-inventory\training-provider-history-view.js" />
+    <Content Include="UI\javascript\internal\training-provider-inventory\training-provider-inventory-list.js" />
+    <Content Include="UI\javascript\internal\organization\organization-profile-view.js" />
+    <Content Include="UI\javascript\internal\grant-program\grant-program-notifications.js" />
+    <Content Include="UI\javascript\internal\grant-program\grant-program-user-guidance.js" />
+    <Content Include="UI\javascript\internal\grant-program\grant-program-definition.js" />
+    <Content Include="UI\javascript\internal\grant-program\grant-program-delivery-partners.js" />
+    <Content Include="UI\javascript\internal\grant-program\grant-program-eligibility.js" />
+    <Content Include="UI\javascript\internal\grant-program\grant-program-home-page-message.js" />
+    <Content Include="UI\javascript\internal\grant-program\grant-program-payment-requests.js" />
+    <Content Include="UI\javascript\internal\grant-program\grant-program-employer-grant-expense-types.js" />
+    <Content Include="UI\javascript\internal\grant-program\grant-program-wda-services-expense-types.js" />
+    <Content Include="UI\javascript\internal\grant-program\grant-program-view.js" />
+    <Content Include="UI\javascript\internal\notification\notification-types-view.js" />
+    <Content Include="UI\javascript\internal\training-provider\index.js" />
+    <Content Include="UI\javascript\internal\training-provider\training-provider-base.js" />
+    <Content Include="UI\javascript\internal\user\index.js" />
+    <Content Include="UI\javascript\internal\user\user-management-dashboard-view.js" />
+    <Content Include="UI\javascript\internal\user\user-management.js" />
+    <Content Include="UI\javascript\internal\training-provider-inventory\training-provider-inventory-edit.js" />
+    <Content Include="UI\javascript\internal\service-description\wda-service-categories.js" />
+    <Content Include="UI\javascript\internal\work-queue\index.js" />
+    <Content Include="UI\javascript\internal\work-queue\work-queue-filter.js" />
+    <Content Include="UI\javascript\internal\work-queue\work-queue-filters.js" />
+    <Content Include="UI\javascript\shared\angular-base.js" />
+    <Content Include="UI\javascript\shared\angular-parent-section.js" />
+    <Content Include="UI\javascript\shared\angular-root.js" />
+    <Content Include="UI\javascript\shared\angular-section.js" />
+    <Content Include="UI\javascript\shared\angular-utils.js" />
+    <Content Include="UI\javascript\internal\community\community-management-dashboard-view.js" />
+    <Content Include="UI\javascript\internal\claim-assessment\claim-assessment-view.js" />
+    <Content Include="UI\javascript\external\service\services-view.js" />
+    <Content Include="UI\javascript\external\skills-training\skills-training-view.js" />
+    <Content Include="UI\javascript\external\service-provider\service-provider-view.js" />
+    <Content Include="UI\javascript\external\application\application-overview-view.js" />
+    <Content Include="UI\javascript\external\program-description\program-description-view.js" />
+    <Content Include="UI\javascript\internal\service-description\wda-services-management-view.js" />
+    <Content Include="UI\javascript\part\participant-information.js" />
+    <Content Include="UI\javascript\shared\components\index.js" />
+    <Content Include="UI\javascript\shared\components\options.js" />
+    <Content Include="UI\javascript\shared\components\internal-state-label.js" />
+    <Content Include="UI\javascript\shared\components\datedropdown.js" />
+    <Content Include="UI\javascript\shared\components\pager.js" />
+    <Content Include="UI\javascript\shared\components\program-title-label.js" />
+    <Content Include="UI\javascript\shared\components\section-edit-buttons.js" />
+    <Content Include="UI\javascript\shared\components\textblock.js" />
+    <Content Include="UI\javascript\shared\components\textareablock.js" />
+    <Content Include="UI\javascript\shared\components\checkboxes.js" />
+    <Content Include="UI\javascript\shared\components\dropdown.js" />
+    <Content Include="UI\javascript\shared\components\validation.js" />
+    <Content Include="UI\javascript\shared\directive-link.js" />
+    <Content Include="UI\javascript\shared\directives\check-list-model.js" />
+    <Content Include="UI\javascript\shared\directives\file-changed.js" />
+    <Content Include="UI\javascript\shared\directives\files-selected.js" />
+    <Content Include="UI\javascript\shared\directives\index.js" />
+    <Content Include="UI\javascript\shared\directives\number.js" />
+    <Content Include="UI\javascript\shared\directives\postal.js" />
+    <Content Include="UI\javascript\shared\directives\postal-code.js" />
+    <Content Include="UI\javascript\shared\directives\currency.js" />
+    <Content Include="UI\javascript\shared\directives\percent.js" />
+    <Content Include="UI\javascript\shared\directives\file-read.js" />
+    <Content Include="UI\javascript\shared\directives\file-selected.js" />
+    <Content Include="UI\javascript\shared\directives\selected.js" />
+    <Content Include="UI\javascript\shared\directives\not-editing.js" />
+    <Content Include="UI\javascript\shared\directives\editing.js" />
+    <Content Include="UI\javascript\shared\directives\validation.js" />
+    <Content Include="UI\javascript\shared\filters\maintainLineBreaks.js" />
+    <Content Include="UI\javascript\shared\filters\index.js" />
+    <Content Include="UI\javascript\shared\filters\currency.js" />
+    <Content Include="UI\javascript\shared\filters\percentage.js" />
+    <Content Include="UI\javascript\shared\filters\phone.js" />
+    <Content Include="UI\javascript\shared\filters\exclusion.js" />
+    <Content Include="UI\javascript\shared\filters\postal.js" />
+    <Content Include="UI\javascript\shared\math-functions.js" />
+    <Content Include="Areas\Ext\Views\TrainingCost\TrainingCostView.cshtml" />
+    <Content Include="Areas\Ext\Views\TrainingCost\_EligibleCosts.cshtml" />
+    <Content Include="Areas\Ext\Views\Application\_TrainingProgramView.cshtml" />
+    <Content Include="Areas\Ext\Views\ServiceProvider\ServiceProviderView.cshtml" />
+    <Content Include="Areas\Ext\Views\SkillsTraining\SkillsTrainingView.cshtml" />
+    <Content Include="Areas\Ext\Views\Service\EmploymentServicesAndSupportsView.cshtml" />
+    <Content Include="Areas\Ext\Views\TrainingProvider\TrainingProviderView.cshtml" />
+    <Content Include="Areas\Ext\Views\TrainingProvider\_TrainingProvider.cshtml" />
+    <Content Include="Areas\Ext\Views\Application\_TrainingProviderView.cshtml" />
+    <Content Include="Areas\Ext\Views\Application\_SkillsTrainingView.cshtml" />
+    <Content Include="Areas\Ext\Views\Application\_EmploymentServicesAndSupportsView.cshtml" />
+    <Content Include="Areas\Ext\Views\Application\_ServiceProviderView.cshtml" />
+    <Content Include="Areas\Ext\Views\Application\_GrantSelectionView.cshtml" />
+    <Content Include="Areas\Ext\Views\Application\_ProgramDescriptionView.cshtml" />
+    <Content Include="Areas\Ext\Views\Application\_TrainingCostView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\_AttachmentsView.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_ProgramConfigurationWDAServices.cshtml" />
+    <Content Include="Areas\Ext\Views\Application\GrantSelectionView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationView\ApplicationDetailsView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\_ApplicantContactView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\_ApplicantView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationView\_SkillsTrainingDetailView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationView\_ServiceProviderDetailView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationView\_EmploymentServicesAndSupportsDetailView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\ApplicationReviewDeliveryPartnerView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\ApplicationReviewApplicantDeclarationView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\ApplicationReviewGrantProgramView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\ApplicationReviewSkillsTrainingView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\ApplicationReviewESSView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\_ServiceProviderReviewView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\_SkillsTrainingReviewView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\ApplicationReviewTrainingCostView.cshtml" />
+    <Content Include="Areas\Int\Views\Community\CommunityManagementView.cshtml" />
+    <Content Include="Areas\Ext\Views\CompletionReporting\_CompletionReportQuestionNOCAndNAICSList.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\_SkillTrainingProgramProviderView.cshtml" />
+    <Content Include="Areas\Int\Views\WDAService\PreviewWDAServicesView.cshtml" />
+    <Content Include="Areas\Int\Views\WDAService\WDAServicesView.cshtml" />
+    <Content Include="Areas\Part\Views\Shared\_PIFLayout.cshtml" />
+    <Content Include="Areas\Part\Views\Information\_ViewStart.cshtml" />
+    <Content Include="Areas\Int\Views\Application\ApplicationDetailsView.cshtml" />
+    <Content Include="Areas\Int\Views\ApplicationSummary\_ApplicationSummary.cshtml" />
+    <Content Include="Areas\Int\Views\ApplicantContact\_ApplicantContact.cshtml" />
+    <Content Include="Areas\Int\Views\Applicant\_Applicant.cshtml" />
+    <Content Include="Areas\Int\Views\TrainingProvider\_TrainingProvider.cshtml" />
+    <Content Include="Areas\Int\Views\TrainingProgram\_TrainingProgram.cshtml" />
+    <Content Include="Areas\Int\Views\TrainingCost\_TrainingCost.cshtml" />
+    <Content Include="Areas\Int\Views\Participant\_Participants.cshtml" />
+    <Content Include="Areas\Int\Views\Claim\_Claims.cshtml" />
+    <Content Include="Areas\Int\Views\ApplicationAttachment\_ApplicationAttachments.cshtml" />
+    <Content Include="Areas\Int\Views\Note\_Notes.cshtml" />
+    <Content Include="Areas\Part\Views\Information\ApplicantReportingView.cshtml" />
+    <Content Include="Areas\Ext\Views\Claim\ClaimReportView.cshtml" />
+    <Content Include="Areas\Ext\Views\Claim\ClaimReviewView.cshtml" />
+    <Content Include="Areas\Ext\Views\Claim\_ClaimDetails.cshtml" />
+    <Content Include="Areas\Ext\Views\Claim\_ClaimAssessment.cshtml" />
+    <Content Include="Areas\Int\Views\ClaimAssessment\_ClaimAssessmentDetails.cshtml" />
+    <Content Include="Areas\Int\Views\Application\_ApplicationTrainingCost.cshtml" />
+    <Content Include="Areas\Int\Views\ProgramDescription\_ProgramDescription.cshtml" />
+    <Content Include="Areas\Int\Views\CompletionReport\_CompletionReport.cshtml" />
+    <Content Include="Areas\Int\Views\ESS\_Services.cshtml" />
+    <Content Include="Areas\Int\Views\ESS\_Provider.cshtml" />
+    <Content Include="Areas\Ext\Views\GrantAgreement\AgreementOverviewView.cshtml" />
+    <Content Include="Areas\Ext\Views\ChangeRequest\_DeliveryDatesView.cshtml" />
+    <Content Include="Areas\Ext\Views\GrantAgreement\_EmployerGrantScheduleA.cshtml" />
+    <Content Include="Areas\Ext\Views\ChangeRequest\_ChangeServiceProviderView.cshtml" />
+    <Content Include="Areas\Ext\Views\GrantAgreement\_WDAServiceScheduleA.cshtml" />
+    <Content Include="Areas\Ext\Views\ChangeRequest\_ProgramDatesView.cshtml" />
+    <Content Include="Areas\Ext\Views\GrantAgreement\_CancelAgreement.cshtml" />
+    <Content Include="Areas\Int\Views\SkillsTraining\_SkillsTrainingProgram.cshtml" />
+    <Content Include="Areas\Int\Views\SkillsTraining\_SkillsTrainingProvider.cshtml" />
+    <Content Include="App_Data\PDF\ParticipantConsentandInformationForm.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Ext\Views\ProgramDescription\ProgramDescriptionView.cshtml" />
+    <Content Include="Areas\Int\Views\Application\_CoverLetter.cshtml" />
+    <Content Include="Areas\Int\Views\Application\_ScheduleB.cshtml" />
+    <Content Include="Areas\Int\Views\Application\_ScheduleA.cshtml" />
+    <Content Include="Areas\Int\Views\ClaimAssessment\_ClaimAssessmentSummary.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_DeliveryPartners.cshtml" />
+    <Content Include="content\components\_AngularDropdown.html" />
+    <Content Include="Areas\Int\Views\SkillsTraining\_SkillsTraining.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_ProgramDefinition.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_HomePageMessage.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_ProgramEligibility.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_DeliveryPartner.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_PaymentRequests.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_ProgramConfiguration.cshtml" />
+    <Content Include="Areas\Int\Views\Notification\NotificationTypesView.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_DeliveryPartnerServices.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_UserGuidance.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_Notifications.cshtml" />
+    <Content Include="Areas\Int\Views\Notification\_Notification.cshtml" />
+    <Content Include="Areas\Int\Views\GrantStream\_ProgramConfiguration.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_ProgramConfigurationEmployerGrants.cshtml" />
+    <Content Include="Areas\Ext\Views\CompletionReporting\CompletionReportView.cshtml" />
+    <Content Include="Areas\Ext\Views\CompletionReporting\_CompletionReportSteps.cshtml" />
+    <Content Include="Areas\Ext\Views\CompletionReporting\_CompletionReportQuestionDefault.cshtml" />
+    <Content Include="Areas\Ext\Views\CompletionReporting\_CompletionReportQuestionDynamicCheckbox.cshtml" />
+    <Content Include="Areas\Ext\Views\CompletionReporting\_CompletionReportQuestionMultipleChoice.cshtml" />
+    <Content Include="Areas\Ext\Views\CompletionReporting\_CompletionReportQuestionFreeform.cshtml" />
+    <Content Include="Areas\Ext\Views\CompletionReporting\_CompletionStepWithMultipleQuestions.cshtml" />
+    <Content Include="Areas\Int\Views\DirectorDashboard\ApplicationBatchApprovalView.cshtml" />
+    <Content Include="Areas\Int\Views\IntakeQueue\IntakeQueueView.cshtml" />
+    <Content Include="Areas\Int\Views\WorkQueue\WorkQueueView.cshtml" />
+    <Content Include="Areas\Int\Views\WorkQueue\_Filters.cshtml" />
+    <Content Include="Areas\Int\Views\WorkQueue\FilterView.cshtml" />
+    <Content Include="Areas\Int\Views\OrganizationProfile\OrganizationView.cshtml" />
+    <Content Include="Areas\Ext\Views\OrganizationProfile\OrganizationProfileView.cshtml" />
+    <Content Include="Areas\Int\Views\TrainingProviderInventory\TrainingProvidersView.cshtml" />
+    <Content Include="Areas\Int\Views\TrainingProviderInventory\_TrainingProviderDetails.cshtml" />
+    <Content Include="Areas\Int\Views\CompletionReport\CompletionReportView.cshtml" />
+    <Content Include="Areas\Int\Views\Participant\ParticipantInformationView.cshtml" />
+    <Content Include="Areas\Int\Views\WDAService\_WDAServiceCategoryView.cshtml" />
+    <Content Include="Areas\Int\Views\WDAService\_WDAServiceLineBreakdownView.cshtml" />
+    <Content Include="Areas\Int\Views\WDAService\_WDAServiceLineView.cshtml" />
+    <Content Include="Areas\Int\Views\User\UserManagementView.cshtml" />
+    <Content Include="Areas\Int\Views\User\_UserView.cshtml" />
+    <Content Include="Areas\Int\Views\Community\_CommunityView.cshtml" />
+    <Content Include="Areas\Int\Views\GrantAgreement\ScheduleBView.cshtml" />
+    <Content Include="Areas\Int\Views\GrantAgreement\ScheduleAView.cshtml" />
+    <Content Include="Areas\Int\Views\GrantAgreement\CoverLetterView.cshtml" />
+    <Content Include="Areas\Int\Views\GrantAgreement\AgreementView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationAttachment\AttachmentsView.cshtml" />
+    <Content Include="Areas\Ext\Views\ChangeRequest\_ChangeTrainingProviderView.cshtml" />
+    <Content Include="Areas\Ext\Views\Claim\_ClaimAttachments.cshtml" />
+    <Content Include="Areas\Int\Views\ClaimAssessment\_ClaimAssessmentAttachment.cshtml" />
+    <Content Include="Areas\Int\Views\GrantStream\_PaymentRequests.cshtml" />
+    <Content Include="Areas\Int\Views\GrantStream\_ProgramConfigurationEmployerGrants.cshtml" />
+    <Content Include="Areas\Int\Views\GrantStream\_ProgramConfigurationWDAServices.cshtml" />
+    <Content Include="Areas\Int\Views\GrantStream\_StreamDefinition.cshtml" />
+    <Content Include="Areas\Int\Views\GrantStream\_StreamEligibility.cshtml" />
+    <Content Include="Areas\Int\Views\GrantStream\Preview.cshtml" />
+    <Content Include="Areas\Int\Views\GrantStream\_ApplicationAttachments.cshtml" />
+    <Content Include="Areas\Int\Views\GrantStream\_Reporting.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_NotificationType.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_NotificationTypes.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_Notification.cshtml" />
+    <Content Include="Areas\Int\Views\Application\_ApplicationNotifications.cshtml" />
+    <Content Include="Areas\Int\Views\Application\_ApplicationNotification.cshtml" />
+    <Content Include="Areas\Int\Views\Notification\NotificationTypePreview.cshtml" />
+    <Content Include="Areas\Int\Views\Notification\_NotificationType.cshtml" />
+    <Content Include="Areas\Int\Views\Reconciliation\ReconciliationReportsView.cshtml" />
+    <Content Include="Areas\Int\Views\Reconciliation\ReconciliationReportView.cshtml" />
+    <Content Include="Areas\Int\Views\Reconciliation\_ReconcilePaymentRequestView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\_TrainingCostView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\_TrainingProviderView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\_TrainingProgramView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\_GrantSelectionView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\_ProgramDescriptionView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\_EmploymentServicesAndSupportsDetailView.cshtml" />
+    <Content Include="Areas\Ext\Views\Application\_AttachmentsView.cshtml" />
+    <Content Include="Areas\Ext\Views\Application\_SkillTrainingProgramProviderView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationView\_ApplicantContactView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationView\_ApplicantView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationView\_GrantSelectionView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationView\_ProgramDescriptionView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationView\_AttachmentsView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationView\_SkillTrainingProgramProviderView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationView\_TrainingProviderView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationView\_TrainingProgramView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationView\_TrainingCostView.cshtml" />
+    <Content Include="Areas\Int\Views\ProgramNotification\ProgramNotificationsView.cshtml" />
+    <Content Include="Areas\Int\Views\ProgramNotification\ProgramNotificationsPreview.cshtml" />
+    <Content Include="Areas\Int\Views\ProgramNotification\ProgramNotificationModalView.cshtml" />
+    <Content Include="Areas\Int\Views\ProgramNotification\ProgramNotificationTemplate.cshtml" />
+    <Content Include="Areas\Int\Views\ProgramNotification\ProgramNotificationRules.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_DocumentTemplates.cshtml" />
+    <Content Include="Areas\Int\Views\Payment\RequestManagementView.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\DocumentTemplatePreview.cshtml" />
+    <Content Include="Areas\Int\Views\ChangeRequest\_ProgramDatesView.cshtml" />
+    <Content Include="Areas\Int\Views\Organization\OrganizationsView.cshtml" />
+    <Content Include="Areas\Int\Views\Organization\_OrganizationDetails.cshtml" />
+    <Content Include="Areas\Int\Views\OrganizationHistory\OrganizationGrantFileHistoryView.cshtml" />
+    <Content Include="Areas\Ext\Views\Application\_ParticipantList.cshtml" />
+    <Content Include="Areas\Part\Views\Information\MaxParticipantEnrolled.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationAttachment\BusinessCaseView.cshtml" />
+    <Content Include="Areas\Int\Views\GrantStream\_BusinessCase.cshtml" />
+    <Content Include="Areas\Ext\Views\Application\_BusinessCaseView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\_BusinessCaseView.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationView\_BusinessCaseView.cshtml" />
+    <Content Include="Areas\Int\Views\GrantProgram\_DenialReasons.cshtml" />
+    <Content Include="Areas\Ext\Views\TrainingCost\_ETGEligibleCosts.cshtml" />
+    <Content Include="Areas\Ext\Views\Claim\_ClaimDetailsETG.cshtml" />
+    <Content Include="Areas\Ext\Views\CompletionReporting\_CompletionReportMQForParticipants.cshtml" />
+    <Content Include="Areas\Ext\Views\CompletionReporting\_CompletionReportQuestionCheckbox.cshtml" />
+    <Content Include="Areas\Int\Views\IntakePeriods\IntakePeriodsView.cshtml" />
+    <Content Include="Areas\Int\Views\IntakePeriods\_IntakePeriodView.cshtml" />
+    <Content Include="Areas\Int\Views\IntakePeriods\_IntakePeriodDisableConfirm.cshtml" />
+    <Content Include="Areas\Ext\Views\AlternateContact\AlternateContactView.cshtml" />
+    <Content Include="Areas\Int\Views\TrainingCost\_TrainingCostWithdrawn.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\_ParticipantList.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationView\_ParticipantList.cshtml" />
+    <Content Include="Areas\Int\Views\Participant\ParticipantHistory.cshtml" />
+    <Content Include="Areas\Int\Views\Prioritization\_Prioritization.cshtml" />
+    <Content Include="Areas\Int\Views\Prioritization\Thresholds.cshtml" />
+    <Content Include="Areas\Int\Views\RegionalException\RegionalExceptionsView.cshtml" />
+    <Content Include="Areas\Int\Views\RegionalException\SelectRegionView.cshtml" />
+    <Content Include="Areas\Int\Views\Prioritization\_Regions.cshtml" />
+    <Content Include="Areas\Int\Views\Prioritization\_Industries.cshtml" />
+    <Content Include="App_Data\PDF\ETG-Travel-Expense-Claim-Form.docx" />
+    <Content Include="Areas\Int\Views\Prioritization\_HighOpportunityOccupations.cshtml" />
+    <Content Include="Areas\Int\Views\Participants\ParticipantsView.cshtml" />
+    <Content Include="Areas\Int\Views\Participants\ParticipantHistoryView.cshtml" />
+    <Content Include="Areas\Int\Views\Automation\Index.cshtml" />
+    <Content Include="Areas\Int\Views\Debug\ReturnUnassessedService.cshtml" />
+    <None Include="NLog.Training.config">
+      <DependentUpon>NLog.config</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Include="parameters.xml" />
+    <Content Include="Robots.txt" />
+    <Content Include="Scripts\angular-1.7.8\angular-sanitize.js" />
+    <Content Include="Scripts\angular-1.7.8\angular.min.js" />
+    <Content Include="Sitemap.xml" />
+    <Content Include="Static\maintenance.css" />
+    <Content Include="Areas\Int\Views\TrainingProviderHistory\TrainingProviderGrantFileHistoryView.cshtml" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="UI\javascript\external\home\home-view.js" />
+    <None Include="UI\javascript\external\claim\claim-reporting-view.js" />
+    <Content Include="UI\javascript\external\completion-report\form-completion-report.js" />
+    <Content Include="UI\javascript\external\application\application-grant-selection-view.js" />
+    <Content Include="UI\javascript\external\training-costs\training-costs-view.js" />
+    <Content Include="UI\javascript\external\header.js" />
+    <Content Include="UI\javascript\internal\claim-dashboard\claim-management-dashboard.js" />
+    <None Include="UI\javascript\internal\claim-assessment\claim-assessment-details.js" />
+    <None Include="UI\javascript\internal\intake-queue\intake-queue.js" />
+    <None Include="UI\javascript\internal\participant\view-participant-info.js" />
+    <None Include="UI\javascript\internal\work-queue\work-queue.js" />
+    <None Include="UI\javascript\part\index.js" />
+    <None Include="UI\javascript\shared\character-count.js" />
+    <None Include="UI\javascript\shared\clipboard.js" />
+    <None Include="UI\javascript\shared\mobile-menu.js" />
+    <None Include="UI\javascript\shared\utils.js" />
+    <Content Include="UI\javascript\internal\grant-opening\grant-openings-view.js" />
+    <Content Include="UI\javascript\internal\debug\internal-debug-management.js" />
+    <Content Include="UI\javascript\shared\form-disable-submit.js" />
+    <Content Include="UI\javascript\internal\application-notes\application-note.js" />
+    <Content Include="UI\javascript\internal\training-provider\validate-training-provider.js" />
+    <Content Include="Areas\Part\Views\web.config" />
+    <Content Include="Areas\Part\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Part\Views\Shared\Layout.cshtml" />
+    <Content Include="Areas\Ext\Views\Application\InviteParticipants.cshtml" />
+    <Content Include="Areas\Ext\Views\GrantAgreement\AgreementReviewView.cshtml" />
+    <Content Include="Areas\Ext\Views\GrantAgreement\ScheduleAView.cshtml" />
+    <Content Include="Areas\Ext\Views\Shared\_GrantApplicationSidebar.cshtml" />
+    <Content Include="Areas\Ext\Views\GrantAgreement\ScheduleBView.cshtml" />
+    <Content Include="Areas\Ext\Views\ParticipantReporting\ParticipantReportingView.cshtml" />
+    <Content Include="Areas\Ext\Views\ParticipantReporting\_ParticipantList.cshtml" />
+    <Content Include="Areas\Ext\Views\GrantAgreement\_RejectAgreement.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationView\WithdrawApplicationView.cshtml" />
+    <Content Include="Areas\Ext\Views\GrantAgreement\CancelAgreement.cshtml" />
+    <Content Include="Areas\Ext\Views\UserProfile\UpdateUserProfileView.cshtml" />
+    <Content Include="Areas\Ext\Views\UserProfile\_UserProfileDetails.cshtml" />
+    <Content Include="Areas\Ext\Views\Shared\_UserProfileReview.cshtml" />
+    <Content Include="Areas\Int\Views\ClaimIntake\ClaimManagementDashboardView.cshtml" />
+    <Content Include="Areas\Ext\Views\GrantAgreement\CoverLetterView.cshtml" />
+    <Content Include="Areas\Ext\Views\Shared\_ClaimAssessmentOutcome.cshtml" />
+    <Content Include="Areas\Ext\Views\Reporting\GrantFileView.cshtml" />
+    <Content Include="Areas\Int\Views\Intake\IntakeManagementDashboard.cshtml" />
+    <Content Include="Areas\Int\Views\Participant\ParticipantContactInfo.cshtml" />
+    <Content Include="Areas\Int\Views\Participant\ParticipantEmployerInfo.cshtml" />
+    <Content Include="Areas\Int\Views\Participant\ParticipantInfo.cshtml" />
+    <Content Include="Views\ContactUs\Index.cshtml" />
+    <Content Include="Areas\Ext\Views\_ViewImports.cshtml" />
+    <Content Include="Areas\Int\Views\Debug\Index.cshtml" />
+    <Content Include="Areas\Int\Views\Debug\AppDateTimeView.cshtml" />
+    <Content Include="Areas\Int\Views\Debug\BCeID.cshtml" />
+    <Content Include="Areas\Int\Views\Debug\Version.cshtml" />
+    <Content Include="Areas\Int\Views\Debug\CurrentUser.cshtml" />
+    <Content Include="Areas\Int\Views\Debug\IDIR.cshtml" />
+    <Content Include="Areas\Ext\Views\Debug\About.cshtml" />
+    <None Include="gulpfile.js" />
+    <None Include="UI\javascript\external\application-review\application-review-applicant-declaration.js" />
+    <None Include="UI\javascript\external\application-review\application-review-delivery-partner-view.js" />
+    <None Include="UI\javascript\external\training-program\training-program-view.js" />
+    <None Include="UI\javascript\external\index.js" />
+    <None Include="UI\javascript\internal\index.js" />
+    <None Include="UI\javascript\shared\datefield.js" />
+    <Content Include="UI\scss\components\_claim-report.scss" />
+    <Content Include="UI\scss\components\_claim-management-dashboard.scss" />
+    <Content Include="UI\scss\fa\_animated.scss" />
+    <Content Include="UI\scss\fa\_bordered-pulled.scss" />
+    <Content Include="UI\scss\fa\_core.scss" />
+    <Content Include="UI\scss\fa\_fixed-width.scss" />
+    <Content Include="UI\scss\fa\_font-awesome.scss" />
+    <Content Include="UI\scss\fa\_icons.scss" />
+    <Content Include="UI\scss\fa\_larger.scss" />
+    <Content Include="UI\scss\fa\_list.scss" />
+    <Content Include="UI\scss\fa\_mixins.scss" />
+    <Content Include="UI\scss\fa\_path.scss" />
+    <Content Include="UI\scss\fa\_rotated-flipped.scss" />
+    <Content Include="UI\scss\fa\_screen-reader.scss" />
+    <Content Include="UI\scss\fa\_stacked.scss" />
+    <Content Include="UI\scss\fa\_variables.scss" />
+    <Content Include="UI\scss\components\_participant-info.scss" />
+    <Content Include="UI\scss\partials\_print.scss" />
+    <Content Include="UI\scss\components\_request-management.scss" />
+    <Content Include="UI\scss\components\_intake-management-dashboard.scss" />
+    <Content Include="UI\scss\components\_request-payment-pdf.scss" />
+    <Content Include="UI\scss\components\_completion-report.scss" />
+    <Content Include="UI\scss\components\_grant-program.scss" />
+    <Content Include="UI\scss\components\_external-grant-applications.scss" />
+    <Content Include="UI\scss\components\_service-category.scss" />
+    <Content Include="UI\scss\components\_application-details.scss" />
+    <Content Include="package-lock.json" />
+    <Content Include="UI\scss\components\_dialog.scss" />
+    <Content Include="UI\scss\components\_edit-training-provider.scss" />
+    <Content Include="UI\scss\components\_intake-periods.scss" />
+    <Content Include="UI\scss\components\_grant-opening-dashboard.scss" />
+    <None Include="UI\webpack.config.js" />
+    <Content Include="Views\Participant\Index.cshtml" />
+    <Content Include="Areas\Ext\Views\UserProfile\ConfirmDetailsView.cshtml" />
+    <Content Include="Areas\Ext\Views\UserProfile\CreateUserProfileView.cshtml" />
+    <Content Include="Areas\Int\Views\web.config" />
+    <Content Include="Areas\Int\Views\Auth\LogIn.cshtml" />
+    <Content Include="Areas\Int\Views\Home\Index.cshtml" />
+    <None Include=".bin\git.cmd" />
+    <None Include=".bin\node.cmd" />
+    <None Include=".bin\npm.cmd" />
+    <Content Include="Areas\Ext\Views\Application\ApplicationOverviewView.cshtml" />
+    <Content Include="Areas\Ext\Views\Shared\_TrainingLocation.cshtml" />
+    <Content Include="Areas\Ext\Views\ApplicationReview\ApplicationReviewView.cshtml" />
+    <None Include="CJG.Web.External.wpp.targets">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CJG.Web.External.Build.targets">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Views\Shared\DebugData.cshtml" />
+    <Content Include="Views\Shared\Footer.cshtml" />
+    <Content Include="Views\Shared\Header.cshtml" />
+    <None Include="UI\scss\styles.scss" />
+    <None Include="UI\npm-install.cmd" />
+    <None Include="package.json" />
+    <None Include="UI\.editorconfig" />
+    <None Include="UI\scss\mixins\_accessibility.scss" />
+    <None Include="UI\scss\mixins\_breakpoints.scss" />
+    <None Include="UI\scss\mixins\_clearfix.scss" />
+    <None Include="UI\scss\mixins\_color.scss" />
+    <None Include="UI\scss\mixins\_gap.scss" />
+    <None Include="UI\scss\mixins\_grids-mapping.scss" />
+    <None Include="UI\scss\mixins\_min-list.scss" />
+    <None Include="UI\scss\mixins\_padded-box.scss" />
+    <None Include="UI\scss\mixins\_typography.scss" />
+    <None Include="UI\scss\partials\_buttons.scss" />
+    <None Include="UI\scss\partials\_forms.scss" />
+    <None Include="UI\scss\partials\_global.scss" />
+    <None Include="UI\scss\partials\_layout.scss" />
+    <None Include="UI\scss\partials\_lists.scss" />
+    <None Include="UI\scss\partials\_normalize.scss" />
+    <None Include="UI\scss\partials\_tables.scss" />
+    <None Include="UI\scss\partials\_typography.scss" />
+    <None Include="UI\scss\partials\_utils.scss" />
+    <None Include="UI\scss\_colors.scss" />
+    <None Include="UI\scss\_grid-settings.scss" />
+    <None Include="UI\scss\_mixins.scss" />
+    <None Include="UI\scss\_settings.scss" />
+    <None Include="UI\scss\partials\_forms-selectmenu.scss" />
+    <None Include="UI\scss\mixins\_icons.scss" />
+    <None Include="UI\scss\partials\_alerts.scss" />
+    <None Include="UI\scss\partials\_panel-bar.scss" />
+    <None Include="UI\scss\partials\_summary.scss" />
+    <None Include="UI\scss\partials\_labels.scss" />
+    <Content Include="Areas\Int\Views\Shared\InternalLayout.cshtml" />
+    <Content Include="Views\Shared\Master.cshtml" />
+    <None Include="UI\scss\partials\_internal.scss" />
+    <None Include="UI\scss\components\_step-flow.scss" />
+    <None Include="UI\scss\components\_read-more.scss" />
+    <None Include="UI\scss\components\_data-table.scss" />
+    <None Include="UI\scss\components\_form-override.scss" />
+    <None Include="UI\scss\components\_kendoui-update.scss" />
+    <None Include="UI\scss\components\_modal.scss" />
+    <Content Include="Views\Error\NotFound.cshtml" />
+    <Content Include="Views\Error\Error.cshtml" />
+    <None Include="UI\scss\components\_claim-assessment.scss" />
+    <None Include="UI\README.md" />
+    <None Include="UI\scss\components\_grant-files.scss" />
+    <None Include="UI\scss\partials\_header.scss" />
+    <None Include="UI\scss\components\_mobile-menu.scss" />
+    <None Include="UI\scss\partials\_footer.scss" />
+    <Content Include="Views\Shared\HeaderLogo.cshtml" />
+    <None Include="UI\scss\components\_sidebar-container.scss" />
+    <None Include="UI\scss\partials\_notices.scss" />
+    <None Include="UI\scss\components\_agreement-block.scss" />
+    <None Include="UI\scss\components\_state-filters.scss" />
+    <Content Include="Views\Shared\GoogleAnalytics.cshtml" />
+    <Content Include="Views\Shared\Alert.cshtml" />
+    <None Include="UI\scss\components\_grant-agreement-overview.scss" />
+    <None Include="UI\scss\components\_application-summary.scss" />
+    <None Include="UI\scss\components\_contact-accordion.scss" />
+    <None Include="UI\scss\components\_intake-queue.scss" />
+    <None Include="UI\scss\components\_deny-application.scss" />
+    <None Include="UI\scss\components\_cancel-agreement.scss" />
+    <None Include="UI\scss\components\_pager.scss" />
+    <Content Include="Views\Error\Timeout.cshtml" />
+    <None Include="UI\npm-config.cmd" />
+    <None Include="UI\scss\components\_work-queues.scss" />
+    <None Include="UI\scss\components\_training-provider-history.scss" />
+    <Content Include="Views\Shared\BaggedAlert.cshtml" />
+    <None Include="Views\Shared\ReadMe.txt" />
+    <Content Include="Views\web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Areas\Ext\Views\Auth\LogIn.cshtml" />
+    <Content Include="Areas\Ext\Views\UserProfile\Index.cshtml" />
+    <Content Include="Areas\Ext\Views\Shared\EditorTemplates\String.cshtml" />
+    <Content Include="Areas\Ext\Views\Shared\EditorTemplates\Address.cshtml" />
+    <Content Include="Areas\Ext\Views\Shared\EditorTemplates\User.cshtml" />
+    <Content Include="Areas\Ext\Views\Shared\EditorTemplates\Organization.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\SiteLayout.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\_ViewImports.cshtml" />
+    <Content Include="Areas\Part\Views\Information\_Step2.cshtml" />
+    <Content Include="Areas\Part\Views\Information\_Step3.cshtml" />
+    <Content Include="Areas\Part\Views\Information\_Step4.cshtml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web.QA.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web.Support.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web.TEST.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Training.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\IdentityConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Areas\Ext\Controllers\AddressController.cs" />
+    <Compile Include="Areas\Ext\Controllers\AlternateContactController.cs" />
+    <Compile Include="Areas\Ext\Controllers\ApplicationAttachmentController.cs" />
+    <Compile Include="Areas\Ext\Controllers\ApplicationViewController.cs" />
+    <Compile Include="Areas\Ext\Controllers\ApplicationReviewController.cs" />
+    <Compile Include="Areas\Ext\Controllers\CompletionReportingController.cs" />
+    <Compile Include="Areas\Ext\Controllers\ChangeRequestController.cs" />
+    <Compile Include="Areas\Ext\Controllers\ServiceController.cs" />
+    <Compile Include="Areas\Ext\Controllers\ClaimController.cs" />
+    <Compile Include="Areas\Ext\Controllers\DebugController.cs" />
+    <Compile Include="Areas\Ext\Controllers\ParticipantReportingController.cs" />
+    <Compile Include="Areas\Ext\Controllers\ProgramDescriptionController.cs" />
+    <Compile Include="Areas\Ext\Controllers\ServiceProviderController.cs" />
+    <Compile Include="Areas\Ext\Controllers\SkillsTrainingController.cs" />
+    <Compile Include="Areas\Ext\Models\AlternateAddressViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ApplicationStartViewModelVmValidation.cs" />
+    <Compile Include="Areas\Ext\Models\Applications\AlternateContactViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Applications\ChangeAlternateContactViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Applications\GrantStreamEligibilityViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Attachments\AttachmentViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Attachments\GrantApplicationBusinessCaseViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Attachments\GrantApplicationAttachmentsViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Attachments\UpdateAttachmentViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Agreements\AgreementTrainingProgramViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Agreements\AgreementTrainingProviderViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ChangeRequest\RequestedTrainingProviderViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Claims\ClaimAttachmentsViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Claims\EligibleExpenseBreakdownViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Claims\EligibleExpenseTypeViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Claims\SidebarClaimModel.cs" />
+    <Compile Include="Areas\Ext\Models\OrganizationProfile\OrganizationProfileViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ParticipantReporting\IncludeParticipantsViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ParticipantReporting\ParticipantInvitationModel.cs" />
+    <Compile Include="Areas\Ext\Models\ParticipantReporting\ParticipantViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ParticipantReporting\ParticipantWarningModel.cs" />
+    <Compile Include="Areas\Ext\Models\Reports\CompletionReportAnswerViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Reports\CompletionReportGroupViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Reports\CompletionReportOptionViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Reports\CompletionReportQuestionViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Reports\CompletionReportDetailsViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingCosts\EligibleCostBreakdownViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingCosts\EligibleCostViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingCosts\EligibleExpenseBreakdownViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingPrograms\CourseLinkValidation.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingPrograms\TrainingProgramDetailsViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingProviders\TrainingProviderTypeViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingProviders\TrainingProviderViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ChangeRequest\ApplicationAddressViewModel.cs" />
+    <Compile Include="Areas\Int\Controllers\ClaimIntakeController.cs" />
+    <Compile Include="Areas\Int\Controllers\ClaimAssessmentController.cs" />
+    <Compile Include="Areas\Int\Controllers\GrantAgreementController.cs" />
+    <Compile Include="Areas\Int\Controllers\IntakePeriodsController.cs" />
+    <Compile Include="Areas\Int\Controllers\AutomationController.cs" />
+    <Compile Include="Areas\Int\Controllers\RegionalExceptionController.cs" />
+    <Compile Include="Areas\Int\Controllers\OrganizationController.cs" />
+    <Compile Include="Areas\Int\Controllers\OrganizationHistoryController.cs" />
+    <Compile Include="Areas\Int\Controllers\PrioritizationController.cs" />
+    <Compile Include="Areas\Int\Controllers\ProgramNotificationController.cs" />
+    <Compile Include="Areas\Int\Controllers\OrganizationProfileController.cs" />
+    <Compile Include="Areas\Int\Controllers\DirectorDashboardController.cs" />
+    <Compile Include="Areas\Int\Controllers\ReconciliationController.cs" />
+    <Compile Include="Areas\Int\Controllers\ParticipantsController.cs" />
+    <Compile Include="Areas\Int\Controllers\WorkQueueController.cs" />
+    <Compile Include="Areas\Int\Controllers\NotificationController.cs" />
+    <Compile Include="Areas\Int\Controllers\StaticDataController.cs" />
+    <Compile Include="Areas\Ext\Controllers\TrainingProgramController.cs" />
+    <Compile Include="Areas\Ext\Controllers\TrainingCostController.cs" />
+    <Compile Include="Areas\Ext\Controllers\TrainingProviderController.cs" />
+    <Compile Include="Areas\Ext\Models\Debug\AboutViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Agreements\AgreementOverviewViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Applications\ApplicationESSReviewViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Applications\ApplicationSkillsReviewViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Applications\ApplicationTrainingCostReviewViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Applications\ApplicationViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Applications\BaseApplicationViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Claims\BaseClaimViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Breakdowns.cs" />
+    <Compile Include="Areas\Ext\Models\Agreements\CancelAgreementViewModal.cs" />
+    <Compile Include="Areas\Ext\Models\Agreements\CovertLetterViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\DeliveryDateViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Claims\ClaimAssessedViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ClaimAttachmentDetailViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Claims\ClaimReviewViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Claims\ClaimSubmittedViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\DynamicProcess.cs" />
+    <Compile Include="Areas\Ext\Models\ChangeRequest\ChangeRequestESSServiceProviderViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ChangeRequest\ChangeRequestESSServiceScopeViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ChangeRequest\ChangeRequestESSViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\EstimatedCostViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Applications\ApplicationGrantProgramReviewViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ProgramTitleLabelViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\GrantApplicationListDetailsViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\GrantFileClaimViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Overview\OverviewApplicantViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\OverviewApplicantContact.cs" />
+    <Compile Include="Areas\Ext\Models\OverviewEligibleCost.cs" />
+    <Compile Include="Areas\Ext\Models\OverviewProgramDescription.cs" />
+    <Compile Include="Areas\Ext\Models\OverviewTrainingCost.cs" />
+    <Compile Include="Areas\Ext\Models\OverviewTrainingProgram.cs" />
+    <Compile Include="Areas\Ext\Models\OverviewTrainingProvider.cs" />
+    <Compile Include="Areas\Ext\Models\Services\EmploymentServiceViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ProgramDescriptions\ProgramDescriptionExtViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Reports\CompletionReportViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ApplicationPrioritizationInfoViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Applications\ApplicationBusinessViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Applications\InternalStateListViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Admin\UserRoleViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Admin\UserRoleListViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Admin\UserFilterViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Admin\UserManagementViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Admin\CommunityViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Admin\UserViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Agreements\GrantAgreementViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Agreements\GrantAgreementScheduleAViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Agreements\GrantAgreementScheduleBViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Agreements\GrantAgreementCoverLetterViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Applications\ApplicationPreviewModel.cs" />
+    <Compile Include="Areas\Int\Models\Attachments\AttachmentViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Attachments\GrantApplicationAttachmentsViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Attachments\UpdateAttachmentViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Automation\AutomationSettingsViewModel.cs" />
+    <Compile Include="Areas\Int\Models\BatchApprovals\BatchApprovalViewModel.cs" />
+    <Compile Include="Areas\Int\Models\BatchApprovals\BatchApprovalFilterViewModel.cs" />
+    <Compile Include="Areas\Int\Models\BatchApprovals\IssueOfferViewModel.cs" />
+    <Compile Include="Areas\Int\Models\BatchApprovals\GrantApplicationViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Claims\ClaimAssessmentDetailsViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Claims\ClaimBreakdownCostViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Claims\ClaimEligibleCostViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Claims\ParticipantCostViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Claims\ParticipantViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Debug\DebugNotificationsViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Debug\NotificationQueueFilterViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Debug\NotificationQueueViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ESS\EmploymentServicesViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ESS\ProviderViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantOpenings\FiscalGrantOpeningGrantStream.cs" />
+    <Compile Include="Areas\Int\Models\GrantOpenings\FiscalGrantOpeningTrainingPeriod.cs" />
+    <Compile Include="Areas\Int\Models\GrantOpenings\GrantStreamInformation.cs" />
+    <Compile Include="Areas\Int\Models\GrantOpenings\GrantOpeningDashboardViewModel.cs" />
+    <Compile Include="Areas\Int\Models\IntakePeriods\IntakePeriodsTrainingPeriodModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantPrograms\AccountCodeViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantPrograms\EligibleExpenseBreakdownViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantPrograms\EligibleExpenseTypeViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantPrograms\GrantProgramDenialReasonListViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantPrograms\GrantProgramDenialReasonViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantPrograms\GrantProgramDocumentTemplatePreviewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantPrograms\GrantProgramDocumentTemplatesViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantPrograms\GrantProgramNotificationsViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantPrograms\GrantProgramNotificationListViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantPrograms\GrantProgramNotificationViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantPrograms\ProgramConfigurationViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantStreams\AccountCodeViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantStreams\EligibleExpenseBreakdownViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantStreams\EligibleExpenseTypeViewModel.cs" />
+    <Compile Include="Areas\Int\Models\IntakePeriods\IntakePeriodsListModel.cs" />
+    <Compile Include="Areas\Int\Models\IntakePeriods\IntakePeriodsTrainingPeriodModelExtensions.cs" />
+    <Compile Include="Areas\Int\Models\IntakePeriods\TrainingPeriodStatusModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantStreams\GrantStreamQuestionViewModel.cs" />
+    <Compile Include="Areas\Int\Models\IntakeQueue\GrantApplicationViewModel.cs" />
+    <Compile Include="Areas\Int\Models\IntakeQueue\IntakeQueueFilterViewModel.cs" />
+    <Compile Include="Areas\Int\Models\InternalUserViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantPrograms\GrantProgramNotificationTypeViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Notifications\NotificationQueuePreviewModel.cs" />
+    <Compile Include="Areas\Int\Models\Notifications\NotificationTemplateViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Notifications\NotificationQueueListViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantApplicationInternalStateViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Notifications\NotificationTypeDashboardViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Notifications\EnableNotificationViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Notifications\GrantProgramNotificationViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Notifications\GrantProgramViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Notifications\NotificationQueueFilterViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Notifications\NotificationTypeFilterViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantPrograms\GrantProgramNotificationTypeListViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Notifications\NotificationTypeListViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Notifications\NotificationTriggerViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Notifications\NotificationTypeViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Notifications\NotificationQueueViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Organizations\OrganizationBusinessLicensesModel.cs" />
+    <Compile Include="Areas\Int\Models\Organizations\OrganizationGrantFileHistoryDataTableModel.cs" />
+    <Compile Include="Areas\Int\Models\Organizations\OrganizationGrantFileHistoryViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Organizations\OrganizationProfileUserViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Organizations\OrganizationProfileUserListViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Organizations\OrganizationGrantFileYTDViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Organizations\OrganizationProfileViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Organizations\OrganizationListViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Organizations\OrganizationsViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Participants\ParticipantApplicationModel.cs" />
+    <Compile Include="Areas\Int\Models\Participants\ParticipantsFilterViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ParticipantTrainingHistory.cs" />
+    <Compile Include="Areas\Int\Models\ParticipantWarningModel.cs" />
+    <Compile Include="Areas\Int\Models\ParticipantWarnings.cs" />
+    <Compile Include="Areas\Int\Models\Prioritization\GrantApplicationViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Prioritization\PrioritizationFilterViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Prioritization\PrioritizationScoresViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Prioritization\PrioritizationThresholdsViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Prioritization\PrioritizationUpdateScoresFileViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationPreviewModel.cs" />
+    <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationListViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationRecipientViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationTemplateViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ProgramNotifications\ProgramNotificationViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Reconciliation\PaymentRequestViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Reconciliation\ReconciliationPaymentReportModel.cs" />
+    <Compile Include="Areas\Int\Models\Reconciliation\ReconciliationPaymentViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Reconciliation\ReconciliationReportViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Reconciliation\ReconciliationReportsViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Settings\UserSettingViewModel.cs" />
+    <Compile Include="Areas\Int\Models\SkillsTraining\UpdateSkillsTrainingProgramViewModel.cs" />
+    <Compile Include="Areas\Int\Models\SkillsTraining\SkillsTrainingProgramViewModel.cs" />
+    <Compile Include="Areas\Int\Models\SkillsTraining\UpdateSkillsTrainingProviderViewModel.cs" />
+    <Compile Include="Areas\Int\Models\SkillsTraining\SkillsTrainingProviderViewModel.cs" />
+    <Compile Include="Areas\Int\Models\TrainingPrograms\TrainingProgramExtraInfoViewModel.cs" />
+    <Compile Include="Areas\Int\Models\TrainingPrograms\TrainingProgramViewModel.cs" />
+    <Compile Include="Areas\Int\Models\TrainingProviders\TrainingProvidersInventoryViewModel.cs" />
+    <Compile Include="Areas\Int\Models\TrainingProviders\TrainingProviderInventoryViewModel.cs" />
+    <Compile Include="Areas\Int\Models\TrainingProviders\TrainingProviderExtraInfoViewModel.cs" />
+    <Compile Include="Areas\Int\Models\TrainingProviders\UpdateTrainingProviderViewModel.cs" />
+    <Compile Include="Areas\Int\Models\WDAServices\ServiceCategoryViewModel.cs" />
+    <Compile Include="Areas\Int\Models\WDAServices\ServiceLineViewModel.cs" />
+    <Compile Include="Areas\Int\Models\WDAServices\WDAServiceViewModel.cs" />
+    <Compile Include="Areas\Int\Models\WorkQueue\GrantApplicationViewModel.cs" />
+    <Compile Include="Areas\Int\Models\IntakeQueue\IntakeQueueUserModel.cs" />
+    <Compile Include="Areas\Int\Models\WorkQueue\WorkQueueFilterAttributeViewModel.cs" />
+    <Compile Include="Areas\Int\Models\WorkQueue\WorkQueueUserFiltersViewModel.cs" />
+    <Compile Include="Areas\Int\Models\WorkQueue\WorkQueueFilterViewModel.cs" />
+    <Compile Include="Areas\Int\Models\WorkQueue\WorkQueueUserFilterViewModel.cs" />
+    <Compile Include="Areas\Int\Models\WorkQueue\WorkQueueUserModel.cs" />
+    <Compile Include="Helpers\CanadaPostConfiguration.cs" />
+    <Compile Include="Helpers\MessageConstants.cs" />
+    <Compile Include="Helpers\FileWrapper.cs" />
+    <Compile Include="Helpers\Modules\LogResponseModule.cs" />
+    <Compile Include="Helpers\ProgramDescriptionViewModelValidation.cs" />
+    <Compile Include="Areas\Ext\Models\ChangeRequest\ChangeRequestProgramTrainingDateViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Agreements\ScheduleAViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Agreements\ScheduleBViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ChangeRequest\ChangeRequestSkillTrainingViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\StreamEligibilityViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ApplicationGrantOpeningGroupModel.cs" />
+    <Compile Include="Areas\Ext\Models\ApplicationGrantOpeningViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ApplicationTrainingPeriodViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ApplicationGrantStreamViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Claims\ClaimAssessmentOutcomeViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ClaimAttachmentViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\CompletionReportStatusViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingPrograms\GrantApplicationAttachmentDetailViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Attachments\GrantApplicationAttachmentViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Reporting\GrantFileViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ParticipantCostModel.cs" />
+    <Compile Include="Areas\Ext\Models\SidebarViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ApplicationStartViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingCosts\TrainingCostViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingOutsideBCListViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingServiceProviderViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Claims\WithdrawClaimViewModel.cs" />
+    <Compile Include="Areas\Int\Controllers\AddressController.cs" />
+    <Compile Include="Areas\Int\Controllers\ApplicantContactController.cs" />
+    <Compile Include="Areas\Int\Controllers\ApplicantController.cs" />
+    <Compile Include="Areas\Int\Controllers\ApplicationSummaryController.cs" />
+    <Compile Include="Areas\Int\Controllers\ESSController.cs" />
+    <Compile Include="Areas\Int\Controllers\IntakeQueueController.cs" />
+    <Compile Include="Areas\Int\Controllers\ParticipantController.cs" />
+    <Compile Include="Areas\Int\Controllers\TrainingProgramController.cs" />
+    <Compile Include="Areas\Int\Controllers\TrainingProviderController.cs" />
+    <Compile Include="Areas\Int\Controllers\SkillsTrainingController.cs" />
+    <Compile Include="Areas\Int\Controllers\ClaimController.cs" />
+    <Compile Include="Areas\Int\Controllers\GrantOpeningController.cs" />
+    <Compile Include="Areas\Int\Controllers\CommunityController.cs" />
+    <Compile Include="Areas\Int\Controllers\NoteController.cs" />
+    <Compile Include="Areas\Int\Controllers\ProgramDescriptionController.cs" />
+    <Compile Include="Areas\Int\Controllers\TrainingCostController.cs" />
+    <Compile Include="Areas\Int\Controllers\WDAServiceController.cs" />
+    <Compile Include="Areas\Int\Controllers\GrantStreamController.cs" />
+    <Compile Include="Areas\Int\Controllers\GrantProgramController.cs" />
+    <Compile Include="Areas\Int\Controllers\PaymentController.cs" />
+    <Compile Include="Areas\Int\Controllers\CompletionReportController.cs" />
+    <Compile Include="Areas\Int\Controllers\SettingController.cs" />
+    <Compile Include="Areas\Int\Controllers\DebugController.cs" />
+    <Compile Include="Areas\Int\Controllers\WorkflowController.cs" />
+    <Compile Include="Areas\Int\Models\AddressViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Applicants\ApplicantViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ApplicantContactViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ApplicationActionButton.cs" />
+    <Compile Include="Areas\Int\Models\Applications\ApplicationComponentViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Applications\ProgramComponentViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Applications\ProviderComponentViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Applications\UpdateReportParticipantViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Claims\HoldPaymentRequestViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Notes\NoteListViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ParticipantViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ParticipantListViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ProgramCostViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ClaimListViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ClaimViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ProgramDescriptions\ProgramDescriptionViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantPrograms\DeliveryPartnerViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ApplicationDetailsViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ApplicationStateViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Applications\ApplicationSummaryViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ApplicationWorkflowViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ClaimWorkflowViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Admin\CommunityManagementViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Notes\NoteViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Settings\AppSettingsViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Applicants\ChangeApplicantContactViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ClaimAssessmentDetailViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ClaimDashboard\ClaimDashboardViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Debug\DebugGrantOpeningViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Debug\DebugAppDateTimeViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Debug\DebugReportingViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantOpenings\FiscalGrantOpeningViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantPrograms\GrantProgramViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantStreams\StreamProgramConfigurationViewModel.cs" />
+    <Compile Include="Areas\Int\Models\TrainingProviders\TrainingProviderViewModel.cs" />
+    <Compile Include="Areas\Int\Models\PaymentRequests\PaymentRequestClaimsDataTableModel.cs" />
+    <Compile Include="Areas\Int\Models\PaymentRequests\RequestBatchesDataTableModel.cs" />
+    <Compile Include="Areas\Int\Models\SyncBCeIDAccoutsViewModel.cs" />
+    <Compile Include="Areas\Int\Models\WorkflowViewModel.cs" />
+    <Compile Include="Areas\Part\Controllers\InformationController.cs" />
+    <Compile Include="Helpers\ActionExecutingContextExtensions.cs" />
+    <Compile Include="Helpers\ClaimDashboardViewModelBuilder.cs" />
+    <Compile Include="Helpers\DisposableListLogger.cs" />
+    <Compile Include="Areas\Int\Controllers\TrainingProviderHistoryController.cs" />
+    <Compile Include="Areas\Int\Models\TrainingProviders\TrainingProviderGrantFileHistoryDataTableModel.cs" />
+    <Compile Include="Areas\Int\Models\TrainingProviders\TrainingProviderGrantFileHistoryViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Claims\ClaimAssessmentViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Debug\DebugIDIRViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Debug\DebugLogViewModel.cs" />
+    <Compile Include="Areas\Int\Models\IntakeManagementViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ParticipantContactInfoViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ParticipantEmploymentInfoViewModel.cs" />
+    <Compile Include="Areas\Int\Models\ParticipantInfoViewModel.cs" />
+    <Compile Include="Areas\Int\Models\BCeIDViewModel.cs" />
+    <Compile Include="Areas\Part\Models\StepCompletedViewModelBase.cs" />
+    <Compile Include="Controllers\ContactUsController.cs" />
+    <Compile Include="Areas\Ext\Controllers\ReportingController.cs" />
+    <Compile Include="Areas\Ext\Models\ChangeRequest\ChangeAgreementTrainingDatesViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Claims\ClaimEligibleCostViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ClaimOldViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\DeliveryMethodSelectionViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\EligibleCostViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingCosts\EligibleExpenseTypeViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\FiscalYearViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\GrantAgreementViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\GrantApplicationViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\GrantOpeningViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\OrganizationProfileViewModelValidation.cs" />
+    <Compile Include="Areas\Ext\Models\OrganizationViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ParticipantCostViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ParticipantFormViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ParticipantReporting\ReportingViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingPeriodViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\UnderRepresentedGroupSelectionViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ViewModelBase.cs" />
+    <Compile Include="Areas\Int\Models\PartialUpdateViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Claims\ClaimReportViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Applications\WithdrawApplicationViewModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantOpenings\GrantOpeningViewModel.cs" />
+    <Compile Include="Areas\Ext\Controllers\GrantAgreementController.cs" />
+    <Compile Include="Areas\Ext\ExtAreaRegistration.cs" />
+    <Compile Include="Areas\Ext\Controllers\AuthController.cs" />
+    <Compile Include="Areas\Ext\Controllers\ApplicationController.cs" />
+    <Compile Include="Areas\Ext\Controllers\OrganizationProfileController.cs" />
+    <Compile Include="Areas\Ext\Controllers\UserProfileController.cs" />
+    <Compile Include="Areas\Ext\Models\Agreements\AgreementReviewViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Applications\ApplicantDeclarationViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Applications\ApplicationDeliveryViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Applications\ApplicationReviewViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Agreements\GrantAgreementDocumentViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Debug\DebugViewModel.cs" />
+    <Compile Include="Areas\Part\Models\ParticipantInfoStep2VmValidation.cs" />
+    <Compile Include="Areas\Part\Models\ParticipantInfoStep4ViewModel.cs" />
+    <Compile Include="Areas\Part\Models\ParticipantInfoStep3VmValidation.cs" />
+    <Compile Include="Areas\Part\Models\ParticipantInfoStep4VmValidation.cs" />
+    <Compile Include="Areas\Part\Models\ParticipantInfoViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingPrograms\TrainingProgramViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingTrainerDetailsListViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ApplicationAddressViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingProviderViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\EditTrainingProviderViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\Applications\ApplicationOverviewViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\AddressViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\UserProfileViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\NoteViewModel.cs" />
+    <Compile Include="Areas\Int\Controllers\ApplicationController.cs" />
+    <Compile Include="Areas\Int\Controllers\AuthController.cs" />
+    <Compile Include="Areas\Int\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Int\Controllers\TrainingProviderInventoryController.cs" />
+    <Compile Include="Areas\Int\Controllers\IntakeController.cs" />
+    <Compile Include="Areas\Int\Controllers\UserController.cs" />
+    <Compile Include="Areas\Int\IntAreaRegistration.cs" />
+    <Compile Include="Areas\Int\Models\Debug\DebugUserViewModel.cs" />
+    <Compile Include="Areas\Int\Models\IndexModel.cs" />
+    <Compile Include="Areas\Int\Models\GrantStreams\GrantStreamViewModel.cs" />
+    <Compile Include="Areas\Int\Models\Claims\InternalUserViewModel.cs" />
+    <Compile Include="Areas\Int\Models\LoginViewModel.cs" />
+    <Compile Include="Areas\Part\Models\ParticipantInfoStep0ViewModel.cs" />
+    <Compile Include="Areas\Part\Models\ParticipantInfoStep1ViewModel.cs" />
+    <Compile Include="Areas\Part\Models\ParticipantInfoStep2ViewModel.cs" />
+    <Compile Include="Areas\Part\Models\ParticipantInfoStep3ViewModel.cs" />
+    <Compile Include="Areas\Part\Models\ParticipantInfoStep5ViewModel.cs" />
+    <Compile Include="Areas\Part\Models\ParticipantInfoStep6ViewModel.cs" />
+    <Compile Include="Areas\Part\PartAreaRegistration.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Helpers\404.aspx.cs">
+      <DependentUpon>404.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Helpers\404.aspx.designer.cs">
+      <DependentUpon>404.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\AlertType.cs" />
+    <Compile Include="Helpers\Filters\AuthorizeActionAttribute.cs" />
+    <Compile Include="Helpers\ControllerExtensions.cs" />
+    <Compile Include="Helpers\Converters\DateTimeTypeConverter.cs" />
+    <Compile Include="Helpers\Converters\DeliveryPartnerServicesConverter.cs" />
+    <Compile Include="Helpers\Converters\UnderRepresentedGroupsTypeConverter.cs" />
+    <Compile Include="Helpers\Converters\DeliveryMethodsTypeConverter.cs" />
+    <Compile Include="Helpers\DropDownListHelper.cs" />
+    <Compile Include="Helpers\Filters\ETagAttribute.cs" />
+    <Compile Include="Helpers\Filters\ExternalFilter.cs" />
+    <Compile Include="Helpers\Filters\MessageFilter.cs" />
+    <Compile Include="Helpers\Filters\ParticipantFilter.cs" />
+    <Compile Include="Helpers\Filters\ParticipantStepFilter.cs" />
+    <Compile Include="Helpers\Filters\RefreshDetectFilter.cs" />
+    <Compile Include="Helpers\Filters\ResponseTimeFilterAttribute.cs" />
+    <Compile Include="Helpers\Filters\ValidateRequestHeader.cs" />
+    <Compile Include="Helpers\FormControlHelper.cs" />
+    <Compile Include="Helpers\HtmlHelperExtensions.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Areas\Ext\Controllers\HomeController.cs" />
+    <Compile Include="App_Start\DependencyConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\ButtonHelper.cs" />
+    <Compile Include="Helpers\EntityExtensions.cs" />
+    <Compile Include="Helpers\ActionResultExtensions.cs" />
+    <Compile Include="Helpers\HttpStatusCodeResultOnAttribute.cs" />
+    <Compile Include="Helpers\IControllerService.cs" />
+    <Compile Include="Helpers\AutofacExtensions.cs" />
+    <Compile Include="Helpers\IntakeManagementBuilder.cs" />
+    <Compile Include="Helpers\JsonHelper.cs" />
+    <Compile Include="Helpers\ModelStateExtensions.cs" />
+    <Compile Include="Helpers\Filters\PreventSpamAttribute.cs" />
+    <Compile Include="Helpers\RadioButtonListHelper.cs" />
+    <Compile Include="Helpers\RedirectOnAttribute.cs" />
+    <Compile Include="Helpers\RouteExtensions.cs" />
+    <Compile Include="Helpers\Settings\TrainingProviderSettings.cs" />
+    <Compile Include="Helpers\Settings\EmailSenderSettings.cs" />
+    <Compile Include="Helpers\Settings\NotificationSettings.cs" />
+    <Compile Include="Helpers\SidebarViewModelFactory.cs" />
+    <Compile Include="Helpers\BooleanExtensions.cs" />
+    <Compile Include="Helpers\StringExtensions.cs" />
+    <Compile Include="Helpers\TempDataExtensions.cs" />
+    <Compile Include="Helpers\TransferResult.cs" />
+    <Compile Include="Helpers\TransferToRouteResult.cs" />
+    <Compile Include="Helpers\ValidateNullableInt.cs" />
+    <Compile Include="Helpers\Validation\RequiredEnumerableAttribute.cs" />
+    <Compile Include="Helpers\Filters\IdentitySignOnFilterAttribute.cs" />
+    <Compile Include="Models\Shared\AddressSharedViewModel.cs" />
+    <Compile Include="Models\Shared\BaseViewModel.cs" />
+    <Compile Include="Models\Shared\ClaimListSharedViewModel.cs" />
+    <Compile Include="Models\Shared\DebugData.cs" />
+    <Compile Include="Areas\Ext\Models\LogInViewModel.cs" />
+    <Compile Include="Models\Shared\EligibleExpenseBreakdownViewModel.cs" />
+    <Compile Include="Models\Shared\EligibleExpenseTypeViewModel.cs" />
+    <Compile Include="Models\Shared\KeyValueViewModel`.cs" />
+    <Compile Include="Models\Shared\LookupTableViewModel.cs" />
+    <Compile Include="Models\Shared\PageViewModel.cs" />
+    <Compile Include="Models\Shared\PhoneViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\ProgramDescriptions\ProgramDescriptionViewModel.cs" />
+    <Compile Include="Models\Shared\Report\CompletionReportAnswerDetailsViewModel.cs" />
+    <Compile Include="Models\Shared\Report\CompletionReportBaseViewModel.cs" />
+    <Compile Include="Models\Shared\Report\CompletionReportDynamicCheckboxViewModel.cs" />
+    <Compile Include="Models\Shared\Report\CompletionReportGroupDetailsViewModel.cs" />
+    <Compile Include="Models\Shared\Report\CompletionReportQuestionDetailsViewModel.cs" />
+    <Compile Include="Models\Shared\Report\CompletionReportServiceCategoryViewModel.cs" />
+    <Compile Include="Models\Shared\Report\CompletionReportServiceLineViewModel.cs" />
+    <Compile Include="Models\Shared\Report\CompletionReportParticipantDetailsViewModel.cs" />
+    <Compile Include="Models\Shared\SiteMinderInfoViewModel.cs" />
+    <Compile Include="Models\Shared\SkillsTrainings\BaseProviderViewModel.cs" />
+    <Compile Include="Models\Shared\SkillsTrainings\BaseTrainingProgramViewModel.cs" />
+    <Compile Include="Models\Shared\SkillsTrainings\ServiceProviderDetailsViewModel.cs" />
+    <Compile Include="Models\Shared\SkillsTrainings\SkillTrainingDetailsViewModel.cs" />
+    <Compile Include="Models\Shared\SkillsTrainings\SkillTrainingProviderDetailsViewModel.cs" />
+    <Compile Include="Models\Shared\SkillsTrainings\SkillTrainingProviderViewModel.cs" />
+    <Compile Include="Models\Shared\SkillsTrainings\SkillTrainingViewModel.cs" />
+    <Compile Include="Models\Shared\TrainingProviders\TrainingCostAttachmentViewModel.cs" />
+    <Compile Include="Models\Shared\TrainingProviders\TrainingProgramAttachmentViewModel.cs" />
+    <Compile Include="Models\Shared\TrainingProviders\TrainingProviderAttachmentViewModel.cs" />
+    <Compile Include="Models\Shared\SkillsTrainings\TrainingProviderDetailsViewModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\Shared\SiteMinderViewPage.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Areas\Ext\Models\Applicant\" />
+    <Folder Include="Areas\Ext\Models\SkillsTrainings\" />
+    <Folder Include="UI\javascript\internal\intake-dashboard\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CJG.Application.Business\CJG.Application.Business.csproj">
+      <Project>{fc084fae-d520-4804-ae61-7501caee495a}</Project>
+      <Name>CJG.Application.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Application.Services\CJG.Application.Services.csproj">
+      <Project>{48dcf26f-44b1-4731-b807-95f3f9721682}</Project>
+      <Name>CJG.Application.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Application.SiteMinderSimulatorModule\CJG.Application.SiteMinderSimulatorModule.csproj">
+      <Project>{87f0998f-7c53-4514-a7bb-fbc6fd1fe9ec}</Project>
+      <Name>CJG.Application.SiteMinderSimulatorModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Core.Entities\CJG.Core.Entities.csproj">
+      <Project>{3eda57e9-e3f8-44b2-a360-3d54deb6dc44}</Project>
+      <Name>CJG.Core.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Core.Interfaces\CJG.Core.Interfaces.csproj">
+      <Project>{3bcf9a94-7976-4bb8-9c23-4cf6526c74f3}</Project>
+      <Name>CJG.Core.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Infrastructure.BCeID.WebService\CJG.Infrastructure.BCeID.WebService.csproj">
+      <Project>{b5e081d1-6965-48d8-ba93-e840a459c65c}</Project>
+      <Name>CJG.Infrastructure.BCeID.WebService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Infrastructure.EF\CJG.Infrastructure.EF.csproj">
+      <Project>{e70b0bc2-2ee1-4e82-8093-8a0088c9bf33}</Project>
+      <Name>CJG.Infrastructure.EF</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Infrastructure.GrantOpeningService\CJG.Infrastructure.GrantOpeningService.csproj">
+      <Project>{23b9fba1-c0c7-4311-9e9d-8240f05d527f}</Project>
+      <Name>CJG.Infrastructure.GrantOpeningService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Infrastructure.NotificationService\CJG.Infrastructure.NotificationService.csproj">
+      <Project>{8552dc67-1af6-4862-9649-9b250a896d75}</Project>
+      <Name>CJG.Infrastructure.NotificationService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Infrastructure.ReportingService\CJG.Infrastructure.ReportingService.csproj">
+      <Project>{0a9c47c8-6b0f-4c4f-b2ce-4bbf48536f2d}</Project>
+      <Name>CJG.Infrastructure.ReportingService</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Support|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;Support</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <PublishDatabaseSettings>
+      <Objects>
+        <ObjectGroup Name="CJG-Deployment" Order="1" Enabled="False">
+          <Destination Path="" />
+          <Object Type="DbFullSql" Enabled="False">
+            <PreSource Path="Data Source=%28local%29\SQL2014%3bInitial Catalog=CJG%3bUser ID=cjg%3bPassword=cjg%3bApplication Name=EntityFramework" ScriptSchema="True" ScriptData="False" CopyAllFullTextCatalogs="False" DriDefaults="True" />
+            <Source Path="obj\Support\AutoScripts\CJG-Deployment_SchemaOnly.sql" Transacted="True" />
+          </Object>
+        </ObjectGroup>
+      </Objects>
+    </PublishDatabaseSettings>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TEST|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;TEST</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'QA|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;QA</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Training|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;Training</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:57777/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- Extending project build with target to add additional steps into the build process -->
+  <Import Project="CJG.Web.External.Build.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.3.1.1\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.3.1.1\build\Microsoft.Net.Compilers.props'))" />
+  </Target>
+  <!-- End project file customization -->
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <Import Project="..\packages\NETStandard.Library.2.0.1\build\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.1\build\NETStandard.Library.targets')" />
+</Project>

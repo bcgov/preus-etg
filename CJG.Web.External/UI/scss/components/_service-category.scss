@@ -1,0 +1,177 @@
+.service-categories-table {
+  width: 100%;
+
+  .row-highlighted {
+    background: #f0f9ff;
+  }
+
+  .up-arrow {
+    vertical-align: middle;
+    margin-right: 8px;
+    align-self: center;
+  }
+
+  .up-arrow:hover {
+    box-shadow: 0px 2px 0px 0px #c7c7c7;
+  }
+
+  .up-arrow:active {
+    opacity: 0.8;
+  }
+
+  > thead > tr > th {
+    border-top: 1px solid black;
+    padding: 10px 0px;
+  }
+
+  tr {
+    border-bottom: 1px solid #e1e1e1;
+  }
+
+  th {
+    border-left: none !important;
+    border-right: none !important;
+    text-align: left;
+    font-size: 0.9375rem;
+  }
+
+  td {
+    vertical-align: top;
+  }
+
+  .delete-button-cell {
+    display: flex;
+    vertical-align: top;
+    justify-content: flex-end;
+    width: auto;
+    text-align: right
+  }
+
+  .category-cell-row {
+    min-width: 25%;
+  }
+
+  button {
+    margin: 0 10px 0 10px;
+  }
+
+  .service-line-breakdowns-caption {
+    align-items: baseline;
+    display: flex;
+
+    * {
+      margin: 5px;
+    }
+  }
+}
+
+.category-cell {
+  padding: 10px 0 10px 0;
+
+  div {
+    margin-bottom: 5px;
+  }
+
+  * {
+    margin-bottom: 2px;
+  }
+}
+
+@media (min-width: 992px) {
+  .category-cell-input {
+    width: 300px;
+  }
+}
+
+.category-table .table-header > div {
+  font-weight: bold;
+}
+
+.line-table .table-header > div {
+  font-weight: bold;
+}
+
+.item-block-container:last-child {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  text-align: left;
+}
+
+.item-block-container:not(:last-child) {
+  border-top: 1px solid black;
+  text-align: left;
+}
+
+.item-block-container:first-child {
+  &.child-block {
+    border-top: none;
+  }
+}
+
+.item-block div {
+  vertical-align: top;
+}
+
+.item-block > div {
+
+  > button {
+    margin-top: 10px;
+  }
+
+  > span:not(.up-arrow) {
+    display: inline-block;
+    padding: 15px 15px 15px 0px;
+    font-size: 0.9375rem;
+  }
+
+  > input[type=text] {
+    margin-top: 15px;
+  }
+
+  > textarea {
+    margin: 15px 0px;
+  }
+
+  > span.up-arrow {
+    margin-top: 20px;
+    cursor: pointer;
+  }
+
+  > .form__label {
+    margin-top: 20px;
+  }
+
+  > p {
+    padding: 15px;
+  }
+}
+
+.layout-internal .panel-bar.k-panelbar .k-item .form--readonly .form__group {
+  border-bottom: none;
+
+  > .label-wrapper {
+    width: 30%;
+
+    > label.form__label {
+      width: 100%;
+      padding-right: 7px;
+    }
+  }
+}
+
+.category-table .row-highlighted {
+  background: #f0f9ff;
+}
+
+.service-line-description {
+  ul {
+    > li {
+      list-style-type: disc;
+      margin-left: 20px !important;
+    }
+  }
+}
+
+.dropdown-padding-top {
+  padding-top: 10px;
+}

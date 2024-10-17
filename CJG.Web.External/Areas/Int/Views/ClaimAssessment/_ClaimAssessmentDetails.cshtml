@@ -1,0 +1,455 @@
+﻿@using CJG.Core.Entities
+<div ng-controller="ClaimAssessmentDetails" ng-init="init()" show="true">
+    <div class="block--claim-assessment-expense-type">
+        <div class="panel-section-buttons">
+            <h2 class="display-inline-block">Eligible Expense Types</h2>
+            <div class="pull-right">
+                <span class="reimbursement-claim-rate">
+                    Reimbursement Rate: {{claim.ReimbursementRate * 100 | number : 2}} %
+                </span>
+                <span class="reimbursement-claim-title">Reimbursement Claim</span>
+                <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+                <section-edit-buttons ng-model="section.editing" ng-if="claim.CanEdit" ng-class="btn--primary" ng-can-save="section.canSave" ng-edit="editClaim()"></section-edit-buttons>
+            </div>
+        </div>
+        <ul ng-if="model.EligibleCosts.length == 0">
+            <text>
+                Selected Claim does not have Eligible Costs
+            </text>
+        </ul>
+
+        <ul class="panel-section-list" ng-if="model.EligibleCosts.length > 0">
+            <li ng-repeat="eligibleCost in model.EligibleCosts">
+                <div>
+                    <span class="panel-section-item">
+                        <span class="panel-section-title" ng-click="toggle(eligibleCost)">
+                            <span class="width-50">
+                                {{eligibleCost.Caption}} <span ng-if="eligibleCost.AddedByAssessor"><b>(Added)</b></span>
+                            </span>
+                        </span>
+                        <span class="panel-section-buttons">
+                            <span><button class="btn btn--primary btn--save-claim-assessment" ng-click="deleteClaimEligibleCost(eligibleCost)" ng-if="eligibleCost.AddedByAssessor" ng-disabled="!section.editing">Delete</button></span>
+                            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+                            <span class="type-claim-total width-20" ng-if="eligibleCost.ExpenseType != @((int)ExpenseTypes.ParticipantAssigned)">
+                                {{ eligibleCost.AssessedReimbursementCost | currency : '$' : 2 }}
+                            </span>
+                            <span class="type-claim-total width-20" ng-if="eligibleCost.ExpenseType == @((int)ExpenseTypes.ParticipantAssigned)">
+                                {{ eligibleCost.TotalAssessedParticipantReimbursement | currency : '$' : 2 }}
+                            </span>
+                            <span class="small" ng-class="eligibleCost.show ? 'up-arrow': 'down-arrow'" ng-click="toggle(eligibleCost)"></span>
+                        </span>
+                    </span>
+
+                    <div class="panel-section-content" id="claim-eligible-cost-{{eligibleCost.Id}}" ng-if="eligibleCost.ExpenseType != @((int)ExpenseTypes.ParticipantAssigned) && eligibleCost.show">
+                        <div class="margin-top clearfix">
+                            <p class="pull-left no-margin">{{eligibleCost.Description}}</p>
+                        </div>
+                        <br />
+                        <table class="table--claims table--claims__cost">
+                            <thead>
+                                <tr>
+                                    <th><b></b></th>
+                                    <th><b>Total Cost</b></th>
+                                    <th><b ng-if="eligibleCost.ServiceType != @((int)ServiceTypes.Administration)">Number<br /> of<br /> Participants</b></th>
+                                    <th><b ng-if="eligibleCost.ServiceType != @((int)ServiceTypes.Administration)">Maximum<br /> Cost per<br /> Participant</b></th>
+                                    <th><b>Applicant<br /> Contribution</b></th>
+                                    <th><b>Maximum<br /> Government<br /> Contribution</b></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Agreement -->
+                                <tr class="js-agreed-costs">
+                                    <td class="no-border">Agreement</td>
+                                    <td class="no-border">
+                                        {{ eligibleCost.AgreedMaxCost | currency : '$' : 2 }}
+                                    </td>
+                                    <td ng-if="eligibleCost.ServiceType == @((int)ServiceTypes.Administration)" class="no-border"></td>
+                                    <td ng-if="eligibleCost.ServiceType != @((int)ServiceTypes.Administration)" class="no-border">
+                                        {{ eligibleCost.AgreedMaxParticipants }}
+                                    </td>
+                                    <td ng-if="eligibleCost.ServiceType == @((int)ServiceTypes.Administration)" class="no-border"></td>
+                                    <td ng-if="eligibleCost.ServiceType != @((int)ServiceTypes.Administration)" class="no-border">
+                                        {{ eligibleCost.AgreedMaxParticipantCost | currency : '$' : 2 }}
+                                    </td>
+                                    <td class="no-border">
+                                        {{ eligibleCost.AgreedEmployerContribution | currency : '$' : 2 }}
+                                    </td>
+                                    <td class="no-border">
+                                        {{ eligibleCost.AgreedMaxReimbursement | currency : '$' : 2 }}
+                                    </td>
+                                </tr>
+
+                                <!-- Past Claims -->
+                                <tr class="js-claimed-costs">
+                                    <td>Past Claims</td>
+                                    <td>
+                                        {{ eligibleCost.AssessedToDate | currency : '$' : 2 }}
+                                    </td>
+                                    <td ng-if="!claim.HasPriorApprovedClaim"></td>
+                                    <td ng-if="claim.HasPriorApprovedClaim && eligibleCost.ServiceType == @((int)ServiceTypes.Administration)"></td>
+                                    <td ng-if="claim.HasPriorApprovedClaim && eligibleCost.ServiceType != @((int)ServiceTypes.Administration)">
+                                        {{ eligibleCost.ClaimParticipants }}
+                                    </td>
+                                    <td ng-if="!claim.HasPriorApprovedClaim"></td>
+                                    <td ng-if="claim.HasPriorApprovedClaim && eligibleCost.ServiceType == @((int)ServiceTypes.Administration)"></td>
+                                    <td ng-if="claim.HasPriorApprovedClaim && eligibleCost.ServiceType != @((int)ServiceTypes.Administration)">
+                                        {{ eligibleCost.AssessedToDateParticipantCost  | currency : '$' : 2 }}
+                                    </td>
+                                    <td ng-if="!claim.HasPriorApprovedClaim"></td>
+                                    <td ng-if="claim.HasPriorApprovedClaim">
+                                        {{ eligibleCost.ReimbursedToDate  | currency : '$' : 2 }}
+                                    </td>
+                                    <td ng-if="!claim.HasPriorApprovedClaim"></td>
+                                    <td ng-if="claim.HasPriorApprovedClaim">
+                                        {{ eligibleCost.EmployerContributionToDate  | currency : '$' : 2 }}
+                                    </td>
+                                </tr>
+
+                                <!-- Remaining to be Claimed -->
+                                <tr class="js-remaining-costs">
+                                    <td>Remaining</td>
+                                    <td>
+                                        {{ eligibleCost.RemainingToBeClaimed | currency : '$' : 2 }}
+                                    </td>
+                                    <td ng-if="eligibleCost.ServiceType == @((int)ServiceTypes.Administration)"></td>
+                                    <td ng-if="eligibleCost.ServiceType != @((int)ServiceTypes.Administration)">
+                                        {{ eligibleCost.ClaimParticipants }}
+                                    </td>
+                                    <td ng-if="eligibleCost.ServiceType == @((int)ServiceTypes.Administration)"></td>
+                                    <td ng-if="eligibleCost.ServiceType != @((int)ServiceTypes.Administration)">
+                                        {{ eligibleCost.RemainingToBeClaimedParticipantCost  | currency : '$' : 2 }}
+                                    </td>
+                                    <td>
+                                        {{ eligibleCost.RemainingToBeClaimedEmployerContribution  | currency : '$' : 2 }}
+                                    </td>
+                                    <td>
+                                        {{ eligibleCost.RemainingToBeClaimedMaxReimbursement | currency : '$' : 2 }}
+                                    </td>
+                                </tr>
+
+                                <!-- Current Claim -->
+                                <tr>
+                                    <td>Claim</td>
+                                    <td>
+                                        {{ eligibleCost.ClaimCost | currency : '$' : 2 }}
+                                    </td>
+                                    <td ng-if="eligibleCost.ServiceType == @((int)ServiceTypes.Administration)"></td>
+                                    <td ng-if="eligibleCost.ServiceType != @((int)ServiceTypes.Administration)">
+                                        {{ eligibleCost.ClaimParticipants }}
+                                    </td>
+                                    <td ng-if="eligibleCost.ServiceType == @((int)ServiceTypes.Administration)"></td>
+                                    <td ng-if="eligibleCost.ServiceType != @((int)ServiceTypes.Administration)">
+                                        {{ eligibleCost.ClaimMaxParticipantCost  | currency : '$' : 2 }}
+                                    </td>
+                                    <td>
+                                        {{ eligibleCost.ClaimEmployerContribution | currency : '$' : 2 }}
+                                    </td>
+                                    <td>
+                                        {{ eligibleCost.ClaimReimbursementCost | currency : '$' : 2 }}
+                                    </td>
+                                </tr>
+
+                                <!-- Assessment -->
+                                <tr class="js-remaining-costs">
+                                    <td class="white-cell">
+                                        Assessed
+                                        <button type="button" class="float-right" ng-click="copyValueAndRecalculateTrainingCost(eligibleCost, eligibleCost, 'ClaimCost', 'AssessedCost')" ng-if="section.editing && eligibleCost.ServiceType != @((int)ServiceTypes.SkillsTraining)" title="Copy claimed values into assessed">
+                                            <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+                                        </button>
+                                    </td>
+                                    <td ng-if="section.editing && eligibleCost.ServiceType != @((int)ServiceTypes.SkillsTraining)" class="white-cell">
+                                        <input type="text" ng-model="eligibleCost.AssessedCost" class="input-inline-align input-right-align" ng-currency="13" ng-change="recalculateTrainingCost(eligibleCost)" ng-validation="errors.EligibleCost_{{eligibleCost.Id}}_AssessedCost" />
+                                    </td>
+                                    <td class="white-cell" ng-if="!section.editing || eligibleCost.ServiceType == @((int)ServiceTypes.SkillsTraining)">
+                                        <span ng-validation="errors.EligibleCost_{{eligibleCost.Id}}_AssessedCost">{{ eligibleCost.AssessedCost | currency : '$' : 2 }}</span>
+                                    </td>
+                                    <td class="white-cell" ng-if="eligibleCost.ServiceType == @((int)ServiceTypes.Administration)"></td>
+                                    <td class="white-cell" ng-if="eligibleCost.ServiceType != @((int)ServiceTypes.Administration)">
+                                        <input type="text" ng-model="eligibleCost.AssessedParticipants" class="input-inline-align input-right-align" ng-number ng-editing ng-change="recalculateTrainingCost(eligibleCost)" ng-validation="errors.EligibleCost_{{eligibleCost.Id}}_AssessedParticipants" />
+                                    </td>
+                                    <td class="white-cell" ng-if="eligibleCost.ServiceType == @((int)ServiceTypes.Administration)"></td>
+                                    <td class="white-cell" ng-if="eligibleCost.ServiceType != @((int)ServiceTypes.Administration)">
+                                        <span ng-validation="errors.EligibleCost_{{eligibleCost.Id}}_AssessedMaxParticipantCost">{{ eligibleCost.AssessedMaxParticipantCost | currency : '$' : 2 }}</span>
+                                    </td>
+                                    <td class="white-cell">
+                                        {{ eligibleCost.AssessedEmployerContribution | currency : '$' : 2 }}
+                                    </td>
+                                    <td class="white-cell">
+                                        <span ng-validation="errors.EligibleCost_{{eligibleCost.Id}}_AssessedReimbursementCost">{{ eligibleCost.AssessedReimbursementCost | currency : '$' : 2 }}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br clear="all" />
+                        <div ng-if="eligibleCost.ServiceType === @((int)ServiceTypes.SkillsTraining) && eligibleCost.Breakdowns.length > 0">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Expense Breakdown</th>
+                                        <th>Claimed Actual Cost</th>
+                                        <th></th>
+                                        <th>Assessed Actual Cost</th>
+                                        <th>Total Prior Claims</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="breakdown in eligibleCost.Breakdowns">
+                                        <td class="col--participant-name">{{breakdown.Caption}}</td>
+                                        <td class="col--actual-participant-cost">{{breakdown.ClaimCost | currency : '$' : 2}}</td>
+                                        <th>
+                                            <button type="button" ng-click="copyValueAndRecalculateTrainingCost(eligibleCost, breakdown, 'ClaimCost', 'AssessedCost')" ng-if="section.editing" title="Copy claimed values into assessed">
+                                                <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+                                            </button>
+                                        </th>
+                                        <td class="col--actual-participant-cost">
+                                            <input class="js-actual-participant-cost" type="text" ng-model="breakdown.AssessedCost" ng-if="section.editing" ng-currency='13' ng-change="recalculateTrainingCost(eligibleCost)" ng-validation="errors.Breakdown_{{breakdown.Id}}_AssessedCost" />
+                                            <span ng-if="!section.editing">{{breakdown.AssessedCost | currency : '$' : 2}}</span>
+                                        </td>
+                                        <td class="col--employer-contribution">{{ breakdown.AssessedToDate | currency : '$' : 2 }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="panel-section-content" id="claim-eligible-cost-{{eligibleCost.Id}}" ng-if="eligibleCost.ExpenseType == @((int)ExpenseTypes.ParticipantAssigned) && eligibleCost.show">
+                        <div class="margin-top clearfix">
+                            <p class="pull-left no-margin">{{eligibleCost.Description}}</p>
+                            <div ng-if="claim.CanUnlock && section.editing" class="pull-right block--unlock-contribution">
+                                <button type="button" class="btn--secondary btn--revert-override" ng-click="removeOverride(eligibleCost)" ng-if="eligibleCost.IsUnlocked" style="padding-top: 4px; padding-bottom: 4px;">Remove Override</button>
+                                <button type="button" ng-click="toggleLock(eligibleCost)" class="cancel-claim-edit" ng-if="eligibleCost.IsUnlocked" title="Lock Override">lock </button>
+                                <button type="button" ng-click="toggleLock(eligibleCost)" class="unlock-contribution" ng-if="!eligibleCost.IsUnlocked" title="Unlock Override"> Unlock</button>
+                            </div>
+                        </div>
+
+                        <table class="table--claims table--claims__cost table--claims__cost__agreed">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th>Total Training Cost</th>
+                                    <th>Number of Participants</th>
+                                    <th>Maximum Cost per Participant</th>
+                                    <th>Employer Contribution</th>
+                                    <th>Maximum Government Contribution</th>
+                                    <th class="align-center-force">
+                                        <span ng-if="section.editing">Action</span>
+                                    </th>
+                                    <th>
+                                        <text ng-if="claim.HasPriorApprovedClaim">Previous Assessed Amounts</text>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Agreement -->
+                                <tr ng-if="eligibleCost.EligibleCostId != null">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        {{ eligibleCost.SourceId == null && eligibleCost.EligibleCostId != null ? "Agreement Schedule" : "Claim Limit" }}
+                                    </td>
+                                    <td class="col--AgreedMaxCost">
+                                        {{ eligibleCost.AgreedMaxCost | currency : '$' : 2 }}
+                                    </td>
+                                    <td class="col--AgreedMaxParticipants">
+                                        {{ eligibleCost.AgreedMaxParticipants }}
+                                    </td>
+                                    <td class="col--AgreedMaxParticipantCost">
+                                        {{ eligibleCost.AgreedMaxParticipantCost | currency : '$' : 2 }}
+                                    </td>
+                                    <td class="col--AgreedEmployerContribution">
+                                        {{ eligibleCost.AgreedParticipantEmployerContribution | currency : '$' : 2 }}
+                                    </td>
+                                    <td class="col--AgreedMaxReimbursement">
+                                        {{ eligibleCost.AgreedMaxParticipantReimbursement | currency : '$' : 2 }}
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <!-- Claimed -->
+                                <tr class="row--assess-editable" ng-if="eligibleCost.EligibleCostId != null">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><div>Claim</div></td>
+                                    <td>{{ eligibleCost.ClaimCost  | currency : '$' : 2 }}</td>
+                                    <td>{{ eligibleCost.ClaimParticipants }}</td>
+                                    <td>{{ eligibleCost.ClaimMaxParticipantCost  | currency : '$' : 2 }}</td>
+                                    <td>{{ eligibleCost.ClaimParticipantEmployerContribution | currency : '$' : 2 }}</td>
+                                    <td>{{ eligibleCost.ClaimMaxParticipantReimbursementCost | currency : '$' : 2 }}</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <!-- Assessment -->
+                                <tr class="row--assess-editable__total js-training-costs">
+                                    <td class="white-cell"></td>
+                                    <td class="white-cell"></td>
+                                    <td class="white-cell"></td>
+                                    <td class="white-cell">
+                                        <div ng-class="section.editing ? 'display--flex' : ''">
+                                            Assessed&nbsp;
+                                            <button tabindex="-1" type="button" ng-if="section.editing" ng-click="copySingleClaimValue(eligibleCost)" title="Copy claimed values into assessed">
+                                                <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+
+                                    <td ng-if="section.editing" class="white-cell">
+                                        <input type="text" class="input-inline-align input-right-align input--small" ng-model="eligibleCost.AssessedCost" ng-currency maxlength="14" ng-change="recalculateTrainingCost(eligibleCost)" ng-validation="errors.EligibleCost_{{eligibleCost.Id}}_AssessedCost" />
+                                    </td>
+                                    <td class="white-cell" ng-if="!section.editing">
+                                        {{ eligibleCost.AssessedCost | currency : '$' : 2 }}
+                                    </td>
+
+                                    <td class="white-cell" ng-if="section.editing">
+                                        <input type="text" class="input-inline-align input-right-align input--small" ng-model="eligibleCost.AssessedParticipants" ng-number maxlength="5" ng-change="recalculateTrainingCost(eligibleCost)" ng-validation="errors.EligibleCost_{{eligibleCost.Id}}_AssessedParticipants" />
+                                    </td>
+                                    <td class="white-cell" ng-if="!section.editing">{{ eligibleCost.AssessedParticipants }}</td>
+                                    <td class="white-cell">
+                                        <span ng-validation="errors.EligibleCost_{{eligibleCost.Id}}_AssessedMaxParticipantCost">{{ eligibleCost.AssessedMaxParticipantCost | currency : '$' : 2 }}</span>
+                                    </td>
+                                    <td class="white-cell">
+                                        {{ eligibleCost.AssessedParticipantEmployerContribution | currency : '$' : 2 }}
+                                    </td>
+
+                                    <td class="white-cell">
+                                        <span class="s-assessed-gov-contribution" ng-if="!section.editing || !eligibleCost.IsUnlocked">
+                                            <span ng-validation="errors.EligibleCost_{{eligibleCost.Id}}_AssessedMaxParticipantReimbursementCost">{{ eligibleCost.AssessedMaxParticipantReimbursementCost | currency : '$' : 2 }}</span>
+                                        </span>
+                                        <span class="js-assessed-gov-contribution__wrapper" ng-if="section.editing && eligibleCost.IsUnlocked">
+                                            <input type="text" class="input-inline-align input-right-align input--small" ng-model="eligibleCost.AssessedMaxParticipantReimbursementCost" ng-currency maxlength="14" ng-change="recalculateTrainingCost(eligibleCost, true)" ng-validation="errors.EligibleCost_{{eligibleCost.Id}}_AssessedMaxParticipantReimbursementCost" />
+                                        </span>
+                                    </td>
+
+                                    <td class="white-cell align-center-force">
+                                        <a tabindex="-1" class="btn--clear-row js-assessed-totals link" ng-if="section.editing" ng-click="clearAssessedValue(eligibleCost)">Clear</a>
+                                    </td>
+                                    <td class="white-cell">
+                                        <span class="previous-assessed-amount " ng-if="eligibleCost.SourceId != null && claim.HasPriorApprovedClaim">
+                                            {{ eligibleCost.PreviousAssessedCost | currency : '$' : 2 }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="table--claims table--claims__cost table--claims__cost__assessed">
+                            <thead>
+                                <tr class="row--less-padding">
+                                    <th>&nbsp;</th>
+                                    <th></th>
+                                    <th colspan="3" class="align-center-force table--border-all" ng-if="!eligibleCost.AddedByAssessor">Claim</th>
+                                    <th colspan="3" ng-if="eligibleCost.AddedByAssessor"></th>
+                                    <th>&nbsp;</th>
+                                    <th colspan="3" class="align-center-force white-cell table--border-all">Assessed</th>
+                                    <th>&nbsp;</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <select tabindex="-1" class="select--participant-category" ng-init="eligibleCost.filter = 'all'" ng-model="eligibleCost.filter" ng-change="filterParticipants(eligibleCost)">
+                                            <option value="all">Participants - All</option>
+                                            <option value="claimed">Participants - Claimed</option>
+                                        </select>
+                                    </td>
+                                    <td></td>
+                                    <td><span ng-if="!eligibleCost.AddedByAssessor" class="display-inline-block">Participant<br />Actual Cost</span></td>
+                                    <td><span ng-if="!eligibleCost.AddedByAssessor" class="display-inline-block">Employer<br />Contribution</span></td>
+                                    <td><span ng-if="!eligibleCost.AddedByAssessor" class="display-inline-block">Government<br />Contribution</span></td>
+                                    <td></td>
+                                    <td>Participant<br />Actual Cost</td>
+                                    <td>Employer<br />Contribution</td>
+                                    <td>Government<br />Contribution</td>
+                                    <td colspan="2">&nbsp;</td>
+                                </tr>
+
+                                <tr class="row--assess-editable row--participant-data" ng-repeat="participantCost in eligibleCost.ParticipantCosts" ng-class="participantCost.ClaimParticipantCost < 0 ? 'no-value' : ''" ng-show="!participantCost.filter">
+                                    <td class="white-cell">
+                                        <span class="notice--icon" ng-if="showClaimWarning(claim.Participants, participantCost.Participant.ParticipantFormId)" title="Possible claim issues."></span>
+                                        <a href="/Int/Application/Participant/Info/View/{{participantCost.Participant.ParticipantFormId}}" target="_blank">{{participantCost.Participant.Name}}</a>
+                                    </td>
+                                    <td></td>
+                                    <td ng-if="!eligibleCost.AddedByAssessor" class="s-actual-participant-cost">{{participantCost.ClaimParticipantCost | currency : '$': 2}} </td>
+                                    <td ng-if="!eligibleCost.AddedByAssessor" class="s-actual-employer-contribution"> {{participantCost.ClaimEmployerContribution | currency : '$': 2}}</td>
+                                    <td ng-if="!eligibleCost.AddedByAssessor" class="s-actual-gov-contribution">{{participantCost.ClaimReimbursement | currency : '$': 2}}</td>
+                                    <td ng-if="!eligibleCost.AddedByAssessor" class="cell-no-side-padding align-center-force">
+                                        <button tabindex="-1" class="btn--copy-row" ng-if="section.editing" ng-click="copyParticipantValue(participantCost, eligibleCost)" title="Copy claimed values into assessed">
+                                            <span class="sr-only">Copy</span>
+                                            <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+                                        </button>
+                                    </td>
+                                    <td ng-if="eligibleCost.AddedByAssessor" colspan="4">&nbsp;</td>
+                                    <td class="s-assessed-participant-cost white-cell">
+                                        <span ng-if="section.editing">
+                                            <input type="text" class="input-inline-align input-right-align input--small" ng-model="participantCost.AssessedParticipantCost" ng-currency maxlength="14" ng-change="recalculateParticipantCost(participantCost, eligibleCost)" ng-validation="errors.ParticipantCost_{{participantCost.Id}}_AssessedParticipantCost" />
+                                        </span>
+                                        <span ng-if="!section.editing">
+                                            <span ng-validation="errors.ParticipantCost_{{participantCost.Id}}_AssessedParticipantCost">{{ participantCost.AssessedParticipantCost | currency : '$': 2}}</span>
+                                        </span>
+                                    </td>
+                                    <td class="s-assessed-employer-contribution white-cell">
+                                        <span class="aec-span">
+                                            {{ participantCost.AssessedEmployerContribution | currency : '$': 2}}
+                                        </span>
+                                    </td>
+                                    <td class="js-td-gov-contrib white-cell">
+                                        <span class="s-assessed-gov-contribution">
+                                            <span ng-validation="errors.ParticipantCost_{{participantCost.Id}}_AssessedReimbursement">{{ participantCost.AssessedReimbursement | currency : '$': 2}}</span>
+                                        </span>
+                                        <span class="js-assessed-gov-contribution" ng-if="eligibleCost.AddedByAssessor">
+                                            <input type="text" class="input-inline-align input-right-align input--small text--right" ng-model="participantCost.AssessedReimbursement" ng-currency maxlength="14" ng-change="recalculateTrainingCost(eligibleCost)" ng-validation="errors.ParticipantCost_{{participantCost.Id}}_AssessedReimbursement" />
+                                        </span>
+                                    </td>
+                                    <td class="white-cell align-center-force">
+                                        <a tabindex="-1" class="btn--clear-row link" ng-if="section.editing" ng-click="clearAssessedParticipantCost(participantCost, eligibleCost)">Clear</a>
+                                    </td>
+                                    <td class="previous-assessed-amount" ng-if="!eligibleCost.AddedByAssessor && model.Version > 1">
+                                        {{participantCost.PreviouslyAssessedReimbursement | currency : '$' : 2}}
+                                    </td>
+                                </tr>
+
+                                <tr class="table--expense-type-last-row">
+                                    <td colspan="5"><p class="pull-left" ng-if="eligibleCost.OverrideRate != eligibleCost.ReimbursementRate">* Manually edited value. May differ from standard reimbursement rate.</p></td>
+                                    <td colspan="2">
+                                        <span ng-if="eligibleCost.OverrideRate != eligibleCost.ReimbursementRate">Reimbursement rate: {{eligibleCost.OverrideRate * 100 | number : 2}}%</span>
+                                    </td>
+                                    <td colspan="2">
+                                        <span>Reimbursement claim: {{eligibleCost.TotalAssessedParticipantReimbursement | currency : '$' : 2}}</span>
+                                    </td>
+                                    <td>&nbsp;</td>
+                                    <td class="previous-assessed-amount">
+                                        <span class="previous-assessed-amount " ng-if="eligibleCost.SourceId == null && claim.HasPriorApprovedClaim">
+                                            {{ eligibleCost.PreviousAssessedParticipantReimbusement | currency : '$' : 2 }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="block--claim-assessment-add-expense-type clearfix" ng-if="$last && section.editing && claim.ProgramType == @((int)ProgramTypes.EmployerGrant) ">
+                        <div class="js-expense-type pull-left">
+                            <div class="control-wrapper">
+                                <div class="selectmenu input--medium">
+                                    <select class="input--medium form-control" ng-model="selectedExpenseType" ng-options="item as item.Caption for item in expenseTypes">
+                                        <option value="" class="" selected="selected">&lt; Select value &gt;</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <a ng-click="addExpenseType(selectedExpenseType)" class="btn btn--primary pull-left margin-top" ng-disabled="!selectedExpenseType">+ Add New Expense</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <span class="total-assessed-value-wrapper pull-right">
+        <span><b>Paid or Owing To-Date:</b> <span>{{claim.AmountPaidOrOwing | currency: '$' : 2}}</span></span>
+        <span><b>Remaining to be Claimed:</b> <span>{{(claim.AgreedMaxCommittment - claim.AmountPaidOrOwing) | currency: '$' : 2}}</span></span>
+        <span><b>Total Claim Assessment:</b> <span class="total-assessed-value" ng-validation="errors.TotalAssessedReimbursement">{{claim.TotalAssessedReimbursement | currency: '$' : 2}} </span></span>
+    </span>
+</div>

@@ -1,0 +1,75 @@
+﻿<div ng-controller="ProgramNotificationModal">
+    <div class="dialog-header">
+        <h3>Program Notification</h3>
+    </div>
+    <div class="dialog-content">
+        <div class="modal-content">
+            <div class="form well">
+                <div>
+                    <div class="row row--alert" ng-if="alert.message">
+                        <div class="alert alert--default" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message">
+                        </div>
+                    </div>
+                    <div class="pull-right"
+                         ng-if="model.Id"
+                         ng-attr-title="{{programNotificationChanged() ? 'Please save the changes before sending' : !totalApplicants() ? 'Requires recipients before sending' : 'Push to the notification queue'}}">
+                        <button class="btn btn--primary"
+                                ng-disabled="programNotificationChanged() || !totalApplicants()"
+                                ng-click="send()">
+                            Send
+                        </button>
+                    </div>
+
+                    <div class="form__group">
+                        <label class="form__label" for="Caption">Name</label>
+                        <div class="form__control">
+                            <input id="Caption" class="input--medium" maxlength="250" ng-model="model.Caption" ng-validation="errors.Caption" />
+                        </div>
+                    </div>
+
+                    <div class="form__group">
+                        <label class="form__label" for="Description">Description</label>
+                        <div class="form__control">
+                            <textarea id="Description" class="input--full" ng-model="model.Description" ng-class="{'has-error': $ctrl.getError()}" maxlength="500" wrap="hard"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form__group">
+                        <label class="form__label" for="Subject">Subject</label>
+                        <div class="form__control">
+                            <input id="Subject" class="input--full" maxlength="500" ng-model="model.Template.EmailSubject" ng-validation="errors.EmailSubject" />
+                        </div>
+                    </div>
+
+                    <div class="form__group tab--container">
+                        <ul class="tab--wrapper">
+                            <li class="tab--tab" ng-class="{'active': !showTemplate}" ng-click="toggleTemplate(false)">
+                                Rules
+                            </li>
+                            <li class="tab--tab" ng-class="{'active': showTemplate, 'error': errors.EmailBody}" ng-click="toggleTemplate(true)">
+                                Template
+                            </li>
+                            <li class="pull-right">
+                                <button class="btn btn--secondary" ng-click="preview()">Preview</button>
+                                <button class="btn btn--secondary" ng-click="test()">Test</button>
+                            </li>
+                        </ul>
+                        <div class="tab--content" ng-show="!showTemplate">
+                            @Html.Partial("ProgramNotificationRules")
+                        </div>
+                        <div class="tab--content" ng-show="showTemplate">
+                            @Html.Partial("ProgramNotificationTemplate")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn--primary pull-right" ng-if="!model.Id" ng-click="save()">Add</button>
+            <button class="btn btn--primary pull-right" ng-if="model.Id" ng-click="save()">Save</button>
+            <button class="btn btn--secondary pull-right" ng-click="closeThisDialog()">Cancel</button>
+            <button class="btn btn--primary btn--danger" ng-if="model.Id" ng-click="deleteProgramNotification()">Delete</button>
+        </div>
+    </div>
+</div>

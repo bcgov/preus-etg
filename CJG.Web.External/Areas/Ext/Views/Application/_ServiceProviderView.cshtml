@@ -1,0 +1,85 @@
+﻿@using CJG.Core.Entities
+@model ApplicationStateExternal
+
+<div class="form--readonly">
+    <ul class="panel-bar k-widget k-reset k-header k-panelbar" style="margin-bottom: 0">
+        <li class="k-item k-state-default" data-state="enabled"
+            ng-repeat="provider in process.TrainingProviders">
+            <span class="k-link k-header" ng-click="toggle($event)"
+                  data-toggle="hide" style="border-top:none;">
+                <span class="panel-bar__heading--text">&#9654;</span>
+                <span class="panel-bar__heading--text" style="margin-left:30px;">
+                    {{provider.Name}}
+                </span>
+                <span class="panel-bar__status" style="padding-left:318px;">
+                    <text>
+                        <span class="label {{PopulateSubSectionClass(provider, 'Provider')}}">
+                            {{PopulateSubSectionText(provider, 'Provider')}}
+                        </span>
+                    </text>
+                </span>
+                @if (Model != ApplicationStateExternal.ApplicationWithdrawn)
+                {
+                <span class="pull-right">
+                    <a class="btn btn--secondary pull-right"
+                       ng-click="edit($event)"
+                       href="/Ext/application/{{model.Id}}/service/provider/view/{{process.ServiceCategoryId}}/{{provider.Id}}">
+                        Edit
+                    </a>
+                    <a class="btn btn--secondary pull-right"
+                       style="width:85px;margin-right:5px;"
+                       ng-click="delete($event, provider, 'Provider')">Delete</a>
+                </span>
+                }
+            </span>
+            <div class="form-section-details" style="display: none;">
+                <div class="form--readonly">
+                    <div class="form__group">
+                        <div class="form__label">Service provider name:</div>
+                        <div class="form__control">
+                            {{provider.Name}}
+                        </div>
+                    </div>
+                    <div class="form__group">
+                        <div class="form__label">Contact first name:</div>
+                        <div class="form__control">
+                            {{provider.ContactFirstName}}
+                        </div>
+                    </div>
+                    <div class="form__group">
+                        <div class="form__label">Contact last name:</div>
+                        <div class="form__control">
+                            {{provider.ContactLastName}}
+                        </div>
+                    </div>
+                    <div class="form__group">
+                        <div class="form__label">Contact email:</div>
+                        <div class="form__control">
+                            {{provider.ContactEmail}}
+                        </div>
+                    </div>
+                    <div class="form__group">
+                        <div class="form__label">Contact phone number:</div>
+                        <div class="form__control">
+                            {{provider.ContactPhoneNumber}}
+                            <span ng-show="provider.ContactPhoneExtension">
+                                Ext. {{provider.ContactPhoneExtension}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form__group" style="border-bottom: none">
+                        <div class="form__label">Service provider address:</div>
+                        <div class="form__control">
+                            {{provider.AddressLine1}}<br />
+                            <div ng-if="provider.AddressLine2 != null">
+                                {{provider.AddressLine2 }} <br />
+                            </div>
+                            {{provider.City}}, {{provider.Region != null ? provider.Region : "" }}, {{provider.Country}}   <br />
+                            {{provider.PostalCode}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,15 @@
+/**
+ * Nicolas Gallagher's micro clearfix hack without IE6/7 support  
+ * http://nicolasgallagher.com/micro-clearfix-hack/
+ */
+@mixin clearfix {
+  &:before,
+  &:after {
+    display: table;
+    content: ' ';
+  }
+
+  &:after {
+    clear: both;
+  }
+}

@@ -1,0 +1,23 @@
+﻿<div class="form--readonly">
+    <div class="form__group">
+        <div class="form__label">For training starting in period:</div>
+        <div class="form__control">
+            {{toPST(model.GrantOpeningTrainingPeriodStartDate)}}
+            to
+            {{toPST(model.GrantOpeningTrainingPeriodEndDate)}}
+        </div>
+    </div>
+    <div class="form__group">
+        <div class="form__label">Training start date:</div>
+        <div class="form__control">
+            {{toPST(model.StartDate)}}
+        </div>
+    </div>
+
+    <div class="form__group">
+        <div class="form__label">Training end date:</div>
+        <div class="form__control">
+            {{toPST(model.EndDate)}}
+        </div>
+    </div>
+</div>

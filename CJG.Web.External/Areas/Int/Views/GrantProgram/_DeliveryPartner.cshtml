@@ -1,0 +1,38 @@
+﻿<div ng-controller="GrantProgramDeliveryPartner" class="form-section" ng-show="model.Id">
+	<span class="panel-section-item">
+		<span class="panel-section-title" ng-click="toggle($event)">Delivery Partner</span>
+		<span class="panel-section-buttons">
+			<span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+			<section-edit-buttons ng-model="section.editing"></section-edit-buttons>
+			<span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+		</span>
+	</span>
+
+	<div class="panel-section-content" ng-if="section.show">
+		<div class="form form-section-container">
+
+			<div class="form__group">
+				<div class="form__control">
+					<div class="control-wrapper" title="Note this sets the default for new grant streams.  Existing grant streams will need to be updated manually.">
+						<input type="checkbox" ng-model="model.IncludeDeliveryPartner" id="include-delivery-partner" name="include-delivery-partner" ng-disabled="!section.editing"/>
+						<label for="include-delivery-partner">Support Delivery Partner</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="width-49">
+				<div class="form__group" ng-show="model.IncludeDeliveryPartner" ng-validation="errors.DeliveryPartners">
+					<label class="form__label">Delivery Partners:</label>
+					@Html.Partial("_DeliveryPartners")
+				</div>
+			</div>
+			
+			<div class="width-49 float-right">
+				<div class="form__group" ng-show="model.IncludeDeliveryPartner" ng-validation="errors.DeliveryPartnerServices">
+					<label class="form__label">Delivery Partner Services:</label>
+					@Html.Partial("_DeliveryPartnerServices")
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

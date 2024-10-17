@@ -1,0 +1,246 @@
+﻿@using CJG.Web.External.Areas.Ext.Controllers
+@{
+    ViewBag.Title = "Employment Assistance Service Provider";
+}
+
+<div class="row" ng-controller="ServiceProviderView" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-eligible-expense-type-id="@ViewBag.EligibleExpenseTypeId" ng-training-provider-id="@ViewBag.TrainingProviderId">
+    <div class="row">
+        @Html.ActionLink("Return", nameof(ApplicationController.ApplicationOverviewView), typeof(ApplicationController), new { grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "link--back" })
+    </div>
+    <div class="row">
+        <div class="main">
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+            <h1>
+                <span ng-show="model.ServiceProvider.Name">Edit </span>
+                <span ng-show="!model.ServiceProvider.Name">Add </span>
+                Employment Assistance Service Provider
+            </h1>
+            <p>
+                Enter the information about the
+                {{ model.ServiceProvider.Caption.charAt(model.ServiceProvider.Caption.length - 1) === 's' ? model.ServiceProvider.Caption.substring(0, model.ServiceProvider.Caption.length - 1) : model.ServiceProvider.Caption}}
+                Provider you have selected below.
+            </p>
+
+            <div class="form__group">
+                <div class="label-wrapper">
+                    <label class="form__label">Service Provider Name <abbr title="Required">*</abbr></label>
+                </div>
+                <div class="control-wrapper form-control">
+                    <input type="text" class="input--medium"
+                           ng-model="model.ServiceProvider.Name" ng-validation="errors.Name">
+                </div>
+            </div>
+            <div class="form__group">
+                <div class="form__label">Type of training provider <abbr title='Required'>*</abbr></div>
+                <div class="form__control">
+                    <div class="control-wrapper selectmenu input--full"
+                         ng-validation="errors.TrainingProviderTypeId">
+                        <select ng-model="model.ServiceProvider.TrainingProviderTypeId"
+                                ng-options="item.Id as item.Caption for item in ProviderTypes"
+                                class="input--full" ng-change="setTrainingProviderTypeDetails()">
+                            <option value="" selected="selected">&lt; Select value &gt;</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-show="model.ServiceProvider.ProofOfInstructorQualifications">
+                <div class="form__group">
+                    <label class="form__label">Proof of instructors qualifications from Training Provider <abbr title="Required">*</abbr></label>
+                    <p>
+                        One file of the following type may be attached: PDF, DOCX, DOC, XLSX, XLS, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}} MB.
+                    </p>
+                    <div ng-validation="errors.ProofOfQualificationsDocument">
+                        <div class="form__control"
+                             ng-if="model.ServiceProvider.ProofOfQualificationsDocument.FileName">
+                            <a class="link"
+                               ng-if="model.ServiceProvider.ProofOfQualificationsDocument.Id"
+                               ng-click="downloadAttachment(model.ServiceProvider.ProofOfQualificationsDocument.Id)">
+                                {{model.ServiceProvider.ProofOfQualificationsDocument.FileName}}
+                            </a>
+                            <span ng-if="!model.ServiceProvider.ProofOfQualificationsDocument.Id">
+                                {{model.ServiceProvider.ProofOfQualificationsDocument.FileName}}
+                            </span>
+                            <button class="btn btn--primary pull-right"
+                                    ng-click="changeAttachment('ProofOfQualificationsDocument')">
+                                Change
+                            </button>
+                        </div>
+                        <div class="form__control"
+                             ng-if="!model.ServiceProvider.ProofOfQualificationsDocument.FileName">
+                            <span>None</span>
+                            <button class="btn btn--primary pull-right"
+                                    ng-click="addAttachment('ProofOfQualificationsDocument')">
+                                Upload
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div ng-show="model.ServiceProvider.CourseOutline">
+                <div class="form__group">
+                    <label class="form__label">Course outline including defined instructional objectives, delivery method and assessment methods <abbr title="Required">*</abbr></label>
+                    <p>One file of the following type may be attached: PDF, DOCX, DOC, XLSX, XLS, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}} MB.</p>
+
+                    <div ng-validation="errors.CourseOutlineDocument">
+                        <div class="form__control" ng-if="model.ServiceProvider.CourseOutlineDocument.FileName">
+                            <a class="link"
+                               ng-if="model.ServiceProvider.CourseOutlineDocument.Id"
+                               ng-click="downloadAttachment(model.ServiceProvider.CourseOutlineDocument.Id)">
+                                {{model.ServiceProvider.CourseOutlineDocument.FileName}}
+                            </a>
+                            <span ng-if="!model.CourseOutlineDocument.Id">
+                                {{model.ServiceProvider.CourseOutlineDocument.FileName}}
+                            </span>
+                            <button class="btn btn--primary pull-right"
+                                    ng-click="changeAttachment('CourseOutlineDocument')">
+                                Change
+                            </button>
+                        </div>
+                        <div class="form__control"
+                             ng-if="!model.ServiceProvider.CourseOutlineDocument.FileName">
+                            <span>None</span>
+                            <button class="btn btn--primary pull-right"
+                                    ng-click="addAttachment('CourseOutlineDocument')">
+                                Upload
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form__group">
+                <div class="label-wrapper">
+                    <label class="form__label">Address line 1 <abbr title="Required">*</abbr></label>
+                </div>
+
+                <div class="control-wrapper form-control">
+                    <input type="text" class="input--full"
+                           ng-model="model.ServiceProvider.AddressLine1"
+                           ng-validation="errors.AddressLine1">
+                </div>
+            </div>
+            <div class="form__group">
+                <div class="label-wrapper">
+                    <label class="form__label">Address line 2</label>
+                </div>
+                <div class="control-wrapper form-control">
+                    <input type="text" class="input--full"
+                           ng-model="model.ServiceProvider.AddressLine2"
+                           ng-validation="errors.AddressLine2">
+                </div>
+            </div>
+            <div class="form__group">
+                <div class="label-wrapper">
+                    <label class="form__label">City <abbr title="Required">*</abbr></label>
+                </div>
+
+                <div class="control-wrapper form-control">
+                    <input type="text" class="input--medium"
+                           ng-model="model.ServiceProvider.City" ng-validation="errors.City">
+                </div>
+            </div>
+
+            <div class="form__group">
+                <label class="form__label">Province <abbr title="Required">*</abbr></label>
+                <div class="form__control">
+                    <div class="control-wrapper selectmenu input--medium"
+                         ng-validation="errors.RegionId">
+                        <select class="input--medium form-control"
+                                ng-model="model.ServiceProvider.RegionId"
+                                ng-options="item.Key as item.Caption for item in Provinces">
+                            <option value="" class="">&lt; Select value &gt;</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form__group">
+                <div class="label-wrapper">
+                    <label class="form__label">Postal code <abbr title="Required">*</abbr></label>
+                </div>
+                <div class="control-wrapper form-control">
+                    <input type="text" class="input--medium"
+                           ng-model="model.ServiceProvider.PostalCode" maxlength="6" ng-postal
+                           ng-validation="errors.PostalCode">
+                </div>
+            </div>
+
+            <h3 class="subheader--body">Service Provider Contact</h3>
+            <p>Enter the contact information for your service provider.</p>
+            <div class="form__group">
+                <div class="form__group">
+                    <div class="label-wrapper">
+                        <label class="form__label">Contact first name <abbr title="Required">*</abbr></label>
+                    </div>
+                    <div class="control-wrapper form-control">
+                        <input type="text" class="input--medium" ng-model="model.ServiceProvider.ContactFirstName"
+                               maxlength="128" ng-validation="errors.ContactFirstName">
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="label-wrapper">
+                        <label class="form__label">Contact last name <abbr title="Required">*</abbr></label>
+                    </div>
+                    <div class="control-wrapper form-control">
+                        <input type="text" class="input--medium" ng-model="model.ServiceProvider.ContactLastName"
+                               maxlength="128" ng-validation="errors.ContactLastName">
+                    </div>
+                </div>
+                <div class="form__group">
+                    <div class="label-wrapper">
+                        <label class="form__label">Contact email <abbr title="Required">*</abbr></label>
+                    </div>
+                    <div class="control-wrapper form-control">
+                        <input type="text" class="input--medium" ng-model="model.ServiceProvider.ContactEmail"
+                               maxlength="128" ng-validation="errors.ContactEmail">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form__group">
+                <label class="form__label">Contact phone <nobr>number <abbr title="Required">*</abbr></nobr></label>
+                <div class="form__control">
+                    <span class="form__group--tel validation-group">
+                        <input type="text" class="input--small phone-areacode"
+                               ng-model="model.ServiceProvider.ContactPhoneAreaCode"
+                               maxlength="3" ng-number ng-class="errors.ContactPhone ? 'has-error': ''">
+                        <span class="spacer">-</span>
+                        <input type="text" class="input--small phone-first-three"
+                               ng-model="model.ServiceProvider.ContactPhoneExchange"
+                               maxlength="3" ng-number ng-class="errors.ContactPhone ? 'has-error': ''">
+                        <span class="spacer">-</span>
+                        <input type="text" class="input--small phone-last-four"
+                               ng-model="model.ServiceProvider.ContactPhoneNumber"
+                               maxlength="4" ng-numbe ng-class="errors.ContactPhone ? 'has-error': ''"r>
+                    </span>
+                    <span class="form__group--tel-ext">
+                        <label>Ext</label>
+                        <input type="text" class="input--small phone-extension"
+                               ng-model="model.ServiceProvider.ContactPhoneExtension"
+                               maxlength="10" ng-number ng-class="errors.ContactPhone ? 'has-error': ''">
+                    </span>
+                    <validation ng-model="errors.ContactPhone">
+                        Contact phone number must be 10-digit number
+                    </validation>
+                </div>
+            </div>
+
+            <div class="button-group">
+                @Html.Button("Cancel",
+                new
+                {
+                @class = "btn btn--secondary",
+                @onclick = "window.location='" +
+                @Url.Action(nameof(ApplicationController.ApplicationOverviewView),
+                nameof(ApplicationController).Replace("Controller", ""),
+                new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'"
+                })
+                <button class="btn btn--primary btn--forward" ng-click="save()">Done</button>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<User>
+  <Guid>11000000-0000-0000-0000-000000000000</Guid>
+  <AccountType>Business</AccountType>
+  <FirstName>Unknown</FirstName>
+  <LastName>User</LastName>
+  <EmailAddress>unknown@fcvinteractive.com</EmailAddress>
+  <TelephoneNumber>1 604-662-8407</TelephoneNumber>
+  <BusinessGuid>10000000-0000-0000-0000-000000000000</BusinessGuid>
+  <Business>
+    <Guid>10000000-0000-0000-0000-000000000000</Guid>
+    <LegalName>Unknown Company</LegalName>
+    <DoingBusinessAs>Unknown</DoingBusinessAs>
+    <AddressId>1</AddressId>
+    <Address>
+      <Id>1</Id>
+      <AddressLine1>123 Main Street.</AddressLine1>
+      <AddressLine2>(line 2)</AddressLine2>
+      <City>(City)</City>
+      <PostalCode>(Postal Code)</PostalCode>
+      <Province>British Columbia</Province>
+      <Country>CA</Country>
+      <UnstructuredAddress></UnstructuredAddress>
+      <Businesses></Businesses>
+    </Address>
+    <Users></Users>
+  </Business>
+</User>

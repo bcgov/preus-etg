@@ -1,0 +1,279 @@
+<div ng-controller="TrainingProvider" name="TrainingProvider{{provider.IsChangeRequest ? 'ChangeRequest' : ''}}">
+	<span class="panel-section-item">
+		<span class="panel-section-title" ng-click="toggle($event)" ng-class="{ 'label--red': provider.IsChangeRequest }">
+			<span class="notice--icon" ng-if="!provider.IsValidated" title="Training Provider requires validation."></span>
+			{{component.Caption}} {{provider.IsChangeRequest ? 'Change Request' : ''}}
+		</span>
+		<span class="panel-section-buttons">
+			<span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+			<section-edit-buttons ng-model="section.editing" ng-if="provider.CanEdit"></section-edit-buttons>
+			<span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+		</span>
+	</span>
+	<div class="panel-section-content" ng-if="section.show">
+    <div class="form form--2-col">
+    <div class="col-50p">
+        <div class="form__group" ng-if="model.TrainingProviderState != @((int)CJG.Core.Entities.TrainingProviderStates.Complete)">
+            <div class="form__label">Change Request Reason:</div>
+            <div class="form__control">
+                <div class="control-wrapper">
+                    <label>{{model.ChangeRequestReason}}</label>
+                </div>
+            </div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Training provider name:</div>
+            <div class="form__control">
+                <div ng-if="model.TrainingProviderInventoryId && model.TrainingProviderInventoryId > 0">
+                    <a href="/Int/Training/Provider/History/View/{{model.TrainingProviderInventoryId}}" target="_blank">{{model.Name}}</a>
+                    <img class="center provider-risk-flag" ng-if="model.TrainingProviderInventoryIsRisk" ng-src="../../../../../images/icons/risk-flag.png" />
+                </div>
+                <div ng-if="!(model.TrainingProviderInventoryId && model.TrainingProviderInventoryId > 0)">{{model.Name}}</div>
+                <div ng-if="!model.RequiresTrainingProviderValidation" class="label label--complete">Validated</div>
+                <div ng-if="model.RequiresTrainingProviderValidation" class="label label--danger">Not validated</div>
+                <div ng-if="model.CanValidateTrainingProvider && !section.editing">
+                    <a class="btn btn--primary js-btn-validate-tp" style="margin-top:5px;" ng-click="showValidateView()">Validate Name</a>
+                </div>
+            </div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Type of training provider:</div>
+            <div class="form__control form__long-select">
+                <div class="control-wrapper selectmenu">
+                    <select ng-model="model.TrainingProviderType.Id"
+                            ng-options="item.Key as item.Value for item in trainingProviderTypes"
+                            class="input--full" ng-validation ng-editing
+                            ng-change="setTrainingProviderTypeDetails()"></select>
+                </div>
+                <div ng-show="section.editing && model.TrainingProviderType.Id == 1"> @* If the training type is public institution *@
+                    <a href="https://www2.gov.bc.ca/gov/content/education-training/post-secondary-education/find-a-program-or-institution/find-an-institution" target="_blank">Find an Institution</a>
+                </div>
+            </div>
+        </div>
+        <div id="training-provider-attachments">
+            <div ng-show="model.CourseOutlineDocument">
+                <div class="form__group">
+                    <div class="form__label">Course outline:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper" ng-validation="errors.CourseOutlineDocument">
+                            <a class="link" ng-if="model.CourseOutlineDocument" ng-click="!model.CourseOutlineDocument.Id || downloadAttachment(model.CourseOutlineDocument.Id)">{{model.CourseOutlineDocument.FileName}}</a>
+                            <button ng-if="model.CourseOutlineDocument && section.editing" class="btn btn--primary pull-right" ng-click="changeAttachment('CourseOutlineDocument')">Change</button>
+                            <span ng-if="!model.CourseOutlineDocument">None</span>
+                            <button ng-if="!model.CourseOutlineDocument && section.editing" class="btn btn--primary pull-right" ng-click="addAttachment('CourseOutlineDocument')">Upload</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div ng-show="model.TrainingProviderType.ProofOfInstructorQualifications">
+                <div class="form__group">
+                    <div class="form__label">Proof of qualifications:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper" ng-validation="errors.ProofOfQualificationsDocument">
+                            <a class="link" ng-if="model.ProofOfQualificationsDocument" ng-click="!model.ProofOfQualificationsDocument.Id || downloadAttachment(model.ProofOfQualificationsDocument.Id)">{{model.ProofOfQualificationsDocument.FileName}}</a>
+                            <button ng-if="model.ProofOfQualificationsDocument && section.editing" class="btn btn--primary pull-right" ng-click="changeAttachment('ProofOfQualificationsDocument')">Change</button>
+                            <span ng-if="!model.ProofOfQualificationsDocument">None</span>
+                            <button ng-if="!model.ProofOfQualificationsDocument && section.editing" class="btn btn--primary pull-right" ng-click="addAttachment('ProofOfQualificationsDocument')">Upload</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Contact first name:</div>
+            <div class="form__control">
+                <div class="control-wrapper">
+                    <input ng-model="model.TrainingTrainerDetailsListViewModel.ContactFirstName" maxlength="250" class="input--full" ng-validation ng-editing />
+                </div>
+            </div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Contact last name:</div>
+            <div class="form__control">
+                <div class="control-wrapper">
+                    <input ng-model="model.TrainingTrainerDetailsListViewModel.ContactLastName" maxlength="250" class="input--full" ng-validation ng-editing />
+                </div>
+            </div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Contact email:</div>
+            <div class="form__control">
+                <div class="control-wrapper">
+                    <input ng-model="model.TrainingTrainerDetailsListViewModel.ContactEmail" maxlength="250" class="input--full" ng-validation ng-editing />
+                </div>
+            </div>
+        </div>
+        <div class="form__group">
+            <div class="form__label">Contact phone number:</div>
+            <div class="form__control">
+                <div class="control-wrapper form__group--tel" ng-validation="errors.TrainingTrainerDetailsListViewModel.PhoneNumberNoExtension">
+                    <input ng-model="model.TrainingTrainerDetailsListViewModel.ContactNumberAreaCode"
+                           class="input-xx-small" maxlength="3" ng-number ng-editing
+                           ng-class="errors.TrainingTrainerDetailsListViewModel.PhoneNumberNoExtension ? 'has-error': ''" />
+                    <span ng-class="spacer">-</span>
+                    <input ng-model="model.TrainingTrainerDetailsListViewModel.ContactNumberExchange"
+                           class="input-xx-small" maxlength="3" ng-number ng-editing
+                           ng-class="errors.TrainingTrainerDetailsListViewModel.PhoneNumberNoExtension ? 'has-error': ''" />
+                    <span ng-class="spacer">-</span>
+                    <input ng-model="model.TrainingTrainerDetailsListViewModel.ContactNumberNumber"
+                           class="input-xx-small" maxlength="4" ng-number ng-editing
+                           ng-class="errors.TrainingTrainerDetailsListViewModel.PhoneNumberNoExtension ? 'has-error': ''" />
+                    <span ng-class="spacer" ng0if="section.editing || model.PhoneNumberViewModel.PhoneExtension">Ext</span>
+                    <input ng-model="model.TrainingTrainerDetailsListViewModel.ContactNumberExtension"
+                           class="input-xx-small" maxlength="20" ng-number ng-editing
+                           ng-class="errors.TrainingTrainerDetailsListViewModel.PhoneNumberNoExtension ? 'has-error': ''" />
+                </div>
+                <validation ng-model="errors.TrainingTrainerDetailsListViewModel.PhoneNumberNoExtension">
+                    Contact phone number must be 10-digit number
+                </validation>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-50p">
+        <div class="form__group" ng-if="model.SelectedDeliveryMethodIds != 3 && 
+                 model.SelectedDeliveryMethodIds != null &&
+                 model.SelectedDeliveryMethodIds != 0">
+            <label class="form__label">Address of Training Location:</label>
+            <div class="form__control form-address-group">
+                <div class="label-wrapper" ng-editing><label>Address line 1:</label></div>
+                <div class="control-wrapper">
+                    <input ng-model="model.TrainingLocationListViewModel.AddressLine1" class="input--medium" maxlength="250" ng-validation ng-editing />
+                </div>
+
+                <div class="label-wrapper" ng-editing><label>Address line 2:</label></div>
+                <div class="control-wrapper" ng-if="section.editing || model.TrainingLocationListViewModel.AddressLine2">
+                    <input ng-model="model.TrainingLocationListViewModel.AddressLine2" class="input--medium" maxlength="250" ng-validation ng-editing />
+                </div>
+
+                <div class="label-wrapper" ng-editing><label>City:</label></div>
+                <div class="control-wrapper">
+                    <input ng-model="model.TrainingLocationListViewModel.City" class="input--medium" maxlength="250" ng-validation ng-editing />
+                </div>
+
+                <div ng-if="model.TrainingLocationListViewModel.CountryId == 'CA'">
+                    <div class="label-wrapper" ng-editing><label>Province:</label></div>
+                    <div class="control-wrapper selectmenu">
+                        <select ng-model="model.TrainingLocationListViewModel.RegionId" ng-options="item.Key as item.Caption for item in provinces" class="input--medium" ng-validation ng-editing></select>
+                    </div>
+
+                    <div class="label-wrapper" ng-editing><label>Postal code:</label></div>
+                    <div class="control-wrapper">
+                        <input ng-model="model.TrainingLocationListViewModel.PostalCode" class="input--medium" maxlength="250" ng-validation ng-editing />
+                    </div>
+                </div>
+
+                <div ng-if="model.TrainingLocationListViewModel.CountryId != 'CA'">
+                    <div class="label-wrapper" ng-editing><label>Province/State/Region:</label></div>
+                    <div class="control-wrapper">
+                        <input ng-model="model.TrainingLocationListViewModel.OtherRegion" class="input--medium" maxlength="250" ng-validation ng-editing />
+                    </div>
+
+                    <div class="label-wrapper" ng-editing><label>Postal/Zip Code:</label></div>
+                    <div class="control-wrapper">
+                        <input ng-model="model.TrainingLocationListViewModel.OtherZipCode" class="input--medium" maxlength="10" ng-validation ng-editing />
+                    </div>
+                </div>
+
+                <div class="label-wrapper" ng-editing><label>Country:</label></div>
+                <div class="control-wrapper selectmenu">
+                    <select ng-model="model.TrainingLocationListViewModel.CountryId" ng-options="item.Key as item.Caption for item in countries" class="input--medium" ng-validation ng-editing></select>
+                </div>
+            </div>
+        </div>
+        <div class="form__group">
+            <label class="form__label">Address of Training Provider:</label>
+            <div class="form__control form-address-group">
+                <div class="label-wrapper" ng-editing><label>Address line 1:</label></div>
+                <div class="control-wrapper">
+                    <input ng-model="model.TrainingProviderLocationListViewModel.AddressLine1" class="input--medium" maxlength="250" ng-validation ng-editing />
+                </div>
+
+                <div class="label-wrapper" ng-editing><label>Address line 2:</label></div>
+                <div class="control-wrapper" ng-if="section.editing || model.TrainingLocationListViewModel.AddressLine2">
+                    <input ng-model="model.TrainingProviderLocationListViewModel.AddressLine2" class="input--medium" maxlength="250" ng-validation ng-editing />
+                </div>
+
+                <div class="label-wrapper" ng-editing><label>City:</label></div>
+                <div class="control-wrapper">
+                    <input ng-model="model.TrainingProviderLocationListViewModel.City" class="input--medium" maxlength="250" ng-validation ng-editing />
+                </div>
+
+                <div ng-if="model.TrainingProviderLocationListViewModel.CountryId == 'CA'">
+                    <div class="label-wrapper" ng-editing><label>Province:</label></div>
+                    <div class="control-wrapper selectmenu">
+                        <select ng-model="model.TrainingProviderLocationListViewModel.RegionId" ng-options="item.Key as item.Caption for item in provinces" class="input--medium" ng-validation ng-editing></select>
+                    </div>
+
+                    <div class="label-wrapper" ng-editing><label>Postal code:</label></div>
+                    <div class="control-wrapper">
+                        <input ng-model="model.TrainingProviderLocationListViewModel.PostalCode" class="input--medium" maxlength="250" ng-validation ng-editing />
+                    </div>
+                </div>
+
+                <div ng-if="model.TrainingProviderLocationListViewModel.CountryId != 'CA'">
+                    <div class="label-wrapper" ng-editing><label>Province/State/Region:</label></div>
+                    <div class="control-wrapper">
+                        <input ng-model="model.TrainingProviderLocationListViewModel.OtherRegion" class="input--medium" maxlength="250" ng-validation ng-editing />
+                    </div>
+
+                    <div class="label-wrapper" ng-editing><label>Postal/Zip Code:</label></div>
+                    <div class="control-wrapper">
+                        <input ng-model="model.TrainingProviderLocationListViewModel.OtherZipCode" class="input--medium" maxlength="10" ng-validation ng-editing />
+                    </div>
+                </div>
+
+                <div class="label-wrapper" ng-editing><label>Country:</label></div>
+                <div class="control-wrapper selectmenu">
+                    <select ng-model="model.TrainingProviderLocationListViewModel.CountryId" ng-options="item.Key as item.Caption for item in countries" class="input--medium" ng-validation ng-editing></select>
+                </div>
+            </div>
+        </div>
+
+        <div ng-if="model.ProgramType !== @((int) CJG.Core.Entities.ProgramTypes.EmployerGrant)">
+            <div class="form__group">
+                <div class="form__label">Training outside BC:</div>
+                <div class="form__control">
+                    <options ng-model="model.TrainingOutsideBcListViewModel.TrainingOutsideBC" ng-items="[{ key: true, value: 'Yes' }, { key: false, value: 'No' }]" class="form__group--radio-inline" key="key" value="value"></options>
+                </div>
+            </div>
+            <div class="form__group" ng-if="model.TrainingOutsideBcListViewModel.TrainingOutsideBC">
+                <div class="form__label">Business case:</div>
+                <div class="form__control">
+                    <div class="control-wrapper" ng-validation="errors.BusinessCaseDocument">
+                        <a class="link" ng-if="model.BusinessCaseDocument" ng-click="!model.BusinessCaseDocument.Id || downloadAttachment(model.BusinessCaseDocument.Id)">{{model.BusinessCaseDocument.FileName}}</a>
+                        <button ng-if="model.BusinessCaseDocument && section.editing" class="btn btn--primary pull-right" ng-click="changeAttachment('BusinessCaseDocument')">Change</button>
+                        <span ng-if="!model.BusinessCaseDocument">None</span>
+                        <button ng-if="!model.BusinessCaseDocument && section.editing" class="btn btn--primary pull-right" ng-click="addAttachment('BusinessCaseDocument')">Upload</button>
+                        <div class="editable-error-block editable-error" style="display: none;">Business Case is required</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form__group">
+            <div class="form__label">Out of province rationale:</div>
+            <div class="form__control">
+                <div class="control-wrapper">
+                    <span ng-show="true" style="white-space: pre-wrap;" ng-bind-html="model.OutOfProvinceLocationRationale"></span>
+                    @*<textarea ng-show="section.editing" ng-model="model.OutOfProvinceLocationRationale" class="input--full textarea--short" ng-validation ng-editing="false"></textarea>*@
+                </div>
+            </div>
+        </div>
+
+        <div class="form__group">
+            <div class="form__label">Alternative Training Options:</div>
+            <div class="form__control">
+                <div class="control-wrapper collapsed__html" ng-bind-html="extraInfo.AlternativeTrainingOptions | unsafe" ng-click="previewTrainingOptions()" title="Click to view full text"></div>
+            </div>
+        </div>
+
+        <div class="form__group">
+            <div class="form__label">Choice of Training Provider:</div>
+            <div class="form__control">
+                <div class="control-wrapper collapsed__html" ng-bind-html="extraInfo.ChoiceOfTrainerOrProgram | unsafe" ng-click="previewChoiceOfTrainer()" title="Click to view full text"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+	</div>
+</div>

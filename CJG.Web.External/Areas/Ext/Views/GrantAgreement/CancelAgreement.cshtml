@@ -1,0 +1,53 @@
+﻿@using CJG.Core.Entities
+
+@model CJG.Web.External.Areas.Ext.Models.IncompleteAgreementViewModel
+@using CJG.Web.External.Areas.Ext.Controllers
+@{
+    ViewBag.Title = "Cancel Agreement";
+}
+
+@using (Html.BeginForm(nameof(GrantAgreementController.IncompleteAgreement), nameof(GrantAgreementController).Replace("Controller", ""), FormMethod.Post))
+{
+    <div class="row">
+
+        <h1>Cancel agreement</h1>
+
+        <div class="main js-cancel-agreement">
+            <p>If you cancel your agreement, no grant reimbursement will be claimable or payable for training and your agreement file will be closed.</p>
+
+            <p>Are you sure you want to cancel your grant agreement?</p>
+
+            <div class="form__group">
+                <label class="form__label form__label--align-top" for="@Html.IdFor(model => model.IncompleteReason)">
+                    Please give your reason for cancelling the agreement<abbr title='Required'>*</abbr>
+                </label>
+                <div class="form__control">
+                    @Html.TextAreaFor(model => Model.IncompleteReason, new { @class = "input--full", maxlength = 800 })
+                </div>
+            </div>
+
+            <div class="button-group">
+                @Html.Button("Cancel",
+                        new {@class= "btn btn--secondary pull-left",
+                            @onclick = "window.location='" + @Url.Action(nameof(GrantAgreementController.AgreementOverviewView),
+                                                 nameof(GrantAgreementController).Replace("Controller", ""),
+                                                 new { grantApplicationId = Model.GrantApplicationId }) + "'",
+                            @type = "button"})
+                @* Don't show this button if Application is in one of these states *@
+                @{ if (!Model.GrantApplication.ApplicationStateInternal.In(
+                     ApplicationStateInternal.ApplicationWithdrawn,
+                     ApplicationStateInternal.CancelledByMinistry,
+                     ApplicationStateInternal.CancelledByAgreementHolder))
+                    {
+
+                        <button class="btn btn--primary pull-right" type="submit" name="btnSubmit" value="Cancel agreement" disabled="disabled">Cancel agreement</button>
+
+                    } }
+
+            </div>
+        </div>
+        @Html.Partial("_GrantApplicationSidebar", Model.SidebarViewModel)
+    </div>
+    @Html.HiddenFor(m => Model.GrantApplicationId)
+    @Html.HiddenFor(m => Model.IncompleteType)
+}

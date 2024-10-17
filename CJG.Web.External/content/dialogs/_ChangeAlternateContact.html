@@ -1,0 +1,77 @@
+﻿<div>
+	<div class="dialog-header">
+		<h3>{{ngDialogData.title}}</h3>
+	</div>
+	<div class="dialog-content">
+		<div class="modal-content">
+
+			<div class="form well">
+                <div class="form__label">
+                    <p>Update the alternate contact using the fields below and then click Save.</p>
+                </div>
+				<div class="form__group form__group--applicant-contact">
+                    <div class="form__label">First Name:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <input ng-model="ngDialogData.model.AlternateFirstName" class="input--full" maxlength="250" ng-validation />
+                        </div>
+                    </div>
+
+                    <div class="form__label">Last Name:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <input ng-model="ngDialogData.model.AlternateLastName" class="input--full" maxlength="250" ng-validation />
+                        </div>
+                    </div>
+                    
+                    <div class="form__label">Email:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <input ng-model="ngDialogData.model.AlternateEmail" class="input--full" maxlength="250" ng-validation />
+                        </div>
+                    </div>
+
+                    <div class="form__label">Position/Title:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper">
+                            <input ng-model="ngDialogData.model.AlternateJobTitle" class="input--full" maxlength="250" ng-validation />
+                        </div>
+                    </div>
+
+                    <div class="form__group">
+                        <div class="form__label">Preferred phone:</div>
+                        <div class="form__control">
+                            <div class="form__group--tel">
+                                <input ng-model="ngDialogData.model.AlternatePhoneNumberViewModel.PhoneAreaCode"
+                                       class="input-xx-small" maxlength="3" ng-number
+                                       ng-class="errors.AlternatePhoneNumberViewModel.Phone ? 'has-error': ''" />
+                                <span ng-class="spacer">-</span>
+                                <input ng-model="ngDialogData.model.AlternatePhoneNumberViewModel.PhoneExchange"
+                                       class="input-xx-small" maxlength="3" ng-number
+                                       ng-class="errors.AlternatePhoneNumberViewModel.Phone ? 'has-error': ''" />
+                                <span ng-class="spacer">-</span>
+                                <input ng-model="ngDialogData.model.AlternatePhoneNumberViewModel.PhoneNumber"
+                                       class="input-xx-small" maxlength="4" ng-number
+                                       ng-class="errors.AlternatePhoneNumberViewModel.Phone ? 'has-error': ''" />
+                                <span ng-class="spacer">Ext</span>
+                                <input ng-model="ngDialogData.model.AlternatePhoneNumberViewModel.PhoneExtension"
+                                       class="input-xx-small" maxlength="20" ng-number
+                                       ng-class="errors.AlternatePhoneNumberViewModel.Phone ? 'has-error': ''" />
+                            </div>
+                            <validation ng-model="errors.AlternatePhoneNumberViewModel.Phone">
+                                Contact phone number must be 10-digit number
+                            </validation>
+                        </div>
+                    </div>
+                </div>
+			</div>
+
+			<div class="modal-footer">
+				<div class="form well">
+					<button class="btn btn--secondary" data-disableonsubmit="false" ng-click="closeThisDialog()">Cancel</button>
+					<button class="btn btn--primary pull-right" ng-click="confirm(ngDialogData.model)">Save</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

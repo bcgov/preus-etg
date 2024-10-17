@@ -1,0 +1,218 @@
+@using CJG.Web.External.Areas.Int.Models
+
+@model IntakeManagementViewModel
+@{
+    ViewBag.Title = "Budget Overview";
+}
+
+<div>
+    <h2>@ViewBag.Title</h2>
+    @using (Html.BeginForm("IntakeManagementDashboard", "Intake", FormMethod.Get))
+    {
+        <div class="form__group-set">
+            <div class="form__group">
+                <label class="form__label" for="@Html.IdFor(model => model.FiscalYearId)">Fiscal Year</label>
+                <div class="form__control">
+                    <div class="selectmenu">
+                        @Html.DropDownListFor(x => x.FiscalYearId, new SelectList(Model.FiscalYears, "Key", "Value"), new { onchange = "this.form.submit();" })
+                    </div>
+                </div>
+            </div>
+           
+            <div class="form__group" style="width: auto;">
+                <label class="form__label" for="@Html.IdFor(model => model.GrantProgramId)">Grant Program</label>
+                <div class="form__control">
+                    <div class="selectmenu">
+                        @Html.DropDownListFor(x => x.GrantProgramId, new SelectList(Model.GrantPrograms, "Key", "Value"), new { onchange = "this.form.submit();" })
+                    </div>
+                </div>
+            </div>
+            @if (Model.GrantStreams.Any()) 
+            { 
+                <div class="form__group" style="width: auto;">
+                    <label class="form__label" for="@Html.IdFor(model => model.GrantStreamId)">Grant Stream</label>
+                    <div class="form__control">
+                        <div class="selectmenu">
+                            @Html.DropDownListFor(x => x.GrantStreamId, new SelectList(Model.GrantStreams, "Key", "Value"), new { onchange = "this.form.submit();" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group" style="width: auto;">
+                    <label class="form__label" for="@Html.IdFor(model => model.BudgetTypeId)">Budget Type</label>
+                    <div class="form__control">
+                        <div class="selectmenu">
+                            @Html.DropDownListFor(x => x.BudgetTypeId, new SelectList(Model.BudgetTypes, "Key", "Value"), new { onchange = "this.form.submit();" })
+                        </div>
+
+                        @Html.ActionLink("Refresh", "IntakeManagementDashboard", new
+                        {
+                            fiscalYearId = Model.FiscalYearId,
+                            grantProgramId = Model.GrantProgramId,
+                            grantStreamId = Model.GrantStreamId,
+                            trainingPeriodId = Model.TrainingPeriodId,
+                            budgetTypeId = Model.BudgetTypeId
+                        }, new { @class = "btn btn--primary margin-left-gutter" })
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    
+@using (Html.BeginForm("SaveIntakeRates", "Intake", FormMethod.Post))
+{
+    if (Model.GrantStreams.Any() && Model.TrainingPeriods.Any())
+    {
+        <div class="table--horizontal-wrapper budget-overview-container">
+            @Html.HiddenFor(m => m.FiscalYearId)
+            @Html.HiddenFor(m => m.GrantProgramId)
+            @Html.HiddenFor(m => m.GrantStreamId)
+            @Html.HiddenFor(m => m.TrainingPeriodId)
+            @Html.HiddenFor(m => m.BudgetTypeId)
+            <table id="intake-management-dashboard" class="table--horizontal table--datatable-horizontal nowrap table--intake-management-dashboard" cellspacing="0" width="100%">
+                <thead>
+                <tr>
+                    <th colspan="1" class="fixed-column">Training Period</th>
+                    @foreach (var period in Model.TrainingPeriods)
+                    {
+                        <td colspan="2">@period.TrainingPeriodName</td>
+                    }
+                    <td colspan="2">FY Totals</td>
+                </tr>
+                <tr>
+                    <th colspan="1" class="fixed-column">Start and End</th>
+                    @foreach (var period in Model.TrainingPeriods)
+                    {
+                        <td colspan="2">@period.StartDate.ToString("yyyy-MM-dd") to @period.EndDate.ToString("yyyy-MM-dd")</td>
+                    }
+                    <td colspan="2"></td>
+                </tr>
+                <tr class="row-status">
+                    <th colspan="1" class="fixed-column">Status</th>
+                    @foreach (var period in Model.TrainingPeriods)
+                    {
+                        <td colspan="2">@(!string.IsNullOrWhiteSpace(period.Status) ? period.Status : "---")</td>
+                    }
+                    <td colspan="2"></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th colspan="1" class="fixed-column">Applications</th>
+                    @foreach (var trainingPeriod in Model.TrainingPeriods)
+                    {
+                        <th class="text-align-right" colspan="1">Number</th>
+                        <th colspan="1" class="text-align-right">Value</th>
+                    }
+                    <th class="text-align-right" colspan="1">FY Number</th>
+                    <th colspan="1" class="text-align-right">FY Value</th>
+                </tr>
+                @foreach (var state in Model.StateNames)
+                {
+                    var summedIntakes = Model.TrainingPeriods.SelectMany(s => s.GrantOpeningIntakes.Where(g => g.Key == state.Key)).ToList();
+                    var fiscalTotalCount = summedIntakes.Select(s => s.Value).Where(v => v.ValueIsMoney).Sum(i => i.Number);
+                    var fiscalTotalValue = summedIntakes.Select(s => s.Value).Where(v => v.ValueIsMoney).Sum(i => i.Value);
+                    bool valueIsMoney = true;
+                    <tr>
+                        <th colspan="1" class="indent-cell fixed-column">@state.Value</th>
+                        @foreach (var trainingPeriod in Model.TrainingPeriods)
+                        {
+                            valueIsMoney = @trainingPeriod.GrantOpeningIntakes[state.Key].ValueIsMoney;
+                            <td class="text-align-right" colspan="1">
+                            @if (valueIsMoney)
+                            {
+                                @trainingPeriod.GrantOpeningIntakes[state.Key].Number
+                            }
+                            </td>
+                            <td class="text-align-right" colspan="1">
+                                @if (@trainingPeriod.GrantOpeningIntakes[state.Key].ValueIsMoney)
+                                {
+                                    @trainingPeriod.GrantOpeningIntakes[state.Key].Value.ToDollarCurrencyString(0)
+                                }
+                                else
+                                {
+                                    @trainingPeriod.GrantOpeningIntakes[state.Key].Value.ToPercentString(1)
+                                }
+                            </td>
+                        }
+                        <td class="text-align-right" colspan="1">
+                            @if(valueIsMoney)
+                            { 
+                                @fiscalTotalCount
+                            }
+                        </td>
+                        <td class="text-align-right" colspan="1">
+                            @if(valueIsMoney)
+                            { 
+                                @fiscalTotalValue.ToDollarCurrencyString(0)
+                            }
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <th colspan="1" class="fixed-column">Withdrawn Rate %</th>
+                    @for (var i = 0; i < Model.TrainingPeriods.Count(); i++)
+                    {
+                        <td class="text-align-right" colspan="2">
+                            @Html.HiddenFor(m => m.TrainingPeriods[i].Id)
+                            @Html.TextBoxFor(m => m.TrainingPeriods[i].WithdrawnRate, new { @class = "input--small", type = "number", min="0", max="100", step = "0.01" })
+                        </td>
+                    }
+                    <td class="text-align-right" colspan="1"></td>
+                    <td class="text-align-right" colspan="1"></td>
+                </tr>
+                <tr>
+                    <th colspan="1" class="fixed-column">Refusal Rate %</th>
+                    @for (var i = 0; i < Model.TrainingPeriods.Count(); i++)
+                    {
+                        <td class="text-align-right" colspan="2">
+                            @Html.TextBoxFor(m => m.TrainingPeriods[i].RefusalRate, new { @class = "input--small", type = "number", min="0", max="100", step = "0.01" })
+                        </td>
+                    }
+                    <td class="text-align-right" colspan="1"></td>
+                    <td class="text-align-right" colspan="1"></td>
+                </tr>
+                <tr>
+                    <th colspan="1" class="fixed-column">Slippage on Approved Amount %</th>
+                    @for (var i = 0; i < Model.TrainingPeriods.Count(); i++)
+                    {
+                        <td class="text-align-right" colspan="2">
+                            @Html.TextBoxFor(m => m.TrainingPeriods[i].SlippageApprovedAmount, new { @class = "input--small", type = "number", min="0", max="100", step = "0.01" })
+                        </td>
+                    }
+                    <td class="text-align-right" colspan="1"></td>
+                    <td class="text-align-right" colspan="1"></td>
+                </tr>
+                <tr>
+                    <th colspan="1" class="fixed-column">Slippage on Claimed Amount %</th>
+                    @for (var i = 0; i < Model.TrainingPeriods.Count(); i++)
+                    {
+                        <td class="text-align-right" colspan="2">
+                            @Html.TextBoxFor(m => m.TrainingPeriods[i].SlippageClaimedAmount, new { @class = "input--small", type = "number", min="0", max="100", step = "0.01" })
+                        </td>
+                    }
+                    <td class="text-align-right" colspan="1"></td>
+                    <td class="text-align-right" colspan="1"></td>
+                </tr>
+                <tr>
+                    <td class="text-align-right" colspan="1"></td>
+                    <th colspan="@(Model.TrainingPeriods.Count() * 2)" class="fixed-column"></th>
+                    <td class="text-align-right" colspan="1"></td>
+                    <td class="text-align-right" colspan="1"><button type="submit" class="btn btn--primary margin-left-gutter pull-right">Update Rates</button></td>
+                </tr>
+                @*<tr>
+                    <th colspan="1" class="fixed-column">Total Application Intake</th>
+                    @foreach (var trainingPeriod in Model.TrainingPeriods) {
+                        <td class="text-align-right" colspan="1">@trainingPeriod.TotalApplicationsIntake</td>
+                        <td class="text-align-right" colspan="1">@trainingPeriod.TotalApplicationsIntakeAmt.ToDollarCurrencyString(0)</td>
+                    }
+                    <td class="text-align-right" colspan="1">@Model.TrainingPeriods.Sum(s => s.TotalApplicationsIntake)</td>
+                    <td class="text-align-right" colspan="1">@Model.TrainingPeriods.Sum(s => s.TotalApplicationsIntakeAmt).ToDollarCurrencyString(0)</td>
+                </tr>*@
+                </tbody>
+            </table>
+        </div>
+       
+        <br/>
+    }
+}
+</div>

@@ -1,0 +1,25 @@
+﻿<span>
+	<span ng-switch="$ctrl.ngModel">
+		<text ng-switch-when="5">
+			<span class="label label--success">Recommended for approval</span>
+		</text>
+		<text ng-switch-when="6">
+			<span class="label label--danger">Recommended for denial</span>
+		</text>
+		<text ng-switch-when="7">
+			<span class="label label--success">Offer issued</span>
+		</text>
+		<text ng-switch-when="23">
+			<span class="label label--warning">Claim Returned to Applicant</span>
+		</text>
+		<text ng-switch-when="24">
+			<span class="label label--danger">Claim Denied</span>
+		</text>
+		<text ng-switch-when="25">
+			<span class="label label--success">Claim Approved</span>
+		</text>
+		<text ng-switch-default>
+			<span class="label label--warning">{{$ctrl.label || $ctrl.ngLabel}}</span>
+		</text>
+	</span>
+</span>
