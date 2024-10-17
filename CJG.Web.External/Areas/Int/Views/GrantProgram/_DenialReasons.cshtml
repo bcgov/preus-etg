@@ -1,0 +1,59 @@
+﻿<div ng-controller="GrantProgramDenialReasons" class="form-section" ng-show="$parent.model.Id">
+    <span class="panel-section-item">
+        <span class="panel-section-title" ng-click="toggle($event)">Reasons For Denial</span>
+        <span class="panel-section-buttons">
+            <span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+            <section-edit-buttons ng-model="section.editing"></section-edit-buttons>
+            <span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+        </span>
+    </span>
+    <div class="panel-section-content" ng-if="section.show">
+        <div class="form form-section-container">
+            <div>
+                <div class="form__control float-left">
+                    <p>
+                        Program areas have program specific reasons for denial. These options can be edited by Director role or System Admin role.
+                    </p>
+                </div>
+                <div class="float-right" style="display: flex;" ng-if="section.editing">
+                    <button class="btn btn--primary" ng-click="createReason()">Add New</button>
+                </div>
+            </div>
+            <pager ng-filter="getDenialReasons" ng-page-size="[10]" ng-page-header="false" ng-local="true">
+                <div class="form-table">
+                    <div class="form-table-heading">
+                        <div class="form-table-cell">Name</div>
+                        <div class="form-table-cell text-center">Active</div>
+                        <div class="form-table-cell"></div>
+                    </div>
+                    <div class="form-table-row" ng-class="{'delete-row': item.ToBeDeleted}" ng-repeat="item in model.GrantProgramDenialReasons" ng-show="$parent.$parent.$ctrl.showPage($index)">
+                        <div class="form-table-cell">
+                            <input ng-model="item.Caption" class="input--full" ng-editing />
+                        </div>
+                        <div class="form-table-cell text-center">
+                            <input type="checkbox" ng-model="item.IsActive" id="denial-reason-{{$index}}" ng-disabled="!section.editing || item.ToBeDeleted" />
+                            <label for="denial-reason-{{$index}}">&nbsp;</label>
+                        </div>
+                    </div>
+                </div>
+            </pager>
+        </div>
+    </div>
+    <div ng-if="section.selectedReason && section.editing" hidden class="form__group">
+        <div class="form__group">
+            <div class="form__label">Name:</div>
+            <div class="form__control">
+                <div class="control-wrapper input--medium">
+                    <input ng-model="section.selectedReason.Caption" class="input--medium" ng-validation="errors.Caption" />
+                </div>
+            </div>
+            <div class="form__label"></div>
+            <div class="form__control">
+                <div class="control-wrapper input--medium">
+                    <input type="checkbox" ng-model="section.selectedReason.IsActive" id="expense-type-is-active" />
+                    <label for="expense-type-is-active">Active</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

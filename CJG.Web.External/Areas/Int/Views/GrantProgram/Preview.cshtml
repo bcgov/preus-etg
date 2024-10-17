@@ -1,0 +1,14 @@
+﻿@{
+    ViewBag.Title = "Preview";
+}
+@if(ViewData["GrantProgramTitle"] == null)
+{
+<h2>Preview</h2>
+}
+else
+{
+<h2>@Html.Raw(ViewData["GrantProgramTitle"])</h2>
+}
+
+
+@Html.Raw(ViewData["GrantProgramMessage"])

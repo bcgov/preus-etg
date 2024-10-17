@@ -1,0 +1,196 @@
+.button-group.table--horizontal-nav {
+  margin: $gutter 0;
+}
+
+.table--claim-management-dashboard {
+  width: 80%;
+  margin: 20px 0 0 0;
+
+  tr {
+    position: relative;
+
+    td, th {
+      border-left: none;
+      border-right: none;
+      padding: 15px;
+      background-clip: padding-box;
+    }
+
+    .text-align-right {
+      text-align: right;
+    }
+
+    td:nth-child(4n-2), td:nth-child(4n-3) {
+      background-color: #f8f8f8;
+    }
+
+    td:nth-child(3), td:nth-child(4) {
+      background-color: #EAF2FA;
+    }
+
+    .background-color-white {
+      background-color: white !important;
+    }
+  }
+
+  tbody, tfoot {
+    tr {
+      td, th {
+        text-align: left;
+      }
+    }
+  }
+
+  thead {
+    tr {
+      td, th {
+        text-align: center;
+      }
+    }
+  }
+
+  tfoot {
+    tr {
+      td, th {
+        font-weight: bold;
+      }
+    }
+  }
+
+  .row--reservation {
+    th, td {
+      padding-top: $gutter * 1.5;
+    }
+  }
+
+  .with-percent-sign,
+  .error {
+    position: relative;
+  }
+
+  .with-percent-sign {
+    right: -8px;
+  }
+
+  th {
+    span.error {
+      right: 0px;
+    }
+  }
+
+  td.error,
+  span.error {
+    right: -5px;
+  }
+}
+/* Horizontal scrolling for columns, first three columns are fixed */
+.horizontal-scroll-claim-management-outer {
+  position: relative;
+  width: 100%;
+  z-index: 1;
+  margin: auto;
+  overflow: auto;
+}
+
+.horizontal-scroll-claim-management > * > table {
+  margin: auto;
+}
+
+.horizontal-scroll-claim-management-outer th,
+.horizontal-scroll-claim-management-outer td {
+  background: #fff;
+  vertical-align: top;
+}
+
+.horizontal-scroll-claim-management-outer thead th {
+  position: -webkit-sticky;
+  position: sticky;
+}
+/* safari and ios need the tfoot itself to be position:sticky also */
+.horizontal-scroll-claim-management-outer tfoot,
+.horizontal-scroll-claim-management-outer tfoot th,
+.horizontal-scroll-claim-management-outer tfoot td {
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 0;
+}
+
+
+
+/* Fixed Column 1 */
+.horizontal-scroll-claim-management > * > table > * > tr > th:first-child,
+.horizontal-scroll-claim-management > * > table > * > tr > td:first-child {
+  position: -webkit-sticky;
+  position: sticky;
+  width: 18em;
+  max-width: 18em;
+  left: 0;
+  z-index: 2;
+}
+/* Fixed Column 2 */
+.horizontal-scroll-claim-management > * > table > * > tr > th:nth-child(2),
+.horizontal-scroll-claim-management > * > table > * > tr > td:nth-child(2) {
+  position: -webkit-sticky;
+  position: sticky;
+  width: 9em;
+  min-width: 9em;
+  max-width: 9em;
+  left: 18em;
+  z-index: 2;
+}
+/* Fixed Column 3 (percentage) */
+.horizontal-scroll-claim-management > * > table > tbody > tr > th:nth-child(3),
+.horizontal-scroll-claim-management > * > table > tbody > tr > td:nth-child(3),
+.horizontal-scroll-claim-management > * > table > tfoot > tr > th:nth-child(3),
+.horizontal-scroll-claim-management > * > table > tfoot > tr > td:nth-child(3) {
+  position: -webkit-sticky;
+  position: sticky;
+  width: 6em;
+  min-width: 6em;
+  max-width: 6em;
+  left: 27em;
+  z-index: 2;
+}
+/* Fixed Column 4 (amount) */
+.horizontal-scroll-claim-management > * > table > tbody > tr > th:nth-child(4),
+.horizontal-scroll-claim-management > * > table > tbody > tr > td:nth-child(4),
+.horizontal-scroll-claim-management > * > table > tfoot > tr > th:nth-child(4),
+.horizontal-scroll-claim-management > * > table > tfoot > tr > td:nth-child(4) {
+  position: -webkit-sticky;
+  position: sticky;
+  width: 8em;
+  min-width: 8em;
+  max-width: 8em;
+  left: 33em;
+  z-index: 2;
+}
+/* Column header for 3&4 */
+.horizontal-scroll-claim-management > * > table > thead > tr > th:nth-child(3) {
+  position: -webkit-sticky;
+  position: sticky;
+  width: 14em;
+  min-width: 14em;
+  max-width: 14em;
+  left: 27em;
+  z-index: 2;
+}
+/* Column header for rest of columns */
+.horizontal-scroll-claim-management > * > table > thead > tr > th:nth-child(n+4) {
+  width: 14em;
+  max-width: 14em;
+  min-width: 14em;
+}
+/* Rest of columns (percent) */
+.horizontal-scroll-claim-management > * > table > tbody > tr > td:nth-child(2n + 5),
+.horizontal-scroll-claim-management > * > table > tfoot > tr > td:nth-child(2n + 5) {
+  width: 6em;
+  max-width: 6em;
+  min-width: 6em;
+}
+/* Rest of columns (amount) */
+.horizontal-scroll-claim-management > * > table > tbody > tr > td:nth-child(2n + 6),
+.horizontal-scroll-claim-management > * > table > tfoot > tr > td:nth-child(2n + 6) {
+  width: 8em;
+  max-width: 8em;
+  min-width: 8em;
+}

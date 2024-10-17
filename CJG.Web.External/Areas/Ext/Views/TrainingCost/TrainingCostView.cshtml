@@ -1,0 +1,232 @@
+﻿@using CJG.Core.Entities
+@{
+    ViewBag.Title = "Training Costs";
+}
+
+<div class="row">
+    @Html.ActionLink("Return", "ApplicationOverviewView", "Application", new { grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "link--back" })
+</div>
+
+<div class="row" ng-controller="TrainingCostsView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+    <div class="main main--full">
+        <div>
+            <h1 class="header--large sentence--case">Training costs</h1>
+            <div class="notice notice--icon">
+                <p>Grants will be calculated based on the reimbursement amount outlined in the Eligibility Criteria.</p>
+            </div>
+        </div>
+
+        <div ng-if="alert.message" class="row row--alert">
+            <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+        </div>
+
+        <div>
+            <h2>Enter Number of Participants in the Training Program*</h2>
+        </div>
+        <div class="alert alert--warning js-participant-mismatch is-hidden">
+            <p><b>Participant numbers for one or more of your expense types exceed the total number of participants you have specified.</b></p>
+            <p>In most cases the number of participants for each expense type should be less than or equal to the total number of participants.</p>
+            <p>Check the participant numbers and make sure they are correct before submitting this application.</p>
+        </div>
+
+        <div class="form__group">
+            <div class="form__control">
+                <input type="text" class="input--small input-right-align" ng-model="model.EstimatedParticipants" ng-number maxlength="4" ng-change="syncNumberOfParticipants()" ng-disabled="EnableEdit" ng-validation>
+            </div>
+        </div>
+        <br />
+        <div>
+            <h2 class="title--cost-estimate">Training Costs</h2>
+        </div>
+        <div id="ExpensesList">
+            <div>
+                @Html.Partial("_ETGEligibleCosts")
+            </div>
+        </div>
+        <br />
+
+        <div id="ExpensePopup" class="js-expenses--add-edit">
+            <button class="btn btn--secondary" ng-show="!EnableEdit" ng-if="model.AllExpenseTypeAllowMultiple" ng-disabled="model.EstimatedParticipants == null || model.EstimatedParticipants <= 0" ng-click="createEligibleCost()">Add new expense type</button>
+            <b style="margin-left:20px">Your maximum amount per participant is {{model.MaxReimbursementAmt | currency}}</b>
+            <div class="form well" ng-if="EnableEdit">
+                <h2 class="no-text-transform">
+                    Add or Edit Expense
+                </h2>
+                <div class="row--alert" ng-if="EligibleCostSummaryMessage">
+                    <div class="alert alert--default alert--error" role="alert"
+                         ng-bind-html="EligibleCostSummaryMessage">
+                    </div>
+                </div>
+                <div class="table--horizontal-wrapper-wide">
+                    <table class="table table--expenses">
+                        <thead>
+                        <tr>
+                            <th class="etg-table-col__expense-type">Expense type</th>
+                            <th class="num-col etg-table-col__gov-contribution">
+                                Number of participants to which this expense applies
+                            </th>
+                            <th class="num-col etg-table-col__num-part">
+                                Total expense
+                            </th>
+                            <th class="num-col etg-table-col__cost-per-part">
+                                Cost per participant
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="width-20">
+                                <div class="selectmenu width-100" ng-if="EligibleExpenseTypes.length > 0">
+                                    <select class="{{EligibleCostExpenseTypeIdError ? 'has-error' : ''}} font-size-small"
+                                            ng-model="EligibleCost.EligibleExpenseType"
+                                            ng-options="item.Caption for item in EligibleExpenseTypes track by item.Id"
+                                            ng-change="changeEligibleCostExpenseType()">
+                                        <option value="">< Select value ></option>
+                                    </select>
+                                </div>
+                                <div ng-if="EligibleExpenseTypes.length == 0">
+                                    <span>{{EligibleCost.EligibleExpenseType.Caption}}</span>
+                                </div>
+                            </td>
+                            <td class="num-col">
+                                <div ng-if="EligibleCost.EligibleExpenseType && EligibleCost.EligibleExpenseType.ExpenseTypeId == @ExpenseTypes.ParticipantAssigned.ToInt()">
+                                    <input class="input--small input-right-align" ng-model="EligibleCost.EstimatedParticipants" ng-class="{'has-error':EligibleCostEstimatedParticipantsError}" ng-number maxlength="4" ng-change="recalculate()">
+                                </div>
+                                <span ng-if="EligibleCost.EligibleExpenseType && EligibleCost.EligibleExpenseType.ExpenseTypeId !=  @ExpenseTypes.ParticipantAssigned.ToInt()">
+                                    {{model.EstimatedParticipants}}
+                                </span>
+                                <span ng-if="!EligibleCost.EligibleExpenseType">
+                                    0
+                                </span>
+                            </td>
+                            <td class="num-col">
+                                <span ng-if="!EligibleCost.EligibleExpenseType">
+                                    0
+                                </span>
+                                <span ng-if="EligibleCost.EligibleExpenseType">
+                                    <input class="currency-width input-right-align" ng-model="EligibleCost.EstimatedCost" ng-class="{'has-error':EligibleCostEstimatedCostError}" ng-currency="13" ng-change="recalculate()">
+                                </span>
+                            </td>
+                            <td class="num-col">
+                                <span>
+                                    {{EligibleCost.EstimatedParticipantCost | currency}}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr ng-if="EligibleCost.EligibleExpenseType && EligibleCost.EligibleExpenseType.RequireExpenseExplanation">
+                            <td colspan="4" style="border-top: 0; padding-top: 0;">
+                                <div>
+                                    <textarea class="input--full textarea--shorter" placeholder="Please provide a description of the expense" ng-model="EligibleCost.ExpenseExplanation" ng-class="{'has-error':EligibleCostRequiredDescriptionError}" maxlength="500"></textarea>
+                                </div>
+                                <div ng-if="EligibleCost.EligibleExpenseType.Caption.startsWith('Other')" style="text-align: left; padding-top: 0.25em">
+                                    The following costs are not eligible: membership fees, subscription fees, annual, fees, professional association dues, software purchase/license, laptops, tablets and other hardware, equipment (e.g. boots and tools), and participant wages while in training.
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="button-group">
+                    <button class="btn btn--secondary" ng-click="cancelEligibleCost()">Cancel</button>
+                    <button class="btn btn--primary btn--forward" ng-disabled="!(EligibleCost.EstimatedParticipants >= 0 && EligibleCost.EstimatedCost >= 0 && EligibleCost.EligibleExpenseType != null)" ng-click="updateEligibleCost()">Save Expense</button>
+                </div>
+            </div>
+
+            <div class="form well" ng-if="EnableEditBreakdown">
+                <h2 class="no-text-transform"><span ng-if="!EligibleCost.EligibleExpenseType.AutoInclude && EligibleCost.EligibleExpenseType.AllowMultiple">Add or </span> Edit Expense Breakdown</h2>
+                <div class="row--alert" ng-if="EligibleCostSummaryMessage">
+                    <div class="alert alert--default alert--error" role="alert">
+                        {{ EligibleCostSummaryMessage }}
+                    </div>
+                </div>
+                <div class="table--horizontal-wrapper-wide">
+                    <table class="table table--expenses">
+                        <thead>
+                        <tr>
+                            <th class="table-col__expense-type">Expense Breakdown Type</th>
+                            <th class="num-col table-col__num-part">Number of Participants</th>
+                            <th class="num-col table-col__cost-per-part">Cost per<br />Participant</th>
+                            <th class="num-col table-col__total-train-cost">Total Training<br />Cost</th>
+                            <th class="num-col table-col__emp-contribution" ng-if="model.ShouldDisplayEmployerContribution">Employer Contribution</th>
+                            <th class="num-col table-col__gov-contribution">Requested Government Contribution</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <div>
+                                    <span>{{EligibleCostBreakdown.TrainingProgramTitle}}</span>
+                                </div>
+                            </td>
+                            <td class="num-col"></td>
+                            <td class="num-col">
+                                <span>
+                                    {{EligibleCostBreakdown.EstimatedParticipantCost | currency}}
+                                </span>
+                            </td>
+                            <td class="num-col">
+                                @Html.TextBox("EligibleCostBreakdown.EstimatedCost", "EligibleCostBreakdown.EstimatedCost", "input-right-align {{EligibleCostBreakdownEstimatedCostError ? 'has-error' : ''}}", "id='EligibleBreakdownCost' ng-currency='13'", onChange: "recalculate()")
+                            </td>
+                            <td class="num-col" ng-if="model.ShouldDisplayEmployerContribution">
+                                <span class="js-employer-contribution">{{EligibleCostBreakdown.EstimatedEmployerContribution | currency}}</span>
+                            </td>
+                            <td class="num-col">
+                                <span class="js-grant-request">{{EligibleCostBreakdown.EstimatedReimbursement | currency}}</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="button-group">
+                    <button class="btn btn--secondary" ng-click="cancelEligibleCostBreakdown()">Cancel</button>
+                    <button class="btn btn--primary btn--forward" ng-disabled="EligibleCostBreakdown.EstimatedCost < 0" ng-click="updateEligibleCostBreakdown()">Save Expense</button>
+                </div>
+            </div>
+        </div>
+        
+        <div ng-if="model.RequireTravelExpenseForm">
+            <br/>
+            <div class="notice notice--icon">
+                <h4>Documents required for Travel Expenses</h4>
+                <p>When claiming Travel Costs, you are required to provide a filled out claim form with your application.</p>
+                <p>Please download the @Html.ActionLink("ETG Travel Expense Claim Form", "DownloadResource", "ApplicationAttachment", new { filename = "ETG-Travel-Expense-Claim-Form", defaultExtension = ".docx", message = "download form" }, null), fill it out, and attach it below.</p>
+            </div>
+
+            <div class="form__group">
+                <label class="form__label">Supporting documentation for Travel Expenses <abbr title="Required">*</abbr></label>
+                <p>One file of the following type may be attached: PDF, DOCX, DOC, XLSX, XLS, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}}MB.</p>
+                <div ng-validation="errors.TravelExpenseDocument">
+                    <div class="form__control" ng-if="model.TravelExpenseDocument.FileName">
+                        <a class="link"
+                           ng-if="model.TravelExpenseDocument.Id"
+                           ng-click="downloadAttachment(model.TravelExpenseDocument.Id)">
+                            {{model.TravelExpenseDocument.FileName}}
+                        </a>
+                        <span ng-if="!model.TravelExpenseDocument.Id">
+                            {{model.TravelExpenseDocument.FileName}}
+                        </span>
+                        <button class="btn btn--primary pull-right" ng-click="changeAttachment('TravelExpenseDocument')">Change</button>
+                    </div>
+                    <div class="form__control" ng-if="!model.TravelExpenseDocument.FileName">
+                        <span>None</span>
+                        <button class="btn btn--primary pull-right" ng-click="addAttachment('TravelExpenseDocument')">Upload</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <br/>
+        <div class="alert alert--error notice--icon" ng-if="model.RequestExceedsAllowed">
+            Your organization has gone over the maximum allowable amount that can be applied for per employer per fiscal year ({{ model.MaximumFiscalGovernmentContributions | currency : '$' : 0 }}). Please adjust your costs.
+        </div>
+
+        <div class="alert alert--error notice--icon" ng-if="section.ParticipantCountMet == false">
+            The number of Participants do not match the number of Participants under Training Costs. You must submit training costs for each Participant or adjust the number of Participants taking training.
+        </div>
+
+        <div class="button-group" ng-if="!EnableEdit && !EnableEditBreakdown">
+            @Html.Button("Cancel", new { @class = "btn btn--secondary", onclick = "window.location='" + Url.Action("ApplicationOverviewView", "Application", new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'" })
+            <button id="btnDone" name="btnDone" class="btn btn--primary btn--forward" ng-click="save()" ng-disabled="model.RequestExceedsAllowed || section.ParticipantCountMet != true">Done</button>
+        </div>
+    </div>
+</div>

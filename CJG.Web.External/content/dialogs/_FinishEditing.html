@@ -1,0 +1,16 @@
+﻿<div>
+	<div class="dialog-header">
+		<h3>{{ngDialogData.title}}</h3>
+	</div>
+	<div class="dialog-content">
+		<div class="modal-content">
+			<label>{{ngDialogData.question}}</label>
+			<div class="modal-footer">
+				<div class="form well">
+					<button class="btn btn--secondary" data-disableonsubmit="false" ng-click="closeThisDialog()">Cancel</button>
+					<button class="btn btn--primary pull-right save-attachment" ng-click="confirm(true)">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

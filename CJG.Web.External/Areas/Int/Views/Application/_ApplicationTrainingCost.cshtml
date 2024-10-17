@@ -1,0 +1,381 @@
+﻿@using CJG.Core.Entities
+<br />
+<div class="form--readonly">
+
+    <div>
+        <a href="#" ng-click="ToggleRequestRows()">{{ShowRequestRows?"Hide":"Show"}} Requested Amounts</a>
+    </div>
+
+    <br />
+
+    <div class="form__group">
+        <label class="form__label" style="width:auto;">
+            Number of participants:
+        </label>
+        <div class="form__control" ng-if="!sections.EditingProgramCost">
+            {{SectionModel.TrainingCost.AgreedParticipants}}
+        </div>
+        <div class="form__control" ng-if="sections.EditingProgramCost">
+            @Html.TextBox("SectionModel.TrainingCost.AgreedParticipants",
+               "",
+               "input-right-align",
+               "ng-number",
+               disabled: "!sections.EditingProgramCost",
+               onChange: "SyncNumberOfParticipants()")
+            @Html.ValidationError("SectionModel.TrainingCost.AgreedParticipants", false)
+        </div>
+    </div>
+    <div class="form__group from-applicant" ng-show="ShowRequestRows">
+        <span class="form__label" style="width:auto;">
+            Number of participants:
+        </span>
+        <span class="form__control">
+            {{SectionModel.TrainingCost.EstimatedParticipants}}
+        </span>
+    </div>
+    <div class="table--horizontal-wrapper-wide">
+        <table class="clearfix table table--expenses js-table-expense-list int-program-cost-table">
+            <thead>
+                <tr>
+                    <th class="table-col__expense-type">Expense Type</th>
+                    <th class="num-col table-col__num-part">Number of Participants</th>
+                    <th class="num-col table-col__cost-per-part">
+                        {{SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant) ? 'Cost per Participant' : 'Average Cost per Participant'}}
+                    </th>
+                    <th class="num-col table-col__total-train-cost">
+                        {{SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant) ? 'Total Training Cost' : 'Total Cost'}}
+                    </th>
+                    <th class="num-col table-col__emp-contribution"
+                        ng-if="SectionModel.TrainingCost.ShouldDisplayEmployerContribution">
+                        Employer Contribution
+                    </th>
+                    <th class="num-col table-col__gov-contribution">
+                        Requested <br />Government <br />Contribution
+                    </th>
+                    <th class="col-small table-col__edit"
+                        ng-if="sections.EditingProgramCost &&
+                        SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                        <span>Edit Expense</span>
+                    </th>
+                    <th class="col-small table-col__delete"
+                        ng-if="sections.EditingProgramCost &&
+                        SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                        <span>Delete Expense</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody ng-repeat="item in SectionModel.TrainingCost.EligibleCosts">
+                <tr>
+                    <td class="{{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom">
+                        <span>{{ item.EligibleExpenseType.Caption }}</span>
+                    </td>
+                    <td class="num-col {{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom">
+                        <span ng-if="item.ServiceType != @((int)ServiceTypes.Administration)">
+                            {{ item.AgreedMaxParticipants}}
+                        </span>
+                    </td>
+                    <td class="num-col {{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom">
+                        <span ng-if="item.ServiceType != @((int)ServiceTypes.Administration)">
+                            {{ item.AgreedMaxParticipantCost | currency : '$' : 2}}
+                        </span>
+                    </td>
+                    <td class="num-col {{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom">
+                        <span ng-if="!sections.EditingProgramCost || SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant) || item.ServiceType == @((int)ServiceTypes.SkillsTraining)">
+                            {{item.AgreedCost | currency : '$' : 2}}
+                        </span>
+                        <div ng-if="sections.EditingProgramCost && SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.WDAService) && item.ServiceType != @((int)ServiceTypes.SkillsTraining)">
+                            @Html.TextBox("item.AgreedCost", "", "input-right-align", "ng-currency", disabled: "!sections.EditingProgramCost", onChange: "RecalculatedWDAWithTotal()")
+                        </div>
+                    </td>
+                    <td class="num-col {{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom" ng-if="SectionModel.TrainingCost.ShouldDisplayEmployerContribution">
+                        <span>
+                            {{ item.AgreedEmployerContribution | currency : '$' : 2}}
+                        </span>
+                    </td>
+                    <td class="num-col {{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom">
+                        <span>
+                            {{ item.AgreedMaxReimbursement | currency : '$' : 2}}
+                        </span>
+                    </td>
+                    <th class="{{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom" ng-if="sections.EditingProgramCost && SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                        <button ng-disabled="EnableEligibleEdit" class="btn--secondary" ng-click="EditEligibleCost($index)" style="margin-top:5px;">
+                            Edit
+                        </button>
+
+                    </th>
+                    <th class="{{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom" ng-if="sections.EditingProgramCost && SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant) && item.AddedByAssessor">
+                        <button ng-disabled="EnableEligibleEdit" class="js-confirm btn--secondary" ng-click="DeleteEligibleCost($index)" style="margin-top:5px;">
+                            Delete
+                        </button>
+                    </th>
+                </tr>
+                <tr class="from-applicant" ng-if="!item.AddedByAssessor" ng-show="ShowRequestRows">
+                    <td class="no-padding-top">
+                        <span>{{ item.EligibleExpenseType.Caption }}</span>
+                    </td>
+                    <td class="num-col no-padding-top">
+                        <span ng-if="item.ServiceType != @((int)ServiceTypes.Administration)">
+                            {{ item.EstimatedParticipants }}
+                        </span>
+                    </td>
+                    <td class="num-col no-padding-top">
+                        <span ng-if="item.ServiceType != @((int)ServiceTypes.Administration)">
+                            {{ item.EstimatedParticipantCost | currency : '$' : 2}}
+                        </span>
+                    </td>
+                    <td class="num-col no-padding-top">
+                        <span>
+                            {{item.EstimatedCost | currency : '$' : 2}}
+                        </span>
+                    </td>
+                    <td class="num-col no-padding-top" ng-if="SectionModel.TrainingCost.ShouldDisplayEmployerContribution">
+                        <span>
+                            {{ item.EstimatedEmployerContribution | currency : '$' : 2}}
+                        </span>
+                    </td>
+                    <td class="num-col no-padding-top">
+                        <span>
+                            {{ item.EstimatedReimbursement | currency : '$' : 2}}
+                        </span>
+                    </td>
+                    <td class="no-padding-top" ng-if="sections.EditingProgramCost &&
+                            SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)"></td>
+                    <td class="no-padding-top" ng-if="sections.EditingProgramCost &&
+                            SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)"></td>
+                </tr>
+                <tr ng-if="item.ServiceType == @((int) ServiceTypes.SkillsTraining)"
+                    ng-repeat-start="subrow in item.Breakdowns">
+                    <td class="{{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom">
+                        > <span>{{ subrow.TrainingProgramTitle }}</span>
+                    </td>
+                    <td class="num-col {{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom"></td>
+                    <td class="num-col {{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom"></td>
+                    <td class="num-col {{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom">
+                        <span ng-if="!sections.EditingProgramCost ||
+                              SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant) ||
+                              item.ServiceType != @((int)ServiceTypes.SkillsTraining)">
+                            <span ng-if="subrow.AssessedCost>0">{{subrow.AssessedCost | currency : '$' : 2}}</span>
+                        </span>
+                        <div ng-if="sections.EditingProgramCost &&
+                             SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.WDAService) &&
+                             item.ServiceType == @((int)ServiceTypes.SkillsTraining)">
+                            @Html.TextBox("subrow.AssessedCost",
+                               "",
+                               "input-right-align",
+                               "ng-currency",
+                               disabled: "!sections.EditingProgramCost || !subrow.IsEligible",
+                               onChange: "RecalculatedWDAWithTotal()")
+                        </div>
+                    </td>
+                    <td class="num-col {{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom"
+                        ng-if="SectionModel.TrainingCost.ShouldDisplayEmployerContribution"></td>
+                    <td class="num-col {{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom"></td>
+                    <td class="{{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom"
+                        ng-if="sections.EditingProgramCost
+                        && SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)"></td>
+                    <td class="{{item.AddedByAssessor ? '' : 'no-border'}} no-padding-bottom"
+                        ng-if="sections.EditingProgramCost
+                        && SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)"></td>
+                </tr>
+                <tr ng-if="item.ServiceType == @((int) ServiceTypes.SkillsTraining)"
+                    ng-repeat-end class="from-applicant" ng-show="ShowRequestRows">
+                    <td class="no-padding-top">
+                        > <span>{{ subrow.TrainingProgramTitle }}</span>
+                    </td>
+                    <td class="num-col no-padding-top"></td>
+                    <td class="num-col no-padding-top"></td>
+                    <td class="num-col no-padding-top">
+                        <span ng-if="subrow.EstimatedCost>0">
+                            {{subrow.EstimatedCost | currency : '$' : 2}}
+                        </span>
+                    </td>
+                    <td class="num-col no-padding-top" ng-if="SectionModel.TrainingCost.ShouldDisplayEmployerContribution"></td>
+                    <td class="num-col no-padding-top"></td>
+                    <td class="no-padding-top" ng-if="sections.EditingProgramCost &&
+                        SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)"></td>
+                    <td class="no-padding-top" ng-if="sections.EditingProgramCost &&
+                        SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)"></td>
+                </tr>
+            </tbody>
+            <tr>
+                <td class="no-padding-bottom"><b>Totals</b></td>
+                <td class="no-padding-bottom"></td>
+                <td class="no-padding-bottom"></td>
+                <td class="num-col no-padding-bottom">
+                    <b>{{SectionModel.TrainingCost.TotalAgreedCost | currency : '$' : 2}}</b>
+                </td>
+                <td class="num-col no-padding-bottom" ng-if="SectionModel.TrainingCost.ShouldDisplayEmployerContribution">
+                    <b>{{SectionModel.TrainingCost.TotalAgreedEmployer | currency : '$' : 2}}</b>
+                </td>
+                <td class="num-col num-col__total-gov-contribution no-padding-bottom">
+                    <b>{{SectionModel.TrainingCost.totalAgreedReimbursement | currency : '$' : 2}}</b>
+                </td>
+                <td class="no-padding-bottom" ng-if="sections.EditingProgramCost &&
+                    SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)"></td>
+                <td class="no-padding-bottom" ng-if="sections.EditingProgramCost &&
+                    SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)"></td>
+            </tr>
+            <tr class="from-applicant">
+                <td class="no-padding-top"><b>Totals</b></td>
+                <td class="no-padding-top"></td>
+                <td class="no-padding-top"></td>
+                <td class="num-col no-padding-top">
+                    <b>{{SectionModel.TrainingCost.TotalEstimatedCost | currency : '$' : 2}}</b>
+                </td>
+                <td class="num-col no-padding-top" ng-if="SectionModel.TrainingCost.ShouldDisplayEmployerContribution">
+                    <b>{{SectionModel.TrainingCost.TotalEmployer | currency : '$' : 2}}</b>
+                </td>
+                <td class="num-col num-col__total-gov-contribution no-padding-top">
+                    <b>{{SectionModel.TrainingCost.TotalRequest | currency : '$' : 2}}</b>
+                </td>
+                <td class="no-padding-top" ng-if="sections.EditingProgramCost &&
+                    SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)"></td>
+                <td class="no-padding-top" ng-if="sections.EditingProgramCost &&
+                    SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)"></td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <div class="form__group" ng-if="SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.WDAService)">
+        <span class="form__label" style="width:auto;">
+            Employment supports total average reimbursement per participant:
+        </span>
+        <span class="form__control">
+            {{SectionModel.TrainingCost.ESSAgreedAverage | currency : '$' : 2}}
+        </span>
+    </div>
+    <div class="form__group from-applicant"
+         ng-if="SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.WDAService)"
+         ng-show="ShowRequestRows">
+        <span class="form__label" style="width:auto;">
+            Employment supports total average reimbursement per participant:
+        </span>
+        <span class="form__control">
+            {{SectionModel.TrainingCost.ESSEstimatedAverage | currency : '$' : 2}}
+        </span>
+    </div>
+    <br />
+    <div id="ExpensePopup" class="js-expenses--add-edit"
+         ng-if="sections.EditingProgramCost && SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+        <button class="btn btn--secondary" ng-show="!EnableEligibleEdit"
+                ng-if="SectionModel.TrainingCost.AllExpenseTypeAllowMultiple"
+                ng-disabled="SectionModel.TrainingCost.AgreedParticipants == null || SectionModel.TrainingCost.AgreedParticipants <= 0"
+                ng-click="CreateEligibleCost()">
+            Add new expense type
+        </button>
+        <div ng-if="EnableEligibleEdit">
+            <h2 class="no-text-transform" ng-if="EligibleCostIndex == null">Add Expense</h2>
+            <h2 class="no-text-transform" ng-if="EligibleCostIndex != null">Edit Expense</h2>
+
+            <div class="row--alert" ng-if="EligibleCostSummaryMessage">
+                <div class="alert alert--default alert--error" role="alert">
+                    {{EligibleCostSummaryMessage}}
+                </div>
+            </div>
+            <div class="table--horizontal-wrapper-wide">
+                <table class="table table--expenses">
+                    <thead>
+                        <tr>
+                            <th class="table-col__expense-type">Expense Type</th>
+                            <th class="num-col table-col__num-part">Number of Participants</th>
+                            <th class="num-col table-col__cost-per-part"
+                                ng-if="SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                                Cost Per <br />Participant
+                            </th>
+                            <th class="num-col table-col__cost-per-part"
+                                ng-if="SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.WDAService)">
+                                Average <br />Cost per <br />Participant
+                            </th>
+                            <th class="num-col table-col__total-train-cost"
+                                ng-if="SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.EmployerGrant)">
+                                Total <br />Training <br />Cost
+                            </th>
+                            <th class="num-col table-col__total-train-cost"
+                                ng-if="SectionModel.TrainingCost.ProgramType == @((int)ProgramTypes.WDAService)">
+                                Total <br />Cost
+                            </th>
+                            <th class="num-col table-col__emp-contribution"
+                                ng-if="SectionModel.TrainingCost.ShouldDisplayEmployerContribution">
+                                Employer Contribution
+                            </th>
+                            <th class="num-col table-col__gov-contribution">Requested Government Contribution</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="selectmenu" ng-if="EligibleExpenseTypes.length > 0">
+                                    <select class="{{EligibleCostExpenseTypeIdError ? 'has-error' : ''}}"
+                                            ng-model="EligibleCost.EligibleExpenseType"
+                                            ng-options="eet.Caption for eet in EligibleExpenseTypes track by eet.Id"
+                                            ng-change="EligibleCostExpenseTypeChange()">
+                                        <option value="">< Select value ></option>
+                                    </select>
+                                </div>
+                                <div ng-if="EligibleExpenseTypes.length == 0">
+                                    <span>{{EligibleCost.EligibleExpenseType.Caption}}</span>
+                                </div>
+                            </td>
+                            <td class="num-col">
+                                <div ng-if="EligibleCost.EligibleExpenseType &&
+                                     EligibleCost.EligibleExpenseType.ExpenseTypeId == @ExpenseTypes.ParticipantAssigned.ToInt()">
+                                    @Html.TextBox("EligibleCost.AgreedMaxParticipants",
+                                       "EligibleCost.AgreedMaxParticipants",
+                                       "input-right-align {{EligibleCostAgreedMaxParticipantsError ? 'has-error' : ''}}",
+                                       "ng-number",
+                                       onChange: "Recalculate()")
+                                </div>
+                                <span ng-if="EligibleCost.EligibleExpenseType &&
+                                      EligibleCost.EligibleExpenseType.ExpenseTypeId !=  @ExpenseTypes.ParticipantAssigned.ToInt()">
+                                    {{model.TrainingProgramEligibleCost.AgreedMaxParticipants}}
+                                </span>
+                                <span ng-if="!EligibleCost.EligibleExpenseType">
+                                    0
+                                </span>
+                            </td>
+                            <td class="num-col">
+                                <span>
+                                    {{EligibleCost.AgreedMaxParticipantCost | currency}}
+                                </span>
+                            </td>
+                            <td class="num-col">
+                                <span ng-if="!EligibleCost.EligibleExpenseType">
+                                    0
+                                </span>
+                                <span ng-if="EligibleCost.EligibleExpenseType">
+                                    @Html.TextBox("EligibleCost.AgreedCost",
+                                       "EligibleCost.AgreedCost",
+                                       "input-right-align {{EligibleCostAgreedCostError ? 'has-error' : ''}}",
+                                       "ng-currency",
+                                       onChange: "Recalculate()")
+                                </span>
+                            </td>
+                            <td class="num-col" ng-if="SectionModel.TrainingCost.ShouldDisplayEmployerContribution">
+                                <span class="js-employer-contribution">{{EligibleCost.EstimatedEmployerContribution | currency}}</span>
+                            </td>
+                            <td class="num-col">
+                                <span class="js-grant-request">{{EligibleCost.AgreedMaxReimbursement | currency}}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="button-group">
+                <button class="btn btn--secondary" ng-click="CancelEligibleCost()">Cancel</button>
+                <button class="btn btn--primary btn--forward"
+                        ng-disabled="!(EligibleCost.EstimatedParticipants >= 0 && EligibleCost.EstimatedCost >= 0 &&
+                                EligibleCost.EligibleExpenseType != null)"
+                        ng-click="UpdateEligibleCost()">
+                    Save Expense
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .from-applicant {
+        opacity: 0.5;
+    }
+</style>

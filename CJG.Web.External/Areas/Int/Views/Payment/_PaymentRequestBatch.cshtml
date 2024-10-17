@@ -1,0 +1,75 @@
+﻿@using CJG.Core.Entities
+@using CJG.Web.External.Areas.Int.Controllers
+@model PaymentRequestBatch
+
+<h2 class="header__title header--small">@Model.BatchType.GetDescription() Batch @Model.BatchNumber (@Model.RequestCount requests)</h2>
+<table id="payment-request-batch-datatable" class="table--request-management-payment-request-batch" width="100%">
+    <thead>
+        <tr style="border-bottom: 1px solid black; border-top: 1px solid black">
+            <th class="text-align--left">
+                Claim Number
+            </th>
+            <th class="text-align--left">
+                Applicant
+            </th>
+            <th>
+                Assessed
+            </th>
+            <th class="text-align--left">
+                Claim State
+            </th>
+            <th class="text-align--left">
+                Type
+            </th>
+            <th>
+                @if (Model.BatchType == PaymentBatchTypes.AmountOwing)
+                {
+                    <span style="color: red;">Amount Owing</span>
+                }
+                else
+                {
+                    @Html.Raw("Payment Amount")
+                }
+            </th>
+            <th class="text-align--left">
+                Document Ref.
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.PaymentRequests)
+        {
+            <tr style="text-align: center">
+                <td class="text-align--left">
+                    @Html.ActionLink(
+                           item.Claim.ClaimNumber,
+                           nameof(ClaimAssessmentController.ClaimAssessmentView),
+                           typeof(ClaimAssessmentController),
+                           new { claimId = item.ClaimId, claimVersion = item.ClaimVersion },
+                           new { target = "_blank" })
+                </td>
+                <td class="text-align--left">@item.Claim.GrantApplication.OrganizationLegalName</td>
+                <td>@item.Claim.TotalAssessedReimbursement.ToDollarCurrencyString()</td>
+                <td class="text-align--left">@item.Claim.ClaimState.GetDescription()</td>
+                @if (item.PaymentType == PaymentTypes.Accrual)
+                {
+                    <td class="text-align--left"><mark>@item.PaymentType.GetDescription()</mark></td>
+                }
+                else
+                {
+                    <td class="text-align--left">@item.PaymentType.GetDescription()</td>
+                }
+
+                @if (Model.BatchType == PaymentBatchTypes.AmountOwing)
+                {
+                    <td style="color: red;">@Math.Abs(item.PaymentAmount).ToDollarCurrencyString()</td>
+                }
+                else
+                {
+                    <td>@item.PaymentAmount.ToDollarCurrencyString()</td>
+                }
+                <td class="text-align--left">@item.DocumentNumber</td>
+            </tr>
+        }
+    </tbody>
+</table>

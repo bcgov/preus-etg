@@ -1,0 +1,136 @@
+﻿@{
+    ViewBag.Title = "Participant information";
+}
+
+<div class="row" ng-controller="ParticipantReportingView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+    <div class="row" ng-if="model.ApplicationStateInternal !== @((int)CJG.Core.Entities.ApplicationStateInternal.Draft) && model.ApplicationStateInternal !== @((int)CJG.Core.Entities.ApplicationStateInternal.ApplicationWithdrawn)">
+        @Html.ActionLink("Return", "GrantFileView", "Reporting", new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
+    </div>
+    <div class="row" ng-if="model.ApplicationStateInternal === @((int)CJG.Core.Entities.ApplicationStateInternal.Draft) || model.ApplicationStateInternal === @((int)CJG.Core.Entities.ApplicationStateInternal.ApplicationWithdrawn)">
+        @Html.ActionLink("Return", "ApplicationOverviewView", "Application", new { grantApplicationId = ViewBag.GrantApplicationId }, new { @class = "link--back" })
+    </div>
+
+    <program-title-label ng-model="model.ProgramTitleLabel"></program-title-label>
+
+    <div class="grant-files">
+        <div class="margin-bottom container-full-width">
+            <h1 class="header--large sentence--case">Participant information</h1>
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+            
+            <div style="display: block;" class="with-participant-report" ng-if="model.ApplicationStateExternal === @((int)CJG.Core.Entities.ApplicationStateExternal.ClaimSubmitted)">
+                <div class="notice">
+                    <div class="inline-help">
+                        <p>Your claim report has been submitted and includes the participants reported below.</p>
+
+                        <p>{{model.Participants.length}} out of {{model.MaxParticipantsAllowed}} participants have successfully reported their participant information.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="!model.UseInvitations">
+                <div style="display: block;" class="with-participant-report" ng-if="model.ParticipantsEditable && Model.ApplicationStateExternal !== @((int)CJG.Core.Entities.ApplicationStateExternal.ClaimSubmitted) && model.Participants.length > 0">
+                    <div class="notice">
+                        <div class="inline-help" ng-if="!model.UseInvitations">
+                            <p>
+                                Before you can submit an application, participants must electronically submit their own Participant Information Forms (PIFs). Employers cannot submit PIFs on behalf of participants.
+                            </p>
+                            <p>
+                                <b>
+                                    IMPORTANT! Participants on Employment Insurance (EI) or British Columbia Employment Assistance clients
+                                    in receipt of Income Assistance (IA)
+                                </b> – Participants who currently receive EI or IA benefits must have approval prior to the start of
+                                training if they wish to maintain their financial supports. Refer to Appendix A of the ETG Eligibility Criteria for details. EI or IA clients who do not obtain pre-approval before participating in training may become ineligible for continued financial supports under EI or IA.
+                            </p>
+                        </div>
+                    </div>
+                
+                    <div class="notice notice--icon">
+                        <p>Temporary foreign workers, international students, people on working holiday visas, or other temporary residents are ineligible.</p>
+                    </div>
+
+                    <div class="notice notice--icon" ng-repeat="warning in model.ParticipantWarnings | filter: { ParticipantIsNearingLimit: true }">
+                        {{ warning.ParticipantName }} is nearing the maximum allowable amount that can be claimed per person per fiscal year ({{ warning.CurrentClaims | currency : '$' : 2 }} of {{ warning.FiscalYearLimit | currency : '$' : 2 }}). Please review the <a href="https://www.workbc.ca/Employer-Resources/B-C-Employer-Training-Grant.aspx" target="_blank">ETG eligibility criteria for details.</a> 
+                    </div>
+                    <div class="notice notice--icon" ng-repeat="warning in model.ParticipantWarnings | filter: { ParticipantIsOverLimit: true }">
+                        {{ warning.ParticipantName }} has reached the maximum allowable amount that can be claimed per person per fiscal year. You cannot claim any more costs for this participant.
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="model.UseInvitations">
+                <p>You have indicated that there will be {{model.MaxParticipantsAllowed}} {{model.MaxParticipantsAllowed == 1 ? 'participant' : 'participants' }}. To change the number of participants, return to the <a href="@Url.Action("TrainingCostView", "TrainingCost", new { id = ViewBag.GrantApplicationId })">Training Cost</a> section of your application.</p>
+                <p>Please enter participant details below. By clicking “Send”, participants will receive an email invitation to complete a Participant Information Form (PIF). <strong style="padding-left: 0.25em;">Please note:</strong> Participants must complete their own PIFs. Employers who complete PIFs on behalf of participants will have their applications denied.</p>
+                
+                <div class="notice notice--icon">
+                    <p>Temporary foreign workers, international students, people on working holiday visas, or other temporary residents are ineligible.</p>
+                </div>
+            </div>
+
+            <div>
+                <div id="ParticipantList">
+                    @Html.Partial("_ParticipantList")
+                </div>
+
+                <div class="wrapper--btn float-left" ng-if="model.ParticipantsEditable && !model.UseInvitations">
+                    <button class="btn btn--primary btn--show-participant" data-simple-toggle=".copy-boxes .wrapper--participant-invitation" ng-click="section.showInvitation = !section.showInvitation">Show participant invitation</button>
+                </div>
+                <div class="wrapper--btn float-left" style="margin-left: 30px;" ng-if="model.CanApplicantReportParticipants">
+                    <a class="btn btn--primary" href="/Part/Information/Applicant/View/{{model.InvitationKey}}">Report Participants</a>
+                </div>
+
+                <div class="notice float-left" style="max-width: 52%; margin: 0px 10px;" ng-if="model.CanApplicantReportParticipants">
+                    <p>If a participant is not able to report by themselves using the participant invitation then you may report them yourself using Report Participant. The steps will include downloading a form and obtaining participant consent before you begin.</p>
+                </div>
+            </div>
+            <div style="clear:both;">
+            </div>
+
+            <div ng-if="model.ParticipantsEditable && section.showInvitation">
+                <div class="hidden wrapper--participant-invitation">
+                    <div ng-if="model.Participants.length === 0">
+                        <p>
+                            <b>Getting Started with Participant Reporting</b>
+                        </p>
+
+                        <div class="notice notice--icon">
+                            <p>
+                                Before you can submit an application, participants must electronically submit their own Participant Information Forms (PIFs). Employers cannot submit PIFs on behalf of participants.
+                            </p>
+                            <p>
+                                <b>IMPORTANT! Participants on Employment Insurance (EI) or British Columbia Employment Assistance clients in receipt of Income Assistance (IA)</b> – Participants who currently receive EI or IA benefits must have approval prior to the start of training if they wish to maintain their financial supports. Refer to Appendix A of the ETG Eligibility Criteria for details. EI or IA clients who do not obtain pre-approval before participating in training may become ineligible for continued financial supports under EI or IA.
+                            </p>
+                        </div>
+                    </div>
+                    <div>
+                        <p>
+                            Please copy the email below into your own email and send it to participants. You will be able to see who has completed their PIF in your Participant Report as soon as they are finished.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="copy-boxes">
+                    <div class="wrapper--copy-section wrapper--email-template">
+                        <div class="wrapper--btn">
+                            <button type="button" class="btn btn--primary copy-to-clipboard" data-clipboard-target=".email-template">Copy Email</button>
+                        </div>
+                        <textarea class="copy-box email-template">{{model.InvitationEmailText}}</textarea>
+                    </div>
+
+                    <div class="wrapper--copy-section wrapper--copy-link">
+                        <div class="wrapper--btn">
+                            <button type="button" class="btn btn--primary copy-to-clipboard" data-clipboard-target=".link-only">Copy Link Only</button>
+                        </div>
+                        <textarea class="copy-box link-only">{{model.InvitationBrowserLink}}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group" ng-if="model.ApplicationStateInternal === @((int)CJG.Core.Entities.ApplicationStateInternal.Draft)">
+                @Html.Button("Cancel", new { @class = "btn btn--secondary", @onclick = "window.location='" + Url.Action("ApplicationOverviewView", "Application", new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'" })
+                <a class="btn btn--primary btn--forward" href="/Ext/Application/Overview/View/@((int)ViewBag.GrantApplicationId)" ng-disabled="!participantOutcomesReported()">Done</a>
+            </div>
+        </div>
+    </div>
+</div>

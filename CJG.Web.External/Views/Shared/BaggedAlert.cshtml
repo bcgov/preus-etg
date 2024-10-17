@@ -1,0 +1,12 @@
+@{
+    var alerts = ViewBag.BaggedAlerts as List<ControllerExtensions.Alert> ?? new List<ControllerExtensions.Alert>();
+}
+@foreach (var alert in alerts)
+{
+    <div class="row row--alert @if (string.IsNullOrEmpty(alert.Message)) {<text>is-hidden</text> }">
+        <div class="alert alert--@alert.MessageType" role="alert">
+            @Html.Raw(alert.Message)
+        </div>
+    </div>
+}
+

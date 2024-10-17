@@ -1,0 +1,177 @@
+// payment request
+.request-payment-pdf-text {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 11pt;
+}
+
+.table--request-payment-pdf {
+  width: 100%;
+  margin-bottom: 0;
+
+  tbody tr td {
+    @extend .request-payment-pdf-text;
+    vertical-align: top;
+    text-align: left;
+    padding: 3px 5px 2px 5px;
+    border: 1px solid;
+
+    &.pdf-text {
+      font-weight: bold;
+    }
+
+    &.pdf-right {
+      text-align: right;
+    }
+  }
+}
+
+.request-payment-pdf-header-wrapper {
+  .request-payment-pdf-header {
+    @extend .request-payment-pdf-text;
+    font-size: 14pt;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    margin: 0;
+  }
+
+  .table--request-payment-pdf {
+    tbody tr td {
+      width: 16.67%;
+    }
+  }
+}
+
+.request-payment-pdf-row-wrapper {
+  page-break-inside: avoid;
+  margin-top: 12pt;
+
+  .request-payment-pdf-row-top {
+    tbody tr:first-child td {
+      width: 13.5%;
+
+      &:nth-child(1) {
+        vertical-align: middle;
+        text-align: center;
+        font-size: 24pt;
+        width: 5%;
+      }
+
+      &:nth-child(2) {
+        width: 35%;
+      }
+
+      &:nth-child(3) {
+        width: 9%;
+      }
+
+      &:nth-child(5), &:nth-child(7) {
+        width: 12%;
+      }
+    }
+  }
+
+  .request-payment-pdf-row-bottom {
+    margin-top: 6pt;
+
+    tbody tr:first-child td {
+      width: 7.5%;
+
+      &:nth-child(1) {
+        width: 0.75%;
+      }
+
+      &:nth-child(2) {
+        vertical-align: top;
+        padding-top: 5px;
+        line-height: 1.1;
+        width: 24.5%;
+      }
+
+      &:nth-child(3) {
+        width: 8%;
+      }
+
+      &:nth-child(4) {
+        vertical-align: middle;
+        text-align: center;
+        font-size: 18pt;
+        line-height: 1.2;
+        width: 15%;
+      }
+    }
+
+    tbody tr td {
+      &.accrual {
+        background: yellow !important;
+        box-shadow: inset 0 0 0 1000px yellow !important;
+      }
+    }
+  }
+}
+
+.request-payment-pdf-footer-wrapper {
+  @extend .request-payment-pdf-text;
+  text-align: center;
+  margin-top: 12pt;
+  width: 100%;
+}
+
+// amount owing
+.wrapper--amount-owing-pdf {
+  @extend .request-payment-pdf-text;
+  font-size: 12pt;
+}
+
+.amount-owing-pdf-template {
+  padding: 2.54cm 2.54cm 0mm 2.54cm;
+  page-break-inside: avoid;
+  width: 100%;
+
+  .amount-owing-pdf-header-wrapper {
+    text-align: right;
+    width: 100%;
+
+    .amount-owing-pdf-header {
+      display: inline-block;
+      text-align: left;
+    }
+  }
+
+  .amount-owing-pdf-footer {
+    margin-top: 40pt;
+
+    > p {
+      margin-top: -1.5em;
+      margin-bottom: 0.5em;
+    }
+  }
+}
+
+.table--amount-owing-pdf {
+  width: 60%;
+  margin-bottom: 0;
+
+  tbody tr td {
+    vertical-align: top;
+    text-align: left;
+    padding: 1px 5px 1px 5px;
+    border: 1px solid;
+    width: 50%;
+  }
+}
+
+// generic
+.no-border {
+  border: none !important;
+}
+
+@media print {
+  .no-print, .no-print * {
+    display: none !important;
+  }
+
+  .on-print, .on-print * {
+    display: block !important;
+  }
+}

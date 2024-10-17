@@ -1,0 +1,24 @@
+﻿@{
+    ViewBag.Title = "Create User Profile";
+}
+<div class="row" ng-controller="CreateUserProfile">
+    <div class="main">
+        <div ng-if="alert.message" class="row row--alert">
+            <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+        </div>
+
+        <h1 class="header--small">Create User Profile</h1>
+        <p class="subheader--step">Step 2 of 2</p>
+        
+        <h2 class="subheader">Business Contact Information</h2>
+        <p class="text--small text--uppercase">* Information must be provided</p>
+        <p>In order to complete your profile we just need a little more information.</p>
+        
+        @Html.Partial("_UserProfileDetails")
+
+        <div class="button-group">
+            <button class="btn btn--secondary btn--back" ng-click="confirmDetails()">Back</button>
+            <button class="btn btn--primary btn--forward" ng-click="save()">Create Profile</button>
+        </div>
+    </div>
+</div>

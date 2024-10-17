@@ -1,0 +1,15 @@
+@{
+	@**
+	 * @param {string} message - Text or HTML string
+	 * @param {string} type - Value should be one of: success, warning, error
+	 *@
+	string message = ViewData["alertMessage"] != null ? ViewData["alertMessage"].ToString().Replace(";", "<br />") : "";
+	string type = ViewData["alertType"] != null ? ViewData["alertType"].ToString() : "default";
+}
+
+<div class="row row--alert @if (string.IsNullOrEmpty(message)) {<text>is-hidden</text> }">
+    <div class="alert alert--@type" role="alert">
+        @Html.Raw(message)
+    </div>
+</div>
+

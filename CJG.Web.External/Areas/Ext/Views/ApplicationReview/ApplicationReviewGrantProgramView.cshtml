@@ -1,0 +1,57 @@
+﻿@using CJG.Core.Entities
+@{
+	ViewBag.Title = "Application Review";
+}
+
+<div ng-controller="ApplicationReviewProgramView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+	<div class="row">
+		<a class="link--back" href="{{model.PreviousStepUrl}}">Return</a>
+	</div>
+	<div class="row">
+		<div class="main">
+
+			<div ng-if="alert.message" class="row row--alert">
+				<div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+			</div>
+
+			<h1 class="sentence--case">Submit application</h1>
+			<p class="subheader--step">Step {{model.CurrentStep}} of {{model.Steps}}</p>
+			<h2>Review grant selection and program description</h2>
+
+			<div ng-show="model.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
+				<div class="heading-group">
+					<h4 class="light">Grant selection</h4>
+					<a class="btn btn--secondary" href="/ext/Application/Grant/Selection/View/{{model.Id}}/0">Edit</a>
+				</div>
+				@Html.Partial("_GrantSelectionView")
+
+
+				<div class="heading-group">
+					<h4 class="light">Program description</h4>
+					<a class="btn btn--secondary" href="/ext/Application/Program/Description/View/{{model.Id}}">Edit</a>
+				</div>
+				@Html.Partial("_ProgramDescriptionView")
+
+				<div ng-show="model.EnableAttachments">
+					<div class="heading-group">
+						<h4 class="light">{{model.AttachmentsHeader}}</h4>
+						<a class="btn btn--secondary" href="/Ext/Application/Attachments/View/{{model.Id}}">Edit</a>
+					</div>
+					@Html.Partial("_AttachmentsView")
+				</div>
+			</div>
+			<div class="button-group">
+				@Html.Button("Cancel",
+						   new
+								{
+									@class = "btn btn--secondary",
+							   @onclick = "window.location='" +
+							   @Url.Action(nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController.ApplicationOverviewView),
+										   nameof(CJG.Web.External.Areas.Ext.Controllers.ApplicationController).Replace("Controller", ""),
+										   new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'"
+								})
+				<a class="btn btn--primary btn--forward" value="Continue" href="{{model.NextStepUrl}}">Continue</a>
+			</div>
+		</div>
+	</div>
+</div>

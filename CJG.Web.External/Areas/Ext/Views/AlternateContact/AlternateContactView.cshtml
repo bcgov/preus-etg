@@ -1,0 +1,110 @@
+﻿@using CJG.Core.Entities
+@using CJG.Web.External.Areas.Ext.Controllers
+@model CJG.Web.External.Areas.Ext.Models.SidebarViewModel
+@{
+    ViewBag.Title = "Edit Alternate Contact";
+}
+
+<div ng-controller="AlternateContactView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+    <div class="row">
+        <div ng-if="model.ApplicationStateExternal == @((int)ApplicationStateExternal.Submitted) ||
+					model.ApplicationStateExternal == @((int)ApplicationStateExternal.AgreementWithdrawn) ||
+					model.ApplicationStateExternal == @((int)ApplicationStateExternal.CancelledByMinistry) ||
+					model.ApplicationStateExternal == @((int)ApplicationStateExternal.ApplicationDenied) ||
+					model.ApplicationStateExternal == @((int)ApplicationStateExternal.AgreementRejected) ||
+					model.ApplicationStateExternal == @((int)ApplicationStateExternal.ReturnedUnassessed) ||
+					model.ApplicationStateExternal == @((int)ApplicationStateExternal.CancelledByAgreementHolder)">
+            @Html.ActionLink("Return", nameof(HomeController.Index), nameof(HomeController).Replace("Controller", ""), null, new { @class = "link--back" })
+        </div>
+        <div ng-if="model.ApplicationStateExternal == @((int)ApplicationStateExternal.AcceptGrantAgreement)">
+            @Html.ActionLink("Return", nameof(GrantAgreementController.AgreementReviewView), nameof(GrantAgreementController).Replace("Controller", ""), new { grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "link--back" })
+        </div>
+        <div ng-if="!(model.ApplicationStateExternal == @((int)ApplicationStateExternal.Submitted) ||
+					  model.ApplicationStateExternal == @((int)ApplicationStateExternal.AgreementWithdrawn) ||
+					  model.ApplicationStateExternal == @((int)ApplicationStateExternal.CancelledByMinistry) ||
+					  model.ApplicationStateExternal == @((int)ApplicationStateExternal.ApplicationDenied) ||
+					  model.ApplicationStateExternal == @((int)ApplicationStateExternal.AgreementRejected) ||
+					  model.ApplicationStateExternal == @((int)ApplicationStateExternal.CancelledByAgreementHolder) ||
+					  model.ApplicationStateExternal == @((int)ApplicationStateExternal.ReturnedUnassessed) ||
+					  model.ApplicationStateExternal == @((int)ApplicationStateExternal.AcceptGrantAgreement))">
+            @Html.ActionLink("Return", nameof(ReportingController.GrantFileView), nameof(ReportingController).Replace("Controller", ""), new { grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "link--back" })
+        </div>
+        <div class="main">
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            <h2 ng-if="model.IsAlternateContact">Edit Alternate Contact</h2>
+            <h2 ng-if="!model.IsAlternateContact">Add Alternate Contact</h2>
+            
+            <div>
+                <div class="form form--flex-2-col">
+                    <div class="col-50p">
+                        <div class="form__group">
+                            <div class="form__label">First Name:</div>
+                            <div class="form__control">
+                                <input ng-model="model.AlternateFirstName" class="input--medium" maxlength="250" ng-validation />
+                            </div>
+                        </div>
+                        <div class="form__group">
+                            <div class="form__label">Last Name:</div>
+                            <div class="form__control">
+                                <input ng-model="model.AlternateLastName" class="input--medium" maxlength="250" ng-validation />
+                            </div>
+                        </div>
+                        <div class="form__group">
+                            <div class="form__label">Email:</div>
+                            <div class="form__control">
+                                <input ng-model="model.AlternateEmail" class="input--medium" maxlength="250" ng-validation />
+                            </div>
+                        </div>
+                        <div class="form__group">
+                            <div class="form__label">Position/Title:</div>
+                            <div class="form__control">
+                                <div class="control-wrapper">
+                                    <input ng-model="model.AlternateJobTitle" class="input--full" maxlength="250" ng-validation />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form__group">
+                            <div class="label-wrapper">
+                                <label class="form__label">Preferred phone:</label>
+                            </div>
+                            <div class="form__control">
+                                <div class="form__group--tel validation-group">
+                                    <input ng-model="model.PhoneNumberViewModel.PhoneAreaCode"
+                                           class="input-xx-small" maxlength="3" ng-number
+                                           ng-class="errors.PhoneNumberViewModel.Phone ? 'has-error': ''" />
+                                    <span ng-class="spacer">-</span>
+                                    <input ng-model="model.PhoneNumberViewModel.PhoneExchange"
+                                           class="input-xx-small" maxlength="3" ng-number
+                                           ng-class="errors.PhoneNumberViewModel.Phone ? 'has-error': ''" />
+                                    <span ng-class="spacer">-</span>
+                                    <input ng-model="model.PhoneNumberViewModel.PhoneNumber"
+                                           class="input-xx-small" maxlength="4" ng-number
+                                           ng-class="errors.PhoneNumberViewModel.Phone ? 'has-error': ''" />
+                                    <span ng-class="spacer">Ext</span>
+                                    <input ng-model="model.PhoneNumberViewModel.PhoneExtension"
+                                           class="input-xx-small" maxlength="20" ng-number
+                                           ng-class="errors.PhoneNumberViewModel.Phone ? 'has-error': ''" />
+                                </div>
+                                <validation ng-model="errors.PhoneNumberViewModel.Phone">
+                                    Contact phone number must be 10-digit number
+                                </validation>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="button-group">
+                @* Due to the various ways to go back, history.go is the easiest here. *@
+                <button onclick="history.go(-1);" class="btn btn--secondary">Cancel</button>
+                <button type="button" class="btn btn--primary btn--forward" ng-click="save()">Save</button>
+            </div>
+
+        </div>
+
+        @Html.Partial("_GrantApplicationSidebar", Model)
+    </div>
+</div>

@@ -1,0 +1,402 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\MSTest.TestAdapter.3.1.1\build\net462\MSTest.TestAdapter.props" Condition="Exists('..\packages\MSTest.TestAdapter.3.1.1\build\net462\MSTest.TestAdapter.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F2012E86-7485-4E47-ABD2-456C57C3656C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CJG.Testing.UnitTests</RootNamespace>
+    <AssemblyName>CJG.Testing.UnitTests</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
+    <IsCodedUITest>False</IsCodedUITest>
+    <TestProjectType>UnitTest</TestProjectType>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Support|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\TAS\</OutputPath>
+    <DefineConstants>TRACE;Support</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TEST|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\TEST\</OutputPath>
+    <DefineConstants>TRACE;TEST</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'QA|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\QA\</OutputPath>
+    <DefineConstants>TRACE;QA</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Training|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Training\</OutputPath>
+    <DefineConstants>TRACE;Training</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DataAnnotationsExtensions, Version=5.0.1.27, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DataAnnotationsExtensions.5.0.1.27\lib\NETFramework40\DataAnnotationsExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentAssertions, Version=5.7.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentAssertions.5.7.0\lib\net45\FluentAssertions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.2\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.2\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Owin, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.4.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MSTest.TestFramework.3.1.1\lib\net462\Microsoft.VisualStudio.TestPlatform.TestFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MSTest.TestFramework.3.1.1\lib\net462\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Moq, Version=4.12.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.12.0\lib\net45\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.6.5\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.Web.4.8.3\lib\net35\NLog.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Collections" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.7\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.7\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <Choose>
+    <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </When>
+    <Otherwise />
+  </Choose>
+  <ItemGroup>
+    <Compile Include="ApplicationServices\AccountCodeServiceTests.cs" />
+    <Compile Include="ApplicationServices\ApplicationAddressServiceTests.cs" />
+    <Compile Include="ApplicationServices\ApplicationWorkflowStateMachineTests.cs" />
+    <Compile Include="ApplicationServices\AttachmentServiceTest.cs" />
+    <Compile Include="ApplicationServices\AuthenticationServiceTest.cs" />
+    <Compile Include="ApplicationServices\AuthorizationServiceTest.cs" />
+    <Compile Include="ApplicationServices\ClaimEligibleCostServiceTest.cs" />
+    <Compile Include="ApplicationServices\ClaimIdServiceTest.cs" />
+    <Compile Include="ApplicationServices\ClaimServiceTest.cs" />
+    <Compile Include="ApplicationServices\CompletionReportServiceTest.cs" />
+    <Compile Include="ApplicationServices\DeliveryPartnerServiceTests.cs" />
+    <Compile Include="ApplicationServices\EligibleExpenseBreakdownServiceTests.cs" />
+    <Compile Include="ApplicationServices\EligibleExpenseTypeServiceTests.cs" />
+    <Compile Include="ApplicationServices\ExpenseTypeServiceTests.cs" />
+    <Compile Include="ApplicationServices\GrantAgreementServiceTests.cs" />
+    <Compile Include="ApplicationServices\GrantApplicationJobServiceTests.cs" />
+    <Compile Include="ApplicationServices\GrantApplicationServiceTests.cs" />
+    <Compile Include="ApplicationServices\GrantOpeningServiceTests.cs" />
+    <Compile Include="ApplicationServices\GrantProgramServiceTests.cs" />
+    <Compile Include="ApplicationServices\GrantStreamServiceTests.cs" />
+    <Compile Include="ApplicationServices\PrioritizationServiceTests.cs" />
+    <Compile Include="ApplicationServices\NaIndustryClassificationSystemServiceTest.cs" />
+    <Compile Include="ApplicationServices\NationalOccupationalClassificationServiceTest.cs" />
+    <Compile Include="ApplicationServices\NoteServiceTest.cs" />
+    <Compile Include="ApplicationServices\Notification\NotificationViewModelTests.cs" />
+    <Compile Include="ApplicationServices\OrganizationServiceBusinessLicenseTests.cs" />
+    <Compile Include="ApplicationServices\OrganizationServiceTests.cs" />
+    <Compile Include="ApplicationServices\ParticipantServiceTests.cs" />
+    <Compile Include="ApplicationServices\PaymentRequestServiceTests.cs" />
+    <Compile Include="ApplicationServices\ReCaptchaServiceTest.cs" />
+    <Compile Include="ApplicationServices\RiskClassificationServiceTests.cs" />
+    <Compile Include="ApplicationServices\ServiceUnitTestBase.cs" />
+    <Compile Include="ApplicationServices\SiteMinderServiceTests.cs" />
+    <Compile Include="ApplicationServices\StaticDataServicesTests.cs" />
+    <Compile Include="ApplicationServices\TrainingPeriodServiceTests.cs" />
+    <Compile Include="ApplicationServices\TrainingServiceTest.cs" />
+    <Compile Include="ApplicationServices\UserServiceTest.cs" />
+    <Compile Include="Controllers\BaseControllerTest.cs" />
+    <Compile Include="Controllers\Ext\ChangeRequestControllerTest.cs" />
+    <Compile Include="Controllers\Ext\HomeControllerTest.cs" />
+    <Compile Include="Controllers\Ext\ApplicationAttachmentControllerTest.cs" />
+    <Compile Include="Controllers\Ext\AddressControllerTest.cs" />
+    <Compile Include="Controllers\Ext\ApplicationControllerTest.cs" />
+    <Compile Include="Controllers\Ext\ApplicationReviewControllerTest.cs" />
+    <Compile Include="Controllers\Ext\ExtControllerTest.cs" />
+    <Compile Include="Controllers\Ext\AuthControllerTest.cs" />
+    <Compile Include="Controllers\Ext\ApplicationViewControllerTest.cs" />
+    <Compile Include="Controllers\Ext\OrganizationProfileControllerTest.cs" />
+    <Compile Include="Controllers\Ext\SkillsTrainingControllerTest.cs" />
+    <Compile Include="Controllers\Ext\ServiceProviderControllerTest.cs" />
+    <Compile Include="Controllers\Ext\ParticipantReportingControllerTest.cs" />
+    <Compile Include="Controllers\Ext\TrainingProgramControllerTest.cs" />
+    <Compile Include="Controllers\Ext\UserProfileControllerTest.cs" />
+    <Compile Include="Controllers\Ext\TrainingProviderControllerTest.cs" />
+    <Compile Include="Controllers\Ext\DebugControllerTest.cs" />
+    <Compile Include="Controllers\Ext\TrainingCostControllerTest.cs" />
+    <Compile Include="Controllers\Int\AddressControllerTest.cs" />
+    <Compile Include="Controllers\Ext\CompletionReportingControllerTest.cs" />
+    <Compile Include="Controllers\Ext\GrantAgreementControllerTest.cs" />
+    <Compile Include="Controllers\Ext\ReportingControllerTest.cs" />
+    <Compile Include="Controllers\Ext\ServiceControllerTest.cs" />
+    <Compile Include="Controllers\Ext\ProgramDescriptionControllerTest.cs" />
+    <Compile Include="Controllers\Int\ApplicantControllerTest.cs" />
+    <Compile Include="Controllers\Int\ApplicantContactControllerTest.cs" />
+    <Compile Include="Controllers\Int\IntakePeriodsControllersTests.cs" />
+    <Compile Include="Controllers\Int\GrantOpeningControllerTest.cs" />
+    <Compile Include="Controllers\Int\ApplicantControllerTests.cs" />
+    <Compile Include="Controllers\Int\HomeControllerTest.cs" />
+    <Compile Include="Controllers\Int\StaticDataControllerTest.cs" />
+    <Compile Include="Controllers\Int\DirectorDashboardControllerTest.cs" />
+    <Compile Include="Controllers\Int\GrantAgreementControllerTest.cs" />
+    <Compile Include="Controllers\Int\ESSControllerTest.cs" />
+    <Compile Include="Controllers\Int\TrainingProviderControllerTest.cs" />
+    <Compile Include="Controllers\Int\SkillsTrainingControllerTest.cs" />
+    <Compile Include="Controllers\Int\OrganizationProfileControllerTest.cs" />
+    <Compile Include="Controllers\Int\TrainingProgramControllerTest.cs" />
+    <Compile Include="Controllers\Int\ApplicationSummaryControllerTest.cs" />
+    <Compile Include="Controllers\Int\ClaimIntakeControllerTest.cs" />
+    <Compile Include="Dates\DateTimeTests.cs" />
+    <Compile Include="Dates\GrantOpeningTests.cs" />
+    <Compile Include="Entities\Extensions\GrantApplicationStateExtensionTests.cs" />
+    <Compile Include="Entities\PrioritizationScoreBreakdownTests.cs" />
+    <Compile Include="Entities\ApplicationAddressTests.cs" />
+    <Compile Include="Entities\ClaimBreakdownCostValidationTests.cs" />
+    <Compile Include="Entities\ClaimEligibleCostValidationTests.cs" />
+    <Compile Include="Entities\ClaimValidationTests.cs" />
+    <Compile Include="Entities\DateTimeExtensionTests.cs" />
+    <Compile Include="Entities\DocumentTemplateValidationTests.cs" />
+    <Compile Include="Entities\EligibleCostBreakdownValidationTests.cs" />
+    <Compile Include="Entities\EligibleCostValidationTests.cs" />
+    <Compile Include="Entities\EligibleExpenseBreakdownValidationTests.cs" />
+    <Compile Include="Entities\EligibleExpenseTypeValidationTests.cs" />
+    <Compile Include="Entities\EmployerCompletionReportAnswerValidationTests.cs" />
+    <Compile Include="Entities\GrantAgreementValidationTests.cs" />
+    <Compile Include="Entities\GrantApplicationExtensionsTests.cs" />
+    <Compile Include="Entities\GrantApplicationValidationTests.cs" />
+    <Compile Include="Entities\GrantOpeningValidationTests.cs" />
+    <Compile Include="Entities\GrantProgramValidationTests.cs" />
+    <Compile Include="Entities\GrantStreamValidationTests.cs" />
+    <Compile Include="Entities\IntakePeriodsTrainingPeriodModelExtensionsTests.cs" />
+    <Compile Include="Entities\OrganizationValidationTests.cs" />
+    <Compile Include="Entities\ParticipantCompletionReportAnswerValidationTests.cs" />
+    <Compile Include="Entities\ParticipantCostValidationTests.cs" />
+    <Compile Include="Entities\ParticipantFormValidationTests.cs" />
+    <Compile Include="Entities\ParticipantValidationTests.cs" />
+    <Compile Include="Entities\PaymentRequestBatchValidationTests.cs" />
+    <Compile Include="Entities\PaymentRequestValidationTests.cs" />
+    <Compile Include="Entities\PaymentValidationTests.cs" />
+    <Compile Include="Entities\ProgramConfigurationValidationTests.cs" />
+    <Compile Include="Entities\ProgramDescriptionValidationTests.cs" />
+    <Compile Include="Entities\TrainingCostValidationTests.cs" />
+    <Compile Include="Entities\TrainingPeriodValidationTests.cs" />
+    <Compile Include="Entities\TrainingProgramValidationTests.cs" />
+    <Compile Include="Entities\TrainingProviderExtensionTests.cs" />
+    <Compile Include="Entities\TrainingProviderValidationTests.cs" />
+    <Compile Include="EntityFrameworkMockHelpers.cs" />
+    <Compile Include="Helpers\CanadaPostConfigurationTests.cs" />
+    <Compile Include="Helpers\EntityExtensionTests.cs" />
+    <Compile Include="Helpers\StringExtenstionTests.cs" />
+    <Compile Include="Interfaces\CollectionExtensionsTests.cs" />
+    <Compile Include="Jobs\GrantOpening\GrantOpeningJobTests.cs" />
+    <Compile Include="Jobs\ReportingService\CsvLineBuilderTests.cs" />
+    <Compile Include="Jobs\ReportingService\SdsiReportJobTests.cs" />
+    <Compile Include="JsonResultTestHelper.cs" />
+    <Compile Include="Models\ParticipantWarningModelTests.cs" />
+    <Compile Include="Models\ParticipantContactInfoViewModelTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CJG.Application.Business\CJG.Application.Business.csproj">
+      <Project>{FC084FAE-D520-4804-AE61-7501CAEE495A}</Project>
+      <Name>CJG.Application.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Application.Services\CJG.Application.Services.csproj">
+      <Project>{48dcf26f-44b1-4731-b807-95f3f9721682}</Project>
+      <Name>CJG.Application.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Core.Entities\CJG.Core.Entities.csproj">
+      <Project>{3EDA57E9-E3F8-44B2-A360-3D54DEB6DC44}</Project>
+      <Name>CJG.Core.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Core.Interfaces\CJG.Core.Interfaces.csproj">
+      <Project>{3BCF9A94-7976-4BB8-9C23-4CF6526C74F3}</Project>
+      <Name>CJG.Core.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Infrastructure.BCeID.WebService\CJG.Infrastructure.BCeID.WebService.csproj">
+      <Project>{B5E081D1-6965-48D8-BA93-E840A459C65C}</Project>
+      <Name>CJG.Infrastructure.BCeID.WebService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Infrastructure.EF\CJG.Infrastructure.EF.csproj">
+      <Project>{e70b0bc2-2ee1-4e82-8093-8a0088c9bf33}</Project>
+      <Name>CJG.Infrastructure.EF</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Infrastructure.GrantOpeningService\CJG.Infrastructure.GrantOpeningService.csproj">
+      <Project>{23b9fba1-c0c7-4311-9e9d-8240f05d527f}</Project>
+      <Name>CJG.Infrastructure.GrantOpeningService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Infrastructure.ReportingService\CJG.Infrastructure.ReportingService.csproj">
+      <Project>{0a9c47c8-6b0f-4c4f-b2ce-4bbf48536f2d}</Project>
+      <Name>CJG.Infrastructure.ReportingService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Testing.Core\CJG.Testing.Core.csproj">
+      <Project>{900e7629-8acd-4846-9303-4cd20bca550e}</Project>
+      <Name>CJG.Testing.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CJG.Web.External\CJG.Web.External.csproj">
+      <Project>{368c4fcc-d480-44cd-b23c-c0053d6baf0b}</Project>
+      <Name>CJG.Web.External</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
+      <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.CodedUITestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITest.Extension, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.VisualStudio.TestTools.UITesting, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <Private>False</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\MSTest.TestAdapter.3.1.1\build\net462\MSTest.TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSTest.TestAdapter.3.1.1\build\net462\MSTest.TestAdapter.props'))" />
+    <Error Condition="!Exists('..\packages\MSTest.TestAdapter.3.1.1\build\net462\MSTest.TestAdapter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSTest.TestAdapter.3.1.1\build\net462\MSTest.TestAdapter.targets'))" />
+  </Target>
+  <Import Project="..\packages\MSTest.TestAdapter.3.1.1\build\net462\MSTest.TestAdapter.targets" Condition="Exists('..\packages\MSTest.TestAdapter.3.1.1\build\net462\MSTest.TestAdapter.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

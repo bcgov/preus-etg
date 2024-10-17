@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FC084FAE-D520-4804-AE61-7501CAEE495A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CJG.Application.Business</RootNamespace>
+    <AssemblyName>CJG.Application.Business</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Helpers\ValidateNullableInt.cs" />
+    <Compile Include="Models\AlternateContactModel.cs" />
+    <Compile Include="Models\AmountOwingBatchPDFModel.cs" />
+    <Compile Include="Models\AmountOwingPDFModel.cs" />
+    <Compile Include="Models\BusinessCaseModel.cs" />
+    <Compile Include="Models\AttachmentModel.cs" />
+    <Compile Include="Models\ClaimEligibleCostBreakdownModel.cs" />
+    <Compile Include="Models\ClaimEligibleCostModel.cs" />
+    <Compile Include="Models\ClaimModel.cs" />
+    <Compile Include="Models\CollectionItemModel.cs" />
+    <Compile Include="Models\DocumentTemplate\TrainingCostTemplateModel.cs" />
+    <Compile Include="Models\DocumentTemplate\EligibleCostTemplateModel.cs" />
+    <Compile Include="Models\DocumentTemplate\TrainingProviderTemplateModel.cs" />
+    <Compile Include="Models\DocumentTemplate\EligibleCostBreakdownTemplateModel.cs" />
+    <Compile Include="Models\DocumentTemplate\TrainingProgramTemplateModel.cs" />
+    <Compile Include="Models\EligibleCostBreakdownModel.cs" />
+    <Compile Include="Models\EligibleCostModel.cs" />
+    <Compile Include="Models\EligibleCostTypeModel.cs" />
+    <Compile Include="Models\EligibleExpenseBreakdownModel.cs" />
+    <Compile Include="Models\GroupedParticipantsModel.cs" />
+    <Compile Include="Models\KeyValueListItem.cs" />
+    <Compile Include="Models\ParticipantFormModel.cs" />
+    <Compile Include="Models\RequestBatchPDFBaseModel.cs" />
+    <Compile Include="Models\PaymentRequestBatchPDFModel.cs" />
+    <Compile Include="Models\RequestOnHoldModel.cs" />
+    <Compile Include="Models\KeyValueParent.cs" />
+    <Compile Include="Models\RequestPDFBaseModel.cs" />
+    <Compile Include="Models\PaymentRequestPDFModel.cs" />
+    <Compile Include="Models\ServiceLineListModel.cs" />
+    <Compile Include="Models\DocumentTemplate\GrantApplicationTemplateModel.cs" />
+    <Compile Include="Models\TrainingBudgetModel.cs" />
+    <Compile Include="Models\TrainingCostModel.cs" />
+    <Compile Include="Models\UserGrantProgramPreferenceModel.cs" />
+    <Compile Include="Models\GrantProgramApplicantModel.cs" />
+    <Compile Include="Models\UserProfileConfirmationModel.cs" />
+    <Compile Include="Models\UserProfileDetailModel.cs" />
+    <Compile Include="Models\ParticipantCostModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CJG.Core.Entities\CJG.Core.Entities.csproj">
+      <Project>{3EDA57E9-E3F8-44B2-A360-3D54DEB6DC44}</Project>
+      <Name>CJG.Core.Entities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

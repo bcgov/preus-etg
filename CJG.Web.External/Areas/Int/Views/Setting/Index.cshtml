@@ -1,0 +1,59 @@
+﻿@model CJG.Web.External.Areas.Int.Models.Settings.AppSettingsViewModel
+
+@{
+    ViewBag.Title = "Application Settings Dashboard";
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("button[name=update]").click(update);
+        });
+
+        function update(event) {
+            // get the model for this update.
+            var key = $(this).data("key");
+            var value = $("#" + key).val();
+            var model = {
+                Key: key,
+                Value: value
+            }
+            $.ajax({
+                url: "/Int/Setting/Update",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(model),
+                success: function(data, status, xhr) {
+                    alert("saved");
+                },
+                error: function (xhr, status, error) {
+                    alert(error);
+                }
+            });
+        }
+    </script>    
+}
+
+<h1>@ViewBag.Title</h1>
+
+<table>
+    <thead>
+        <tr>
+            <td>Key</td>
+            <td>Value</td>
+            <td></td>
+        </tr>
+    </thead>
+    @{
+        foreach (var setting in Model.Settings)
+        {
+            <tr>
+                <td>@Html.Label(setting.Key)</td>
+                <td>@Html.TextBox(setting.Key, setting.Value)</td>
+                <td>
+                    <button name="update" type="button" data-key="@setting.Key">update</button>
+                </td>
+            </tr>
+        }
+    }
+</table>

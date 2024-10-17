@@ -1,0 +1,32 @@
+﻿@model CJG.Web.External.Areas.Int.Models.DebugGrantOpeningViewModel
+@{
+    ViewBag.Title = "Debug NotificationService-ReturnUnassessedApplicationsJob";
+}
+<div>
+    <h1>Return Unassessed Applications Scheduled Service</h1>
+    
+    <div>
+        <p>This job normally runs as part of the NotificationService. It has been parted out here for testing purposes.</p>
+        <p>This job uses the system time as the 'current time'. Please use that if you need to run this at a different point in time.</p>
+        <p>This job also requires the 'Unassessed Application Service' setting be turned on in the Automation menu.</p>
+    </div>
+
+    @using (Html.BeginForm("ReturnUnassessedService", "Debug", FormMethod.Post))
+    {
+        <input type="submit" class="btn btn--primary" value="Start ReturnUnassessedService" />
+    }
+    <br />
+    @if (Model.LogRecords != null && Model.LogRecords.Any())
+    {
+        <div class="form__group">
+            <label class="form__label">Log records</label>
+            <ul class="panel-bar">
+                @foreach (var item in Model.LogRecords)
+                {
+                    <li>@item</li>
+                }
+            </ul>
+        </div>
+    }
+
+</div>

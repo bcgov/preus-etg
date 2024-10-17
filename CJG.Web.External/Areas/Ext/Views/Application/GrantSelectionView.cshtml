@@ -1,0 +1,62 @@
+﻿@model CJG.Web.External.Areas.Ext.Models.ApplicationStartViewModel
+@{
+    ViewBag.Title = "Start a new application";
+}
+
+<div ng-controller="GrantSelectionView" ng-init="init()" 
+     ng-grant-application-id="@ViewBag.GrantApplicationId" 
+     ng-grant-program-id="@ViewBag.GrantProgramId" 
+     ng-seed-grant-application-id="@ViewBag.SeedGrantApplicationId">
+
+    <div class="row" ng-if="isNewApplication">
+        @Html.ActionLink("Return", "Index", "Home", null, new { @class = "link--back" })
+    </div>
+    <div class="row" ng-if="!isNewApplication">
+        @Html.ActionLink("Return", "ApplicationOverviewView", "Application", new { grantApplicationId = @ViewBag.GrantApplicationId }, new { @class = "link--back" })
+    </div>
+    <div class="row" ng-if="showApplicationForm">
+        <div class="main" role="main">
+            <div ng-show="isNewApplication">
+                <div ng-show="isDuplication">
+                    <h1 class="header--large sentence--case">Duplicate <span class="text--lowercase">a</span> new application</h1>
+                </div>
+                <div ng-show="!isDuplication">
+                    <h1 class="header--large sentence--case">Start <span class="text--lowercase">a</span> new application</h1>
+                </div>                
+                <div>
+                    
+                    <p>Please fill in each section of this form. This will help us assess your application quickly.</p>
+                    <p><p><strong>Before you start:</strong> Only employers or their authorized employees may submit an application using their Business BCeID. Employers may not share their BCeID user login ID. Other people (e.g., training providers, fee-based service providers) cannot apply on an employer’s behalf.</p>
+                </div>
+            </div>
+            <div ng-show="!isNewApplication">
+                <h1 class="header--large">Grant selection</h1>
+            </div>
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            <div>
+                @Html.Partial("_GrantApplicationStreams")
+            </div>
+            <b/>
+			<p>
+				<div ng-show="isNewApplication" class="button-group">
+					@Html.Button("Cancel", new { @class = "btn btn--secondary", onclick="window.location='" + Url.Action("Index", "Home", null) + "'" })
+					<button type="button" class="btn btn--primary btn--forward" ng-click="save()">Continue</button>
+				</div>
+				<div ng-show="!isNewApplication" class="button-group">
+					@Html.Button("Cancel", new { @class = "btn btn--secondary", onclick="window.location='" + Url.Action("ApplicationOverviewView", "Application", new { grantApplicationId = ViewBag.GrantApplicationId }) + "'" })
+					<button type="button" class="btn btn--primary btn--forward" ng-click="save()">Done</button>
+				</div>
+			</p>
+        </div>
+    </div>
+
+    <div class="row row--alert" ng-if="showApplicationForm === false">
+        <div class="alert alert--default alert--warning" role="alert">
+            There are no grant opportunities at this time.
+        </div>
+    </div>
+</div>

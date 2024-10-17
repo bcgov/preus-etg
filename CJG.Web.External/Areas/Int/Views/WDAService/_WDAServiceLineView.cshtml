@@ -1,0 +1,80 @@
+﻿
+<div class="item-block" ng-class="line.Selected? 'row-highlighted': ''">
+
+
+    <div class="width-5 no-border">
+        <button class="btn btn--primary" ng-if="line.Id == 0" ng-click="cancelCreate(line, item.ServiceLines)" style="margin-top: 15px;">Cancel</button>
+
+
+        <button class="btn btn--empty" ng-click="toggleEditServiceLine(line, 'Caption')" ng-if="!line.EditingCaption  && line.Id != 0">Edit</button>
+        <button class="btn btn--empty" ng-click="toggleEditServiceLine(line, 'Caption')" ng-if="line.EditingCaption  && line.Id != 0">Cancel</button>
+    </div>
+    <div class="width-20">
+        <span ng-if="!line.EditingCaption" ng-click="selectLine(line, item)" style="display: block; padding-bottom: 0px;"> {{line.Caption}}</span>
+        <input type="text" ng-model="line.Caption" class="input--medium" ng-if="line.EditingCaption" />
+        <button class="btn btn--empty"
+                ng-click="deleteLine(line, item.ServiceLines)"
+                ng-if="!line.IsActive">
+            &lt;Delete&gt;
+        </button>
+    </div>
+    <div class="width-5">
+        <input type="checkbox" ng-model="line.IsActive" id="service-line-isActive-{{line.Id}}-{{$index}}" ng-disabled="!section.editing" />
+        <label for="service-line-isActive-{{line.Id}}-{{$index}}">&nbsp;</label>
+    </div>
+    <div class="width-5">
+
+        <button class="btn btn--empty" ng-if="!line.EditingDescription && line.Id != 0" ng-click="toggleEditServiceLine(line, 'Description')">Edit</button>
+        <button class="btn btn--empty" ng-if="line.EditingDescription  && line.Id != 0" ng-click="toggleEditServiceLine(line, 'Description')">Cancel</button>
+    </div>
+    <div class="width-55">
+        <p ng-bind-html="line.Description" ng-if="!line.EditingDescription" ng-click="selectLine(line, item)"></p>
+        <textarea ng-model="line.Description" ng-if="line.EditingDescription " rows="5"></textarea>
+    </div>
+    <div class="width-5">
+        <span class="up-arrow" ng-click="changeOrder(item.ServiceLines, line);" ng-if="$index != 0"></span>
+    </div>
+
+</div>
+
+<div class="line-table" ng-if="line.ServiceLineBreakDowns.length > 0 && line.Selected">
+    <div>
+        <div class="width-5">&nbsp;</div>
+        <div class="width-95">
+            <p>Adding types to a Service Line will enable an additional dropdown list under the service line on the skills training form.</p>
+        </div>
+    </div>
+    <div class="width-5">&nbsp;</div>
+    <div class="width-95">
+        <div class="table-header">
+            <div class="width-5">
+                <div style="font-weight: normal;" ng-if="line.Selected">
+                    <div class="width-5">&nbsp;</div>
+                    <div class="width-50">
+                        <span ng-click="closeChild(line)">Close&gt;</span>
+                    </div>
+                </div>
+            </div>
+            <div class="width-10">Types</div>
+            <div class="width-55">
+                <span>Caption:&nbsp;&nbsp;</span>
+                <input style="width: 80%; font-weight: normal;" type="text" ng-model="line.BreakdownCaption" ng-init="GetBreakdownCaption(line)">
+            </div>
+            <div class="width-10"></div>
+            <div class="width-5">Active</div>
+            <div class="width-5"></div>
+            <div class="width-5">Reorder</div>
+        </div>
+        <div class="line-table-body">
+            <div  class="item-block-container" ng-repeat="breakdown in line.ServiceLineBreakDowns | orderBy: 'RowSequence'">
+                @Html.Partial("_WDAServiceLineBreakdownView")
+            </div>
+        </div>
+    </div>
+</div>
+<div ng-if="line.Selected" style="margin: 10px 0px">
+    <div class="width-5">&nbsp;</div>
+    <div class="width-50">
+        <span ng-if="CheckExistEmptyCaption(line.ServiceLineBreakDowns) && line.Id != 0" ng-click="addLineBreakDown(line.ServiceLineBreakDowns)">Add New</span>
+    </div>
+</div>

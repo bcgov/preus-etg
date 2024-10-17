@@ -1,0 +1,171 @@
+﻿@model CJG.Web.External.Areas.Int.Models.DebugLogViewModel
+
+@{
+    ViewBag.Title = "Debug Dashboard";
+    Func<string, string> tr_class = (level)=> {
+        switch (level)
+        {
+            case ("Info"):
+                return "table-info";
+            case ("Debug"):
+                return "table-active";
+            case ("Warning"):
+                return "table-warning";
+            case ("Error"):
+                return "table-danger";
+            default:
+                return "";
+        }
+    };
+}
+
+<style>
+    td.left {
+        text-align: left;
+    }
+
+    .debug--filter {
+        display: inline-block;
+        margin-right: 1em;
+    }
+    .debug--filter label {
+        display: block;
+    }
+    .debug--table {
+        font-size: 0.9em;
+    }
+    .debug--table th,
+    .debug--table td {
+        vertical-align: top;
+        padding: 0.25em 0.5em !important;
+    }
+
+</style>
+
+<div id="log">
+    @using (Html.BeginForm("Log", "Debug", FormMethod.Post, new { id = "Filter" }))
+    {
+
+        <div class="">
+			<h2>@ViewBag.Title</h2>
+
+			<div class="form__group">
+
+                <div class="form__group debug--filter">
+                    <div class="form__control">
+                        @Html.LabelFor(model => model.Page)
+                        @Html.TextBoxFor(model => model.Page, new { @class = "input--small"})
+                    </div>
+                </div>
+                <div class="form__group debug--filter">
+                    <div class="form__control">
+                        @Html.LabelFor(model => model.Level)
+                        <div class="wrapper--dropdown selectmenu input--small">
+                            @Html.DropDownListFor(model => model.Level, new List<SelectListItem>
+                            {
+                                new SelectListItem { Value = "", Text = "None" },
+                                new SelectListItem { Value = "Trace", Text = "Trace"  },
+                                new SelectListItem { Value = "Debug", Text = "Debug" },
+                                new SelectListItem { Value = "Info", Text = "Info" },
+                                new SelectListItem { Value = "Warn", Text = "Warn" },
+                                new SelectListItem { Value = "Error", Text = "Error" },
+                                new SelectListItem { Value = "Fatal", Text = "Fatal" }
+                            }, new { @class = "input--small" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group debug--filter">
+                    <div class="form__control">
+                        @Html.LabelFor(model => model.Message)
+                        @Html.TextBoxFor(model => model.Message)
+                    </div>
+                </div>
+                <div class="form__group debug--filter">
+                    <div class="form__control">
+                        @Html.LabelFor(model => model.UserName, "User")
+                        @Html.TextBoxFor(model => model.UserName)
+                    </div>
+                </div>
+                <div class="form__group debug--filter">
+                    <div class="form__control">
+                        @Html.LabelFor(model => model.DateAdded)
+                        @Html.TextBoxFor(model => model.DateAdded)
+                    </div>
+                </div>
+                <div class="form__group debug--filter">
+                    <div class="form__control">
+                        <input type="submit" class="btn btn--primary" value="Filter"/>
+                    </div>
+                </div>
+
+			</div>
+		</div>
+
+        <table class="table debug--table">
+            <thead class="">
+            <tr>
+                <th width="10%">Date</th>
+                <th>Level</th>
+                <th class="left">Message</th>
+                <th class="left">Exception</th>
+                <th>UserName</th>
+                <th class="left">Url</th>
+            </tr>
+            </thead>
+            @{
+                foreach (var log in Model.Logs)
+                {
+                    <tr class="@tr_class(log.Level)">
+                        <td>@($"{log.DateAdded.ToLocalTime():yyyy-MM-dd h:mm:ss tt}".ToLower())</td>
+                        <td>@log.Level</td>
+                        <td class="left">@log.Message</td>
+                        <td class="left">@log.Exception</td>
+                        <td>@log.UserName</td>
+                        <td class="left">@log.Url</td>
+                    </tr>
+                }
+            }
+            <tfoot>
+            <tr>
+                <td colspan="6">
+                    @if (Model.Page > 1)
+                    {
+                        <a href="#" id="previous">Previous</a>
+                    }
+                    @if (Model.Total == Model.ItemsPerPage)
+                    {
+                        <a href="#" id="next">Next</a>
+                    }
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    }
+</div>
+
+<script>
+    var previous = document.getElementById('previous');
+    if (previous != null)
+        document.getElementById('previous').onclick = function () { onPrevious(); return false; }
+
+    var next = document.getElementById('next');
+    if (next != null)
+        document.getElementById('next').onclick = function () { onNext(); return false; }
+
+    function onPrevious()
+    {
+        var page = Number(document.getElementById('Page').value) - 1;
+        filterLog(page);
+    }
+
+    function onNext() {
+        var page = Number(document.getElementById('Page').value) + 1;
+        filterLog(page);
+    }
+
+    function filterLog(page) {
+        console.log(page);
+        document.getElementById('Page').value = page;
+        document.getElementById('Filter').submit();
+    }
+</script>

@@ -1,0 +1,112 @@
+﻿<div ng-controller="WorkQueueFilter">
+    <div class="dialog-header">
+        <h3>{{ngDialogData.title}}</h3>
+    </div>
+    <div class="dialog-content layout-internal">
+        <div class="modal-content">
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            <div class="queue-filter">
+                <div class="filter-inputs-wrapper">
+                    <div class="form__group filter-name-input-wrapper">
+                        <div class="form-item">
+                            <label class="form__label">Name</label>
+                            <div class="form__control">
+                                <input ng-model="ngDialogData.filter.Name" class="work-queue-filter-input input--medium" ng-validation="errors.Name" />
+                            </div>
+                        </div>
+                        <div class="form-item">
+                            <label class="form__label">Description</label>
+                            <div class="form__control">
+                                <textarea ng-model="ngDialogData.filter.Description" class="input--medium" size="3" ng-validation="errors.Description"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-item">
+                            <div class="form__control">
+                                <div class="selectmenu">
+                                    <select ng-model="ngDialogData.filter.AssessorId" class="input--medium" ng-options="item.Key as item.Value for item in ngDialogData.assessors">
+                                        <option value="">All Assessors</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-item">
+                            <div class="form__control">
+                                <div class="selectmenu">
+                                    <select ng-model="ngDialogData.filter.FiscalYearId" class="input--medium" ng-options="item.Key as item.Value for item in ngDialogData.fiscalYears" ng-change="loadTrainingPeriods()">
+                                        <option value="">All Fiscal Periods</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-item">
+                            <div class="form__control">
+                                <div class="selectmenu">
+                                    <select ng-model="ngDialogData.filter.GrantProgramId" class="input--medium" ng-options="item.Key as item.Value for item in ngDialogData.grantPrograms" ng-change="loadGrantStreams()">
+                                        <option value="">All Grant Programs</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-item">
+                            <div class="form__control">
+                                <div class="selectmenu">
+                                    <select ng-model="ngDialogData.filter.GrantStreamId" class="input--medium" ng-options="item.Key as item.Value for item in ngDialogData.grantStreams" ng-change="loadTrainingPeriods()">
+                                        <option value="">All Grant Streams</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-item">
+                            <div class="form__control">
+                                <div class="selectmenu">
+                                    <select ng-model="ngDialogData.filter.TrainingPeriodCaption" class="input--medium" ng-options="item.Key as item.Value for item in ngDialogData.trainingPeriods">
+                                        <option value="">All Intake Periods</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-item">
+                            <label class="form__label">Applicant</label>
+                            <div class="form__control">
+                                <input ng-model="ngDialogData.filter.Applicant" class="work-queue-filter-input input--medium" ng-validation="errors.Applicant" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form__group filter-checkbox-wrapper-outer">
+                        <h4>Select states to include in filter</h4>
+                        <div>
+                            <label>Defaults:</label>
+                            <button class="btn btn--filter" ng-click="assessorDefaults()">Assessor</button>
+                            <button class="btn btn--filter" ng-click="directorDefaults()">Director</button>
+                            <button class="btn btn--filter" ng-click="clearDefaults()">Clear</button>
+                        </div>
+                        <div class="filter-checkbox-wrapper">
+                            <div class="block--filter-selector">
+                                <div class="block--category category-filters" ng-repeat="group in stateGroups">
+                                    <p class="category-filter-heading" ng-click="toggleStateGroup($event)">{{group.Caption}}</p>
+                                    <div class="filter-category">
+                                        <div class="form__checkbox" ng-repeat="state in group.States">
+                                            <input type="checkbox" ng-model="state.IsChecked" id="state-{{state.Id}}" />
+                                            <label for="state-{{state.Id}}">{{state.Caption}}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="button-group">
+                <button class="btn btn--secondary" ng-click="cancel()">Cancel</button>
+                <button class="btn btn--secondary" ng-if="ngDialogData.filter.Id" ng-click="deleteFilter()">Delete</button>
+                <button class="btn btn--primary pull-right" ng-click="save()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,34 @@
+﻿@model CJG.Web.External.Areas.Int.Models.IntakePeriods.TrainingPeriodStatusModel
+
+<div ng-controller="IntakePeriodToggle">
+    <div class="dialog-header">
+        <h3>@Model.TargetStatus Intake Period?</h3>
+    </div>
+    <div class="dialog-content intake-period-dialog-content">
+        <div class="modal-content">
+            <div class="edit-model-modal-inline">
+                <div class="form">
+                    <div ng-if="alert.message" class="row row--alert">
+                        <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+                    </div>
+
+                    <input type="hidden" ng-model="ngDialogData.intakePeriod.Id" ng-value="ngDialogData.intakePeriod.Id ? ngDialogData.intakePeriod.Id : ''" disabled/>
+                    
+                    <div>
+                        <p>@Model.DialogMessage</p>
+                    </div>
+
+                    @if (Model.ShowYesAndNoButtons)
+                    {
+                        <button class="btn btn--secondary pull-left" ng-click="closeThisDialog()">No</button>
+                        <button class="btn btn--primary pull-right" ng-click="saveIntakePeriodStatus()">Yes</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn--secondary pull-left" ng-click="closeThisDialog()">Ok</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

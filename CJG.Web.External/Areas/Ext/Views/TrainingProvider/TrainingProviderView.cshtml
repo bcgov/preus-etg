@@ -1,0 +1,30 @@
+﻿@using CJG.Web.External.Areas.Ext.Controllers
+@{
+    ViewBag.Title = "Training provider";
+}
+
+<div ng-controller="ApplicationTrainingProviderView" ng-grant-application-id="@ViewBag.GrantApplicationId" ng-training-provider-id="@ViewBag.TrainingProviderId">
+    <div class="row">
+        @Html.ActionLink("Return", "ApplicationOverviewView", "Application", new { grantApplicationId = (int)ViewBag.GrantApplicationId }, new { @class = "link--back" })
+    </div>
+    <div class="row">
+        <div class="main">
+            <h1 class="header--large sentence--case">Training provider</h1>
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            @Html.Partial("_TrainingProvider")
+
+            <div class="button-group">
+                @Html.Button("Cancel",
+                        new { @class = "btn btn--secondary", @onclick = "window.location='" + @Url.Action(nameof(ApplicationController.ApplicationOverviewView),
+                                typeof(ApplicationController).Name.Replace("Controller", ""),
+                                new { grantApplicationId = (int)ViewBag.GrantApplicationId }) + "'"
+                             })
+                <button class="btn btn--primary btn--forward" ng-click="save()">Done</button>
+            </div>
+        </div>
+        </div>
+</div>

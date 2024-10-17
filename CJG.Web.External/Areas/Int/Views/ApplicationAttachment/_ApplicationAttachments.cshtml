@@ -1,0 +1,67 @@
+﻿<div ng-controller="Attachments" @*ng-if="grantFile.ShowAttachments"*@>
+	<span class="panel-section-item">
+		<span class="panel-section-title" ng-click="toggle($event)">Attachments</span>
+		<span class="panel-section-buttons">
+			<span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+			<section-edit-buttons ng-model="section.editing"></section-edit-buttons>
+			<span class="small" ng-class="section.show ? 'up-arrow': 'down-arrow'" ng-click="toggle($event)"></span>
+		</span>
+	</span>
+	<div class="panel-section-content" ng-if="section.show">
+		<div>
+            <div class="notice notice--icon" ng-if="model.AttachmentGuidance">
+                <div ng-bind-html="model.AttachmentGuidance" class="narrow-space-list"></div>
+            </div>
+			<p>Use Add Attachment below and enter a description to identify each attachment. You may attach up to {{model.AttachmentsMaximum}} Applicant Attachments. Ministry Attachments are unlimited.</p>
+            <p>Accepted file types: PDF, DOCX, DOC, XLSX, XLS, JPG, JPEG, PNG, GIF.</p>
+		</div>
+
+		<div>
+			<div class="form__group" ng-if="model.Attachments">
+                <table style="width:100%;">
+                    <tr>
+                        <th></th>
+                        <th style="text-align: left">File</th>
+                        <th style="text-align: left">Added By</th>
+                        <th></th>
+                    </tr>
+                    <tr ng-repeat="attachment in model.Attachments">
+                        <td style="width:10%;vertical-align:top">{{$index + 1}}</td>
+                        <td style="width:50%;vertical-align:top;word-wrap: break-word;word-break: break-all;"><a href="/Int/Application/Attachment/Download/{{grantFile.Id}}/{{attachment.Id}}">{{attachment.FileName}}</a><br />{{attachment.Description}}</td>
+                        <td style="width:20%;vertical-align:top">{{ (attachment.AttachmentType == 1 ? "Ministry Attachment" : "Applicant Attachment") }}</td>
+                        <td style="vertical-align:top" ng-if="section.editing">
+                            <button class="btn btn--secondary pull-right margin-left-10" ng-click="removeAttachment($index)">Remove</button>
+                            <button class="btn btn--secondary pull-right margin-left-10" ng-click="changeAttachment(attachment)">Change</button>
+                        </td>
+                    </tr>
+                </table>
+			</div>
+			<button ng-if="section.editing" class="btn btn--secondary" ng-click="addAttachment(0)" ng-disabled="countAttachments() >= model.AttachmentsMaximum" data-disableonsubmit="false">Add Applicant Attachment</button>
+			<button ng-if="section.editing" class="btn btn--secondary" style="margin-left: 10px;" ng-click="addAttachment(1)" data-disableonsubmit="false">Add Ministry Attachment</button>
+        </div>
+
+		<div id="grant-application-attachment"></div>
+	</div>
+</div>
+
+<style>
+	ul.k-upload-files {
+		display: none;
+	}
+
+	.k-upload-selected {
+		display: none !important;
+	}
+
+	.k-upload-status-total {
+		display: none !important;
+	}
+
+	.narrow-space-list ul {
+		margin-bottom: 0;
+	}
+
+	.narrow-space-list ul:not([class]) li {
+		margin-bottom: 0;
+	}
+</style>

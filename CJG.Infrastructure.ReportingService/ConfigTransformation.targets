@@ -1,0 +1,39 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="SetTransformAppConfigDestination" BeforeTargets="PrepareForBuild" Condition="exists('app.$(Configuration).config')">
+    <PropertyGroup>
+      <!-- Force build process to use the transformed configuration file from now on. -->
+      <AppConfig>$(IntermediateOutputPath)$(TargetFileName).config</AppConfig>
+    </PropertyGroup>
+    <Message Text="AppConfig transformation destination: = $(AppConfig)" />
+  </Target>
+
+  <!-- Transform the app.config after the prepare for build completes. -->
+  <Target Name="TransformAppConfig" AfterTargets="PrepareForBuild" Condition="exists('app.$(Configuration).config')">
+    <!-- Generate transformed app config in the intermediate directory -->
+    <TransformXml Source="app.config" Destination="$(AppConfig)" Transform="app.$(Configuration).config" />
+  </Target>
+
+  <Target Name="AfterCompile" Condition="exists('NLog.$(Configuration).config')">
+    <ItemGroup>
+      <NLogConfigFiles Include="NLog.*.config" />
+    </ItemGroup>
+    <Copy SourceFiles="@(NLogConfigFiles)" DestinationFolder="$(IntermediateOutputPath)" />
+    
+    <!--Generate transformed NLog.Config in the intermediate directory-->
+  
+    <TransformXml Source="NLog.config" Destination="$(IntermediateOutputPath)NLog.config" Transform="NLog.$(Configuration).config" />
+    <ItemGroup>
+      <AppConfigWithTargetPath Include="$(IntermediateOutputPath)NLog.config">
+        <TargetPath>NLog.config</TargetPath>
+      </AppConfigWithTargetPath>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="AfterPublish">
+    <PropertyGroup>
+      <DeployedConfig>$(_DeploymentApplicationDir)$(TargetName)$(TargetExt).config$(_DeploymentFileMappingExtension)</DeployedConfig>
+    </PropertyGroup>
+    <!--Publish copies the untransformed App.config to deployment directory so overwrite it-->
+    <Copy Condition="Exists('$(DeployedConfig)')" SourceFiles="$(IntermediateOutputPath)$(TargetFileName).config" DestinationFiles="$(DeployedConfig)" />
+  </Target>
+</Project>

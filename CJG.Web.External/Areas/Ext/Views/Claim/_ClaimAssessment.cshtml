@@ -1,0 +1,250 @@
+﻿<div class="clearfix clearfix">
+    <ul class="panel-bar k-widget k-reset k-header k-panelbar" ng-if="model.Claim.EligibleCosts.length > 0" id="panelBar">
+        <li class="k-item k-state-default" ng-repeat="eligibleCost in model.Claim.EligibleCosts">
+            <span class="panel-bar__heading k-link k-header" ng-click="toggle(eligibleCost)" id="panel-header-eligible-cost-{{eligibleCost.Id}}">
+                <span class="display-block">
+                    <span class="pull-left">{{eligibleCost.EligibleExpenseTypeCaption}}</span>
+                </span>
+            </span>
+            <div class="panel-bar__content" id="claim-eligible-cost-{{eligibleCost.Id}}">
+                <table class="table--claims table--claims__cost">
+                    <thead>
+                        <tr>
+                            <th class="claim-title-font">{{ model.Claim.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant) ? '' : 'Agreement and Claim Summary'}}</th>
+                            <th class="claim-title-font">{{ model.Claim.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant) ? 'Total Training Cost' : 'Total Cost'}}</th>
+                            <th class="claim-title-font">{{ eligibleCost.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.Administration) ? '' : 'Number of Participants'}}</th>
+                            <th class="claim-title-font">{{ eligibleCost.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.Administration) ? '' : (model.Claim.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant) ? 'Maximum Cost per Participant' : 'Maximum Average Cost per Participant')}}</th>
+                            <th class="claim-title-font" ng-if="model.Claim.ClaimType == @((int)CJG.Core.Entities.ClaimTypes.MultipleClaimsWithoutAmendments)">Applicant Contribution</th>
+                            <th class="claim-title-font">Government Contribution</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="js-agreed-costs" ng-if="!eligibleCost.AddedByAssessor && model.Claim.ClaimType == @((int)CJG.Core.Entities.ClaimTypes.SingleAmendableClaim)">
+                            <td>
+                                {{ model.Claim.Version > 1 ? 'Claim Limit' : 'Agreement'}}
+                            </td>
+                            <td class="col--AgreedMaxCost">
+                                {{ eligibleCost.AgreedMaxCost | currency : '$' : 2 }}
+                            </td>
+                            <td class="col--AgreedMaxParticipants">
+                                {{ eligibleCost.AgreedMaxParticipants }}
+                            </td>
+                            <td class="col--AgreedMaxParticipantCost">
+                                {{ eligibleCost.AgreedMaxParticipantCost | currency : '$' : 2 }}
+                            </td>
+                            <td class="col--AgreedMaxReimbursement">
+                                {{ eligibleCost.AgreedMaxParticipantReimbursementCost | currency : '$' : 2 }}
+                            </td>
+                        </tr>
+                        <tr ng-if="!eligibleCost.AddedByAssessor && model.Claim.ClaimType == @((int)CJG.Core.Entities.ClaimTypes.SingleAmendableClaim)">
+                            <td>Claim</td>
+                            <td>
+                                {{ eligibleCost.ClaimCost | currency : '$' : 2 }}
+                            </td>
+                            <td>
+                                {{ eligibleCost.ClaimParticipants }}
+                            </td>
+                            <td>
+                                {{ eligibleCost.ClaimMaxParticipantCost | currency : '$' : 2 }}
+                            </td>
+                            <td>
+                                {{ eligibleCost.ClaimMaxParticipantReimbursementCost | currency : '$' : 2 }}
+                            </td>
+                        </tr>
+                        <tr class="js-agreed-costs" ng-if="model.Claim.ClaimType == @((int)CJG.Core.Entities.ClaimTypes.MultipleClaimsWithoutAmendments)">
+                            <td class="no-border">
+                                {{ eligibleCost.SourceId == null && eligibleCost.EligibleCostId != null ? "Agreement" : "Claim Limit" }}
+                            </td>
+                            <td class="no-border">
+                                {{ eligibleCost.AgreedMaxCost | currency : '$' : 2 }}
+                            </td>
+                            <td ng-if="eligibleCost.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.Administration)" class="no-border"></td>
+                            <td ng-if="eligibleCost.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)" class="no-border">
+                                {{ eligibleCost.AgreedMaxParticipants }}
+                            </td>
+                            <td ng-if="eligibleCost.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.Administration)" class="no-border"></td>
+                            <td ng-if="eligibleCost.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)" class="no-border">
+                                {{ eligibleCost.AgreedMaxParticipantCost | currency : '$' : 2 }}
+                            </td>
+                            <td class="no-border">
+                                {{ eligibleCost.AgreedEmployerContribution | currency : '$' : 2 }}
+                            </td>
+                            <td class="no-border">
+                                {{ eligibleCost.AgreedMaxReimbursement | currency : '$' : 2 }}
+                            </td>
+                        </tr>
+                        <tr class="js-claimed-costs" ng-if="model.Claim.ClaimType == @((int)CJG.Core.Entities.ClaimTypes.MultipleClaimsWithoutAmendments)">
+                            <td>
+                                Past Claims
+                            </td>
+                            <td>
+                                {{ eligibleCost.TotalClaimedToDate | currency : '$' : 2 }}
+                            </td>
+                            <td ng-if="eligibleCost.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.Administration)"></td>
+                            <td ng-if="eligibleCost.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)">
+                                {{ eligibleCost.ClaimParticipants }}
+                            </td>
+                            <td ng-if="eligibleCost.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.Administration)"></td>
+                            <td ng-if="eligibleCost.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)">
+                                {{ eligibleCost.ParticipantCostTotalClaimedToDate  | currency : '$' : 2 }}
+                            </td>
+                            <td>
+                                {{ eligibleCost.EmployerContributionTotalClaimedToDate  | currency : '$' : 2 }}
+                            </td>
+                            <td>
+                                {{ eligibleCost.MaxReibursementTotalClaimedToDate  | currency : '$' : 2 }}
+                            </td>
+                        </tr>
+                        <tr class="js-remaining-costs" ng-if="model.Claim.ClaimType == @((int)CJG.Core.Entities.ClaimTypes.MultipleClaimsWithoutAmendments)">
+                            <td>
+                                Remaining
+                            </td>
+                            <td>
+                                {{ eligibleCost.RemainingToClaimed | currency : '$' : 2 }}
+                            </td>
+                            <td ng-if="eligibleCost.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.Administration)"></td>
+                            <td ng-if="eligibleCost.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)">
+                                {{ eligibleCost.ClaimParticipants }}
+                            </td>
+                            <td ng-if="eligibleCost.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.Administration)"></td>
+                            <td ng-if="eligibleCost.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)">
+                                {{ eligibleCost.ParticipantCostRemainingToClaimed  | currency : '$' : 2 }}
+                            </td>
+                            <td>
+                                {{ eligibleCost.EmployerContributionRemainingToClaimed  | currency : '$' : 2 }}
+                            </td>
+                            <td>
+                                {{ eligibleCost.MaxReimbursementRemainingToClaimed | currency : '$' : 2 }}
+                            </td>
+                        </tr>
+                        <tr class="js-training-costs" ng-if="model.Claim.ClaimType == @((int)CJG.Core.Entities.ClaimTypes.MultipleClaimsWithoutAmendments)">
+                            <td>Claim</td>
+                            <td>
+                                {{ eligibleCost.ClaimCost | currency : '$' : 2 }}
+                            </td>
+                            <td ng-if="eligibleCost.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.Administration)"></td>
+                            <td ng-if="eligibleCost.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)">
+                                {{ eligibleCost.ClaimParticipants }}
+                            </td>
+                            <td ng-if="eligibleCost.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.Administration)"></td>
+                            <td ng-if="eligibleCost.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)">
+                                {{ eligibleCost.ClaimMaxParticipantCost | currency : '$' : 2 }}
+                            </td>
+                            <td>
+                                {{ eligibleCost.ClaimEmployerContribution | currency : '$' : 2 }}
+                            </td>
+                            <td>
+                                {{ eligibleCost.ClaimMaxReimbursement | currency : '$' : 2 }}
+                            </td>
+                        </tr>
+                        <tr class="js-training-costs">
+                            <td><strong>Assessment</strong></td>
+                            <td>
+                                <strong>{{ eligibleCost.AssessedCost | currency : '$' : 2 }}</strong>
+                            </td>
+                            <td ng-if="eligibleCost.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.Administration)"></td>
+                            <td ng-if="eligibleCost.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)">
+                                <strong>{{ eligibleCost.AssessedParticipants }}</strong>
+                            </td>
+                            <td ng-if="eligibleCost.ServiceType == @((int)CJG.Core.Entities.ServiceTypes.Administration)"></td>
+                            <td ng-if="eligibleCost.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.Administration)">
+                                <strong>{{ eligibleCost.AssessedMaxParticipantCost | currency : '$' : 2 }}</strong>
+                            </td>
+                            <td ng-if="model.Claim.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.WDAService)">
+                               <strong>{{ eligibleCost.AssessedEmployerContribution | currency : '$' : 2 }}</strong>
+                            </td>
+                            <td>
+                               <strong>{{ model.Claim.ProgramType == @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant) ? (eligibleCost.AssessedMaxParticipantReimbursementCost | currency : '$' : 2) : (eligibleCost.AssessedMaxReimbursement | currency : '$' : 2) }}</strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="clearfix margin-top">
+                </div>
+                <div ng-if="eligibleCost.ServiceType != @((int)CJG.Core.Entities.ServiceTypes.EmploymentServicesAndSupports)">
+                    <div ng-if="eligibleCost.Breakdowns.length > 0">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Expense Breakdown</th>
+                                    <th>Claimed Actual Cost</th>
+                                    <th>Assessed Actual Cost</th>
+                                    <th>Total Prior Claims</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="breakdown in eligibleCost.Breakdowns">
+                                    <td class="col--participant-name">{{breakdown.BreakdownCaption}}</td>
+                                    <td class="col--actual-participant-cost" style="text-align:right;">{{ breakdown.ClaimCost | currency : '$' : 2 }}</td>
+                                    <td class="col--actual-participant-cost" style="text-align:right;">{{ breakdown.AssessedCost | currency : '$' : 2 }}</td>
+                                    <td class="col--actual-participant-cost" style="text-align:right;">{{ breakdown.TotalClaimedToDate | currency : '$' : 2 }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div ng-if="eligibleCost.ExpenseType == @((int)CJG.Core.Entities.ExpenseTypes.ParticipantAssigned)">
+                    <text ng-if="eligibleCost.ParticipantCosts.length == 0"><br />There are no Participant Costs entered for this Expense Item</text>
+
+                    <table class="table--claims table--claims__cost table--claims__participant--outcome">
+                        <tbody>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td colspan="2" class="align-center">
+                                    {{ eligibleCost.AddedByAssessor ? '&nbsp;' : 'Claim' }}
+                                </td>
+                                <td colspan="2" class="align-center">
+                                    Assessment
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Participants</td>
+                                <td>
+                                    <span ng-class="{'unresolved' : eligibleCost.AddedByAssessor}">Participant<br />Actual Cost</span>
+                                </td>
+                                <td>
+                                    <span ng-class="{'unresolved' : eligibleCost.AddedByAssessor}">Government<br />Contribution</span>
+                                </td>
+                                <td>
+                                    Participant<br />Actual Cost
+                                </td>
+                                <td>
+                                    Government<br />Contribution
+                                </td>
+                            </tr>
+                            <tr ng-repeat="participantCost in eligibleCost.ParticipantCosts">
+                                <td>{{participantCost.Name}}</td>
+                                <td>
+                                    <span ng-class="{'unresolved' : eligibleCost.AddedByAssessor}">{{ participantCost.ClaimParticipantCost | currency: '$' : 2 }}</span>
+                                </td>
+                                <td>
+                                    <span ng-class="{'unresolved' : eligibleCost.AddedByAssessor}">{{ participantCost.ClaimReimbursement | currency : '$' : 2 }}</span>
+                                </td>
+                                <td>
+                                    {{ participantCost.AssessedParticipantCost | currency : '$' : 2 }}
+                                </td>
+                                <td>
+                                    {{ participantCost.AssessedReimbursement | currency : '$' : 2 }}
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="clearfix margin-top">
+                    <span class="pull-right margin-top">
+                        <strong>
+                            Reimbursement: {{ eligibleCost.TotalAssessedReimbursement | currency : '$' : 2 }}
+                        </strong>
+                    </span>
+                </div>
+            </div>
+        </li>
+    </ul>
+
+    <div class="pull-right">
+        <strong>
+            Total Reimbursement: <span class="grand-total">{{model.Claim.TotalAssessedReimbursement | currency : '$' : 2}}</span>
+        </strong>
+    </div>
+</div>

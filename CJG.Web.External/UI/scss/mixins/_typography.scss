@@ -1,0 +1,25 @@
+@function fs($to-size) {
+  $val: $to-size;
+  @if $font-unit == rem {
+    $val: rem(strip-units($to-size));
+  }
+  @return $val;
+}
+
+@mixin font-size($to-size) {
+  font-size: fs($to-size);
+}
+
+@mixin webfont-family($font-stack...) {
+  @if length($font-stack) == 0 {
+    $font-stack: $default-font-stack;
+  }
+  font-family: $font-stack;
+  .wf-loading & {
+    visibility: hidden;
+  }
+  .wf-active &,
+  .wf-inactive & {
+    visibility: visible;
+  }
+}

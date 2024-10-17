@@ -1,0 +1,79 @@
+﻿@using CJG.Web.External.Helpers
+@using CJG.Core.Entities
+@model CJG.Web.External.Areas.Ext.Models.SidebarViewModel
+@{
+    ViewBag.Title = "Agreement Review";
+}
+<div ng-controller="GrantAgreementReviewView" ng-grant-application-id="@ViewBag.GrantApplicationId">
+    <div class="row">
+        @Html.ActionLink("Home", nameof(CJG.Web.External.Areas.Ext.Controllers.HomeController.Index), nameof(CJG.Web.External.Areas.Ext.Controllers.HomeController).Replace("Controller", ""), null, new { @class = "link--back" })
+    </div>
+    <div class="row">
+        <div class="main">
+            <program-title-label ng-model="model.GrantAgreementApplicationViewModel"></program-title-label>
+
+            <div ng-if="alert.message" class="row row--alert">
+                <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+            </div>
+
+            <div>
+                <h1>Review <span class="text--lowercase">and</span> Accept Grant Agreement</h1>
+            </div>
+
+            <p>The grant agreement is an offer made to you by the Ministry in response to your grant application.</p>
+            <p>The Ministry requires you to review and accept the grant agreement within five (5) days of its issue.  After this time, the Ministry may withdraw the offer and close your grant file.</p>
+            <p>For each section of the agreement shown below, read and confirm your understanding and acceptance.  When you have done this, you will be able to accept the agreement and proceed with your training and reimbursement claim.</p>
+            <p>If you choose not to accept your agreement, you may reject it and your application file will be closed.</p>
+
+            <br class="is-hidden-on-mobile" />
+
+            <ul class="step-flow--list">
+                <li class="step-flow__item" ng-validation="errors.CoverLetterConfirmed">
+                    <div class="step-flow__heading">Approval Letter</div>
+                    <div class="step-flow__status">
+                        <span ng-if="model.CoverLetterConfirmed" class="label label--complete">Complete</span>
+                        <span ng-if="!model.CoverLetterConfirmed" class="label label--notstarted">Not Started</span>
+                    </div>
+                    <div class="step-flow__action">
+                        <a class="btn btn--secondary" ng-disabled="model.ApplicationStateExternal == @ApplicationStateExternal.ApplicationWithdrawn.ToInt()" href="@Url.Action(nameof(CJG.Web.External.Areas.Ext.Controllers.GrantAgreementController.CoverLetterView), new { grantApplicationId = ViewBag.GrantApplicationId })">View approval letter</a>
+                    </div>
+                </li>
+                <li class="step-flow__item" ng-validation="errors.ScheduleAConfirmed">
+                    <div class="step-flow__heading">Schedule A - Grant Services</div>
+                    <div class="step-flow__status">
+                        <span ng-if="model.ScheduleAConfirmed" class="label label--complete">Complete</span>
+                        <span ng-if="!model.ScheduleAConfirmed" class="label label--notstarted">Not Started</span>
+                    </div>
+                    <div class="step-flow__action">
+                        <a class="btn btn--secondary" ng-disabled="model.ApplicationStateExternal == @ApplicationStateExternal.ApplicationWithdrawn.ToInt()" href="@Url.Action(nameof(CJG.Web.External.Areas.Ext.Controllers.GrantAgreementController.ScheduleAView), new { grantApplicationId = ViewBag.GrantApplicationId })">View Schedule A</a>
+                    </div>
+                </li>
+                <li class="step-flow__item" ng-validation="errors.ScheduleBConfirmed">
+                    <div class="step-flow__heading">Schedule B - Definitions and General Terms</div>
+                    <div class="step-flow__status">
+                        <span ng-if="model.ScheduleBConfirmed" class="label label--complete">Complete</span>
+                        <span ng-if="!model.ScheduleBConfirmed" class="label label--notstarted">Not Started</span>
+                    </div>
+                    <div class="step-flow__action">
+                        <a class="btn btn--secondary" ng-disabled="model.ApplicationStateExternal == @ApplicationStateExternal.ApplicationWithdrawn.ToInt()" href="@Url.Action(nameof(CJG.Web.External.Areas.Ext.Controllers.GrantAgreementController.ScheduleBView), new { grantApplicationId = ViewBag.GrantApplicationId })">View Schedule B</a>
+                    </div>
+                </li>
+            </ul>
+
+            <br class="is-hidden-on-mobile" />
+
+            <div class="sub-container--dark">
+                <p>
+                    By clicking "Accept Agreement" below, I acknowledge and agree that this action has the same
+                    legal effect as accepting the agreement by my written signature.
+                </p>
+                <div class="button-group">
+                    <a class="btn btn--secondary btn--forward btn--mobile-full-width" ng-disabled="model.ApplicationStateInternal == @ApplicationStateInternal.ApplicationWithdrawn.ToInt()" ng-click="rejectAgreement()">Reject agreement</a>
+                    <a class="btn btn--primary pull-right btn--mobile-full-width" ng-disabled="!model.CoverLetterConfirmed || !model.ScheduleAConfirmed || !model.ScheduleBConfirmed" ng-click="acceptAgreement()">Accept agreement</a>
+                </div>
+            </div>
+        </div>
+
+        @Html.Partial("_GrantApplicationSidebar", Model)
+    </div>
+</div>

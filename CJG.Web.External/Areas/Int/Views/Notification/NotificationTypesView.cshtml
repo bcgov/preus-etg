@@ -1,0 +1,103 @@
+﻿@{
+	ViewBag.Title = "Notification Type Management";
+}
+<div ng-controller="NotificationTypes">
+	<div class="row row--alert" ng-if="alert.message">
+		<div class="alert alert--default" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message">
+		</div>
+	</div>
+	<div class="form-section">
+		<div>
+			@* Header *@
+			<h2 class="header__title">Notification Type Management Dashboard</h2>
+		</div>
+		<div class="form__group">
+			@* Quantity *@
+			<div class="form__control float-left margin-right-10">
+				<div>Quantity</div>
+				<div class="selectmenu">
+					<select ng-model="filter.quantity" ng-options="item as item for item in quantities" class="input--small" ng-change="applyFilter()"></select>
+				</div>
+			</div>
+			@* Triggers dropdown *@
+			<div class="form__control float-left margin-right-10">
+				<div>Trigger</div>
+				<div class="selectmenu">
+					<select ng-model="filter.notificationTriggerId" ng-options="item.Id as item.Caption for item in triggers" ng-change="applyFilter()">
+						<option value="">< All Triggers ></option>
+					</select>
+				</div>
+			</div>
+			@* Search *@
+			<div class="form__control float-left">
+				<div>Search Name</div>
+				<input type="text" ng-model="filter.caption" ng-keypress="search($event)" />
+				<button class="btn btn--search" ng-click="search($event)"></button>
+			</div>
+			@* Add New button *@
+			<div class="form__control float-right margin-left-10">
+				<div>&nbsp;</div>
+				<a class="btn btn--primary" ng-click="openNotificationTypeModal()">Add New</a>
+			</div>
+			@* Enable Notifications btn *@
+			<div class="form__control float-right">
+				<div>&nbsp;</div>
+				<a class="btn btn--primary" ng-click="toggleNotificationsDialog()" ng-class="{ 'btn--danger' : data.EnableNotifications }" ng-disabled="!data.AllowEnableNotifications" >{{data.EnableNotifications ? 'Disable' : 'Enable'}} Notifications</a>
+			</div>
+		</div>
+		@* Table *@
+		<div class="form-section-big notification-table">
+			<div class="form-table">
+				@* Header *@
+				<div class="form-table-heading">
+					<div class="form-table-cell width-300px">
+						<label class="action {{sortDirection('Caption')}}" ng-click="sort('Caption')">Name</label>
+					</div>
+					<div class="form-table-cell text-center">
+						<label class="action {{sortDirection('IsActive')}}" ng-click="sort('IsActive')">Active</label>
+					</div>
+					<div class="form-table-cell">
+						<label class="action {{sortDirection('Description')}}" ng-click="sort('Description')">Description</label>
+					</div>
+					<div class="form-table-cell"></div>
+				</div>
+				@* Body *@
+				<div class="form-table-row" ng-repeat="notificationType in model.Items" ng-class="{ 'row-highlight' : notification.Selected }" ng-dblclick="openNotificationTypeModal(notificationType)">
+					@* Name *@
+					<div class="form-table-cell">{{notificationType.Caption}}</div>
+					@* Active *@
+					<div class="form-table-cell text-center">
+						<input type="checkbox" ng-model="notificationType.IsActive" id="is-active-{{$index}}" ng-disabled="true" />
+						<label for="is-active-{{$index}}">&nbsp;</label>
+					</div>
+					@* Description *@
+					<div class="form-table-cell">{{notificationType.Description}}</div>
+					@* Edit button *@
+					<div class="form-table-cell">
+					<a ng-click="openNotificationTypeModal(notificationType)" class="btn btn--secondary pull-right">Edit</a>
+					</div>
+				</div>
+			</div>
+			@* Footer *@
+			<div>
+				<span>
+					<label ng-show="model.Total">Showing {{pager.items.first}} to {{pager.items.last}} of {{pager.items.total}} entries</label>
+					<label ng-show="!model.Total">There are no notification types</label>
+				</span>
+				<div class="button-group">
+					<div class="float-right">
+						<button class="btn btn--secondary internal-previous" ng-disabled="!pager.enablePrevious" tabindex="0" ng-click="!pager.enablePrevious || applyFilter(pager.page - 1)">Previous</button>
+						<span>
+							<button class="btn btn--secondary btn--page" tabindex="0" ng-show="pager.showFirstPage" ng-click="applyFilter(pager.showFirstPage)">{{pager.showFirstPage}}</button>
+							<span class="ellipsis" ng-show="pager.showFirstPage">…</span>
+							<button ng-repeat="page in pager.pages" class="btn btn--secondary btn--page" ng-class="{ 'btn--current' : pager.page === page }" tabindex="0" ng-click="applyFilter(page)" ng-disabled="pager.page === page">{{page}}</button>
+							<span class="ellipsis" ng-show="pager.showLastPage">…</span>
+							<button class="btn btn--secondary btn--page" tabindex="0" ng-show="pager.showLastPage" ng-click="applyFilter(pager.showLastPage)">{{pager.showLastPage}}</button>
+						</span>
+						<button class="btn btn--secondary internal-next" ng-disabled="!pager.enableNext" tabindex="0" ng-click="!pager.enableNext || applyFilter(pager.page + 1)">Next</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

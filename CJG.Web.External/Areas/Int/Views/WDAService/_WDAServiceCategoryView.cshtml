@@ -1,0 +1,219 @@
+﻿<div ng-controller="WDAServiceCategories" show-hide="false">
+	<div class="panel-section-item">
+		<div class="panel-section-title" ng-click="toggle($event)">
+			<h3 class="display-inline-block">Service Categories</h3>
+		</div>
+		<div class="panel-section-buttons">
+			<span><button class="btn btn--empty" style="pointer-events: none;" tabindex="-1">&nbsp;</button></span>
+			<span><button class="btn btn--secondary" ng-click="preview()">Test Formatted Text</button></span>
+			<section-edit-buttons ng-model="section.editing"></section-edit-buttons>
+		</div>
+	</div>
+
+	<div class="panel-section-content" ng-show="section.show">
+		<div class="row row--alert" ng-if="alert.message">
+			<div class="alert alert--default" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+		</div>
+
+		@* Service Categories *@
+		<table class="service-categories-table">
+			<thead>
+				<tr>
+					<th class="width-5"></th>
+					<th class="width-25">Category</th>
+					<th class="width-5">Active</th>
+					<th>Description</th>
+					<th class="width-8" ng-show="section.editing">Order</th>
+				</tr>
+			</thead>
+			<tbody ng-repeat="serviceCategory in model.ServiceCategories | orderBy: 'RowSequence'" ng-show="!serviceCategory.Deleted">
+				<tr ng-class="{'row-highlighted' : serviceCategory.Selected}">
+					@* Open/Close btn *@
+					<td class="width-5">
+						<button class="btn btn--secondary" ng-click="serviceCategory.Selected = !serviceCategory.Selected">{{ serviceCategory.Selected ? 'Close' : 'Open'}}</button>
+					</td>
+					@* Category *@
+					<td class="category-cell">
+						<div class="input-medium">
+							<label class="text--bold float-left category-cell-row">Caption:&nbsp;</label>
+							<input class="width-300px" type="text" ng-model="serviceCategory.Caption" ng-validation="errors['ServiceCategories[{{$index}}]'].Caption" ng-editing />
+						</div>
+						<div>
+							<label class="text--bold float-left category-cell-row">Type:&nbsp;</label>
+							<div ng-validation="errors['ServiceCategories[{{$index}}]'].ServiceTypeId">
+								<select class="category-cell-input" ng-model="serviceCategory.ServiceTypeId" ng-options="item.Id as item.Caption for item in serviceTypes" ng-change="changeServiceType(serviceCategory)" ng-editing></select>
+							</div>
+						</div>
+						<div style="display:none;">
+							<input type="checkbox" ng-model="serviceCategory.AutoInclude" id="service-category-autoInclude-{{serviceCategory.Id}}-{{$index}}" ng-disabled="!section.editing" />
+							<label for="service-category-autoInclude-{{serviceCategory.Id}}-{{$index}}" title="By default this will add an expense line to the application.">Auto Include</label>
+						</div>
+						<div style="display:none;">
+							<input type="checkbox" ng-model="serviceCategory.AllowMultiple" id="service-category-allowMultiple-{{serviceCategory.Id}}-{{$index}}" ng-disabled="!section.editing" />
+							<label for="service-category-allowMultiple-{{serviceCategory.Id}}-{{$index}}" title="Allow multiple expense lines of the same type.">Allow Multiple</label>
+						</div>
+						<div ng-show="serviceCategory.ServiceTypeId === @((int)CJG.Core.Entities.ServiceTypes.EmploymentServicesAndSupports)">
+							<input type="checkbox" ng-model="serviceCategory.CompletionReport" id="service-category-completion-report-{{serviceCategory.Id}}-{{$index}}" ng-disabled="!section.editing" />
+							<label for="service-category-completion-report-{{serviceCategory.Id}}-{{$index}}" title="Participants must be associated with these expenses during completion reporting.">Completion Report</label>
+						</div>
+
+						<div ng-if="serviceCategory.ServiceTypeId === @((int)CJG.Core.Entities.ServiceTypes.SkillsTraining)">
+							<div>
+								<label class="text--bold float-left category-cell-row" title="The minimum allowed training programs.">Minimum:&nbsp;</label>
+								<input type="text" ng-model="serviceCategory.MinPrograms" class="input--small" ng-number maxlength="2" ng-validation="errors['ServiceCategories[{{$index}}]'].MinPrograms" ng-editing />
+							</div>
+							<div>
+								<label class="text--bold float-left category-cell-row" title="The maximum allowed training programs.">Maximum:&nbsp;</label>
+								<input type="text" ng-model="serviceCategory.MaxPrograms" class="input--small" ng-number maxlength="2" ng-validation="errors['ServiceCategories[{{$index}}]'].MaxPrograms" ng-editing />
+							</div>
+						</div>
+
+						<div ng-if="serviceCategory.ServiceTypeId === @((int)CJG.Core.Entities.ServiceTypes.EmploymentServicesAndSupports)">
+							<div>
+								<label class="text--bold float-left category-cell-row" title="The minimum allowed service providers.">Minimum:&nbsp;</label>
+								<input type="text" ng-model="serviceCategory.MinProviders" class="input--small" ng-number maxlength="2" ng-validation="errors['ServiceCategories[{{$index}}]'].MinProviders" ng-editing />
+							</div>
+							<div>
+								<label class="text--bold float-left category-cell-row" title="The maximum allowed service providers.">Maximum:&nbsp;</label>
+								<input type="text" ng-model="serviceCategory.MaxProviders" class="input--small" ng-number maxlength="2" ng-validation="errors['ServiceCategories[{{$index}}]'].MaxProviders" ng-editing />
+							</div>
+						</div>
+					</td>
+					@* Active *@
+					<td>
+						<input type="checkbox" ng-model="serviceCategory.IsActive" id="service-category-isActive-{{serviceCategory.Id}}-{{serviceCategory.uid}}" ng-disabled="!section.editing" />
+						<label for="service-category-isActive-{{serviceCategory.Id}}-{{serviceCategory.uid}}">&nbsp;</label>
+					</td>
+					@* Description *@
+					<td>
+						<p ng-bind-html="serviceCategory.Description" ng-if="!section.editing"></p>
+						<textarea ng-model="serviceCategory.Description" ng-if="section.editing" rows="2"></textarea>
+					</td>
+					@* Delete btn *@
+					<td class="delete-button-cell" ng-show="section.editing" title="{{serviceCategory.AllowDelete ? '' : 'Service category is being used in applications'}}">
+						<span class="up-arrow" ng-click="changeOrder(model.ServiceCategories, $index);" ng-if="$index != 0"></span>
+						<button class="btn btn--secondary" ng-show="section.editing" ng-click="deleteItem(model.ServiceCategories, $index)" ng-disabled="!serviceCategory.AllowDelete">Delete</button>
+					</td>
+				</tr>
+
+				@* Service Line *@
+				<tr ng-if="serviceCategory.Selected">
+					<td></td>
+					<td colspan="4">
+						<h4>Service Lines</h4>
+						<table class="service-categories-table">
+							<thead>
+								<tr class="">
+									<th class="width-5"></th>
+									<th class="width-20">Service</th>
+									<th class="width-5">Active</th>
+									<th>Description</th>
+									<th class="width-8" ng-show="section.editing">Order</th>
+								</tr>
+							</thead>
+							<tbody ng-repeat="serviceLine in serviceCategory.ServiceLines | orderBy: 'RowSequence'" ng-show="!serviceLine.Deleted">
+								<tr ng-class="{'row-highlighted' : serviceLine.Selected}">
+									@* Open btn *@
+									<td>
+										<button class="btn btn--secondary" ng-click="serviceLine.Selected = !serviceLine.Selected" ng-show="serviceLine.ServiceLineBreakdowns.length || section.editing">{{ serviceLine.Selected ? 'Close' : 'Open'}}</button>
+									</td>
+									@* Service *@
+									<td class="category-cell">
+										<div class="input-medium">
+											<label class="text--bold float-left category-cell-row">Caption:&nbsp;</label>
+											<input type="text" ng-model="serviceLine.Caption" class="input--medium" ng-validation="errors['ServiceLine[{{$index}}]'].Caption" ng-editing />
+										</div>
+										<div style="display:none;">
+											<input type="checkbox" ng-model="serviceLine.EnableCost" id="service-line-enableCost-{{serviceLine.Id}}-{{$index}}" ng-disabled="!section.editing" />
+											<label for="service-line-enableCost-{{serviceLine.Id}}-{{$index}}" title="Allow applicant to enter a cost associated with this service line.">Enable Cost</label>
+										</div>
+									</td>
+									@* Active *@
+									<td>
+										<input type="checkbox" ng-model="serviceLine.IsActive" id="service-line-isActive-{{serviceLine.Id}}-{{serviceLine.uid}}" ng-disabled="!section.editing" />
+										<label for="service-line-isActive-{{serviceLine.Id}}-{{serviceLine.uid}}">&nbsp;</label>
+									</td>
+									@* Description *@
+									<td>
+										<p ng-bind-html="serviceLine.Description" ng-if="!section.editing"></p>
+										<textarea ng-model="serviceLine.Description" ng-if="section.editing" rows="2"></textarea>
+									</td>
+									@* Delete btn *@
+									<td class="delete-button-cell" ng-show="section.editing" title="{{serviceLine.AllowDelete ? '' : 'Service line is being used in applications'}}">
+										<span class="up-arrow" ng-click="changeOrder(serviceCategory.ServiceLines, $index);" ng-if="$index != 0"></span>
+										<button class="btn btn--secondary" ng-show="section.editing" ng-click="deleteItem(serviceCategory.ServiceLines, $index)" ng-disabled="!serviceLine.AllowDelete">Delete</button>
+									</td>
+								</tr>
+
+								@* Service Line Breakdowns *@
+								<tr class="item-block" ng-if="serviceLine.Selected">
+									<td></td>
+									<td colspan="4">
+										<h4>Service Line Breakdowns</h4>
+										<div class="service-line-breakdowns-caption">
+											<label class="text--bold float-left" title="The caption for the listed service line breakdowns.">Breakdown Caption:</label>
+											<input type="text" ng-model="serviceLine.BreakdownCaption" class="input--medium" ng-validation="errors['ServiceLines[{{$index}}]'].Caption" ng-editing />
+										</div>
+										<table class="service-categories-table" ng-show="serviceLine.ServiceLineBreakdowns.length || section.editing">
+											<thead>
+												<tr>
+													<th class="width-20">Caption</th>
+													<th class="width-5" >Active</th>
+													<th>Description</th>
+													<th class="width-8" ng-show="section.editing">Order</th>
+												</tr>
+											</thead>
+											<tbody ng-repeat="breakdown in serviceLine.ServiceLineBreakdowns | orderBy: 'RowSequence'" ng-show="!breakdown.Deleted">
+												<tr class="category-cell">
+													@* Caption *@
+													<td>
+														<div class="">
+															<input type="text" ng-model="breakdown.Caption" class="input--medium" ng-validation="errors['ServiceLineBreakdowns[{{$index}}]'].Caption" ng-editing />
+														</div>
+													</td>
+													@* Active *@
+													<td>
+														<input type="checkbox" ng-model="breakdown.IsActive" id="service-line-breakdown-isActive-{{breakdown.Id}}-{{breakdown.uid}}" ng-disabled="!section.editing" />
+														<label for="service-line-breakdown-isActive-{{breakdown.Id}}-{{breakdown.uid}}">&nbsp;</label>
+													</td>
+													@* Description *@
+													<td>
+														<p ng-bind-html="breakdown.Description" ng-if="!section.editing"></p>
+														<textarea ng-model="breakdown.Description" ng-if="section.editing" rows="2"></textarea>
+													</td>
+													@* Delete btn *@
+													<td class="delete-button-cell" ng-show="section.editing" title="{{breakdown.AllowDelete ? '' : 'Service line breakdown is being used in applications'}}">
+														<span class="up-arrow" ng-click="changeOrder(serviceLine.ServiceLineBreakdowns, $index);" ng-if="$index != 0"></span>
+														<button class="btn btn--secondary" ng-show="section.editing" ng-click="deleteItem(serviceLine.ServiceLineBreakdowns, $index)" ng-disabled="!breakdown.AllowDelete">Delete</button>
+													</td>
+												</tr>
+											</tbody>
+											@* Add New Service Line Breakdown btn *@
+											<tr ng-if="section.editing">
+												<td colspan="2">
+													<button class="btn btn--secondary" ng-click="addServiceLineBreakdown(serviceLine)">Add New Breakdown</button>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</tbody>
+							@* Add New Service Line btn *@
+							<tr ng-if="section.editing">
+								<td colspan="2">
+									<button class="btn btn--secondary" ng-click="addServiceLine(serviceCategory)">Add New Service Line</button>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</tbody>
+			@* Add New Service Category btn *@
+			<tr ng-if="section.editing">
+				<td colspan="2">
+					<button class="btn btn--secondary" ng-click="addServiceCategory()">Add New Service Category</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>

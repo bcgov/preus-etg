@@ -1,0 +1,36 @@
+﻿<div class="form__group form__group--radio-inline">
+    <label class="form__label" for="allParticipantsCompletedTraining">
+        {{question.Question}} <abbr title="Required" ng-if="question.IsRequired">*</abbr>
+    </label>
+</div>
+<div class="block--completion-report">
+    <pager ng-filter="getParticipants" ng-local="true">
+        <table class="form__group--data-grid">
+            <thead>
+                <tr>
+                    <th ng-repeat="heading in question.TableHeadings">{{heading}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="participant in $parent.$ctrl.ngItems" ng-show="$parent.$parent.$ctrl.showPage($index)">
+                    <td class="participant-name-panel">{{participant.FirstName}} {{participant.LastName}}</td>
+                    <td>
+
+                        <div class="form-item" style="display:block">
+                            <div class="form__control">
+                                <div>
+                                    <div ng-repeat="item in question.Level1Options">
+                                        <input type="checkbox"
+                                               id="cb-{{item.Id}}-{{participant.Id}}"
+                                               ng-model="getParticipantAnswer(question.Level1Answers, participant.Id).IsSelected[item.Id]" />
+                                        <label for="cb-{{item.Id}}-{{participant.Id}}">{{item.Answer}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </pager>
+</div>

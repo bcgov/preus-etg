@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "Organizations";
+}
+
+<div ng-controller="OrganizationList">
+    <div class="form-section">
+        <div>
+            <h2 class="header__title">Organizations</h2>
+        </div>
+    </div>
+
+    <div class="details-block">
+        <pager ng-if="model" ng-filter="getOrganizations" ng-page-size="[10, 25, 50, 100]" ng-risk-flag="true">
+            <div class="form-table">
+                <div class="form-table-heading">
+                    <div class="form-table-cell">Risk</div>
+                    <div class="form-table-cell">Organization</div>
+                    <div class="form-table-cell">DBA</div>
+                    <div class="form-table-cell">YTD Requested</div>
+                    <div class="form-table-cell">YTD Approved</div>
+                    <div class="form-table-cell">YTD Paid</div>
+                    <div class="form-table-cell">Notes</div>
+                    <div class="form-table-cell"></div>
+                </div>
+                <div class="form-table-row" ng-repeat="org in $parent.$ctrl.ngItems">
+                    <div class="form-table-cell" style="vertical-align:middle;"><img class="center"  ng-if="org.RiskFlag" src="../../../../images/icons/risk-flag.png" /></div>
+                    <div class="form-table-cell"><div class="form-word-wrap"><a href="/Int/Organization/History/View/{{org.OrgId}}">{{org.LegalName}}</a>
+                    </div></div>
+                    <div class="form-table-cell">{{org.DoingBusinessAs}}</div>
+                    <div class="form-table-cell">{{org.YTDRequested| currency : '$' : 2}}</div>
+                    <div class="form-table-cell">{{org.YTDApproved| currency : '$' : 2}}</div>
+                    <div class="form-table-cell">{{org.YTDPaid| currency : '$' : 2}}</div>
+                    <div class="form-table-cell"><div class="form-word-wrap">{{org.Notes}}</div></div>
+                    <div class="form-table-cell">
+                        <button ng-if="model.AllowDeleteOrganization" class="btn btn--secondary" ng-click="editOrganization(org)">Edit</button>
+                        <button ng-if="!model.AllowDeleteOrganization" class="btn btn--secondary" ng-click="editOrganization(org)" disabled="disabled">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </pager>
+    </div>
+
+    @*<div>
+        <button class="btn btn--primary btn--forward js-btn-create" ng-click="addOrganization()">Add Organization</button>
+    </div>*@
+</div>

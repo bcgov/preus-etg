@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "Program Notifications";
+}
+
+<div ng-controller="ProgramNotificationManagement">
+    <h2 class="header__title header--small">Program Notifications</h2>
+    <p>Program notifications provide a way to send out mass emails to applicants.</p>
+    <pager ng-filter="getProgramNotifications" ng-page-size="[10, 25, 50, 100]">
+        <table class="form__group--data-grid">
+            <thead>
+                <tr>
+                    <th>Notification</th>
+                    <th>Description</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="notification in $parent.$ctrl.ngItems">
+                    <td>{{notification.Caption}}</td>
+                    <td>{{notification.Description}}</td>
+                    <td style="text-align: right;">
+                        <button class="btn btn--secondary" ng-click="update(notification.Id)">Edit</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </pager>
+    <button class="btn btn--primary" ng-click="update()">Add New</button>
+</div>

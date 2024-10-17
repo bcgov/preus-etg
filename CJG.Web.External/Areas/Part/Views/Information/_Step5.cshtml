@@ -1,0 +1,17 @@
+﻿
+<div ng-if="model.ParticipantInfoStep5ViewModel" ng-show="model.ParticipantInfoStep0ViewModel.Step == 5">
+    <p class="subheader--step">Step 5 of 5: Consent and certification of personal information</p>
+
+    <div ng-bind-html="model.ParticipantInfoStep5ViewModel.ParticipantConsentBody"></div>
+
+    <div class="form__group">
+        <label class="form__label">Your name</label>
+
+        <div class="form__control">
+            {{model.ParticipantInfoStep5ViewModel.ConsentNameEntered}}
+        </div>
+    </div>
+
+    <br />
+    <button type="button" class="btn btn--primary" ng-click="next()">I hereby provide my consent as described above</button>
+</div>

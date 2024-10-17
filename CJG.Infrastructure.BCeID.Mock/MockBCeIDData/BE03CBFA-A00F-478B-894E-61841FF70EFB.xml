@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<User>
+  <Guid>BE03CBFA-A00F-478B-894E-61841FF70EFB</Guid>
+  <AccountType>Void</AccountType>
+  <FirstName>CJG05</FirstName>
+  <LastName>Test05</LastName>
+  <EmailAddress>ian@ccal.ca</EmailAddress>
+  <TelephoneNumber>1 604-395-6000</TelephoneNumber>
+  <BusinessGuid>cb32d2f3-b9db-44ba-976b-1bd85a84e0bb</BusinessGuid>
+  <Business>
+    <Guid>cb32d2f3-b9db-44ba-976b-1bd85a84e0bb</Guid>
+    <LegalName>Canada-BC Job Grant</LegalName>
+    <DoingBusinessAs>CJG Service Providers T</DoingBusinessAs>
+    <AddressId>8</AddressId>
+    <Address>
+      <Id>8</Id>
+      <AddressLine1>419 Sixth Street</AddressLine1>
+      <AddressLine2></AddressLine2>
+      <City>New Westminster</City>
+      <PostalCode>V3L 3C2</PostalCode>
+      <Province>British Columbia</Province>
+      <Country>CA</Country>
+      <UnstructuredAddress></UnstructuredAddress>
+      <Businesses></Businesses>
+    </Address>
+    <Users></Users>
+  </Business>
+</User>

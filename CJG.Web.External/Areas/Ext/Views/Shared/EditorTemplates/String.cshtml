@@ -1,0 +1,11 @@
+﻿@* This is based on code from here http://stackoverflow.com/a/11702643/5322405 *@
+@{
+    var data = HtmlHelper.AnonymousObjectToHtmlAttributes(ViewData["htmlAttributes"]);
+
+    if (ViewData.ModelMetadata.IsReadOnly)
+    {
+        data.Add("readonly", "readonly");
+        data.Add("disabled", "disabled");
+    }
+    @Html.TextBox("", ViewData.TemplateInfo.FormattedModelValue, data)
+}

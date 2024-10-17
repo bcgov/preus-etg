@@ -1,0 +1,297 @@
+.btn-group {
+  @include clearfix;
+  display: inline-block;
+}
+
+.btn {
+  appearance: none;
+  background-color: $button-background-color-default;
+  border: $button-border-width-default solid $button-border-color-default;
+  color: $button-color-default;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  font-weight: bold;
+
+  + .btn {
+    margin-left: 0;
+  }
+
+  &[disabled],
+  &.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .layout-internal & {    
+    padding: 5px 10px 6px;
+
+    &.btn--small {
+      padding: $button-internal-small-padding;
+    }
+  }
+
+  &.btn--small {
+    padding: $button-internal-padding;
+  }
+
+  &.btn--filter {
+    display: inline-block;
+    font-size: 10pt;
+    font-weight: bolder;
+    padding: 5px 10px 6px;
+    border: 1px solid #d0d0d1;
+    line-height: 1.2;
+    color: #252525;
+    background: #f2f2f2;
+    height: 100%;
+  }
+
+  &.btn--filter:hover {
+    text-decoration: underline;
+  }
+
+  &.btn--filter:focus {
+    outline: none;
+  }
+}
+
+.k-widget .btn {
+  box-sizing: border-box;
+}
+
+.btn--primary,
+.editable-submit {
+  @include font-size($button-font-size-primary);
+  color: $button-primary-color;
+  line-height: $button-primary-line-height;
+  padding: $button-primary-padding;
+  white-space: nowrap;
+
+  &:hover,
+  &.hover,
+  &:active,
+  &.active {
+    color: $button-primary-hover-color;
+    text-decoration: underline;
+  }
+
+  &,
+  &[disabled],
+  &.disabled {
+  }
+}
+
+.btn--page,
+.btn--page:last-child,
+.btn--page:first-child {
+  box-sizing: border-box;
+  min-width: 35px;
+  background-color: transparent;
+  border: 1px solid #efefef;
+  font-weight: normal;
+  margin-left: 2px !important;
+  margin-right: 2px !important;
+
+  &:hover,
+  &.hover,
+  &:active,
+  &.active {
+    font-weight: bold;
+    text-decoration: underline;
+  }
+
+  &.btn--current {
+    background-color: #6e6e6e !important;
+    color: #fff !important;
+  }
+
+  &.btn--secondary {
+    min-width: 35px;
+    line-height: normal !important;
+  }
+
+  &.btn-small,
+  &.btn--secondary.btn-small {
+    line-height: normal !important;
+    padding: 5px 10px !important;
+    height: inherit;
+  }
+}
+
+.btn--secondary,
+.btn--secondary:last-child,
+.btn--secondary:first-child {
+  @include font-size($button-font-size-secondary);
+  line-height: $button-secondary-line-height;
+  padding: $button-secondary-padding;
+  box-sizing: border-box;
+  min-width: 53px;
+  background: color('secondaryBtnBG');
+  color: color('btnText');
+  border-color: color('secondaryBtnBorder');
+  border-style: solid;
+  border-width: 1px;
+  font-weight: bold;
+
+  &, &:hover {
+    &.btn {
+      background: color('secondaryBtnBG');
+      color: color('btnText');
+      border-color: color('secondaryBtnBorder');
+    }
+  }
+
+  &:hover,
+  &.hover,
+  &:active,
+  &.active {
+    text-decoration: underline;
+  }
+
+  &[disabled],
+  &.disabled {
+    opacity: 0.4;
+    cursor: default;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.btn-tertiary {
+  @include font-size($button-font-size-tertiary);
+  appearance: none;
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0;
+
+  &:hover,
+  &.hover {
+    color: $button-tertiary-color-hover;
+  }
+
+  &[disabled],
+  &.disabled {
+    color: $button-tertiary-color-disabled;
+  }
+}
+
+input[type=submit] {
+  &[disabled] {
+    opacity: .65;
+  }
+}
+
+// For unstyled <button> elements
+.btn--plain {
+  background-color: transparent;
+  border: 0;
+  color: color('primary');
+  padding: 0;
+  font-weight: normal;
+
+  &:hover {
+    background-color: transparent;
+  }
+}
+
+.btn--danger {
+  &, &:hover, &:active {
+    border-color: #d9534f !important;
+    background-color: #d9534f !important;
+    color: white !important;
+  }
+}
+
+.btn--success {
+  &, &:hover, &:active {
+    border-color: green !important;
+    background-color: green !important;
+    color: white !important;
+  }
+}
+
+.button-group {
+  @include clearfix;
+  margin: gap(3) 0 gap(2) 0;
+
+  .btn:first-child {
+    float: left;
+  }
+
+  .btn:last-child {
+    float: right;
+    margin-top: 0;
+  }
+}
+
+.btn--add-expense {
+  margin-bottom: gap(2);
+}
+
+.btn--empty {
+  font-weight: normal;
+  line-height: 1.5em;
+  background: none;
+  border: none;
+  color: #494949;
+}
+
+.btn--mobile-full-width {
+  width: 100%;
+
+  @include media-breakpoint-up(md) {
+    width: auto;
+  }
+}
+
+.btn + .btn {
+  @include media-breakpoint-down(sm) {
+    margin-top: gap(2);
+  }
+
+  margin-left: 30px;
+}
+
+.alert-popup-btn {
+  margin: 0 2px 0 2px;
+  width: 15%;
+}
+
+.btn--search {
+  @extend .fa;
+  @extend .fa-search;
+  margin-left: -4px;
+  line-height: 18px;
+  border-bottom: 0;
+  color: $button-primary-color;
+  white-space: nowrap;
+
+  &:hover,
+  &.hover,
+  &:active,
+  &.active {
+    text-decoration: underline;
+  }
+}
+
+.btn--delete {
+  height: 40px;
+  border-color: #fb7f7c;
+  background-color: #d9534f;
+  color: white;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

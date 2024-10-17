@@ -1,0 +1,1120 @@
+$tablePadding: 15px 15px 15px 0;
+
+table {
+  &.dataTable {
+    tbody {
+      tr {
+        td, th {
+          padding: $tablePadding;
+
+          &:last-child {
+            padding-right: 0;
+          }
+        }
+      }
+    }
+  }
+
+  td, th {
+    padding: $tablePadding;
+
+    &:last-child {
+      padding-right: 0;
+    }
+  }
+
+  th {
+    vertical-align: top;
+    font-size: $font-size-small;
+  }
+
+  td {
+    font-size: $font-size-table;
+  }
+
+  .align-left {
+    float: left;
+  }
+}
+
+
+.table {
+  border: 1px solid color('white');
+  margin-bottom: gap(2);
+  width: 100%;
+
+  th,
+  td {
+    padding: 15px 10px;
+    border: 1px solid color('border');
+    color: color('bodyText');
+  }
+
+  td {
+    text-align: center;
+    font-size: $font-size-table;
+
+    select {
+      width: 100%;
+    }
+  }
+
+  th {
+    font-size: $font-size-small;
+    font-weight: bold;
+  }
+
+  td {
+    // background-color: $tile-background;
+  }
+
+  th:first-child,
+  td:first-child {
+    text-align: left;
+    padding-left: 0;
+  }
+
+  th:last-child,
+  td:last-child {
+    padding-right: 0;
+  }
+}
+
+.table--expenses,
+.table--expenses-total {
+  border: 0;
+
+  th, td {
+    border: 0;
+    vertical-align: middle;
+    box-sizing: border-box;
+    // min-width: 90px;
+    // max-width: 88px;
+    //min-width: 115px;
+  }
+
+  th {
+    vertical-align: top;
+    font-size: $font-size-small;
+  }
+
+  .num-col {
+    text-align: right;
+
+    input {
+      text-align: right;
+    }
+  }
+
+  th {
+    padding: 5px 5px 10px;
+    border-bottom: solid 1px color('Charcoal');
+  }
+
+  td:not(.scolumn) {
+    border-bottom: solid 1px color('Charcoal');
+    border-top: solid 1px color('Charcoal');
+    height: 56px;
+    vertical-align: middle;
+  }
+
+  tr {
+    td:first-child {
+      width: 230px;
+    }
+  }
+
+  tr:first-of-type {
+    td {
+      border-bottom: none;
+    }
+  }
+
+  tr:last-of-type {
+    td {
+      &:last-child {
+        text-align: right;
+      }
+    }
+  }
+
+  .scolumn {
+    text-align: right;
+  }
+
+  thead {
+    @include font-size(14px);
+    // border-top: 1px solid color('border');
+    // border-bottom: 1px solid color('border');
+    line-height: 1.2;
+    border-top: 0;
+  }
+
+  tbody {
+    // border-bottom: 1px solid color('border');
+    padding-bottom: 10px;
+  }
+
+  .th-col-1 {
+    min-width: 200px;
+  }
+
+  .well--dark & {
+    thead, tbody {
+      border-color: darken(color('border'), 10%);
+    }
+  }
+}
+
+
+.table--expenses {
+  margin-bottom: 0;
+
+  .input--small.k-numerictextbox.js-total-cost {
+    width: auto;
+  }
+
+  .etg-table-col__empty {
+    width: 5%;
+  }
+
+  .etg-table-col__expense-type {
+    width: 15%;
+  }
+
+  .etg-table-col__gov-contribution, .etg-table-col__num-part {
+    width: 15%;
+    text-align: right;
+  }
+
+  .etg-table-col__cost-per-part {
+    width: 10%;
+    text-align: right;
+  }
+
+  .table-col__expense-type {
+    width: 30%;
+
+    .selectmenu {
+      width: calc(100% - 2px);
+    }
+  }
+
+  .table-col__num-part {
+    width: 10%;
+  }
+
+  .table-col__cost-per-part {
+    width: 15%;
+  }
+
+  .table-col__total-train-cost {
+    width: 15%;
+  }
+
+  .table-col__emp-contribution {
+    width: 15%;
+  }
+
+  .table-col__gov-contribution {
+    width: 15%;
+  }
+
+  .table-col__edit {
+    width: 76px;
+  }
+
+  .table-col__delete {
+    width: 86px;
+  }
+
+  .table-col__edit-delete {
+    width: 162px;
+
+    span {
+        display: none;
+    }
+  }
+}
+
+.int-program-cost-table {
+  td:not(.scolumn) {
+    border-top: none;
+  }
+}
+
+.table--datatable {
+  th {
+    text-align: left;
+  }
+}
+
+.table-training-services {
+  border: 0;
+
+  th, td {
+    border: 0;
+    vertical-align: middle;
+    text-align: left;
+    box-sizing: border-box;
+  }
+
+  th {
+    vertical-align: top;
+    padding: 5px 10px 10px;
+    border-bottom: solid 1px color('Charcoal');
+  }
+
+  td {
+    border-bottom: solid 1px color('Charcoal');
+    height: 56px;
+    vertical-align: middle;
+  }
+
+  tr th:first-child, tr td:first-child {
+    width: 290px;
+  }
+
+  tr th:nth-child(2), tr td:nth-child(2) {
+    width: 200px;
+  }
+
+
+  tbody {
+    padding-bottom: 10px;
+  }
+
+  .th-col-1 {
+    min-width: 200px;
+  }
+
+  .well--dark & {
+    thead, tbody {
+      border-color: darken(color('border'), 10%);
+    }
+  }
+}
+
+
+.js-expenses--add-edit {
+  > .form.well {
+    background-color: rgba(color('Ghost'), 0.4);
+    margin: 20px -20px;
+  }
+}
+
+.js-expenses--add-edit.form-is-hidden + .button-group {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.table--select-provider {
+  &.dataTable tbody td {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+}
+
+
+.table--completion-reporting {
+  thead {
+    border-bottom: 3px solid #333;
+  }
+}
+
+.table--stream-matrix {
+  a {
+    cursor: pointer;
+  }
+
+  td {
+    text-align: left;
+  }
+
+  td, th {
+    border-left: none;
+    border-right: none;
+
+    &:first-child, &:last-child {
+      padding: 15px 10px;
+    }
+  }
+
+  thead th {
+    font-weight: normal;
+    text-align: right;
+  }
+
+  .cell-highlight {
+    background-color: color('lightBlue');
+  }
+
+  .text--right {
+    text-align: right;
+  }
+}
+
+.table-row-bottom-border {
+  tr {
+    border-bottom: 1px solid #EFEFEF;
+  }
+}
+
+.table--grant-details {
+  border: none;
+
+  th, td {
+    text-align: left;
+    border: 0;
+    vertical-align: middle;
+    border-bottom: solid 1px color('DarkGrey');
+  }
+
+  .text--right {
+    text-align: right;
+  }
+}
+
+.table--datatable-horizontal {
+  td, th {
+    border: 1px solid #c5c5c5;
+  }
+
+  td {
+    text-align: center;
+  }
+
+  .num-col {
+    text-align: right;
+    padding-right: 0;
+  }
+
+  tbody tr > th:first-child {
+    text-align: left;
+  }
+
+  [colspan="2"] {
+    min-width: 265px;
+
+    .js-claims-dashboard & {
+      min-width: 0;
+    }
+  }
+
+  .indent-cell {
+    text-indent: 20px;
+  }
+}
+
+.table--horizontal-nav {
+  max-width: 979px;
+
+  .btn,
+  .btn--primary:last-child {
+    min-width: 100px;
+  }
+
+  .btn--forward {
+    text-align: right;
+  }
+}
+
+.table--horizontal-wrapper {
+  @media (max-width: 591px) {
+    overflow-x: scroll;
+  }
+  // @media (max-width: 657px) {
+  //   overflow-x: scroll;
+  // }
+}
+
+.table--horizontal-wrapper-wide {
+  /* @media (max-width: 785px) { */
+  @media (max-width: 760px) {
+    overflow-x: scroll;
+  }
+}
+
+.js-claims-dashboard {
+  .k-numerictextbox {
+    max-width: 90px;
+  }
+}
+
+.panel-bar__content {
+  table {
+    margin: 20px 0 0;
+  }
+}
+
+.table--padded {
+  th {
+    text-align: left;
+  }
+
+  th, td {
+    padding: 5px;
+  }
+}
+
+.program-configuration-table {
+  width: 100%;
+}
+
+.block--assess-cost-estimate {
+  .block--toggle-request-amount {
+    /*display: none;*/
+    margin-top: 10px;
+  }
+
+  .js-table-expense-list {
+    tbody {
+      tr {
+        td:not(.agreed) {
+          opacity: 0.5;
+        }
+        /*display: none;*/
+        &.row--cost-estimate-total,
+        &.row--newly-added {
+          display: table-row;
+        }
+
+        &.edit-row {
+          // display: none;
+        }
+      }
+    }
+
+    &.show {
+      tbody {
+        tr {
+          display: table-row;
+
+          &.edit-row {
+            td {
+              border-bottom: none;
+            }
+          }
+
+          &.row--cost-estimate-total,
+          &.row--newly-added {
+            td {
+              border-bottom: solid 1px color('Charcoal');
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .js-expenses--add-edit {
+    .form {
+      padding: 20px;
+    }
+  }
+
+  &.edit-enabled {
+    .block--toggle-request-amount {
+      display: block;
+    }
+
+    tbody {
+      tr {
+        // display: none;
+        td {
+          /*opacity:  0.5;*/
+          &:first-child {
+            width: 205px;
+          }
+        }
+
+        &.row--cost-estimate-total,
+        &.row--newly-added,
+        &.edit-row {
+          display: table-row;
+
+          td {
+            opacity: 1;
+          }
+        }
+      }
+
+      .edit-type {
+        display: table-cell;
+      }
+
+      .expense-type {
+        // display: none;
+      }
+    }
+
+    .block--expense-addition {
+      tbody {
+        tr {
+          td {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+}
+
+.row--reservation {
+  th, td {
+    border: none;
+  }
+
+  td {
+    text-align: right;
+  }
+}
+
+.table--claims {
+  th, td {
+    border-bottom: solid 1px color('Charcoal');
+    text-align: right;
+    font-weight: normal;
+
+    &:first-child {
+      text-align: left;
+      width: 20%;
+    }
+
+    &:last-child {
+      padding-right: 0;
+    }
+  }
+
+  .table--expense-type-last-row {
+    td:last-child {
+      width: 40px;
+    }
+  }
+
+  .text-align--left {
+    text-align: left;
+  }
+}
+
+.table--request-management-payment-requests,
+.table--request-management-payment-request-batch,
+.table--request-management-amount-owing,
+.table--request-management-payment-request-hold {
+  th, td {
+    text-align: right;
+  }
+
+  .text-align--left {
+    text-align: left;
+  }
+}
+
+.block--grant-opening-financial-plan {
+  th, td {
+    &:last-child {
+      width: 100px;
+
+      .input--x-small {
+        width: 100px;
+      }
+    }
+  }
+}
+
+.layout-internal {
+  .table--expenses {
+    .input--small.k-numerictextbox.js-total-cost {
+      // width: 100px;
+    }
+
+    .num-col {
+      // width: 100px;
+    }
+
+    .no-padding-top {
+      padding-top: 0px;
+      height: inherit !important;
+    }
+
+    .no-padding-bottom {
+      padding-bottom: 0px;
+      height: inherit !important;
+    }
+
+    &.original-value-visible {
+      .requested-expense {
+        td {
+          border-bottom: $table-border;
+        }
+      }
+
+      .requested-expense {
+        td {
+          border-bottom: $table-border;
+        }
+
+        & + .row--cost-estimate-total {
+          td {
+            border-top: none;
+          }
+        }
+      }
+
+      .row--cost-estimate-total {
+        td {
+          border-top: $table-border;
+        }
+      }
+
+      tr.from-applicant {
+        td {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+}
+
+.page--training-provider-history {
+  margin-right: 20px;
+
+  h2 {
+    margin: 20px 0 0;
+  }
+}
+
+.main {
+  table.dataTable {
+    thead {
+      .row--no-border {
+        td, th {
+          border-bottom: none;
+        }
+      }
+
+      th.colspan-three {
+        padding-right: 0;
+        text-align: center;
+      }
+
+      th.sorting,
+      th.sorting_asc,
+      th.sorting_desc {
+        background-position: left 77%;
+      }
+
+      th.align-right {
+        text-align: right;
+      }
+    }
+  }
+}
+
+#trainingProviderGrantFileHistory {
+  th.sorting {
+    background-position: left 77%;
+  }
+}
+
+.table-col__edit {
+  span {
+    width: 66px;
+    display: block;
+    visibility: hidden;
+  }
+}
+
+.table-col__delete {
+  span {
+    width: 81px;
+    display: block;
+    visibility: hidden;
+  }
+}
+
+.cost-estimate-editable {
+  .alert {
+    margin-top: 20px;
+  }
+}
+
+.layout-internal {
+  .table--claims__cost__assessed {
+    margin-top: 50px;
+
+    td {
+      &:nth-child(1) {
+        padding: 0 10px;
+      }
+    }
+  }
+}
+
+.table--claims__cost {
+  border-collapse: separate;
+
+  &.table--claims__cost__agreed {
+    th,
+    td {
+      &:nth-child(2) {
+        border-bottom-color: color('Charcoal');
+      }
+    }
+  }
+
+  &.table--claims__cost__assessed {
+    th,
+    td {
+      &:nth-child(2) {
+        .layout-internal & {
+          border-bottom-color: transparent;
+        }
+      }
+    }
+  }
+
+  .table--expense-type-last-row {
+    th,
+    td {
+      border-bottom: none;
+      // &:nth-child(2){
+      //   border-bottom-color: color('Charcoal') !important;
+      // }
+    }
+  }
+
+  th,
+  td {
+    &:nth-child(1) {
+      width: 23.5%;
+    }
+
+    &:nth-child(2) {
+      .layout-internal & {
+        width: 2%;
+      }
+    }
+
+    &:nth-child(3),
+    &:nth-child(4),
+    &:nth-child(5),
+    &:nth-child(6),
+    &:nth-child(7),
+    &:nth-child(8),
+    &:nth-child(9) {
+      width: 10%;
+    }
+
+    &:nth-child(10) {
+      width: 4.5%;
+    }
+
+    input {
+      width: 120px;
+    }
+
+    .js-assessed-participant-cost {
+      position: relative;
+      width: 100%;
+      padding-left: 10px;
+    }
+
+    .js-assessed-totals {
+      width: 100%;
+    }
+  }
+
+  th {
+    vertical-align: top;
+  }
+
+  .table--expense-type-last-row {
+    th,
+    td {
+      &:nth-child(1) {
+        border-right: none;
+      }
+
+      &:nth-child(2) {
+        padding-right: 15px;
+      }
+    }
+  }
+
+  .layout-external & {
+    th, td {
+      &:nth-child(2) {
+        width: 15%;
+      }
+    }
+  }
+}
+
+.table--claims__participant {
+  width: 500px;
+  float: right;
+
+  th,
+  td {
+    &:nth-child(1) {
+      width: 300px;
+    }
+
+    &:nth-child(2),
+    &:nth-child(3),
+    &:nth-child(4),
+    &:nth-child(5),
+    &:nth-child(6),
+    &:nth-child(7),
+    &:nth-child(8) {
+      width: 80px;
+    }
+
+    &:nth-child(9) {
+      width: 60px;
+    }
+
+    input {
+      width: 90px;
+    }
+  }
+
+  th {
+    vertical-align: top;
+  }
+}
+
+.table--claims__participant--outcome {
+  width: 100%;
+  float: none;
+
+  td.align-center,
+  th.align-center {
+    text-align: center;
+    padding: 0;
+  }
+}
+
+.table--claims__list {
+  width: 100%;
+
+  th, td {
+    text-align: center;
+
+    &:nth-child(5),
+    &:nth-child(6) {
+      text-align: right;
+    }
+  }
+}
+
+.table--claims.table--claims__claim-list {
+  width: 100%;
+
+  thead {
+    th {
+      width: auto;
+    }
+  }
+
+  tbody {
+    td {
+      width: auto;
+    }
+  }
+}
+
+.table--training-provider-history {
+  width: 100%;
+
+  td {
+    &:nth-child(6),
+    &:nth-child(7),
+    &:nth-child(8) {
+      text-align: right;
+    }
+  }
+}
+
+.table--border-top {
+  border-top: solid 1px;
+}
+
+.table--border-left {
+  border-left: solid 1px;
+}
+
+.table--border-right {
+  border-right: solid 1px;
+}
+
+.table--border-all {
+  border: solid 1px;
+}
+
+.row--less-padding {
+  th, td {
+    padding: 5px 0;
+  }
+}
+
+.row--not-in-prev-claim {
+  td {
+    opacity: 0.4;
+  }
+}
+
+.previous-assessed-amount {
+  opacity: 0.5;
+}
+
+th.table--font-size-16 {
+  font-size: 16px;
+}
+
+
+/* DIV TABLES */
+
+.provider-risk-flag {
+    height: 1em;
+    margin-bottom: -2px;
+}
+
+.form-table {
+  display: table;
+  width: 100%;
+
+  .inline-risk-flag {
+    vertical-align: middle;
+    width: 16px;
+  }
+}
+
+.form-table-row,
+.reconciliation-report-view-subrow {
+  display: table-row;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.form-table-row {
+  &:nth-child(2n+2),
+  &:nth-child(2n+1).reconciliation-report-view-subrow {
+    background: #efefef;
+  }
+
+  &-with-hover {
+    &:nth-child(2n+2) {
+      background: #efefef;
+    }
+
+    &:hover {
+      background-color: #e0eef9;
+    }
+  }
+}
+
+.form-table-heading {
+  display: table-header-group;
+  font-weight: bold;
+
+  .sorting,
+  .sorting_asc,
+  .sorting_desc {
+    background-position: left 77%;
+    background-repeat: no-repeat;
+    padding: 10px 10px 2px;
+    vertical-align: bottom;
+  }
+
+  .sorting {
+    background-image: url('#{$icon-img-path}/icon--sort.svg');
+  }
+
+  .sorting_asc {
+    background-image: url('#{$icon-img-path}/icon--sort-asc.svg');
+  }
+
+  .sorting_desc {
+    background-image: url('#{$icon-img-path}/icon--sort-desc.svg');
+  }
+
+  th {
+    text-align: left;
+    border-bottom: 1px solid #EFEFEF;
+  }
+}
+
+.form-table-cell {
+  display: table-cell;
+  padding: 2px;
+  border-bottom: 1px solid #EFEFEF;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.notification-table .form-table-cell {
+  white-space: normal;
+  min-width: 80px;
+}
+
+.display--table-row {
+  display: table-row
+}
+.table--workbc-emulation {
+
+  th, td {
+    border: 2px;
+    vertical-align: middle;
+    box-sizing: border-box;
+    border-color: rgb(233, 235, 240);
+    border: 2px solid #e9ebf0;
+  }
+
+  th {
+    padding: 15px;
+    vertical-align: top;
+    background-color: rgb(35, 64, 117);
+    color: rgb(255, 255, 255);
+  }
+
+  td {
+    padding: 15px;
+    color: rgb(35, 64, 117);
+    background-color: rgb(255, 255, 255);
+    text-align: center;
+  }
+}
+
+.with-backing-colors {
+  .form-table-heading {
+    .form-table-cell {
+      background-color: #fff;
+    }
+  }
+
+  .form-table-row {
+    background-color: #aaa;
+
+    .form-table-cell {
+      background-color: #fff;
+    }
+
+    &:nth-child(2n+2) {
+      .form-table-cell {
+        background-color: #efefef;
+      }
+    }
+  }
+}

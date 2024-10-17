@@ -1,0 +1,63 @@
+﻿@model CJG.Web.External.Areas.Part.Models.ParticipantInfoStep1ViewModel
+
+@using (Html.BeginForm())
+{
+    <div id="step1-participant-info">
+        <p class="subheader--step">Step 1 of 5: Confirm participation</p>
+         
+        <p>You are confirming that you will attend the following training:</p>
+
+        <dl class="info-list">
+            <dt>Employer</dt>
+            <dd>@Model.ProgramEmployerName</dd>
+
+            <dt>Employer contact</dt>
+            <dd>@Model.ProgramSponsorName</dd>
+            
+            <dt>Training description</dt>
+            <dd>
+                @Model.ProgramDescription
+            </dd>
+            <dt>Training start date</dt>
+            <dd>
+                @Model.ProgramStartDate.ToString("MMMM d, yyyy")
+            </dd>
+        </dl>
+
+        <div>
+            <p>To participate in training through the B.C. Employer Training Grant, you are required to provide personal information. You will also be asked to confirm your consent for the collection and use of this information.</p>
+            <p><strong>Important:</strong> If you are on Employment Insurance (EI) or in receipt of Income Assistance (IA) and do not obtain approval before training starts, you may become ineligible for continued financial support under EI or IA. Please review <a href="https://www.workbc.ca/find-loans-and-grants/industry-and-employers/bc-employer-training-grant/application-support-and" target="_blank">Appendix A of the ETG Eligibility Criteria</a> for instructions on how to ensure your benefits will not be impacted.</p>
+
+            <p>Before you begin your application, please be prepared with the following::</p>
+            <ul>
+                <li>Your Social Insurance Number</li>
+                <li>If you are unemployed, the National Occupation Classification code after training will be completed.</li>
+                <li>If you are currently employed, the National Occupation Classification code before and after training.</li>
+            </ul>
+        </div>
+
+        <p>National Occupation Classification codes can be searched here: <a href="http://www.cic.gc.ca/english/immigrate/skilled/noc.asp" target="_blank">http://www.cic.gc.ca/english/immigrate/skilled/noc.asp</a>. If you are unsure which code to select, please contact your employer. WorkBC agents are also available to help via email, online chat or telephone at <a href="https://www.workbc.ca/Contact-Us.aspx" target="_blank">https://www.workbc.ca/Contact-Us.aspx</a>.</p>
+        <p>All steps that follow must be completed. If you exit without completing all steps, or if your session idles longer than 30 minutes, then you will need to start over.</p>
+        <p>To begin, please complete the Captcha below and confirm you will attend this training. Don’t see the Captcha? Try refreshing the page.</p>
+
+        <div class="margin-bottom" id="recaptcha" data-site-key="@Model.RecaptchaSiteKey"></div>
+         
+        <div>
+            @if (Model.RecaptchaEnabled)
+            {
+                <button type="submit" id="BtnS1Submit" onclick="BtnS1Submit.disabled = true; submit();" class="btn btn--primary js-btn-submit" ng-disabled="!section.validRecaptcha">I will attend training</button>
+            }
+            else
+            {
+                <button type="submit" id="BtnS1Submit" onclick="BtnS1Submit.disabled = true; submit();" class="btn btn--primary js-btn-submit">I will attend training</button>
+            }
+        </div>
+        <br />
+        <br />
+
+        <p>If you will not attend training then click <a href="/Part/Information/Exit" class="btn btn--primary js-btn-cancel">Exit</a></p>
+
+        <p>Next step: Contact information</p>
+
+    </div>
+}

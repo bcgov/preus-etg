@@ -1,0 +1,322 @@
+﻿@using CJG.Core.Entities
+<div ng-controller="GrantOpeningView">
+    <div class="dialog-header">
+        <h3>{{ngDialogData.title}} - {{ngDialogData.model.GrantStreamName}}</h3>
+    </div>
+    <div class="dialog-content">
+        <div class="modal-content">
+            <div data-modal-title="{{ngDialogData.model.GrantStreamName}}" class="modal-content">
+
+                <div ng-if="alert.message" class="row row--alert">
+                    <div class="alert" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
+                </div>
+
+                <div>
+                    {{ngDialogData.model.TrainingPeriodCaption}}
+                    ({{toPST(ngDialogData.model.TrainingPeriodStartDate)}}
+                    to
+                    {{toPST(ngDialogData.model.TrainingPeriodEndDate)}})
+                </div>
+                <div>
+                    <text>
+                        <span class="label {{getOpeningStateCss(ngDialogData.model.State)}}">{{getOpeningStateLabel(ngDialogData.model.State)}}</span>
+                    </text>
+                </div>
+                <div class="columns" ng-class="{'columns--two' : (!section.edit.dates && !section.edit.budget)}">
+                    <div class="column" ng-show="!section.edit.budget">
+                        <div class="heading-group heading-group--spread">
+                            <h4>Schedule</h4>
+                            <button ng-if="ngDialogData.model.IsScheduleEnabled || ngDialogData.model.IsUserGM1" class="btn btn--secondary" ng-click="toggle('dates')" ng-show="!section.edit.dates">Change</button>
+                            <button ng-if="ngDialogData.model.IsScheduleEnabled || ngDialogData.model.IsUserGM1" class="btn btn--secondary" ng-click="toggle('dates')" ng-show="section.edit.dates">Cancel</button>
+                        </div>
+                        <div class="section" ng-show="!section.edit.dates">
+                            <table class="table table--grant-details">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Status</td>
+                                        <td>{{getOpeningStateLabel(ngDialogData.model.State)}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Publish date</td>
+                                        <td>{{toPST(ngDialogData.model.PublishDate)}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Opening date</td>
+                                        <td>{{toPST(ngDialogData.model.OpeningDate)}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Closing date</td>
+                                        <td>{{toPST(ngDialogData.model.ClosingDate)}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="section editor--stream-schedule" ng-show="section.edit.dates">
+                            <form action="#">
+                                <table class="table table--grant-details">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <label class="form__label" for="publish-date">Publish Date <abbr title="Required">*</abbr></label>
+                                            </td>
+                                            <td>
+                                                <div class="control-wrapper" ng-validation="errors.PublishDate">
+                                                    <datedropdown ng-model="ngDialogData.model.PublishDate" ng-min-date="section.minDate" ng-max-date="ngDialogData.model.TrainingPeriodEndDate" ng-editing="true" ng-disabled="ngDialogData.model.State >= @((int)GrantOpeningStates.Published)"></datedropdown>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label class="form__label" for="opening-date">Opening Date <abbr title="Required">*</abbr></label>
+                                            </td>
+                                            <td>
+                                                <div class="control-wrapper" ng-validation="errors.OpeningDate">
+                                                    <datedropdown ng-model="ngDialogData.model.OpeningDate" ng-min-date="section.minDate" ng-max-date="ngDialogData.model.TrainingPeriodEndDate" ng-editing="true" ng-disabled="ngDialogData.model.State >= @((int)GrantOpeningStates.Open)"></datedropdown>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label class="form__label" for="closing-date">Closing Date <abbr title="Required">*</abbr></label>
+                                            </td>
+                                            <td>
+                                                <div class="control-wrapper" ng-validation="errors.ClosingDate">
+                                                    <datedropdown ng-model="ngDialogData.model.ClosingDate" ng-min-date="section.minDate" ng-max-date="ngDialogData.model.TrainingPeriodEndDate" ng-editing="true"></datedropdown>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div>
+                                    <button class="btn btn--primary float-right" type="button" ng-click="save()">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="column" ng-show="!section.edit.dates">
+                        <div class="heading-group heading-group--spread">
+                            <h4>Financial Plan</h4>
+                            <button ng-if="ngDialogData.model.IsFinancialEnabled && ngDialogData.model.IsUserGM1" class="btn btn--secondary" ng-click="toggle('budget')" ng-show="!section.edit.budget">Change</button>
+                            <button ng-if="ngDialogData.model.IsFinancialEnabled && ngDialogData.model.IsUserGM1" class="btn btn--secondary" ng-click="toggle('budget')" ng-show="section.edit.budget">Cancel</button>
+                        </div>
+
+                        <div class="section" ng-show="!section.edit.budget">
+                            <table class="table table--grant-details block--grant-opening-financial-plan">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th class="text--right">Amount</th>
+                                        <th class="text--right">Gross up rates</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Budget Allocation</td>
+                                        <td class="text--right">{{ngDialogData.model.BudgetAllocationAmt | currency}}</td>
+                                        <td class="text--right"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Assessment Denied</td>
+                                        <td class="text--right">{{ngDialogData.model.DeniedAmt | currency}}</td>
+                                        <td class="text--right">{{ngDialogData.model.PlanDeniedRate | percentage: 1}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Assessment Withdrawals</td>
+                                        <td class="text--right">{{ngDialogData.model.WithdrawnAmt | currency}}</td>
+                                        <td class="text--right">{{ngDialogData.model.PlanWithdrawnRate | percentage: 1}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Assessment Reductions</td>
+                                        <td class="text--right">{{ngDialogData.model.ReductionAmt | currency}}</td>
+                                        <td class="text--right">{{ngDialogData.model.PlanReductionRate | percentage: 1}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Delivery Slippage</td>
+                                        <td class="text--right">{{ngDialogData.model.SlippageAmt | currency}}</td>
+                                        <td class="text--right">{{ngDialogData.model.PlanSlippageRate | percentage: 1}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Delivery Cancellations</td>
+                                        <td class="text--right">{{ngDialogData.model.CancellationAmt | currency}}</td>
+                                        <td class="text--right">{{ngDialogData.model.PlanCancellationRate | percentage: 1}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Intake Target</strong></td>
+                                        <td class="text--right"><strong>{{ngDialogData.model.IntakeTargetAmt | currency}}</strong></td>
+                                        <td class="text--right"><strong>{{ngDialogData.model.IntakeTargetRate | percentage: 1}}</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="section editor--financial-stream" ng-show="section.edit.budget">
+                            <form action="#">
+                                <table class="table table--grant-details block--grant-opening-financial-plan">
+                                    <thead>
+                                        <tr>
+                                            <th width="500"></th>
+                                            <th class="text--right">Amount</th>
+                                            <th class="text--right">Gross up rates</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Budget Allocation</td>
+                                            <td class="text--right right-padding-0">
+                                                <input type="text" ng-model="ngDialogData.model.BudgetAllocationAmt" class="input--medium input-right-align" ng-currency ng-change="recalculatedAmt()" />
+                                            </td>
+                                            <td class="text--right"></td>
+                                        </tr>
+                                        <tr class="js-rate">
+                                            <td>Assessment Denied</td>
+                                            <td class="text--right">
+                                                <span class="js-rate-amount">{{ngDialogData.model.DeniedAmt | currency}}</span>
+                                            </td>
+                                            <td class="text--right">
+                                                <input type="text" ng-model="ngDialogData.model.PlanDeniedRate" class="input--small input-right-align" ng-percent ng-change="recalculatedAmt()" />
+                                            </td>
+                                        </tr>
+                                        <tr class="js-rate">
+                                            <td>
+                                                Assessment Withdrawals
+                                            </td>
+                                            <td class="text--right">
+                                                <span class="js-rate-amount">{{ngDialogData.model.WithdrawnAmt | currency}}</span>
+                                            </td>
+                                            <td class="text--right">
+                                                <input type="text" ng-model="ngDialogData.model.PlanWithdrawnRate" class="input--small input-right-align" ng-percent ng-change="recalculatedAmt()" />
+                                            </td>
+                                        </tr>
+                                        <tr class="js-rate">
+                                            <td>
+                                                Assessment Reductions
+                                            </td>
+                                            <td class="text--right">
+                                                <span class="js-rate-amount">{{ngDialogData.model.ReductionAmt | currency}}</span>
+                                            </td>
+                                            <td class="text--right">
+                                                <input type="text" ng-model="ngDialogData.model.PlanReductionRate" class="input--small input-right-align" ng-percent ng-change="recalculatedAmt()" />
+                                            </td>
+                                        </tr>
+                                        <tr class="js-rate">
+                                            <td>
+                                                Delivery Slippage
+                                            </td>
+                                            <td class="text--right">
+                                                <span class="js-rate-amount">{{ngDialogData.model.SlippageAmt | currency}}</span>
+                                            </td>
+                                            <td class="text--right">
+                                                <input type="text" ng-model="ngDialogData.model.PlanSlippageRate" class="input--small input-right-align" ng-percent ng-change="recalculatedAmt()" />
+                                            </td>
+                                        </tr>
+                                        <tr class="js-rate">
+                                            <td>
+                                                Delivery Cancellations
+                                            </td>
+                                            <td class="text--right">
+                                                <span class="js-rate-amount">{{ngDialogData.model.CancellationAmt | currency}}</span>
+                                            </td>
+                                            <td class="text--right">
+                                                <input type="text" ng-model="ngDialogData.model.PlanCancellationRate" class="input--small input-right-align" ng-percent ng-change="recalculatedAmt()" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Intake Target</strong>
+                                            </td>
+                                            <td class="text--right">
+                                                <strong><span class="js-intake-amount">{{ngDialogData.model.IntakeTargetAmt | currency}}</span></strong>
+                                            </td>
+                                            <td class="text--right">
+                                                <strong><span class="js-intake-rate">{{ngDialogData.model.IntakeTargetRate | percentage: 1}}</span></strong>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="margin-bottom">
+                                    <button class="btn btn--primary float-right" type="button" ng-click="save()">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer" ng-show="!IsEditing">
+                    <div ng-if="ngDialogData.model.IsUserGM1">
+                        <div ng-if="ngDialogData.model.State == 0">
+                            <button ng-if="ngDialogData.model.AllowDeleteGrantOpening" class="btn btn--primary btn--danger" ng-click="deleteGrantOpening()">Delete</button>
+                            <button ng-if="ngDialogData.model.BudgetAllocationAmt == 0" class="btn btn--primary" disabled ng-click="changeGrantStatus($event, 'Schedule')">Schedule</button>
+                            <span ng-if="ngDialogData.model.BudgetAllocationAmt == 0">Define a Budget Allocation to enable publishing</span>
+                            <button ng-if="ngDialogData.model.BudgetAllocationAmt != 0" class="btn btn--primary pull-right" ng-click="changeGrantStatus($event, 'Schedule')">Schedule</button>
+                        </div>
+                        <div ng-if="ngDialogData.model.State == 1">
+                            <a class="btn btn--primary" ng-click="changeGrantStatus($event, 'Unschedule')">Cancel Schedule</a>
+                        </div>
+                        <div ng-if="ngDialogData.model.State == 3 || ngDialogData.model.State == 5">
+                            <div class="block--contact-us__accordion" id="close-opening-grand-confirm">
+                                <div class="block--contact-us__accordion--wrapper">
+                                    <div class="block--contact-us__accordion--header">
+                                        <button class="btn btn--secondary" ng-click="handleCheckboxToggle('close-opening-grand-confirm')">Close Grant Opening</button>
+                                    </div>
+                                    <div class="block--contact-us__accordion--body is-hidden">
+                                        <p>
+                                            After a grant opening is closed from Open for Submit, no applications may be submitted for the grant opening.
+                                            Normally, grant openings are closed from this state only when all applications created for the grant opening have been submitted.
+                                        </p>
+                                        <div class="well well--dark">
+                                            <input id="confirm-close-opening-grant" type="checkbox" name="" value="">
+                                            <label for="confirm-close-opening-grant">
+                                                Are you sure you want to close this grant opening?
+                                            </label>
+                                        </div>
+                                        <a class="btn btn--primary margin-top" ng-click="changeGrantStatus($event, 'Close')" ng-disabled="!disableCloseToggleButton">Close</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="ngDialogData.model.State == 4">
+                            <a class="btn btn--primary" ng-click="changeGrantStatus($event, 'OpenForSubmit')">Open for Submit</a>
+                            <text>&nbsp;&nbsp;</text>
+                            <a ng-if="ngDialogData.model.IsTrainingEndDateInThePast" class="btn btn--primary js-btn-opening-status" ng-click="changeGrantStatus($event, 'Reopen')">Reopen</a>
+                            <text>&nbsp;&nbsp;</text>
+                            <a class="btn btn--secondary" ng-click="handleCheckboxToggle()" ng-show="ngDialogData.model.NumberUnfundedApplications">Return Unfunded Applications</a>
+                            <div class="margin-top" ng-show="ngDialogData.model.NumberUnfundedApplications">
+                                <div class="return-unfunded is-hidden" id="return-unfunded-applications">
+                                    <p>
+                                        After the intake target has been achieved and the grant opening is closed,
+                                        you may return new unfunded applications to applicants so that they can edit
+                                        and resubmit them for a new grant opening.
+                                        There are currently {{ngDialogData.model.NumberUnfundedApplications}} applications that will be returned.
+                                    </p>
+                                    <div class="well well--dark">
+                                        <input id="confirm-return-unfunded" type="checkbox" name="" value="">
+                                        <label for="confirm-return-unfunded">Are you sure you want to return the New applications for this grant opening?</label>
+                                    </div>
+                                    <a class="btn btn--primary margin-top" ng-click="returnFundingApplications($event)" ng-disabled="!disableReturnToggleButton">Return Unfunded Applications</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
