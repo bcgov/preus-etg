@@ -1,6 +1,6 @@
 # Build/CI pipeline for ETG application
 
-name: Build and Deploy to Dev/QA
+name: Build and Deploy to TEST
 run-name: Build of commit ${{ github.sha }} by ${{ github.actor }}
 on: workflow_dispatch
 env:
@@ -11,7 +11,7 @@ env:
   
 jobs:
   build:
-    environment: Dev
+    environment: Test
     runs-on: etg-ci
 
     steps:
@@ -152,7 +152,7 @@ jobs:
       shell: cmd
 
   deploy:
-    environment: Dev
+    environment: Test
     runs-on: etg-ci
     needs: build
     
