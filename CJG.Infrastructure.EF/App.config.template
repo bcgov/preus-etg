@@ -13,6 +13,6 @@
   <connectionStrings>
     <!-- NOTE: This connection string deliberately uses Integrated Security so that the Entity Framework migrations can be run without giving the website user
                permissions for things like creating and dropping tables. The websites should not use this connection string. -->
-    <add name="CJG" connectionString="data source=#{db-instance};initial catalog=#{db-name};User Id=#{db-user};Password=#{db-pass};MultipleActiveResultSets=True;App=EntityFramework" providerName="System.Data.SqlClient"/>
+    <add name="CJG" connectionString="data source=#{db-instance};initial catalog=#{db-name};Integrated Security=True;MultipleActiveResultSets=True;App=EntityFramework" providerName="System.Data.SqlClient"/>
   </connectionStrings>
 <startup><supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.8"/></startup></configuration>
