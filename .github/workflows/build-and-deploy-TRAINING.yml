@@ -79,7 +79,7 @@ jobs:
 
     - name: Run Config-Replace script on EF
       run: |
-        $configTags = (@{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, @{tag='db-name'; val="${{ vars.DB_NAME }}"}, @{tag='db-user'; val="${{ vars.DB_USER }}"}, @{tag='db-pass'; val="${{ secrets.DB_PASSWORD }}"})        
+        $configTags = (@{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, @{tag='db-name'; val="${{ vars.DB_NAME }}"})        
         ${{ vars.CICD_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.EF/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.EF/App.config" $configTags
       shell: powershell
 
@@ -172,7 +172,6 @@ jobs:
       shell: cmd
       
     - name: Back up database
-      if: false
       run: |
         ${{ vars.CICD_SCRIPTS_FOLDER }}\backupdatabase.ps1 "${{ vars.DB_SERVER }}" "${{ vars.DB_NAME }}" "${{ vars.DB_RELEASE_USER }}" "${{ secrets.DB_RELEASE_PASSWORD }}" "${{ vars.DB_BACKUP_FOLDER }}\${{ vars.ENVIRONMENT }}\Databases" 5
       shell: powershell
@@ -243,5 +242,11 @@ jobs:
         -setParam:name="EmailFromAddress",value="${{ vars.EMAIL_FROM_ADDRESS }}" ^
         -setParam:name="EmailFromDisplayName",value="${{ vars.EMAIL_FROM_NAME }}" ^
         -setParam:name="MaxUploadSizeInBytes",value="${{ vars.MAX_UPLOAD_SIZE }}" ^
-        -setParam:name="ReCaptchaSecret",value="${{ secrets.RECAPTCHA_SECRET }}"                  
+        -setParam:name="ReCaptchaSecret",value="${{ secrets.RECAPTCHA_SECRET }}" ^
+        -setParam:name="ExternalUserOverrideEmail",value="${{ vars.EXTERNAL_USER_OVERRIDE_EMAIL }}"
       shell: cmd
+      
+    - name: Run auth list
+      run: |      
+        ${{ vars.CICD_SCRIPTS_FOLDER }}\windowsauthlist.ps1 "${{ vars.WEB_FOLDER }}\${{ vars.ENVIRONMENT }}\Web.config" "${{ vars.SERVER_ACCESS_ROLES }}" "${{ vars.SERVER_ACCESS_USERS }}"
+      shell: powershell

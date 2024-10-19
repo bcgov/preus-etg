@@ -79,7 +79,7 @@ jobs:
 
     - name: Run Config-Replace script on EF
       run: |
-        $configTags = (@{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, @{tag='db-name'; val="${{ vars.DB_NAME }}"}, @{tag='db-user'; val="${{ vars.DB_USER }}"}, @{tag='db-pass'; val="${{ secrets.DB_PASSWORD }}"})        
+        $configTags = (@{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, @{tag='db-name'; val="${{ vars.DB_NAME }}"})        
         ${{ vars.CICD_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.EF/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.EF/App.config" $configTags
       shell: powershell
 
@@ -168,12 +168,12 @@ jobs:
       shell: powershell
       
     - name: Back up DB migration program
-      run: xcopy /E /I /Y CJG.Infrastructure.EF\bin\${{ vars.BUILD_CONFIGURATION }} ${{ vars.DB_BACKUP_FOLDER }}\${{ vars.BUILD_CONFIGURATION }}\Databases\
+      run: xcopy /E /I /Y CJG.Infrastructure.EF\bin\${{ vars.BUILD_CONFIGURATION }} ${{ vars.DB_BACKUP_FOLDER }}\${{ vars.ENVIRONMENT }}\Databases\
       shell: cmd
       
     - name: Back up database
       run: |
-        ${{ vars.CICD_SCRIPTS_FOLDER }}\backupdatabase.ps1 "${{ vars.DB_SERVER }}" "${{ vars.DB_NAME }}" "${{ vars.DB_RELEASE_USER }}" "${{ secrets.DB_RELEASE_PASSWORD }}" "${{ vars.DB_BACKUP_FOLDER }}\${{ vars.BUILD_CONFIGURATION }}\Databases" 5
+        ${{ vars.CICD_SCRIPTS_FOLDER }}\backupdatabase.ps1 "${{ vars.DB_SERVER }}" "${{ vars.DB_NAME }}" "${{ vars.DB_RELEASE_USER }}" "${{ secrets.DB_RELEASE_PASSWORD }}" "${{ vars.DB_BACKUP_FOLDER }}\${{ vars.ENVIRONMENT }}\Databases" 5
       shell: powershell
 
     - name: Update database (run EF migration)
@@ -182,35 +182,35 @@ jobs:
       shell: cmd      
       
     - name: Back up Grant Opening Service
-      run: xcopy /E /I /Y "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.BUILD_CONFIGURATION }}\GrantOpeningService" "${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ vars.BUILD_CONFIGURATION }}\Scheduled Tasks\GrantOpeningService\"
+      run: xcopy /E /I /Y "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.ENVIRONMENT }}\GrantOpeningService" "${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ vars.ENVIRONMENT }}\Scheduled Tasks\GrantOpeningService\"
       shell: cmd
       
     - name: Deploy Grant Opening Service
-      run: xcopy /E /I /Y "CJG.Infrastructure.GrantOpeningService\bin\${{ vars.BUILD_CONFIGURATION }}" "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.BUILD_CONFIGURATION }}\GrantOpeningService\"
+      run: xcopy /E /I /Y "CJG.Infrastructure.GrantOpeningService\bin\${{ vars.BUILD_CONFIGURATION }}" "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.ENVIRONMENT }}\GrantOpeningService\"
       shell: cmd
       
     - name: Back up Notification Service
-      run: xcopy /E /I /Y "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.BUILD_CONFIGURATION }}\NotificationService" "${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ vars.BUILD_CONFIGURATION }}\Scheduled Tasks\NotificationService\"
+      run: xcopy /E /I /Y "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.ENVIRONMENT }}\NotificationService" "${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ vars.ENVIRONMENT }}\Scheduled Tasks\NotificationService\"
       shell: cmd
       
     - name: Deploy Notification Service
-      run: xcopy /E /I /Y "CJG.Infrastructure.NotificationService\bin\${{ vars.BUILD_CONFIGURATION }}" "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.BUILD_CONFIGURATION }}\NotificationService\"
+      run: xcopy /E /I /Y "CJG.Infrastructure.NotificationService\bin\${{ vars.BUILD_CONFIGURATION }}" "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.ENVIRONMENT }}\NotificationService\"
       shell: cmd
       
     - name: Back up Reporting Service
-      run: xcopy /E /I /Y "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.BUILD_CONFIGURATION }}\ReportingService" "${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ vars.BUILD_CONFIGURATION }}\Scheduled Tasks\ReportingService\"
+      run: xcopy /E /I /Y "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.ENVIRONMENT }}\ReportingService" "${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ vars.ENVIRONMENT }}\Scheduled Tasks\ReportingService\"
       shell: cmd
       
     - name: Deploy Reporting Service
-      run: xcopy /E /I /Y "CJG.Infrastructure.ReportingService\bin\${{ vars.BUILD_CONFIGURATION }}" "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.BUILD_CONFIGURATION }}\ReportingService\"
+      run: xcopy /E /I /Y "CJG.Infrastructure.ReportingService\bin\${{ vars.BUILD_CONFIGURATION }}" "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.ENVIRONMENT }}\ReportingService\"
       shell: cmd
 
     - name: Back up Web Application
-      run: xcopy /E /I /Y "${{ vars.WEB_FOLDER }}\${{ vars.BUILD_CONFIGURATION }}" "${{ vars.WEB_BACKUP_FOLDER }}\${{ vars.BUILD_CONFIGURATION }}\"
+      run: xcopy /E /I /Y "${{ vars.WEB_FOLDER }}\${{ vars.ENVIRONMENT }}" "${{ vars.WEB_BACKUP_FOLDER }}\${{ vars.ENVIRONMENT }}\"
       shell: cmd
       
     - name: Copy Web Application to Server
-      run: xcopy /E /I /Y "CJG.Web.External\obj\${{ vars.BUILD_CONFIGURATION }}\Package\${{ vars.WEB_DEPLOY_PACKAGE_NAME }}" "${{ vars.WEB_RELEASE_FOLDER }}\${{ vars.BUILD_CONFIGURATION }}\"
+      run: xcopy /E /I /Y "CJG.Web.External\obj\${{ vars.BUILD_CONFIGURATION }}\Package\${{ vars.WEB_DEPLOY_PACKAGE_NAME }}" "${{ vars.WEB_RELEASE_FOLDER }}\${{ vars.ENVIRONMENT }}\"
       shell: cmd
 
     - name: Run Config-Replace script on Offline Page
@@ -220,14 +220,14 @@ jobs:
         $maintenance_duration = ${{ vars.MAINTENANCE_DURATION }}
         $maintenance_end = $maintenance_start.AddMinutes($maintenance_duration)       
         $config_values = (@{tag="maintenance-date"; val="$now"}, @{tag="maintenance-start"; val="$maintenance_start"}, @{tag="maintenance-end"; val="$maintenance_end"})        
-        ${{ vars.CICD_SCRIPTS_FOLDER }}\replaceoffline.ps1 "${{ vars.WEB_FOLDER }}\app_offline_template.htm" "${{ vars.WEB_FOLDER }}\${{ vars.BUILD_CONFIGURATION }}\app_offline.htm" ($config_values) $maintenance_duration
+        ${{ vars.CICD_SCRIPTS_FOLDER }}\replaceoffline.ps1 "${{ vars.WEB_FOLDER }}\app_offline_template.htm" "${{ vars.WEB_FOLDER }}\${{ vars.ENVIRONMENT }}\app_offline.htm" ($config_values) $maintenance_duration
       shell: powershell
       
     - name: Deploy web application (Web Deploy)
       run: |        
         "${{ vars.MSDEPLOY_PATH }}" ^
         -verb:sync ^
-        -source:package="${{ vars.WEB_RELEASE_FOLDER }}\${{ vars.BUILD_CONFIGURATION }}\${{ vars.WEB_DEPLOY_PACKAGE_NAME }}" ^
+        -source:package="${{ vars.WEB_RELEASE_FOLDER }}\${{ vars.ENVIRONMENT }}\${{ vars.WEB_DEPLOY_PACKAGE_NAME }}" ^
         -dest:auto,userName="${{ vars.SERVICE_ACCOUNT }}",password="${{ secrets.SERVICE_ACCOUNT_PASSWORD }}" ^
         -setParam:name="IIS Web Application Name",value="${{ vars.WEB_SERVER_NAME }}" ^
         -setParam:name="CJG-Web.config Connection String",value="data source=${{ vars.DB_INSTANCE }};initial catalog=${{ vars.DB_NAME }};User Id=${{ vars.DB_USER }};Password=${{ secrets.DB_PASSWORD }};MultipleActiveResultSets=True;App=EntityFramework" ^
@@ -242,5 +242,5 @@ jobs:
         -setParam:name="EmailFromAddress",value="${{ vars.EMAIL_FROM_ADDRESS }}" ^
         -setParam:name="EmailFromDisplayName",value="${{ vars.EMAIL_FROM_NAME }}" ^
         -setParam:name="MaxUploadSizeInBytes",value="${{ vars.MAX_UPLOAD_SIZE }}" ^
-        -setParam:name="ReCaptchaSecret",value="${{ secrets.RECAPTCHA_SECRET }}"                  
+        -setParam:name="ReCaptchaSecret",value="${{ secrets.RECAPTCHA_SECRET }}"          
       shell: cmd
