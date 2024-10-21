@@ -101,7 +101,7 @@
 			    tags="">
 		<parameterEntry kind="XmlFile"
 					    scope="Web.config"
-					    match="/configuration/appSettings/add[@key='EmailFromAddress']/@value" />
+					    match="/configuration/appSettings/add[@key='ExternalUserOverrideEmail']/@value" />
 	</parameter>
 	<parameter name="EmailFromDisplayName"
              description="Please provide the email from name."
