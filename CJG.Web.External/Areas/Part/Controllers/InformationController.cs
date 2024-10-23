@@ -772,7 +772,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			if (model == null)
 				model = new ParticipantInfoViewModel();
 
-			model.CanadaPostKey = new CanadaPostConfiguration(HttpContext).GetCanadaPostKey().Key;
+			model.CanadaPostKey = new CanadaPostConfiguration().Key;
 
 			// Create Step1
 			var grantApplication = _grantApplicationService.Get(invitationKey);
@@ -810,7 +810,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			if (model == null)
 				model = new ParticipantInfoViewModel();
 
-			model.CanadaPostKey = new CanadaPostConfiguration(HttpContext).GetCanadaPostKey().Key;
+			model.CanadaPostKey = new CanadaPostConfiguration().Key;
 
 			if (model.ParticipantInfoStep2ViewModel == null)
 			{

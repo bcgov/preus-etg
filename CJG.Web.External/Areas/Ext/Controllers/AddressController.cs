@@ -100,8 +100,8 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 
 			try
 			{
-				var cpConfig = new CanadaPostConfiguration(HttpContext);
-				key = cpConfig.GetCanadaPostKey().Key;
+				var cpConfig = new CanadaPostConfiguration();
+				key = cpConfig.Key;
 			}
 			catch (Exception ex)
 			{

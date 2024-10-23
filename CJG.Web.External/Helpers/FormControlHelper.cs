@@ -268,7 +268,7 @@ namespace CJG.Web.External.Helpers
 
 		public static MvcHtmlString IncludeCanadaPostAutoComplete(this HtmlHelper helper)
 		{
-			var configuration = new CanadaPostConfiguration(new HttpContextWrapper(HttpContext.Current));
+			var configuration = new CanadaPostConfiguration();
 			var jsPath = configuration.GetJsPath();
 			var cssPath = configuration.GetCssPath();
 
