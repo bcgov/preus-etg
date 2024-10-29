@@ -1,6 +1,6 @@
 # Build/CI pipeline for ETG application
 
-name: Build and Deploy to DEV/QA
+name: Deploy to DEV/QA
 run-name: Build of commit ${{ github.sha }} by ${{ github.actor }}
 on: workflow_dispatch
 env:

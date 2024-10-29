@@ -1,0 +1,274 @@
+# Build/CI pipeline for ETG application
+
+name: Build and Deploy ETG to DEV/QA Only
+run-name: Build of commit ${{ github.sha }} by ${{ github.actor }}
+on: workflow_dispatch
+env:
+  NUGET_CERT_REVOCATION_MODE: offline # Bypass cert validation during NuGet Restore
+  HTTP_PROXY: ${{ vars.HTTP_PROXY }}
+  HTTPS_PROXY: ${{ vars.HTTP_PROXY }}
+  NO_PROXY: ${{ vars.NO_PROXY }}
+  
+jobs:
+  setup_build:
+    name: Set up Build Environment
+    runs-on: etg-ci
+    outputs:
+      build_number: ${{ steps.generate_build_number.outputs.build_number }}
+    steps:      
+    - name: Generate custom build number and set artifacts path
+      id: generate_build_number
+      run: |
+        $timestamp = (Get-Date).ToString("yyyyMMdd")
+        $buildNumber = "$timestamp.${env:GITHUB_RUN_NUMBER}"
+        echo "BUILD_NUMBER=$buildNumber" >> $env:GITHUB_ENV
+        echo "build_number=$buildNumber" >> $GITHUB_OUTPUT
+        echo "::set-output name=build_number::$buildNumber"
+      shell: powershell  
+
+    - name: Display build number
+      run: echo "Build number is $env:BUILD_NUMBER"
+      shell: powershell     
+       
+        
+  build_dev_qa:
+    name: Build for DEV/QA
+    environment: Dev
+    runs-on: etg-ci
+    needs: setup_build
+    env:
+      BUILD_NUMBER: ${{ needs.setup_build.outputs.build_number }}
+      ARTIFACTS_PATH: ${{ github.workspace }}\..\_artifacts\${{ needs.setup_build.outputs.build_number }}\${{ vars.ENVIRONMENT }}
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up NuGet
+      uses: NuGet/setup-nuget@v2.0.0               
+
+    - name: NuGet Restore
+      run: | 
+        nuget restore "${{github.workspace}}\ETG.sln"   
+        
+    - name: Set up MSBuild
+      uses: microsoft/setup-msbuild@v2
+      
+    - name: Set up npm
+      uses: actions/setup-node@v4
+      with:
+        node-version: '12.16.1'
+        registry-url: 'https://registry.npmjs.org/'
+        
+    - name: Configure npm additional options
+      run: |
+        npm config set strict-ssl false
+        npm config set proxy ${{ vars.HTTP_PROXY }}
+        npm config set https-proxy ${{ vars.HTTP_PROXY }}        
+    
+    - name: Install Node.js dependencies
+      run: npm install
+      working-directory: "CJG.Web.External/UI"
+
+    - name: Run Node.js build
+      run: npm run ci-build
+      working-directory: "CJG.Web.External/UI"
+      
+    - name: Run Config-Replace script on Notification Service
+      run: |
+        $configTags = (
+          @{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, 
+          @{tag='db-name'; val="${{ vars.DB_NAME }}"}, 
+          @{tag='db-user'; val="${{ vars.DB_USER }}"}, 
+          @{tag='db-pass'; val="${{ secrets.DB_PASSWORD }}"},
+          @{tag='smtp-server'; val="${{ vars.SMTP_SERVER }}"},
+          @{tag='email-enabled'; val="${{ vars.EMAIL_ENABLED }}"}
+        )        
+        ${{ vars.CI_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.NotificationService/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.NotificationService/App.config" $configTags
+      shell: powershell
+      
+    - name: Run Config-Replace script on Reporting Service
+      run: |
+        $configTags = (
+          @{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, 
+          @{tag='db-name'; val="${{ vars.DB_NAME }}"}, 
+          @{tag='db-user'; val="${{ vars.DB_USER }}"}, 
+          @{tag='db-pass'; val="${{ secrets.DB_PASSWORD }}"},
+          @{tag='csv-file-path-template'; val="${{ vars.REPORTING_SERVICE_CSV_FILE_PATH_TEMPLATE }}"},
+          @{tag='html-file-path-template'; val="${{ vars.REPORTING_SERVICE_HTML_FILE_PATH_TEMPLATE }}"}
+        )
+        ${{ vars.CI_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.ReportingService/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.ReportingService/App.config" $configTags
+      shell: powershell
+      
+    - name: Run Config-Replace script on Grant Opening Service
+      run: |
+        $configTags = (@{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, @{tag='db-name'; val="${{ vars.DB_NAME }}"}, @{tag='db-user'; val="${{ vars.DB_USER }}"}, @{tag='db-pass'; val="${{ secrets.DB_PASSWORD }}"})
+        ${{ vars.CI_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.GrantOpeningService/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.GrantOpeningService/App.config" $configTags
+      shell: powershell
+
+    - name: Run Config-Replace script on EF
+      run: |
+        $configTags = (@{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, @{tag='db-name'; val="${{ vars.DB_NAME }}"})        
+        ${{ vars.CI_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.EF/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.EF/App.config" $configTags
+      shell: powershell
+
+    - name: MSBuild .NET framework
+      run: |
+        msbuild.exe "${{github.workspace}}\ETG.sln" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:IncrementalBuild=true /P:SkipExtraFilesOnServer=True /p:platform="Any CPU" /p:configuration="${{ vars.BUILD_CONFIGURATION }}"
+      working-directory: ${{github.workspace}}
+
+    - name: Create artifacts directory
+      run: |
+          if (-Not (Test-Path -Path "${{ env.ARTIFACTS_PATH }}")) {
+            New-Item -ItemType Directory -Path "${{ env.ARTIFACTS_PATH }}"
+          }
+      shell: powershell
+     
+    - name: Upload Web Application as artifact to GitHub
+      uses: actions/upload-artifact@v4
+      with:
+        name: ETGWebApplication-${{ vars.BUILD_CONFIGURATION }}
+        path: "**/CJG.Web.External/obj/${{ vars.BUILD_CONFIGURATION }}/Package/PackageTmp/"
+        
+    - name: Copy Web Application to local artifacts folder
+      run: xcopy /E /I ${{ github.workspace }}\CJG.Web.External\obj\${{ vars.BUILD_CONFIGURATION }}\Package\PackageTmp ${{ env.ARTIFACTS_PATH }}\CJG.Web.External\
+      shell: cmd
+      
+    - name: Upload Web Application Deploy Package as artifact to GitHub
+      uses: actions/upload-artifact@v4
+      with:
+        name: ETGWebApplicationDeployPackage-${{ vars.BUILD_CONFIGURATION }}
+        path: "**/CJG.Web.External/obj/${{ vars.BUILD_CONFIGURATION }}/Package/${{ vars.WEB_DEPLOY_PACKAGE_NAME }}"
+      
+    - name: Copy Web Application Deploy Package to local artifacts folder
+      run: xcopy /E /I ${{ github.workspace }}\CJG.Web.External\obj\${{ vars.BUILD_CONFIGURATION }}\Package\${{ vars.WEB_DEPLOY_PACKAGE_NAME }} ${{ env.ARTIFACTS_PATH }}\
+      shell: cmd
+
+    - name: Upload EF Service as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: EFMigration-${{ vars.BUILD_CONFIGURATION }}
+        path: "**/CJG.Infrastructure.EF/bin/${{ vars.BUILD_CONFIGURATION }}/"
+
+    - name: Copy EF to local artifacts folder
+      run: xcopy /E /I CJG.Infrastructure.EF\bin\${{ vars.BUILD_CONFIGURATION }} ${{ env.ARTIFACTS_PATH }}\CJG.Infrastructure.EF\
+      shell: cmd
+        
+    - name: Upload Notification Service as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: NotificationService-${{ vars.BUILD_CONFIGURATION }}
+        path: "**/CJG.Infrastructure.NotificationService/bin/${{ vars.BUILD_CONFIGURATION }}/" 
+
+    - name: Copy Notification Service to local artifacts folder
+      run: xcopy /E /I /Y CJG.Infrastructure.NotificationService\bin\${{ vars.BUILD_CONFIGURATION }} "${{ env.ARTIFACTS_PATH }}\CJG.Infrastructure.NotificationService\"
+      shell: cmd
+
+    - name: Upload Reporting Service as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ReportingService-${{ vars.BUILD_CONFIGURATION }}
+        path: "**/CJG.Infrastructure.ReportingService/bin/${{ vars.BUILD_CONFIGURATION }}/"
+
+    - name: Copy Reporting Service to local artifacts folder
+      run: xcopy /E /I /Y CJG.Infrastructure.ReportingService\bin\${{ vars.BUILD_CONFIGURATION }} ${{ env.ARTIFACTS_PATH }}\CJG.Infrastructure.ReportingService\
+      shell: cmd
+
+    - name: Upload Grant Opening Service as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: GrantOpeningService-${{ vars.BUILD_CONFIGURATION }}
+        path: "**/CJG.Infrastructure.GrantOpeningService/bin/${{ vars.BUILD_CONFIGURATION }}/"
+
+    - name: Copy Reporting Service to local artifacts folder
+      run: xcopy /E /I /Y CJG.Infrastructure.GrantOpeningService\bin\${{ vars.BUILD_CONFIGURATION }} ${{ env.ARTIFACTS_PATH }}\CJG.Infrastructure.GrantOpeningService\
+      shell: cmd
+
+  deploy_dev_qa:
+    name: Deploy to DEV/QA
+    environment: Dev
+    runs-on: etg-cd-dev
+    needs: [setup_build, build_dev_qa]
+    
+    env:
+      BUILD_NUMBER: ${{ needs.setup_build.outputs.build_number }}
+      ARTIFACTS_PATH: ${{ github.workspace }}\..\_artifacts\${{ needs.setup_build.outputs.build_number }}\${{ vars.ENVIRONMENT }}
+    
+    steps:
+      
+    - name: Back up DB migration program
+      run: xcopy /E /I /Y CJG.Infrastructure.EF\bin\${{ vars.BUILD_CONFIGURATION }} ${{ vars.DB_BACKUP_FOLDER }}\${{ vars.ENVIRONMENT }}\Databases\
+      shell: cmd
+      
+    - name: Back up database
+      run: |
+        ${{ vars.CD_SCRIPTS_FOLDER }}\backupdatabase.ps1 "${{ vars.DB_SERVER }}" "${{ vars.DB_NAME }}" "${{ vars.DB_RELEASE_USER }}" "${{ secrets.DB_RELEASE_PASSWORD }}" "${{ vars.DB_BACKUP_FOLDER }}\${{ vars.ENVIRONMENT }}\Databases" "Pre-release DB Backup ${{ env.BUILD_NUMBER }}.bak" 5
+      shell: powershell
+
+    - name: Update database (run EF migration)
+      run: migrate.exe CJG.Infrastructure.EF.dll /startupConfigurationFile=CJG.Infrastructure.EF.dll.config
+      working-directory: CJG.Infrastructure.EF\bin\${{ vars.ENVIRONMENT }}\
+      shell: cmd      
+      
+    - name: Back up Grant Opening Service
+      run: xcopy /E /I /Y "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.ENVIRONMENT }}\GrantOpeningService" "${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ vars.ENVIRONMENT }}\Scheduled Tasks\GrantOpeningService\"
+      shell: cmd
+      
+    - name: Deploy Grant Opening Service
+      run: xcopy /E /I /Y "CJG.Infrastructure.GrantOpeningService\bin\${{ vars.BUILD_CONFIGURATION }}" "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.ENVIRONMENT }}\GrantOpeningService\"
+      shell: cmd
+      
+    - name: Back up Notification Service
+      run: xcopy /E /I /Y "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.ENVIRONMENT }}\NotificationService" "${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ vars.ENVIRONMENT }}\Scheduled Tasks\NotificationService\"
+      shell: cmd
+      
+    - name: Deploy Notification Service
+      run: xcopy /E /I /Y "CJG.Infrastructure.NotificationService\bin\${{ vars.BUILD_CONFIGURATION }}" "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.ENVIRONMENT }}\NotificationService\"
+      shell: cmd
+      
+    - name: Back up Reporting Service
+      run: xcopy /E /I /Y "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.ENVIRONMENT }}\ReportingService" "${{ vars.SCHEDULED_TASKS_BACKUP_FOLDER }}\${{ vars.ENVIRONMENT }}\Scheduled Tasks\ReportingService\"
+      shell: cmd
+      
+    - name: Deploy Reporting Service
+      run: xcopy /E /I /Y "CJG.Infrastructure.ReportingService\bin\${{ vars.BUILD_CONFIGURATION }}" "${{ vars.SCHEDULED_TASKS_FOLDER }}\${{ vars.ENVIRONMENT }}\ReportingService\"
+      shell: cmd
+
+    - name: Back up Web Application
+      run: xcopy /E /I /Y "${{ vars.WEB_FOLDER }}\${{ vars.ENVIRONMENT }}" "${{ vars.WEB_BACKUP_FOLDER }}\${{ vars.ENVIRONMENT }}\"
+      shell: cmd
+      
+    - name: Copy Web Application to Server
+      run: xcopy /E /I /Y "CJG.Web.External\obj\${{ vars.BUILD_CONFIGURATION }}\Package\${{ vars.WEB_DEPLOY_PACKAGE_NAME }}" "${{ vars.WEB_RELEASE_FOLDER }}\${{ vars.ENVIRONMENT }}\"
+      shell: cmd
+
+    - name: Run Config-Replace script on Offline Page
+      run: |
+        $now = Get-Date -Format "dddd MMMM dd, yyyy"
+        $maintenance_start = Get-Date
+        $maintenance_duration = ${{ vars.MAINTENANCE_DURATION }}
+        $maintenance_end = $maintenance_start.AddMinutes($maintenance_duration)       
+        $config_values = (@{tag="maintenance-date"; val="$now"}, @{tag="maintenance-start"; val="$maintenance_start"}, @{tag="maintenance-end"; val="$maintenance_end"})        
+        ${{ vars.CD_SCRIPTS_FOLDER }}\replaceoffline.ps1 "${{ vars.WEB_FOLDER }}\app_offline_template.htm" "${{ vars.WEB_FOLDER }}\${{ vars.ENVIRONMENT }}\app_offline.htm" ($config_values) $maintenance_duration
+      shell: powershell
+      
+    - name: Deploy web application (Web Deploy)
+      run: |        
+        "${{ vars.MSDEPLOY_PATH }}" ^
+        -verb:sync ^
+        -source:package="${{ vars.WEB_RELEASE_FOLDER }}\${{ vars.ENVIRONMENT }}\${{ vars.WEB_DEPLOY_PACKAGE_NAME }}" ^
+        -dest:auto,userName="${{ vars.SERVICE_ACCOUNT }}",password="${{ secrets.SERVICE_ACCOUNT_PASSWORD }}" ^
+        -setParam:name="IIS Web Application Name",value="${{ vars.WEB_SERVER_NAME }}" ^
+        -setParam:name="CJG-Web.config Connection String",value="data source=${{ vars.DB_INSTANCE }};initial catalog=${{ vars.DB_NAME }};User Id=${{ vars.DB_USER }};Password=${{ secrets.DB_PASSWORD }};MultipleActiveResultSets=True;App=EntityFramework" ^
+        -setParam:name="BCeIDWebService_UserName",value="${{ vars.BCEID_USER }}" ^
+        -setParam:name="BCeIDWebService_Password",value="${{ secrets.BCEID_PASSWORD }}" ^
+        -setParam:name="BCeIDWebService_OnlineServiceId",value="${{ secrets.BCEID_ONLINE_SERVICE_ID }}" ^
+        -setParam:name="BCeIDWebService_Timeout",value="${{ vars.BCEID_TIMEOUT }}" ^
+        -setParam:name="BCeIDWebServiceLogoffURL",value="${{ vars.BCEID_LOGOFF_URL }}" ^
+        -setParam:name="BCeIDWebServiceLogoffReturnURL",value="${{ vars.BCEID_LOGOFF_RETURN_URL }}" ^
+        -setParam:name="SMTPServer",value="${{ vars.SMTP_SERVER }}" ^
+        -setParam:name="EnableEmails",value="${{ vars.EMAIL_ENABLED }}" ^
+        -setParam:name="EmailFromAddress",value="${{ vars.EMAIL_FROM_ADDRESS }}" ^
+        -setParam:name="EmailFromDisplayName",value="${{ vars.EMAIL_FROM_NAME }}" ^
+        -setParam:name="MaxUploadSizeInBytes",value="${{ vars.MAX_UPLOAD_SIZE }}" ^
+        -setParam:name="ReCaptchaSecret",value="${{ secrets.RECAPTCHA_SECRET }}"        
+      shell: cmd

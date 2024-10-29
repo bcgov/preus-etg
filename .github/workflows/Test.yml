@@ -1,0 +1,37 @@
+# Build/CI pipeline for ETG application
+
+name: Scratch workflow
+on: 
+  workflow_dispatch:
+    inputs:
+      build_runid:
+        description: "Run ID of the workflow that contains the build artifacts"
+        required: true
+        type: string
+env:
+  NUGET_CERT_REVOCATION_MODE: offline # Bypass cert validation during NuGet Restore
+  HTTP_PROXY: ${{ vars.HTTP_PROXY }}
+  HTTPS_PROXY: ${{ vars.HTTP_PROXY }}
+  NO_PROXY: ${{ vars.NO_PROXY }}
+ 
+  
+jobs:
+
+  deploy:
+    environment: Test
+    runs-on: etg-cd-dev
+    
+    steps:
+    
+    - name: Clear Working Directory
+      run: |
+        Write-Host "Clearing workspace directory..."
+        Remove-Item -Path "${{ github.workspace }}\CJG*" -Recurse -Force
+      shell: powershell
+      
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: "*-${{ vars.BUILD_CONFIGURATION }}*"
+        merge-multiple: true
+        github-token: ${{ secrets.GH_API_TOKEN }}
+        run-id: ${{ github.event.inputs.build_runid }}
