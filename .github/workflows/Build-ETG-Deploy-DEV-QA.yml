@@ -37,7 +37,7 @@ jobs:
     needs: setup_build
     strategy:
       matrix:
-        environment: [dev, qa]  # Define environments as a matrix for parallel deployment
+        environment: [Dev, QA]  # Define environments as a matrix for parallel deployment
     env:
       BUILD_NUMBER: ${{ needs.setup_build.outputs.build_number }}
       ARTIFACTS_PATH: ${{ github.workspace }}\..\_artifacts\${{ needs.setup_build.outputs.build_number }}\${{ vars.ENVIRONMENT }}
