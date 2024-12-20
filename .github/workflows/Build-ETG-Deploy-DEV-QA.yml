@@ -31,13 +31,11 @@ jobs:
       shell: powershell     
        
         
-  build_dev_qa:
-    name: Build for DEV/QA
+  build_dev:
+    name: Build for DEV
+    environment: Dev
     runs-on: etg-ci
     needs: setup_build
-    strategy:
-      matrix:
-        environment: [Dev, QA]  # Define environments as a matrix for parallel deployment
     env:
       BUILD_NUMBER: ${{ needs.setup_build.outputs.build_number }}
       ARTIFACTS_PATH: ${{ github.workspace }}\..\_artifacts\${{ needs.setup_build.outputs.build_number }}\${{ vars.ENVIRONMENT }}
@@ -189,7 +187,7 @@ jobs:
     name: Deploy to DEV
     environment: Dev
     runs-on: etg-cd-dev
-    needs: [setup_build, build_dev_qa]
+    needs: [setup_build, build_dev]
     
     env:
       BUILD_NUMBER: ${{ needs.setup_build.outputs.build_number }}
@@ -275,11 +273,164 @@ jobs:
         -setParam:name="ReCaptchaSecret",value="${{ secrets.RECAPTCHA_SECRET }}"        
       shell: cmd
 
+  build_qa:
+    name: Build for QA
+    environment: QA
+    runs-on: etg-ci
+    needs: setup_build
+    env:
+      BUILD_NUMBER: ${{ needs.setup_build.outputs.build_number }}
+      ARTIFACTS_PATH: ${{ github.workspace }}\..\_artifacts\${{ needs.setup_build.outputs.build_number }}\${{ vars.ENVIRONMENT }}
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up NuGet
+      uses: NuGet/setup-nuget@v2.0.0               
+
+    - name: NuGet Restore
+      run: | 
+        nuget restore "${{github.workspace}}\ETG.sln"   
+        
+    - name: Set up MSBuild
+      uses: microsoft/setup-msbuild@v2
+      
+    - name: Set up npm
+      uses: actions/setup-node@v4
+      with:
+        node-version: '12.16.1'
+        registry-url: 'https://registry.npmjs.org/'
+        
+    - name: Configure npm additional options
+      run: |
+        npm config set strict-ssl false
+        npm config set proxy ${{ vars.HTTP_PROXY }}
+        npm config set https-proxy ${{ vars.HTTP_PROXY }}        
+    
+    - name: Install Node.js dependencies
+      run: npm install
+      working-directory: "CJG.Web.External/UI"
+
+    - name: Run Node.js build
+      run: npm run ci-build
+      working-directory: "CJG.Web.External/UI"
+      
+    - name: Run Config-Replace script on Notification Service
+      run: |
+        $configTags = (
+          @{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, 
+          @{tag='db-name'; val="${{ vars.DB_NAME }}"}, 
+          @{tag='db-user'; val="${{ vars.DB_USER }}"}, 
+          @{tag='db-pass'; val="${{ secrets.DB_PASSWORD }}"},
+          @{tag='smtp-server'; val="${{ vars.SMTP_SERVER }}"},
+          @{tag='email-enabled'; val="${{ vars.EMAIL_ENABLED }}"}
+        )        
+        ${{ vars.CI_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.NotificationService/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.NotificationService/App.config" $configTags
+      shell: powershell
+      
+    - name: Run Config-Replace script on Reporting Service
+      run: |
+        $configTags = (
+          @{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, 
+          @{tag='db-name'; val="${{ vars.DB_NAME }}"}, 
+          @{tag='db-user'; val="${{ vars.DB_USER }}"}, 
+          @{tag='db-pass'; val="${{ secrets.DB_PASSWORD }}"},
+          @{tag='csv-file-path-template'; val="${{ vars.REPORTING_SERVICE_CSV_FILE_PATH_TEMPLATE }}"},
+          @{tag='html-file-path-template'; val="${{ vars.REPORTING_SERVICE_HTML_FILE_PATH_TEMPLATE }}"}
+        )
+        ${{ vars.CI_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.ReportingService/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.ReportingService/App.config" $configTags
+      shell: powershell
+      
+    - name: Run Config-Replace script on Grant Opening Service
+      run: |
+        $configTags = (@{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, @{tag='db-name'; val="${{ vars.DB_NAME }}"}, @{tag='db-user'; val="${{ vars.DB_USER }}"}, @{tag='db-pass'; val="${{ secrets.DB_PASSWORD }}"})
+        ${{ vars.CI_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.GrantOpeningService/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.GrantOpeningService/App.config" $configTags
+      shell: powershell
+
+    - name: Run Config-Replace script on EF
+      run: |
+        $configTags = (@{tag='db-instance'; val="${{ vars.DB_INSTANCE }}"}, @{tag='db-name'; val="${{ vars.DB_NAME }}"})        
+        ${{ vars.CI_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.EF/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.EF/App.config" $configTags
+      shell: powershell
+
+    - name: MSBuild .NET framework
+      run: |
+        msbuild.exe "${{github.workspace}}\ETG.sln" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:IncrementalBuild=true /P:SkipExtraFilesOnServer=True /p:platform="Any CPU" /p:configuration="${{ vars.BUILD_CONFIGURATION }}"
+      working-directory: ${{github.workspace}}
+
+    - name: Create artifacts directory
+      run: |
+          if (-Not (Test-Path -Path "${{ env.ARTIFACTS_PATH }}")) {
+            New-Item -ItemType Directory -Path "${{ env.ARTIFACTS_PATH }}"
+          }
+      shell: powershell
+     
+    - name: Upload Web Application as artifact to GitHub
+      uses: actions/upload-artifact@v4
+      with:
+        name: ETGWebApplication-${{ vars.BUILD_CONFIGURATION }}
+        path: "**/CJG.Web.External/obj/${{ vars.BUILD_CONFIGURATION }}/Package/PackageTmp/"
+        
+    - name: Copy Web Application to local artifacts folder
+      run: xcopy /E /I ${{ github.workspace }}\CJG.Web.External\obj\${{ vars.BUILD_CONFIGURATION }}\Package\PackageTmp ${{ env.ARTIFACTS_PATH }}\CJG.Web.External\
+      shell: cmd
+      
+    - name: Upload Web Application Deploy Package as artifact to GitHub
+      uses: actions/upload-artifact@v4
+      with:
+        name: ETGWebApplicationDeployPackage-${{ vars.BUILD_CONFIGURATION }}
+        path: "**/CJG.Web.External/obj/${{ vars.BUILD_CONFIGURATION }}/Package/${{ vars.WEB_DEPLOY_PACKAGE_NAME }}"
+      
+    - name: Copy Web Application Deploy Package to local artifacts folder
+      run: xcopy /E /I ${{ github.workspace }}\CJG.Web.External\obj\${{ vars.BUILD_CONFIGURATION }}\Package\${{ vars.WEB_DEPLOY_PACKAGE_NAME }} ${{ env.ARTIFACTS_PATH }}\
+      shell: cmd
+
+    - name: Upload EF Service as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: EFMigration-${{ vars.BUILD_CONFIGURATION }}
+        path: "**/CJG.Infrastructure.EF/bin/${{ vars.BUILD_CONFIGURATION }}/"
+
+    - name: Copy EF to local artifacts folder
+      run: xcopy /E /I CJG.Infrastructure.EF\bin\${{ vars.BUILD_CONFIGURATION }} ${{ env.ARTIFACTS_PATH }}\CJG.Infrastructure.EF\
+      shell: cmd
+        
+    - name: Upload Notification Service as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: NotificationService-${{ vars.BUILD_CONFIGURATION }}
+        path: "**/CJG.Infrastructure.NotificationService/bin/${{ vars.BUILD_CONFIGURATION }}/" 
+
+    - name: Copy Notification Service to local artifacts folder
+      run: xcopy /E /I /Y CJG.Infrastructure.NotificationService\bin\${{ vars.BUILD_CONFIGURATION }} "${{ env.ARTIFACTS_PATH }}\CJG.Infrastructure.NotificationService\"
+      shell: cmd
+
+    - name: Upload Reporting Service as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ReportingService-${{ vars.BUILD_CONFIGURATION }}
+        path: "**/CJG.Infrastructure.ReportingService/bin/${{ vars.BUILD_CONFIGURATION }}/"
+
+    - name: Copy Reporting Service to local artifacts folder
+      run: xcopy /E /I /Y CJG.Infrastructure.ReportingService\bin\${{ vars.BUILD_CONFIGURATION }} ${{ env.ARTIFACTS_PATH }}\CJG.Infrastructure.ReportingService\
+      shell: cmd
+
+    - name: Upload Grant Opening Service as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: GrantOpeningService-${{ vars.BUILD_CONFIGURATION }}
+        path: "**/CJG.Infrastructure.GrantOpeningService/bin/${{ vars.BUILD_CONFIGURATION }}/"
+
+    - name: Copy Reporting Service to local artifacts folder
+      run: xcopy /E /I /Y CJG.Infrastructure.GrantOpeningService\bin\${{ vars.BUILD_CONFIGURATION }} ${{ env.ARTIFACTS_PATH }}\CJG.Infrastructure.GrantOpeningService\
+      shell: cmd
+    
+    
   deploy_qa:
     name: Deploy to QA
     environment: QA
     runs-on: etg-cd-dev
-    needs: [setup_build, build_dev_qa, deploy_dev]    
+    needs: [setup_build, build_qa]    
     env:
       BUILD_NUMBER: ${{ needs.setup_build.outputs.build_number }}
       ARTIFACTS_PATH: ${{ github.workspace }}\..\_artifacts\${{ needs.setup_build.outputs.build_number }}\${{ vars.ENVIRONMENT }}
