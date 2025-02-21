@@ -108,5 +108,69 @@
             </div>
             <button ng-if="model.MaximumNumberOfAttachmentsAllowed > model.Attachments.length" class="btn btn--secondary" ng-click="addAttachment()" data-disableonsubmit="false">Add attachment</button>
         </div>
+
+        <div class="claim-final-checks">
+            <div class="form__group form__group--radio-inline form__group_finalchecks">
+                <label class="form__label">
+                    1. Have you submitted your proof of payment?
+                </label>
+                <p>This must include one of the following which shows payment of the total amount to the training provider:</p>
+                <ul>
+                    <li>The front and back of the cleared cheque (this can be found in your online bank statement)</li>
+                    <li>A copy/screenshot of your credit card/bank statement from your financial institution showing the payment</li>
+                </ul>
+                <div class="form__control" ng-validation="errors.ParticipantsPaidForExpenses">
+                    <div class="form-item">
+                        <input type="radio" id="final-check-1-yes" ng-value="true" ng-change="toggleFinalCheck()" ng-model="claimFinalCheck1" name="claimFinalCheck1">
+                        <label for="final-check-1-yes">Yes</label>
+                    </div>
+                    <div class="form-item">
+                        <input type="radio" id="final-check-1-no" ng-value="false" ng-change="toggleFinalCheck()" ng-model="claimFinalCheck1" name="claimFinalCheck1">
+                        <label for="final-check-1-no">No</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form__group form__group--radio-inline form__group_finalchecks">
+                <label class="form__label">
+                    2. Does your receipt clearly show the start date of training?
+                </label>
+                <p>If your receipt does not show this, you must provide an invoice or an email from the training provider confirming the start date.</p>
+                <div class="form__control" ng-validation="errors.ParticipantsPaidForExpenses">
+                    <div class="form-item">
+                        <input type="radio" id="final-check-2-yes" ng-value="true" ng-change="toggleFinalCheck()" ng-model="claimFinalCheck2" name="claimFinalCheck2">
+                        <label for="final-check-2-yes">Yes</label>
+                    </div>
+                    <div class="form-item">
+                        <input type="radio" id="final-check-2-no" ng-value="false" ng-change="toggleFinalCheck()" ng-model="claimFinalCheck2" name="claimFinalCheck2">
+                        <label for="final-check-2-no">No</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form__group form__group--radio-inline form__group_finalchecks">
+                <label class="form__label">
+                    3. Does your training provider receipt/invoice or email show confirmation of all the following information:
+                </label>
+                <ul>
+                    <li>Training provider name</li>
+                    <li>Training program title</li>
+                    <li>Total cost of training</li>
+                </ul>
+                <div class="form__control" ng-validation="errors.ParticipantsPaidForExpenses">
+                    <div class="form-item">
+                        <input type="radio" id="final-check-3-yes" ng-value="true" ng-change="toggleFinalCheck()" ng-model="claimFinalCheck3" name="claimFinalCheck3">
+                        <label for="final-check-3-yes">Yes</label>
+                    </div>
+                    <div class="form-item">
+                        <input type="radio" id="final-check-3-no" ng-value="false" ng-change="toggleFinalCheck()" ng-model="claimFinalCheck3" name="claimFinalCheck3">
+                        <label for="final-check-3-no">No</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="notice notice--icon" ng-show="claimFinalCheckHasNo">
+                <p>You have selected “No” to one or more of the mandatory questions. Please go back and ensure you have uploaded all required documentation.</p>
+            </div>
+        </div>
+
     </div>
 </div>

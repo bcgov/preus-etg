@@ -51,6 +51,7 @@ app.controller('ClaimReportingView', function ($scope, $attrs, $controller, $tim
   $scope.participantsHaveWarnings = null;
 
   $scope.allowSubmitButton = false;
+  $scope.finalCheckComplete = false;
 
   $scope.totalAttachments = 0;
   $scope.ApplicantNotesSuccessMessage = '';

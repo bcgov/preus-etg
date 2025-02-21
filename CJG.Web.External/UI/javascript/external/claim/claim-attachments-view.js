@@ -45,7 +45,12 @@ app.controller('ClaimAttachmentsView', function ($scope, $attrs, $controller, $t
     claimVersion: $attrs.ngClaimVersion,
     attachments: [],
     showInstructions: false,
-    showReimbursementWarning: false
+    showReimbursementWarning: false,
+
+    claimFinalCheckHasNo: false,
+    claimFinalCheck1: null,
+    claimFinalCheck2: null,
+    claimFinalCheck3: null
   };
   
   angular.extend(this, $controller('Section', { $scope: $scope, $attrs: $attrs }));
@@ -107,6 +112,21 @@ app.controller('ClaimAttachmentsView', function ($scope, $attrs, $controller, $t
       $scope.showReimbursementWarning = false;
       $scope.$parent.allowSubmitButton = true;
     }
+  }
+
+  // The Toggle Upload methods also talk to and set values in the parent controller since this is a partial controller.
+  // The different calls to $scope.$parent and $scope.model are deliberate.
+  $scope.toggleFinalCheck = function (toggleErrors = true) {
+    var anyAreNo = $scope.claimFinalCheck1 === false
+      || $scope.claimFinalCheck2 === false
+      || $scope.claimFinalCheck3 === false;
+
+    var allChecked = $scope.claimFinalCheck1 === true
+      && $scope.claimFinalCheck2 === true
+      && $scope.claimFinalCheck3 === true;
+
+    $scope.claimFinalCheckHasNo = anyAreNo;
+    $scope.$parent.finalCheckComplete = allChecked;
   }
 
   // The Toggle Upload methods also talk to and set values in the parent controller since this is a partial controller.
