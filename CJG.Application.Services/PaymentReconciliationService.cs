@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using CJG.Core.Entities;
+using CJG.Core.Entities.Extensions;
 using CJG.Core.Entities.Helpers;
 using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
@@ -235,7 +236,12 @@ namespace CJG.Application.Services
 					if (!createNew)
 					{
 						// Check if there is a report that already exists for this range.
-						var existingReport = _dbContext.ReconciliationReports.OrderByDescending(rr => rr.DateAdded).FirstOrDefault(rp => rp.DateRun == reconciliationReport.DateRun && rp.Requestor == reconciliationReport.Requestor && rp.PeriodFrom == reconciliationReport.PeriodFrom && rp.PeriodTo == reconciliationReport.PeriodTo);
+						var existingReport = _dbContext.ReconciliationReports
+							.OrderByDescending(rr => rr.DateAdded)
+							.FirstOrDefault(rp =>
+								rp.DateRun == reconciliationReport.DateRun && rp.Requestor == reconciliationReport.Requestor &&
+								rp.PeriodFrom == reconciliationReport.PeriodFrom && rp.PeriodTo == reconciliationReport.PeriodTo);
+
 						if (existingReport != null)
 						{
 							var paymentIds = existingReport.Payments.Select(p => p.Id).ToArray();
@@ -259,13 +265,9 @@ namespace CJG.Application.Services
 							{
 								recPayment.ReconcilationState = ReconciliationStates.InvalidDocumentNumber;
 							}
-							else if (recPayment.SupplierName != recPayment.GrantApplication.OrganizationLegalName)
+							else if (recPayment.IsValidSupplierName(recPayment.GrantApplication))
 							{
 								recPayment.ReconcilationState = ReconciliationStates.InvalidSupplierName;
-							}
-							else if (!string.IsNullOrWhiteSpace(recPayment.SupplierNumber) ? recPayment.SupplierNumber != paymentRequest.RecipientBusinessNumber : false)
-							{
-								recPayment.ReconcilationState = ReconciliationStates.InvalidSupplierNumber;
 							}
 							else
 							{
@@ -441,11 +443,8 @@ namespace CJG.Application.Services
 					else if (recPayment.DocumentNumber != payment.PaymentRequest.DocumentNumber)
 						state = ReconciliationStates.InvalidDocumentNumber;
 
-					else if (recPayment.SupplierName != payment.PaymentRequest.GrantApplication.OrganizationLegalName)
+					else if (recPayment.IsValidSupplierName(payment.PaymentRequest.GrantApplication))
 						state = ReconciliationStates.InvalidSupplierName;
-
-					else if (recPayment.SupplierNumber != payment.PaymentRequest.RecipientBusinessNumber)
-						state = ReconciliationStates.InvalidSupplierNumber;
 
 					recPayment.ReconcilationState = state;
 					if (state == ReconciliationStates.Reconciled)
@@ -548,11 +547,8 @@ namespace CJG.Application.Services
 				else if (recPayment.DocumentNumber != paymentRequest.DocumentNumber)
 					state = ReconciliationStates.InvalidDocumentNumber;
 
-				else if (recPayment.SupplierName != paymentRequest.GrantApplication.OrganizationLegalName)
+				else if (recPayment.IsValidSupplierName(paymentRequest.GrantApplication))
 					state = ReconciliationStates.InvalidSupplierName;
-
-				else if (recPayment.SupplierNumber != paymentRequest.RecipientBusinessNumber)
-					state = ReconciliationStates.InvalidSupplierNumber;
 
 				recPayment.ReconcilationState = state;
 				if (recPayment.ReconcilationState == ReconciliationStates.Reconciled)

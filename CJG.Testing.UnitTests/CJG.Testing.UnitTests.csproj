@@ -266,6 +266,7 @@
     <Compile Include="Dates\DateTimeTests.cs" />
     <Compile Include="Dates\GrantOpeningTests.cs" />
     <Compile Include="Entities\Extensions\GrantApplicationStateExtensionTests.cs" />
+    <Compile Include="Entities\Extensions\ReconciliationPaymentExtensionTests.cs" />
     <Compile Include="Entities\PrioritizationScoreBreakdownTests.cs" />
     <Compile Include="Entities\ApplicationAddressTests.cs" />
     <Compile Include="Entities\ClaimBreakdownCostValidationTests.cs" />
