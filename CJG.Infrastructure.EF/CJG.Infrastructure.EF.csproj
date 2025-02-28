@@ -460,6 +460,10 @@
     <Compile Include="Migrations\202410081743430_v02.13.01.Designer.cs">
       <DependentUpon>202410081743430_v02.13.01.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202502272236506_v02.16.00.cs" />
+    <Compile Include="Migrations\202502272236506_v02.16.00.Designer.cs">
+      <DependentUpon>202502272236506_v02.16.00.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Content Include="Migrations\v02.02.03\PostDeploy\Seed\03 GrantOpenings.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -952,6 +956,12 @@
     <Content Include="Migrations\v02.02.03\PostDeploy\Seed\01 AddQuestions.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Migrations\v02.16.00\PostDeploy\Seed\01_UpdateTrainingLevels.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v02.16.00\PostDeploy\Seed\02_UpdateInDemandOccupations.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Migrations\v02.11.06\PostDeploy\Seed\01_AddNotificationEmailTemplate.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1352,6 +1362,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202410081743430_v02.13.01.resx">
       <DependentUpon>202410081743430_v02.13.01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202502272236506_v02.16.00.resx">
+      <DependentUpon>202502272236506_v02.16.00.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -91,7 +91,7 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
       set: 'skillFocuses',
       condition: !$scope.skillFocuses || !$scope.skillFocuses.length,
       localCache: true
-    })
+    });
   }
 
   /**
@@ -104,7 +104,7 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
       url: '/Int/Application/Training/Program/In/Demand/Occupations',
       set: 'inDemandOccupations',
       condition: !$scope.inDemandOccupations || !$scope.inDemandOccupations.length,
-      localCache: true
+      localCache: false
     });
   }
 
@@ -118,7 +118,7 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
       url: '/Int/Application/Training/Program/Training/Levels',
       set: 'trainingLevels',
       condition: !$scope.trainingLevels || !$scope.trainingLevels.length,
-      localCache: true
+      localCache: false
     });
   }
 
