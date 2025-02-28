@@ -186,7 +186,8 @@ jobs:
   deploy_dev:
     name: Deploy to DEV
     environment: Dev
-    runs-on: etg-cd-dev
+    #runs-on: etg-cd-dev
+    runs-on: etg-ci
     needs: [setup_build, build_dev]
     
     env:
