@@ -429,14 +429,26 @@ jobs:
   deploy_qa:
     name: Deploy to QA
     environment: QA
-    #runs-on: etg-cd-dev
-    runs-on: etg-ci
+    runs-on: etg-cd-dev
     needs: [setup_build, build_qa]    
     env:
       BUILD_NUMBER: ${{ needs.setup_build.outputs.build_number }}
       ARTIFACTS_PATH: ${{ github.workspace }}\..\_artifacts\${{ needs.setup_build.outputs.build_number }}\${{ vars.ENVIRONMENT }}
     
     steps:
+
+    - name: Clear Working Directory
+      run: |
+        Write-Host "Clearing workspace directory..."
+        Remove-Item -Path "${{ github.workspace }}\CJG*" -Recurse -Force
+      shell: powershell
+    
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: "*-${{ vars.BUILD_CONFIGURATION }}*"
+        merge-multiple: true
+        github-token: ${{ secrets.GH_API_TOKEN }}
+        run-id: ${{ github.event.inputs.build_runid }}          
       
     - name: Back up DB migration program
       run: xcopy /E /I /Y CJG.Infrastructure.EF\bin\${{ vars.BUILD_CONFIGURATION }} ${{ vars.DB_BACKUP_FOLDER }}\${{ vars.ENVIRONMENT }}\Databases\
