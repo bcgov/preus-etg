@@ -448,7 +448,8 @@ jobs:
         pattern: "*-${{ vars.BUILD_CONFIGURATION }}*"
         merge-multiple: true
         github-token: ${{ secrets.GH_API_TOKEN }}
-        run-id: ${{ github.event.inputs.build_runid }}          
+        #run-id: ${{ github.event.inputs.build_runid }}
+        run-id: ${{ github.event.workflow_run.id }}  ##Dynamically fetch the latest successful run ID        
       
     - name: Back up DB migration program
       run: xcopy /E /I /Y CJG.Infrastructure.EF\bin\${{ vars.BUILD_CONFIGURATION }} ${{ vars.DB_BACKUP_FOLDER }}\${{ vars.ENVIRONMENT }}\Databases\
