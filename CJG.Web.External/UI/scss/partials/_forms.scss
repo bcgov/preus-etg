@@ -517,6 +517,26 @@ input[type=radio] {
   }
 }
 
+.claim-final-checks {
+  margin-top: 1em;
+}
+
+.form__group_finalchecks {
+  p {
+    margin-bottom: 0.5em;
+    margin-left: 1em;
+  }
+
+  ul {
+    margin-bottom: 0.5em;
+    margin-left: 1.2em;
+  }
+
+  .form__control {
+      margin-left: 1em;
+  }
+}
+
 .modal-content {
   .form__group--radio-inline {
     .form__control {

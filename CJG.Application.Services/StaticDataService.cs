@@ -1,13 +1,13 @@
-﻿using CJG.Core.Entities;
-using CJG.Core.Interfaces.Service;
-using CJG.Infrastructure.Entities;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using CJG.Core.Entities;
+using CJG.Core.Interfaces.Service;
+using CJG.Infrastructure.Entities;
+using NLog;
 using static CJG.Core.Entities.Constants;
 
 namespace CJG.Application.Services
@@ -17,11 +17,8 @@ namespace CJG.Application.Services
 	/// </summary>
 	public class StaticDataService : Service, IStaticDataService
 	{
-		#region Properties
-		private static readonly ConcurrentDictionary<string, IEnumerable<object>> _cache = new ConcurrentDictionary<string, IEnumerable<object>>();
-		#endregion
+		private static readonly ConcurrentDictionary<string, IEnumerable<object>> Cache = new ConcurrentDictionary<string, IEnumerable<object>>();
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a <typeparamref name="StaticDataService"/> object and initializes it with the specified property values.
 		/// </summary>
@@ -31,9 +28,7 @@ namespace CJG.Application.Services
 		public StaticDataService(IDataContext context, HttpContextBase httpContext, ILogger logger) : base(context, httpContext, logger)
 		{
 		}
-		#endregion
 
-		#region Methods
 		/// <summary>
 		/// Copy the properties of the source entity to the destination entity through reflection.
 		/// </summary>
@@ -45,7 +40,6 @@ namespace CJG.Application.Services
 			_dbContext.CopyTo<TEntity>(source, destination);
 		}
 
-		#region LookupTables
 		/// <summary>
 		/// Get the specified entities of type <typeparamref name="TEntity"/> and caches them.
 		/// </summary>
@@ -58,10 +52,10 @@ namespace CJG.Application.Services
 			{
 				var type = typeof(TEntity);
 				IEnumerable<object> results;
-				if (!_cache.TryGetValue(type.Name, out results))
+				if (!Cache.TryGetValue(type.Name, out results))
 				{
 					var items = fetch().ToList();
-					_cache.TryAdd(type.Name, items);
+					Cache.TryAdd(type.Name, items);
 					return items;
 				}
 
@@ -657,8 +651,6 @@ namespace CJG.Application.Services
 		}
 
 
-		#endregion
-
 		/// <summary>
 		/// Get the <typeparamref name="DbSet"/> of type <typeparamref name="TEntity"/>.
 		/// </summary>
@@ -838,6 +830,5 @@ namespace CJG.Application.Services
 		{
 			return _dbContext.NotificationTypes.Find(id);
 		}
-		#endregion
 	}
 }
