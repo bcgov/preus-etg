@@ -117,5 +117,6 @@ jobs:
       
     - name: Run auth list
       run: |      
-        ${{ vars.CICD_SCRIPTS_FOLDER }}\windowsauthlist.ps1 "${{ vars.WEB_FOLDER }}\${{ vars.ENVIRONMENT }}\Web.config" "${{ vars.SERVER_ACCESS_ROLES }}"
+        #${{ vars.CICD_SCRIPTS_FOLDER }}\windowsauthlist.ps1 "${{ vars.WEB_FOLDER }}\${{ vars.ENVIRONMENT }}\Web.config" "${{ vars.SERVER_ACCESS_ROLES }}"
+        ${{ vars.CD_SCRIPTS_FOLDER }}\windowsauthlist.ps1 "${{ vars.WEB_FOLDER }}\${{ vars.ENVIRONMENT }}\Web.config" "${{ vars.SERVER_ACCESS_ROLES }}"
       shell: powershell
