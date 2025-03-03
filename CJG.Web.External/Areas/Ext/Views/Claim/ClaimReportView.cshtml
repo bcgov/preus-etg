@@ -36,7 +36,7 @@
                     </div>
                     <div class="clearfix"></div>
                     <div class="margin-bottom pull-right" ng-if="model.Claim.IsEditable && grantFile.ReportingPeriodIsOpen && allowSubmitButton">
-                        <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-disabled="totalAttachments <= 0 || participantsHaveWarnings" ng-click="saveAndReview();">Submit my claim now</a>
+                        <a class="btn btn--primary js-btn-update" data-disableonsubmit="false" ng-disabled="totalAttachments <= 0 || participantsHaveWarnings || !finalCheckComplete" ng-click="saveAndReview();">Submit my claim now</a>
                     </div>
                     @*<div class="margin-bottom pull-right" ng-if="grantFile.AllowReviewAndSubmit && grantFile.EnableSubmit">
                         @Html.ActionLink("Submit my claim now", "ClaimReviewView", "Claim", new { claimId = ViewBag.ClaimId, claimVersion = ViewBag.ClaimVersion }, new { @class = "btn btn--primary" })

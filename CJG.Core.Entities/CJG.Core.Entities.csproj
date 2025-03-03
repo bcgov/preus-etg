@@ -124,6 +124,7 @@
     <Compile Include="DenialReason.cs" />
     <Compile Include="ExpectedParticipantOutcome.cs" />
     <Compile Include="Extensions\GrantApplicationStateExtensions.cs" />
+    <Compile Include="Extensions\ReconciliationPaymentExtensions.cs" />
     <Compile Include="GrantStreamEligibilityAnswer.cs" />
     <Compile Include="GrantStreamEligibilityQuestion.cs" />
     <Compile Include="IPrincipalExtensions.cs" />
