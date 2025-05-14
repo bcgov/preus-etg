@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -21,22 +22,6 @@ namespace CJG.Application.Services
 	/// </summary>
 	public class PaymentReconciliationService : Service, IPaymentReconciliationService
 	{
-		private static readonly Dictionary<string, int> _months = new Dictionary<string, int>() {
-			{ "JAN", 1 },
-			{ "FEB", 2 },
-			{ "MAR", 3 },
-			{ "APR", 4 },
-			{ "MAY", 5 },
-			{ "JUN", 6 },
-			{ "JUL", 7 },
-			{ "AUG", 8 },
-			{ "SEP", 9 },
-			{ "SEPT", 9 },
-			{ "OCT", 10 },
-			{ "NOV", 11 },
-			{ "DEC", 12 }
-		};
-
 		private string[] _validPrefix;
 
 		/// <summary>
@@ -45,10 +30,8 @@ namespace CJG.Application.Services
 		/// <param name="context"></param>
 		/// <param name="httpContext"></param>
 		/// <param name="logger"></param>
-		public PaymentReconciliationService(
-			IDataContext context,
-			HttpContextBase httpContext,
-			ILogger logger) : base(context, httpContext, logger)
+		public PaymentReconciliationService(IDataContext context, HttpContextBase httpContext, ILogger logger)
+			: base(context, httpContext, logger)
 		{
 		}
 
@@ -93,9 +76,6 @@ namespace CJG.Application.Services
 			{
 				var user = _dbContext.InternalUsers.Find(_httpContext.User.GetUserId())
 				           ?? throw new InvalidOperationException("User does not exist");
-
-				var reconciliationReport = new ReconciliationReport(user);
-
 				var defaultGrantProgramId = GetDefaultGrantProgramId();
 
 				_validPrefix = _dbContext.GrantPrograms
@@ -105,22 +85,26 @@ namespace CJG.Application.Services
 					.Distinct()
 					.ToArray();
 
+				var reconciliationReport = new ReconciliationReport(user);
+
 				using (var document = SpreadsheetDocument.Open(stream, false))
 				{
 					var workbookPart = document.WorkbookPart;
 					var sheet = workbookPart.WorksheetParts.FirstOrDefault() ?? throw new InvalidOperationException("Excel contains no sheets.");
-					var rows = sheet.Worksheet.Descendants<Row>();
+					var rows = sheet.Worksheet.Descendants<Row>().ToList();
 
-					var periodNameCol = "E";
-					var amountCol = "G";
-					var supplierNameCol = "H";
-					var supplierNumberCol = "M";
-					var creationDateCol = "I";
-					var documentNumberCol = "J";
-					var batchNameCol = "L";
+					var clientCol = "A";
+					var finalBalanceCol = "E";  // Used to detect the value of 'Final Balance' which signifies the end of the data rows
+					var supplierNameCol = "F";
+					var periodNameCol = "G";
+					var creationDateCol = "H";
+					var documentNumberCol = "I";
+					var amountCol = "J";
 
-					var fromYear = 0;
-					var toYear = 0;
+					var bypassedHeaderRows = false;
+					var keepProcessing = true;
+
+					var trackedPeriods = new List<DateTime>();
 
 					foreach (var row in rows)
 					{
@@ -128,110 +112,93 @@ namespace CJG.Application.Services
 						var cells = row.Descendants<Cell>().ToList();
 
 						// Assumption that the 'Client' column header will always be the first column.
-						var firstCell = cells.FirstOrDefault(c => c.CellReference == $"A{rowIndex}");
-						var cellValue = GetCellValue<string>(workbookPart, firstCell);
+						var clientCell = cells.FirstOrDefault(c => c.CellReference == $"{clientCol}{rowIndex}");
+						var cellValue = GetCellValue<string>(workbookPart, clientCell);
 
-						if (int.TryParse(cellValue, out int clientId))
+						if (!keepProcessing)
+							break;
+
+						if (!bypassedHeaderRows)
 						{
-							// Get the cells for each relevant column.
-							var amountCell = cells.FirstOrDefault(c => c.CellReference == $"{amountCol}{rowIndex}");
-							var supplierNameCell = cells.FirstOrDefault(c => c.CellReference == $"{supplierNameCol}{rowIndex}");
-							var supplierNumberCell = cells.FirstOrDefault(c => c.CellReference == $"{supplierNumberCol}{rowIndex}");
-							var creationDateCell = cells.FirstOrDefault(c => c.CellReference == $"{creationDateCol}{rowIndex}");
-							var documentNumberCell = cells.FirstOrDefault(c => c.CellReference == $"{documentNumberCol}{rowIndex}");
-							var batchNameCell = cells.FirstOrDefault(c => c.CellReference == $"{batchNameCol}{rowIndex}");
-							var periodNameCall = cells.FirstOrDefault(c => c.CellReference == $"{periodNameCol}{rowIndex}");
+							var cellData = cellValue.Trim().ToLower();
 
-							// Extract the values from the cells.
-							var amount = GetCellValue<decimal>(workbookPart, amountCell, 2);
-							var supplierName = GetCellValue<string>(workbookPart, supplierNameCell);
-							var supplierNumber = GetCellValue<string>(workbookPart, supplierNumberCell);
-							var creationDate = GetCellValue<DateTime>(workbookPart, creationDateCell);
-							var documentNumber = GetCellValue<string>(workbookPart, documentNumberCell);
-							var batchName = GetCellValue<string>(workbookPart, batchNameCell);
-							var periodName = GetCellValue<DateTime>(workbookPart, periodNameCall);
+							if (cellData.StartsWith("time run:"))
+							{
+								var dateTimeString = cellData.Replace("time run: ", "").Trim();
+								var format = "d/M/yyyy h:mm:ss tt";
 
-							if (fromYear == 0 || (periodName.Year > 0 && periodName.Year < fromYear))
-								fromYear = periodName.Year; // Get the lowest year.
+								if (DateTime.TryParseExact(dateTimeString, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDateTime))
+								{
+									reconciliationReport.DateRun = parsedDateTime.ToUniversalTime();
+									continue;
+								}
 
-							if (periodName.Year > toYear)
-								toYear = periodName.Year; // Get the highest year.
+								throw new InvalidOperationException($"The reconciliation report 'run date' is invalid - '{cellValue}'.");
+							}
 
-							// Determine if this is a payment or accrual journal entry.  If it is, import it.
-							var payment = GetReconciliationPayment(reconciliationReport, batchName, creationDate, documentNumber, supplierName, supplierNumber, amount);
-							if (payment != null)
-								reconciliationReport.Payments.Add(payment);
+							if (cellData == "client")
+								bypassedHeaderRows = true;
+
+							continue;
 						}
-						else
+
+						var finalBalanceCell = cells.FirstOrDefault(c => c.CellReference == $"{finalBalanceCol}{rowIndex}");
+						var finalBalanceCellValue = GetCellValue<string>(workbookPart, finalBalanceCell);
+
+						// TODO: Could optimise this to break out here and not do another loop if we want to stop all processing
+						if (finalBalanceCellValue.Trim().ToLower() == "final balance")
 						{
-							if (string.Compare("Client", cellValue) == 0)
-							{
-								amountCol = ColumnIndexToColumnLetter(GetColumnIndex(cells.FirstOrDefault(c => GetCellValue<string>(workbookPart, c) == "Actual Amount")?.CellReference?.Value));
-								supplierNameCol = ColumnIndexToColumnLetter(GetColumnIndex(cells.FirstOrDefault(c => GetCellValue<string>(workbookPart, c) == "Description or Supplier Name")?.CellReference?.Value));
-								supplierNumberCol = ColumnIndexToColumnLetter(GetColumnIndex(cells.FirstOrDefault(c => GetCellValue<string>(workbookPart, c) == "Supplier Number")?.CellReference?.Value));
-								creationDateCol = ColumnIndexToColumnLetter(GetColumnIndex(cells.FirstOrDefault(c => GetCellValue<string>(workbookPart, c) == "Creation Date")?.CellReference?.Value));
-								documentNumberCol = ColumnIndexToColumnLetter(GetColumnIndex(cells.FirstOrDefault(c => GetCellValue<string>(workbookPart, c) == "Document Number")?.CellReference?.Value));
-								batchNameCol = ColumnIndexToColumnLetter(GetColumnIndex(cells.FirstOrDefault(c => GetCellValue<string>(workbookPart, c) == "Batch Name")?.CellReference?.Value));
-								periodNameCol = ColumnIndexToColumnLetter(GetColumnIndex(cells.FirstOrDefault(c => GetCellValue<string>(workbookPart, c) == "Period Name")?.CellReference?.Value));
-							}
-							else if (cellValue != null)
-							{
-								if (cellValue.StartsWith("Run Date"))
-								{
-									var match = Regex.Match(cellValue, @"Run\sDate:\s(?<d>[0-9]{4}/[0-9]{2}/[0-9]{2})\s+Run\sTime:\s(?<t>[0-9]{2}:[0-9]{2}:[0-9]{2})");
-									if (match.Success)
-									{
-										var date = match.Groups["d"].Value;
-										var time = match.Groups["t"].Value;
-										if (DateTime.TryParse($"{date} {time}", out DateTime runDate))
-										{
-											reconciliationReport.DateRun = runDate.ToUniversalTime();
-											continue;
-										}
-									}
-									throw new InvalidOperationException($"The reconciliation report 'run date' is invalid - '{cellValue}'.");
-								}
-								else if (cellValue.StartsWith("Requester"))
-								{
-									reconciliationReport.Requestor = cellValue.Replace("Requester:", "").Trim();
-								}
-								else if (cellValue.StartsWith("Period From"))
-								{
-									var match = Regex.Match(cellValue, @"Period\sFrom:\s(?<m>[A-Za-z]{3,4})-(?<y>[0-9]{2})\s\((?<f>.+)\)");
-									if (match.Success)
-									{
-										try
-										{
-											var year = fromYear == 0 ? AppDateTime.UtcNow.Year : fromYear;
-											var month = _months[match.Groups["m"].Value];
-											var day = 1;
-											reconciliationReport.PeriodFrom = new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Local).ToUtcMorning();
-											continue;
-										}
-										catch { }
-									}
-									throw new InvalidOperationException($"The reconciliation report 'period from' is invalid - '{cellValue}'.");
-								}
-								else if (cellValue.StartsWith("Period To"))
-								{
-									var match = Regex.Match(cellValue, @"Period\sTo:\s(?<m>[A-Za-z]{3,4})-(?<y>[0-9]{2})\s\((?<f>.+)\)");
-									if (match.Success)
-									{
-										try
-										{
-											var year = toYear == 0 ? AppDateTime.UtcNow.Year : toYear;
-											var month = _months[match.Groups["m"].Value];
-											var day = DateTime.DaysInMonth(year, month);
-											reconciliationReport.PeriodTo = new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Local).ToUtcMidnight();
-											continue;
-										}
-										catch { }
-									}
-									throw new InvalidOperationException($"The reconciliation report 'period to' is invalid - '{cellValue}'.");
-								}
-							}
+							keepProcessing = false;
+							continue;
 						}
+
+						var validClientId = int.TryParse(cellValue, out int clientId);  // Parses the first cell to see if it's an integer (we've hit the client id cell)
+						if (!validClientId)
+							continue;
+
+						var amountCell = cells.FirstOrDefault(c => c.CellReference == $"{amountCol}{rowIndex}");
+						var supplierNameCell = cells.FirstOrDefault(c => c.CellReference == $"{supplierNameCol}{rowIndex}");
+						var creationDateCell = cells.FirstOrDefault(c => c.CellReference == $"{creationDateCol}{rowIndex}");
+						var documentNumberCell = cells.FirstOrDefault(c => c.CellReference == $"{documentNumberCol}{rowIndex}");
+						var periodNameCall = cells.FirstOrDefault(c => c.CellReference == $"{periodNameCol}{rowIndex}");
+
+						// Extract the values from the cells.
+						var supplierName = GetCellValue<string>(workbookPart, supplierNameCell);
+						var creationDate = GetCellValue<DateTime?>(workbookPart, creationDateCell);
+						var documentNumber = GetCellValue<string>(workbookPart, documentNumberCell);
+						var amount = GetCellValue<decimal>(workbookPart, amountCell, 2);
+						var batchName = string.Empty;
+						var supplierNumber = string.Empty;
+						var periodName = GetCellValue<string>(workbookPart, periodNameCall);
+
+						if (creationDate == null)
+							continue;
+
+						var periodDate = ParsePeriodNameToDate(periodName);
+
+						if (periodDate != null && !trackedPeriods.Contains(periodDate.Value))
+							trackedPeriods.Add(periodDate.Value);
+
+						// Determine if this is a payment or accrual journal entry.  If it is, import it.
+						var payment = GetReconciliationPayment(reconciliationReport, batchName, creationDate.Value, documentNumber, supplierName, supplierNumber, amount);
+
+						if (payment != null)
+							reconciliationReport.Payments.Add(payment);
 					}
+
+					// Figure out the Period From/To from the payments
+					if (trackedPeriods.Any())
+					{ 
+						var earliestPeriod = trackedPeriods.Min();
+						var lastPeriod = trackedPeriods.Max().AddMonths(1).AddDays(-1);
+
+						reconciliationReport.PeriodFrom = earliestPeriod.ToUniversalTime();
+						reconciliationReport.PeriodTo = lastPeriod.ToUniversalTime();
+					}
+
+					// Since we don't have a requestor on the CAS File, we can use the current logged in user
+					if (string.IsNullOrWhiteSpace(reconciliationReport.Requestor))
+						reconciliationReport.Requestor = user.IDIR;
 
 					if (!createNew)
 					{
@@ -327,17 +294,18 @@ namespace CJG.Application.Services
 						// Only add payments for the same document number and supplier name that originated from CAS.
 						recPayments.AddRange(reconciliationReport.Payments.Where(rp => rp.FromCAS && rp.ReconcilationState == ReconciliationStates.NoMatch && rp.DocumentNumber == recPayment.DocumentNumber && rp.SupplierName == recPayment.SupplierName).ToArray());
 
-						if (recPayments.Any() && recPayments.Sum(rp => rp.Amount) == 0)
+						if (!recPayments.Any() || recPayments.Sum(rp => rp.Amount) != 0)
+							continue;
+
+						// The assumption is that the sum of these similar line items from CAS zero out and therefore are reconciled.
+						recPayment.ReconcilationState = ReconciliationStates.Reconciled;
+
+						recPayments.Where(rp => rp.ReconcilationState != ReconciliationStates.Reconciled).ForEach(rp =>
 						{
-							// The assumption is that the sum of these similar line items from CAS zero out and therefore are reconciled.
-							recPayment.ReconcilationState = ReconciliationStates.Reconciled;
-							recPayments.Where(rp => rp.ReconcilationState != ReconciliationStates.Reconciled).ForEach(rp =>
-							{
-								// All reports that contain the Reconciliation Payment needs to be checked to determine if they are now reconciled too.
-								rp.ReconcilationState = ReconciliationStates.Reconciled;
-								rp.Reports.Where(r => !r.IsReconciled).ForEach(r => r.IsReconciled = r.Payments.All(p => p.ReconcilationState == ReconciliationStates.Reconciled));
-							});
-						}
+							// All reports that contain the Reconciliation Payment needs to be checked to determine if they are now reconciled too.
+							rp.ReconcilationState = ReconciliationStates.Reconciled;
+							rp.Reports.Where(r => !r.IsReconciled).ForEach(r => r.IsReconciled = r.Payments.All(p => p.ReconcilationState == ReconciliationStates.Reconciled));
+						});
 					}
 
 					// Fetch all payment requests for the reported period that do not currently have a linked reconciliation payment.
@@ -381,6 +349,18 @@ namespace CJG.Application.Services
 				// Caller must close the stream.
 				throw;
 			}
+		}
+
+		private DateTime? ParsePeriodNameToDate(string periodName)
+		{
+			if (string.IsNullOrWhiteSpace(periodName))
+				return null;
+
+			// The period name is provided as "APR-25" meaning April 2025
+			if (DateTime.TryParseExact($"01-{periodName}", "dd-MMM-yy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var foundDate))
+				return foundDate;
+
+			throw new InvalidOperationException($"The reconciliation report row 'Period Name' is invalid - '{periodName}'.");
 		}
 
 		/// <summary>
@@ -527,9 +507,7 @@ namespace CJG.Application.Services
 
 			// Only need to add the reconciliation payment if it was added to a report.
 			if (addPayment && relatedPayment.Id == 0)
-			{
 				_dbContext.ReconciliationPayments.Add(relatedPayment);
-			}
 
 			// Need to manually update any other reconciliation payment that is linked through a related payment request.
 			foreach (var recPayment in paymentRequest.ReconciliationPayments.Where(rp => rp.Id != payment.Id))
@@ -577,22 +555,22 @@ namespace CJG.Application.Services
 		{
 			foreach (var payment in report.Payments.ToArray())
 			{
-				if (payment.Reports.Count() == 1)
+				if (payment.Reports.Count != 1)
+					continue;
+
+				foreach (var paymentReport in payment.Reports)
 				{
-					foreach (var paymentReport in payment.Reports)
-					{
-						if (paymentReport.IsReconciled)
-							paymentReport.IsReconciled = false;
-					}
-
-					if (payment.PaymentRequest != null && payment.PaymentRequest.IsReconciled)
-					{
-						payment.PaymentRequest.IsReconciled = false;
-						payment.PaymentRequest.Claim.ClaimState = payment.PaymentRequest.Claim.TotalAssessedReimbursement > 0 ? ClaimState.PaymentRequested : ClaimState.AmountOwing;
-					}
-
-					_dbContext.ReconciliationPayments.Remove(payment);
+					if (paymentReport.IsReconciled)
+						paymentReport.IsReconciled = false;
 				}
+
+				if (payment.PaymentRequest != null && payment.PaymentRequest.IsReconciled)
+				{
+					payment.PaymentRequest.IsReconciled = false;
+					payment.PaymentRequest.Claim.ClaimState = payment.PaymentRequest.Claim.TotalAssessedReimbursement > 0 ? ClaimState.PaymentRequested : ClaimState.AmountOwing;
+				}
+
+				_dbContext.ReconciliationPayments.Remove(payment);
 			}
 
 			_dbContext.ReconciliationReports.Remove(report);
@@ -614,11 +592,26 @@ namespace CJG.Application.Services
 		private ReconciliationPayment GetReconciliationPayment(ReconciliationReport reconciliationReport, string batchName, DateTime dateCreated, string documentNumber, string supplierName, string supplierNumber, decimal amount)
 		{
 			// A double entry occurs if identical payment(s) shows up in the same CAS report.  We need to create a separate line item for it otherwise it would get hidden by an existing line item.
-			var doubleEntry = reconciliationReport.Payments.Count(p => p.BatchName == batchName && p.DateCreated == dateCreated && p.DocumentNumber == documentNumber && p.SupplierName == supplierName && p.Amount == amount);
+			var doubleEntry = reconciliationReport.Payments
+				.Count(p => p.BatchName == batchName
+				            && p.DateCreated == dateCreated
+				            && p.DocumentNumber == documentNumber
+				            && p.SupplierName == supplierName
+				            && p.Amount == amount);
 
 			// If this payment has already been imported then use it instead of creating a new one (look for an exact match).
 			// An assumption is made that if there are double entries that they will be in the same order in each report.  We try and match that order so that we associated existing reconciliation payments to the newly uploaded report.
-			var existing = _dbContext.ReconciliationPayments.Where(rp => rp.BatchName == batchName && rp.DateCreated == dateCreated && rp.DocumentNumber == documentNumber && rp.SupplierName == supplierName && rp.Amount == amount).OrderBy(rp => rp.DateAdded).Skip(doubleEntry).Take(1).SingleOrDefault();
+			var existing = _dbContext.ReconciliationPayments
+				.Where(rp => rp.BatchName == batchName
+				             && rp.DateCreated == dateCreated
+				             && rp.DocumentNumber == documentNumber
+				             && rp.SupplierName == supplierName
+				             && rp.Amount == amount)
+				.OrderBy(rp => rp.DateAdded)
+				.Skip(doubleEntry)
+				.Take(1)
+				.SingleOrDefault();
+
 			if (existing != null)
 				return existing;
 
@@ -631,22 +624,25 @@ namespace CJG.Application.Services
 			if (paymentRequest == null)
 			{
 				// Look for possible payment requests that match this line item.
-				var paymentRequests = _dbContext.PaymentRequests.Where(pr => (pr.GrantApplication.OrganizationLegalName == supplierName || pr.RecipientBusinessNumber == supplierNumber)
-					&& pr.PaymentAmount == amount
-					&& pr.DateAdded <= dateCreated // Only look for payment requests before the payment was issued.
-					&& !pr.IsReconciled); // Assume this new reconciliation payment would not be associated with a previously reconciled payment request.
+				var paymentRequests = _dbContext.PaymentRequests
+					.Where(pr => pr.GrantApplication.OrganizationLegalName == supplierName
+					             && pr.PaymentAmount == amount
+					             && pr.DateAdded <= dateCreated // Only look for payment requests before the payment was issued.
+								 && !pr.IsReconciled); // Assume this new reconciliation payment would not be associated with a previously reconciled payment request.
 
 				if (paymentRequests.Count() == 1) // A possible matching payment request was found, but the document number doesn't match.
 					return new ReconciliationPayment(paymentRequests.First(), batchName, dateCreated, documentNumber, supplierName, supplierNumber, amount)
 					{
 						ReconcilationState = ReconciliationStates.InvalidDocumentNumber
 					};
-				else if (paymentRequests.Count() > 1) // Many possible matching payment requests were found, but the document number doesn't match.
+
+				if (paymentRequests.Count() > 1) // Many possible matching payment requests were found, but the document number doesn't match.
 					return new ReconciliationPayment(batchName, dateCreated, documentNumber, supplierName, supplierNumber, amount)
 					{
 						ReconcilationState = ReconciliationStates.InvalidDocumentNumber
 					};
-				else if (string.IsNullOrWhiteSpace(supplierNumber)) // Determine if the line item is a payment request.
+
+				if (string.IsNullOrWhiteSpace(supplierNumber)) // Determine if the line item is a payment request.
 				{
 					// A valid prefix indicates it is an actual payment request.
 					if (_validPrefix == null)
@@ -671,13 +667,14 @@ namespace CJG.Application.Services
 
 					return null;
 				}
-				else if (doubleEntry > 0) // When a CAS report has identical entries assume it's a duplicate.
+
+				if (doubleEntry > 0) // When a CAS report has identical entries assume it's a duplicate.
 					return new ReconciliationPayment(batchName, dateCreated, documentNumber, supplierName, supplierNumber, amount)
 					{
 						ReconcilationState = ReconciliationStates.Duplicate
 					};
-				else
-					return new ReconciliationPayment(batchName, dateCreated, documentNumber, supplierName, supplierNumber, amount);
+
+				return new ReconciliationPayment(batchName, dateCreated, documentNumber, supplierName, supplierNumber, amount);
 			}
 
 			// A matching payment request was found and should be associated with this reconciliation payment.
@@ -700,14 +697,15 @@ namespace CJG.Application.Services
 			try
 			{
 				var value = cell.InnerText;
+
 				if (cell?.DataType?.Value == CellValues.SharedString)
 				{
-					var stringTable = workbookPart.GetPartsOfType<SharedStringTablePart>().FirstOrDefault();
+					if (cell.InnerText != null && cell.InnerText.Trim() == string.Empty)
+						return TruncateOrRound((T)System.Convert.ChangeType(value, typeof(T)), position);
 
+					var stringTable = workbookPart.GetPartsOfType<SharedStringTablePart>().FirstOrDefault();
 					if (stringTable != null)
-					{
-						return TruncateOrRound((T)System.Convert.ChangeType(stringTable.SharedStringTable.ElementAt(int.Parse(value)).InnerText, typeof(T)), position);
-					}
+						return TruncateOrRound((T) System.Convert.ChangeType(stringTable.SharedStringTable.ElementAt(int.Parse(value)).InnerText, typeof(T)), position);
 				}
 
 				if (typeof(T) == typeof(DateTime))
@@ -715,8 +713,13 @@ namespace CJG.Application.Services
 
 				if (typeof(T) == typeof(DateTime?))
 				{
-					if (value == null) return default;
-					return (T)System.Convert.ChangeType(DateTime.FromOADate(double.Parse(value)).ToLocalTime().ToUniversalTime(), typeof(T));
+					if (string.IsNullOrEmpty(value))
+						return default;
+
+					Type t = typeof(T);
+					t = Nullable.GetUnderlyingType(t) ?? t;
+
+					return (T)System.Convert.ChangeType(DateTime.FromOADate(double.Parse(value)).ToLocalTime().ToUniversalTime(), t);
 				}
 
 				return TruncateOrRound((T)System.Convert.ChangeType(value, typeof(T)), position);

@@ -1,5 +1,4 @@
-﻿using CJG.Core.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
@@ -11,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using CJG.Core.Entities;
 
 namespace CJG.Application.Services
 {
@@ -57,25 +57,22 @@ namespace CJG.Application.Services
 
 		public static bool IsValidTrainingDates(DateTime newStartDate, DateTime newEndDate, DateTime trainingPeriodStartDate, DateTime trainingPeriodEndDate)
 		{
-			return (newStartDate.WithinRange(trainingPeriodStartDate, trainingPeriodEndDate)
-						&& newEndDate.WithinRange(trainingPeriodStartDate, trainingPeriodEndDate)
-						&& newStartDate > AppDateTime.UtcNow.Date && (trainingPeriodEndDate >= trainingPeriodStartDate)
-						&& newEndDate <= newStartDate.AddYears(1));
+			return newStartDate.WithinRange(trainingPeriodStartDate, trainingPeriodEndDate)
+			       && newEndDate.WithinRange(trainingPeriodStartDate, trainingPeriodEndDate)
+			       && newStartDate > AppDateTime.UtcNow.Date && (trainingPeriodEndDate >= trainingPeriodStartDate)
+			       && newEndDate <= newStartDate.AddYears(1);
 		}
 
 		public static bool WithinRange(this DateTime checkDate, DateTime startDate, DateTime endDate)
 		{
-			return (checkDate >= startDate && checkDate <= endDate);
+			return checkDate >= startDate && checkDate <= endDate;
 		}
 
 		public static IOrderedQueryable<TSource> Order<TSource>(this IQueryable<TSource> source, string propertyName, bool ascending)
 		{
 			var queryElementTypeParam = Expression.Parameter(typeof(TSource));
-
 			var memberAccess = Expression.PropertyOrField(queryElementTypeParam, propertyName);
-
 			var keySelector = Expression.Lambda(memberAccess, queryElementTypeParam);
-
 			var orderBy = Expression.Call(typeof(Queryable), ascending ? "OrderBy" : "OrderByDescending", new[] { typeof(TSource), memberAccess.Type }, source.Expression, Expression.Quote(keySelector));
 
 			return (IOrderedQueryable<TSource>)source.Provider.CreateQuery<TSource>(orderBy);
@@ -114,7 +111,6 @@ namespace CJG.Application.Services
 			}
 		}
 
-
 		/// <summary>
 		/// Format Canadian Postal code - add space between 2 code segments  & convert to upper case.
 		/// </summary>
@@ -132,11 +128,9 @@ namespace CJG.Application.Services
 			return postalcode;
 		}
 
-		public static StringBuilder ParseTemplate(IDictionary<string, string> placeholders,
-			string templateText, bool verifyEmptyValues = false)
+		public static StringBuilder ParseTemplate(IDictionary<string, string> placeholders, string templateText, bool verifyEmptyValues = false)
 		{
 			var str = new StringBuilder(templateText);
-
 			var regex = new Regex(@"(\:\:.+?\:\:)", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
 			foreach (Match match in regex.Matches(templateText))
@@ -172,8 +166,11 @@ namespace CJG.Application.Services
 		/// <param name="excludeItems"></param>
 		public static void MapProperties<From, To>(From source, To target, Func<From, object> excludeItems = null)
 		{
-			if (source == null) return;
-			if (target == null) throw new ArgumentNullException(nameof(target));
+			if (source == null)
+				return;
+
+			if (target == null)
+				throw new ArgumentNullException(nameof(target));
 
 			var excludedProperties = excludeItems?.Invoke(source).GetType().GetProperties().Select(o => o.Name).ToList();
 			var sourceProperties = typeof(From).GetProperties().Where(x => x.CanRead && (excludedProperties == null || !excludedProperties.Contains(x.Name))).ToList();
@@ -191,8 +188,11 @@ namespace CJG.Application.Services
 		/// <param name="target"></param>
 		public static void MapProperties<From, To>(From source, To target) where To : new()
 		{
-			if (source == null) return;
-			if (target == null) throw new ArgumentNullException(nameof(target));
+			if (source == null)
+				return;
+
+			if (target == null)
+				throw new ArgumentNullException(nameof(target));
 
 			var sourceProperties = source.GetType().GetProperties().Where(p => p.CanRead && !p.GetGetMethod().IsVirtual);
 			MapProperties(source, target, sourceProperties);
@@ -210,34 +210,38 @@ namespace CJG.Application.Services
 		/// <param name="properties"></param>
 		private static void MapProperties<From, To>(From source, To target, IEnumerable<PropertyInfo> properties)
 		{
-			var targetProperties = typeof(To).GetProperties().Where(p => p.CanWrite && !p.GetGetMethod().IsVirtual);
+			var targetProperties = typeof(To)
+				.GetProperties()
+				.Where(p => p.CanWrite && !p.GetGetMethod().IsVirtual)
+				.ToList();
+			
 			foreach (var from in properties)
 			{
 				var to = targetProperties.FirstOrDefault(p => p.Name.Equals(from.Name));
-				if (to != null)
-				{
-					object value = from.GetValue(source);
+				if (to == null)
+					continue;
+
+				object value = from.GetValue(source);
 					
-					if (value != null && from.PropertyType.IsArray && from.PropertyType.GetElementType() == typeof(byte) && to.PropertyType == typeof(string))
-					{
-						to.SetValue(target, Convert.ToBase64String((byte[])value));
-					}
-					else if (value != null && from.PropertyType == typeof(string) && to.PropertyType.IsArray && to.PropertyType.GetElementType() == typeof(byte))
-					{
-						to.SetValue(target, Convert.FromBase64String((string)value));
-					}
-					else if (from.PropertyType == typeof(string) && to.PropertyType.IsEnum)
-					{
-						to.SetValue(target, Enum.Parse(to.PropertyType, (string)value));
-					}
-					else if (from.PropertyType.IsEnum && to.PropertyType == typeof(string))
-					{
-						to.SetValue(target, Enum.GetName(from.PropertyType, value));
-					}
-					else if (from.PropertyType.IsValueType || from.PropertyType.IsEnum || from.PropertyType == typeof(string) || from.PropertyType == to.PropertyType)
-					{
-						to.SetValue(target, value);
-					}
+				if (value != null && from.PropertyType.IsArray && from.PropertyType.GetElementType() == typeof(byte) && to.PropertyType == typeof(string))
+				{
+					to.SetValue(target, Convert.ToBase64String((byte[])value));
+				}
+				else if (value != null && from.PropertyType == typeof(string) && to.PropertyType.IsArray && to.PropertyType.GetElementType() == typeof(byte))
+				{
+					to.SetValue(target, Convert.FromBase64String((string)value));
+				}
+				else if (from.PropertyType == typeof(string) && to.PropertyType.IsEnum)
+				{
+					to.SetValue(target, Enum.Parse(to.PropertyType, (string)value));
+				}
+				else if (from.PropertyType.IsEnum && to.PropertyType == typeof(string))
+				{
+					to.SetValue(target, Enum.GetName(from.PropertyType, value));
+				}
+				else if (from.PropertyType.IsValueType || from.PropertyType.IsEnum || from.PropertyType == typeof(string) || from.PropertyType == to.PropertyType)
+				{
+					to.SetValue(target, value);
 				}
 			}
 		}
@@ -254,7 +258,7 @@ namespace CJG.Application.Services
 
 			foreach (var error in errors)
 			{
-				if (!String.IsNullOrWhiteSpace(error.Key))
+				if (!string.IsNullOrWhiteSpace(error.Key))
 				{
 					var property = typeof(T).GetProperty(error.Key);
 
@@ -262,7 +266,7 @@ namespace CJG.Application.Services
 					{
 						var properties = target.GetType().GetProperties().Where(t => !t.GetType().IsValueType
 							&& t.PropertyType != typeof(string)
-							&& t.PropertyType != typeof(Boolean));
+							&& t.PropertyType != typeof(bool));
 
 						foreach (var item in properties)
 						{
@@ -305,12 +309,19 @@ namespace CJG.Application.Services
 			if (source == null)
 				return null;
 
-			Dictionary<string, object> values = new Dictionary<string, object>();
+			var values = new Dictionary<string, object>();
 
-			var includedProperties = properties?.Invoke(source).GetType().GetProperties().Select(o => o.Name).ToList();
-			var sourcePropertities = typeof(T).GetProperties().Where(x => x.CanRead && (includedProperties == null || includedProperties.Contains(x.Name))).ToList();
+			var includedProperties = properties?.Invoke(source)
+				.GetType()
+				.GetProperties()
+				.Select(o => o.Name)
+				.ToList();
 
-			foreach (var property in sourcePropertities)
+			var sourceProperties = typeof(T).GetProperties()
+				.Where(x => x.CanRead && (includedProperties == null || includedProperties.Contains(x.Name)))
+				.ToList();
+
+			foreach (var property in sourceProperties)
 				if (!property.GetGetMethod().IsVirtual)
 					values.Add(property.Name, property.GetValue(source, null));
 
@@ -322,9 +333,11 @@ namespace CJG.Application.Services
 			if (source == null || values == null)
 				return false;
 
-			var sourcePropertities = typeof(T).GetProperties().Where(t => !t.GetGetMethod().IsVirtual).ToList();
+			var sourceProperties = typeof(T).GetProperties()
+				.Where(t => !t.GetGetMethod().IsVirtual)
+				.ToList();
 
-			foreach (var property in sourcePropertities)
+			foreach (var property in sourceProperties)
 				if (values.ContainsKey(property.Name))
 					if (!(property.GetValue(source, null) == null && values[property.Name] == null) &&
 						property.GetValue(source, null)?.Equals(values[property.Name]) != true)
