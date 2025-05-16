@@ -197,28 +197,33 @@ namespace CJG.Application.Services
 			_dbContext.PaymentRequestBatches.Add(paymentRequestBatch);
 
 			// Add notification for each application in payment request.
-			var notification_errors = new List<Exception>();
+			var notificationErrors = new List<Exception>();
 			foreach (var claim in claims)
 			{
 				try
 				{
 					var application = claim.GrantApplication;
-					var notifications = application.GrantOpening.GrantStream.GrantProgram.GrantProgramNotificationTypes.Where(nt => nt.IsActive && nt.NotificationType.IsActive && nt.NotificationType.ClaimReportRule == NotificationClaimReportRules.PaymentRequestIssued);
+					var notifications = application.GrantOpening
+						.GrantStream
+						.GrantProgram
+						.GrantProgramNotificationTypes
+						.Where(nt => nt.IsActive
+						             && nt.NotificationType.IsActive
+						             && nt.NotificationType.ClaimReportRule == NotificationClaimReportRules.PaymentRequestIssued);
+
 					foreach (var notification in notifications)
-					{
 						_notificationService.HandleWorkflowNotification(application, notification);
-					}
 				}
 				catch (Exception ex)
 				{
-					notification_errors.Add(ex);
+					notificationErrors.Add(ex);
 				}
 			}
 
 			_dbContext.CommitTransaction();
 
-			if (notification_errors.Any())
-				throw new NotificationException("Error(s) occured while attempting to send email notifications", new NotificationException(String.Join("\n", notification_errors.Select(e => e.Message))));
+			if (notificationErrors.Any())
+				throw new NotificationException("Error(s) occured while attempting to send email notifications", new NotificationException(String.Join("\n", notificationErrors.Select(e => e.Message))));
 
 			return paymentRequestBatch;
 		}

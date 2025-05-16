@@ -166,10 +166,28 @@ namespace CJG.Application.Services
 			participantInvitation.ParticipantForm = participantForm;
 			participantInvitation.ParticipantInvitationStatus = ParticipantInvitationStatus.Completed;
 
+			HandledWorkflowNotifications(participantForm);
+
 			_dbContext.Update(participantInvitation);
 			_dbContext.Commit();
 
 			return participantInvitation;
+		}
+
+		private void HandledWorkflowNotifications(ParticipantForm participantForm)
+		{
+			var grantApplication = participantForm.GrantApplication;
+			var notificationTypes = grantApplication.GrantOpening.GrantStream.GrantProgram.GrantProgramNotificationTypes
+				.Where(t => t.IsActive)
+				.Where(t => t.NotificationType.IsActive)
+				.Where(t => t.NotificationType.NotificationTriggerId == NotificationTriggerTypes.Workflow)
+				.Where(t => t.NotificationType.ParticipantReportRule != NotificationParticipantReportRules.NotApplicable);
+
+			foreach (var grantProgramNotificationType in notificationTypes)
+			{
+				if (_notificationService.CheckNotificationWorkflow(grantProgramNotificationType, grantApplication, null))
+					_notificationService.HandleWorkflowNotification(grantApplication, grantProgramNotificationType);
+			}
 		}
 	}
 }
