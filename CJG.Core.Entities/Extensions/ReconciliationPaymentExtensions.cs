@@ -10,8 +10,8 @@ namespace CJG.Core.Entities.Extensions
 			if (grantApplication == null)
 				return false;
 
-			var supplierName = recPayment.SupplierName?.ToLower();
-			var orgName = grantApplication.OrganizationLegalName?.ToLower();
+			var supplierName = recPayment.SupplierName?.ToLower().Trim();
+			var orgName = grantApplication.OrganizationLegalName?.ToLower().Trim();
 
 			if (string.IsNullOrWhiteSpace(supplierName) || string.IsNullOrWhiteSpace(orgName))
 				return false;

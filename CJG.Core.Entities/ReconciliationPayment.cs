@@ -141,22 +141,22 @@ namespace CJG.Core.Entities
 		/// <param name="paymentRequest"></param>
 		public ReconciliationPayment(PaymentRequest paymentRequest)
 		{
-			this.PaymentRequestBatchId = paymentRequest?.PaymentRequestBatchId ?? throw new ArgumentNullException(nameof(paymentRequest));
-			this.PaymentRequestBatch = paymentRequest.PaymentRequestBatch;
-			this.GrantApplicationId = paymentRequest?.GrantApplicationId ?? throw new ArgumentNullException(nameof(paymentRequest));
-			this.GrantApplication = paymentRequest.GrantApplication;
-			this.ClaimId = paymentRequest?.ClaimId ?? throw new ArgumentNullException(nameof(paymentRequest));
-			this.ClaimVersion = paymentRequest?.ClaimVersion ?? throw new ArgumentNullException(nameof(paymentRequest));
-			this.PaymentRequest = paymentRequest;
+			PaymentRequestBatchId = paymentRequest?.PaymentRequestBatchId ?? throw new ArgumentNullException(nameof(paymentRequest));
+			PaymentRequestBatch = paymentRequest.PaymentRequestBatch;
+			GrantApplicationId = paymentRequest?.GrantApplicationId ?? throw new ArgumentNullException(nameof(paymentRequest));
+			GrantApplication = paymentRequest.GrantApplication;
+			ClaimId = paymentRequest?.ClaimId ?? throw new ArgumentNullException(nameof(paymentRequest));
+			ClaimVersion = paymentRequest?.ClaimVersion ?? throw new ArgumentNullException(nameof(paymentRequest));
+			PaymentRequest = paymentRequest;
 			paymentRequest.ReconciliationPayments.Add(this);
-			this.DocumentNumber = paymentRequest.DocumentNumber;
-			this.SupplierName = paymentRequest.GrantApplication.OrganizationLegalName;
-			this.SupplierNumber = paymentRequest.RecipientBusinessNumber;
-			this.Amount = 0; // Must be $0 so that it will reconcile when an actual CAS line item is provided.
-			this.FromCAS = false;
+			DocumentNumber = paymentRequest.DocumentNumber;
+			SupplierName = paymentRequest.GrantApplication.OrganizationLegalName;
+			SupplierNumber = paymentRequest.RecipientBusinessNumber;
+			Amount = 0; // Must be $0 so that it will reconcile when an actual CAS line item is provided.
+			FromCAS = false;
 
-			this.PaymentType = paymentRequest.PaymentType;
-			this.ReconcilationState = ReconciliationStates.NoMatch;
+			PaymentType = paymentRequest.PaymentType;
+			ReconcilationState = ReconciliationStates.NoMatch;
 		}
 
 		/// <summary>
@@ -171,24 +171,24 @@ namespace CJG.Core.Entities
 		/// <param name="amount"></param>
 		public ReconciliationPayment(PaymentRequest paymentRequest, string batchName, DateTime dateCreated, string documentNumber, string supplierName, string supplierNumber, decimal amount)
 		{
-			this.PaymentRequestBatchId = paymentRequest?.PaymentRequestBatchId ?? throw new ArgumentNullException(nameof(paymentRequest));
-			this.PaymentRequestBatch = paymentRequest.PaymentRequestBatch;
-			this.GrantApplicationId = paymentRequest?.GrantApplicationId ?? throw new ArgumentNullException(nameof(paymentRequest));
-			this.GrantApplication = paymentRequest.GrantApplication;
-			this.ClaimId = paymentRequest?.ClaimId ?? throw new ArgumentNullException(nameof(paymentRequest));
-			this.ClaimVersion = paymentRequest?.ClaimVersion ?? throw new ArgumentNullException(nameof(paymentRequest));
-			this.PaymentRequest = paymentRequest;
+			PaymentRequestBatchId = paymentRequest?.PaymentRequestBatchId ?? throw new ArgumentNullException(nameof(paymentRequest));
+			PaymentRequestBatch = paymentRequest.PaymentRequestBatch;
+			GrantApplicationId = paymentRequest?.GrantApplicationId ?? throw new ArgumentNullException(nameof(paymentRequest));
+			GrantApplication = paymentRequest.GrantApplication;
+			ClaimId = paymentRequest?.ClaimId ?? throw new ArgumentNullException(nameof(paymentRequest));
+			ClaimVersion = paymentRequest?.ClaimVersion ?? throw new ArgumentNullException(nameof(paymentRequest));
+			PaymentRequest = paymentRequest;
 			paymentRequest.ReconciliationPayments.Add(this);
-			this.BatchName = batchName;
-			this.DateCreated = dateCreated;
-			this.DocumentNumber = documentNumber;
-			this.SupplierName = supplierName;
-			this.SupplierNumber = supplierNumber;
-			this.Amount = amount;
-			this.FromCAS = true;
+			BatchName = batchName;
+			DateCreated = dateCreated;
+			DocumentNumber = documentNumber;
+			SupplierName = supplierName;
+			SupplierNumber = supplierNumber;
+			Amount = amount;
+			FromCAS = true;
 
-			this.PaymentType = this.DeterminePaymentType();
-			this.ReconcilationState = ReconciliationStates.NotReconciled;
+			PaymentType = this.DeterminePaymentType();
+			ReconcilationState = ReconciliationStates.NotReconciled;
 		}
 
 		/// <summary>
@@ -203,16 +203,16 @@ namespace CJG.Core.Entities
 		/// <param name="amount"></param>
 		public ReconciliationPayment(string batchName, DateTime dateCreated, string documentNumber, string supplierName, string supplierNumber, decimal amount)
 		{
-			this.BatchName = batchName;
-			this.DateCreated = dateCreated;
-			this.DocumentNumber = documentNumber;
-			this.SupplierName = supplierName;
-			this.SupplierNumber = supplierNumber;
-			this.Amount = amount;
-			this.FromCAS = true;
+			BatchName = batchName;
+			DateCreated = dateCreated;
+			DocumentNumber = documentNumber;
+			SupplierName = supplierName;
+			SupplierNumber = supplierNumber;
+			Amount = amount;
+			FromCAS = true;
 
-			this.PaymentType = this.DeterminePaymentType();
-			this.ReconcilationState = ReconciliationStates.NoMatch;
+			PaymentType = this.DeterminePaymentType();
+			ReconcilationState = ReconciliationStates.NoMatch;
 		}
 		#endregion
 

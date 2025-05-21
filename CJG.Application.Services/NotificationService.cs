@@ -451,9 +451,9 @@ namespace CJG.Application.Services
 		/// </summary>
 		/// <param name="grantApplication"></param>
 		/// <param name="user"></param>
-		/// <param name="grantProgramNotificationType"></param>
+		/// <param name="notificationType"></param>
 		/// <returns></returns>
-		public NotificationQueue GenerateNotificationMessage(GrantApplication grantApplication, User user, GrantProgramNotificationType grantProgramNotificationType)
+		public NotificationQueue GenerateNotificationMessage(GrantApplication grantApplication, User user, GrantProgramNotificationType notificationType)
 		{
 			if (grantApplication == null)
 				throw new ArgumentNullException(nameof(grantApplication));
@@ -461,15 +461,15 @@ namespace CJG.Application.Services
 			if (user == null)
 				throw new ArgumentNullException(nameof(user));
 
-			if (grantProgramNotificationType == null)
-				throw new ArgumentNullException(nameof(grantProgramNotificationType));
+			if (notificationType == null)
+				throw new ArgumentNullException(nameof(notificationType));
 
-			var template = grantProgramNotificationType.NotificationTemplate;
+			var template = notificationType.NotificationTemplate;
 			var model = new NotificationViewModel(grantApplication, user, _httpContext);
 			var body = ParseDocumentTemplate(model, template.EmailBody);
 			var subject = ParseDocumentTemplate(model, template.EmailSubject);
 			var sender = $"{_notificationSettings.DefaultSenderName} <{_notificationSettings.DefaultSenderAddress}>";
-			var type = grantProgramNotificationType.NotificationType;
+			var type = notificationType.NotificationType;
 
 			// Decode the output if any encoded html is detected (ie: HTML Denial Reason)
 			if (ContainsEncodedHtml(body))
@@ -715,8 +715,10 @@ namespace CJG.Application.Services
 			if (grantApplication == null)
 				throw new ArgumentNullException(nameof(grantApplication));
 
-			var participants = grantApplication.ParticipantForms.Count();
-			var agreedAmountParticipants = grantApplication.TrainingCost.AgreedParticipants;
+			var participants = grantApplication.ParticipantForms.Count;
+			var agreedAmountParticipants = grantApplication.ApplicationStateInternal == ApplicationStateInternal.Draft
+				? grantApplication.TrainingCost.EstimatedParticipants
+				: grantApplication.TrainingCost.AgreedParticipants;
 
 			if (participants == 0) return NotificationParticipantReportRules.NoneReported;
 

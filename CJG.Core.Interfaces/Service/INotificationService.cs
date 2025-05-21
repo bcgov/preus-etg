@@ -25,11 +25,11 @@ namespace CJG.Core.Interfaces.Service
 
 		IEnumerable<NotificationQueue> SendScheduledNotifications(DateTime appDate = default);
 
-		NotificationQueue GenerateNotificationMessage(GrantApplication grantApplication, User user, NotificationType NotificationType);
-		NotificationQueue GenerateNotificationMessage(GrantApplication grantApplication, User user, GrantProgramNotificationType NotificationType);
+		NotificationQueue GenerateNotificationMessage(GrantApplication grantApplication, User user, NotificationType notificationType);
+		NotificationQueue GenerateNotificationMessage(GrantApplication grantApplication, User user, GrantProgramNotificationType notificationType);
 		
-		void HandleWorkflowNotification(GrantApplication grantApplication, NotificationType NotificationType);
-		void HandleWorkflowNotification(GrantApplication grantApplication, GrantProgramNotificationType NotificationType);
+		void HandleWorkflowNotification(GrantApplication grantApplication, NotificationType notificationType);
+		void HandleWorkflowNotification(GrantApplication grantApplication, GrantProgramNotificationType notificationType);
 
 		bool CheckNotificationWorkflow(GrantProgramNotificationType grantProgramNotificationType, GrantApplication grantApplication, DateTime appDate = default);
 		bool CheckNotificationWorkflow(GrantProgramNotificationType grantProgramNotificationType, GrantApplication grantApplication, ApplicationStateInternal? previousState = null, DateTime appDate = default);
