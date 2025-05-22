@@ -139,7 +139,7 @@ app.controller('ApplicationNote', function ($scope, $controller, $timeout) {
     }
 
     $scope.tinymceOptions = {
-      plugins: 'link code autoresize preview fullscreen lists advlist anchor paste',
+      plugins: 'link code autoresize preview fullscreen lists advlist anchor powerpaste',
       toolbar: 'undo redo | bold italic | formatselect | alignleft aligncenter alignright | outdent indent | numlist bullist | anchor | preview | fullscreen | code ',
       forced_root_block: 'p',
       browser_spellcheck: true,
