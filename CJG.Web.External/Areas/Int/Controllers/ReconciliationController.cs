@@ -21,12 +21,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
     [RouteArea("Int")]
 	public class ReconciliationController : BaseController
 	{
-		#region Variables
 		private readonly IPaymentReconciliationService _paymentReconciliationService;
 		private readonly IPaymentRequestService _paymentRequestService;
-		#endregion
 
-		#region Constructors
 		/// <summary>
 		/// Creates a new instance of a ReconciliationController object.
 		/// </summary>
@@ -41,10 +38,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_paymentReconciliationService = paymentReconciliationService;
 			_paymentRequestService = paymentRequestService;
 		}
-		#endregion
 
-		#region Endpoints
-		#region Reconciliation Reports
 		/// <summary>
 		/// A page to view reconciliation reports.
 		/// </summary>
@@ -129,9 +123,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 			return Json(model);
 		}
-		#endregion
 
-		#region Reconciliation Report
 		/// <summary>
 		/// A page to view the reconciliation report for the specified 'id'.
 		/// </summary>
@@ -166,9 +158,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
-		#endregion
 
-		#region Reconciliation Payment
 		/// <summary>
 		/// A partial view modal popup to reconcile a payment with a payment request.
 		/// </summary>
@@ -261,7 +251,5 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 			return Json(model);
 		}
-		#endregion
-		#endregion
 	}
 }

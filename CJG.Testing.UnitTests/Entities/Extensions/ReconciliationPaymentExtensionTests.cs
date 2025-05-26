@@ -15,6 +15,15 @@ namespace CJG.Testing.UnitTests.Entities.Extensions
 		[DataRow("Fred Smith", "", false)]
 		[DataRow("Fred Smith", "Fred, Johnny, Frank and Co.", false)]
 		[DataRow("Org Name", "oRG NaMe", true)]
+		[DataRow("Bread, Colin & Bread, Milary", "BREAD, COLIN & BREAD, MILARY", true)]
+		[DataRow("Colin Bread & Milary Bread", "BREAD, COLIN & BREAD, MILARY", false)]
+		[DataRow("Org Name", "oRG NaMe", true)]
+		[DataRow(" Space Man ", "Space Man", true)]
+		[DataRow("Other Space Man", " Other Space Man ", true)]
+		[DataRow("New Line", "New Line\n", true)]
+		[DataRow("Other New Line\n", "Other New Line", true)]
+		[DataRow("CAPITAL SOURCE", "Capital Source", true)]
+		[DataRow("Capital Target", "CAPITAL TARGET", true)]
 		[DataRow("No Match", "Smith, Fred", false)]
 		public void IsSupplierNameValid(string organizationName, string supplierName, bool expectMatch)
 		{

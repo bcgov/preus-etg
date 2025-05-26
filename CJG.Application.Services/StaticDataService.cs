@@ -326,14 +326,15 @@ namespace CJG.Application.Services
 			return _dbContext.SkillLevels.Find(id);
 		}
 
-
 		/// <summary>
 		/// Get all the training levels that are active.
 		/// </summary>
 		/// <returns></returns>
 		public IEnumerable<TrainingLevel> GetTrainingLevels()
 		{
-			return Get<TrainingLevel, int>().Where(e => e.IsActive);
+			return Get<TrainingLevel, int>()
+				.Where(e => e.IsActive)
+				.OrderBy(e => e.RowSequence);
 		}
 
 		/// <summary>
