@@ -423,7 +423,7 @@ namespace CJG.Application.Services
 					else if (recPayment.DocumentNumber != payment.PaymentRequest.DocumentNumber)
 						state = ReconciliationStates.InvalidDocumentNumber;
 
-					else if (recPayment.IsValidSupplierName(payment.PaymentRequest.GrantApplication))
+					else if (!recPayment.IsValidSupplierName(payment.PaymentRequest.GrantApplication))
 						state = ReconciliationStates.InvalidSupplierName;
 
 					recPayment.ReconcilationState = state;
@@ -525,7 +525,7 @@ namespace CJG.Application.Services
 				else if (recPayment.DocumentNumber != paymentRequest.DocumentNumber)
 					state = ReconciliationStates.InvalidDocumentNumber;
 
-				else if (recPayment.IsValidSupplierName(paymentRequest.GrantApplication))
+				else if (!recPayment.IsValidSupplierName(paymentRequest.GrantApplication))
 					state = ReconciliationStates.InvalidSupplierName;
 
 				recPayment.ReconcilationState = state;
