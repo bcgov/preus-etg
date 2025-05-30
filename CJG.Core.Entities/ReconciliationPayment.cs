@@ -218,7 +218,7 @@ namespace CJG.Core.Entities
 
 		#region Methods
 		/// <summary>
-		/// Validates the reconcilation payment.
+		/// Validates the reconciliation payment.
 		/// </summary>
 		/// <param name="validationContext"></param>
 		/// <returns></returns>
