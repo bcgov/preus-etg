@@ -125,7 +125,7 @@ namespace CJG.Application.Services
 							if (cellData.StartsWith("time run:"))
 							{
 								var dateTimeString = cellData.Replace("time run: ", "").Trim();
-								var format = "d/M/yyyy h:mm:ss tt";
+								var format = "M/d/yyyy h:mm:ss tt";
 
 								if (DateTime.TryParseExact(dateTimeString, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDateTime))
 								{
@@ -196,7 +196,7 @@ namespace CJG.Application.Services
 						reconciliationReport.PeriodTo = lastPeriod.ToUniversalTime();
 					}
 
-					// Since we don't have a requestor on the CAS File, we can use the current logged in user
+					// Since we don't have a requester on the CAS File, we can use the current logged in user
 					if (string.IsNullOrWhiteSpace(reconciliationReport.Requestor))
 						reconciliationReport.Requestor = user.IDIR;
 
@@ -232,7 +232,7 @@ namespace CJG.Application.Services
 							{
 								recPayment.ReconcilationState = ReconciliationStates.InvalidDocumentNumber;
 							}
-							else if (recPayment.IsValidSupplierName(recPayment.GrantApplication))
+							else if (!recPayment.IsValidSupplierName(recPayment.GrantApplication))
 							{
 								recPayment.ReconcilationState = ReconciliationStates.InvalidSupplierName;
 							}
@@ -423,7 +423,7 @@ namespace CJG.Application.Services
 					else if (recPayment.DocumentNumber != payment.PaymentRequest.DocumentNumber)
 						state = ReconciliationStates.InvalidDocumentNumber;
 
-					else if (recPayment.IsValidSupplierName(payment.PaymentRequest.GrantApplication))
+					else if (!recPayment.IsValidSupplierName(payment.PaymentRequest.GrantApplication))
 						state = ReconciliationStates.InvalidSupplierName;
 
 					recPayment.ReconcilationState = state;
@@ -525,7 +525,7 @@ namespace CJG.Application.Services
 				else if (recPayment.DocumentNumber != paymentRequest.DocumentNumber)
 					state = ReconciliationStates.InvalidDocumentNumber;
 
-				else if (recPayment.IsValidSupplierName(paymentRequest.GrantApplication))
+				else if (!recPayment.IsValidSupplierName(paymentRequest.GrantApplication))
 					state = ReconciliationStates.InvalidSupplierName;
 
 				recPayment.ReconcilationState = state;
