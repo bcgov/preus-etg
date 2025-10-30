@@ -43,8 +43,7 @@ jobs:
       
     - name: Back up database
       run: |
-        Set-ExecutionPolicy Bypass -Scope Process -Force
-        Unblock-File -Path .\backupdatabase.ps1  
+        Set-ExecutionPolicy Bypass -Scope Process -Force        
         ${{ vars.CD_SCRIPTS_FOLDER }}\backupdatabase.ps1 "${{ vars.DB_SERVER }}" "${{ vars.DB_NAME }}" "${{ vars.DB_RELEASE_USER }}" "${{ secrets.DB_RELEASE_PASSWORD }}" "${{ vars.DB_BACKUP_FOLDER }}\${{ vars.ENVIRONMENT }}\Databases" "${{ vars.DB_NAME }}-Backup.bak" 5
       shell: powershell
 
