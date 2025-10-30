@@ -86,11 +86,12 @@ jobs:
 
     - name: Run Config-Replace script on Offline Page
       run: |
+        Set-ExecutionPolicy Bypass -Scope Process -Force
         $now = Get-Date -Format "dddd MMMM dd, yyyy"
         $maintenance_start = Get-Date
         $maintenance_duration = ${{ vars.MAINTENANCE_DURATION }}
         $maintenance_end = $maintenance_start.AddMinutes($maintenance_duration)       
-        $config_values = (@{tag="maintenance-date"; val="$now"}, @{tag="maintenance-start"; val="$maintenance_start"}, @{tag="maintenance-end"; val="$maintenance_end"})        
+        $config_values = (@{tag="maintenance-date"; val="$now"}, @{tag="maintenance-start"; val="$maintenance_start"}, @{tag="maintenance-end"; val="$maintenance_end"})                
         ${{ vars.CD_SCRIPTS_FOLDER }}\replaceoffline.ps1 "${{ vars.WEB_FOLDER }}\app_offline_template.htm" "${{ vars.WEB_FOLDER }}\${{ vars.ENVIRONMENT }}\app_offline.htm" ($config_values) $maintenance_duration
       shell: powershell
       
