@@ -30,7 +30,7 @@ app.controller('Base', function ($scope, $sce, $timeout, Utils, ngDialog) {
    **/
   function backup() {
     if ($scope.model) {
-      console.log('backing up - ' + $scope.section.name);
+      //console.log('backing up - ' + $scope.section.name);
       $scope.section.backup = angular.copy($scope.model);
     }
   }
@@ -44,7 +44,7 @@ app.controller('Base', function ($scope, $sce, $timeout, Utils, ngDialog) {
    **/
   function restore() {
     if ($scope.section.backup) {
-      console.log('restoring - ' + $scope.section.name);
+      //console.log('restoring - ' + $scope.section.name);
       //Utils.initValue($scope, 'model', $scope.section.backup);
       Utils.sync($scope.section.backup, $scope.model);
       //$scope.model = angular.copy($scope.section.backup);
@@ -67,7 +67,7 @@ app.controller('Base', function ($scope, $sce, $timeout, Utils, ngDialog) {
   $scope.clearAlert = function () { Utils.clearAlert($scope); }
 
   /**
-   * Set an alert message based on the options provied.
+   * Set an alert message based on the options provided.
    * @function setAlert
    * @param {any} options
    */

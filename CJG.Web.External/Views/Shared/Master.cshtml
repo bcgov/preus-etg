@@ -43,8 +43,8 @@
     <input type="hidden" name="__AjaxRequestVerificationToken" value="@TokenHeaderValue()">
     <script src="~/Scripts/jquery/jquery-3.7.1.min.js"></script>
     <script type="text/javascript" src="~/js/common.js"></script>
-
-    @if (IsSectionDefined("Scripts"))
+    
+@if (IsSectionDefined("Scripts"))
     {
         @RenderSection("Scripts")
     }
