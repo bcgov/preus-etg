@@ -56,10 +56,10 @@
                         <!-- Description -->
                         <div class="form-table-cell">{{item.Description}}</div>
                         <!-- Edit/View btn -->
-                        <button class="btn btn--secondary pull-right" style="margin: 3px 0px;" ng-if="!item.Id" ng-click="openNotificationTypeModal(item)" ng-disabled="item.ToBeDeleted">
+                        <button class="btn btn--secondary pull-right" style="margin: 3px 0;" ng-if="!item.Id" ng-click="openNotificationTypeModal(item)" ng-disabled="item.ToBeDeleted">
                             {{section.editing ? 'Edit' : 'View'}}
                         </button>
-                        <button class="btn btn--secondary pull-right" style="margin: 3px 0px;" ng-if="item.Id" ng-click="cancelNotificationType(item)">Cancel</button>
+                        <button class="btn btn--secondary pull-right" style="margin: 3px 0;" ng-if="item.Id" ng-click="cancelNotificationType(item)">Cancel</button>
                     </div>
                 </div>
             </pager>

@@ -32,11 +32,9 @@ app.controller('CommunityManagementDashboard', function ($scope, $attrs, $contro
       if (updatedCommunity) {
         if ($scope.updateCommunityModel(updatedCommunity)) {
           // Edit
-          formHelper.SetAlert($scope, status, ('Community Updated'));
         } else {
           // Add
           $scope.model.Communities.push(updatedCommunity);
-          formHelper.SetAlert($scope, status, ('Community Added'));
         }
       }
     });
@@ -48,7 +46,7 @@ app.controller('CommunityManagementDashboard', function ($scope, $attrs, $contro
   * @param {object} community
   * @returns {Promise}
   * */
-  $scope.updateCommunityModel = function (community) {
+  $scope.updateCommunityModel = function(community) {
     for (var i = 0; i < $scope.model.Communities.length; i++) {
       if ($scope.model.Communities[i].Id == community.Id) {
         return $scope.model.Communities[i] = community;
@@ -63,7 +61,9 @@ app.controller('CommunityManagementDashboard', function ($scope, $attrs, $contro
   * @returns {Promise}
   **/
   $scope.search = function ($event) {
-    if ($event.keyCode === 13 || $event.type === 'click') $scope.CommunitySearch = $scope.searchCriteria; 
+    if ($event.keyCode === 13 || $event.type === 'click')
+      $scope.CommunitySearch = $scope.searchCriteria;
+
     return Promise.resolve();
   }
 

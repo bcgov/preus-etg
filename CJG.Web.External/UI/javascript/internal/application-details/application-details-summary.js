@@ -1,6 +1,6 @@
 app.filter('stripHTML', [function () {
   return function (stringWithHtml) {
-    var strippedText = $('<div/>').html(stringWithHtml).text();
+    var strippedText = $('<div></div>').html(stringWithHtml).text();
     return strippedText;
   };
 }]);

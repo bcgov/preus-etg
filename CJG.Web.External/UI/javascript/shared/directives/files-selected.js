@@ -7,7 +7,7 @@ app.directive("ngFilesSelected", function ($timeout) {
       ngFilesSelected: "="
     },
     link: function (scope, element, attributes) {
-      element.bind("change", function (changeEvent) {
+      element.on("change", function (changeEvent) {
         return $timeout(function () {
           scope.ngFilesSelected = changeEvent.target.files;
         });

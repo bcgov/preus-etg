@@ -444,6 +444,9 @@
     <Content Include="Scripts\angular-1.7.8\ng-loading-overlay.min.js" />
     <Content Include="Scripts\angular-1.7.8\tinymce.min.js" />
     <Content Include="Scripts\jquery-3.4.1\jquery-3.4.1.min.js" />
+    <Content Include="Scripts\jquery\jquery-3.7.1.min.js" />
+    <Content Include="Scripts\jquery\jquery-migrate-3.5.2.js" />
+    <Content Include="Scripts\jquery\jquery-migrate-3.5.2.min.js" />
     <Content Include="UI\javascript\external\agreement\grant-agreement-document-view.js" />
     <Content Include="UI\javascript\external\agreement\grant-agreement-scheduleB-view.js" />
     <Content Include="UI\javascript\external\agreement\grant-agreement-scheduleA-view.js" />

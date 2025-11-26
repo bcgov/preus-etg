@@ -71,9 +71,7 @@
                         Notes:
                     </label>
                     <div class="form__control padding-bottom-20">
-                        <textarea ng-model="model.Notes"
-                          ng-class="{'has-error': $ctrl.getError()}"
-                          maxlength="2000" class="input--full copy-box--med"></textarea>
+                        <textarea ng-model="model.Notes" ng-class="{'has-error': $ctrl.getError()}" maxlength="2000" class="input--full copy-box--med"></textarea>
                         <span class="char-count-status">{{(2000 - model.Notes.length)}} chars left</span>
                     </div>
                 </div>

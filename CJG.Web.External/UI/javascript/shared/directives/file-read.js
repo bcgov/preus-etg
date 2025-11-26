@@ -7,7 +7,7 @@ app.directive("ngFileRead", function ($timeout) {
       ngFileRead: "="
     },
     link: function (scope, element, attributes) {
-      element.bind("change", function (changeEvent) {
+      element.on("change", function (changeEvent) {
         var reader = new FileReader();
         reader.onload = function (loadEvent) {
           return $timeout(function () {

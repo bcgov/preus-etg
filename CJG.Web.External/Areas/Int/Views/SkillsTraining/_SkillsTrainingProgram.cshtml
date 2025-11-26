@@ -75,7 +75,7 @@
                 <div class="form__group">
                     <div class="form__label">Skills Training Focus:</div>
                     <div class="form__control">
-                        <div class="control-wrapper selectmenu input--full" ">
+                        <div class="control-wrapper selectmenu input--full">
                             <select ng-model="model.ServiceLineId" ng-options="item.Id as item.Caption for item in section.serviceLines" ng-change="loadServiceLineBreakdowns()" class="input--full" ng-validation ng-editing></select>
                         </div>
                     </div>
@@ -83,7 +83,7 @@
                 <div class="form__group" ng-if="section.serviceLineBreakdowns && section.serviceLineBreakdowns.length">
                     <div class="form__label">{{model.ServiceLineBreakdownCaption}}:</div>
                     <div class="form__control">
-                        <div class="control-wrapper selectmenu input--full" ">
+                        <div class="control-wrapper selectmenu input--full">
                             <select ng-model="model.ServiceLineBreakdownId" ng-options="item.Id as item.Caption for item in section.serviceLineBreakdowns" class="input--full" ng-validation ng-editing></select>
                         </div>
                     </div>
@@ -91,7 +91,7 @@
                 <div class="form__group">
                     <div class="form__label">Skill level:</div>
                     <div class="form__control">
-                        <div class="control-wrapper selectmenu input--full" ">
+                        <div class="control-wrapper selectmenu input--full">
                             <select ng-model="model.SkillLevelId" ng-options="item.Key as item.Value for item in skillLevels" class="input--full" ng-validation ng-editing></select>
                         </div>
                     </div>
@@ -99,7 +99,7 @@
                 <div class="form__group">
                     <div class="form__label">Expected certificates, qualifications, or credentials:</div>
                     <div class="form__control">
-                        <div class="control-wrapper selectmenu input--full" ">
+                        <div class="control-wrapper selectmenu input--full">
                             <select ng-model="model.ExpectedQualificationId" ng-options="item.Key as item.Value for item in expectedQualifications" class="input--full" ng-validation ng-editing></select>
                         </div>
                     </div>
@@ -117,17 +117,17 @@
                     <div class="form__control" ng-if="section.editing">
                         <div class="control-wrapper selectmenu input--full">
                             <select ng-model="model.CipsCode1Id" ng-options="item.Key as item.Value for item in CipsCode1" class="input--full" ng-change="changeCipsCode(2, model.CipsCode1Id)" ng-validation>
-                                <option value="">< Select Any ></option>
+                                <option value="">Select Any</option>
                             </select>
                         </div>
                         <div class="control-wrapper selectmenu input--full" ng-if="model.CipsCode1Id">
                             <select ng-model="model.CipsCode2Id" ng-options="item.Key as item.Value for item in programCipsCode2" class="input--full" ng-change="changeCipsCode(3, model.CipsCode2Id)" ng-validation>
-                                <option value="">< Select Any ></option>
+                                <option value="">Select Any</option>
                             </select>
                         </div>
                         <div class="control-wrapper selectmenu input--full" ng-if="model.CipsCode2Id">
                             <select ng-model="model.CipsCode3Id" ng-options="item.Key as item.Value for item in programCipsCode3" class="input--full" ng-change="changeCipsCode(4, model.CipsCode3Id)" ng-validation>
-                                <option value="">< Select Any ></option>
+                                <option value="">Select Any</option>
                             </select>
                         </div>
                     </div>
