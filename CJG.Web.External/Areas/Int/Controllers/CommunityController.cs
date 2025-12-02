@@ -13,12 +13,12 @@ using System.Web.Mvc;
 namespace CJG.Web.External.Areas.Int.Controllers
 {
 
-    [AuthorizeAction(Privilege.GM1, Privilege.SM)]
-    [RouteArea("Int")]
-    public class CommunityController : BaseController
-    {
-        #region Variables
-        private readonly ICommunityService _communityService;
+	[AuthorizeAction(Privilege.GM1, Privilege.SM)]
+	[RouteArea("Int")]
+	public class CommunityController : BaseController
+	{
+		#region Variables
+		private readonly ICommunityService _communityService;
 		#endregion
 
 		#region Constructors
@@ -27,26 +27,25 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// </summary>
 		/// <param name="controllerService"></param>
 		/// <param name="communityService"></param>
-		public CommunityController (
+		public CommunityController(
 			IControllerService controllerService,
-            ICommunityService communityService
-           ) : base(controllerService.Logger)
+			ICommunityService communityService
+		   ) : base(controllerService.Logger)
 		{
-            _communityService = communityService;
-        }
-        #endregion
+			_communityService = communityService;
+		}
+		#endregion
 
-        #region Endpoints
 		/// <summary>
 		/// Display the Community Management view.
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet]
 		[Route("Admin/Community/View")]
-        public ActionResult CommunityManagementView()
-        {
-            return View();
-        }
+		public ActionResult CommunityManagementView()
+		{
+			return View();
+		}
 
 		/// <summary>
 		/// Returns the Modal view.
@@ -70,9 +69,12 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		public JsonResult GetCommunity(int id)
 		{
 			var community = new CommunityViewModel();
-			try {
+			try
+			{
 				community = new CommunityViewModel(_communityService.Get(id));
-			} catch (Exception ex) {
+			}
+			catch (Exception ex)
+			{
 				HandleAngularException(ex, community);
 			}
 			return Json(community, JsonRequestBehavior.AllowGet);
@@ -83,14 +85,17 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet]
-        [PreventSpam]
-        [Route("Admin/Communities")]
-        public ActionResult GetCommunities()
-        {
+		[PreventSpam]
+		[Route("Admin/Communities")]
+		public ActionResult GetCommunities()
+		{
 			var communities = new CommunityManagementViewModel();
-			try {
+			try
+			{
 				communities = new CommunityManagementViewModel(_communityService.GetAll());
-			} catch (Exception ex) {
+			}
+			catch (Exception ex)
+			{
 				HandleAngularException(ex, communities);
 			}
 			return Json(communities, JsonRequestBehavior.AllowGet);
@@ -107,20 +112,25 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		public JsonResult AddCommunity(CommunityViewModel model)
 		{
 			try
-			 {
-				if (ModelState.IsValid) {
-					if (_communityService.Get(model.Caption) == null) {
+			{
+				if (ModelState.IsValid)
+				{
+					if (_communityService.Get(model.Caption) == null)
+					{
 						var community = new Community();
-
 						community.Caption = model.Caption;
 
 						community = _communityService.Add(community);
 
 						model.Id = community.Id;
-					} else {
+					}
+					else
+					{
 						throw new InvalidOperationException("A community by that name already exists.");
 					}
-				} else {
+				}
+				else
+				{
 					HandleModelStateValidation(model);
 				}
 			}
@@ -137,37 +147,45 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPut]
-        [PreventSpam, ValidateRequestHeader]
-        [Route("Admin/Community")]
-        public JsonResult UpdateCommunity(CommunityViewModel model)
-        {
-            try
-            {
-				if (ModelState.IsValid) {
+		[PreventSpam, ValidateRequestHeader]
+		[Route("Admin/Community")]
+		public JsonResult UpdateCommunity(CommunityViewModel model)
+		{
+			try
+			{
+				if (ModelState.IsValid)
+				{
 					var community = _communityService.Get(model.Id);
-					if (community != null) {
+					if (community != null)
+					{
 						var communityWithSameCaptionAsModel = _communityService.Get(model.Caption);
-						if (communityWithSameCaptionAsModel == null || community.Id == communityWithSameCaptionAsModel.Id) {
+						if (communityWithSameCaptionAsModel == null || community.Id == communityWithSameCaptionAsModel.Id)
+						{
 							community.Caption = model.Caption;
 							community.IsActive = model.Active;
 
 							_communityService.Update(community);
-						} else { 
+						}
+						else
+						{
 							throw new InvalidOperationException("A community by that name already exists.");
 						}
-					} else {
+					}
+					else
+					{
 						throw new InvalidOperationException("A community by that Id could not be found.");
 					}
-				} else {
+				}
+				else
+				{
 					HandleModelStateValidation(model);
 				}
-            }
-            catch (Exception ex)
-            {
-                HandleAngularException(ex, model);
-            }
-            return Json(model);
-        }
-        #endregion
-    }
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, model);
+			}
+			return Json(model);
+		}
+	}
 }

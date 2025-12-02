@@ -24,7 +24,7 @@
                                 <select ng-model="ngDialogData.NotificationType.NotificationTriggerId"
                                         ng-options="item.Id as item.Caption for item in Triggers"
                                         class="input--full">
-                                    <option value="">< Select Trigger ></option>
+                                    <option value="">Select Trigger</option>
                                 </select>
                             </div>
                         </div>
@@ -41,8 +41,7 @@
                     <label class="form__label">Description</label>
                     @* Description *@
                     <div class="form__control">
-                        <textarea class="input--full copy-box--small" rows="3" cols="100"
-                                  ng-model="ngDialogData.NotificationType.Description" ng-validation="errors.Description" />
+                        <textarea class="input--full copy-box--small" rows="3" cols="100" ng-model="ngDialogData.NotificationType.Description" ng-validation="errors.Description"></textarea>
                     </div>
                 </div>
             </div>
@@ -251,8 +250,7 @@
                         @* Body *@
                         <div class="form__label">Body<abbr title='Required'>*</abbr></div>
                         <div ng-class="{'has-error': errors.NotificationTemplate.EmailBody}">
-                            <textarea ng-model="ngDialogData.NotificationType.NotificationTemplate.EmailBody"
-                                      ui-tinymce="tinymceOptions" />
+                            <textarea ng-model="ngDialogData.NotificationType.NotificationTemplate.EmailBody" ui-tinymce="tinymceOptions"></textarea>
                         </div>
                         <validation ng-model="errors.NotificationTemplate.EmailBody"></validation>
                     </div>

@@ -13,7 +13,7 @@
                     <div class="selectmenu">
                         <select ng-model="ngDialogData.grantProgramId"
                                 ng-options="item[ngDialogData.grantProgramKey || 'Key'] as item[ngDialogData.grantProgramValue || 'Value'] for item in ngDialogData.grantPrograms">
-                            <option value=""><-- Select One --></option>
+                            <option value="">-- Select One --</option>
                         </select>
                     </div>
                 </div>
@@ -23,7 +23,7 @@
                 <div class="form__control">
                     <div class="selectmenu">
                         <select ng-model="ngDialogData.applicationState" ng-options="item.Id as item.Caption for item in ngDialogData.applicationStates">
-                            <option value=""><-- Select One --></option>
+                            <option value="">-- Select One --</option>
                         </select>
                     </div>
                 </div>

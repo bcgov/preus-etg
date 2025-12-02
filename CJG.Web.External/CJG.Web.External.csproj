@@ -437,13 +437,18 @@
     <Content Include="Areas\Part\Views\Information\_Step5.cshtml" />
     <Content Include="Areas\Ext\Views\TrainingProgram\TrainingProgramView.cshtml" />
     <Content Include="Areas\Ext\Views\Shared\_SaveAttachment.cshtml" />
-    <Content Include="Scripts\angular-1.7.8\angular-moment.min.js" />
-    <Content Include="Scripts\angular-1.7.8\moment-timezone-with-data.min.js" />
-    <Content Include="Scripts\angular-1.7.8\moment-timezone.min.js" />
-    <Content Include="Scripts\angular-1.7.8\moment.min.js" />
-    <Content Include="Scripts\angular-1.7.8\ng-loading-overlay.min.js" />
-    <Content Include="Scripts\angular-1.7.8\tinymce.min.js" />
-    <Content Include="Scripts\jquery-3.4.1\jquery-3.4.1.min.js" />
+    <Content Include="Scripts\angular-1.8.3\angular-moment.min.js" />
+    <Content Include="Scripts\angular-1.8.3\angular-sanitize.js" />
+    <Content Include="Scripts\angular-1.8.3\angular.min.js" />
+    <Content Include="Scripts\angular-1.8.3\moment-timezone-with-data.min.js" />
+    <Content Include="Scripts\angular-1.8.3\moment-timezone.min.js" />
+    <Content Include="Scripts\angular-1.8.3\moment.min.js" />
+    <Content Include="Scripts\angular-1.8.3\ng-loading-overlay.min.js" />
+    <Content Include="Scripts\angular-1.8.3\ngDialog.min.js" />
+    <Content Include="Scripts\angular-1.8.3\tinymce.min.js" />
+    <Content Include="Scripts\jquery\jquery-3.7.1.min.js" />
+    <Content Include="Scripts\jquery\jquery-migrate-3.5.2.js" />
+    <Content Include="Scripts\jquery\jquery-migrate-3.5.2.min.js" />
     <Content Include="UI\javascript\external\agreement\grant-agreement-document-view.js" />
     <Content Include="UI\javascript\external\agreement\grant-agreement-scheduleB-view.js" />
     <Content Include="UI\javascript\external\agreement\grant-agreement-scheduleA-view.js" />
@@ -481,7 +486,6 @@
     <Content Include="UI\javascript\external\training-provider\index.js" />
     <Content Include="UI\javascript\external\claim\claim-attachments-view.js" />
     <Content Include="UI\javascript\external\attachments\application-attachments-view.js" />
-    <Content Include="Scripts\angular-1.7.8\ngDialog.min.js" />
     <Content Include="UI\javascript\external\completion-report\completion-report-details-view.js" />
     <Content Include="UI\javascript\external\completion-report\completion-report-view.js" />
     <Content Include="UI\javascript\external\reporting\reporting-grant-file-view.js" />
@@ -886,8 +890,6 @@
     </None>
     <Content Include="parameters.xml" />
     <Content Include="Robots.txt" />
-    <Content Include="Scripts\angular-1.7.8\angular-sanitize.js" />
-    <Content Include="Scripts\angular-1.7.8\angular.min.js" />
     <Content Include="Sitemap.xml" />
     <Content Include="Static\maintenance.css" />
     <Content Include="Areas\Int\Views\TrainingProviderHistory\TrainingProviderGrantFileHistoryView.cshtml" />

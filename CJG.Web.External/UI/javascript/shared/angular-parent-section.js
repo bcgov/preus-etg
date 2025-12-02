@@ -22,7 +22,7 @@ app.controller('ParentSection', function ($scope, $attrs, $controller, $timeout,
     var foptions = Object.assign({}, data);
 
     if (foptions.event) {
-      console.log('bubble event - ' + $scope.section.name + ' broadcast: ' + data.event);
+      //console.log('bubble event - ' + $scope.section.name + ' broadcast: ' + data.event);
       delete data.event;
       $scope.broadcast(foptions.event, data);
     }
