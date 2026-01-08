@@ -8,6 +8,7 @@ namespace CJG.Web.External.Areas.Int.Models
 	public class ParticipantEmploymentInfoViewModel
 	{
 		public string EmploymentStatus { get; set; }
+		public string MultipleEmploymentPositions { get; set; }
 		public string CityofWork { get; set; }
 		public string ReceivingEIValue { get; set; }
 
@@ -40,6 +41,8 @@ namespace CJG.Web.External.Areas.Int.Models
 		public ParticipantEmploymentInfoViewModel(ParticipantForm participantForm, INationalOccupationalClassificationService nationalOccupationalClassificationService)
 		{
 			EmploymentStatus = participantForm.EmploymentStatus?.Caption;
+			MultipleEmploymentPositions = participantForm.MultipleEmploymentPositions.AsYesOrNo();
+				
 			CityofWork = participantForm.PrimaryCity;
 			ReceivingEIValue = participantForm.EIBenefit?.Caption;
 			if (participantForm?.GrantApplication?.GrantOpening?.GrantStream?.GrantProgram?.ProgramTypeId == ProgramTypes.WDAService)

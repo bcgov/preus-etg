@@ -351,6 +351,11 @@ namespace CJG.Core.Entities
 		public string FromCountry { get; set; }
 
 		/// <summary>
+		/// get/set - Does the participant have multiple employment positions? "Do you have multiple employment positions?"
+		/// </summary>
+		public bool? MultipleEmploymentPositions { get; set; }
+
+		/// <summary>
 		/// get/set - The foreign key to the EI benefits for this participant.
 		/// </summary>
 		public int EIBenefitId { get; set; }

@@ -1129,6 +1129,9 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					EmploymentStatusId = model.ParticipantInfoStep4ViewModel.EmploymentStatus,
 					EmploymentTypeId = model.ParticipantInfoStep4ViewModel.EmploymentType != 0 ? model.ParticipantInfoStep4ViewModel.EmploymentType : null,
 					TrainingResultId = model.ParticipantInfoStep4ViewModel.TrainingResult != 0 ? (int?)model.ParticipantInfoStep4ViewModel.TrainingResult : null,
+					MultipleEmploymentPositions = HasEmployedStatus(model.ParticipantInfoStep4ViewModel)
+						? model.ParticipantInfoStep4ViewModel.MultipleEmploymentPositions
+						: null,
 					EIBenefitId = model.ParticipantInfoStep4ViewModel.EIBenefit != 0 ? model.ParticipantInfoStep4ViewModel.EIBenefit : EI_BENEFIT_NONE_OF_THE_ABOVE,
 					MaternalPaternal = model.ParticipantInfoStep4ViewModel.MaternalPaternal ?? false,
 					ReceivingEIBenefit = model.ParticipantInfoStep4ViewModel.CurrentReceiveEI ?? false,
@@ -1207,6 +1210,11 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				this.SetAlert(e);
 				throw;
 			}
+		}
+
+		private bool HasEmployedStatus(ParticipantInfoStep4ViewModel model)
+		{
+			return model.EmploymentStatus == 2 || model.EmploymentStatus == 3 || model.EmploymentStatus == 6;
 		}
 
 		private bool HasConsentForm()
