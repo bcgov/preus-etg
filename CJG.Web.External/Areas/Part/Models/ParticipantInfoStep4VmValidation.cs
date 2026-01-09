@@ -11,6 +11,11 @@ namespace CJG.Web.External.Areas.Part.Models
 			return employmentType == 2 || employmentType == 3 || employmentType == 6;
 		}
 
+		private static bool WasEmployed(int employmentType)
+		{
+			return employmentType == 1 || employmentType == 4;
+		}
+
 		public static ValidationResult ValidateMultipleEmploymentPositions(bool? multipleEmploymentPositions, ValidationContext context)
 		{
 			ParticipantInfoStep4ViewModel model = context.ObjectInstance as ParticipantInfoStep4ViewModel;
@@ -26,6 +31,24 @@ namespace CJG.Web.External.Areas.Part.Models
 				result = new ValidationResult("The Multiple Employment Positions field is required.");
 
 			return result;
+		}
+
+		public static ValidationResult ValidatePreviousEmploymentLastDayOfWork(DateTime? lastDateOfWork, ValidationContext context)
+		{
+			ParticipantInfoStep4ViewModel model = context.ObjectInstance as ParticipantInfoStep4ViewModel;
+			if (model == null)
+				throw new ArgumentNullException();
+
+			if (!WasEmployed(model.EmploymentStatus))
+				return ValidationResult.Success;
+
+			if (!lastDateOfWork.HasValue)
+				return new ValidationResult("Previous employment last day of work is required.");
+
+			if (lastDateOfWork.Value.ToUniversalTime() > AppDateTime.UtcNow)
+				return new ValidationResult("Previous employment last day of work cannot be greater than today.");
+
+			return ValidationResult.Success;
 		}
 
 		public static ValidationResult ValidateHowLongYears(int? howLongYears, ValidationContext context)

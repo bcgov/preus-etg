@@ -910,7 +910,8 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			var age = today.Year - dateOfBirth.Year;
 
 			// If participant's birthday has not yet occurred this year, subtract a year from age
-			if (dateOfBirth > today.AddYears(-age)) age--;
+			if (dateOfBirth > today.AddYears(-age))
+				age--;
 
 			// Assign to Step3ViewModel required to display YouthInCare controls
 			model.ParticipantInfoStep3ViewModel.Age = age;
@@ -1094,19 +1095,20 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					LastName = model.ParticipantInfoStep2ViewModel.LastName,
 					SIN = $"{model.ParticipantInfoStep2ViewModel.SIN1}-{model.ParticipantInfoStep2ViewModel.SIN2}-{model.ParticipantInfoStep2ViewModel.SIN3}",
 					PhoneNumber1 = $"{model.ParticipantInfoStep2ViewModel.Phone1AreaCode}{model.ParticipantInfoStep2ViewModel.Phone1Exchange}{model.ParticipantInfoStep2ViewModel.Phone1Number}".FormatPhoneNumber(),
-					PhoneExtension1 = !String.IsNullOrWhiteSpace(model.ParticipantInfoStep2ViewModel.Phone1Extension) ? $"{model.ParticipantInfoStep2ViewModel.Phone1Extension}" : null,
+					PhoneExtension1 = !string.IsNullOrWhiteSpace(model.ParticipantInfoStep2ViewModel.Phone1Extension) ? $"{model.ParticipantInfoStep2ViewModel.Phone1Extension}" : null,
 					PhoneNumber2 = $"{model.ParticipantInfoStep2ViewModel.Phone2AreaCode}{model.ParticipantInfoStep2ViewModel.Phone2Exchange}{model.ParticipantInfoStep2ViewModel.Phone2Number}".FormatPhoneNumber(),
-					PhoneExtension2 = !String.IsNullOrWhiteSpace(model.ParticipantInfoStep2ViewModel.Phone2Extension) ? $"{model.ParticipantInfoStep2ViewModel.Phone2Extension}" : null,
+					PhoneExtension2 = !string.IsNullOrWhiteSpace(model.ParticipantInfoStep2ViewModel.Phone2Extension) ? $"{model.ParticipantInfoStep2ViewModel.Phone2Extension}" : null,
 					EmailAddress = model.ParticipantInfoStep2ViewModel.EmailAddress.Trim(),
 					AddressLine1 = model.ParticipantInfoStep2ViewModel.AddressLine1,
 					AddressLine2 = model.ParticipantInfoStep2ViewModel.AddressLine2,
 					City = model.ParticipantInfoStep2ViewModel.City,
 					PostalCode = model.ParticipantInfoStep2ViewModel.PostalCode,
 					BirthDate = DateTime.SpecifyKind(DateTime.Parse(
-					model.ParticipantInfoStep2ViewModel.DateOfBirth.Year.ToString() + "/" +
-					model.ParticipantInfoStep2ViewModel.DateOfBirth.Month.ToString() + "/" +
-					model.ParticipantInfoStep2ViewModel.DateOfBirth.Day.ToString()), DateTimeKind.Local).ToUniversalTime(),
-
+						model.ParticipantInfoStep2ViewModel.DateOfBirth.Year.ToString() + "/" +
+						model.ParticipantInfoStep2ViewModel.DateOfBirth.Month.ToString() + "/" +
+						model.ParticipantInfoStep2ViewModel.DateOfBirth.Day.ToString()
+					), DateTimeKind.Local).ToUniversalTime(),
+					
 					// Step 3 of 6
 					CanadianStatusId = model.ParticipantInfoStep3ViewModel.CanadianStatus,
 					AboriginalBandId = model.ParticipantInfoStep3ViewModel.AboriginalBand != 0 ? model.ParticipantInfoStep3ViewModel.AboriginalBand : null,
@@ -1132,6 +1134,13 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					MultipleEmploymentPositions = HasEmployedStatus(model.ParticipantInfoStep4ViewModel)
 						? model.ParticipantInfoStep4ViewModel.MultipleEmploymentPositions
 						: null,
+					PreviousEmploymentLastDayOfWork = model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.HasValue
+					? DateTime.SpecifyKind(DateTime.Parse(
+						model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.Value.Year.ToString() + "/" +
+						model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.Value.Month.ToString() + "/" +
+						model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.Value.Day.ToString()
+					), DateTimeKind.Local).ToUniversalTime()
+					: (DateTime?)null,
 					EIBenefitId = model.ParticipantInfoStep4ViewModel.EIBenefit != 0 ? model.ParticipantInfoStep4ViewModel.EIBenefit : EI_BENEFIT_NONE_OF_THE_ABOVE,
 					MaternalPaternal = model.ParticipantInfoStep4ViewModel.MaternalPaternal ?? false,
 					ReceivingEIBenefit = model.ParticipantInfoStep4ViewModel.CurrentReceiveEI ?? false,

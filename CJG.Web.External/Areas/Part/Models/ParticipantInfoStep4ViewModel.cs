@@ -1,4 +1,5 @@
-﻿using CJG.Application.Business.Models;
+﻿using System;
+using CJG.Application.Business.Models;
 using CJG.Core.Entities;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,6 +15,13 @@ namespace CJG.Web.External.Areas.Part.Models
 
 		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidateMultipleEmploymentPositions")]
 		public bool? MultipleEmploymentPositions { get; set; }
+
+		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidatePreviousEmploymentLastDayOfWork")]
+		public DateTime? PreviousEmploymentLastDayOfWork { get; set; }
+
+		public int? PreviousEmploymentLastDayOfWorkDay { get; set; }
+		public int? PreviousEmploymentLastDayOfWorkMonth { get; set; }
+		public int? PreviousEmploymentLastDayOfWorkYear { get; set; }
 
 		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidateEmploymentType")]
 		public int? EmploymentType { get; set; }

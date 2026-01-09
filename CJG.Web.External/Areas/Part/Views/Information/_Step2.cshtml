@@ -1,7 +1,7 @@
 ﻿
 <div ng-if="model.ParticipantInfoStep2ViewModel" ng-show="model.ParticipantInfoStep0ViewModel.Step == 2">
     <p class="subheader--step">Step 2 of {{model.ParticipantInfoStep0ViewModel.TotalSteps}}: Contact information</p>
-
+    
     @Html.TextBoxBlock(new FormControl
     {
         Id = "FirstName",
@@ -38,7 +38,7 @@
         StartYear = "{{calculatedYear(model.ParticipantInfoStep0ViewModel.AppDateTimeNow, -model.ParticipantInfoStep2ViewModel.ParticipantOldestAge)}}",
         EndYear = "{{calculatedYear(model.ParticipantInfoStep0ViewModel.AppDateTimeNow, -model.ParticipantInfoStep2ViewModel.ParticipantYoungestAge)}}"
     })
-
+    
     <div class="form__group">
         <label class="form__label">Social Insurance <nobr>Number <abbr title="Required">*</abbr></nobr></label>
 

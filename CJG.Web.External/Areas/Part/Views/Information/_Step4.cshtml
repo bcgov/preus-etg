@@ -11,10 +11,23 @@
         Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.EmploymentStatuses",
         CssClass = "input--full",
         IsInnerModel = true,
-        DefaultOverride = true
+        DefaultOverride = true,
+        OnChange = "initializeDatePickerForLastDayOfWork()"
     })
     
-    <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 6">
+<div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4">
+    @Html.DatePickerDropDownList(new DatePickerFormControl
+    {
+        Id = "previouslastdayofwork-date",
+        Date = "model.ParticipantInfoStep2ViewModel.PreviousEmploymentLastDayOfWork",
+        IsRequired = false,
+        Label = "When was your previous employment last day of work?",
+        StartYear = "{{calculatedYear(model.ParticipantInfoStep0ViewModel.AppDateTimeNow, -20)}}",
+        EndYear = "{{calculatedYear(model.ParticipantInfoStep0ViewModel.AppDateTimeNow, 0)}}"
+    })
+</div>
+
+<div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 6">
         <div class="form__group form__group--radio-inline">
             <div class="form__label">
                 Do you have multiple employment positions?<abbr title="Required">*</abbr>

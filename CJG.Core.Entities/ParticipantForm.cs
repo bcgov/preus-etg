@@ -356,6 +356,11 @@ namespace CJG.Core.Entities
 		public bool? MultipleEmploymentPositions { get; set; }
 
 		/// <summary>
+		/// get/set - The last day of employment before the participant was unemployed
+		/// </summary>
+		public DateTime? PreviousEmploymentLastDayOfWork { get; set; }
+
+		/// <summary>
 		/// get/set - The foreign key to the EI benefits for this participant.
 		/// </summary>
 		public int EIBenefitId { get; set; }
