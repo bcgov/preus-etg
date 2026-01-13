@@ -303,6 +303,24 @@ namespace CJG.Web.External.Areas.Part.Models
 			return result;
 		}
 
+		public static ValidationResult ValidatePreviousHourlyWage(decimal? previousHourlyWage, ValidationContext context)
+		{
+			var model = context.ObjectInstance as ParticipantInfoStep4ViewModel;
+			if (model == null)
+				throw new ArgumentNullException();
+
+			if (!WasEmployed(model.EmploymentStatus))
+				return ValidationResult.Success;
+
+			if (!previousHourlyWage.HasValue)
+				return new ValidationResult("The Previous Hourly Wage field is required.");
+
+			if (previousHourlyWage.Value < 0)
+				return new ValidationResult("The Previous Hourly Wage field must be greater than or equal to 0.");
+
+			return ValidationResult.Success;
+		}
+
 		public static ValidationResult ValidatePrimaryCity(string primaryCity, ValidationContext context)
 		{
 			ParticipantInfoStep4ViewModel model = context.ObjectInstance as ParticipantInfoStep4ViewModel;

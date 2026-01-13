@@ -1134,13 +1134,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					MultipleEmploymentPositions = HasEmployedStatus(model.ParticipantInfoStep4ViewModel)
 						? model.ParticipantInfoStep4ViewModel.MultipleEmploymentPositions
 						: null,
-					PreviousEmploymentLastDayOfWork = model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.HasValue
-					? DateTime.SpecifyKind(DateTime.Parse(
-						model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.Value.Year.ToString() + "/" +
-						model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.Value.Month.ToString() + "/" +
-						model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.Value.Day.ToString()
-					), DateTimeKind.Local).ToUniversalTime()
-					: (DateTime?)null,
+					PreviousEmploymentLastDayOfWork = GetPreviousEmploymentLastDayOfWork(model),
 					EIBenefitId = model.ParticipantInfoStep4ViewModel.EIBenefit != 0 ? model.ParticipantInfoStep4ViewModel.EIBenefit : EI_BENEFIT_NONE_OF_THE_ABOVE,
 					MaternalPaternal = model.ParticipantInfoStep4ViewModel.MaternalPaternal ?? false,
 					ReceivingEIBenefit = model.ParticipantInfoStep4ViewModel.CurrentReceiveEI ?? false,
@@ -1151,6 +1145,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					BusinessOwner = model.ParticipantInfoStep4ViewModel.BusinessOwner ?? false,
 					AvgHoursPerWeek = model.ParticipantInfoStep4ViewModel.AvgHoursPerWeek,
 					HourlyWage = model.ParticipantInfoStep4ViewModel.HourlyWage,
+					PreviousHourlyWage = GetPreviousHourlyWage(model),
 					PrimaryCity = model.ParticipantInfoStep4ViewModel.PrimaryCity,
 					Apprentice = model.ParticipantInfoStep4ViewModel.Apprentice ?? false,
 					ItaRegistered = model.ParticipantInfoStep4ViewModel.ItaRegistered ?? false,
@@ -1221,9 +1216,36 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			}
 		}
 
+		private DateTime? GetPreviousEmploymentLastDayOfWork(ParticipantInfoViewModel model)
+		{
+			if (!HasPreviouslyEmployedStatus(model.ParticipantInfoStep4ViewModel))
+				return (DateTime?)null;
+
+			return model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.HasValue
+				? DateTime.SpecifyKind(DateTime.Parse(
+					model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.Value.Year.ToString() + "/" +
+					model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.Value.Month.ToString() + "/" +
+					model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.Value.Day.ToString()
+				), DateTimeKind.Local).ToUniversalTime()
+				: (DateTime?)null;
+		}
+
+		private decimal? GetPreviousHourlyWage(ParticipantInfoViewModel model)
+		{
+			if (!HasPreviouslyEmployedStatus(model.ParticipantInfoStep4ViewModel))
+				return (decimal?)null;
+
+			return model.ParticipantInfoStep4ViewModel.PreviousHourlyWage;
+		}
+
 		private bool HasEmployedStatus(ParticipantInfoStep4ViewModel model)
 		{
 			return model.EmploymentStatus == 2 || model.EmploymentStatus == 3 || model.EmploymentStatus == 6;
+		}
+
+		private bool HasPreviouslyEmployedStatus(ParticipantInfoStep4ViewModel model)
+		{
+			return model.EmploymentStatus == 1 || model.EmploymentStatus == 4;
 		}
 
 		private bool HasConsentForm()

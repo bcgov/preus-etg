@@ -436,6 +436,11 @@ namespace CJG.Core.Entities
 		public decimal? HourlyWage { get; set; }
 
 		/// <summary>
+		/// get/set - The hourly rate this participant used to make.
+		/// </summary>
+		public decimal? PreviousHourlyWage { get; set; }
+
+		/// <summary>
 		/// get/set - The primary city this participant works from.
 		/// </summary>
 		[MaxLength(250)]
