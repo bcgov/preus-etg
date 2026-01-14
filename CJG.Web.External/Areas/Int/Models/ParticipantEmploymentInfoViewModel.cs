@@ -31,6 +31,7 @@ namespace CJG.Web.External.Areas.Int.Models
 		public string MostImportantResult { get; set; }
 		public string TypeOfEmployment { get; set; }
 		public string AverageHourlyWage { get; set; }
+		public string PreviousHourlyWage { get; set; }
 		public string MaternalParentalBenefits { get; set; }
 		public bool ShowEmploymentFields { get; set; }
 
@@ -72,6 +73,9 @@ namespace CJG.Web.External.Areas.Int.Models
 			MostImportantResult = participantForm.TrainingResult?.Caption;
 			TypeOfEmployment = participantForm.EmploymentType?.Caption;
 			AverageHourlyWage = string.Format("{0:c}", participantForm.HourlyWage);
+			PreviousHourlyWage = participantForm.PreviousHourlyWage.HasValue
+				? string.Format("{0:c}", participantForm.PreviousHourlyWage)
+				: string.Empty;
 			MaternalParentalBenefits = participantForm.MaternalPaternal ? "Yes" : "No";
 			ShowEmploymentFields = new[] { "Employed", "Self-employed" }.Contains(EmploymentStatus);
 		}
