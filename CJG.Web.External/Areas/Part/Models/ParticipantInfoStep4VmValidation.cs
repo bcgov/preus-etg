@@ -16,6 +16,11 @@ namespace CJG.Web.External.Areas.Part.Models
 			return employmentType == 1 || employmentType == 4;
 		}
 
+		private static bool WasEmployedOrInTraining(int employmentType)
+		{
+			return employmentType == 1 || employmentType == 4 || employmentType == 5;
+		}
+
 		public static ValidationResult ValidateMultipleEmploymentPositions(bool? multipleEmploymentPositions, ValidationContext context)
 		{
 			ParticipantInfoStep4ViewModel model = context.ObjectInstance as ParticipantInfoStep4ViewModel;
@@ -131,7 +136,7 @@ namespace CJG.Web.External.Areas.Part.Models
 
 			var averageHoursPerWeek = previousAverageHoursPerWeek.Value;
 			if (averageHoursPerWeek < 0 || averageHoursPerWeek > 168.0m)
-				return new ValidationResult("The previous average hours per week must be within 0 to 168.");
+				return new ValidationResult("The Previous Average Hours per Week must be within 0 to 168.");
 
 			return ValidationResult.Success;
 		}
@@ -337,6 +342,23 @@ namespace CJG.Web.External.Areas.Part.Models
 				return new ValidationResult("The Previous Hourly Wage field must be greater than or equal to 0.");
 
 			return ValidationResult.Success;
+		}
+
+		public static ValidationResult ValidatePreviousEmployerFullName(string previousEmployerFullName, ValidationContext context)
+		{
+			ParticipantInfoStep4ViewModel model = context.ObjectInstance as ParticipantInfoStep4ViewModel;
+			if (model == null)
+				throw new ArgumentNullException();
+
+			ValidationResult result = ValidationResult.Success;
+
+			if (WasEmployedOrInTraining(model.EmploymentStatus))
+			{
+				if (string.IsNullOrWhiteSpace(previousEmployerFullName))
+					result = new ValidationResult("The Last Previous Employer field is required.");
+			}
+
+			return result;
 		}
 
 		public static ValidationResult ValidatePrimaryCity(string primaryCity, ValidationContext context)

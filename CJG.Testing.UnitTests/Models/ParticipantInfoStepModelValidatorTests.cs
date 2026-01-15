@@ -115,9 +115,27 @@ namespace CJG.Testing.UnitTests.Models
 			_model.PreviousAvgHoursPerWeek = rate;
 
 			var results = ValidateModel(_model);
-			var errorToLookFor = "The previous average hours per week must be within 0 to 168.";
+			var errorToLookFor = "The Previous Average Hours per Week must be within 0 to 168.";
 
 			Assert.AreEqual(showError, results.Any(x => x.ErrorMessage == errorToLookFor));
+		}
+
+		[DataTestMethod]
+		[DataRow(1, true)]
+		[DataRow(2, false)]
+		[DataRow(3, false)]
+		[DataRow(4, true)]
+		[DataRow(5, true)]
+		[DataRow(6, false)]
+		public void LastPreviousEmployerNameShouldBeRequired(int employmentStatus, bool required)
+		{
+			_model.EmploymentStatus = employmentStatus;
+			_model.PreviousEmployerFullName = null;
+
+			var results = ValidateModel(_model);
+			var errorToLookFor = "The Last Previous Employer field is required.";
+
+			Assert.AreEqual(required, results.Any(x => x.ErrorMessage == errorToLookFor));
 		}
 
 		public IList<ValidationResult> ValidateModel(object model)

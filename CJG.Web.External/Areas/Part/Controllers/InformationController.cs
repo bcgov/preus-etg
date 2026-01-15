@@ -1147,6 +1147,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					PreviousAvgHoursPerWeek = GetPreviousAverageHoursWorked(model),
 					HourlyWage = model.ParticipantInfoStep4ViewModel.HourlyWage,
 					PreviousHourlyWage = GetPreviousHourlyWage(model),
+					PreviousEmployerFullName = GetPreviousEmployerFullName(model),
 					PrimaryCity = model.ParticipantInfoStep4ViewModel.PrimaryCity,
 					Apprentice = model.ParticipantInfoStep4ViewModel.Apprentice ?? false,
 					ItaRegistered = model.ParticipantInfoStep4ViewModel.ItaRegistered ?? false,
@@ -1231,6 +1232,14 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				: (DateTime?)null;
 		}
 
+		private string GetPreviousEmployerFullName(ParticipantInfoViewModel model)
+		{
+			if (!HasPreviouslyEmployedOrInTrainingStatus(model.ParticipantInfoStep4ViewModel))
+				return null;
+
+			return model.ParticipantInfoStep4ViewModel.PreviousEmployerFullName;
+		}
+
 		private decimal? GetPreviousHourlyWage(ParticipantInfoViewModel model)
 		{
 			if (!HasPreviouslyEmployedStatus(model.ParticipantInfoStep4ViewModel))
@@ -1241,7 +1250,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 
 		private int? GetPreviousAverageHoursWorked(ParticipantInfoViewModel model)
 		{
-			if (HasPreviouslyEmployedStatus(model.ParticipantInfoStep4ViewModel))
+			if (!HasPreviouslyEmployedStatus(model.ParticipantInfoStep4ViewModel))
 				return null;
 
 			return model.ParticipantInfoStep4ViewModel.PreviousAvgHoursPerWeek;
@@ -1255,6 +1264,11 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		private bool HasPreviouslyEmployedStatus(ParticipantInfoStep4ViewModel model)
 		{
 			return model.EmploymentStatus == 1 || model.EmploymentStatus == 4;
+		}
+
+		private bool HasPreviouslyEmployedOrInTrainingStatus(ParticipantInfoStep4ViewModel model)
+		{
+			return model.EmploymentStatus == 1 || model.EmploymentStatus == 4 || model.EmploymentStatus == 5;
 		}
 
 		private bool HasConsentForm()

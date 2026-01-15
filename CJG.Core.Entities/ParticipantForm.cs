@@ -436,6 +436,11 @@ namespace CJG.Core.Entities
 		public int? PreviousAvgHoursPerWeek { get; set; }
 
 		/// <summary>
+		/// get/set - The name of the most recent employer someone that was unemployed had
+		/// </summary>
+		public string PreviousEmployerFullName { get; set; }
+
+		/// <summary>
 		/// get/set - The hourly rate this participant makes.
 		/// </summary>
 		[Range(0, 99999, ErrorMessage = "The hourly rate must be within $0 to $99,999.")]
