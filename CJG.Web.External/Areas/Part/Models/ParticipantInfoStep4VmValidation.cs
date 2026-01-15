@@ -117,6 +117,25 @@ namespace CJG.Web.External.Areas.Part.Models
 			return result;
 		}
 
+		public static ValidationResult ValidatePreviousAvgHoursPerWeek(int? previousAverageHoursPerWeek, ValidationContext context)
+		{
+			var model = context.ObjectInstance as ParticipantInfoStep4ViewModel;
+			if (model == null)
+				throw new ArgumentNullException();
+
+			if (!WasEmployed(model.EmploymentStatus))
+				return ValidationResult.Success;
+
+			if (!previousAverageHoursPerWeek.HasValue)
+				return new ValidationResult("The Previous Average Hour field is required.");
+
+			var averageHoursPerWeek = previousAverageHoursPerWeek.Value;
+			if (averageHoursPerWeek < 0 || averageHoursPerWeek > 168.0m)
+				return new ValidationResult("The previous average hours per week must be within 0 to 168.");
+
+			return ValidationResult.Success;
+		}
+
 		public static ValidationResult ValidateApprentice(bool? apprentice, ValidationContext context)
 		{
 			ParticipantInfoStep4ViewModel model = context.ObjectInstance as ParticipantInfoStep4ViewModel;
@@ -126,9 +145,8 @@ namespace CJG.Web.External.Areas.Part.Models
 			ValidationResult result = ValidationResult.Success;
 
 			if (!apprentice.HasValue)
-			{
 				result = new ValidationResult("The Apprentice field is required.");
-			}
+
 			return result;
 		}
 

@@ -430,6 +430,12 @@ namespace CJG.Core.Entities
 		public int? AvgHoursPerWeek { get; set; }
 
 		/// <summary>
+		/// get/set - The average hours per week this participant worked in their previous job.
+		/// </summary>
+		[Range(0, 168, ErrorMessage = "The average hours per week must be within 0 to 168.")]
+		public int? PreviousAvgHoursPerWeek { get; set; }
+
+		/// <summary>
 		/// get/set - The hourly rate this participant makes.
 		/// </summary>
 		[Range(0, 99999, ErrorMessage = "The hourly rate must be within $0 to $99,999.")]

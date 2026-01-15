@@ -112,6 +112,9 @@ namespace CJG.Web.External.Areas.Part.Models
 		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidateAvgHoursPerWeek"), Range(0, 168, ErrorMessage = "The average hours per week must be within 0 to 168.")]
 		public int? AvgHoursPerWeek { get; set; }
 
+		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidatePreviousAvgHoursPerWeek"), Range(0, 168, ErrorMessage = "The previous average hours per week must be within 0 to 168.")]
+		public int? PreviousAvgHoursPerWeek { get; set; }
+
 		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidateHourlyWage"), Range(0, 99999, ErrorMessage = "The hourly rate must be within $0 to $99,999.")]
 		public decimal? HourlyWage { get; set; }
 

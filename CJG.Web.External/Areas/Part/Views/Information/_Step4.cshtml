@@ -499,6 +499,15 @@
         <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4">
             @Html.TextBoxBlock(new FormControl
             {
+                Label = "How many hours per week did you work on average in your previous position?<abbr title='Required'>*</abbr>",
+                Model = "model.ParticipantInfoStep4ViewModel.PreviousAvgHoursPerWeek",
+                IsInnerModel = true,
+                Size = "input--small",
+                Options = "maxlength = '3'"
+            })
+
+            @Html.TextBoxBlock(new FormControl
+            {
                 Label = "What was your previous hourly rate of pay?<abbr title='Required'>*</abbr>",
                 Model = "model.ParticipantInfoStep4ViewModel.PreviousHourlyWage",
                 IsInnerModel = true,

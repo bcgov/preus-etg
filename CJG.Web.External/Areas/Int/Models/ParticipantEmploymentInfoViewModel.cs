@@ -28,6 +28,7 @@ namespace CJG.Web.External.Areas.Int.Models
 		public string ProgramDescription { get; set; }
 		public string OtherProgramDesc { get; set; }
 		public int? HoursPerWeek { get; set; }
+		public int? PreviousHoursPerWeek { get; set; }
 		public string MostImportantResult { get; set; }
 		public string TypeOfEmployment { get; set; }
 		public string AverageHourlyWage { get; set; }
@@ -70,6 +71,7 @@ namespace CJG.Web.External.Areas.Int.Models
 			ProgramDescription = participantForm.ProgramDescription;
 			OtherProgramDesc = participantForm.OtherProgramDesc;
 			HoursPerWeek = participantForm.AvgHoursPerWeek;
+			PreviousHoursPerWeek = participantForm.PreviousAvgHoursPerWeek;
 			MostImportantResult = participantForm.TrainingResult?.Caption;
 			TypeOfEmployment = participantForm.EmploymentType?.Caption;
 			AverageHourlyWage = string.Format("{0:c}", participantForm.HourlyWage);
