@@ -910,7 +910,8 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			var age = today.Year - dateOfBirth.Year;
 
 			// If participant's birthday has not yet occurred this year, subtract a year from age
-			if (dateOfBirth > today.AddYears(-age)) age--;
+			if (dateOfBirth > today.AddYears(-age))
+				age--;
 
 			// Assign to Step3ViewModel required to display YouthInCare controls
 			model.ParticipantInfoStep3ViewModel.Age = age;
@@ -1094,19 +1095,20 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					LastName = model.ParticipantInfoStep2ViewModel.LastName,
 					SIN = $"{model.ParticipantInfoStep2ViewModel.SIN1}-{model.ParticipantInfoStep2ViewModel.SIN2}-{model.ParticipantInfoStep2ViewModel.SIN3}",
 					PhoneNumber1 = $"{model.ParticipantInfoStep2ViewModel.Phone1AreaCode}{model.ParticipantInfoStep2ViewModel.Phone1Exchange}{model.ParticipantInfoStep2ViewModel.Phone1Number}".FormatPhoneNumber(),
-					PhoneExtension1 = !String.IsNullOrWhiteSpace(model.ParticipantInfoStep2ViewModel.Phone1Extension) ? $"{model.ParticipantInfoStep2ViewModel.Phone1Extension}" : null,
+					PhoneExtension1 = !string.IsNullOrWhiteSpace(model.ParticipantInfoStep2ViewModel.Phone1Extension) ? $"{model.ParticipantInfoStep2ViewModel.Phone1Extension}" : null,
 					PhoneNumber2 = $"{model.ParticipantInfoStep2ViewModel.Phone2AreaCode}{model.ParticipantInfoStep2ViewModel.Phone2Exchange}{model.ParticipantInfoStep2ViewModel.Phone2Number}".FormatPhoneNumber(),
-					PhoneExtension2 = !String.IsNullOrWhiteSpace(model.ParticipantInfoStep2ViewModel.Phone2Extension) ? $"{model.ParticipantInfoStep2ViewModel.Phone2Extension}" : null,
+					PhoneExtension2 = !string.IsNullOrWhiteSpace(model.ParticipantInfoStep2ViewModel.Phone2Extension) ? $"{model.ParticipantInfoStep2ViewModel.Phone2Extension}" : null,
 					EmailAddress = model.ParticipantInfoStep2ViewModel.EmailAddress.Trim(),
 					AddressLine1 = model.ParticipantInfoStep2ViewModel.AddressLine1,
 					AddressLine2 = model.ParticipantInfoStep2ViewModel.AddressLine2,
 					City = model.ParticipantInfoStep2ViewModel.City,
 					PostalCode = model.ParticipantInfoStep2ViewModel.PostalCode,
 					BirthDate = DateTime.SpecifyKind(DateTime.Parse(
-					model.ParticipantInfoStep2ViewModel.DateOfBirth.Year.ToString() + "/" +
-					model.ParticipantInfoStep2ViewModel.DateOfBirth.Month.ToString() + "/" +
-					model.ParticipantInfoStep2ViewModel.DateOfBirth.Day.ToString()), DateTimeKind.Local).ToUniversalTime(),
-
+						model.ParticipantInfoStep2ViewModel.DateOfBirth.Year.ToString() + "/" +
+						model.ParticipantInfoStep2ViewModel.DateOfBirth.Month.ToString() + "/" +
+						model.ParticipantInfoStep2ViewModel.DateOfBirth.Day.ToString()
+					), DateTimeKind.Local).ToUniversalTime(),
+					
 					// Step 3 of 6
 					CanadianStatusId = model.ParticipantInfoStep3ViewModel.CanadianStatus,
 					AboriginalBandId = model.ParticipantInfoStep3ViewModel.AboriginalBand != 0 ? model.ParticipantInfoStep3ViewModel.AboriginalBand : null,
@@ -1129,6 +1131,10 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					EmploymentStatusId = model.ParticipantInfoStep4ViewModel.EmploymentStatus,
 					EmploymentTypeId = model.ParticipantInfoStep4ViewModel.EmploymentType != 0 ? model.ParticipantInfoStep4ViewModel.EmploymentType : null,
 					TrainingResultId = model.ParticipantInfoStep4ViewModel.TrainingResult != 0 ? (int?)model.ParticipantInfoStep4ViewModel.TrainingResult : null,
+					MultipleEmploymentPositions = HasEmployedStatus(model.ParticipantInfoStep4ViewModel)
+						? model.ParticipantInfoStep4ViewModel.MultipleEmploymentPositions
+						: null,
+					PreviousEmploymentLastDayOfWork = GetPreviousEmploymentLastDayOfWork(model),
 					EIBenefitId = model.ParticipantInfoStep4ViewModel.EIBenefit != 0 ? model.ParticipantInfoStep4ViewModel.EIBenefit : EI_BENEFIT_NONE_OF_THE_ABOVE,
 					MaternalPaternal = model.ParticipantInfoStep4ViewModel.MaternalPaternal ?? false,
 					ReceivingEIBenefit = model.ParticipantInfoStep4ViewModel.CurrentReceiveEI ?? false,
@@ -1138,7 +1144,10 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					HowLongMonths = model.ParticipantInfoStep4ViewModel.HowLongMonths,
 					BusinessOwner = model.ParticipantInfoStep4ViewModel.BusinessOwner ?? false,
 					AvgHoursPerWeek = model.ParticipantInfoStep4ViewModel.AvgHoursPerWeek,
+					PreviousAvgHoursPerWeek = GetPreviousAverageHoursWorked(model),
 					HourlyWage = model.ParticipantInfoStep4ViewModel.HourlyWage,
+					PreviousHourlyWage = GetPreviousHourlyWage(model),
+					PreviousEmployerFullName = GetPreviousEmployerFullName(model),
 					PrimaryCity = model.ParticipantInfoStep4ViewModel.PrimaryCity,
 					Apprentice = model.ParticipantInfoStep4ViewModel.Apprentice ?? false,
 					ItaRegistered = model.ParticipantInfoStep4ViewModel.ItaRegistered ?? false,
@@ -1207,6 +1216,59 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				this.SetAlert(e);
 				throw;
 			}
+		}
+
+		private DateTime? GetPreviousEmploymentLastDayOfWork(ParticipantInfoViewModel model)
+		{
+			if (!HasPreviouslyEmployedStatus(model.ParticipantInfoStep4ViewModel))
+				return (DateTime?)null;
+
+			return model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.HasValue
+				? DateTime.SpecifyKind(DateTime.Parse(
+					model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.Value.Year.ToString() + "/" +
+					model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.Value.Month.ToString() + "/" +
+					model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.Value.Day.ToString()
+				), DateTimeKind.Local).ToUniversalTime()
+				: (DateTime?)null;
+		}
+
+		private string GetPreviousEmployerFullName(ParticipantInfoViewModel model)
+		{
+			if (!HasPreviouslyEmployedOrInTrainingStatus(model.ParticipantInfoStep4ViewModel))
+				return null;
+
+			return model.ParticipantInfoStep4ViewModel.PreviousEmployerFullName;
+		}
+
+		private decimal? GetPreviousHourlyWage(ParticipantInfoViewModel model)
+		{
+			if (!HasPreviouslyEmployedStatus(model.ParticipantInfoStep4ViewModel))
+				return (decimal?)null;
+
+			return model.ParticipantInfoStep4ViewModel.PreviousHourlyWage;
+		}
+
+		private int? GetPreviousAverageHoursWorked(ParticipantInfoViewModel model)
+		{
+			if (!HasPreviouslyEmployedStatus(model.ParticipantInfoStep4ViewModel))
+				return null;
+
+			return model.ParticipantInfoStep4ViewModel.PreviousAvgHoursPerWeek;
+		}
+
+		private bool HasEmployedStatus(ParticipantInfoStep4ViewModel model)
+		{
+			return model.EmploymentStatus == 2 || model.EmploymentStatus == 3 || model.EmploymentStatus == 6;
+		}
+
+		private bool HasPreviouslyEmployedStatus(ParticipantInfoStep4ViewModel model)
+		{
+			return model.EmploymentStatus == 1 || model.EmploymentStatus == 4;
+		}
+
+		private bool HasPreviouslyEmployedOrInTrainingStatus(ParticipantInfoStep4ViewModel model)
+		{
+			return model.EmploymentStatus == 1 || model.EmploymentStatus == 4 || model.EmploymentStatus == 5;
 		}
 
 		private bool HasConsentForm()

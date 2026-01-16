@@ -52,9 +52,9 @@ namespace CJG.Web.External.Areas.Int.Models
 			AlternatePhone = !string.IsNullOrWhiteSpace(participantForm.PhoneNumber2) ? (participantForm.PhoneNumber2 + (string.IsNullOrWhiteSpace(participantForm.PhoneExtension2) ? "" : " Ext " + participantForm.PhoneExtension2)) : "";
 			AboriginalGroup = participantForm.PersonAboriginal == 1 ? participantForm?.AboriginalBand?.Caption : null;
 			ParticipantEmail = participantForm.EmailAddress;
-			Living = participantForm.PersonAboriginal == 1 && participantForm.AboriginalBand?.Id == 1 
+			Living = participantForm.PersonAboriginal == 1 && participantForm.AboriginalBand?.Id == 1
 				? (participantForm.LiveOnReserve ? "On" : "Off") + " Reserve"
-				:null;
+				: null;
 			ResidentialAddressLine1 = participantForm.AddressLine1;
 			ResidentialAddressLine2 = String.IsNullOrWhiteSpace(participantForm.AddressLine2) ? "" : participantForm.AddressLine2;
 			VisibleMinority = TriState(participantForm.VisibleMinority, null);
@@ -68,7 +68,6 @@ namespace CJG.Web.External.Areas.Int.Models
 
 		public ParticipantContactInfoViewModel()
 		{
-
 		}
 
 		public string TriState(int? value, string[] options)

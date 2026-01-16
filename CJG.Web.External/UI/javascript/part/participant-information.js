@@ -92,7 +92,7 @@ app.controller('ParticipantInformationView', function ($scope, $controller, $att
           }
         });
       } catch (ex) {
-        return $scope.messageDialog('ReCaptcha', '<p>Google Recaptcha failed to load, please try again later or contact support.</p><p>'  + ex.message + '</p>')
+        return $scope.messageDialog('ReCaptcha', '<p>Google Recaptcha failed to load, please try again later or contact support.</p><p>' + ex.message + '</p>')
           .catch(angular.noop);
       }
     } else {
@@ -144,7 +144,9 @@ app.controller('ParticipantInformationView', function ($scope, $controller, $att
   }
 
   $scope.getDate = function (year, month, day) {
-    if (year * month * day === 0) return null;
+    if (year * month * day === 0)
+      return null;
+
     return new Date(year + "/" + month + "/" + day);
   }
 
@@ -179,9 +181,10 @@ app.controller('ParticipantInformationView', function ($scope, $controller, $att
     else if ($scope.model.ParticipantInfoStep3ViewModel.PersonAboriginal == 2 || $scope.model.ParticipantInfoStep3ViewModel.PersonAboriginal == 3) {
       $scope.model.ParticipantInfoStep3ViewModel.LiveOnReserve = null;
       $scope.model.ParticipantInfoStep3ViewModel.AboriginalBand = null;
-      
+
     }
   }
+
   $scope.resetHiddenControlsforAboriginalBand = function () {
     if ($scope.model.ParticipantInfoStep3ViewModel.AboriginalBand != 1) {
       $scope.model.ParticipantInfoStep3ViewModel.LiveOnReserve = null;
@@ -193,11 +196,22 @@ app.controller('ParticipantInformationView', function ($scope, $controller, $att
       $scope.model.ParticipantInfoStep3ViewModel.YearToCanada = 0;
     }
   }
+
   $scope.resetHiddenControlsforCanadaRefugee = function () {
     if ($scope.model.ParticipantInfoStep3ViewModel.CanadaRefugee != 1) {
       $scope.model.ParticipantInfoStep3ViewModel.FromCountry = null;
     }
   }
+
+  $scope.initializeDatePickerForLastDayOfWork = function () {
+    // Have to re-populate the date picker on step 4 when the Employment Status changes
+    setTimeout(function () {
+      angular.element('.datefield').each(function () {
+        var df = new DateField(this);
+      });
+    });
+  }
+
   $scope.next = function () {
     var step = $scope.model.ParticipantInfoStep0ViewModel.Step;
     var endpoint = 'Step' + step;
@@ -211,6 +225,7 @@ app.controller('ParticipantInformationView', function ($scope, $controller, $att
           model.DateOfBirth = $scope.getDate(angular.element('#birth-date-Year').val(), angular.element('#birth-date-Month').val(), angular.element('#birth-date-Day').val());
           model.SIN = model.SIN1 + model.SIN2 + model.SIN3;
           model.Phone1 = model.Phone1AreaCode + model.Phone1Exchange + model.Phone1Number;
+
           if (phone2)
             model.Phone2 = model.Phone2AreaCode + model.Phone2Exchange + model.Phone2Number;
           else
@@ -222,7 +237,10 @@ app.controller('ParticipantInformationView', function ($scope, $controller, $att
           model.RegionId = document.getElementById("RegionId").value.split(":").filter(r => r != "?").pop();
 
           break;
+
         case 4:
+          model.PreviousEmploymentLastDayOfWork = $scope.getDate(angular.element('#previouslastdayofwork-date-Year').val(), angular.element('#previouslastdayofwork-date-Month').val(), angular.element('#previouslastdayofwork-date-Day').val());
+
           if ($scope.model.ParticipantInfoStep0ViewModel.ReportedByApplicant) {
             endpoint = 'Form';
           }
@@ -239,7 +257,8 @@ app.controller('ParticipantInformationView', function ($scope, $controller, $att
         set: 'model'
       })
         .then(function (response) {
-          if (response.data.RedirectUrl) window.location = response.data.RedirectUrl;
+          if (response.data.RedirectUrl)
+            window.location = response.data.RedirectUrl;
 
           $scope.goto(1);
           window.scrollTo(0, 0);
@@ -251,8 +270,10 @@ app.controller('ParticipantInformationView', function ($scope, $controller, $att
   $scope.goto = function (increment) {
     return $timeout(function () {
       var step = $scope.model.ParticipantInfoStep0ViewModel.Step + increment;
+
       if (step == 5)
         $scope.model.ParticipantInfoStep5ViewModel.ParticipantConsentBody = $sce.trustAsHtml($scope.model.ParticipantInfoStep5ViewModel.ParticipantConsentBody);
+
       if (step > 1 && step < 6)
         $scope.model.ParticipantInfoStep0ViewModel.Step = step;
     });

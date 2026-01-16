@@ -8,6 +8,7 @@ namespace CJG.Web.External.Areas.Int.Models
 	public class ParticipantEmploymentInfoViewModel
 	{
 		public string EmploymentStatus { get; set; }
+		public string MultipleEmploymentPositions { get; set; }
 		public string CityofWork { get; set; }
 		public string ReceivingEIValue { get; set; }
 
@@ -27,9 +28,13 @@ namespace CJG.Web.External.Areas.Int.Models
 		public string ProgramDescription { get; set; }
 		public string OtherProgramDesc { get; set; }
 		public int? HoursPerWeek { get; set; }
+		public int? PreviousHoursPerWeek { get; set; }
+		public string PreviousEmployerFullName { get; set; }
+
 		public string MostImportantResult { get; set; }
 		public string TypeOfEmployment { get; set; }
 		public string AverageHourlyWage { get; set; }
+		public string PreviousHourlyWage { get; set; }
 		public string MaternalParentalBenefits { get; set; }
 		public bool ShowEmploymentFields { get; set; }
 
@@ -40,6 +45,8 @@ namespace CJG.Web.External.Areas.Int.Models
 		public ParticipantEmploymentInfoViewModel(ParticipantForm participantForm, INationalOccupationalClassificationService nationalOccupationalClassificationService)
 		{
 			EmploymentStatus = participantForm.EmploymentStatus?.Caption;
+			MultipleEmploymentPositions = participantForm.MultipleEmploymentPositions.AsYesOrNo();
+				
 			CityofWork = participantForm.PrimaryCity;
 			ReceivingEIValue = participantForm.EIBenefit?.Caption;
 			if (participantForm?.GrantApplication?.GrantOpening?.GrantStream?.GrantProgram?.ProgramTypeId == ProgramTypes.WDAService)
@@ -66,9 +73,14 @@ namespace CJG.Web.External.Areas.Int.Models
 			ProgramDescription = participantForm.ProgramDescription;
 			OtherProgramDesc = participantForm.OtherProgramDesc;
 			HoursPerWeek = participantForm.AvgHoursPerWeek;
+			PreviousHoursPerWeek = participantForm.PreviousAvgHoursPerWeek;
+			PreviousEmployerFullName = participantForm.PreviousEmployerFullName;
 			MostImportantResult = participantForm.TrainingResult?.Caption;
 			TypeOfEmployment = participantForm.EmploymentType?.Caption;
 			AverageHourlyWage = string.Format("{0:c}", participantForm.HourlyWage);
+			PreviousHourlyWage = participantForm.PreviousHourlyWage.HasValue
+				? string.Format("{0:c}", participantForm.PreviousHourlyWage)
+				: string.Empty;
 			MaternalParentalBenefits = participantForm.MaternalPaternal ? "Yes" : "No";
 			ShowEmploymentFields = new[] { "Employed", "Self-employed" }.Contains(EmploymentStatus);
 		}

@@ -351,6 +351,16 @@ namespace CJG.Core.Entities
 		public string FromCountry { get; set; }
 
 		/// <summary>
+		/// get/set - Does the participant have multiple employment positions? "Do you have multiple employment positions?"
+		/// </summary>
+		public bool? MultipleEmploymentPositions { get; set; }
+
+		/// <summary>
+		/// get/set - The last day of employment before the participant was unemployed
+		/// </summary>
+		public DateTime? PreviousEmploymentLastDayOfWork { get; set; }
+
+		/// <summary>
 		/// get/set - The foreign key to the EI benefits for this participant.
 		/// </summary>
 		public int EIBenefitId { get; set; }
@@ -420,10 +430,26 @@ namespace CJG.Core.Entities
 		public int? AvgHoursPerWeek { get; set; }
 
 		/// <summary>
+		/// get/set - The average hours per week this participant worked in their previous job.
+		/// </summary>
+		[Range(0, 168, ErrorMessage = "The average hours per week must be within 0 to 168.")]
+		public int? PreviousAvgHoursPerWeek { get; set; }
+
+		/// <summary>
+		/// get/set - The name of the most recent employer someone that was unemployed had
+		/// </summary>
+		public string PreviousEmployerFullName { get; set; }
+
+		/// <summary>
 		/// get/set - The hourly rate this participant makes.
 		/// </summary>
 		[Range(0, 99999, ErrorMessage = "The hourly rate must be within $0 to $99,999.")]
 		public decimal? HourlyWage { get; set; }
+
+		/// <summary>
+		/// get/set - The hourly rate this participant used to make.
+		/// </summary>
+		public decimal? PreviousHourlyWage { get; set; }
 
 		/// <summary>
 		/// get/set - The primary city this participant works from.

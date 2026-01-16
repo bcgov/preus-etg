@@ -6,23 +6,68 @@
 
     @Html.DropDownList(new FormControl
     {
-        Label = "Which best describes your employment status before starting the training <abbr title='Required'>*</abbr>",
+        Label = "Which best describes your employment status before starting the training? <abbr title='Required'>*</abbr>",
         Model = "model.ParticipantInfoStep4ViewModel.EmploymentStatus",
         Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.EmploymentStatuses",
         CssClass = "input--full",
         IsInnerModel = true,
-        DefaultOverride = true
+        DefaultOverride = true,
+        OnChange = "initializeDatePickerForLastDayOfWork()"
     })
+    
+<div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4">
+    @Html.DatePickerDropDownList(new DatePickerFormControl
+    {
+        Id = "previouslastdayofwork-date",
+        Date = "model.ParticipantInfoStep2ViewModel.PreviousEmploymentLastDayOfWork",
+        IsRequired = false,
+        Label = "When was your previous employment last day of work?",
+        StartYear = "{{calculatedYear(model.ParticipantInfoStep0ViewModel.AppDateTimeNow, -20)}}",
+        EndYear = "{{calculatedYear(model.ParticipantInfoStep0ViewModel.AppDateTimeNow, 0)}}"
+    })
+</div>
+
+<div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 6">
+        <div class="form__group form__group--radio-inline">
+            <div class="form__label">
+                Do you have multiple employment positions? <abbr title="Required">*</abbr>
+            </div>
+
+            <div>
+                <div class="form-item">
+                    @Html.RadioButton(new FormControl
+                    {
+                        Label = "Yes",
+                        Id = "MultipleEmploymentPositionsYes",
+                        Model = "model.ParticipantInfoStep4ViewModel.MultipleEmploymentPositions",
+                        Value = "true"
+                    })
+                </div>
+
+                <div class="form-item">
+                    @Html.RadioButton(new FormControl
+                    {
+                        Label = "No",
+                        Id = "MultipleEmploymentPositionsNo",
+                        Model = "model.ParticipantInfoStep4ViewModel.MultipleEmploymentPositions",
+                        Value = "false"
+                    })
+                </div>
+
+                @Html.ValidationError("model.ParticipantInfoStep4ViewModel.MultipleEmploymentPositions", true)
+            </div>
+        </div>
+    </div>
 
     @if (Model.ParticipantInfoStep1ViewModel.ProgramType == ProgramTypes.WDAService)
     {
         <div class="form__group form__group--radio-inline">
             <div class="form__label">
-                Are you currently receiving Employment Insurance (EI) benefits?<abbr title="Required">*</abbr>
+                Are you currently receiving Employment Insurance (EI) benefits? <abbr title="Required">*</abbr>
             </div>
             <div>
                 <div class="form-item">
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "Yes",
                         Id = "CurrentReceiveEIYes",
@@ -32,7 +77,7 @@
                 </div>
 
                 <div class="form-item">
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "No",
                         Id = "CurrentReceiveEINo",
@@ -51,12 +96,12 @@
         <div ng-if="model.ParticipantInfoStep4ViewModel.CurrentReceiveEI">
             <div class="form__group form__group--radio-inline">
                 <div class="form__label">
-                    Are these maternal or paternal benefits <abbr title="Required">*</abbr>
+                    Are these maternal or paternal benefits? <abbr title="Required">*</abbr>
                 </div>
 
                 <div>
                     <div class="form-item">
-                        @Html.RadioButton(new FormControl()
+                        @Html.RadioButton(new FormControl
                         {
                             Label = "Yes",
                             Id = "MaternalPaternalYes",
@@ -66,7 +111,7 @@
                     </div>
 
                     <div class="form-item">
-                        @Html.RadioButton(new FormControl()
+                        @Html.RadioButton(new FormControl
                         {
                             Label = "No",
                             Id = "MaternalPaternalNo",
@@ -80,11 +125,11 @@
             </div>
             <div class="form__group form__group--radio-inline">
                 <div class="form__label">
-                    Have you received EI benefits in the past?<abbr title="Required">*</abbr>
+                    Have you received EI benefits in the past? <abbr title="Required">*</abbr>
                 </div>
                 <div>
                     <div>
-                        @Html.RadioButton(new FormControl()
+                        @Html.RadioButton(new FormControl
                         {
                             Label = "No",
                             Id = "EIBenefitNo",
@@ -94,7 +139,7 @@
                     </div>
 
                     <div>
-                        @Html.RadioButton(new FormControl()
+                        @Html.RadioButton(new FormControl
                         {
                             Label = "In last Month",
                             Id = "EIBenefitLastMonth",
@@ -104,7 +149,7 @@
                     </div>
 
                     <div>
-                        @Html.RadioButton(new FormControl()
+                        @Html.RadioButton(new FormControl
                         {
                             Label = "In last 3 months",
                             Id = "EIBenefitLastThreeMonth",
@@ -114,7 +159,7 @@
                     </div>
 
                     <div>
-                        @Html.RadioButton(new FormControl()
+                        @Html.RadioButton(new FormControl
                         {
                             Label = "In last 36 months (3 years)",
                             Id = "EIBenefitLastThreeYears",
@@ -124,7 +169,7 @@
                     </div>
 
                     <div>
-                        @Html.RadioButton(new FormControl()
+                        @Html.RadioButton(new FormControl
                         {
                             Label = "In last 60 months (5 years)",
                             Id = "EIBenefitLastFiveYears",
@@ -143,12 +188,12 @@
                          model.ParticipantInfoStep4ViewModel.EIBenefit == 4 || model.ParticipantInfoStep4ViewModel.EIBenefit == 5">
                 <div class="form__group form__group--radio-inline">
                     <div class="form__label">
-                        Were these maternal or paternal benefits <abbr title="Required">*</abbr>
+                        Were these maternal or paternal benefits? <abbr title="Required">*</abbr>
                     </div>
 
                     <div>
                         <div class="form-item">
-                            @Html.RadioButton(new FormControl()
+                            @Html.RadioButton(new FormControl
                             {
                                 Label = "Yes",
                                 Id = "PastMaternalPaternalYes",
@@ -158,7 +203,7 @@
                         </div>
 
                         <div class="form-item">
-                            @Html.RadioButton(new FormControl()
+                            @Html.RadioButton(new FormControl
                             {
                                 Label = "No",
                                 Id = "PastMaternalPaternalNo",
@@ -178,12 +223,12 @@
     {
         <div class="form__group form__group--radio-inline">
             <div class="form__label">
-                Have you received or are you receiving Employment Insurance (EI) benefits <abbr title="Required">*</abbr>
+                Have you received or are you receiving Employment Insurance (EI) benefits? <abbr title="Required">*</abbr>
             </div>
 
             <div>
                 <div>
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "Currently receiving",
                         Id = "EIBenefitReceiving",
@@ -193,7 +238,7 @@
                 </div>
 
                 <div>
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "In last Month",
                         Id = "EIBenefitLastMonth",
@@ -203,7 +248,7 @@
                 </div>
 
                 <div>
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "In last 3 months",
                         Id = "EIBenefitLastThreeMonth",
@@ -213,7 +258,7 @@
                 </div>
 
                 <div>
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "In last 36 months (3 years)",
                         Id = "EIBenefitLastThreeYears",
@@ -223,7 +268,7 @@
                 </div>
 
                 <div>
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "In last 60 months (5 years)",
                         Id = "EIBenefitLastFiveYears",
@@ -233,7 +278,7 @@
                 </div>
 
                 <div>
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "None of the above",
                         Id = "EIBenefitNoneAbove",
@@ -253,12 +298,12 @@
         <div ng-if="model.ParticipantInfoStep4ViewModel.EIBenefit != 6">
             <div class="form__group form__group--radio-inline">
                 <div class="form__label">
-                    Were these maternal or paternal benefits <abbr title="Required">*</abbr>
+                    Were these maternal or paternal benefits? <abbr title="Required">*</abbr>
                 </div>
 
                 <div>
                     <div class="form-item">
-                        @Html.RadioButton(new FormControl()
+                        @Html.RadioButton(new FormControl
                         {
                             Label = "Yes",
                             Id = "MaternalPaternalYes",
@@ -268,7 +313,7 @@
                     </div>
 
                     <div class="form-item">
-                        @Html.RadioButton(new FormControl()
+                        @Html.RadioButton(new FormControl
                         {
                             Label = "No",
                             Id = "MaternalPaternalNo",
@@ -285,12 +330,12 @@
     <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1">
         <div class="form__group form__group--radio-inline">
             <div class="form__label">
-                Are you currently receiving Income Assistance (IA) <abbr title="Required">*</abbr>
+                Are you currently receiving Income Assistance (IA)? <abbr title="Required">*</abbr>
             </div>
 
             <div>
                 <div class="form-item">
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "Yes",
                         Id = "BceaClientYes",
@@ -300,7 +345,7 @@
                 </div>
 
                 <div class="form-item">
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "No",
                         Id = "BceaClientNo",
@@ -321,21 +366,20 @@
         </div>
     </div>
     <div>
-
-        <div class="form__group form__group--radio-inline" ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3">
+        <div class="form__group form__group--radio-inline" ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 6">
             <div class="form__label">
                 <span ng-if="model.ParticipantInfoStep0ViewModel.GrantProgramId == 2">
                     <!--2 is for ETG-->
-                    Were you employed by @Model.ParticipantInfoStep1ViewModel.ProgramEmployerFullName supporting this training on @Model.ParticipantInfoStep0ViewModel.ApplicationSubmissionDate.ToShortDateString() ? <abbr title="Required">*</abbr>
+                    Were you employed by @Model.ParticipantInfoStep1ViewModel.ProgramEmployerFullName supporting this training on @Model.ParticipantInfoStep0ViewModel.ApplicationSubmissionDate.ToShortDateString()? <abbr title="Required">*</abbr>
                 </span>
                 <span ng-if="model.ParticipantInfoStep0ViewModel.GrantProgramId != 2">
-                    Are you currently employed by the Employer supporting this training <abbr title="Required">*</abbr>
+                    Are you currently employed by the Employer supporting this training? <abbr title="Required">*</abbr>
                 </span>
             </div>
 
             <div>
                 <div class="form-item">
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "Yes",
                         Id = "EmployedBySupportEmployerYes",
@@ -345,7 +389,7 @@
                 </div>
 
                 <div class="form-item">
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "No, by another employer",
                         Id = "EmployedBySupportEmployerNo",
@@ -358,8 +402,8 @@
             </div>
         </div>
 
-        <div class="form__group" ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3">
-            <label class="form__label">How long have you been <span>{{selectedEmploymentStatus()}}</span> in this job <abbr title="Required">*</abbr></label>
+        <div class="form__group" ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 6">
+            <label class="form__label">How long have you been <span>{{selectedEmploymentStatus()}}</span> in this job? <abbr title="Required">*</abbr></label>
             <div class="form__control">
                 <div class="form__group--yearsmonths">
                     @Html.TextBox(new FormControl { CssClass = "no-generic-mask", Size = "input--small", Model = "model.ParticipantInfoStep4ViewModel.HowLongYears", Options = "maxlength = '2'" })
@@ -375,19 +419,19 @@
             </div>
         </div>
 
-        <div class="form__group form__group--radio-inline" ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3">
+        <div class="form__group form__group--radio-inline" ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 6">
             <div class="form__label">
                 <span ng-if="model.ParticipantInfoStep0ViewModel.GrantProgramId == 2">
-                    Are you an owner or part-owner of @Model.ParticipantInfoStep1ViewModel.ProgramEmployerFullName <abbr title="Required">*</abbr>
+                    Are you an owner or part-owner of @Model.ParticipantInfoStep1ViewModel.ProgramEmployerFullName? <abbr title="Required">*</abbr>
                 </span>
                 <span ng-if="model.ParticipantInfoStep0ViewModel.GrantProgramId !== 2">
-                    Are you an owner or part-owner of the Company / Business <abbr title="Required">*</abbr>
+                    Are you an owner or part-owner of the Company / Business? <abbr title="Required">*</abbr>
                 </span>
             </div>
 
             <div>
                 <div class="form-item">
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "Yes",
                         Id = "BusinessOwnerYes",
@@ -397,7 +441,7 @@
                 </div>
 
                 <div class="form-item">
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "No",
                         Id = "BusinessOwnerNo",
@@ -410,17 +454,17 @@
             </div>
         </div>
 
-        <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3">
-            @Html.TextBoxBlock(new FormControl()
+        <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 6">
+            @Html.TextBoxBlock(new FormControl
             {
-                Label = "Over the past 3 months, how many hours per week did you work on average <abbr title='Required'>*</abbr>",
+                Label = "Over the past 3 months, how many hours per week did you work on average? <abbr title='Required'>*</abbr>",
                 Model = "model.ParticipantInfoStep4ViewModel.AvgHoursPerWeek",
                 IsInnerModel = true,
                 Size = "input--small",
                 Options = "maxlength = '3'"
             })
 
-            @Html.DropDownList(new FormControl()
+            @Html.DropDownList(new FormControl
             {
                 Label = "Type of employment <abbr title='Required'>*</abbr>",
                 Model = "model.ParticipantInfoStep4ViewModel.EmploymentType",
@@ -441,17 +485,47 @@
                 <li>PERMANENT: your job is expected to last as long as you want the job and as long as business conditions permit.</li>
             </ul>
 
-            @Html.TextBoxBlock(new FormControl()
+            @Html.TextBoxBlock(new FormControl
             {
-                Label = "What is your <span ng-show='model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2'>average </span>hourly wage (rounded to the nearest dollar) <abbr title='Required'>*</abbr>",
+                Label = "What is your <span ng-show='model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2'>average </span>hourly wage (rounded to the nearest dollar)? <abbr title='Required'>*</abbr>",
                 Model = "model.ParticipantInfoStep4ViewModel.HourlyWage",
                 IsInnerModel = true,
                 Size = "input--small",
                 Options = "maxlength = '5'"
             })
         </div>
+        
+        <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 5">
+            @Html.TextBoxBlock(new FormControl
+            {
+                Label = "Who was your last previous employer? <abbr title='Required'>*</abbr>",
+                Model = "model.ParticipantInfoStep4ViewModel.PreviousEmployerFullName",
+                IsInnerModel = true,
+                Size = "input--full"
+            })
+        </div>
 
-        <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3">
+        <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4">
+            @Html.TextBoxBlock(new FormControl
+            {
+                Label = "How many hours per week did you work on average in your previous position? <abbr title='Required'>*</abbr>",
+                Model = "model.ParticipantInfoStep4ViewModel.PreviousAvgHoursPerWeek",
+                IsInnerModel = true,
+                Size = "input--small",
+                Options = "maxlength = '3'"
+            })
+
+            @Html.TextBoxBlock(new FormControl
+            {
+                Label = "What was your previous hourly rate of pay? <abbr title='Required'>*</abbr>",
+                Model = "model.ParticipantInfoStep4ViewModel.PreviousHourlyWage",
+                IsInnerModel = true,
+                Size = "input--small",
+                Options = "maxlength = '5'"
+            })
+        </div>
+
+        <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 6">
             @Html.TextBoxBlock(new FormControl
             {
                 Label = "Current Job Title <abbr title='Required'>*</abbr>",
@@ -461,7 +535,7 @@
             })
 
             <div class="form__group form__group--radio-inline">
-                <label class="form__label" for="">What is your <u><em>current</em></u> National Occupation Classification (NOC) <u><em>before training</em></u> <abbr title="Required">*</abbr></label>
+                <label class="form__label">What is your <u><em>current</em></u> National Occupation Classification (NOC) <u><em>before training</em></u>? <abbr title="Required">*</abbr></label>
                 <div class="form__control">
                     <div class="form__group--multiselect">
                         @Html.DropDown(new FormControl
@@ -507,7 +581,7 @@
                 </div>
             </div>
 
-            @Html.TextBoxBlock(new FormControl()
+            @Html.TextBoxBlock(new FormControl
             {
                 Label = "In what city do you <u><em>currently</em></u> perform your work <abbr title='Required'>*</abbr>",
                 Model = "model.ParticipantInfoStep4ViewModel.PrimaryCity",
@@ -524,7 +598,7 @@
         })
 
         <div class="form__group form__group--radio-inline">
-            <label class="form__label" for="">What <em>will</em> your National Occupation Classification (NOC) be <em>after</em> training <abbr title="Required">*</abbr></label>
+            <label class="form__label" for="">What <em>will</em> your National Occupation Classification (NOC) be <em>after</em> training? <abbr title="Required">*</abbr></label>
             <div class="notice notice--icon">
                 The National Occupational Classification (NOC) is Canada’s national system for describing occupations. Start by selecting one of the 10 broad occupational categories and continue choosing the next <span style="font-style: italic; text-decoration: underline;">best</span> option that describes your work.
             </div>
@@ -576,7 +650,7 @@
 
     <div class="form__group form__group--radio-inline">
         <div class="form__label">
-            Are you an apprentice <abbr title="Required">*</abbr>
+            Are you an apprentice? <abbr title="Required">*</abbr>
         </div>
 
         <div>
@@ -607,12 +681,12 @@
     <div ng-if="model.ParticipantInfoStep4ViewModel.Apprentice">
         <div class="form__group form__group--radio-inline">
             <div class="form__label">
-                Are you registered with the Industry Training Authority (ITA) <abbr title="Required">*</abbr>
+                Are you registered with the Industry Training Authority (ITA)? <abbr title="Required">*</abbr>
             </div>
 
             <div>
                 <div class="form-item">
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "Yes",
                         Id = "ItaRegisteredYes",
@@ -622,7 +696,7 @@
                 </div>
 
                 <div class="form-item">
-                    @Html.RadioButton(new FormControl()
+                    @Html.RadioButton(new FormControl
                     {
                         Label = "No",
                         Id = "ItaRegisteredNo",
@@ -643,7 +717,7 @@
 
         <div>
             <div class="form-item">
-                @Html.RadioButton(new FormControl()
+                @Html.RadioButton(new FormControl
                 {
                     Label = "Yes",
                     Id = "OtherProgramsYes",
@@ -678,7 +752,7 @@
 
     @Html.DropDownList(new FormControl
     {
-        Label = "What do you expect will be the most important result of training <abbr title='Required'>*</abbr>",
+        Label = "What do you expect will be the most important result of training? <abbr title='Required'>*</abbr>",
         Model = "model.ParticipantInfoStep4ViewModel.TrainingResult",
         Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.TrainingResults",
         CssClass = "input--full",
