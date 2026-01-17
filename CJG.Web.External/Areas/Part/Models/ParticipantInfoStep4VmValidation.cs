@@ -438,6 +438,21 @@ namespace CJG.Web.External.Areas.Part.Models
 			return result;
 		}
 
+		public static ValidationResult ValidatePreviousEmploymentNoc(int? nocCode, ValidationContext context)
+		{
+			ParticipantInfoStep4ViewModel model = context.ObjectInstance as ParticipantInfoStep4ViewModel;
+			if (model == null)
+				throw new ArgumentNullException();
+
+			if (!WasEmployed(model.EmploymentStatus))
+				return ValidationResult.Success;
+
+			if (!nocCode.HasValue || nocCode <= 0)
+				return new ValidationResult("Your National Occupation Classification (NOC) for previous employment is required.");
+
+			return ValidationResult.Success;
+		}
+
 		public static ValidationResult ValidateOtherProgramDesc(string otherProgramDesc, ValidationContext context)
 		{
 			ParticipantInfoStep4ViewModel model = context.ObjectInstance as ParticipantInfoStep4ViewModel;

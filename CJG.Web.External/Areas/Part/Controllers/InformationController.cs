@@ -1021,21 +1021,26 @@ namespace CJG.Web.External.Areas.Part.Controllers
 
 		private void LookupNocCodes(ref ParticipantInfoViewModel model)
 		{
-			#region Current NOC
+			// Current NOCs
 			model.ParticipantInfoStep4ViewModel.CurrentNoc1Codes = _nationalOccupationalClassificationService.GetNationalOccupationalClassificationLevel(1).Select(n => new KeyValuePair<int, string>(n.Id, $"{n.Code} | {n.Description}")).ToList();
 			model.ParticipantInfoStep4ViewModel.CurrentNoc2Codes = GetNocCodes(2);
 			model.ParticipantInfoStep4ViewModel.CurrentNoc3Codes = GetNocCodes(3);
 			model.ParticipantInfoStep4ViewModel.CurrentNoc4Codes = GetNocCodes(4);
 			model.ParticipantInfoStep4ViewModel.CurrentNoc5Codes = GetNocCodes(5);
-			#endregion
 
-			#region Future NOC
+			// Future NOCs
 			model.ParticipantInfoStep4ViewModel.FutureNoc1Codes = _nationalOccupationalClassificationService.GetNationalOccupationalClassificationLevel(1).Select(n => new KeyValuePair<int, string>(n.Id, $"{n.Code} | {n.Description}")).ToList();
 			model.ParticipantInfoStep4ViewModel.FutureNoc2Codes = GetNocCodes(2);
 			model.ParticipantInfoStep4ViewModel.FutureNoc3Codes = GetNocCodes(3);
 			model.ParticipantInfoStep4ViewModel.FutureNoc4Codes = GetNocCodes(4);
 			model.ParticipantInfoStep4ViewModel.FutureNoc5Codes = GetNocCodes(5);
-			#endregion
+
+			// Previous Employment NOCs
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc1Codes = _nationalOccupationalClassificationService.GetNationalOccupationalClassificationLevel(1).Select(n => new KeyValuePair<int, string>(n.Id, $"{n.Code} | {n.Description}")).ToList();
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc2Codes = GetNocCodes(2);
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc3Codes = GetNocCodes(3);
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc4Codes = GetNocCodes(4);
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc5Codes = GetNocCodes(5);
 		}
 
 		private List<KeyValueParent<int, string, int>> GetNocCodes(int level)
@@ -1184,6 +1189,22 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					newParticipantForm.FutureNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.FutureNoc2Id.Value);
 				else if (model.ParticipantInfoStep4ViewModel.FutureNoc1Id.HasValue)
 					newParticipantForm.FutureNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.FutureNoc1Id.Value);
+				#endregion
+
+				#region Previous Employment NOC
+				if (HasPreviouslyEmployedStatus(model.ParticipantInfoStep4ViewModel))
+				{
+					if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc5Id.HasValue)
+						newParticipantForm.PreviousEmploymentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc5Id.Value);
+					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc4Id.HasValue)
+						newParticipantForm.PreviousEmploymentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc4Id.Value);
+					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc3Id.HasValue)
+						newParticipantForm.PreviousEmploymentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc3Id.Value);
+					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc2Id.HasValue)
+						newParticipantForm.PreviousEmploymentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc2Id.Value);
+					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc1Id.HasValue)
+						newParticipantForm.PreviousEmploymentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc1Id.Value);
+				}
 				#endregion
 
 				var individualInvitation = GetParticipantInvitation(model.ParticipantInfoStep0ViewModel.InvitationKey, model.ParticipantInfoStep0ViewModel.IndividualKey ?? Guid.Empty);
