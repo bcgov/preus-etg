@@ -15,8 +15,10 @@ namespace CJG.Web.External.Areas.Int.Models
 		public string JobTitleBeforeTraining { get; set; }
 		public string JobTitleAfterTraining { get; set; }
 
-		public string CurrentNocLevel4 { get; set; }
-		public string FutureNocLevel4 { get; set; }
+		public string CurrentNocLevel5 { get; set; }
+		public string FutureNocLevel5 { get; set; }
+		public string PreviousEmploymentNocLevel5 { get; set; }
+		public string PreviousEmploymentNaicsLevel5 { get; set; }
 
 		public string ReceivingIA { get; set; }
 		public string Apprentice { get; set; }
@@ -53,10 +55,16 @@ namespace CJG.Web.External.Areas.Int.Models
 				ReceivingEIValue = participantForm.ReceivingEIBenefit.ToStringValue();
 
 			if (participantForm.CurrentNoc != null && participantForm.CurrentNoc.Id != 0 && !string.IsNullOrWhiteSpace(participantForm.CurrentNoc.Code))
-				CurrentNocLevel4 = participantForm.CurrentNoc.ToString();
+				CurrentNocLevel5 = participantForm.CurrentNoc.ToString();
 
 			if (participantForm.FutureNoc != null && participantForm.FutureNoc.Id != 0 && !string.IsNullOrWhiteSpace(participantForm.FutureNoc.Code))
-				FutureNocLevel4 = participantForm.FutureNoc.ToString();
+				FutureNocLevel5 = participantForm.FutureNoc.ToString();
+
+			if (participantForm.PreviousEmploymentNoc != null && participantForm.PreviousEmploymentNoc.Id != 0 && !string.IsNullOrWhiteSpace(participantForm.PreviousEmploymentNoc.Code))
+				PreviousEmploymentNocLevel5 = participantForm.PreviousEmploymentNoc.ToString();
+
+			if (participantForm.PreviousEmploymentNaics != null && participantForm.PreviousEmploymentNaics.Id != 0 && !string.IsNullOrWhiteSpace(participantForm.PreviousEmploymentNaics.Code))
+				PreviousEmploymentNaicsLevel5 = participantForm.PreviousEmploymentNaics.ToString();
 
 			JobTitleBeforeTraining = participantForm.JobTitleBefore;
 			JobTitleAfterTraining = participantForm.JobTitleFuture;

@@ -522,6 +522,28 @@ namespace CJG.Core.Entities
 		public virtual NationalOccupationalClassification Noc { get; set; }
 
 		/// <summary>
+		/// get/set - The foreign key to the Previous Employment NOC for this participant.
+		/// </summary>
+		public int? PreviousEmploymentNocId { get; set; }
+
+		/// <summary>
+		/// get/set - The Previous Employment NOC for this participant.
+		/// </summary>
+		[ForeignKey(nameof(PreviousEmploymentNocId))]
+		public virtual NationalOccupationalClassification PreviousEmploymentNoc { get; set; }
+
+		/// <summary>
+		/// get/set - The foreign key to the Previous Employment NAICS for this participant.
+		/// </summary>
+		public int? PreviousEmploymentNaicsId { get; set; }
+
+		/// <summary>
+		/// get/set - The Previous Employment NAICS for this participant.
+		/// </summary>
+		[ForeignKey(nameof(PreviousEmploymentNaicsId))]
+		public virtual NaIndustryClassificationSystem PreviousEmploymentNaics { get; set; }
+
+		/// <summary>
 		/// get/set - The foreign key to the NAICS for this participant.
 		/// </summary>
 		public int? NaicsId { get; set; }

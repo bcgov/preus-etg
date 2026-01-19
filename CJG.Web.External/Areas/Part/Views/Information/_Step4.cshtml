@@ -14,20 +14,20 @@
         DefaultOverride = true,
         OnChange = "initializeDatePickerForLastDayOfWork()"
     })
-    
-<div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4">
-    @Html.DatePickerDropDownList(new DatePickerFormControl
-    {
-        Id = "previouslastdayofwork-date",
-        Date = "model.ParticipantInfoStep2ViewModel.PreviousEmploymentLastDayOfWork",
-        IsRequired = false,
-        Label = "When was your previous employment last day of work?",
-        StartYear = "{{calculatedYear(model.ParticipantInfoStep0ViewModel.AppDateTimeNow, -20)}}",
-        EndYear = "{{calculatedYear(model.ParticipantInfoStep0ViewModel.AppDateTimeNow, 0)}}"
-    })
-</div>
 
-<div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 6">
+    <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4">
+        @Html.DatePickerDropDownList(new DatePickerFormControl
+        {
+            Id = "previouslastdayofwork-date",
+            Date = "model.ParticipantInfoStep2ViewModel.PreviousEmploymentLastDayOfWork",
+            IsRequired = false,
+            Label = "When was your previous employment last day of work?",
+            StartYear = "{{calculatedYear(model.ParticipantInfoStep0ViewModel.AppDateTimeNow, -20)}}",
+            EndYear = "{{calculatedYear(model.ParticipantInfoStep0ViewModel.AppDateTimeNow, 0)}}"
+        })
+    </div>
+
+    <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 2 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 3 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 6">
         <div class="form__group form__group--radio-inline">
             <div class="form__label">
                 Do you have multiple employment positions? <abbr title="Required">*</abbr>
@@ -494,7 +494,8 @@
                 Options = "maxlength = '5'"
             })
         </div>
-        
+
+
         <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 5">
             @Html.TextBoxBlock(new FormControl
             {
@@ -569,7 +570,7 @@
                             Size = "input--full",
                             IsInnerModel = true
                         })
-                        
+
                         @Html.DropDown(new FormControl
                         {
                             Model = "model.ParticipantInfoStep4ViewModel.CurrentNoc5Id",
@@ -588,14 +589,110 @@
                 IsInnerModel = true
             })
         </div>
-        
+
+        <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4">
+            <div class="form__group form__group--radio-inline">
+                <label class="form__label">What is the National Occupation Classification (NOC) <u><em>of your previous employment</em></u>? <abbr title="Required">*</abbr></label>
+                <div class="form__control">
+                    <div class="form__group--multiselect">
+                        @Html.DropDown(new FormControl
+                        {
+                            Model = "model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc1Id",
+                            Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc1Codes",
+                            Size = "input--full",
+                            IsInnerModel = true
+                        })
+
+                        @Html.DropDown(new FormControl
+                        {
+                            Model = "model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc2Id",
+                            Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc2Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc1Id}:true",
+                            Size = "input--full",
+                            IsInnerModel = true
+                        })
+
+                        @Html.DropDown(new FormControl
+                        {
+                            Model = "model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc3Id",
+                            Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc3Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc2Id}:true",
+                            Size = "input--full",
+                            IsInnerModel = true
+                        })
+
+                        @Html.DropDown(new FormControl
+                        {
+                            Model = "model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc4Id",
+                            Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc4Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc3Id}:true",
+                            Size = "input--full",
+                            IsInnerModel = true
+                        })
+
+                        @Html.DropDown(new FormControl
+                        {
+                            Model = "model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc5Id",
+                            Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc5Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc4Id}:true",
+                            Size = "input--full",
+                            IsInnerModel = true
+                        })
+                    </div>
+                </div>
+            </div>            
+            
+            <div class="form__group form__group--radio-inline">
+                <label class="form__label">What is the North American Industry Classification System (NAICS) <u><em>of your previous employment</em></u>? <abbr title="Required">*</abbr></label>
+                <div class="form__control">
+                    <div class="form__group--multiselect">
+                        @Html.DropDown(new FormControl
+                        {
+                            Model = "model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics1Id",
+                            Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics1Codes",
+                            Size = "input--full",
+                            IsInnerModel = true
+                        })
+
+                        @Html.DropDown(new FormControl
+                        {
+                            Model = "model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics2Id",
+                            Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics2Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics1Id}:true",
+                            Size = "input--full",
+                            IsInnerModel = true
+                        })
+
+                        @Html.DropDown(new FormControl
+                        {
+                            Model = "model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics3Id",
+                            Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics3Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics2Id}:true",
+                            Size = "input--full",
+                            IsInnerModel = true
+                        })
+
+                        @Html.DropDown(new FormControl
+                        {
+                            Model = "model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics4Id",
+                            Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics4Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics3Id}:true",
+                            Size = "input--full",
+                            IsInnerModel = true
+                        })
+
+                        @Html.DropDown(new FormControl
+                        {
+                            Model = "model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics5Id",
+                            Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics5Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics4Id}:true",
+                            Size = "input--full",
+                            IsInnerModel = true
+                        })
+                    </div>
+                </div>
+            </div>
+        </div>
+
         @Html.TextBoxBlock(new FormControl
-        {
-            Label = "After training job title <abbr title='Required'>*</abbr>",
-            Model = "model.ParticipantInfoStep4ViewModel.JobTitleFuture",
-            Size = "input--full",
-            IsInnerModel = true
-        })
+            {
+                Label = "After training job title <abbr title='Required'>*</abbr>",
+                Model = "model.ParticipantInfoStep4ViewModel.JobTitleFuture",
+                Size = "input--full",
+                IsInnerModel = true
+            })
 
         <div class="form__group form__group--radio-inline">
             <label class="form__label" for="">What <em>will</em> your National Occupation Classification (NOC) be <em>after</em> training? <abbr title="Required">*</abbr></label>
