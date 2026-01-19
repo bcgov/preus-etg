@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace CJG.Infrastructure.EF.Migrations
 {
-	[Description("v02.17.05")]
+	[Description("v02.17.06")]
 	public partial class v021706 : ExtendedDbMigration
     {
         public override void Up()

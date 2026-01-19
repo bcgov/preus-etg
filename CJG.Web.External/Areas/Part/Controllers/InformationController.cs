@@ -32,6 +32,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IParticipantService _participantService;
 		private readonly INationalOccupationalClassificationService _nationalOccupationalClassificationService;
+		private readonly INaIndustryClassificationSystemService _naIndustryClassificationSystemService;
 		private readonly IReCaptchaService _reCaptchaService;
 		private readonly IGrantProgramService _grantProgramService;
 		private readonly IAttachmentService _attachmentService;
@@ -44,6 +45,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		/// <param name="grantApplicationService"></param>
 		/// <param name="grantParticipantService"></param>
 		/// <param name="nationalOccupationalClassificationService"></param>
+		/// <param name="naIndustryClassificationSystemService"></param>
 		/// <param name="recaptchaService"></param>
 		/// <param name="grantProgramService"></param>
 		/// <param name="attachmentService"></param>
@@ -53,6 +55,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			IGrantApplicationService grantApplicationService,
 			IParticipantService grantParticipantService,
 			INationalOccupationalClassificationService nationalOccupationalClassificationService,
+			INaIndustryClassificationSystemService naIndustryClassificationSystemService,
 			IReCaptchaService recaptchaService,
 			IGrantProgramService grantProgramService,
 			IAttachmentService attachmentService,
@@ -62,6 +65,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			_grantApplicationService = grantApplicationService;
 			_participantService = grantParticipantService;
 			_nationalOccupationalClassificationService = nationalOccupationalClassificationService;
+			_naIndustryClassificationSystemService = naIndustryClassificationSystemService;
 			_reCaptchaService = recaptchaService;
 			_grantProgramService = grantProgramService;
 			_attachmentService = attachmentService;
@@ -939,6 +943,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		{
 			// Prime objects such as dropdown lists for this step
 			LookupNocCodes(ref model);
+			LookupNaicsCodes(ref model);
 
 			var kvpEmploymentStatuses = _staticDataService.GetEmploymentStatuses().Select(x => new KeyValuePair<int, string>(x.Id, x.Caption)).ToList();
 			model.ParticipantInfoStep4ViewModel.EmploymentStatuses = kvpEmploymentStatuses;
@@ -1043,10 +1048,28 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc5Codes = GetNocCodes(5);
 		}
 
+		private void LookupNaicsCodes(ref ParticipantInfoViewModel model)
+		{
+			// Previous Employment NAICs
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics1Codes = _naIndustryClassificationSystemService.GetNaIndustryClassificationSystemLevel(1).Select(n => new KeyValuePair<int, string>(n.Id, $"{n.Code} | {n.Description}")).ToList();
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics2Codes = GetNaicsCodes(2);
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics3Codes = GetNaicsCodes(3);
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics4Codes = GetNaicsCodes(4);
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics5Codes = GetNaicsCodes(5);
+		}
+
 		private List<KeyValueParent<int, string, int>> GetNocCodes(int level)
 		{
 			return _nationalOccupationalClassificationService
 				.GetNationalOccupationalClassificationLevel(level)
+				.Select(n => new KeyValueParent<int, string, int>(n.Id, $"{n.Code} | {n.Description}", n.ParentId ?? 0))
+				.ToList();
+		}
+
+		private List<KeyValueParent<int, string, int>> GetNaicsCodes(int level)
+		{
+			return _naIndustryClassificationSystemService
+				.GetNaIndustryClassificationSystemLevel(level)
 				.Select(n => new KeyValueParent<int, string, int>(n.Id, $"{n.Code} | {n.Description}", n.ParentId ?? 0))
 				.ToList();
 		}
@@ -1204,6 +1227,22 @@ namespace CJG.Web.External.Areas.Part.Controllers
 						newParticipantForm.PreviousEmploymentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc2Id.Value);
 					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc1Id.HasValue)
 						newParticipantForm.PreviousEmploymentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc1Id.Value);
+				}
+				#endregion
+
+				#region Previous Employment NAICS
+				if (HasPreviouslyEmployedStatus(model.ParticipantInfoStep4ViewModel))
+				{
+					if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics5Id.HasValue)
+						newParticipantForm.PreviousEmploymentNaics = _naIndustryClassificationSystemService.GetNaIndustryClassificationSystem(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics5Id.Value);
+					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics4Id.HasValue)
+						newParticipantForm.PreviousEmploymentNaics = _naIndustryClassificationSystemService.GetNaIndustryClassificationSystem(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics4Id.Value);
+					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics3Id.HasValue)
+						newParticipantForm.PreviousEmploymentNaics = _naIndustryClassificationSystemService.GetNaIndustryClassificationSystem(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics3Id.Value);
+					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics2Id.HasValue)
+						newParticipantForm.PreviousEmploymentNaics = _naIndustryClassificationSystemService.GetNaIndustryClassificationSystem(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics2Id.Value);
+					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics1Id.HasValue)
+						newParticipantForm.PreviousEmploymentNaics = _naIndustryClassificationSystemService.GetNaIndustryClassificationSystem(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics1Id.Value);
 				}
 				#endregion
 

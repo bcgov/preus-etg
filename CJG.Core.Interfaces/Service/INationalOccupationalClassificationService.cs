@@ -1,6 +1,5 @@
-﻿using CJG.Core.Entities;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using CJG.Core.Entities;
 
 namespace CJG.Core.Interfaces.Service
 {

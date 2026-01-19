@@ -98,6 +98,28 @@ namespace CJG.Web.External.Areas.Part.Models
 		public List<KeyValueParent<int, string, int>> PreviousEmploymentNoc5Codes { get; set; } = new List<KeyValueParent<int, string, int>>();
 		#endregion
 
+		#region Previous Employment NAICS
+		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidatePreviousEmploymentNaics")]
+		public int? PreviousEmploymentNaics1Id { get; set; }
+		public List<KeyValuePair<int, string>> PreviousEmploymentNaics1Codes { get; set; } = new List<KeyValuePair<int, string>>();
+
+		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidatePreviousEmploymentNaics")]
+		public int? PreviousEmploymentNaics2Id { get; set; }
+		public List<KeyValueParent<int, string, int>> PreviousEmploymentNaics2Codes { get; set; } = new List<KeyValueParent<int, string, int>>();
+
+		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidatePreviousEmploymentNaics")]
+		public int? PreviousEmploymentNaics3Id { get; set; }
+		public List<KeyValueParent<int, string, int>> PreviousEmploymentNaics3Codes { get; set; } = new List<KeyValueParent<int, string, int>>();
+
+		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidatePreviousEmploymentNaics")]
+		public int? PreviousEmploymentNaics4Id { get; set; }
+		public List<KeyValueParent<int, string, int>> PreviousEmploymentNaics4Codes { get; set; } = new List<KeyValueParent<int, string, int>>();
+
+		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidatePreviousEmploymentNaics")]
+		public int? PreviousEmploymentNaics5Id { get; set; }
+		public List<KeyValueParent<int, string, int>> PreviousEmploymentNaics5Codes { get; set; } = new List<KeyValueParent<int, string, int>>();
+		#endregion
+
 		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidateJobTitleBefore")]
 		public string JobTitleBefore { get; set; }
 

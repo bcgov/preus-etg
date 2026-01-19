@@ -453,6 +453,21 @@ namespace CJG.Web.External.Areas.Part.Models
 			return ValidationResult.Success;
 		}
 
+		public static ValidationResult ValidatePreviousEmploymentNaics(int? naicsCode, ValidationContext context)
+		{
+			ParticipantInfoStep4ViewModel model = context.ObjectInstance as ParticipantInfoStep4ViewModel;
+			if (model == null)
+				throw new ArgumentNullException();
+
+			if (!WasEmployed(model.EmploymentStatus))
+				return ValidationResult.Success;
+
+			if (!naicsCode.HasValue || naicsCode <= 0)
+				return new ValidationResult("Your North American Industry Classification System (NAICS) for previous employment is required.");
+
+			return ValidationResult.Success;
+		}
+
 		public static ValidationResult ValidateOtherProgramDesc(string otherProgramDesc, ValidationContext context)
 		{
 			ParticipantInfoStep4ViewModel model = context.ObjectInstance as ParticipantInfoStep4ViewModel;

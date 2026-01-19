@@ -636,6 +636,53 @@
                         })
                     </div>
                 </div>
+            </div>            
+            
+            <div class="form__group form__group--radio-inline">
+                <label class="form__label">What is the North American Industry Classification System (NAICS) <u><em>of your previous employment</em></u>? <abbr title="Required">*</abbr></label>
+                <div class="form__control">
+                    <div class="form__group--multiselect">
+                        @Html.DropDown(new FormControl
+                        {
+                            Model = "model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics1Id",
+                            Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics1Codes",
+                            Size = "input--full",
+                            IsInnerModel = true
+                        })
+
+                        @Html.DropDown(new FormControl
+                        {
+                            Model = "model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics2Id",
+                            Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics2Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics1Id}:true",
+                            Size = "input--full",
+                            IsInnerModel = true
+                        })
+
+                        @Html.DropDown(new FormControl
+                        {
+                            Model = "model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics3Id",
+                            Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics3Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics2Id}:true",
+                            Size = "input--full",
+                            IsInnerModel = true
+                        })
+
+                        @Html.DropDown(new FormControl
+                        {
+                            Model = "model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics4Id",
+                            Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics4Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics3Id}:true",
+                            Size = "input--full",
+                            IsInnerModel = true
+                        })
+
+                        @Html.DropDown(new FormControl
+                        {
+                            Model = "model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics5Id",
+                            Options = "item.Key as item.Value for item in model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics5Codes | filter:{Parent: model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics4Id}:true",
+                            Size = "input--full",
+                            IsInnerModel = true
+                        })
+                    </div>
+                </div>
             </div>
         </div>
 
