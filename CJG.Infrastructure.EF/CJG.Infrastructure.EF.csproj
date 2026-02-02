@@ -464,6 +464,38 @@
     <Compile Include="Migrations\202502272236506_v02.16.00.Designer.cs">
       <DependentUpon>202502272236506_v02.16.00.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202601072223167_v02.17.00.cs" />
+    <Compile Include="Migrations\202601072223167_v02.17.00.Designer.cs">
+      <DependentUpon>202601072223167_v02.17.00.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601082203046_v02.17.01.cs" />
+    <Compile Include="Migrations\202601082203046_v02.17.01.Designer.cs">
+      <DependentUpon>202601082203046_v02.17.01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601092234029_v02.17.02.cs" />
+    <Compile Include="Migrations\202601092234029_v02.17.02.Designer.cs">
+      <DependentUpon>202601092234029_v02.17.02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601100000410_v02.17.03.cs" />
+    <Compile Include="Migrations\202601100000410_v02.17.03.Designer.cs">
+      <DependentUpon>202601100000410_v02.17.03.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601142338031_v02.17.04.cs" />
+    <Compile Include="Migrations\202601142338031_v02.17.04.Designer.cs">
+      <DependentUpon>202601142338031_v02.17.04.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601152322147_v02.17.05.cs" />
+    <Compile Include="Migrations\202601152322147_v02.17.05.Designer.cs">
+      <DependentUpon>202601152322147_v02.17.05.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601162318341_v02.17.06.cs" />
+    <Compile Include="Migrations\202601162318341_v02.17.06.Designer.cs">
+      <DependentUpon>202601162318341_v02.17.06.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601192205534_v02.17.07.cs" />
+    <Compile Include="Migrations\202601192205534_v02.17.07.Designer.cs">
+      <DependentUpon>202601192205534_v02.17.07.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Content Include="Migrations\v02.02.03\PostDeploy\Seed\03 GrantOpenings.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -956,6 +988,9 @@
     <Content Include="Migrations\v02.02.03\PostDeploy\Seed\01 AddQuestions.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Migrations\v02.17.00\PostDeploy\Seed\01_AddEmploymentStatus.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Migrations\v02.16.00\PostDeploy\Seed\01_UpdateTrainingLevels.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1365,6 +1400,30 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202502272236506_v02.16.00.resx">
       <DependentUpon>202502272236506_v02.16.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601072223167_v02.17.00.resx">
+      <DependentUpon>202601072223167_v02.17.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601082203046_v02.17.01.resx">
+      <DependentUpon>202601082203046_v02.17.01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601092234029_v02.17.02.resx">
+      <DependentUpon>202601092234029_v02.17.02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601100000410_v02.17.03.resx">
+      <DependentUpon>202601100000410_v02.17.03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601142338031_v02.17.04.resx">
+      <DependentUpon>202601142338031_v02.17.04.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601152322147_v02.17.05.resx">
+      <DependentUpon>202601152322147_v02.17.05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601162318341_v02.17.06.resx">
+      <DependentUpon>202601162318341_v02.17.06.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601192205534_v02.17.07.resx">
+      <DependentUpon>202601192205534_v02.17.07.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

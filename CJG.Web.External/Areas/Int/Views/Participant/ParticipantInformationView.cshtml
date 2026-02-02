@@ -1,5 +1,7 @@
 ﻿@model CJG.Web.External.Areas.Int.Models.ParticipantInfoViewModel
-
+@{
+    ViewBag.Title = $"PIF [{Model.FileNo}]: {Model.ContactInfo.FullName}";
+}
 <div class="clearfix" ng-controller="ViewParticipantInfo">
     <h2>@Model.ContactInfo.FullName</h2>
 

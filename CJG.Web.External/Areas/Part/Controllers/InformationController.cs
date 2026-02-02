@@ -32,6 +32,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		private readonly IGrantApplicationService _grantApplicationService;
 		private readonly IParticipantService _participantService;
 		private readonly INationalOccupationalClassificationService _nationalOccupationalClassificationService;
+		private readonly INaIndustryClassificationSystemService _naIndustryClassificationSystemService;
 		private readonly IReCaptchaService _reCaptchaService;
 		private readonly IGrantProgramService _grantProgramService;
 		private readonly IAttachmentService _attachmentService;
@@ -44,6 +45,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		/// <param name="grantApplicationService"></param>
 		/// <param name="grantParticipantService"></param>
 		/// <param name="nationalOccupationalClassificationService"></param>
+		/// <param name="naIndustryClassificationSystemService"></param>
 		/// <param name="recaptchaService"></param>
 		/// <param name="grantProgramService"></param>
 		/// <param name="attachmentService"></param>
@@ -53,6 +55,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			IGrantApplicationService grantApplicationService,
 			IParticipantService grantParticipantService,
 			INationalOccupationalClassificationService nationalOccupationalClassificationService,
+			INaIndustryClassificationSystemService naIndustryClassificationSystemService,
 			IReCaptchaService recaptchaService,
 			IGrantProgramService grantProgramService,
 			IAttachmentService attachmentService,
@@ -62,6 +65,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			_grantApplicationService = grantApplicationService;
 			_participantService = grantParticipantService;
 			_nationalOccupationalClassificationService = nationalOccupationalClassificationService;
+			_naIndustryClassificationSystemService = naIndustryClassificationSystemService;
 			_reCaptchaService = recaptchaService;
 			_grantProgramService = grantProgramService;
 			_attachmentService = attachmentService;
@@ -910,7 +914,8 @@ namespace CJG.Web.External.Areas.Part.Controllers
 			var age = today.Year - dateOfBirth.Year;
 
 			// If participant's birthday has not yet occurred this year, subtract a year from age
-			if (dateOfBirth > today.AddYears(-age)) age--;
+			if (dateOfBirth > today.AddYears(-age))
+				age--;
 
 			// Assign to Step3ViewModel required to display YouthInCare controls
 			model.ParticipantInfoStep3ViewModel.Age = age;
@@ -938,6 +943,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 		{
 			// Prime objects such as dropdown lists for this step
 			LookupNocCodes(ref model);
+			LookupNaicsCodes(ref model);
 
 			var kvpEmploymentStatuses = _staticDataService.GetEmploymentStatuses().Select(x => new KeyValuePair<int, string>(x.Id, x.Caption)).ToList();
 			model.ParticipantInfoStep4ViewModel.EmploymentStatuses = kvpEmploymentStatuses;
@@ -1020,27 +1026,50 @@ namespace CJG.Web.External.Areas.Part.Controllers
 
 		private void LookupNocCodes(ref ParticipantInfoViewModel model)
 		{
-			#region Current NOC
+			// Current NOCs
 			model.ParticipantInfoStep4ViewModel.CurrentNoc1Codes = _nationalOccupationalClassificationService.GetNationalOccupationalClassificationLevel(1).Select(n => new KeyValuePair<int, string>(n.Id, $"{n.Code} | {n.Description}")).ToList();
 			model.ParticipantInfoStep4ViewModel.CurrentNoc2Codes = GetNocCodes(2);
 			model.ParticipantInfoStep4ViewModel.CurrentNoc3Codes = GetNocCodes(3);
 			model.ParticipantInfoStep4ViewModel.CurrentNoc4Codes = GetNocCodes(4);
 			model.ParticipantInfoStep4ViewModel.CurrentNoc5Codes = GetNocCodes(5);
-			#endregion
 
-			#region Future NOC
+			// Future NOCs
 			model.ParticipantInfoStep4ViewModel.FutureNoc1Codes = _nationalOccupationalClassificationService.GetNationalOccupationalClassificationLevel(1).Select(n => new KeyValuePair<int, string>(n.Id, $"{n.Code} | {n.Description}")).ToList();
 			model.ParticipantInfoStep4ViewModel.FutureNoc2Codes = GetNocCodes(2);
 			model.ParticipantInfoStep4ViewModel.FutureNoc3Codes = GetNocCodes(3);
 			model.ParticipantInfoStep4ViewModel.FutureNoc4Codes = GetNocCodes(4);
 			model.ParticipantInfoStep4ViewModel.FutureNoc5Codes = GetNocCodes(5);
-			#endregion
+
+			// Previous Employment NOCs
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc1Codes = _nationalOccupationalClassificationService.GetNationalOccupationalClassificationLevel(1).Select(n => new KeyValuePair<int, string>(n.Id, $"{n.Code} | {n.Description}")).ToList();
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc2Codes = GetNocCodes(2);
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc3Codes = GetNocCodes(3);
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc4Codes = GetNocCodes(4);
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc5Codes = GetNocCodes(5);
+		}
+
+		private void LookupNaicsCodes(ref ParticipantInfoViewModel model)
+		{
+			// Previous Employment NAICs
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics1Codes = _naIndustryClassificationSystemService.GetNaIndustryClassificationSystemLevel(1).Select(n => new KeyValuePair<int, string>(n.Id, $"{n.Code} | {n.Description}")).ToList();
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics2Codes = GetNaicsCodes(2);
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics3Codes = GetNaicsCodes(3);
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics4Codes = GetNaicsCodes(4);
+			model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics5Codes = GetNaicsCodes(5);
 		}
 
 		private List<KeyValueParent<int, string, int>> GetNocCodes(int level)
 		{
 			return _nationalOccupationalClassificationService
 				.GetNationalOccupationalClassificationLevel(level)
+				.Select(n => new KeyValueParent<int, string, int>(n.Id, $"{n.Code} | {n.Description}", n.ParentId ?? 0))
+				.ToList();
+		}
+
+		private List<KeyValueParent<int, string, int>> GetNaicsCodes(int level)
+		{
+			return _naIndustryClassificationSystemService
+				.GetNaIndustryClassificationSystemLevel(level)
 				.Select(n => new KeyValueParent<int, string, int>(n.Id, $"{n.Code} | {n.Description}", n.ParentId ?? 0))
 				.ToList();
 		}
@@ -1094,19 +1123,20 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					LastName = model.ParticipantInfoStep2ViewModel.LastName,
 					SIN = $"{model.ParticipantInfoStep2ViewModel.SIN1}-{model.ParticipantInfoStep2ViewModel.SIN2}-{model.ParticipantInfoStep2ViewModel.SIN3}",
 					PhoneNumber1 = $"{model.ParticipantInfoStep2ViewModel.Phone1AreaCode}{model.ParticipantInfoStep2ViewModel.Phone1Exchange}{model.ParticipantInfoStep2ViewModel.Phone1Number}".FormatPhoneNumber(),
-					PhoneExtension1 = !String.IsNullOrWhiteSpace(model.ParticipantInfoStep2ViewModel.Phone1Extension) ? $"{model.ParticipantInfoStep2ViewModel.Phone1Extension}" : null,
+					PhoneExtension1 = !string.IsNullOrWhiteSpace(model.ParticipantInfoStep2ViewModel.Phone1Extension) ? $"{model.ParticipantInfoStep2ViewModel.Phone1Extension}" : null,
 					PhoneNumber2 = $"{model.ParticipantInfoStep2ViewModel.Phone2AreaCode}{model.ParticipantInfoStep2ViewModel.Phone2Exchange}{model.ParticipantInfoStep2ViewModel.Phone2Number}".FormatPhoneNumber(),
-					PhoneExtension2 = !String.IsNullOrWhiteSpace(model.ParticipantInfoStep2ViewModel.Phone2Extension) ? $"{model.ParticipantInfoStep2ViewModel.Phone2Extension}" : null,
+					PhoneExtension2 = !string.IsNullOrWhiteSpace(model.ParticipantInfoStep2ViewModel.Phone2Extension) ? $"{model.ParticipantInfoStep2ViewModel.Phone2Extension}" : null,
 					EmailAddress = model.ParticipantInfoStep2ViewModel.EmailAddress.Trim(),
 					AddressLine1 = model.ParticipantInfoStep2ViewModel.AddressLine1,
 					AddressLine2 = model.ParticipantInfoStep2ViewModel.AddressLine2,
 					City = model.ParticipantInfoStep2ViewModel.City,
 					PostalCode = model.ParticipantInfoStep2ViewModel.PostalCode,
 					BirthDate = DateTime.SpecifyKind(DateTime.Parse(
-					model.ParticipantInfoStep2ViewModel.DateOfBirth.Year.ToString() + "/" +
-					model.ParticipantInfoStep2ViewModel.DateOfBirth.Month.ToString() + "/" +
-					model.ParticipantInfoStep2ViewModel.DateOfBirth.Day.ToString()), DateTimeKind.Local).ToUniversalTime(),
-
+						model.ParticipantInfoStep2ViewModel.DateOfBirth.Year.ToString() + "/" +
+						model.ParticipantInfoStep2ViewModel.DateOfBirth.Month.ToString() + "/" +
+						model.ParticipantInfoStep2ViewModel.DateOfBirth.Day.ToString()
+					), DateTimeKind.Local).ToUniversalTime(),
+					
 					// Step 3 of 6
 					CanadianStatusId = model.ParticipantInfoStep3ViewModel.CanadianStatus,
 					AboriginalBandId = model.ParticipantInfoStep3ViewModel.AboriginalBand != 0 ? model.ParticipantInfoStep3ViewModel.AboriginalBand : null,
@@ -1129,6 +1159,10 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					EmploymentStatusId = model.ParticipantInfoStep4ViewModel.EmploymentStatus,
 					EmploymentTypeId = model.ParticipantInfoStep4ViewModel.EmploymentType != 0 ? model.ParticipantInfoStep4ViewModel.EmploymentType : null,
 					TrainingResultId = model.ParticipantInfoStep4ViewModel.TrainingResult != 0 ? (int?)model.ParticipantInfoStep4ViewModel.TrainingResult : null,
+					MultipleEmploymentPositions = HasEmployedStatus(model.ParticipantInfoStep4ViewModel)
+						? model.ParticipantInfoStep4ViewModel.MultipleEmploymentPositions
+						: null,
+					PreviousEmploymentLastDayOfWork = GetPreviousEmploymentLastDayOfWork(model),
 					EIBenefitId = model.ParticipantInfoStep4ViewModel.EIBenefit != 0 ? model.ParticipantInfoStep4ViewModel.EIBenefit : EI_BENEFIT_NONE_OF_THE_ABOVE,
 					MaternalPaternal = model.ParticipantInfoStep4ViewModel.MaternalPaternal ?? false,
 					ReceivingEIBenefit = model.ParticipantInfoStep4ViewModel.CurrentReceiveEI ?? false,
@@ -1138,7 +1172,10 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					HowLongMonths = model.ParticipantInfoStep4ViewModel.HowLongMonths,
 					BusinessOwner = model.ParticipantInfoStep4ViewModel.BusinessOwner ?? false,
 					AvgHoursPerWeek = model.ParticipantInfoStep4ViewModel.AvgHoursPerWeek,
+					PreviousAvgHoursPerWeek = GetPreviousAverageHoursWorked(model),
 					HourlyWage = model.ParticipantInfoStep4ViewModel.HourlyWage,
+					PreviousHourlyWage = GetPreviousHourlyWage(model),
+					PreviousEmployerFullName = GetPreviousEmployerFullName(model),
 					PrimaryCity = model.ParticipantInfoStep4ViewModel.PrimaryCity,
 					Apprentice = model.ParticipantInfoStep4ViewModel.Apprentice ?? false,
 					ItaRegistered = model.ParticipantInfoStep4ViewModel.ItaRegistered ?? false,
@@ -1177,6 +1214,38 @@ namespace CJG.Web.External.Areas.Part.Controllers
 					newParticipantForm.FutureNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.FutureNoc1Id.Value);
 				#endregion
 
+				#region Previous Employment NOC
+				if (HasPreviouslyEmployedStatus(model.ParticipantInfoStep4ViewModel))
+				{
+					if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc5Id.HasValue)
+						newParticipantForm.PreviousEmploymentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc5Id.Value);
+					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc4Id.HasValue)
+						newParticipantForm.PreviousEmploymentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc4Id.Value);
+					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc3Id.HasValue)
+						newParticipantForm.PreviousEmploymentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc3Id.Value);
+					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc2Id.HasValue)
+						newParticipantForm.PreviousEmploymentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc2Id.Value);
+					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc1Id.HasValue)
+						newParticipantForm.PreviousEmploymentNoc = _nationalOccupationalClassificationService.GetNationalOccupationalClassification(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNoc1Id.Value);
+				}
+				#endregion
+
+				#region Previous Employment NAICS
+				if (HasPreviouslyEmployedStatus(model.ParticipantInfoStep4ViewModel))
+				{
+					if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics5Id.HasValue)
+						newParticipantForm.PreviousEmploymentNaics = _naIndustryClassificationSystemService.GetNaIndustryClassificationSystem(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics5Id.Value);
+					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics4Id.HasValue)
+						newParticipantForm.PreviousEmploymentNaics = _naIndustryClassificationSystemService.GetNaIndustryClassificationSystem(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics4Id.Value);
+					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics3Id.HasValue)
+						newParticipantForm.PreviousEmploymentNaics = _naIndustryClassificationSystemService.GetNaIndustryClassificationSystem(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics3Id.Value);
+					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics2Id.HasValue)
+						newParticipantForm.PreviousEmploymentNaics = _naIndustryClassificationSystemService.GetNaIndustryClassificationSystem(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics2Id.Value);
+					else if (model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics1Id.HasValue)
+						newParticipantForm.PreviousEmploymentNaics = _naIndustryClassificationSystemService.GetNaIndustryClassificationSystem(model.ParticipantInfoStep4ViewModel.PreviousEmploymentNaics1Id.Value);
+				}
+				#endregion
+
 				var individualInvitation = GetParticipantInvitation(model.ParticipantInfoStep0ViewModel.InvitationKey, model.ParticipantInfoStep0ViewModel.IndividualKey ?? Guid.Empty);
 
 				if (individualInvitation != null)
@@ -1207,6 +1276,59 @@ namespace CJG.Web.External.Areas.Part.Controllers
 				this.SetAlert(e);
 				throw;
 			}
+		}
+
+		private DateTime? GetPreviousEmploymentLastDayOfWork(ParticipantInfoViewModel model)
+		{
+			if (!HasPreviouslyEmployedStatus(model.ParticipantInfoStep4ViewModel))
+				return (DateTime?)null;
+
+			return model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.HasValue
+				? DateTime.SpecifyKind(DateTime.Parse(
+					model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.Value.Year.ToString() + "/" +
+					model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.Value.Month.ToString() + "/" +
+					model.ParticipantInfoStep4ViewModel.PreviousEmploymentLastDayOfWork.Value.Day.ToString()
+				), DateTimeKind.Local).ToUniversalTime()
+				: (DateTime?)null;
+		}
+
+		private string GetPreviousEmployerFullName(ParticipantInfoViewModel model)
+		{
+			if (!HasPreviouslyEmployedOrInTrainingStatus(model.ParticipantInfoStep4ViewModel))
+				return null;
+
+			return model.ParticipantInfoStep4ViewModel.PreviousEmployerFullName;
+		}
+
+		private decimal? GetPreviousHourlyWage(ParticipantInfoViewModel model)
+		{
+			if (!HasPreviouslyEmployedStatus(model.ParticipantInfoStep4ViewModel))
+				return (decimal?)null;
+
+			return model.ParticipantInfoStep4ViewModel.PreviousHourlyWage;
+		}
+
+		private int? GetPreviousAverageHoursWorked(ParticipantInfoViewModel model)
+		{
+			if (!HasPreviouslyEmployedStatus(model.ParticipantInfoStep4ViewModel))
+				return null;
+
+			return model.ParticipantInfoStep4ViewModel.PreviousAvgHoursPerWeek;
+		}
+
+		private bool HasEmployedStatus(ParticipantInfoStep4ViewModel model)
+		{
+			return model.EmploymentStatus == 2 || model.EmploymentStatus == 3 || model.EmploymentStatus == 6;
+		}
+
+		private bool HasPreviouslyEmployedStatus(ParticipantInfoStep4ViewModel model)
+		{
+			return model.EmploymentStatus == 1 || model.EmploymentStatus == 4;
+		}
+
+		private bool HasPreviouslyEmployedOrInTrainingStatus(ParticipantInfoStep4ViewModel model)
+		{
+			return model.EmploymentStatus == 1 || model.EmploymentStatus == 4 || model.EmploymentStatus == 5;
 		}
 
 		private bool HasConsentForm()

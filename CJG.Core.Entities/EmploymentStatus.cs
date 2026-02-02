@@ -5,8 +5,7 @@
     /// </summary>
     public class EmploymentStatus : LookupTable<int>
     {
-        #region Constructors
-        /// <summary>
+	    /// <summary>
         /// Creates a new instance of a <typeparamref name="EmploymentStatus"/> object.
         /// </summary>
         public EmploymentStatus() : base()
@@ -23,6 +22,5 @@
         {
 
         }
-        #endregion
     }
 }

@@ -240,7 +240,7 @@ namespace CJG.Web.External.Helpers
         /// <param name="validationResults"></param>
         /// <param name="isRedirect"></param>
         /// <param name="delimiter"></param>
-        public static void SetAlert(this Controller controller, IEnumerable<ValidationResult> validationResults, bool isRedirect = false, string delimiter = "</br>")
+        public static void SetAlert(this Controller controller, IEnumerable<ValidationResult> validationResults, bool isRedirect = false, string delimiter = "<br/>")
         {
             var message = validationResults.Select(vr => vr.ErrorMessage).Aggregate((a, b) => $"{a}{delimiter}{b}");
             controller.ControllerContext.SetAlert(message, AlertType.Warning, isRedirect);

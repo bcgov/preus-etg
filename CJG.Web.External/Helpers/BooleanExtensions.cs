@@ -9,5 +9,15 @@
 		{
 			return (value) ? trueValue : falseValue;
 		}
+
+		public static string AsYesOrNo(this bool value, string nullString = "---")
+		{
+			return value ? "Yes" : "No";
+		}
+
+		public static string AsYesOrNo(this bool? value, string nullString = "---")
+		{
+			return !value.HasValue ? nullString : value.Value.AsYesOrNo(nullString);
+		}
 	}
 }

@@ -40,7 +40,7 @@ namespace CJG.Web.External.Areas.Part.Models
         public int ParticipantOldestAge { get; set; }
         public int ParticipantYoungestAge { get; set; }
 
-        [NotMapped]
+		[NotMapped]
         [Required(ErrorMessage = "Social Insurance Number is required")]
         [ConvertMap(nameof(SIN), new[] { nameof(SIN1), nameof(SIN2), nameof(SIN3) }, "{0}{1}{2}")]
         [RegularExpression("^[0-9]{9}$", ErrorMessage = "Social Insurance Number must be 9-digit number")]

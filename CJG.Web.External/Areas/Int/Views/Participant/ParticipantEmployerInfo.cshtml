@@ -16,6 +16,20 @@
                 </div>
             </div>
         </div>
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Multiple Employment Positions:</div>
+                    <div class="infoTable--data">@Model.MultipleEmploymentPositions</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label"></div>
+                    <div class="infoTable--data"></div>
+                </div>
+            </div>
+        </div>
 
         <div class="infotable-tr">
             <div class="infotable-td">
@@ -24,9 +38,9 @@
                         <div class="infoTable--cell-wrap">
                             <div class="infoTable--label">Before Training National Occupation Code:</div>
                             <div class="infoTable--data">
-                                @if (Model.CurrentNocLevel4 != null)
+                                @if (Model.CurrentNocLevel5 != null)
                                 {
-                                    <span class="participant-noc">@Model.CurrentNocLevel4</span>
+                                    <span class="participant-noc">@Model.CurrentNocLevel5</span>
                                 }
                             </div>
                         </div>
@@ -47,9 +61,9 @@
                         <div class="infoTable--cell-wrap">
                             <div class="infoTable--label">After Training National Occupation Code:</div>
                             <div class="infoTable--data">
-                                @if (Model.FutureNocLevel4 != null)
+                                @if (Model.FutureNocLevel5 != null)
                                 {
-                                    <span class="participant-noc">@Model.FutureNocLevel4</span>
+                                    <span class="participant-noc">@Model.FutureNocLevel5</span>
                                 }
                             </div>
                         </div>
@@ -156,6 +170,61 @@
                 <div class="infoTable--cell-wrap">
                     <div class="infoTable--label">Hourly Wage:</div>
                     <div class="infoTable--data">@Model.AverageHourlyWage</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Previous Employer Name:</div>
+                    <div class="infoTable--data">@Model.PreviousEmployerFullName</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Previous Employment Last Day of Work</div>
+                    <div class="infoTable--data">@Model.PreviousEmploymentLastDayOfWork</div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Previous Employment National Occupation Code:</div>
+                    <div class="infoTable--data">
+                        @if (Model.PreviousEmploymentNocLevel5 != null)
+                        {
+                            <span class="participant-noc">@Model.PreviousEmploymentNocLevel5</span>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Previous Employment NAICS Code:</div>
+                    <div class="infoTable--data">
+                        @if (Model.PreviousEmploymentNaicsLevel5 != null)
+                        {
+                            <span class="participant-noc">@Model.PreviousEmploymentNaicsLevel5</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="infotable-tr">
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Previous hours per week:</div>
+                    <div class="infoTable--data">@Model.PreviousHoursPerWeek</div>
+                </div>
+            </div>
+            <div class="infotable-td">
+                <div class="infoTable--cell-wrap">
+                    <div class="infoTable--label">Previous Hourly Wage:</div>
+                    <div class="infoTable--data">@Model.PreviousHourlyWage</div>
                 </div>
             </div>
         </div>
