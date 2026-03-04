@@ -71,6 +71,20 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
    * @function loadSkillLevels
    * @returns {Promise}
    **/
+  function loadTrainingObjectives() {
+    return $scope.load({
+      url: '/Int/Application/Training/Program/Training/Objectives',
+      set: 'trainingObjectives',
+      condition: !$scope.trainingObjectives || !$scope.trainingObjectives.length,
+      localCache: true
+    });
+  }
+
+  /**
+   * Make AJAX request for skill levels
+   * @function loadSkillLevels
+   * @returns {Promise}
+   **/
   function loadSkillLevels() {
     return $scope.load({
       url: '/Int/Application/Training/Program/Skill/Levels',
@@ -81,7 +95,7 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
   }
 
   /**
-   * Make AJAX requst for skill focuses
+   * Make AJAX request for skill focuses
    * @function loadSkillFocuses
    * @returns {Promise}
    **/
@@ -198,9 +212,15 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
   * @returns {Promise}
   **/
   function loadCipsCode(level, parentId, set) {
-    if (level > 1 && !parentId) return Promise.resolve(); // No need to fetch the data.
-    if (!level) level = 1;
-    if (!set) set = 'CipsCode' + level;
+    if (level > 1 && !parentId)
+      return Promise.resolve(); // No need to fetch the data.
+
+    if (!level)
+      level = 1;
+
+    if (!set)
+      set = 'CipsCode' + level;
+
     var url = '/Int/Application/Training/Program/CipsCodes/' + level + '/' + (parentId ? parentId : '');
     return $scope.load({
       url: url,
@@ -217,6 +237,7 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
   $scope.init = function () {
     return Promise.all([
       loadDeliveryMethods(),
+      loadTrainingObjectives(),
       loadSkillLevels(),
       loadSkillFocuses(),
       loadInDemandOccupations(),
@@ -282,9 +303,15 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
    * @returns {string}
    **/
   function getSelectedCipsCode() {
-    if ($scope.model.CipsCode3Id) return getCaption($scope.programCipsCode3, $scope.model.CipsCode3Id);
-    if ($scope.model.CipsCode2Id) return getCaption($scope.programCipsCode2, $scope.model.CipsCode2Id);
-    if ($scope.model.CipsCode1Id) return getCaption($scope.CipsCode1, $scope.model.CipsCode1Id);
+    if ($scope.model.CipsCode3Id)
+      return getCaption($scope.programCipsCode3, $scope.model.CipsCode3Id);
+
+    if ($scope.model.CipsCode2Id)
+      return getCaption($scope.programCipsCode2, $scope.model.CipsCode2Id);
+
+
+    if ($scope.model.CipsCode1Id)
+      return getCaption($scope.CipsCode1, $scope.model.CipsCode1Id);
   };
   
   /**
@@ -294,8 +321,13 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
    * @returns {string}
    */
   function getCaption(items, key) {
-    if (!items || !items.length) return '';
-    var item = items.find(function (item) { return item.Key === key; });
+    if (!items || !items.length)
+      return '';
+
+    var item = items.find(function (item) {
+       return item.Key === key;
+    });
+
     return item ? item.Value : '';
   }
 

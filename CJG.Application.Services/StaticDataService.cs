@@ -286,6 +286,24 @@ namespace CJG.Application.Services
 			return GetRegion("CA", id);
 		}
 
+		/// <summary>
+		/// Get all the Training Objectives that are active.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<TrainingObjective> GetTrainingObjectives()
+		{
+			return Get<TrainingObjective, int>().Where(e => e.IsActive);
+		}
+
+		/// <summary>
+		/// Get the specified Training Objective
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public TrainingObjective GetTrainingObjective(int id)
+		{
+			return _dbContext.TrainingObjectives.Find(id);
+		}
 
 		/// <summary>
 		/// Get all the skills focuses that are active.
@@ -305,7 +323,6 @@ namespace CJG.Application.Services
 		{
 			return _dbContext.SkillsFocuses.Find(id);
 		}
-
 
 		/// <summary>
 		/// Get all the skill levels that are active.

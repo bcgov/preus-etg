@@ -159,6 +159,7 @@ namespace CJG.Infrastructure.EF
 		public virtual DbSet<DeliveryMethod> DeliveryMethods { get; set; }
 		public virtual DbSet<ExpectedQualification> ExpectedQualifications { get; set; }
 		public virtual DbSet<InDemandOccupation> InDemandOccupations { get; set; }
+		public virtual DbSet<TrainingObjective> TrainingObjectives { get; set; }
 		public virtual DbSet<SkillsFocus> SkillsFocuses { get; set; }
 		public virtual DbSet<SkillLevel> SkillLevels { get; set; }
 		public virtual DbSet<TrainingLevel> TrainingLevels { get; set; }

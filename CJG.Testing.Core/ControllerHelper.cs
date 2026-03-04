@@ -212,6 +212,7 @@ namespace CJG.Testing.Core
 
 		public Mock<IStaticDataService> MockStaticDataService(Mock<IStaticDataService> mockStaticDataService)
 		{
+			var trainingObjective = new TrainingObjective[] { EntityHelper.CreateTrainingObjective("training objective") };
 			var skillLevels = new SkillLevel[] { EntityHelper.CreateSkillLevel("skill level") };
 			var skillsFocuses = new SkillsFocus[] { EntityHelper.CreateSkillFocus("skill focus") };
 			var trainingLevels = new TrainingLevel[] { EntityHelper.CreateTrainingLevel("training level") };
@@ -226,6 +227,7 @@ namespace CJG.Testing.Core
 			var fiscalYear = EntityHelper.CreateFiscalYear();
 			var trainingPeriod = EntityHelper.CreateTrainingPeriod(DateTime.Today, DateTime.Today.AddMonths(3));
 			mockStaticDataService = Mock.Get(Mock.Of<IStaticDataService>(x =>
+				x.GetTrainingObjectives() == trainingObjective &&
 				x.GetSkillLevels() == skillLevels &&
 				x.GetSkillsFocuses() == skillsFocuses &&
 				x.GetTrainingLevels() == trainingLevels &&

@@ -191,6 +191,7 @@ app.controller('TrainingProgramView', function ($scope, $attrs, $controller, $ti
    **/
   function init() {
     return Promise.all([
+      loadDropdown('/Training/Objectives', 'TrainingObjectives'),
       loadDropdown('/Skill/Levels', 'SkillLevels'),
       loadDropdown('/Skills/Focuses', 'SkillFocus'),
       loadDropdown('/Expected/Qualifications', 'ExpectedQualifications'),

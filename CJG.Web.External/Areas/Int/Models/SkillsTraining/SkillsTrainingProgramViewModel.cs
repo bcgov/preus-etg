@@ -1,4 +1,7 @@
-﻿using CJG.Application.Business.Models;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Security.Principal;
 using CJG.Application.Services;
 using CJG.Core.Entities;
 using CJG.Core.Interfaces;
@@ -6,14 +9,10 @@ using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Models.Shared;
 using CJG.Web.External.Models.Shared.SkillsTrainings;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Security.Principal;
 
 namespace CJG.Web.External.Areas.Int.Models.SkillsTraining
 {
-	public class SkillsTrainingProgramViewModel : BaseViewModel
+    public class SkillsTrainingProgramViewModel : BaseViewModel
 	{
 		#region Properties
 		public bool CanEdit { get; set; }

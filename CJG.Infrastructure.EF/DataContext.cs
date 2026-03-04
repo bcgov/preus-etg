@@ -132,6 +132,7 @@ namespace CJG.Infrastructure.EF
 		public DbSet<DeliveryMethod> DeliveryMethods => _context.DeliveryMethods;
 		public DbSet<ExpectedQualification> ExpectedQualifications => _context.ExpectedQualifications;
 		public DbSet<InDemandOccupation> InDemandOccupations => _context.InDemandOccupations;
+		public DbSet<TrainingObjective> TrainingObjectives => _context.TrainingObjectives;
 		public DbSet<SkillsFocus> SkillsFocuses => _context.SkillsFocuses;
 		public DbSet<SkillLevel> SkillLevels => _context.SkillLevels;
 		public DbSet<TrainingLevel> TrainingLevels => _context.TrainingLevels;

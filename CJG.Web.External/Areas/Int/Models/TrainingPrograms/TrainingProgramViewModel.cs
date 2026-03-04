@@ -23,6 +23,7 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 		public DateTime MinEndDate { get; set; }
 		public DateTime MaxEndDate { get; set; }
 		public int? InDemandOccupationId { get; set; }
+		public int? TrainingObjectiveId { get; set; }
 		public int SkillLevelId { get; set; }
 		public int? SkillFocusId { get; set; }
 		public int ExpectedQualificationId { get; set; }
@@ -93,8 +94,11 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 
 		public void MapTo(TrainingProgram trainingProgram, IStaticDataService staticDataService)
 		{
-			if (trainingProgram == null) throw new ArgumentNullException(nameof(trainingProgram));
-			if (staticDataService == null) throw new ArgumentNullException(nameof(staticDataService));
+			if (trainingProgram == null)
+				throw new ArgumentNullException(nameof(trainingProgram));
+
+			if (staticDataService == null)
+				throw new ArgumentNullException(nameof(staticDataService));
 
 			Utilities.MapProperties(this, trainingProgram);
 			trainingProgram.StartDate = StartDate.ToUtcMorning();

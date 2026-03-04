@@ -19,6 +19,9 @@ namespace CJG.Core.Interfaces.Service
 		IEnumerable<InDemandOccupation> GetInDemandOccupations();
 		InDemandOccupation GetInDemandOccupation(int id);
 
+		IEnumerable<TrainingObjective> GetTrainingObjectives();
+		TrainingObjective GetTrainingObjective(int id);
+
 		IEnumerable<SkillsFocus> GetSkillsFocuses();
 		SkillsFocus GetSkillsFocus(int id);
 
