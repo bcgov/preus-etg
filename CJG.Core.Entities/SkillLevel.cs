@@ -1,14 +1,14 @@
 ﻿namespace CJG.Core.Entities
 {
-    /// <summary>
-    /// SkillLevel class, provides a way to manage a list of valid skill level.
-    /// </summary>
-    /// <example>
-    ///     Entry Level Skills
-    ///     Upskilling or Upgrading
-    ///     Maintenance for Current Job
-    /// </example>
-    public class SkillLevel : LookupTable<int>
+	/// <summary>
+	/// SkillLevel class, provides a way to manage a list of valid skill level.
+	/// </summary>
+	/// <example>
+	///     Entry Level Skills
+	///     Upskilling or Upgrading
+	///     Maintenance for Current Job
+	/// </example>
+	public class SkillLevel : LookupTable<int>
     {
         #region Constructors
         /// <summary>

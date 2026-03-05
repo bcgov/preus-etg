@@ -9,6 +9,7 @@ using System.Security.Principal;
 
 namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 {
+	[Obsolete("Don't think this is used anymore")]
 	public class TrainingProgramDetailsViewModel : BaseTrainingProgramViewModel
 	{
 		#region Properties
@@ -179,6 +180,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 				trainingProgram.TitleOfQualification = this.TitleOfQualification;
 			}
 
+			// if (trainingObjectiveId == (int)TrainingObjectives.ApprenticeshipTraining)
 			if (new int[] { Core.Entities.Constants.SkillsFocus_ApprenticeshipTraining }.Contains(this.SkillFocusId.GetValueOrDefault()))
 			{
 				trainingProgram.InDemandOccupationId = this.InDemandOccupationId;

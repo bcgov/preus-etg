@@ -47,6 +47,18 @@ namespace CJG.Core.Entities
 		public virtual InDemandOccupation InDemandOccupation { get; set; }
 
 		/// <summary>
+		/// get/set - The foreign key to the training objective.
+		/// </summary>
+		//[Index("IX_TrainingPrograms", Order = 8)]
+		public int? TrainingObjectiveId { get; set; }
+
+		/// <summary>
+		/// get/set - The skill level.
+		/// </summary>
+		[ForeignKey(nameof(TrainingObjectiveId))]
+		public virtual TrainingObjective TrainingObjective { get; set; }
+
+		/// <summary>
 		/// get/set - The foreign key to the skill level.
 		/// </summary>
 		[Index("IX_TrainingPrograms", Order = 8)]
@@ -395,12 +407,20 @@ namespace CJG.Core.Entities
 					yield return new ValidationResult($"The '{EligibleCostBreakdown.EligibleCost.EligibleExpenseType.Caption}' '{ServiceLine.Caption}' is not a valid service for this grant opening.", new[] { nameof(ServiceLineId) });
 			}
 
+			if (TrainingObjectiveId == null)
+				yield return new ValidationResult("You must select a training objective.", new[] { nameof(TrainingObjectiveId) });
+
+			if (SkillFocusId == null)
+				yield return new ValidationResult("You must select a skill type.", new[] { nameof(SkillFocusId) });
+
+			//// If certain SkillFocus then there must be other fields provided.
+			//if (new[] { 5, 6 }.Contains(SkillFocus == null ? 0 : (int)SkillFocusId))
 			// If certain SkillFocus then there must be other fields provided.
-			if (new[] { 5, 6 }.Contains(SkillFocus == null ? 0 : (int)SkillFocusId))
+			if (TrainingObjectiveId == (int)TrainingObjectives.ApprenticeshipTraining)
 			{
 				// Must contain MemberOfUnderRepresentedGroup.
-				if (MemberOfUnderRepresentedGroup == null)
-					yield return new ValidationResult("You must select whether you are a member of a under represented group.", new[] { nameof(MemberOfUnderRepresentedGroup) });
+				//if (MemberOfUnderRepresentedGroup == null)
+				//	yield return new ValidationResult("You must select whether you are a member of a under represented group.", new[] { nameof(MemberOfUnderRepresentedGroup) });
 
 				// Must contain InDemandOccupation.
 				if (InDemandOccupation == null && InDemandOccupationId == null)
@@ -480,6 +500,7 @@ namespace CJG.Core.Entities
 		public void Clone(TrainingProgram tp,  bool cloneTrainingProviders = true)
 		{
 			InDemandOccupationId = tp.InDemandOccupationId;
+			TrainingObjectiveId = tp.TrainingObjectiveId;
 			SkillLevelId = tp.SkillLevelId;
 			SkillFocusId = tp.SkillFocusId;
 			ExpectedQualificationId = tp.ExpectedQualificationId;

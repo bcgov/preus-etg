@@ -57,14 +57,17 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 		[Required(ErrorMessage = "You must select an expected qualification.")]
 		public int? ExpectedQualificationId { get; set; }
 
+		[Required(ErrorMessage = "You must select a training objective.")]
+		public int? TrainingObjectiveId { get; set; }
+
 		[Required(ErrorMessage = "You must select a skill level.")]
 		public int? SkillLevelId { get; set; }
 
+		[Required(ErrorMessage = "You must select a skill type.")]
+		public int? SkillFocusId { get; set; }
+
 		[Required(ErrorMessage = "You must select an in-demand occupation.")]
 		public int? InDemandOccupationId { get; set; }
-
-		[Required(ErrorMessage = "You must select a skills focus.")]
-		public int? SkillFocusId { get; set; }
 
 		[Required(ErrorMessage = "You must select a training level.")]
 		public int? TrainingLevelId { get; set; }
@@ -119,6 +122,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 			GrantApplicationRowVersion = Convert.ToBase64String(trainingProgram.GrantApplication.RowVersion);
 
 			InDemandOccupationId = trainingProgram.InDemandOccupationId == 0 ? null : trainingProgram.InDemandOccupationId;
+			TrainingObjectiveId = trainingProgram.TrainingObjectiveId.HasValue && trainingProgram.TrainingObjectiveId.Value == 0 ? null : (int?)trainingProgram.TrainingObjectiveId;
 			SkillLevelId = trainingProgram.SkillLevelId == 0 ? null : (int?)trainingProgram.SkillLevelId;
 			SkillFocusId = trainingProgram.SkillFocusId == 0 ? null : trainingProgram.SkillFocusId;
 			ExpectedQualificationId = trainingProgram.ExpectedQualificationId == 0 ? null : (int?)trainingProgram.ExpectedQualificationId;
@@ -257,6 +261,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 				trainingProgram.DeliveryMethods.Clear();
 			}
 
+			trainingProgram.TrainingObjectiveId = TrainingObjectiveId.Value;
 			trainingProgram.SkillFocusId = SkillFocusId.Value;
 			trainingProgram.SkillLevelId = SkillLevelId.Value;
 			trainingProgram.TotalTrainingHours = TotalTrainingHours.Value;
@@ -272,7 +277,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingPrograms
 				? null
 				: TitleOfQualification;
 
-			if (new[] { Constants.SkillsFocus_ApprenticeshipTraining }.Contains(SkillFocusId.GetValueOrDefault()))
+			if (new[] { (int)TrainingObjectives.ApprenticeshipTraining }.Contains(TrainingObjectiveId.GetValueOrDefault()))
 			{
 				trainingProgram.InDemandOccupationId = InDemandOccupationId;
 				trainingProgram.TrainingLevelId = TrainingLevelId;

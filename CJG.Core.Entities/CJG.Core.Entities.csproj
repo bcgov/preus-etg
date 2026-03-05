@@ -244,6 +244,7 @@
     <Compile Include="StateExtensions.cs" />
     <Compile Include="TempData.cs" />
     <Compile Include="TrainingCostExtensions.cs" />
+    <Compile Include="TrainingObjective.cs" />
     <Compile Include="TrainingPeriodBudgetRate.cs" />
     <Compile Include="TrainingPeriodBudgetType.cs" />
     <Compile Include="TrainingProgramExtensions.cs" />

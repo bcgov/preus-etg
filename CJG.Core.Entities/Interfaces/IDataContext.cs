@@ -127,6 +127,7 @@ namespace CJG.Infrastructure.Entities
 		DbSet<DeliveryMethod> DeliveryMethods { get; }
 		DbSet<ExpectedQualification> ExpectedQualifications { get; }
 		DbSet<InDemandOccupation> InDemandOccupations { get; }
+		DbSet<TrainingObjective> TrainingObjectives { get; }
 		DbSet<SkillsFocus> SkillsFocuses { get; }
 		DbSet<SkillLevel> SkillLevels { get; }
 		DbSet<TrainingLevel> TrainingLevels { get; }

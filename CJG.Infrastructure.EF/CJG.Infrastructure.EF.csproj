@@ -496,6 +496,18 @@
     <Compile Include="Migrations\202601192205534_v02.17.07.Designer.cs">
       <DependentUpon>202601192205534_v02.17.07.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202603030007232_v02.19.00.cs" />
+    <Compile Include="Migrations\202603030007232_v02.19.00.Designer.cs">
+      <DependentUpon>202603030007232_v02.19.00.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202603031939195_v02.19.01.cs" />
+    <Compile Include="Migrations\202603031939195_v02.19.01.Designer.cs">
+      <DependentUpon>202603031939195_v02.19.01.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202603051846229_v02.19.02.cs" />
+    <Compile Include="Migrations\202603051846229_v02.19.02.Designer.cs">
+      <DependentUpon>202603051846229_v02.19.02.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Content Include="Migrations\v02.02.03\PostDeploy\Seed\03 GrantOpenings.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -988,6 +1000,12 @@
     <Content Include="Migrations\v02.02.03\PostDeploy\Seed\01 AddQuestions.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Migrations\v02.19.02\PostDeploy\Seed\01_UpdateSkillFocus.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v02.19.00\PostDeploy\Seed\01_TrainingObjectives.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Migrations\v02.17.00\PostDeploy\Seed\01_AddEmploymentStatus.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1424,6 +1442,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202601192205534_v02.17.07.resx">
       <DependentUpon>202601192205534_v02.17.07.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202603030007232_v02.19.00.resx">
+      <DependentUpon>202603030007232_v02.19.00.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202603031939195_v02.19.01.resx">
+      <DependentUpon>202603031939195_v02.19.01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202603051846229_v02.19.02.resx">
+      <DependentUpon>202603051846229_v02.19.02.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

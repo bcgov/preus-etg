@@ -219,6 +219,15 @@ namespace CJG.Testing.Core
 			};
 		}
 
+		public static TrainingObjective CreateTrainingObjective(string caption, int id = 1)
+		{
+			return new TrainingObjective
+			{
+				Id = id,
+				Caption = caption
+			};
+		}
+
 		public static SkillLevel CreateSkillLevel(string caption, int id = 1)
 		{
 			return new SkillLevel
