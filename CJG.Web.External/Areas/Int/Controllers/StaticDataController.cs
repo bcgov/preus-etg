@@ -134,7 +134,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			KeyValueListItem<int, string>[] model = null;
 			try
 			{
-				var entity = _staticDataService.GetTrainingObjectives();
+				var entity = _staticDataService.GetTrainingObjectives().OrderBy(e => e.RowSequence);
 				model = entity.Select(o => new KeyValueListItem<int, string>(o.Id, o.Caption)).ToArray();
 			}
 			catch (Exception ex)
@@ -172,7 +172,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			KeyValueListItem<int, string>[] model = null;
 			try
 			{
-				var entity = _staticDataService.GetSkillsFocuses();
+				var entity = _staticDataService.GetSkillsFocuses().OrderBy(e => e.RowSequence);
 				model = entity.Select(o => new KeyValueListItem<int, string>(o.Id, o.Caption)).ToArray();
 			}
 			catch (Exception ex)

@@ -407,18 +407,20 @@ namespace CJG.Core.Entities
 					yield return new ValidationResult($"The '{EligibleCostBreakdown.EligibleCost.EligibleExpenseType.Caption}' '{ServiceLine.Caption}' is not a valid service for this grant opening.", new[] { nameof(ServiceLineId) });
 			}
 
-			if (TrainingObjective == null)
+			if (TrainingObjectiveId == null)
 				yield return new ValidationResult("You must select a training objective.", new[] { nameof(TrainingObjectiveId) });
+
+			if (SkillFocusId == null)
+				yield return new ValidationResult("You must select a skill type.", new[] { nameof(SkillFocusId) });
 
 			//// If certain SkillFocus then there must be other fields provided.
 			//if (new[] { 5, 6 }.Contains(SkillFocus == null ? 0 : (int)SkillFocusId))
 			// If certain SkillFocus then there must be other fields provided.
-			var trainingObjectiveId = TrainingObjective?.Id ?? 0;
-			if (trainingObjectiveId == (int)TrainingObjectives.ApprenticeshipTraining)
+			if (TrainingObjectiveId == (int)TrainingObjectives.ApprenticeshipTraining)
 			{
 				// Must contain MemberOfUnderRepresentedGroup.
-				if (MemberOfUnderRepresentedGroup == null)
-					yield return new ValidationResult("You must select whether you are a member of a under represented group.", new[] { nameof(MemberOfUnderRepresentedGroup) });
+				//if (MemberOfUnderRepresentedGroup == null)
+				//	yield return new ValidationResult("You must select whether you are a member of a under represented group.", new[] { nameof(MemberOfUnderRepresentedGroup) });
 
 				// Must contain InDemandOccupation.
 				if (InDemandOccupation == null && InDemandOccupationId == null)

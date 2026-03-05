@@ -26,6 +26,7 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 		public int? TrainingObjectiveId { get; set; }
 		public int SkillLevelId { get; set; }
 		public int? SkillFocusId { get; set; }
+		public string ExistingSkillFocus { get; set; }
 		public int ExpectedQualificationId { get; set; }
 		public int? TrainingLevelId { get; set; }
 		public string TrainingBusinessCase { get; set; }
@@ -78,6 +79,13 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 
 			if (trainingProgram.CourseOutlineDocument != null)
 				CourseOutlineDocument = new AttachmentViewModel(trainingProgram.CourseOutlineDocument);
+
+			// Keep existing value for reference and force the user to select a new type
+			if (trainingProgram.SkillFocus?.IsActive == false)
+			{ 
+				ExistingSkillFocus = trainingProgram.SkillFocus.Caption;
+				SkillFocusId = null;
+			}
 
 			MapCipsCodes(trainingProgram, cipsCodesService);
 		}

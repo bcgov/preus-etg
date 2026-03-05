@@ -118,7 +118,7 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
       url: '/Int/Application/Training/Program/In/Demand/Occupations',
       set: 'inDemandOccupations',
       condition: !$scope.inDemandOccupations || !$scope.inDemandOccupations.length,
-      localCache: false
+      localCache: true
     });
   }
 
@@ -132,7 +132,7 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
       url: '/Int/Application/Training/Program/Training/Levels',
       set: 'trainingLevels',
       condition: !$scope.trainingLevels || !$scope.trainingLevels.length,
-      localCache: false
+      localCache: true
     });
   }
 
