@@ -512,6 +512,10 @@
     <Compile Include="Migrations\202603052353161_v02.19.03.Designer.cs">
       <DependentUpon>202603052353161_v02.19.03.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202603062253591_v02.19.04.cs" />
+    <Compile Include="Migrations\202603062253591_v02.19.04.Designer.cs">
+      <DependentUpon>202603062253591_v02.19.04.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Content Include="Migrations\v02.02.03\PostDeploy\Seed\03 GrantOpenings.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1004,6 +1008,9 @@
     <Content Include="Migrations\v02.02.03\PostDeploy\Seed\01 AddQuestions.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Migrations\v02.19.04\PostDeploy\Seed\01_AddWorkSharingToCompletionReport.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Migrations\v02.19.02\PostDeploy\Seed\01_UpdateSkillFocus.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1458,6 +1465,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202603052353161_v02.19.03.resx">
       <DependentUpon>202603052353161_v02.19.03.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202603062253591_v02.19.04.resx">
+      <DependentUpon>202603062253591_v02.19.04.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
