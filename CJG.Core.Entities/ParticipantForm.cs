@@ -397,6 +397,11 @@ namespace CJG.Core.Entities
 		public bool BusinessOwner { get; set; }
 
 		/// <summary>
+		/// Has the Participant ever been employed? Knockout question for other employment questions. 
+		/// </summary>
+		public bool? HaveYouEverBeenEmployed { get; set; }
+
+		/// <summary>
 		/// get/set - Whether this participant is an apprentice.
 		/// </summary>
 		public bool Apprentice { get; set; }
