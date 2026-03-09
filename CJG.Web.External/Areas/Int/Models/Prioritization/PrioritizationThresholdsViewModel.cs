@@ -33,5 +33,7 @@ namespace CJG.Web.External.Areas.Int.Models.Prioritization
 		[Required(ErrorMessage = "You must enter a numeric First Time Applicant Score.")]
 		public int FirstTimeApplicantAssignedScore { get; set; }
 
+		[Required(ErrorMessage = "You must enter a numeric B.C. Public Post Secondary Score.")]
+		public int PublicPostSecondaryScore { get; set; }
 	}
 }

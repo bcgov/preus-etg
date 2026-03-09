@@ -19,6 +19,7 @@ namespace CJG.Testing.UnitTests.Entities
 				HighOpportunityOccupationScore = 100,
 				RegionalScore = 1000,
 				SmallBusinessScore = 10000,
+				PublicPostSecondaryScore = 1000000,
 				EligibilityAnswerScores = new List<PrioritizationScoreBreakdownAnswer>
 				{
 					new PrioritizationScoreBreakdownAnswer
@@ -32,7 +33,7 @@ namespace CJG.Testing.UnitTests.Entities
 		[TestMethod, TestCategory("PrioritizationScoreBreakdown"), TestCategory("Methods")]
 		public void GetTotalScore_Sums_Everything()
 		{
-			Assert.AreEqual(111111, _breakdown.GetTotalScore());
+			Assert.AreEqual(1111111, _breakdown.GetTotalScore());
 		}
 	}
 }

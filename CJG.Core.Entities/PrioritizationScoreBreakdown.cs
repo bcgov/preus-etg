@@ -26,6 +26,8 @@ namespace CJG.Core.Entities
 		public int SmallBusinessScore { get; set; }
 		public int FirstTimeApplicantScore { get; set; }
 
+		public int PublicPostSecondaryScore { get; set; }
+
 		[NotMapped]
 		public int QuestionScoreTotal
 		{
@@ -36,7 +38,13 @@ namespace CJG.Core.Entities
 
 		public int GetTotalScore()
 		{
-			return IndustryScore + HighOpportunityOccupationScore + RegionalScore + SmallBusinessScore + FirstTimeApplicantScore + QuestionScoreTotal;
+			return FirstTimeApplicantScore
+				   + IndustryScore
+				   + HighOpportunityOccupationScore
+				   + RegionalScore
+				   + SmallBusinessScore
+				   + QuestionScoreTotal
+				   + PublicPostSecondaryScore;
 		}
 
 		/// <summary>

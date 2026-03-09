@@ -106,6 +106,7 @@ namespace CJG.Application.Services
 			var highOpportunityOccupationScore = GetHighOpportunityOccupationScore(grantApplication, threshold);
 			var smallBusinessScore = GetSmallBusinessScore(grantApplication, threshold);
 			var firstTimeApplicantScore = GetFirstTimeApplicantScore(grantApplication, threshold);
+			var publicPostSecondaryScore = GetPublicPostSecondaryScore(grantApplication, threshold);
 
 			var breakdown = grantApplication.PrioritizationScoreBreakdown ?? new PrioritizationScoreBreakdown();
 
@@ -122,12 +123,28 @@ namespace CJG.Application.Services
 			breakdown.SmallBusinessScore = smallBusinessScore;
 			breakdown.FirstTimeApplicantScore = firstTimeApplicantScore;
 
+			breakdown.PublicPostSecondaryScore = publicPostSecondaryScore;
+
 			foreach (var answer in breakdown.EligibilityAnswerScores.ToList())
 				_dbContext.PrioritizationScoreBreakdownAnswers.Remove(answer);
 
 			breakdown.EligibilityAnswerScores = GetEligibilityQuestionAnswers(grantApplication);
 
 			return breakdown;
+		}
+
+		private int GetPublicPostSecondaryScore(GrantApplication grantApplication, PrioritizationThreshold threshold)
+		{
+			var trainingProgram = grantApplication.TrainingPrograms.FirstOrDefault();
+			var trainingProvider = trainingProgram?.TrainingProvider;
+
+			if (trainingProvider == null)
+				return 0;
+
+			if (trainingProvider.TrainingProviderType.Id != (int)TrainingProviderTypes.BcPublicPostSecondaryInstitution)
+				return 0;
+
+			return threshold.PublicPostSecondaryScore;
 		}
 
 		public bool UpdateIndustryScores(Stream stream)

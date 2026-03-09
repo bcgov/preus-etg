@@ -21,5 +21,6 @@ namespace CJG.Core.Entities
 		public int RegionalThresholdAssignedScore { get; set; }
 		public int EmployeeCountAssignedScore { get; set; }
 		public int FirstTimeApplicantAssignedScore { get; set; }
+		public int PublicPostSecondaryScore { get; set; }
 	}
 }

@@ -270,6 +270,7 @@
     <Compile Include="RecentPeriod.cs" />
     <Compile Include="Claim.cs" />
     <Compile Include="TrainingProviderInventory.cs" />
+    <Compile Include="TrainingProviderTypes.cs" />
     <Compile Include="TrainingResult.cs" />
     <Compile Include="EmploymentStatus.cs" />
     <Compile Include="EmploymentType.cs" />
