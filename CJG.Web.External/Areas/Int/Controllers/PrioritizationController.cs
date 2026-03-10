@@ -68,7 +68,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 					FirstTimeApplicantAssignedScore = thresholds.FirstTimeApplicantAssignedScore,
 
-					PublicPostSecondaryScore = thresholds.PublicPostSecondaryScore
+					PublicPostSecondaryScore = thresholds.PublicPostSecondaryScore,
+					SkilledTradesApprenticeshipScore = thresholds.SkilledTradesApprenticeshipScore
 				};
 				return Json(model, JsonRequestBehavior.AllowGet);
 			}
@@ -208,7 +209,9 @@ namespace CJG.Web.External.Areas.Int.Controllers
 					thresholds.RegionalThresholdAssignedScore = model.RegionalThresholdAssignedScore;
 					thresholds.EmployeeCountAssignedScore = model.EmployeeCountAssignedScore;
 					thresholds.FirstTimeApplicantAssignedScore = model.FirstTimeApplicantAssignedScore;
+
 					thresholds.PublicPostSecondaryScore = model.PublicPostSecondaryScore;
+					thresholds.SkilledTradesApprenticeshipScore = model.SkilledTradesApprenticeshipScore;
 
 					_prioritizationService.UpdateThresholds(thresholds);
 				}

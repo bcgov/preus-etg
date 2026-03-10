@@ -35,5 +35,8 @@ namespace CJG.Web.External.Areas.Int.Models.Prioritization
 
 		[Required(ErrorMessage = "You must enter a numeric B.C. Public Post Secondary Score.")]
 		public int PublicPostSecondaryScore { get; set; }
+
+		[Required(ErrorMessage = "You must enter a numeric Skilled Trades Apprenticeship Score.")]
+		public int SkilledTradesApprenticeshipScore { get; set; }
 	}
 }

@@ -22,5 +22,6 @@ namespace CJG.Core.Entities
 		public int EmployeeCountAssignedScore { get; set; }
 		public int FirstTimeApplicantAssignedScore { get; set; }
 		public int PublicPostSecondaryScore { get; set; }
+		public int SkilledTradesApprenticeshipScore { get; set; }
 	}
 }

@@ -107,9 +107,10 @@ namespace CJG.Application.Services
 			var smallBusinessScore = GetSmallBusinessScore(grantApplication, threshold);
 			var firstTimeApplicantScore = GetFirstTimeApplicantScore(grantApplication, threshold);
 			var publicPostSecondaryScore = GetPublicPostSecondaryScore(grantApplication, threshold);
-
+			var skilledTradesApprenticeshipScore = GetSkilledTradesApprenticeshipScore(grantApplication, threshold);
+			
 			var breakdown = grantApplication.PrioritizationScoreBreakdown ?? new PrioritizationScoreBreakdown();
-
+			
 			breakdown.RegionalScore = regionalResult.Score;
 			breakdown.RegionalName = regionalResult.Name;
 
@@ -124,6 +125,7 @@ namespace CJG.Application.Services
 			breakdown.FirstTimeApplicantScore = firstTimeApplicantScore;
 
 			breakdown.PublicPostSecondaryScore = publicPostSecondaryScore;
+			breakdown.SkilledTradesApprenticeshipScore = skilledTradesApprenticeshipScore;
 
 			foreach (var answer in breakdown.EligibilityAnswerScores.ToList())
 				_dbContext.PrioritizationScoreBreakdownAnswers.Remove(answer);
@@ -131,20 +133,6 @@ namespace CJG.Application.Services
 			breakdown.EligibilityAnswerScores = GetEligibilityQuestionAnswers(grantApplication);
 
 			return breakdown;
-		}
-
-		private int GetPublicPostSecondaryScore(GrantApplication grantApplication, PrioritizationThreshold threshold)
-		{
-			var trainingProgram = grantApplication.TrainingPrograms.FirstOrDefault();
-			var trainingProvider = trainingProgram?.TrainingProvider;
-
-			if (trainingProvider == null)
-				return 0;
-
-			if (trainingProvider.TrainingProviderType.Id != (int)TrainingProviderTypes.BcPublicPostSecondaryInstitution)
-				return 0;
-
-			return threshold.PublicPostSecondaryScore;
 		}
 
 		public bool UpdateIndustryScores(Stream stream)
@@ -712,6 +700,38 @@ namespace CJG.Application.Services
 				return 0;
 
 			return threshold.FirstTimeApplicantAssignedScore;
+		}
+
+		private int GetPublicPostSecondaryScore(GrantApplication grantApplication, PrioritizationThreshold threshold)
+		{
+			var trainingProgram = grantApplication.TrainingPrograms.FirstOrDefault();
+			var trainingProvider = trainingProgram?.TrainingProvider;
+
+			if (trainingProvider == null)
+				return 0;
+
+			if (trainingProvider.TrainingProviderType.Id != (int)TrainingProviderTypes.BcPublicPostSecondaryInstitution)
+				return 0;
+
+			return threshold.PublicPostSecondaryScore;
+		}
+
+		private int GetSkilledTradesApprenticeshipScore(GrantApplication grantApplication, PrioritizationThreshold threshold)
+		{
+			var trainingProgram = grantApplication.TrainingPrograms.FirstOrDefault();
+			if (trainingProgram == null)
+				return 0;
+
+			var validSkilledTrades = new List<int> { (int) TrainingLevels.Level3, (int) TrainingLevels.Level4 };
+
+			var trainingLevelId = trainingProgram.TrainingLevel?.Id;
+			if (!trainingLevelId.HasValue)
+				return 0;
+
+			if (!validSkilledTrades.Contains(trainingLevelId.Value))
+				return 0;
+
+			return threshold.SkilledTradesApprenticeshipScore;
 		}
 
 		private static List<PrioritizationScoreBreakdownAnswer> GetEligibilityQuestionAnswers(GrantApplication grantApplication)

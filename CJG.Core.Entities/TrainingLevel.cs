@@ -1,6 +1,6 @@
 ﻿namespace CJG.Core.Entities
 {
-    /// <summary>
+	/// <summary>
     /// TrainingLevel class, provides a way to manage a list of valid training level.
     /// </summary>
     /// <example>

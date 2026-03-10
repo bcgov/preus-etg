@@ -45,7 +45,8 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 				EmployeeCountAssignedScore = 4,
 				FirstTimeApplicantAssignedScore = 5,
 
-				PublicPostSecondaryScore = 37
+				PublicPostSecondaryScore = 37,
+				SkilledTradesApprenticeshipScore = 51
 			};
 
 			_helper.MockDbSet(GetPrioritizationIndustryScores());
@@ -559,6 +560,33 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			Assert.AreEqual(37, result.PublicPostSecondaryScore);
 		}
 
+		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Skilled Trades Apprenticeship Score")]
+		public void GetBreakdown_DoesNotSet_SkilledTradesApprenticeshipScore()
+		{
+			AddTrainingProgramOfLevel(_grantApplication, 22, "Not Level 3 or 4");
+			var result = _service.GetBreakdown(_grantApplication);
+
+			Assert.AreEqual(0, result.SkilledTradesApprenticeshipScore);
+		}
+
+		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Skilled Trades Apprenticeship Score")]
+		public void GetBreakdown_DoesSet_SkilledTradesApprenticeshipScore_Level3()
+		{
+			AddTrainingProgramOfLevel(_grantApplication, (int)TrainingLevels.Level3, TrainingLevels.Level3.GetDescription());
+			var result = _service.GetBreakdown(_grantApplication);
+
+			Assert.AreEqual(51, result.SkilledTradesApprenticeshipScore);
+		}
+
+		[TestMethod, TestCategory("Prioritization Service Methods"), TestCategory("Skilled Trades Apprenticeship Score")]
+		public void GetBreakdown_DoesSet_SkilledTradesApprenticeshipScore_Level4()
+		{
+			AddTrainingProgramOfLevel(_grantApplication, (int)TrainingLevels.Level4, TrainingLevels.Level4.GetDescription());
+			var result = _service.GetBreakdown(_grantApplication);
+
+			Assert.AreEqual(51, result.SkilledTradesApprenticeshipScore);
+		}
+
 		private void AddTrainingProgramOfType(GrantApplication grantApplication, int trainingProviderTypeId, string trainingProviderCaption)
 		{
 			if (grantApplication.TrainingPrograms.Any())
@@ -575,6 +603,22 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 
 			var trainingProgram = new TrainingProgram();
 			trainingProgram.TrainingProviders.Add(trainingProvider);
+
+			grantApplication.TrainingPrograms.Add(trainingProgram);
+		}
+
+		private void AddTrainingProgramOfLevel(GrantApplication grantApplication, int trainingLevelTypeId, string trainingLevelCaption)
+		{
+			if (grantApplication.TrainingPrograms.Any())
+				return;
+			var trainingProgram = new TrainingProgram
+			{
+				TrainingLevel = new TrainingLevel
+				{
+					Id = trainingLevelTypeId,
+					Caption = trainingLevelCaption
+				}
+			};
 
 			grantApplication.TrainingPrograms.Add(trainingProgram);
 		}
