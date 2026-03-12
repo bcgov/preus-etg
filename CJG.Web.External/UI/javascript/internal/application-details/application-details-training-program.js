@@ -273,6 +273,13 @@ app.controller('TrainingProgram', function ($scope, $attrs, $controller, $timeou
     return loadCipsCode(level, parentId, 'programCipsCode' + level);
   }
 
+  $scope.updatedTrainingObjective = function () {
+    if ($scope.model.TrainingObjectiveId !== 3) {
+      $scope.model.TrainingLevelId = null;
+      $scope.model.InDemandOccupationId = null;
+    }
+  }
+
   $scope.previewBusinessTrainingRelevance = function () {
     return ngDialog.open({
         template: '/content/dialogs/_FullContent.html',

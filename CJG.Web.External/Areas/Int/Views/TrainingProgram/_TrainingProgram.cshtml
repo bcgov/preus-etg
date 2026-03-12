@@ -76,7 +76,7 @@
                     <div class="form__label">Training Objective:</div>
                     <div class="form__control">
                         <div class="control-wrapper selectmenu input--full">
-                            <select ng-model="model.TrainingObjectiveId" ng-options="item.Key as item.Value for item in trainingObjectives" class="input--full" ng-validation ng-editing></select>
+                            <select ng-model="model.TrainingObjectiveId" ng-options="item.Key as item.Value for item in trainingObjectives" class="input--full" ng-validation ng-editing ng-change="updatedTrainingObjective()"></select>
                         </div>
                     </div>
                 </div>
