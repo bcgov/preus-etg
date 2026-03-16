@@ -23,6 +23,9 @@ namespace CJG.Web.External.Areas.Int.Models
 		public int SmallBusinessScore { get; set; }
 		public int FirstTimeApplicantScore { get; set; }
 
+		public int PublicPostSecondaryScore { get; set; }
+		public int SkilledTradesApprenticeshipScore { get; set; }
+
 		public List<Tuple<string, int>> QuestionScores { get; set; } = new List<Tuple<string, int>>();
 
 		public int TotalScore { get; set; }
@@ -53,7 +56,9 @@ namespace CJG.Web.External.Areas.Int.Models
 
 			SmallBusinessScore = breakdown.SmallBusinessScore;
 			FirstTimeApplicantScore = breakdown.FirstTimeApplicantScore;
-
+			PublicPostSecondaryScore = breakdown.PublicPostSecondaryScore;
+			SkilledTradesApprenticeshipScore = breakdown.SkilledTradesApprenticeshipScore;
+			
 			QuestionScores = breakdown.EligibilityAnswerScores
 				.Select(q => new Tuple<string, int>(q.QuestionedAnswered.EligibilityQuestion, q.QuestionScore))
 				.ToList();

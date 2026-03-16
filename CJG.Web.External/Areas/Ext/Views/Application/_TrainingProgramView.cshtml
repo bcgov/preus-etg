@@ -48,6 +48,14 @@
         </div>
     </div>
     <div class="form__group">
+        <div class="form__label">Training Objective:</div>
+        <div class="form__control">
+            <div ng-if="model.TrainingProgram.TrainingObjective != null">
+                {{model.TrainingProgram.TrainingObjective.Caption}}
+            </div>
+        </div>
+    </div>
+    <div class="form__group">
         <div class="form__label">Skill level:</div>
         <div class="form__control">
             <div ng-if="model.TrainingProgram.SkillLevel != null">
@@ -56,7 +64,7 @@
         </div>
     </div>
     <div class="form__group">
-        <div class="form__label">Training skill focus:</div>
+        <div class="form__label">Skill type:</div>
         <div class="form__control">
             <div ng-if="model.TrainingProgram.SkillFocus != null">
                 {{model.TrainingProgram.SkillFocus.Caption}}

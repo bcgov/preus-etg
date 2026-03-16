@@ -12,6 +12,8 @@ namespace CJG.Web.External.Areas.Int.Models
 
 		public string EmploymentStatus { get; set; }
 		public string MultipleEmploymentPositions { get; set; }
+		public string HaveYouEverBeenEmployed { get; set; }
+
 		public string CityofWork { get; set; }
 		public string ReceivingEIValue { get; set; }
 
@@ -52,7 +54,8 @@ namespace CJG.Web.External.Areas.Int.Models
 		{
 			EmploymentStatus = participantForm.EmploymentStatus?.Caption;
 			MultipleEmploymentPositions = participantForm.MultipleEmploymentPositions.AsYesOrNo();
-				
+			HaveYouEverBeenEmployed = participantForm.HaveYouEverBeenEmployed.AsYesOrNo();
+
 			CityofWork = participantForm.PrimaryCity;
 			ReceivingEIValue = participantForm.EIBenefit?.Caption;
 			if (participantForm?.GrantApplication?.GrantOpening?.GrantStream?.GrantProgram?.ProgramTypeId == ProgramTypes.WDAService)

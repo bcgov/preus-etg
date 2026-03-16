@@ -13,6 +13,9 @@ namespace CJG.Web.External.Areas.Part.Models
 		public int EmploymentStatus { get; set; }
 		public List<KeyValuePair<int, string>> EmploymentStatuses { get; set; } = new List<KeyValuePair<int, string>>();
 
+		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidateHaveYouEverBeenEmployed")]
+		public bool? HaveYouEverBeenEmployed { get; set; }
+
 		[CustomValidation(typeof(ParticipantInfoStep4VmValidation), "ValidateMultipleEmploymentPositions")]
 		public bool? MultipleEmploymentPositions { get; set; }
 

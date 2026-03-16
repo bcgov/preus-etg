@@ -6,18 +6,19 @@ using CJG.Core.Entities;
 
 namespace CJG.Web.External.Areas.Ext.Models
 {
-	public class OverviewTrainingProgram
+    public class OverviewTrainingProgram
 	{
 		public int Id { get; set; }
 		public TrainingProgramStates TrainingProgramState { get; set; }
 		public string CourseTitle { get; set; }
 		public IEnumerable<DeliveryMethod> DeliveryMethods { get; set; }
 		public int TotalTrainingHours { get; set; }
+		public TrainingObjective TrainingObjective { get; set; }
 		public SkillsFocus SkillFocus { get; set; }
 		public SkillLevel SkillLevel { get; set; }
 		public string EligibleExpenseBreakdown { get; set; }
 		public string ServiceLineBreakdown { get; set; }
-		public bool ShowSkillFocusFields => SkillFocus != null && (SkillFocus.Id == 5 || SkillFocus.Id == 6);
+		public bool ShowSkillFocusFields => TrainingObjective != null && (TrainingObjective.Id == (int)TrainingObjectives.ApprenticeshipTraining);
 		public InDemandOccupation InDemandOccupation { get; set; }
 		public TrainingLevel TrainingLevel { get; set; }
 		public bool? MemberOfUnderRepresentedGroup { get; set; }
@@ -39,13 +40,15 @@ namespace CJG.Web.External.Areas.Ext.Models
 
 		public OverviewTrainingProgram()
 		{
-
 		}
+
 		public OverviewTrainingProgram(TrainingProgram trainingProgram)
 		{
 			Utilities.MapProperties(trainingProgram, this);
+
 			TrainingProgramState = trainingProgram.TrainingProgramState;
 			DeliveryMethods = trainingProgram.DeliveryMethods;
+			TrainingObjective = trainingProgram.TrainingObjective;
 			SkillLevel = trainingProgram.SkillLevel;
 			SkillFocus = trainingProgram.SkillFocus;
 			EligibleExpenseBreakdown = trainingProgram.EligibleCostBreakdown?.EligibleExpenseBreakdown.Caption;
@@ -60,10 +63,9 @@ namespace CJG.Web.External.Areas.Ext.Models
 			CourseOutlineDocument = trainingProgram.CourseOutlineDocument;
 
 			TotalCost = trainingProgram.EligibleCostBreakdown?.EstimatedCost;
+
 			if (trainingProgram.TrainingProviders.Any())
-			{
 				AssociatedProvider = new OverviewTrainingProvider(trainingProgram.TrainingProviders.First());
-			}
 		}
 	}
 }

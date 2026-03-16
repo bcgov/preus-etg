@@ -73,6 +73,14 @@
                     </div>
                 </div>
                 <div class="form__group">
+                    <div class="form__label">Training Objective:</div>
+                    <div class="form__control">
+                        <div class="control-wrapper selectmenu input--full">
+                            <select ng-model="model.TrainingObjectiveId" ng-options="item.Key as item.Value for item in trainingObjectives" class="input--full" ng-validation ng-editing ng-change="updatedTrainingObjective()"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form__group">
                     <div class="form__label">Skill level:</div>
                     <div class="form__control">
                         <div class="control-wrapper selectmenu input--full">
@@ -81,14 +89,15 @@
                     </div>
                 </div>
                 <div class="form__group">
-                    <div class="form__label">Training skill focus:</div>
+                    <div class="form__label">Skill type:</div>
                     <div class="form__control">
                         <div class="control-wrapper selectmenu input--full">
                             <select ng-model="model.SkillFocusId" ng-options="item.Key as item.Value for item in skillFocuses" class="input--full" ng-validation ng-editing></select>
                         </div>
+                        <span ng-if="model.ExistingSkillFocus && !section.editing">{{ model.ExistingSkillFocus }} [Deactivated]</span>
                     </div>
                 </div>
-                <div ng-if="model.SkillFocusId == 5">
+                <div ng-if="model.TrainingObjectiveId == 3">
                     <div class="form__group">
                         <div class="form__label">In demand occupation:</div>
                         <div class="form__control">
@@ -112,10 +121,10 @@
                         <div class="form-address-group form__control">
                             <div class="control-wrapper" ng-validation="errors.MemberOfUnderRepresentedGroup">
                                 <input type="radio" ng-model="model.MemberOfUnderRepresentedGroup" id="member-of-under-represented-group-yes-{{section.name}}" name="member-of-under-represented-group-{{section.name}}" ng-value="true" class="form__group--radio-inline" ng-editing />
-                                <label for="member-of-under-represented-group-yes-{{section.name}}">Yes</label>
-                                <input type="radio" ng-model="model.MemberOfUnderRepresentedGroup" id="member-of-under-represented-group-no-{{section.name}}" name="member-of-under-represented-group-{{section.name}}" ng-value="false" class="form__group--radio-inline" ng-editing />
-                                <label for="member-of-under-represented-group-no-{{section.name}}">No</label>
-                            </div>
+                            <label for="member-of-under-represented-group-yes-{{section.name}}">Yes</label>
+                            <input type="radio" ng-model="model.MemberOfUnderRepresentedGroup" id="member-of-under-represented-group-no-{{section.name}}" name="member-of-under-represented-group-{{section.name}}" ng-value="false" class="form__group--radio-inline" ng-editing />
+                            <label for="member-of-under-represented-group-no-{{section.name}}">No</label>
+</div>
                         </div>
                     </div>
                     <div class="form__group" ng-if="model.MemberOfUnderRepresentedGroup === true">

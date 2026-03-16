@@ -152,7 +152,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				if (!existingFileUploaded && !anyFilesUploaded)
 					ModelState.AddModelError("CourseOutlineDocument", "You must provide a course outline document.");
 
-				if (!(new int[] { Core.Entities.Constants.SkillsFocus_ApprenticeshipTraining }.Contains(model.SkillFocusId.GetValueOrDefault())))
+				if (!new int[] { (int)TrainingObjectives.ApprenticeshipTraining }.Contains(model.TrainingObjectiveId.GetValueOrDefault()))
 				{
 					ModelState.Remove("InDemandOccupationId");
 					ModelState.Remove("TrainingLevelId");
@@ -217,7 +217,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				if (!existingFileUploaded && !anyFilesUploaded)
 					ModelState.AddModelError("CourseOutlineDocument", "You must provide a course outline document.");
 
-				if (!(new int[] { Core.Entities.Constants.SkillsFocus_ApprenticeshipTraining }.Contains(model.SkillFocusId.GetValueOrDefault())))
+				if (!new int[] { (int)TrainingObjectives.ApprenticeshipTraining }.Contains(model.TrainingObjectiveId.GetValueOrDefault()))
 				{
 					ModelState.Remove("InDemandOccupationId");
 					ModelState.Remove("TrainingLevelId");
@@ -294,6 +294,34 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				throw new NotAuthorizedException("User does not have access to document.");
 
 			return File(attachment.AttachmentData, MediaTypeNames.Application.Octet, $"{attachment.FileName}{attachment.FileExtension}");
+		}
+
+		/// <summary>
+		/// Get an array of training objectives.
+		/// </summary>
+		/// <returns></returns>
+		[HttpGet]
+		[ValidateRequestHeader]
+		[PreventSpam]
+		[Route("Training/Program/Training/Objectives")]
+		public JsonResult GetTrainingObjectives()
+		{
+			var results = new List<CollectionItemModel>();
+			try
+			{
+				results = _staticDataService.GetTrainingObjectives()
+					.Select(x => new CollectionItemModel
+					{
+						Id = x.Id,
+						Caption = x.Caption,
+						RowSequence = x.RowSequence
+					}).ToList();
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex);
+			}
+			return Json(results, JsonRequestBehavior.AllowGet);
 		}
 
 		/// <summary>

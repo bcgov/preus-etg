@@ -105,6 +105,7 @@ namespace CJG.Core.Entities
 		public const int Delivery_Workplace = 2;
 		public const int Delivery_Online = 3;
 
+		[Obsolete("This isn't used anymore")]
 		public const int SkillsFocus_ApprenticeshipTraining = 5;
 
 		public const int ExpectedQualifications_None = 5;

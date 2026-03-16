@@ -136,6 +136,25 @@
                 <div class="control-wrapper form-control"><input type="text" class="input--small" ng-model="model.TotalTrainingHours" maxlength="5" ng-number ng-validation></div>
             </div>
 
+            <div class="form__group">
+                <div class="label-wrapper"><label class="form__label">Training objective <abbr title="Required">*</abbr></label></div>
+                <div class="control-wrapper">
+                    <div class="selectmenu input--medium" ng-validation="errors.TrainingObjectiveId">
+                        <select class="input--medium form-control ng-pristine ng-untouched ng-valid ng-empty" ng-model="model.TrainingObjectiveId" ng-options="item.Id as item.Caption for item in TrainingObjectives">
+                            <option value="" selected="selected">&lt; Select value &gt;</option>
+                        </select>
+                    </div>
+                </div>
+                <br />
+                <div class="notice notice--icon">
+                    <p><strong>Occupational Skills Training</strong> - Training through public post-secondary institutions or private training providers leading to a certificate or licence with the aim of maintaining or obtaining new employment (e.g., early childhood education certificate, Class 1 driver’s licence).</p>
+                    <p><strong>Short-Term Training</strong> - Short duration training certificates/courses needed to meet the specific job or industry requirements (e.g. first aid certifications, food safety).</p>
+                    <p><strong>Apprenticeship Training</strong> - Apprentices are employed persons who are attached to an employer and registered with SkilledTradesBC. Apprentices are released by their employer in order to attend technical classroom training.</p>
+                    <p><strong>Literacy and Language Training</strong> - Training focusing on the upskilling of literacy, essential skills and language training, including any literacy or language training conducted for pre-apprenticeship programs.</p>
+                    <p><strong>Other</strong> - Other skills development activities that are not identified in the other categories.</p>
+                </div>
+            </div>
+            
             <div class="form__group input--medium">
                 <div class="label-wrapper"><label class="form__label">Skill level <abbr title="Required">*</abbr></label></div>
                 <div class="control-wrapper">
@@ -147,8 +166,8 @@
                 </div>
             </div>
 
-            <div class="form__group input--medium">
-                <div class="label-wrapper"><label class="form__label">Main focus of training skills <abbr title='Required'>*</abbr></label></div>
+            <div class="form__group">
+                <div class="label-wrapper"><label class="form__label">Skill type<abbr title='Required'>*</abbr></label></div>
                 <div class="control-wrapper">
                     <div class="selectmenu input--medium" ng-validation="errors.SkillFocusId">
                         <select class="input--medium form-control ng-pristine ng-untouched ng-valid ng-empty" ng-model="model.SkillFocusId" ng-options="item.Id as item.Caption for item in SkillFocus">
@@ -156,9 +175,16 @@
                         </select>
                     </div>
                 </div>
+                <br/>
+                <div class="notice notice--icon">
+                    <p><strong>Management and Business Skills</strong> - Strategic planning, leading and motivating, allocating and controlling resources, evaluating, co-ordinating and organizing, recruiting and hiring, supervising.</p>
+                    <p><strong>Soft Skills</strong> - Communication skills, personal management skills (e.g. personal goal setting, time management, etc.) and working as a team.</p>
+                    <p><strong>Technical Skills</strong> - Skills required to operate a particular machine or use a particular technology.</p>
+                    <p><strong>Essential Skills</strong> - Foundational skills needed for the core basics of work, learning and life such as reading, writing, document use, numeracy.</p>
+                </div>
             </div>
 
-            <div ng-if="model.SkillFocusId === 5">
+            <div ng-if="model.TrainingObjectiveId === 3">
                 <div class="form__group">
                     <div class="form__label">Apprenticeship training is for <abbr title='Required'>*</abbr></div>
                     <div class="form__control">

@@ -23,8 +23,10 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 		public DateTime MinEndDate { get; set; }
 		public DateTime MaxEndDate { get; set; }
 		public int? InDemandOccupationId { get; set; }
+		public int? TrainingObjectiveId { get; set; }
 		public int SkillLevelId { get; set; }
 		public int? SkillFocusId { get; set; }
+		public string ExistingSkillFocus { get; set; }
 		public int ExpectedQualificationId { get; set; }
 		public int? TrainingLevelId { get; set; }
 		public string TrainingBusinessCase { get; set; }
@@ -78,6 +80,13 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 			if (trainingProgram.CourseOutlineDocument != null)
 				CourseOutlineDocument = new AttachmentViewModel(trainingProgram.CourseOutlineDocument);
 
+			// Keep existing value for reference and force the user to select a new type
+			if (trainingProgram.SkillFocus?.IsActive == false)
+			{ 
+				ExistingSkillFocus = trainingProgram.SkillFocus.Caption;
+				SkillFocusId = null;
+			}
+
 			MapCipsCodes(trainingProgram, cipsCodesService);
 		}
 
@@ -93,8 +102,11 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 
 		public void MapTo(TrainingProgram trainingProgram, IStaticDataService staticDataService)
 		{
-			if (trainingProgram == null) throw new ArgumentNullException(nameof(trainingProgram));
-			if (staticDataService == null) throw new ArgumentNullException(nameof(staticDataService));
+			if (trainingProgram == null)
+				throw new ArgumentNullException(nameof(trainingProgram));
+
+			if (staticDataService == null)
+				throw new ArgumentNullException(nameof(staticDataService));
 
 			Utilities.MapProperties(this, trainingProgram);
 			trainingProgram.StartDate = StartDate.ToUtcMorning();

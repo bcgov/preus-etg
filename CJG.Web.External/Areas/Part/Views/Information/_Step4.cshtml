@@ -12,10 +12,43 @@
         CssClass = "input--full",
         IsInnerModel = true,
         DefaultOverride = true,
-        OnChange = "initializeDatePickerForLastDayOfWork()"
+        OnChange = "changeEmploymentStatus()"
     })
-
+    
     <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4">
+        <div class="form__group form__group--radio-inline">
+            <div class="form__label">
+                Have you ever been employed? <abbr title="Required">*</abbr>
+            </div>
+                
+            <div>
+                <div class="form-item">
+                    @Html.RadioButton(new FormControl
+                    {
+                        Label = "Yes",
+                        Id = "HaveYouEverBeenEmployedYes",
+                        Model = "model.ParticipantInfoStep4ViewModel.HaveYouEverBeenEmployed",
+                        Value = "true",
+                        OnChange = "initializeDatePickerForLastDayOfWork()"
+                    })
+                </div>
+
+                <div class="form-item">
+                    @Html.RadioButton(new FormControl
+                    {
+                        Label = "No",
+                        Id = "HaveYouEverBeenEmployedNo",
+                        Model = "model.ParticipantInfoStep4ViewModel.HaveYouEverBeenEmployed",
+                        Value = "false"
+                    })
+                </div>
+
+                @Html.ValidationError("model.ParticipantInfoStep4ViewModel.HaveYouEverBeenEmployed", true)
+            </div>
+        </div>
+    </div>
+
+    <div ng-if="model.ParticipantInfoStep4ViewModel.HaveYouEverBeenEmployed && (model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4)">
         @Html.DatePickerDropDownList(new DatePickerFormControl
         {
             Id = "previouslastdayofwork-date",
@@ -495,8 +528,7 @@
             })
         </div>
 
-
-        <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 5">
+        <div ng-if="model.ParticipantInfoStep4ViewModel.HaveYouEverBeenEmployed && (model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4)">
             @Html.TextBoxBlock(new FormControl
             {
                 Label = "Who was your last previous employer? <abbr title='Required'>*</abbr>",
@@ -506,7 +538,7 @@
             })
         </div>
 
-        <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4">
+        <div ng-if="model.ParticipantInfoStep4ViewModel.HaveYouEverBeenEmployed && (model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4)">
             @Html.TextBoxBlock(new FormControl
             {
                 Label = "How many hours per week did you work on average in your previous position? <abbr title='Required'>*</abbr>",
@@ -590,7 +622,7 @@
             })
         </div>
 
-        <div ng-if="model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4">
+        <div ng-if="model.ParticipantInfoStep4ViewModel.HaveYouEverBeenEmployed && (model.ParticipantInfoStep4ViewModel.EmploymentStatus == 1 || model.ParticipantInfoStep4ViewModel.EmploymentStatus == 4)">
             <div class="form__group form__group--radio-inline">
                 <label class="form__label">What is the National Occupation Classification (NOC) <u><em>of your previous employment</em></u>? <abbr title="Required">*</abbr></label>
                 <div class="form__control">

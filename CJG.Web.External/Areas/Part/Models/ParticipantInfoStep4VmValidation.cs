@@ -11,14 +11,38 @@ namespace CJG.Web.External.Areas.Part.Models
 			return employmentType == 2 || employmentType == 3 || employmentType == 6;
 		}
 
-		private static bool WasEmployed(int employmentType)
+		private static bool IsUnemployed(int employmentType)
 		{
 			return employmentType == 1 || employmentType == 4;
 		}
 
-		private static bool WasEmployedOrInTraining(int employmentType)
+		//private static bool WasEmployedOrInTraining(int employmentType, bool? haveYouEverBeenEmployed)
+		//{
+		//	var previouslyEmployed = haveYouEverBeenEmployed ?? false;
+		//	return previouslyEmployed && (employmentType == 1 || employmentType == 4 || employmentType == 5);
+		//}
+
+		private static bool WasEmployed(int employmentType, bool? haveYouEverBeenEmployed)
 		{
-			return employmentType == 1 || employmentType == 4 || employmentType == 5;
+			var previouslyEmployed = haveYouEverBeenEmployed ?? false;
+			return previouslyEmployed && (employmentType == 1 || employmentType == 4);
+		}
+
+		public static ValidationResult ValidateHaveYouEverBeenEmployed(bool? haveYouEverBeenEmployed, ValidationContext context)
+		{
+			ParticipantInfoStep4ViewModel model = context.ObjectInstance as ParticipantInfoStep4ViewModel;
+			if (model == null)
+				throw new ArgumentNullException();
+
+			var result = ValidationResult.Success;
+
+			if (!IsUnemployed(model.EmploymentStatus))
+				return result;
+
+			if (!haveYouEverBeenEmployed.HasValue)
+				result = new ValidationResult("The Have you ever been employed field is required.");
+
+			return result;
 		}
 
 		public static ValidationResult ValidateMultipleEmploymentPositions(bool? multipleEmploymentPositions, ValidationContext context)
@@ -44,7 +68,7 @@ namespace CJG.Web.External.Areas.Part.Models
 			if (model == null)
 				throw new ArgumentNullException();
 
-			if (!WasEmployed(model.EmploymentStatus))
+			if (!WasEmployed(model.EmploymentStatus, model.HaveYouEverBeenEmployed))
 				return ValidationResult.Success;
 
 			if (!lastDateOfWork.HasValue)
@@ -128,7 +152,7 @@ namespace CJG.Web.External.Areas.Part.Models
 			if (model == null)
 				throw new ArgumentNullException();
 
-			if (!WasEmployed(model.EmploymentStatus))
+			if (!WasEmployed(model.EmploymentStatus, model.HaveYouEverBeenEmployed))
 				return ValidationResult.Success;
 
 			if (!previousAverageHoursPerWeek.HasValue)
@@ -332,7 +356,7 @@ namespace CJG.Web.External.Areas.Part.Models
 			if (model == null)
 				throw new ArgumentNullException();
 
-			if (!WasEmployed(model.EmploymentStatus))
+			if (!WasEmployed(model.EmploymentStatus, model.HaveYouEverBeenEmployed))
 				return ValidationResult.Success;
 
 			if (!previousHourlyWage.HasValue)
@@ -352,13 +376,13 @@ namespace CJG.Web.External.Areas.Part.Models
 
 			ValidationResult result = ValidationResult.Success;
 
-			if (WasEmployedOrInTraining(model.EmploymentStatus))
-			{
-				if (string.IsNullOrWhiteSpace(previousEmployerFullName))
-					result = new ValidationResult("The Last Previous Employer field is required.");
-			}
+			if (!WasEmployed(model.EmploymentStatus, model.HaveYouEverBeenEmployed))
+				return ValidationResult.Success;
 
-			return result;
+			if (string.IsNullOrWhiteSpace(previousEmployerFullName))
+				return new ValidationResult("The Last Previous Employer field is required.");
+
+			return ValidationResult.Success;
 		}
 
 		public static ValidationResult ValidatePrimaryCity(string primaryCity, ValidationContext context)
@@ -444,7 +468,7 @@ namespace CJG.Web.External.Areas.Part.Models
 			if (model == null)
 				throw new ArgumentNullException();
 
-			if (!WasEmployed(model.EmploymentStatus))
+			if (!WasEmployed(model.EmploymentStatus, model.HaveYouEverBeenEmployed))
 				return ValidationResult.Success;
 
 			if (!nocCode.HasValue || nocCode <= 0)
@@ -459,7 +483,7 @@ namespace CJG.Web.External.Areas.Part.Models
 			if (model == null)
 				throw new ArgumentNullException();
 
-			if (!WasEmployed(model.EmploymentStatus))
+			if (!WasEmployed(model.EmploymentStatus, model.HaveYouEverBeenEmployed))
 				return ValidationResult.Success;
 
 			if (!naicsCode.HasValue || naicsCode <= 0)

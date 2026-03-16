@@ -60,10 +60,44 @@ namespace CJG.Testing.UnitTests.Models
 		[DataRow(4, true)]
 		[DataRow(5, false)]
 		[DataRow(6, false)]
+		public void HaveYouEverBeenEmployedShouldBeRequired(int employmentStatus, bool required)
+		{
+			_model.EmploymentStatus = employmentStatus;
+
+			var results = ValidateModel(_model);
+			var errorToLookFor = "The Have you ever been employed field is required.";
+
+			Assert.AreEqual(required, results.Any(x => x.ErrorMessage == errorToLookFor));
+		}
+
+		[DataTestMethod]
+		[DataRow(false, false)]
+		[DataRow(true, true)]
+		public void HaveYouEverBeenEmployedAffectsSubQuestions(bool beenEmployed, bool required)
+		{
+			_model.HaveYouEverBeenEmployed = beenEmployed;
+
+			_model.EmploymentStatus = 1;
+			_model.PreviousEmploymentLastDayOfWork = null;
+
+			var results = ValidateModel(_model);
+			var errorToLookFor = "Previous employment last day of work is required.";
+
+			Assert.AreEqual(required, results.Any(x => x.ErrorMessage == errorToLookFor));
+		}
+
+		[DataTestMethod]
+		[DataRow(1, true)]
+		[DataRow(2, false)]
+		[DataRow(3, false)]
+		[DataRow(4, true)]
+		[DataRow(5, false)]
+		[DataRow(6, false)]
 		public void LastWorkedDateShouldBeRequired(int employmentStatus, bool required)
 		{
 			_model.EmploymentStatus = employmentStatus;
 			_model.PreviousEmploymentLastDayOfWork = null;
+			_model.HaveYouEverBeenEmployed = true;
 
 			var results = ValidateModel(_model);
 			var errorToLookFor = "Previous employment last day of work is required.";
@@ -80,6 +114,7 @@ namespace CJG.Testing.UnitTests.Models
 
 			_model.EmploymentStatus = 1;
 			_model.PreviousEmploymentLastDayOfWork = currentDate.AddDays(dayOffset);
+			_model.HaveYouEverBeenEmployed = true;
 
 			var results = ValidateModel(_model);
 			var errorToLookFor = "Previous employment last day of work cannot be greater than today.";
@@ -96,6 +131,7 @@ namespace CJG.Testing.UnitTests.Models
 		{
 			_model.EmploymentStatus = employmentStatus;
 			_model.PreviousHourlyWage = null;
+			_model.HaveYouEverBeenEmployed = true;
 
 			var results = ValidateModel(_model);
 			var errorToLookFor = "The Previous Average Hour field is required.";
@@ -125,12 +161,13 @@ namespace CJG.Testing.UnitTests.Models
 		[DataRow(2, false)]
 		[DataRow(3, false)]
 		[DataRow(4, true)]
-		[DataRow(5, true)]
+		[DataRow(5, false)]
 		[DataRow(6, false)]
 		public void LastPreviousEmployerNameShouldBeRequired(int employmentStatus, bool required)
 		{
 			_model.EmploymentStatus = employmentStatus;
 			_model.PreviousEmployerFullName = null;
+			_model.HaveYouEverBeenEmployed = true;
 
 			var results = ValidateModel(_model);
 			var errorToLookFor = "The Last Previous Employer field is required.";
@@ -148,6 +185,8 @@ namespace CJG.Testing.UnitTests.Models
 		public void PreviousEmploymentNocShouldBeRequired(int employmentStatus, bool required)
 		{
 			_model.EmploymentStatus = employmentStatus;
+			_model.HaveYouEverBeenEmployed = true;
+
 			_model.PreviousEmploymentNoc1Id = null;
 			_model.PreviousEmploymentNoc2Id = null;
 			_model.PreviousEmploymentNoc3Id = null;
@@ -186,6 +225,8 @@ namespace CJG.Testing.UnitTests.Models
 		public void PreviousEmploymentNaicsShouldBeRequired(int employmentStatus, bool required)
 		{
 			_model.EmploymentStatus = employmentStatus;
+			_model.HaveYouEverBeenEmployed = true;
+
 			_model.PreviousEmploymentNaics1Id = null;
 			_model.PreviousEmploymentNaics2Id = null;
 			_model.PreviousEmploymentNaics3Id = null;

@@ -128,6 +128,25 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 		[HttpGet]
 		[OutputCache(CacheProfile = "StaticData", VaryByParam = "none", Location = OutputCacheLocation.ServerAndClient)]
+		[Route("Application/Training/Program/Training/Objectives")]
+		public JsonResult GetTrainingObjectives()
+		{
+			KeyValueListItem<int, string>[] model = null;
+			try
+			{
+				var entity = _staticDataService.GetTrainingObjectives().OrderBy(e => e.RowSequence);
+				model = entity.Select(o => new KeyValueListItem<int, string>(o.Id, o.Caption)).ToArray();
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex);
+			}
+
+			return Json(model, JsonRequestBehavior.AllowGet);
+		}
+
+		[HttpGet]
+		[OutputCache(CacheProfile = "StaticData", VaryByParam = "none", Location = OutputCacheLocation.ServerAndClient)]
 		[Route("Application/Training/Program/Skill/Levels")]
 		public JsonResult GetSkillLevels()
 		{
@@ -153,7 +172,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			KeyValueListItem<int, string>[] model = null;
 			try
 			{
-				var entity = _staticDataService.GetSkillsFocuses();
+				var entity = _staticDataService.GetSkillsFocuses().OrderBy(e => e.RowSequence);
 				model = entity.Select(o => new KeyValueListItem<int, string>(o.Id, o.Caption)).ToArray();
 			}
 			catch (Exception ex)

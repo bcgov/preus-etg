@@ -47,7 +47,10 @@ namespace CJG.Web.External.Areas.Ext.Models.Reports
 			if (completionReportQuestion == null) throw new ArgumentNullException(nameof(completionReportQuestion));
 
 			Utilities.MapProperties(completionReportQuestion, this);
-			var options = completionReportQuestion.Options.Select(o => new CompletionReportOptionViewModel(o));
+			var options = completionReportQuestion.Options
+				.OrderBy(o => o.Sequence)
+				.Select(o => new CompletionReportOptionViewModel(o));
+
 			var level1Options = options.Where(o => o.Level == 1).ToList();
 			var level2Options = options.Where(o => o.Level == 2).ToList();
 
