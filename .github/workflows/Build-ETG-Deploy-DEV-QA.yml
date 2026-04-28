@@ -429,7 +429,8 @@ jobs:
   deploy_qa:
     name: Deploy to QA
     environment: QA
-    runs-on: etg-cd-dev
+    #runs-on: etg-cd-dev
+    runs-on: etg-ci
     needs: [setup_build, build_qa]    
     env:
       BUILD_NUMBER: ${{ needs.setup_build.outputs.build_number }}
