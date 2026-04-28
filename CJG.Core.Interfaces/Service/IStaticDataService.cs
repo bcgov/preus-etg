@@ -90,6 +90,8 @@ namespace CJG.Core.Interfaces.Service
 		IEnumerable<TrainingPeriod> GetTrainingPeriodsForFiscalYear(int fiscalYearId, int grantProgramId, int grantStreamId);
 		TrainingPeriod GetTrainingPeriod(int id);
 
+		IEnumerable<PublicPostSecondarySchool> GetPublicPostSecondarySchools();
+
 		IEnumerable<NoteType> GetNoteTypes();
 		NoteType GetNoteType(NoteTypes type);
 

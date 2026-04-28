@@ -141,6 +141,7 @@
     <Compile Include="PrioritizationScoreBreakdown.cs" />
     <Compile Include="PrioritizationScoreBreakdownAnswer.cs" />
     <Compile Include="PrioritizationThreshold.cs" />
+    <Compile Include="PublicPostSecondarySchool.cs" />
     <Compile Include="ReconciliationPayment.cs" />
     <Compile Include="ReconciliationReport.cs" />
     <Compile Include="GrantProgramNotificationType.cs" />

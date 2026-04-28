@@ -346,6 +346,26 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			}
 			return Json(types, JsonRequestBehavior.AllowGet);
 		}
+
+		[HttpGet]
+		[PreventSpam]
+		[ValidateRequestHeader]
+		[Route("Training/Provider/PublicPostSecondarySchools")]
+		public JsonResult GetPublicPostSecondarySchools()
+		{
+			var schools = new List<PublicPostSecondarySchoolModel>();
+			try
+			{
+				schools = _staticDataService.GetPublicPostSecondarySchools()
+					.Select(s => new PublicPostSecondarySchoolModel(s))
+					.ToList();
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex);
+			}
+			return Json(schools, JsonRequestBehavior.AllowGet);
+		}
 		#endregion
 
 		#region Attachment

@@ -172,6 +172,7 @@ namespace CJG.Infrastructure.Entities
 		DbSet<PrioritizationHighOpportunityOccupationScore> PrioritizationHighOpportunityOccupationScores { get; }
 		DbSet<PrioritizationRegion> PrioritizationRegions { get; }
 		DbSet<PrioritizationPostalCode> PrioritizationPostalCodes { get; }
+		DbSet<PublicPostSecondarySchool> PublicPostSecondarySchools { get; }
 		#endregion
 
 		#region Completion Report
