@@ -6,6 +6,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Web;
 using CJG.Core.Entities;
+using CJG.Core.Entities.Extensions;
 using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
 using CJG.Infrastructure.Entities;
@@ -523,6 +524,9 @@ namespace CJG.Application.Services
 		/// </summary>
 		private void OnSelectForAssessment()
 		{
+			if (_grantApplication.HasBeenReturnedToNew())
+				_grantApplication.TrainingCost.CopyEstimatedIntoAgreed();
+
 			var reservedApplicationIds = _grantOpeningService.MakeReservation(_grantApplication);
 
 			LogStateChangesForReservedApplications(reservedApplicationIds);
@@ -531,7 +535,6 @@ namespace CJG.Application.Services
 
 			_logger.Info($"Grant application {_grantApplication.Id} has been selected for assessment.");
 		}
-
 
 		/// <summary>
 		/// File annotation contains director instructions.
@@ -559,7 +562,7 @@ namespace CJG.Application.Services
 			_grantApplication.TrainingCost.ResetEstimatedCosts();
 
 			_grantOpeningService.AdjustFinancialStatements(_grantApplication, _originalState, ApplicationWorkflowTrigger.ReturnUnderAssessmentToNew);
-
+			
 			LogStateChanges();
 			UpdateGrantApplication();
 

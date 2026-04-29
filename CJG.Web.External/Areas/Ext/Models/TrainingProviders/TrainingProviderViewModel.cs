@@ -28,6 +28,9 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingProviders
 		public int? GrantApplicationId { get; set; }
 		public int? TrainingProgramId { get; set; }
 
+		public bool? IsPublicPostSecondarySchool { get; set; }
+		public int? PublicPostSecondarySchoolId { get; set; }
+
 		[Required(ErrorMessage = "Training Provider Type is required"), Range(1, int.MaxValue, ErrorMessage = "Training Provider Type is required")]
 		public int? TrainingProviderTypeId { get; set; }
 
@@ -217,6 +220,16 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingProviders
 			GrantApplicationId = trainingProvider.GrantApplicationId;
 			var grantApplication = trainingProvider.GetGrantApplication();
 			GrantApplicationRowVersion = Convert.ToBase64String(grantApplication.RowVersion);
+
+			// For new Providers going forward, we want to default to the School being on
+			if (trainingProvider.Id == 0)
+				IsPublicPostSecondarySchool = trainingProvider.IsPublicPostSecondarySchool ?? true;
+			// If we have an existing provider record, assume we had no value
+			else
+				IsPublicPostSecondarySchool = trainingProvider.IsPublicPostSecondarySchool ?? false;
+
+			PublicPostSecondarySchoolId = trainingProvider.PublicPostSecondarySchoolId;
+
 			TrainingProgramId = trainingProvider.TrainingPrograms.FirstOrDefault()?.Id;
 			SelectedDeliveryMethodIds = trainingProvider.TrainingPrograms.FirstOrDefault()?.DeliveryMethods.Select(dm => dm.Id).ToArray();
 			EligibleCostId = trainingProvider.EligibleCostId;
@@ -290,6 +303,7 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingProviders
 			ProofOfQualificationsDocument = new TrainingProviderAttachmentViewModel(trainingProvider.ProofOfQualificationsDocument, Id, TrainingProviderAttachmentTypes.ProofOfQualifications, RowVersion);
 			CourseOutlineDocument = new TrainingProviderAttachmentViewModel(trainingProvider.CourseOutlineDocument, Id, TrainingProviderAttachmentTypes.CourseOutline, RowVersion);
 		}
+
 		#endregion
 
 		#region Methods
@@ -365,6 +379,9 @@ namespace CJG.Web.External.Areas.Ext.Models.TrainingProviders
 			trainingProvider.Name = Name;
 			trainingProvider.ChangeRequestReason = ChangeRequestReason;
 			trainingProvider.TrainingProviderTypeId = TrainingProviderTypeId.Value;
+
+			trainingProvider.IsPublicPostSecondarySchool = IsPublicPostSecondarySchool;
+			trainingProvider.PublicPostSecondarySchoolId = PublicPostSecondarySchoolId;
 
 			if (!trainingProvider.TrainingPrograms.Any() && trainingProvider.TrainingProviderState == TrainingProviderStates.Incomplete)
 			{

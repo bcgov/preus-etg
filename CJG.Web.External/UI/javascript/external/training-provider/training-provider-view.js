@@ -86,6 +86,13 @@ app.controller('ApplicationTrainingProviderView', function ($scope, $attrs, $con
     });
   };
 
+  function loadPublicPostSecondarySchools() {
+    return $scope.load({
+      url: '/Ext/Training/Provider/PublicPostSecondarySchools',
+      set: 'PublicPostSecondarySchools'
+    });
+  };
+
 /**
  * Make an AJAX request to get an array of countries
  * @function loadCountries
@@ -218,10 +225,57 @@ app.controller('ApplicationTrainingProviderView', function ($scope, $attrs, $con
     if ($scope.model.IsCanadianAddressTrainingProvider) {
       $scope.model.CountryIdTrainingProvider = 'CA';
       $scope.model.CountryTrainingProvider = 'Canada';
-      $scope.model.RegionIdTrainingProvider = null;
+      $scope.model.RegionIdTrainingProvider = 'BC';
     } else {
       $scope.model.RegionIdTrainingProvider = null;
       $scope.model.CountryIdTrainingProvider = null;
+    }
+  }
+
+  $scope.schoolTypeChange = function () {
+    if ($scope.model.IsPublicPostSecondarySchool) {
+      $scope.model.TrainingProviderTypeId = 1; // Post Secondary
+      $scope.model.IsCanadianAddressTrainingProvider = true;
+    }
+
+    if (!$scope.model.IsPublicPostSecondarySchool) {
+      $scope.model.TrainingProviderTypeId = null;
+      $scope.model.PublicPostSecondarySchoolId = null;
+    }
+  }
+
+  $scope.resetTrainingProviderAddressIfNeeded = function () {
+    if ($scope.model.IsPublicPostSecondarySchool)
+      $scope.resetTrainingProviderAddress();
+
+    return;
+  }
+
+  $scope.resetTrainingProviderAddress = function() {
+    $scope.model.Name = null;
+    $scope.model.AddressLine1TrainingProvider = null;
+    $scope.model.AddressLine1TrainingProvider = null;
+    $scope.model.AddressLine2TrainingProvider = null;
+    $scope.model.CityTrainingProvider = null;
+    $scope.model.PostalCodeTrainingProvider = null;
+    $scope.model.OtherRegionTrainingProvider = "BC";
+  }
+
+  $scope.schoolChange = function () {
+    let school = $scope.PublicPostSecondarySchools.filter(s => s.Id === $scope.model.PublicPostSecondarySchoolId)[0];
+
+    if ($scope.model.IsPublicPostSecondarySchool) {
+      $scope.resetTrainingProviderAddress();
+
+      if (school != null) {
+        $scope.model.Name = school.Name;
+        $scope.model.AddressLine1TrainingProvider = school.AddressLine1;
+        $scope.model.AddressLine1TrainingProvider = school.AddressLine1;
+        $scope.model.AddressLine2TrainingProvider = school.AddressLine2;
+        $scope.model.CityTrainingProvider = school.City;
+        $scope.model.PostalCodeTrainingProvider = school.PostalCode;
+        $scope.model.OtherRegionTrainingProvider = "BC";
+      }
     }
   }
 
@@ -383,6 +437,7 @@ app.controller('ApplicationTrainingProviderView', function ($scope, $attrs, $con
     return Promise.all([
         loadCanadaPostKey(),
         loadProviderTypes(),
+        loadPublicPostSecondarySchools(),
         loadCountries(),
         loadProvinces(),
         loadTrainingProvider()
@@ -392,6 +447,9 @@ app.controller('ApplicationTrainingProviderView', function ($scope, $attrs, $con
         addressComplete.destroy();
         fieldMappingCanadaPost();
         loadAlternateProvidersInfoIfEmpty();
+        $timeout(function() {
+          $scope.schoolTypeChange();
+        });
       })
       .catch(angular.noop);
   }

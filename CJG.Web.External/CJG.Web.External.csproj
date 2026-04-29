@@ -1178,6 +1178,7 @@
     <Compile Include="Areas\Ext\Models\TrainingCosts\EligibleExpenseBreakdownViewModel.cs" />
     <Compile Include="Areas\Ext\Models\TrainingPrograms\CourseLinkValidation.cs" />
     <Compile Include="Areas\Ext\Models\TrainingPrograms\TrainingProgramDetailsViewModel.cs" />
+    <Compile Include="Areas\Ext\Models\TrainingProviders\PublicPostSecondarySchoolModel.cs" />
     <Compile Include="Areas\Ext\Models\TrainingProviders\TrainingProviderTypeViewModel.cs" />
     <Compile Include="Areas\Ext\Models\TrainingProviders\TrainingProviderViewModel.cs" />
     <Compile Include="Areas\Ext\Models\ChangeRequest\ApplicationAddressViewModel.cs" />
