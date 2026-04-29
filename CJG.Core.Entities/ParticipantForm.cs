@@ -448,7 +448,7 @@ namespace CJG.Core.Entities
 		/// <summary>
 		/// get/set - The hourly rate this participant makes.
 		/// </summary>
-		[Range(0, 99999, ErrorMessage = "The hourly rate must be within $0 to $99,999.")]
+		[Range(0, 999, ErrorMessage = "The hourly rate must be within $0 to $999.")]
 		public decimal? HourlyWage { get; set; }
 
 		/// <summary>
