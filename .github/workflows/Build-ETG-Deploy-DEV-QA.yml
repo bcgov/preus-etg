@@ -2,7 +2,11 @@
 
 name: Build and Deploy ETG to DEV/QA
 run-name: Build of commit ${{ github.sha }} by ${{ github.actor }}
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+      - develop
 env:
   NUGET_CERT_REVOCATION_MODE: offline # Bypass cert validation during NuGet Restore
   HTTP_PROXY: ${{ vars.HTTP_PROXY }}
