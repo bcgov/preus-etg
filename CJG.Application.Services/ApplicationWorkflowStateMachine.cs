@@ -560,6 +560,7 @@ namespace CJG.Application.Services
 			_grantApplication.ResetValidatedTrainingProvider();
 			_grantApplication.ResetParticipantEligibilityStatus();
 			_grantApplication.TrainingCost.ResetEstimatedCosts();
+			_grantApplication.TrainingCost.CopyEstimatedIntoAgreed();
 
 			_grantOpeningService.AdjustFinancialStatements(_grantApplication, _originalState, ApplicationWorkflowTrigger.ReturnUnderAssessmentToNew);
 			
