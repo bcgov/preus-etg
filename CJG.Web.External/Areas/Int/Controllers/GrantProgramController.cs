@@ -1036,7 +1036,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet]
-		[Route("Program/Notification/Types")]
+		[Route("Program/Notification/NotificationTypes")]
 		public JsonResult GetNotificationTypes()
 		{
 			var notificationTypes = new NotificationTypeListViewModel();
@@ -1050,6 +1050,25 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 
 			return Json(notificationTypes, JsonRequestBehavior.AllowGet);
+		}
+
+		[HttpGet]
+		[Route("Program/Denial/Reason/{grantProgramId}")]
+		public JsonResult GetGrantProgramDenialReasons(int grantProgramId)
+		{
+			var grantProgramDenialReasons = new GrantProgramDenialReasonListViewModel();
+			try
+			{
+				var grantProgram = _grantProgramService.Get(grantProgramId);
+
+				grantProgramDenialReasons = new GrantProgramDenialReasonListViewModel(grantProgram.DenialReasons, grantProgram.Id);
+			}
+			catch (Exception ex)
+			{
+				HandleAngularException(ex, grantProgramDenialReasons);
+			}
+
+			return Json(grantProgramDenialReasons, JsonRequestBehavior.AllowGet);
 		}
 
 		/// <summary>
@@ -1074,25 +1093,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			}
 
 			return Json(grantProgramNotificationTypes, JsonRequestBehavior.AllowGet);
-		}
-
-		[HttpGet]
-		[Route("Program/Denial/Reason/{grantProgramId}")]
-		public JsonResult GetGrantProgramDenialReasons(int grantProgramId)
-		{
-			var grantProgramDenialReasons = new GrantProgramDenialReasonListViewModel();
-			try
-			{
-				var grantProgram = _grantProgramService.Get(grantProgramId);
-
-				grantProgramDenialReasons = new GrantProgramDenialReasonListViewModel(grantProgram.DenialReasons, grantProgram.Id);
-			}
-			catch (Exception ex)
-			{
-				HandleAngularException(ex, grantProgramDenialReasons);
-			}
-
-			return Json(grantProgramDenialReasons, JsonRequestBehavior.AllowGet);
 		}
 
 		/// <summary>

@@ -47,7 +47,7 @@ app.controller('GrantProgramNotificationTypes', function ($scope, $attrs, $contr
    **/
   function loadNotificationTypes() {
     return $scope.load({
-      url: '/Int/Admin/Grant/Program/Notification/Types/',
+      url: '/Int/Admin/Grant/Program/Notification/NotificationTypes',
       set: 'notificationTypes'
     });
   }
