@@ -97,6 +97,10 @@ namespace CJG.Core.Entities
 		[DefaultValue(TrainingProviderStates.Incomplete), Index("IX_TrainingProviders", Order = 1)]
 		public TrainingProviderStates TrainingProviderState { get; set; } = TrainingProviderStates.Incomplete;
 
+		public bool? IsPublicPostSecondarySchool { get; set; }
+		// This is just a loose reference to the PublicPostSecondarySchool table. Not mapped over.
+		public int? PublicPostSecondarySchoolId { get; set; }
+
 		/// <summary>
 		/// get/set - The foreign key to the training provider inventory.  This means it has been validated.
 		/// </summary>

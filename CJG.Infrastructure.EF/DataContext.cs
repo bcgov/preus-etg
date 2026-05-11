@@ -176,6 +176,7 @@ namespace CJG.Infrastructure.EF
 		public DbSet<PrioritizationHighOpportunityOccupationScore> PrioritizationHighOpportunityOccupationScores => _context.PrioritizationHighOpportunityOccupationScores;
 		public DbSet<PrioritizationRegion> PrioritizationRegions => _context.PrioritizationRegions;
 		public DbSet<PrioritizationPostalCode> PrioritizationPostalCodes => _context.PrioritizationPostalCodes;
+		public DbSet<PublicPostSecondarySchool> PublicPostSecondarySchools => _context.PublicPostSecondarySchools;
 		#endregion
 
 		#region Completion Report

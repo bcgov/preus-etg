@@ -668,7 +668,6 @@ namespace CJG.Application.Services
 			return Get<VulnerableGroup, int>().Where(e => e.IsActive);
 		}
 
-
 		/// <summary>
 		/// Get the <typeparamref name="DbSet"/> of type <typeparamref name="TEntity"/>.
 		/// </summary>
@@ -678,6 +677,7 @@ namespace CJG.Application.Services
 		{
 			return _dbContext.Set<TEntity>();
 		}
+
 
 		/// <summary>
 		/// Get all the fiscal years that are active.
@@ -761,6 +761,13 @@ namespace CJG.Application.Services
 		public TrainingPeriod GetTrainingPeriod(int id)
 		{
 			return _dbContext.TrainingPeriods.Find(id);
+		}
+
+		public IEnumerable<PublicPostSecondarySchool> GetPublicPostSecondarySchools()
+		{
+			return _dbContext.PublicPostSecondarySchools
+				.AsNoTracking()
+				.OrderBy(s => s.Name);
 		}
 
 		/// <summary>

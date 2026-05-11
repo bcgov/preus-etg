@@ -206,6 +206,7 @@ namespace CJG.Infrastructure.EF
 		public virtual DbSet<PrioritizationHighOpportunityOccupationScore> PrioritizationHighOpportunityOccupationScores { get; set; }
 		public virtual DbSet<PrioritizationRegion> PrioritizationRegions { get; set; }
 		public virtual DbSet<PrioritizationPostalCode> PrioritizationPostalCodes { get; set; }
+		public virtual DbSet<PublicPostSecondarySchool> PublicPostSecondarySchools { get; set; }
 		#endregion
 
 		#region Completion Report

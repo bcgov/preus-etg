@@ -1,15 +1,14 @@
-﻿using CJG.Application.Services;
-using CJG.Core.Entities;
-using CJG.Web.External.Models.Shared;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using CJG.Application.Services;
+using CJG.Core.Entities;
+using CJG.Web.External.Models.Shared;
 
 namespace CJG.Web.External.Areas.Int.Models.Notifications
 {
 	public class NotificationTypeViewModel : BaseViewModel
 	{
-		#region Properties
 		[Required(ErrorMessage = "The Name field is required."), MaxLength(250)]
 		public string Caption { get; set; }
 		[MaxLength(500)]
@@ -51,35 +50,39 @@ namespace CJG.Web.External.Areas.Int.Models.Notifications
 		public NotificationRecipientRules RecipientRule { get; set; }
 		public string RecipientRuleCaption { get; set; }
 		public bool CanDelete { get; set; }
-		#endregion
 
-		#region Constructors
 		public NotificationTypeViewModel() { }
 
 		public NotificationTypeViewModel(NotificationType notificationType)
 		{
-			if (notificationType == null) throw new ArgumentNullException(nameof(notificationType));
+			if (notificationType == null)
+				throw new ArgumentNullException(nameof(notificationType));
 
 			Utilities.MapProperties(notificationType, this);
 
-			this.NotificationTemplate.Id = notificationType.NotificationTemplateId;
-			this.NotificationTemplate.Caption = notificationType.Caption;
-			this.NotificationTemplate.EmailBody = notificationType.NotificationTemplate.EmailBody;
-			this.NotificationTemplate.EmailSubject = notificationType.NotificationTemplate.EmailSubject;
+			NotificationTemplate.Id = notificationType.NotificationTemplateId;
+			NotificationTemplate.Caption = notificationType.Caption;
+			NotificationTemplate.EmailBody = notificationType.NotificationTemplate.EmailBody;
+			NotificationTemplate.EmailSubject = notificationType.NotificationTemplate.EmailSubject;
 
-			this.MilestoneDateNameCaption = this.MilestoneDateName.GetDescription();
-			this.ResendRuleCaption = notificationType.ResendRule.GetDescription();
-			this.ApprovalRuleCaption = notificationType.ApprovalRule.GetDescription();
-			this.ParticipantReportRuleCaption = notificationType.ParticipantReportRule.GetDescription();
-			this.ClaimReportRuleCaption = notificationType.ClaimReportRule.GetDescription();
-			this.CompletionReportRuleCaption = notificationType.CompletionReportRule.GetDescription();
-			this.RecipientRuleCaption = notificationType.RecipientRule.GetDescription();
-			this.NotificationTriggerCaption = notificationType.NotificationTrigger.Caption;
-			this.PreviousApplicationStateCaption = notificationType.PreviousApplicationState != null ? Enum.GetName(typeof(ApplicationStateInternal), notificationType.PreviousApplicationState) : "Not Applicable";
-			this.CurrentApplicationStateCaption = notificationType.CurrentApplicationState != null ? Enum.GetName(typeof(ApplicationStateInternal), notificationType.CurrentApplicationState) : "Not Applicable";
+			MilestoneDateNameCaption = MilestoneDateName.GetDescription();
+			ResendRuleCaption = notificationType.ResendRule.GetDescription();
+			ApprovalRuleCaption = notificationType.ApprovalRule.GetDescription();
+			ParticipantReportRuleCaption = notificationType.ParticipantReportRule.GetDescription();
+			ClaimReportRuleCaption = notificationType.ClaimReportRule.GetDescription();
+			CompletionReportRuleCaption = notificationType.CompletionReportRule.GetDescription();
+			RecipientRuleCaption = notificationType.RecipientRule.GetDescription();
+			NotificationTriggerCaption = notificationType.NotificationTrigger.Caption;
 
-			this.CanDelete = !notificationType.NotificationQueue.Any();
+			PreviousApplicationStateCaption = notificationType.PreviousApplicationState != null
+				? Enum.GetName(typeof(ApplicationStateInternal), notificationType.PreviousApplicationState)
+				: "Not Applicable";
+
+			CurrentApplicationStateCaption = notificationType.CurrentApplicationState != null
+				? Enum.GetName(typeof(ApplicationStateInternal), notificationType.CurrentApplicationState)
+				: "Not Applicable";
+
+			CanDelete = !notificationType.NotificationQueue.Any();
 		}
-		#endregion
 	}
 }

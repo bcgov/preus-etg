@@ -1,9 +1,40 @@
-<div class="form__group">
-    <div class="label-wrapper"><label class="form__label">Training provider name <abbr title="Required">*</abbr></label></div>
-    <div class="control-wrapper form-control"> <input type="text" class="input--medium" ng-model="model.Name" ng-validation></div>
+@Html.IncludeCanadaPostAutoComplete()
+
+<div>
+    <div class="form__group form__group--radio-inline">
+        <div class="form-item">
+            <input type="radio" id="IsPublicPostSecondarySchoolTrue" ng-value="true" ng-model="model.IsPublicPostSecondarySchool" name="model.IsPublicPostSecondarySchool" ng-change="schoolTypeChange()">
+            <label for="IsPublicPostSecondarySchoolTrue">Training Provider is one of the following B.C. public post-secondary institutions:</label>
+        </div>
+
+        <div class="form__group" style="margin-left: 2em;">
+            <div class="form__label">
+                B.C. public post-secondary institution <abbr title='Required'>*</abbr>
+            </div>
+            <div class="form__control">
+                <div class="control-wrapper selectmenu input--full" ng-validation="errors.PublicPostSecondarySchoolId">
+                    <select ng-model="model.PublicPostSecondarySchoolId" ng-options="item.Id as item.Name for item in PublicPostSecondarySchools" class="input--full" ng-disabled="!model.IsPublicPostSecondarySchool" ng-change="schoolChange()">
+                        <option value="" selected="selected">&lt; Select value &gt;</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form__group form__group--radio-inline">
+        <div class="form-item">
+            <input type="radio" id="IsPublicPostSecondarySchoolFalse" ng-value="false" ng-model="model.IsPublicPostSecondarySchool" name="model.IsPublicPostSecondarySchool" ng-change="schoolTypeChange()" ng-click="resetTrainingProviderAddressIfNeeded()">
+            <label for="IsPublicPostSecondarySchoolFalse">Training Provider is not one of the above:</label>
+        </div>
+        
+        <div class="form__group" style="margin-left: 2em;" ng-hide="model.IsPublicPostSecondarySchool">
+            <div class="label-wrapper"><label class="form__label">Training provider name <abbr title="Required">*</abbr></label></div>
+            <div class="control-wrapper form-control"> <input type="text" class="input--medium" ng-model="model.Name" ng-disabled="model.IsPublicPostSecondarySchool" ng-validation></div>
+        </div>
+
+    </div>
 </div>
 
-@Html.IncludeCanadaPostAutoComplete()
 
 <div class="form__group">
     <div class="form__label">
@@ -11,13 +42,15 @@
     </div>
     <div class="form__control">
         <div class="control-wrapper selectmenu input--full" ng-validation="errors.TrainingProviderTypeId">
-            <select ng-model="model.TrainingProviderTypeId" ng-options="item.Id as item.Caption for item in ProviderTypes" class="input--full" ng-change="setTrainingProviderTypeName()">
+            <select ng-model="model.TrainingProviderTypeId" ng-options="item.Id as item.Caption for item in ProviderTypes" class="input--full" ng-disabled="model.IsPublicPostSecondarySchool" ng-change="setTrainingProviderTypeName()">
                 <option value="" selected="selected">&lt; Select value &gt;</option>
             </select>
         </div>
     </div>
 </div>
-<div ng-show="false"> @*model.ProofOfInstructorQualifications*@
+
+<div ng-show="false">
+    @*model.ProofOfInstructorQualifications*@
     <div class="form__group">
         <label class="form__label">Proof of instructors qualifications from Training Provider <abbr title="Required">*</abbr></label>
         <p>
@@ -42,7 +75,8 @@
         </div>
     </div>
 </div>
-<div ng-show="false"> @*model.CourseOutline*@
+<div ng-show="false">
+    @*model.CourseOutline*@
     <div class="form__group">
         <label class="form__label">Course outline including defined instructional objectives, delivery method and assessment methods <abbr title="Required">*</abbr></label>
         <p>One file of the following type may be attached: PDF, DOCX, DOC, XLSX, XLS, JPG, JPEG, PNG, GIF. Maximum file size is {{model.MaxUploadSize}} MB.</p>
@@ -89,7 +123,7 @@
         <label class="form__label">Country <abbr title="Required">*</abbr></label>
         <div class="form__control">
             <div class="control-wrapper selectmenu input--medium" ng-validation="errors.CountryId">
-                <select ng-model="model.CountryId" ng-options="item.Key as item.Caption for item in Countries | filter: filterItems" class="input--medium">
+                <select ng-model="model.CountryId" ng-options="item.Key as item.Caption for item in Countries | filter: filterItems" class="input--medium" ng-disabled="model.IsPublicPostSecondarySchool" >
                     <option id="Country" value="" selected="selected">&lt; Select value &gt;</option>
                 </select>
             </div>
@@ -98,10 +132,10 @@
             </p>
         </div>
     </div>
-  
+
     <div class="form__group">
         <div class="label-wrapper"><label class="form__label">Address line 1 <abbr title="Required">*</abbr></label></div>
-        <div class="control-wrapper form-control"><input Id="AddressLine1" type="text" class="input--full" ng-model="model.AddressLine1" ng-mouseleave ="AddressLine1Change()" ng-validation></div>
+        <div class="control-wrapper form-control"><input Id="AddressLine1" type="text" class="input--full" ng-model="model.AddressLine1" ng-mouseleave="AddressLine1Change()" ng-validation></div>
     </div>
 
 
@@ -149,11 +183,11 @@
 <div class="form__group form__group--radio-inline">
     <div ng-validation="errors.IsCanadianAddressTrainingProvider">
         <div class="form-item">
-            <input type="radio" id="IsCanadianAddressTrainingProviderTrue" ng-value="true" ng-model="model.IsCanadianAddressTrainingProvider" name="model.IsCanadianAddressTrainingProvider" ng-change="countryChangeTrainingProvider()">
+            <input type="radio" id="IsCanadianAddressTrainingProviderTrue" ng-value="true" ng-model="model.IsCanadianAddressTrainingProvider" name="model.IsCanadianAddressTrainingProvider" ng-change="countryChangeTrainingProvider()" ng-disabled="model.IsPublicPostSecondarySchool">
             <label for="IsCanadianAddressTrainingProviderTrue">Canada</label>
         </div>
         <div class="form-item">
-            <input type="radio" id="IsCanadianAddressTrainingProviderFalse" ng-value="false" ng-model="model.IsCanadianAddressTrainingProvider" name="model.IsCanadianAddressTrainingProvider" ng-change="countryChangeTrainingProvider()">
+            <input type="radio" id="IsCanadianAddressTrainingProviderFalse" ng-value="false" ng-model="model.IsCanadianAddressTrainingProvider" name="model.IsCanadianAddressTrainingProvider" ng-change="countryChangeTrainingProvider()" ng-disabled="model.IsPublicPostSecondarySchool">
             @*<label for="IsCanadianAddressFalse">Other Countries</label>*@
             <label for="IsCanadianAddressTrainingProviderFalse">Other Country</label>
         </div>
@@ -176,25 +210,25 @@
 
 <div class="form__group">
     <div class="label-wrapper"><label class="form__label">Address line 1 <abbr title="Required">*</abbr></label></div>
-    <div class="control-wrapper form-control"><input Id="AddressLine1TrainingProvider" type="text" class="input--full" ng-model="model.AddressLine1TrainingProvider" ng-mouseleave="AddressLine1TrainingProviderChange()" ng-validation></div>
+    <div class="control-wrapper form-control"><input Id="AddressLine1TrainingProvider" type="text" class="input--full" ng-model="model.AddressLine1TrainingProvider" ng-mouseleave="AddressLine1TrainingProviderChange()" ng-validation ng-disabled="model.IsPublicPostSecondarySchool"></div>
 </div>
 
 
 <div class="form__group">
     <div class="label-wrapper"><label class="form__label">Address line 2</label></div>
-    <div class="control-wrapper form-control"><input id="AddressLine2TrainingProvider" type="text" class="input--full" ng-model="model.AddressLine2TrainingProvider" ng-validation></div>
+    <div class="control-wrapper form-control"><input id="AddressLine2TrainingProvider" type="text" class="input--full" ng-model="model.AddressLine2TrainingProvider" ng-validation ng-disabled="model.IsPublicPostSecondarySchool"></div>
 </div>
 
 <div class="form__group">
     <div class="label-wrapper"><label class="form__label">City <abbr title="Required">*</abbr></label></div>
-    <div class="control-wrapper form-control"><input Id="CityTrainingProvider" type="text" class="input--medium" ng-model="model.CityTrainingProvider" ng-validation></div>
+    <div class="control-wrapper form-control"><input Id="CityTrainingProvider" type="text" class="input--medium" ng-model="model.CityTrainingProvider" ng-validation ng-disabled="model.IsPublicPostSecondarySchool"></div>
 </div>
 
 <div class="form__group" ng-show="model.IsCanadianAddressTrainingProvider">
     <label class="form__label">Province <abbr title="Required">*</abbr></label>
     <div class="form__control">
         <div class="control-wrapper selectmenu input--medium" ng-validation="errors.RegionIdTrainingProvider">
-            <select Id="RegionIdTrainingProvider" class="input--medium form-control" ng-model="model.RegionIdTrainingProvider" ng-options="item.Key as item.Caption for item in Provinces" ng-change="TrainingProviderRegionChanged()">
+            <select Id="RegionIdTrainingProvider" class="input--medium form-control" ng-model="model.RegionIdTrainingProvider" ng-options="item.Key as item.Caption for item in Provinces" ng-change="TrainingProviderRegionChanged()" ng-disabled="model.IsPublicPostSecondarySchool">
                 <option value="" selected="selected">&lt; Select value &gt;</option>
             </select>
         </div>
@@ -204,7 +238,7 @@
 <div class="form__group" ng-show="model.IsCanadianAddressTrainingProvider">
     <div class="form__group">
         <div class="label-wrapper"><label class="form__label">Postal code <abbr title="Required">*</abbr></label></div>
-        <div class="control-wrapper form-control"><input Id="PostalCodeTrainingProvider" type="text" class="input--medium" ng-model="model.PostalCodeTrainingProvider" maxlength="6" ng-postal ng-validation></div>
+        <div class="control-wrapper form-control"><input Id="PostalCodeTrainingProvider" type="text" class="input--medium" ng-model="model.PostalCodeTrainingProvider" maxlength="6" ng-postal ng-validation ng-disabled="model.IsPublicPostSecondarySchool"></div>
     </div>
 </div>
 
@@ -290,7 +324,7 @@
     </div>
     <div class="form__control">
         <textarea class="input--full textarea--medium"
-                  ng-model="model.AlternativeTrainingOptions" 
+                  ng-model="model.AlternativeTrainingOptions"
                   ng-validation="errors.AlternativeTrainingOptions"
                   ui-tinymce="tinymceOptions"></textarea>
     </div>
@@ -303,7 +337,7 @@
     </div>
     <div class="form__control">
         <textarea class="input--full textarea--medium"
-                  ng-model="model.ChoiceOfTrainerOrProgram" 
+                  ng-model="model.ChoiceOfTrainerOrProgram"
                   ng-validation="errors.ChoiceOfTrainerOrProgram"
                   ui-tinymce="tinymceOptions"></textarea>
     </div>

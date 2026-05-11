@@ -39,12 +39,14 @@ app.controller('TrainingCostsView', function ($scope, $attrs, $controller, $time
 
   function loadTrainingCost() {
     return $scope.load({
-      url: '/Ext/Application/Training/Cost/' + $scope.section.grantApplicationId,
-      set: 'model'
-    })
-      .then(function (response) {
-        calculateESSTotal();
-        checkClaimedParticipantsExceedDeclared();
+        url: '/Ext/Application/Training/Cost/' + $scope.section.grantApplicationId,
+        set: 'model'
+      })
+      .then(function(response) {
+        $timeout(function() {
+          calculateESSTotal();
+          checkClaimedParticipantsExceedDeclared();
+        });
       });
   }
 
