@@ -20,15 +20,10 @@ namespace CJG.Infrastructure.ReportingService
 
                 var appFactory = new AppFactory();
                 logger = appFactory.GetLogger();
-                var job = appFactory.GetGrantOpeningJob();
-                job.Start(options.CurrentDate, 
-                    string.Format(Settings.Default.CsvFilePathTemplate, options.CurrentDate),
-                    string.Format(Settings.Default.HtmlFilePathTemplate, options.CurrentDate),
-                    Settings.Default.NumDaysBefore,
-                    $"{AppDomain.CurrentDomain.BaseDirectory}\\SDSI-Report-Template.html",
-					Settings.Default.ReportCutoffDate,
-                    Settings.Default.MaxParticipants, 
-                    Settings.Default.CsvAddReportHeader);
+
+                CreateSection25Report(appFactory, options);
+                CreateEiEligibilityCheckReport(appFactory, options);
+
                 resultCode = SystemExitCode.Success;
             }
             catch (Exception e)
@@ -45,7 +40,30 @@ namespace CJG.Infrastructure.ReportingService
             return (int)resultCode;
         }
 
-        private static Options ParseArgs(string[] args)
+        private static void CreateSection25Report(AppFactory appFactory, Options options)
+        {
+	        var job = appFactory.GetSection25ReportJob();
+	        job.Start(options.CurrentDate,
+		        string.Format(Settings.Default.CsvFilePathTemplate, options.CurrentDate),
+		        string.Format(Settings.Default.HtmlFilePathTemplate, options.CurrentDate),
+		        Settings.Default.NumDaysBefore,
+		        $"{AppDomain.CurrentDomain.BaseDirectory}\\SDSI-Report-Template.html",
+		        Settings.Default.ReportCutoffDate,
+		        Settings.Default.MaxParticipants,
+		        Settings.Default.CsvAddReportHeader);
+        }
+
+        private static void CreateEiEligibilityCheckReport(AppFactory appFactory, Options options)
+        {
+	        // Get the participants that are on EI
+	        var job = appFactory.GetEiEligibilityCheckReportJob();
+	        job.Start(options.CurrentDate,
+		        string.Format(Settings.Default.CsvFilePathTemplateEiCheck, options.CurrentDate),
+		        new DateTime(2026, 4, 1),
+		        Settings.Default.MaxParticipants);
+        }
+
+		private static Options ParseArgs(string[] args)
         {
             var options = new Options();
 

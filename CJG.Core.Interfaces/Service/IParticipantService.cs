@@ -18,12 +18,14 @@ namespace CJG.Core.Interfaces.Service
 		IEnumerable<ParticipantCost> GetParticipantCostsForClaimEligibleCost(int claimEligibleCostId);
 		IEnumerable<ParticipantCost> GetParticipantCosts(ClaimEligibleCost eligibleCost);
 		IEnumerable<ParticipantForm> GetUnemployedParticipantEnrollments(DateTime currentDate, int take, DateTime cutoffDate);
+		IEnumerable<ParticipantForm> GetParticipantsEnrollmentsForEiCheck(DateTime currentDate, int take, DateTime cutoffDate);
 
 		int GetParticipantsWithClaimEligibleCostCount(int claimId, int claimVersion);
 		IDictionary<string, decimal> GetParticipantYTD(GrantApplication grantApplication);
 
 		void UpdateReportedDate(IEnumerable<ParticipantForm> participantEnrollments, DateTime reportedDate);
 		void UpdateExpectedOutcome(ParticipantForm participantForm, ExpectedParticipantOutcome? modelExpectedOutcome);
+		void UpdateEiEligibilityReportedDate(IEnumerable<ParticipantForm> participantEnrollments, DateTime reportedDate);
 		void RemoveParticipant(ParticipantForm participantForm);
 		void IncludeParticipant(ParticipantForm participant);
 		void ExcludeParticipant(ParticipantForm participant);

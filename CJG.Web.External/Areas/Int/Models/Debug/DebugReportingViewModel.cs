@@ -12,9 +12,9 @@ namespace CJG.Web.External.Areas.Int.Models
         public int MaxParticipants { get; set; } = 10;
         public bool AddHeader { get; set; } = true;
         public string[] SelectedFilePaths { get; set; }
-        public List<SelectListItem> FileNames { get; set; }
+		public List<SelectListItem> FileNames { get; set; } = new List<SelectListItem>();
 
-        public DebugReportingViewModel()
+		public DebugReportingViewModel()
         {
             LogRecords = new List<string>();
         }

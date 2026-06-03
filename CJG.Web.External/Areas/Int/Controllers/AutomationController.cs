@@ -49,12 +49,13 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 			try
 			{
-				var jobSetting = _settingService.Get(SettingServiceKeys.ReturnUnassessedSettingKey);
-				var currentState = jobSetting?.GetValue<bool>() ?? false;
+				var unassessedServiceSetting = GetCurrentStateForKey(SettingServiceKeys.ReturnUnassessedSettingKey);
+				var eiServiceSetting = GetCurrentStateForKey(SettingServiceKeys.EiEligibilityCheckServiceSettingKey);
 
 				model = new AutomationSettingsViewModel
 				{
-					ReturnedToUnassessedServiceState = currentState
+					ReturnedToUnassessedServiceState = unassessedServiceSetting,
+					EiEligibilityCheckServiceState = eiServiceSetting
 				};
 
 				return Json(model, JsonRequestBehavior.AllowGet);
@@ -76,11 +77,8 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			{
 				if (ModelState.IsValid)
 				{
-					var setting = _settingService.Get(SettingServiceKeys.ReturnUnassessedSettingKey)
-					              ?? new Setting(SettingServiceKeys.ReturnUnassessedSettingKey, model.ReturnedToUnassessedServiceState);
-					setting.SetValue(model.ReturnedToUnassessedServiceState);
-
-					_settingService.AddOrUpdate(setting);
+					UpdateSettingByKey(SettingServiceKeys.ReturnUnassessedSettingKey, model.ReturnedToUnassessedServiceState);
+					UpdateSettingByKey(SettingServiceKeys.EiEligibilityCheckServiceSettingKey, model.EiEligibilityCheckServiceState);
 				}
 				else
 				{
@@ -94,6 +92,24 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 			model.RedirectURL = "/Int/Admin/Automation/View";
 			return Json(model);
+		}
+
+		private bool GetCurrentStateForKey(string settingKey)
+		{
+			var jobSetting = _settingService.Get(settingKey);
+			var currentState = jobSetting?.GetValue<bool>() ?? false;
+
+			return currentState;
+		}
+
+		private void UpdateSettingByKey(string settingKey, bool setValueTo)
+		{
+			var setting = _settingService.Get(settingKey)
+			              ?? new Setting(settingKey, setValueTo);
+
+			setting.SetValue(setValueTo);
+
+			_settingService.AddOrUpdate(setting);
 		}
 	}
 }

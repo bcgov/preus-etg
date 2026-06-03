@@ -42,6 +42,9 @@
       <setting name="HtmlFilePathTemplate" serializeAs="String">
         <value>#{html-file-path-template}</value>
       </setting>
+      <setting name="CsvFilePathTemplateDuplicateSin" serializeAs="String">
+        <value>#{csv-duplicate-sin-file-path-template}</value>
+      </setting>
       <setting name="SiteUrl" serializeAs="String">
         <value>https://skillstraininggrants.gov.bc.ca/</value>
       </setting>

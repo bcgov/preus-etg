@@ -601,6 +601,11 @@ namespace CJG.Core.Entities
 		public DateTime? ReportedOn { get; set; }
 
 		/// <summary>
+		/// get/set - When the participant was reported on for EI Eligibility
+		/// </summary>
+		public DateTime? EiEligibilityReportedOn { get; set; }
+
+		/// <summary>
 		/// get - All the costs associated with this participant.
 		/// </summary>
 		public virtual ICollection<ParticipantCost> ParticipantCosts { get; set; } = new List<ParticipantCost>();
