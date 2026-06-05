@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using CJG.Application.Services;
@@ -180,8 +179,12 @@ namespace CJG.Web.External.Areas.Int.Controllers
 					var participantsApproved = model.ParticipantInfo
 						.Where(w => w.ParticipantId != null)
 						.ToDictionary(d => d.ParticipantId, d => d.Approved);
+					var participantLMDAEligible = model.ParticipantInfo
+						.Where(w => w.ParticipantId != null)
+						.ToDictionary(d => d.ParticipantId, d => d.IsLMDAEligible);
 
 					_participantService.ApproveDenyParticipants(grantApplicationId, participantsApproved);
+					_participantService.SetLMDAEligibility(grantApplicationId, participantLMDAEligible);
 
 					model = new ParticipantListViewModel(grantApplication, _participantService);
 				}

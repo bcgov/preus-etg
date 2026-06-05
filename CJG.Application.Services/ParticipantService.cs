@@ -176,6 +176,25 @@ namespace CJG.Application.Services
 			_dbContext.Commit();
 		}
 
+		public void SetLMDAEligibility(int grantApplicationId, Dictionary<int?, bool?> participants)
+		{
+			var grantApplication = _dbContext.GrantApplications.FirstOrDefault(w => w.Id == grantApplicationId);
+			if (grantApplication == null)
+				return;
+
+			foreach (var participant in participants)
+			{
+				var pf = _dbContext.ParticipantForms.FirstOrDefault(w => w.Id == participant.Key.Value);
+				if (pf != null)
+				{
+					pf.IsLMDAEligible = participant.Value;
+					_dbContext.Update(pf);
+				}
+			}
+
+			_dbContext.Commit();
+		}
+
 		public void ReportAttendance(GrantApplication grantApplication, Dictionary<int, bool?> participantAttended, INoteService noteService)
 		{
 			foreach (var participant in participantAttended)

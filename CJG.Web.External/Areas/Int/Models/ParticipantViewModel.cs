@@ -19,6 +19,7 @@ namespace CJG.Web.External.Areas.Int.Models
 		public int? ConsentFormAttachmentId { get; set; }
 		public bool? Approved { get; set; }
 		public bool? Attended { get; set; }
+		public bool? IsLMDAEligible { get; set; }
 
 		public bool? HasClaimWarnings { get; set; }
 
@@ -41,6 +42,7 @@ namespace CJG.Web.External.Areas.Int.Models
 			SIN = participant.SIN;
 			Approved = participant.Approved;
 			Attended = participant.Attended;
+			IsLMDAEligible = participant.IsLMDAEligible;
 		}
 	}
 }

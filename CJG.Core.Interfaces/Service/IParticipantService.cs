@@ -12,6 +12,7 @@ namespace CJG.Core.Interfaces.Service
 		ParticipantCost Update(ParticipantCost participantCost);
 
 		void ApproveDenyParticipants(int grantApplicationId, Dictionary<int?, bool?> participantApproved);
+		void SetLMDAEligibility(int grantApplicationId, Dictionary<int?, bool?> participants);
 		void ReportAttendance(GrantApplication grantApplication, Dictionary<int, bool?> participantAttended, INoteService noteService);
 
 		IEnumerable<ParticipantForm> GetParticipantFormsForGrantApplication(int grantApplication);

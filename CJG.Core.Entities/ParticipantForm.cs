@@ -585,6 +585,11 @@ namespace CJG.Core.Entities
 		public bool IsExcludedFromClaim { get; set; }
 
 		/// <summary>
+		/// get/set - Is this participant eligible for LMDA funding?
+		/// </summary>
+		public bool? IsLMDAEligible { get; set; }
+
+		/// <summary>
 		/// get/set - the consent form upload by grant application applicant
 		/// </summary>
 		public int? ParticipantConsentAttachmentId { get; set; }

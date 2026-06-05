@@ -222,6 +222,7 @@ namespace CJG.Web.External.Areas.Int.Controllers
 					grantApplication.Organization.DoingBusinessAsMinistry = model.DoingBusinessAsMinistry;
 					grantApplication.RowVersion = Convert.FromBase64String(model.RowVersion);
 					grantApplication.RiskClassificationId = model.RiskClassificationId;
+					grantApplication.LMDAEligibilityReviewed = model.LMDAEligibilityReviewed;
 
 					if (_grantAgreementService.AgreementUpdateRequired(grantApplication))
 					{

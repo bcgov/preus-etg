@@ -315,6 +315,11 @@ namespace CJG.Core.Entities
 		public bool EligibilityConfirmed { get; set; }
 
 		/// <summary>
+		/// get/set - Did an Adjudicator review each participants LMDA Eligibility?
+		/// </summary>
+		public bool? LMDAEligibilityReviewed { get; set; }
+
+		/// <summary>
 		/// get/set - Whether participant reporting is enabled after a claim has been submitted
 		/// </summary>
 		public bool CanReportParticipants { get; set; }
