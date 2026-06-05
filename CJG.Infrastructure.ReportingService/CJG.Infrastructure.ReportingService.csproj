@@ -131,6 +131,8 @@
   <ItemGroup>
     <Compile Include="AppFactory.cs" />
     <Compile Include="CsvLineBuilder.cs" />
+    <Compile Include="EiEligibilityCheckReportJob.cs" />
+    <Compile Include="IEiEligibilityCheckReportJob.cs" />
     <Compile Include="ISdsiReportJob.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -147,24 +149,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="App.config.template" />
-    <None Include="App.Debug.config">
-      <DependentUpon>App.config</DependentUpon>
-    </None>
-    <None Include="App.QA.config">
-      <DependentUpon>App.config</DependentUpon>
-    </None>
-    <None Include="App.Release.config">
-      <DependentUpon>App.config</DependentUpon>
-    </None>
-    <None Include="App.Support.config">
-      <DependentUpon>App.config</DependentUpon>
-    </None>
-    <None Include="App.TEST.config">
-      <DependentUpon>App.config</DependentUpon>
-    </None>
-    <None Include="App.Training.config">
-      <DependentUpon>App.config</DependentUpon>
-    </None>
     <None Include="ConfigTransformation.targets">
       <SubType>Designer</SubType>
     </None>

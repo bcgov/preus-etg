@@ -26,9 +26,11 @@ namespace CJG.Infrastructure.ReportingService
 			builder.RegisterInstance(_logger).As<ILogger>();
 			builder.RegisterInstance(new InternalHttpContext(new HttpContextWrapper(new HttpContext(new HttpRequest("", Settings.Default.SiteUrl, null), new HttpResponse(null))))).As<HttpContextBase>();
 			builder.RegisterType<SdsiReportJob>().As<ISdsiReportJob>();
+			builder.RegisterType<EiEligibilityCheckReportJob>().As<IEiEligibilityCheckReportJob>();
 			builder.RegisterType<ParticipantService>().As<IParticipantService>();
 			builder.RegisterType<EligibleCostService>().As<IEligibleCostService>();
 			builder.RegisterType<SiteMinderService>().As<ISiteMinderService>();
+			builder.RegisterType<SettingService>().As<ISettingService>();
 			builder.RegisterType<OrganizationService>().As<IOrganizationService>();
 			builder.RegisterType<UserService>().As<IUserService>();
 			builder.RegisterType<BCeIDService>().As<IBCeIDService>();
@@ -46,9 +48,14 @@ namespace CJG.Infrastructure.ReportingService
 			return _logger;
 		}
 		
-		public ISdsiReportJob GetGrantOpeningJob()
+		public ISdsiReportJob GetSection25ReportJob()
 		{
 			return Container.Resolve<ISdsiReportJob>();
+		}
+
+		public IEiEligibilityCheckReportJob GetEiEligibilityCheckReportJob()
+		{
+			return Container.Resolve<IEiEligibilityCheckReportJob>();
 		}
 	}
 }

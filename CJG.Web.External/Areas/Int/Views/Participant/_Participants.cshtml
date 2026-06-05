@@ -37,7 +37,8 @@
                 <td ng-click="changeSorting('LastName')"><img ng-src="{{imgSrcLastName}}" /> Name</td>
                 <td>Email</td>
                 <td>Phone</td>
-                <td ng-if="grantFile.CanManageParticipantEligibilty" >Eligibility</td>
+                <td ng-if="grantFile.CanManageParticipantEligibilty">Eligibility</td>
+                <td>LMDA Eligibility</td>
                 <td>YTD Paid</td>
                 <td>Reported By</td>
                 <td ng-click="changeSorting('ReportedOn')"><img ng-src="{{imgSrcReportedOn}}" /> Reported On</td>
@@ -51,7 +52,7 @@
                 </td>
                 <td><a href="mailto:{{participant.EmailAddress}}">{{participant.EmailAddress}}</a></td>
                 <td>{{participant.PhoneNumber}}</td>
-                  
+
                 <td ng-if="grantFile.CanManageParticipantEligibilty && section.editing">
                     <input type="radio" ng-model="participant.Approved" id="approved-yes-{{participant.ParticipantId}}" name="approved-{{participant.ParticipantId}}" ng-value="true" class="form__group--radio-inline" ng-editing />
                     <label for="approved-yes-{{participant.ParticipantId}}">Yes</label>
@@ -61,7 +62,19 @@
                 <td ng-if="grantFile.CanManageParticipantEligibilty && !section.editing && participant.Approved == null">not set</td>
                 <td ng-if="grantFile.CanManageParticipantEligibilty && !section.editing && participant.Approved == true">Eligible</td>
                 <td ng-if="grantFile.CanManageParticipantEligibilty && !section.editing && participant.Approved == false">Ineligible</td>
-                <td>{{participant.YTDFunded | currency : '$' : 2}}</td>
+                <td ng-if="section.editing">
+                    <input type="radio" ng-model="participant.IsLMDAEligible" id="lmda-yes-{{participant.ParticipantId}}" name="lmda-{{participant.ParticipantId}}" ng-value="true" class="form__group--radio-inline" ng-editing />
+                    <label for="lmda-yes-{{participant.ParticipantId}}">Yes</label>
+                    <input type="radio" ng-model="participant.IsLMDAEligible" id="lmda-no-{{participant.ParticipantId}}" name="lmda-{{participant.ParticipantId}}" ng-value="false" class="form__group--radio-inline" ng-editing />
+                    <label for="lmda-no-{{participant.ParticipantId}}">No</label>
+                </td>
+                <td ng-if="!section.editing">
+                    <span ng-if="participant.IsLMDAEligible == null">not set</span>
+                    <span ng-if="participant.IsLMDAEligible == true">Eligible</span>
+                    <span ng-if="participant.IsLMDAEligible == false">Not Eligible</span>
+                </td>
+                <td>{{participant.YTDFunded | currency : '$' : 2}}
+                </td>
                 <td ng-if="participant.ReportedBy == 'Applicant'"><a href="/Int/Application/Participant/Consent/{{participant.ParticipantId}}">{{participant.ReportedBy}}</a></td>
                 <td ng-if="participant.ReportedBy == 'Participant'">{{participant.ReportedBy}}</td>
                 <td>{{participant.ReportedOn}}</td>

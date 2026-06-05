@@ -176,6 +176,25 @@ namespace CJG.Application.Services
 			_dbContext.Commit();
 		}
 
+		public void SetLMDAEligibility(int grantApplicationId, Dictionary<int?, bool?> participants)
+		{
+			var grantApplication = _dbContext.GrantApplications.FirstOrDefault(w => w.Id == grantApplicationId);
+			if (grantApplication == null)
+				return;
+
+			foreach (var participant in participants)
+			{
+				var pf = _dbContext.ParticipantForms.FirstOrDefault(w => w.Id == participant.Key.Value);
+				if (pf != null)
+				{
+					pf.IsLMDAEligible = participant.Value;
+					_dbContext.Update(pf);
+				}
+			}
+
+			_dbContext.Commit();
+		}
+
 		public void ReportAttendance(GrantApplication grantApplication, Dictionary<int, bool?> participantAttended, INoteService noteService)
 		{
 			foreach (var participant in participantAttended)
@@ -228,6 +247,32 @@ namespace CJG.Application.Services
 		public IEnumerable<ParticipantCost> GetParticipantCosts(ClaimEligibleCost eligibleCost)
 		{
 			return _dbContext.ParticipantCosts.Where(pc => pc.ClaimEligibleCostId == eligibleCost.Id);
+		}
+
+		/// <summary>
+		/// Get participant forms that haven't had EI checks reported on
+		/// </summary>
+		/// <param name="currentDate"></param>
+		/// <param name="take"></param>
+		/// <param name="cutoffDate"></param>
+		/// <returns>Collection of ParticipantEnrollment</returns>
+		public IEnumerable<ParticipantForm> GetParticipantsEnrollmentsForEiCheck(DateTime currentDate, int take, DateTime cutoffDate)
+		{
+			var currentDateUtc = currentDate.ToUniversalTime();
+			var cutoffDateUtc = cutoffDate.ToUniversalTime();
+
+			var trainingStartReportDate = currentDateUtc.AddDays(-1);
+
+			var participantForms = _dbContext.ParticipantForms
+				.Include(pf => pf.GrantApplication)
+				.Where(pf => pf.EiEligibilityReportedOn == null || pf.EiEligibilityReportedOn > currentDateUtc)
+				.Where(pf => pf.GrantApplication.DateSubmitted >= cutoffDateUtc)
+				.Where(pf => pf.GrantApplication.ApplicationStateInternal != ApplicationStateInternal.Draft)
+				.Where(pf => pf.ProgramStartDate <= trainingStartReportDate)
+				.OrderBy(pf => pf.DateAdded)
+				.Take(take);
+
+			return participantForms;
 		}
 
 		/// <summary>
@@ -297,6 +342,19 @@ namespace CJG.Application.Services
 				pf.ExpectedParticipantOutcome = modelExpectedOutcome;
 				_dbContext.Update(pf);
 			}
+
+			_dbContext.Commit();
+		}
+
+		/// <summary>
+		/// Update ParticipantEnrollments with date when they were reported for EI Eligibility
+		/// </summary>
+		/// <param name="participantEnrollments"></param>
+		/// <param name="reportedDate"></param>
+		public void UpdateEiEligibilityReportedDate(IEnumerable<ParticipantForm> participantEnrollments, DateTime reportedDate)
+		{
+			foreach (var participantEnrollment in participantEnrollments)
+				participantEnrollment.EiEligibilityReportedOn = reportedDate.ToUniversalTime();
 
 			_dbContext.Commit();
 		}

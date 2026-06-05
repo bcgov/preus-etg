@@ -6,5 +6,6 @@
 	public static class SettingServiceKeys
 	{
 		public const string ReturnUnassessedSettingKey = "AutomationReturnUnassessedService";
+		public const string EiEligibilityCheckServiceSettingKey = "EiEligibilityCheckService";
 	}
 }
