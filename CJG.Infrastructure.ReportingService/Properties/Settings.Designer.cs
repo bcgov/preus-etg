@@ -25,6 +25,15 @@ namespace CJG.Infrastructure.ReportingService.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2021-08-01")]
+        public global::System.DateTime ReportCutoffDate {
+            get {
+                return ((global::System.DateTime)(this["ReportCutoffDate"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool CsvAddReportHeader {
             get {
