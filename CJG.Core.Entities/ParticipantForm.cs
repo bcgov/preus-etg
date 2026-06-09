@@ -585,6 +585,11 @@ namespace CJG.Core.Entities
 		public bool IsExcludedFromClaim { get; set; }
 
 		/// <summary>
+		/// get/set - Is this participant eligible for LMDA funding?
+		/// </summary>
+		public bool? IsLMDAEligible { get; set; }
+
+		/// <summary>
 		/// get/set - the consent form upload by grant application applicant
 		/// </summary>
 		public int? ParticipantConsentAttachmentId { get; set; }
@@ -599,6 +604,11 @@ namespace CJG.Core.Entities
 		/// get/set - When the participant was reported on.
 		/// </summary>
 		public DateTime? ReportedOn { get; set; }
+
+		/// <summary>
+		/// get/set - When the participant was reported on for EI Eligibility
+		/// </summary>
+		public DateTime? EiEligibilityReportedOn { get; set; }
 
 		/// <summary>
 		/// get - All the costs associated with this participant.

@@ -26,7 +26,7 @@
                         <div class="alert alert--default" ng-class="'alert--' + alert.type" role="alert" ng-bind-html="alert.message"></div>
                     </div>
                     <p>The Automation section allows you to toggle automation services on or off.</p>
-    
+
                     <div class="form form--2-col">
                         <div class="col-50p">
                             <div class="form__group">
@@ -38,6 +38,26 @@
                                         </div>
                                     </div>
                                     <p>The service that will return Grant Applications automatically after 60 days.</p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-50p">
+
+                        </div>
+                    </div>
+                    <div class="clear-both"></div>
+                    <div class="form form--2-col">
+                        <div class="col-50p">
+                            <div class="form__group">
+                                <div class="form__label">ETG EI Eligibility Check Service:</div>
+                                <div class="form__control">
+                                    <div class="control-wrapper">
+                                        <div class="selectmenu">
+                                            <select ng-model="model.EiEligibilityCheckServiceState" ng-options="item.Value as item.Key for item in model.StateOptions" class="input--medium" ng-editing></select>
+                                        </div>
+                                    </div>
+                                    <p>The service that provides the ETG EI Eligibility Check.</p>
                                 </div>
                             </div>
 

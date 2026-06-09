@@ -6,6 +6,8 @@ namespace CJG.Web.External.Areas.Int.Models.Automation
 	public class AutomationSettingsViewModel : BaseViewModel
 	{
 		public bool ReturnedToUnassessedServiceState { get; set; }
+		public bool EiEligibilityCheckServiceState { get; set; }
+
 		public List<KeyValuePair<string, bool>> StateOptions { get; set; }
 
 		public AutomationSettingsViewModel()

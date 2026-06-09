@@ -60,6 +60,7 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 		public ProgramTypes ProgramType { get; private set; }
 
 		public int? PrioritizationScore { get; set; }
+		public bool? LMDAEligibilityReviewed { get; set; }
 
 		public ApplicationSummaryViewModel() { }
 
@@ -153,6 +154,7 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 			BusinessCaseHeader = grantApplication.GrantOpening.GrantStream.BusinessCaseInternalHeader;
 
 			PrioritizationScore = grantApplication.PrioritizationScoreBreakdown != null ? grantApplication.PrioritizationScore : (int?)null;
+			LMDAEligibilityReviewed = grantApplication.LMDAEligibilityReviewed;
 		}
 
 		public GrantApplication MapToGrantApplication(ApplicationSummaryViewModel model, GrantApplication grantApplication)

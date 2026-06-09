@@ -209,6 +209,19 @@
                         {{ model.PrioritizationScore || 0 }}
                     </div>
                 </div>
+                <div class="form__group">
+                    <label class="form__label">LMDA Eligibility Reviewed:</label>
+                    <div class="form-address-group form__control">
+                        <div class="form__group form__group--radio-inline">
+                            <div class="control-wrapper" ng-validation="errors.LMDAEligibilityReviewed">
+                                <input type="radio" ng-model="model.LMDAEligibilityReviewed" id="has-reviewed-lmda-yes-{{section.name}}" name="has-reviewed-lmda-{{section.name}}" ng-value="true" class="form__group--radio-inline" ng-editing />
+                                <label for="has-reviewed-lmda-yes-{{section.name}}">Yes</label>
+                                <input type="radio" ng-model="model.LMDAEligibilityReviewed" id="has-reviewed-lmda-no-{{section.name}}" name="has-reviewed-lmda-{{section.name}}" ng-value="false" class="form__group--radio-inline" ng-editing />
+                                <label for="has-reviewed-lmda-no-{{section.name}}">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="clear-both"></div>

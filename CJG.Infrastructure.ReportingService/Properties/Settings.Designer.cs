@@ -90,5 +90,16 @@ namespace CJG.Infrastructure.ReportingService.Properties {
 	            return (DateTime)this["ReportCutoffDate"];
 			}
 		}
-    }
+
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("report\\ETG Referrals\\ei-eligibility-check-report-{0:yyyy-MM-dd-HH-mm-ss}.csv")]
+        public string CsvFilePathTemplateEiCheck
+        {
+	        get
+	        {
+		        return ((string)(this["CsvFilePathTemplateEiCheck"]));
+	        }
+        }
+	}
 }
