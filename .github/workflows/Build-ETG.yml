@@ -100,6 +100,7 @@ jobs:
           @{tag='db-user'; val="${{ vars.DB_USER }}"}, 
           @{tag='db-pass'; val='${{ secrets.DB_PASSWORD }}'},
           @{tag='csv-file-path-template'; val="${{ vars.REPORTING_SERVICE_CSV_FILE_PATH_TEMPLATE }}"},
+          @{tag='csv-ei-file-path-template'; val="${{ vars.REPORTING_SERVICE_EI_ELIGIBILITY_FILE_PATH_TEMPLATE }}"},
           @{tag='html-file-path-template'; val="${{ vars.REPORTING_SERVICE_HTML_FILE_PATH_TEMPLATE }}"}
         )
         ${{ vars.CI_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.ReportingService/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.ReportingService/App.config" $configTags
@@ -252,6 +253,7 @@ jobs:
           @{tag='db-user'; val="${{ vars.DB_USER }}"}, 
           @{tag='db-pass'; val='${{ secrets.DB_PASSWORD }}'},
           @{tag='csv-file-path-template'; val="${{ vars.REPORTING_SERVICE_CSV_FILE_PATH_TEMPLATE }}"},
+          @{tag='csv-ei-file-path-template'; val="${{ vars.REPORTING_SERVICE_EI_ELIGIBILITY_FILE_PATH_TEMPLATE }}"},
           @{tag='html-file-path-template'; val="${{ vars.REPORTING_SERVICE_HTML_FILE_PATH_TEMPLATE }}"}
         )
         ${{ vars.CI_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.ReportingService/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.ReportingService/App.config" $configTags
@@ -404,6 +406,7 @@ jobs:
           @{tag='db-user'; val="${{ vars.DB_USER }}"}, 
           @{tag='db-pass'; val='${{ secrets.DB_PASSWORD }}'},
           @{tag='csv-file-path-template'; val="${{ vars.REPORTING_SERVICE_CSV_FILE_PATH_TEMPLATE }}"},
+          @{tag='csv-ei-file-path-template'; val="${{ vars.REPORTING_SERVICE_EI_ELIGIBILITY_FILE_PATH_TEMPLATE }}"},
           @{tag='html-file-path-template'; val="${{ vars.REPORTING_SERVICE_HTML_FILE_PATH_TEMPLATE }}"}
         )
         ${{ vars.CI_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.ReportingService/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.ReportingService/App.config" $configTags
@@ -556,6 +559,7 @@ jobs:
           @{tag='db-user'; val="${{ vars.DB_USER }}"}, 
           @{tag='db-pass'; val='${{ secrets.DB_PASSWORD }}'},
           @{tag='csv-file-path-template'; val="${{ vars.REPORTING_SERVICE_CSV_FILE_PATH_TEMPLATE }}"},
+          @{tag='csv-ei-file-path-template'; val="${{ vars.REPORTING_SERVICE_EI_ELIGIBILITY_FILE_PATH_TEMPLATE }}"},
           @{tag='html-file-path-template'; val="${{ vars.REPORTING_SERVICE_HTML_FILE_PATH_TEMPLATE }}"}
         )
         ${{ vars.CI_SCRIPTS_FOLDER }}\replacetoken.ps1 "${{ github.workspace }}/CJG.Infrastructure.ReportingService/App.config.template" "${{ github.workspace }}/CJG.Infrastructure.ReportingService/App.config" $configTags
