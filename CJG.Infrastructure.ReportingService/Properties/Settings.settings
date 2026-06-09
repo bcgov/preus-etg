@@ -2,6 +2,9 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CJG.Infrastructure.ReportingService.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
+    <Setting Name="ReportCutoffDate" Type="System.DateTime" Scope="Application">
+      <Value Profile="(Default)">2021-08-01</Value>
+    </Setting>
     <Setting Name="CsvAddReportHeader" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">True</Value>
     </Setting>
@@ -16,6 +19,9 @@
     </Setting>
     <Setting Name="HtmlFilePathTemplate" Type="System.String" Scope="Application">
       <Value Profile="(Default)">report\participant-report-{0:yyyy-MM-dd}-::ParticipantEnrollmentId::.html</Value>
+    </Setting>
+    <Setting Name="CsvFilePathTemplateEiCheck" Type="System.String" Scope="User">
+      <Value Profile="(Default)">report_output\ETG Referrals\ei-eligibility-check-report-{0:yyyy-MM-dd-HH-mm-ss}.csv</Value>
     </Setting>
     <Setting Name="SiteUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)">https://skillstraininggrants.gov.bc.ca/</Value>

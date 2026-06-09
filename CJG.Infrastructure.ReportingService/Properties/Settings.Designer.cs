@@ -8,14 +8,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using CJG.Core.Entities;
-
 namespace CJG.Infrastructure.ReportingService.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -23,6 +20,15 @@ namespace CJG.Infrastructure.ReportingService.Properties {
         public static Settings Default {
             get {
                 return defaultInstance;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2021-08-01")]
+        public global::System.DateTime ReportCutoffDate {
+            get {
+                return ((global::System.DateTime)(this["ReportCutoffDate"]));
             }
         }
         
@@ -71,6 +77,19 @@ namespace CJG.Infrastructure.ReportingService.Properties {
             }
         }
         
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("report_output\\ETG Referrals\\ei-eligibility-check-report-{0:yyyy-MM-dd-HH-mm-ss}.c" +
+            "sv")]
+        public string CsvFilePathTemplateEiCheck {
+            get {
+                return ((string)(this["CsvFilePathTemplateEiCheck"]));
+            }
+            set {
+                this["CsvFilePathTemplateEiCheck"] = value;
+            }
+        }
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("https://skillstraininggrants.gov.bc.ca/")]
@@ -79,27 +98,5 @@ namespace CJG.Infrastructure.ReportingService.Properties {
                 return ((string)(this["SiteUrl"]));
             }
         }
-
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2021-08-01")]
-        public DateTime ReportCutoffDate
-        {
-            get
-            {
-	            return (DateTime)this["ReportCutoffDate"];
-			}
-		}
-
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("report\\ETG Referrals\\ei-eligibility-check-report-{0:yyyy-MM-dd-HH-mm-ss}.csv")]
-        public string CsvFilePathTemplateEiCheck
-        {
-	        get
-	        {
-		        return ((string)(this["CsvFilePathTemplateEiCheck"]));
-	        }
-        }
-	}
+    }
 }
