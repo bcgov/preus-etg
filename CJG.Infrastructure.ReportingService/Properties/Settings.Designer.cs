@@ -61,7 +61,16 @@ namespace CJG.Infrastructure.ReportingService.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("report\\participant-report-{0:yyyy-MM-dd}.csv")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://skillstraininggrants.gov.bc.ca/")]
+        public string SiteUrl {
+            get {
+                return ((string)(this["SiteUrl"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("report_output\\participant-report-{0:yyyy-MM-dd}.csv")]
         public string CsvFilePathTemplate {
             get {
                 return ((string)(this["CsvFilePathTemplate"]));
@@ -70,32 +79,19 @@ namespace CJG.Infrastructure.ReportingService.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("report\\participant-report-{0:yyyy-MM-dd}-::ParticipantEnrollmentId::.html")]
-        public string HtmlFilePathTemplate {
-            get {
-                return ((string)(this["HtmlFilePathTemplate"]));
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("report_output\\ETG Referrals\\ei-eligibility-check-report-{0:yyyy-MM-dd-HH-mm-ss}.c" +
-            "sv")]
+        [global::System.Configuration.DefaultSettingValueAttribute("report_output\\ETG Referrals\\ei-eligibility-check-report-{0:yyyy-MM-dd-HH-mm-ss}.csv")]
         public string CsvFilePathTemplateEiCheck {
             get {
                 return ((string)(this["CsvFilePathTemplateEiCheck"]));
-            }
-            set {
-                this["CsvFilePathTemplateEiCheck"] = value;
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://skillstraininggrants.gov.bc.ca/")]
-        public string SiteUrl {
+        [global::System.Configuration.DefaultSettingValueAttribute("report_output\\participant-report-{0:yyyy-MM-dd}-::ParticipantFormId::.html")]
+        public string HtmlFilePathTemplate {
             get {
-                return ((string)(this["SiteUrl"]));
+                return ((string)(this["HtmlFilePathTemplate"]));
             }
         }
     }
