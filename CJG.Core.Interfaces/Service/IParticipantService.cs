@@ -26,7 +26,7 @@ namespace CJG.Core.Interfaces.Service
 
 		void UpdateReportedDate(IEnumerable<ParticipantForm> participantEnrollments, DateTime reportedDate);
 		void UpdateExpectedOutcome(ParticipantForm participantForm, ExpectedParticipantOutcome? modelExpectedOutcome);
-		void UpdateEiEligibilityReportedDate(IEnumerable<ParticipantForm> participantEnrollments, DateTime reportedDate);
+		void UpdateEiEligibilityReportedDate(IEnumerable<ParticipantForm> participants, DateTime reportedDate);
 		void RemoveParticipant(ParticipantForm participantForm);
 		void IncludeParticipant(ParticipantForm participant);
 		void ExcludeParticipant(ParticipantForm participant);

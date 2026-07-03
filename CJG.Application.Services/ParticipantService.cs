@@ -349,12 +349,12 @@ namespace CJG.Application.Services
 		/// <summary>
 		/// Update ParticipantEnrollments with date when they were reported for EI Eligibility
 		/// </summary>
-		/// <param name="participantEnrollments"></param>
+		/// <param name="participants"></param>
 		/// <param name="reportedDate"></param>
-		public void UpdateEiEligibilityReportedDate(IEnumerable<ParticipantForm> participantEnrollments, DateTime reportedDate)
+		public void UpdateEiEligibilityReportedDate(IEnumerable<ParticipantForm> participants, DateTime reportedDate)
 		{
-			foreach (var participantEnrollment in participantEnrollments)
-				participantEnrollment.EiEligibilityReportedOn = reportedDate.ToUniversalTime();
+			foreach (var participant in participants)
+				participant.EiEligibilityReportedOn = reportedDate.ToUniversalTime();
 
 			_dbContext.Commit();
 		}

@@ -55,12 +55,11 @@ namespace CJG.Infrastructure.ReportingService
 
         private static void CreateEiEligibilityCheckReport(AppFactory appFactory, Options options)
         {
-	        // Get the participants that are on EI
 	        var job = appFactory.GetEiEligibilityCheckReportJob();
 	        job.Start(options.CurrentDate,
 		        string.Format(Settings.Default.CsvFilePathTemplateEiCheck, options.CurrentDate),
 		        new DateTime(2026, 4, 1),
-		        Settings.Default.MaxParticipants);
+		        2500);
         }
 
 		private static Options ParseArgs(string[] args)
