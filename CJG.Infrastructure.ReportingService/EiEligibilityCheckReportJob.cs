@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
 using System.IO;
 using System.Linq;
 using CJG.Application.Services;
@@ -53,7 +54,20 @@ namespace CJG.Infrastructure.ReportingService
 
 			_logger.Info($"Exported {participantCount} participant records into csv file: {csvFilePath}");
 
-			_participantService.UpdateEiEligibilityReportedDate(participants, currentDate);
+			try
+			{
+				_participantService.UpdateEiEligibilityReportedDate(participants, currentDate);
+			}
+			catch (DbEntityValidationException e)
+			{
+				var errors = string.Join(Environment.NewLine, e.EntityValidationErrors.SelectMany(v => v.ValidationErrors.Select(m => $"{m.PropertyName}: {m.ErrorMessage}")));
+				_logger.Error($"Encountered the following errors when attempting to update eligibility reported date:{Environment.NewLine}{errors}");
+
+				_logger.Info($"Attempting to delete generated file: {csvFilePath}");
+				File.Delete(csvFilePath);
+
+				return;
+			}
 
 			_logger.Info($"All {participants.Count} exported participant records marked with date {currentDate.ToUniversalTime()}");
 		}

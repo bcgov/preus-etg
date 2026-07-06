@@ -35,6 +35,7 @@ namespace CJG.Web.External.Areas.Int.Models
 		public bool RequiresTrainingProviderValidation { get; set; }
 		public bool RequiresCIPSValidation { get; set; }
 		public bool CanManageParticipantEligibilty { get; set; }
+		public bool CanManageParticipantLMDAEligibilty { get; set; }
 		public bool EditParticipants { get; set; }
 		public bool RequiresNumParticipantsMatchNumApprovedParticipants { get; set; }
 		public bool RequiresReviewOfAllParticipants { get; set; }
@@ -106,7 +107,11 @@ namespace CJG.Web.External.Areas.Int.Models
 			RequiresCIPSValidation = grantApplication.RequiresCIPSValidation();
 			RequiresTrainingProviderValidation = grantApplication.RequiresTrainingProviderValidation();
 
-			CanManageParticipantEligibilty = ProgramType == ProgramTypes.EmployerGrant && grantApplication.RequireAllParticipantsBeforeSubmission;
+			var canEditParticipants = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.UpdateParticipants);
+			var canEditParticipantLMDA = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.UpdateParticipantLMDAEligibility);
+
+			CanManageParticipantEligibilty = ProgramType == ProgramTypes.EmployerGrant && grantApplication.RequireAllParticipantsBeforeSubmission && canEditParticipants;
+			CanManageParticipantLMDAEligibilty = ProgramType == ProgramTypes.EmployerGrant && grantApplication.RequireAllParticipantsBeforeSubmission && canEditParticipantLMDA;
 
 			RequiresNumParticipantsMatchNumApprovedParticipants = CanManageParticipantEligibilty && grantApplication.RequiresNumParticipantsMatchNumApprovedParticipants();
 			RequiresReviewOfAllParticipants = CanManageParticipantEligibilty && grantApplication.ParticipantForms.Any(a => !a.Approved.HasValue);
@@ -128,7 +133,9 @@ namespace CJG.Web.External.Areas.Int.Models
 			// This isn't technically correct
 			ShowESS = grantApplication.GetProgramType() == ProgramTypes.WDAService;
 
-			EditParticipants = CanManageParticipantEligibilty && user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.UpdateParticipants);
+			EditParticipants = (CanManageParticipantEligibilty && user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.UpdateParticipants))
+			                    || (CanManageParticipantLMDAEligibilty && user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.UpdateParticipantLMDAEligibility));
+			                   
 			ShowParticipants = grantApplication.ParticipantForms.Count > 0
 				|| user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EnableApplicantReportingOfParticipants)
 				|| user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EnableParticipantReporting);
