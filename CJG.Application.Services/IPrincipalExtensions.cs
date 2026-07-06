@@ -272,36 +272,36 @@ namespace CJG.Application.Services
 						default:
 							return user.HasPrivilege(Privilege.AM4) || (user.HasPrivilege(Privilege.AM2) && isAssessor);
 					}
-				case (ApplicationWorkflowTrigger.EditApplicantContact):
+				case ApplicationWorkflowTrigger.EditApplicantContact:
 					switch (grantApplication.ApplicationStateInternal)
 					{
-						case (ApplicationStateInternal.Draft):
-						case (ApplicationStateInternal.ApplicationWithdrawn):
+						case ApplicationStateInternal.Draft:
+						case ApplicationStateInternal.ApplicationWithdrawn:
 							return isApplicationAdministrator;
-						case (ApplicationStateInternal.Unfunded):
+						case ApplicationStateInternal.Unfunded:
 							return isApplicationAdministrator || user.HasPrivilege(Privilege.AM4);
-						case (ApplicationStateInternal.New):
-						case (ApplicationStateInternal.PendingAssessment):
+						case ApplicationStateInternal.New:
+						case ApplicationStateInternal.PendingAssessment:
 							return user.HasPrivilege(Privilege.AM2, Privilege.AM3);
-						case (ApplicationStateInternal.UnderAssessment):
-						case (ApplicationStateInternal.RecommendedForDenial):
-						case (ApplicationStateInternal.RecommendedForApproval):
-						case (ApplicationStateInternal.ReturnedToAssessment):
-						case (ApplicationStateInternal.ChangeRequest):
-						case (ApplicationStateInternal.ChangeForApproval):
-						case (ApplicationStateInternal.ChangeForDenial):
-						case (ApplicationStateInternal.ChangeReturned):
-							return user.HasPrivilege(Privilege.AM3) || (user.HasPrivilege(Privilege.AM2) && isAssessor);
-						case (ApplicationStateInternal.Closed):
-						case (ApplicationStateInternal.ReturnedUnassessed):
+						case ApplicationStateInternal.UnderAssessment:
+						case ApplicationStateInternal.RecommendedForDenial:
+						case ApplicationStateInternal.RecommendedForApproval:
+						case ApplicationStateInternal.ReturnedToAssessment:
+						case ApplicationStateInternal.ChangeRequest:
+						case ApplicationStateInternal.ChangeForApproval:
+						case ApplicationStateInternal.ChangeForDenial:
+						case ApplicationStateInternal.ChangeReturned:
+							return user.HasPrivilege(Privilege.AM3) || user.HasPrivilege(Privilege.AM2) && isAssessor;
+						case ApplicationStateInternal.Closed:
+						case ApplicationStateInternal.ReturnedUnassessed:
 							return false;
-						case (ApplicationStateInternal.ApplicationDenied):
-						case (ApplicationStateInternal.OfferWithdrawn):
-						case (ApplicationStateInternal.CancelledByAgreementHolder):
-						case (ApplicationStateInternal.CancelledByMinistry):
+						case ApplicationStateInternal.ApplicationDenied:
+						case ApplicationStateInternal.OfferWithdrawn:
+						case ApplicationStateInternal.CancelledByAgreementHolder:
+						case ApplicationStateInternal.CancelledByMinistry:
 							return user.HasPrivilege(Privilege.AM4);
 						default:
-							return user.HasPrivilege(Privilege.AM4) || (user.HasPrivilege(Privilege.AM2) && isAssessor);
+							return user.HasPrivilege(Privilege.AM4) || user.HasPrivilege(Privilege.AM2) && isAssessor;
 					}
 				// The difference between ChangeApplicantContact (below) and (above) is in the ChangeReturned and the default case.
 				// The "Change Applicant Contact" button is enabled for all assessors.
@@ -797,25 +797,26 @@ namespace CJG.Application.Services
 				case ApplicationWorkflowTrigger.ReturnUnassessedToNew:
 					return user.HasPrivilege(Privilege.AM4);
 
-				case (ApplicationWorkflowTrigger.CloseClaimReporting):
+				case ApplicationWorkflowTrigger.CloseClaimReporting:
 					return (user.HasPrivilege(Privilege.AM3) || (user.HasPrivilege(Privilege.AM2, Privilege.AM5) && isAssessor)) && hasSubmittedAClaim;
 
-				case (ApplicationWorkflowTrigger.Close):
-				case (ApplicationWorkflowTrigger.EnableClaimReporting):
-				case (ApplicationWorkflowTrigger.EnableCompletionReporting):
+				case ApplicationWorkflowTrigger.Close:
+				case ApplicationWorkflowTrigger.EnableClaimReporting:
+				case ApplicationWorkflowTrigger.EnableCompletionReporting:
 					return (user.HasPrivilege(Privilege.AM3) || (user.HasPrivilege(Privilege.AM2, Privilege.AM5) && isAssessor));
-				case (ApplicationWorkflowTrigger.GeneratePaymentRequest):
+				case ApplicationWorkflowTrigger.GeneratePaymentRequest:
 					return user.HasPrivilege(Privilege.PM1);
-				case (ApplicationWorkflowTrigger.ViewParticipants):
+				case ApplicationWorkflowTrigger.ViewParticipants:
 					return isApplicationAdministrator || user.HasPrivilege(Privilege.IA2);
 				case ApplicationWorkflowTrigger.UpdateParticipants:
+				case ApplicationWorkflowTrigger.UpdateParticipantLMDAEligibility:
 					return user.HasPrivilege(Privilege.AM4) || (user.HasPrivilege(Privilege.AM2) && isAssessor);
-				case (ApplicationWorkflowTrigger.EnableParticipantReporting):
+				case ApplicationWorkflowTrigger.EnableParticipantReporting:
 					return (user.HasPrivilege(Privilege.AM4) || (user.HasPrivilege(Privilege.AM2) && isAssessor))
 						&& claimType == Core.Entities.ClaimTypes.MultipleClaimsWithoutAmendments;
-				case (ApplicationWorkflowTrigger.EnableApplicantReportingOfParticipants):
+				case ApplicationWorkflowTrigger.EnableApplicantReportingOfParticipants:
 					return grantApplication.GrantOpening.GrantStream.CanApplicantReportParticipants && (user.HasPrivilege(Privilege.AM4) || (user.HasPrivilege(Privilege.AM2) && isAssessor));
-				case (ApplicationWorkflowTrigger.HoldPaymentRequests):
+				case ApplicationWorkflowTrigger.HoldPaymentRequests:
 					return user.HasPrivilege(Privilege.AM2, Privilege.AM3);
 				default:
 					return false;

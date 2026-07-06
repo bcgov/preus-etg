@@ -273,6 +273,11 @@ namespace CJG.Core.Entities
 		[Description("Update Participants")]
 		UpdateParticipants = 80,
 		/// <summary>
+		/// UpdateParticipants - Directors and Assessors can edit participant LMDA eligibility.
+		/// </summary>
+		[Description("Update Participant LMDA Eligibility")]
+		UpdateParticipantLMDAEligibility = 81,
+		/// <summary>
 		/// AddRemoveTrainingProvider - Add/Remove Training Provider
 		/// </summary>
 		[Description("Add/Remove Training Provider")]
