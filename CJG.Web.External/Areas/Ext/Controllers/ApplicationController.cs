@@ -7,7 +7,6 @@ using CJG.Core.Interfaces;
 using CJG.Core.Interfaces.Service;
 using CJG.Web.External.Areas.Ext.Models;
 using CJG.Web.External.Areas.Ext.Models.Applications;
-using CJG.Web.External.Areas.Int.Models.GrantStreams;
 using CJG.Web.External.Controllers;
 using CJG.Web.External.Helpers;
 using CJG.Web.External.Helpers.Filters;
@@ -195,9 +194,10 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 				// passedEligibilityQuestions replaces previous code which set GrantApplication.EligibilityConfirmed to false if
 				// there were no eligibility questions, and set it to true if there were (since if there are questions that must be
 				// true to add the grant application with the extant eligibility question).
-				int numQuestions = 0;
-				int numFoundQuestions = 0;
-				bool passedEligibilityQuestions = true;
+				var numQuestions = 0;
+				var numFoundQuestions = 0;
+				var passedEligibilityQuestions = true;
+
 				if (dbModel.StreamEligibilityQuestions.Count() != 0)
 				{
 					foreach (var question in dbModel.StreamEligibilityQuestions)
@@ -226,6 +226,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 						}
 					}
 				}
+
 				if (numFoundQuestions != numQuestions)
 				{
 					ModelState.AddModelError("EligibilityQuestion", "The stream eligibility requirements must be met for your application to be submitted and assessed.");
@@ -250,12 +251,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					grantApplication.CopyApplicant(currentUser);
 					grantApplication.AddApplicationAdministrator(currentUser);
 					grantApplication.ApplicationType = _grantApplicationService.GetDefaultApplicationType();
-
-					// Base the completion report that will be processed, on whether the grant program has Account Code for CWRG.
-					if (grantOpening.GrantStream.GrantProgram.AccountCodeId == Constants.GrantProgramNameCWRGIdKey)
-						grantApplication.CompletionReportId = Constants.CompletionReportCWRG;
-					else
-						grantApplication.CompletionReportId = Constants.CompletionReportETG;
+					grantApplication.CompletionReportId = Constants.CompletionReportETG;
 					grantApplication.GrantOpeningId = model.GrantOpeningId.GetValueOrDefault();
 					grantApplication.OrganizationId = currentUser.OrganizationId;
 					grantApplication.OrganizationBCeID = currentUser.Organization.BCeIDGuid;
@@ -289,6 +285,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 					var earliest = grantApplication.DateSubmitted ?? grantApplication.DateAdded;
 					grantApplication.StartDate = model.DeliveryStartDate.HasValue ? new DateTime(model.DeliveryStartYear, model.DeliveryStartMonth, model.DeliveryStartDay, 0, 0, 0, DateTimeKind.Local).ToUtcMorning() : earliest;
 					grantApplication.EndDate = model.DeliveryEndDate.HasValue ? new DateTime(model.DeliveryEndYear, model.DeliveryEndMonth, model.DeliveryEndDay, 0, 0, 0, DateTimeKind.Local).ToUtcMidnight() : earliest.AddMonths(1);
+					grantApplication.LMDAEligibilityReviewed = false; // A new application needs to be flagged as not reviewed. NULL values here indicate older applications.
 
 					foreach (var question in dbModel.StreamEligibilityQuestions)
 					{
@@ -544,40 +541,6 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			return Json(model);
 		}
 
-		/// <summary>
-		/// Add the eligibility answers
-		/// </summary>
-		/// <param name="grantApplicationId"></param>
-		/// <param name="dbQuestions"></param>
-		/// <param name="clientQuestions"></param>
-		/// <returns></returns>
-		private void AddStreamAnswers(int grantApplicationId, IEnumerable<GrantStreamQuestionViewModel> dbQuestions, IEnumerable<GrantStreamQuestionViewModel> clientQuestions)
-		{
-			List<GrantStreamEligibilityAnswer> answers = new List<GrantStreamEligibilityAnswer>();
-			if (dbQuestions.Count() != 0)
-			{
-				foreach (var question in dbQuestions)
-				{
-					foreach (var clientQuestion in clientQuestions)
-					{
-						if (question.Id == clientQuestion.Id)
-						{
-							if (clientQuestion.EligibilityAnswer != null)
-							{
-								answers.Add(new GrantStreamEligibilityAnswer
-								{
-									GrantApplicationId = grantApplicationId,
-									GrantStreamEligibilityQuestionId = question.Id,
-									EligibilityAnswer = clientQuestion.EligibilityAnswer.GetValueOrDefault(false)
-								});
-							}
-						}
-					}
-				}
-				_grantStreamService.AddGrantStreamAnswers(answers);
-			}
-		}
-
 		#region Application Overview
 		/// <summary>
 		/// Display the Grant Application overview View.
@@ -636,10 +599,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 			if (!_organizationService.IsOrganizationNaicsStatusUpdated(currentUser.Organization.Id))
 			{
 				if (_organizationService.NotSubmittedGrantApplications(currentUser.Organization.Id) > 0)
-				{
-					// Clear NAICS
 					_organizationService.ClearOrganizationOldNaicsCode(currentUser.Organization.Id);
-				}
 
 				this.SetAlerts(MessageConstants.Message_BCeID_NAICS_Expired, AlertType.Warning);
 			}
@@ -706,7 +666,7 @@ namespace CJG.Web.External.Areas.Ext.Controllers
 								if(grantApplication.TrainingCost.EstimatedParticipants != grantApplication.ParticipantForms.Count())
 								{
 									grantApplication.ApplicationStateExternal = ApplicationStateExternal.Incomplete;
-								}								
+								}
 							}
 						}
 
