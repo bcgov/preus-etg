@@ -13,7 +13,7 @@ namespace CJG.Web.External.Areas.Part.Models
 
 		private static bool IsUnemployed(int employmentType)
 		{
-			return employmentType == 1 || employmentType == 4;
+			return employmentType == 1 || employmentType == 4 || employmentType == 5;
 		}
 
 		//private static bool WasEmployedOrInTraining(int employmentType, bool? haveYouEverBeenEmployed)
@@ -25,7 +25,7 @@ namespace CJG.Web.External.Areas.Part.Models
 		private static bool WasEmployed(int employmentType, bool? haveYouEverBeenEmployed)
 		{
 			var previouslyEmployed = haveYouEverBeenEmployed ?? false;
-			return previouslyEmployed && (employmentType == 1 || employmentType == 4);
+			return previouslyEmployed && (employmentType == 1 || employmentType == 4 || employmentType == 5);
 		}
 
 		public static ValidationResult ValidateHaveYouEverBeenEmployed(bool? haveYouEverBeenEmployed, ValidationContext context)

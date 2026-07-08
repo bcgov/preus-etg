@@ -1335,7 +1335,7 @@ namespace CJG.Web.External.Areas.Part.Controllers
 
 		private bool HasUnemployedStatus(ParticipantInfoStep4ViewModel model)
 		{
-			return model.EmploymentStatus == 1 || model.EmploymentStatus == 4;
+			return model.EmploymentStatus == 1 || model.EmploymentStatus == 4 || model.EmploymentStatus == 5;
 		}
 
 		//private bool HasPreviouslyEmployedOrInTrainingStatus(ParticipantInfoStep4ViewModel model)

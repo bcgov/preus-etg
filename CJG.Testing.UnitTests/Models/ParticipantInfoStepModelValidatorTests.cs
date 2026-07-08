@@ -58,7 +58,7 @@ namespace CJG.Testing.UnitTests.Models
 		[DataRow(2, false)]
 		[DataRow(3, false)]
 		[DataRow(4, true)]
-		[DataRow(5, false)]
+		[DataRow(5, true)]
 		[DataRow(6, false)]
 		public void HaveYouEverBeenEmployedShouldBeRequired(int employmentStatus, bool required)
 		{
@@ -91,7 +91,7 @@ namespace CJG.Testing.UnitTests.Models
 		[DataRow(2, false)]
 		[DataRow(3, false)]
 		[DataRow(4, true)]
-		[DataRow(5, false)]
+		[DataRow(5, true)]
 		[DataRow(6, false)]
 		public void LastWorkedDateShouldBeRequired(int employmentStatus, bool required)
 		{
@@ -127,6 +127,8 @@ namespace CJG.Testing.UnitTests.Models
 		[DataRow(2, false)]
 		[DataRow(3, false)]
 		[DataRow(4, true)]
+		[DataRow(5, true)]
+		[DataRow(6, false)]
 		public void PreviousAverageWageShouldBeRequired(int employmentStatus, bool required)
 		{
 			_model.EmploymentStatus = employmentStatus;
@@ -161,7 +163,7 @@ namespace CJG.Testing.UnitTests.Models
 		[DataRow(2, false)]
 		[DataRow(3, false)]
 		[DataRow(4, true)]
-		[DataRow(5, false)]
+		[DataRow(5, true)]
 		[DataRow(6, false)]
 		public void LastPreviousEmployerNameShouldBeRequired(int employmentStatus, bool required)
 		{
@@ -180,7 +182,7 @@ namespace CJG.Testing.UnitTests.Models
 		[DataRow(2, false)]
 		[DataRow(3, false)]
 		[DataRow(4, true)]
-		[DataRow(5, false)]
+		[DataRow(5, true)]
 		[DataRow(6, false)]
 		public void PreviousEmploymentNocShouldBeRequired(int employmentStatus, bool required)
 		{
@@ -220,7 +222,7 @@ namespace CJG.Testing.UnitTests.Models
 		[DataRow(2, false)]
 		[DataRow(3, false)]
 		[DataRow(4, true)]
-		[DataRow(5, false)]
+		[DataRow(5, true)]
 		[DataRow(6, false)]
 		public void PreviousEmploymentNaicsShouldBeRequired(int employmentStatus, bool required)
 		{
