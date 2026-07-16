@@ -418,6 +418,9 @@ namespace CJG.Application.Services
 					_grantApplication.DateSubmitted = AppDateTime.UtcNow;
 					_grantApplication.TrainingCost.CopyEstimatedIntoAgreed();
 
+					if (_grantApplication.LMDAEligibilityReviewed == null)
+						_grantApplication.LMDAEligibilityReviewed = false;
+
 					var breakdown = _prioritizationService.GetBreakdown(_grantApplication);
 					_grantApplication.PrioritizationScoreBreakdown = breakdown;
 					_grantApplication.PrioritizationScore = breakdown?.GetTotalScore() ?? 0;
