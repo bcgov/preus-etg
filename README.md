@@ -1,6 +1,6 @@
-# Skills Training Grants
+# Employer Training Grants
 
-Welcome to the Skills Training Grants (STG) solution which replaces the Canada-BC Job Grant and is funded through the negotiated Workforce Development Agreement (WDA). 
+Welcome to the Employer Training Grants (ETG) solution which replaces the Canada-BC Job Grant and is funded through the negotiated Workforce Development Agreement (WDA). 
 [More Information](https://www.workbc.ca/Employer-Resources/Skills-Training/Skills-Training-Programs.aspx)
 
 - B.C. Employer Training Grant (ETG). [More Information](https://www.workbc.ca/Employer-Resources/BC-Employer-Training-Grant.aspx)
