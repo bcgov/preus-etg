@@ -8,7 +8,7 @@ Welcome to the Employer Training Grants (ETG) solution which replaces the Canada
 - Community Workplace Response Grants (CWRG). [More Information](https://www.workbc.ca/Employment-Services/Community-Workforce-Response-Grant.aspx)
 
 ## Hosting, DevOps, Source Control
-The project is hosted and managed by [Ministry of Advanced Education, Skills & Training](https://www2.gov.bc.ca/gov/content/governments/organizational-structure/ministries-organizations/ministries/advanced-education-skills-training), within [TFS](http://bonnie.idir.bcgov/tfs/Economy/CJG%20-%20Canada%20Job%20Grant) using [GIT](http://bonnie.idir.bcgov/tfs/Economy/CJG%20-%20Canada%20Job%20Grant/_git/CJG%20-%20Canada%20Job%20Grant%202018) as source control.
+The project is hosted and managed by [Ministry of Post-Secondary Education & Future Skills](https://www2.gov.bc.ca/gov/content/governments/organizational-structure/ministries-organizations/ministries/advanced-education-skills-training), within [TFS](http://bonnie.idir.bcgov/tfs/Economy/CJG%20-%20Canada%20Job%20Grant) using [GIT](http://bonnie.idir.bcgov/tfs/Economy/CJG%20-%20Canada%20Job%20Grant/_git/CJG%20-%20Canada%20Job%20Grant%202018) as source control.
 
 ---
 ## Application Overview
