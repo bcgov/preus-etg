@@ -252,25 +252,35 @@ namespace CJG.Application.Services
 				case ApplicationWorkflowTrigger.EditSummary:
 					switch (grantApplication.ApplicationStateInternal)
 					{
-						case (ApplicationStateInternal.Draft):
-						case (ApplicationStateInternal.ApplicationWithdrawn):
-						case (ApplicationStateInternal.Unfunded):
+						case ApplicationStateInternal.Draft:
+						case ApplicationStateInternal.ApplicationWithdrawn:
+						case ApplicationStateInternal.Unfunded:
 							return isApplicationAdministrator;
-						case (ApplicationStateInternal.New):
-						case (ApplicationStateInternal.OfferIssued):
-						case (ApplicationStateInternal.OfferWithdrawn):
-						case (ApplicationStateInternal.CancelledByAgreementHolder):
-						case (ApplicationStateInternal.CancelledByMinistry):
-						case (ApplicationStateInternal.Closed):
-						case (ApplicationStateInternal.AgreementRejected):
-						case (ApplicationStateInternal.ReturnedUnassessed):
+						case ApplicationStateInternal.New:
+						case ApplicationStateInternal.OfferIssued:
+							return user.HasPrivilege(Privilege.AM4) || user.HasPrivilege(Privilege.AM2) && isAssessor;
+						case ApplicationStateInternal.OfferWithdrawn:
+						case ApplicationStateInternal.CancelledByAgreementHolder:
+						case ApplicationStateInternal.CancelledByMinistry:
+						case ApplicationStateInternal.Closed:
+						case ApplicationStateInternal.AgreementRejected:
+						case ApplicationStateInternal.ReturnedUnassessed:
 							return false;
-						case (ApplicationStateInternal.ApplicationDenied):
+						case ApplicationStateInternal.ApplicationDenied:
 							return user.HasPrivilege(Privilege.AM4);
-						case (ApplicationStateInternal.PendingAssessment):
+						case ApplicationStateInternal.PendingAssessment:
 							return user.HasPrivilege(Privilege.AM2, Privilege.AM3);
 						default:
 							return user.HasPrivilege(Privilege.AM4) || (user.HasPrivilege(Privilege.AM2) && isAssessor);
+					}
+				case ApplicationWorkflowTrigger.EditLMDAEligibility:
+					switch (grantApplication.ApplicationStateInternal)
+					{
+						case ApplicationStateInternal.New:
+						case ApplicationStateInternal.OfferIssued:
+							return user.HasPrivilege(Privilege.AM2, Privilege.AM3, Privilege.AM4);
+						default:
+							return false;
 					}
 				case ApplicationWorkflowTrigger.EditApplicantContact:
 					switch (grantApplication.ApplicationStateInternal)
