@@ -58,6 +58,7 @@ namespace CJG.Web.External.Areas.Int.Models
 		public int TotalApprovedParticipants { get; set; }
 
 		public bool EditSummary { get; set; }
+		public bool EditLMDAEligibility { get; set; }
 		public bool EditApplicantContact { get; set; }
 		public bool EditApplicant { get; set; }
 		public bool EditAttachments { get; set; }
@@ -177,6 +178,7 @@ namespace CJG.Web.External.Areas.Int.Models
 			}
 
 			EditSummary = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditSummary);
+			EditLMDAEligibility = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditLMDAEligibility);
 			EditApplicantContact = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditApplicantContact);
 			EditApplicant = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditApplicant);
 			EditAttachments = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditApplicationAttachments);

@@ -14,7 +14,7 @@ using CJG.Web.External.Helpers.Filters;
 
 namespace CJG.Web.External.Areas.Int.Controllers
 {
-    [RouteArea("Int")]
+	[RouteArea("Int")]
 	public class ApplicationSummaryController : BaseController
 	{
 		private readonly IStaticDataService _staticDataService;
@@ -33,7 +33,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			IGrantAgreementService grantAgreementService,
 			IDeliveryPartnerService deliveryPartnerService,
 			IAttachmentService attachmentService
-
 		   ) : base(controllerService.Logger)
 		{
 			_staticDataService = controllerService.StaticDataService;
@@ -45,7 +44,6 @@ namespace CJG.Web.External.Areas.Int.Controllers
 			_attachmentService = attachmentService;
 		}
 
-		#region Endpoints
 		/// <summary>
 		/// Get the summary information for the application details view.
 		/// </summary>
@@ -182,52 +180,57 @@ namespace CJG.Web.External.Areas.Int.Controllers
 				var grantApplication = _grantApplicationService.Get(model.Id);
 				grantApplication.RowVersion = Convert.FromBase64String(model.RowVersion);
 
-				bool deliveryDatesModified = (model.DeliveryStartDate.ToLocalTime().Date != grantApplication.StartDate.ToLocalTime().Date || model.DeliveryEndDate.ToLocalTime().Date != grantApplication.EndDate.ToLocalTime().Date);
+				bool deliveryDatesModified = model.DeliveryStartDate.ToLocalTime().Date != grantApplication.StartDate.ToLocalTime().Date || model.DeliveryEndDate.ToLocalTime().Date != grantApplication.EndDate.ToLocalTime().Date;
 				if (deliveryDatesModified && grantApplication.ApplicationStateInternal.In(ApplicationStateInternal.NewClaim, ApplicationStateInternal.ClaimAssessEligibility, ApplicationStateInternal.ClaimAssessReimbursement, ApplicationStateInternal.ClaimApproved))
-				{
 					ModelState.AddModelError(nameof(model.DeliveryStartDate) + " + " + nameof(model.DeliveryEndDate), "You cannot change the Delivery Dates when a Claim is currently submitted or a previous Claim has been approved.");
-				}
 
 				if (model.DeliveryPartnerId == null)
-				{
 					model.SelectedDeliveryPartnerServiceIds = new List<int>();
-				}
 
-				if ((!model.HasRequestedAdditionalFunding) ?? true)
-				{
+				if (!model.HasRequestedAdditionalFunding ?? true)
 					ModelState.Remove("DescriptionOfFundingRequested");
-				}
 
 				if (ModelState.IsValid)
 				{
-					// when delivery start/end dates changed
-					if (deliveryDatesModified)
+					var workflowTrigger = ApplicationWorkflowTrigger.EditSummary;
+					var userCanEditSummary = User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditSummary);
+					var userCanEditLMDAEligibility = User.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditLMDAEligibility);
+
+					if (userCanEditSummary)
 					{
-						// delivery date range must cover all training programs date ranges
-						var earliest = grantApplication.DateSubmitted.Value.ToLocalMorning();
-						var latest = model.DeliveryStartDate.AddYears(1);
-						if (model.DeliveryStartDate < earliest || latest < model.DeliveryEndDate)
+						// when delivery start/end dates changed
+						if (deliveryDatesModified)
 						{
-							throw new InvalidOperationException($"Delivery dates must be within {earliest:yyyy-MM-dd} and {latest:yyyy-MM-dd}");
+							// delivery date range must cover all training programs date ranges
+							var earliest = grantApplication.DateSubmitted.Value.ToLocalMorning();
+							var latest = model.DeliveryStartDate.AddYears(1);
+							if (model.DeliveryStartDate < earliest || latest < model.DeliveryEndDate)
+							{
+								throw new InvalidOperationException($"Delivery dates must be within {earliest:yyyy-MM-dd} and {latest:yyyy-MM-dd}");
+							}
+
+							// Update Delivery dates in the Grant Application.
+							grantApplication.StartDate = model.DeliveryStartDate.ToUtcMorning();
+							grantApplication.EndDate = model.DeliveryEndDate.ToUtcMidnight();
+
+							grantApplication.TrainingPrograms.ForEach(ga => ga.StartDate = grantApplication.StartDate);
+							grantApplication.TrainingPrograms.ForEach(ga => ga.EndDate = grantApplication.EndDate);
 						}
 
-						// Update Delivery dates in the Grant Application.
-						grantApplication.StartDate = model.DeliveryStartDate.ToUtcMorning();
-						grantApplication.EndDate = model.DeliveryEndDate.ToUtcMidnight();
-
-						grantApplication.TrainingPrograms.ForEach(ga => ga.StartDate = grantApplication.StartDate);
-						grantApplication.TrainingPrograms.ForEach(ga => ga.EndDate = grantApplication.EndDate);
+						grantApplication.Organization.DoingBusinessAsMinistry = model.DoingBusinessAsMinistry;
+						grantApplication.RowVersion = Convert.FromBase64String(model.RowVersion);
+						grantApplication.RiskClassificationId = model.RiskClassificationId;
+						grantApplication.LMDAEligibilityReviewed = model.LMDAEligibilityReviewed;
 					}
 
-					grantApplication.Organization.DoingBusinessAsMinistry = model.DoingBusinessAsMinistry;
-					grantApplication.RowVersion = Convert.FromBase64String(model.RowVersion);
-					grantApplication.RiskClassificationId = model.RiskClassificationId;
-					grantApplication.LMDAEligibilityReviewed = model.LMDAEligibilityReviewed;
+					if (!userCanEditSummary && userCanEditLMDAEligibility)
+					{
+						grantApplication.LMDAEligibilityReviewed = model.LMDAEligibilityReviewed;
+						workflowTrigger = ApplicationWorkflowTrigger.EditLMDAEligibility;
+					}
 
 					if (_grantAgreementService.AgreementUpdateRequired(grantApplication))
-					{
 						_grantAgreementService.UpdateAgreement(grantApplication);
-					}
 
 					if (file != null)
 					{
@@ -235,23 +238,24 @@ namespace CJG.Web.External.Areas.Int.Controllers
 						if (grantApplication.BusinessCaseDocument == null || grantApplication.BusinessCaseDocument.Id == 0)
 						{
 							grantApplication.BusinessCaseDocument = attachment;
-							_attachmentService.Add(attachment,true);
+							_attachmentService.Add(attachment, true);
 						}
 						else
 						{
 							attachment.Id = grantApplication.BusinessCaseDocument.Id;
 							attachment.RowVersion = grantApplication.BusinessCaseDocument.RowVersion;
-							_attachmentService.Update(attachment,true);
+							_attachmentService.Update(attachment, true);
 						}
 					}
+
 					if (grantApplication.GrantOpening.GrantStream.IncludeDeliveryPartner)
 					{
 						_grantApplicationService.UpdateDeliveryPartner(grantApplication, model.DeliveryPartnerId, model.SelectedDeliveryPartnerServiceIds);
-						_grantApplicationService.Update(grantApplication, ApplicationWorkflowTrigger.EditSummary);
+						_grantApplicationService.Update(grantApplication, workflowTrigger);
 					}
 					else
 					{
-						_grantApplicationService.Update(grantApplication, ApplicationWorkflowTrigger.EditSummary);
+						_grantApplicationService.Update(grantApplication, workflowTrigger);
 					}
 
 					model = new ApplicationSummaryViewModel(grantApplication, _deliveryPartnerService, _authorizationService, _grantApplicationService, _riskClassificationService, User);
@@ -268,6 +272,5 @@ namespace CJG.Web.External.Areas.Int.Controllers
 
 			return Json(model, JsonRequestBehavior.AllowGet);
 		}
-		#endregion
 	}
 }
