@@ -7,7 +7,7 @@
 	{
 		public static string ToStringValue(this bool value, string trueValue = "Yes", string falseValue = "No")
 		{
-			return (value) ? trueValue : falseValue;
+			return value ? trueValue : falseValue;
 		}
 
 		public static string AsYesOrNo(this bool value, string nullString = "---")

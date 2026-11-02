@@ -64,8 +64,8 @@ namespace CJG.Web.External.Areas.Int.Models.TrainingPrograms
 		{
 			Id = trainingProgram?.Id ?? throw new ArgumentNullException(nameof(trainingProgram));
 			Utilities.MapProperties(trainingProgram, this);
-			StartDate = trainingProgram.StartDate.ToLocalMorning();
-			EndDate = trainingProgram.EndDate.ToLocalMidnight();
+			StartDate = trainingProgram.StartDate.ToLocalTime();
+			EndDate = trainingProgram.EndDate.ToLocalTime();
 
 			MinStartDate = trainingProgram.GrantApplication.GrantOpening.TrainingPeriod.StartDate;
 			MaxStartDate = trainingProgram.GrantApplication.GrantOpening.TrainingPeriod.EndDate;
