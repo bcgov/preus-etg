@@ -10,7 +10,7 @@
             <span ng-if="grantFile.HasAgreement">
                 @Html.ActionLink("View Agreement", nameof(GrantAgreementController.AgreementView), typeof(GrantAgreementController), new { grantApplicationId = ViewBag.GrantApplicationId })
             </span>
-            <section-edit-buttons ng-model="section.editing" ng-if="grantFile.EditSummary"></section-edit-buttons>
+            <section-edit-buttons ng-model="section.editing" ng-if="grantFile.EditSummary || grantFile.EditLMDAEligibility"></section-edit-buttons>
         </div>
     </div>
     <div class="panel-section-content" ng-show="section.show">
@@ -39,7 +39,7 @@
                 </div>
                 <div class="form__group">
                     <div class="form__label">Training Dates:</div>
-                    <div class="form__control">
+                    <div class="form__control" ng-if="section.editing && grantFile.EditSummary">
                         <div class="control-wrapper" ng-class="{ 'float-left' : !section.editing }">
                             <datedropdown ng-model="model.DeliveryStartDate" ng-text="model.DeliveryStartDate" ng-min-date="model.TrainingPeriodStartDate" ng-max-date="model.TrainingPeriodEndDate"></datedropdown>
                         </div>
@@ -49,6 +49,9 @@
                         <div class="control-wrapper" ng-class="{ 'float-left' : !section.editing }">
                             <datedropdown ng-model="model.DeliveryEndDate" ng-text="model.DeliveryEndDate" ng-min-date="model.TrainingPeriodStartDate" ng-max-date="section.maxTrainingPeriodDate"></datedropdown>
                         </div>
+                    </div>
+                    <div class="form__control" ng-if="!section.editing || (section.editing && !grantFile.EditSummary)">
+                        {{toPST(model.DeliveryStartDate)}} to {{toPST(model.DeliveryEndDate)}}
                     </div>
                 </div>
                 <div class="form__group">
@@ -82,13 +85,19 @@
                 </div>
                 <div class="form__group last-item" ng-if="model.ProgramType === @((int)CJG.Core.Entities.ProgramTypes.EmployerGrant)">
                     <div class="form__label">{{model.BusinessCaseHeader}}</div>
-                    <div class="form__control">
+                    <div class="form__control" ng-if="section.editing && grantFile.EditSummary">
                         <div class="control-wrapper" ng-validation="errors.BusinessCaseDocument">
                             <a class="link" ng-if="model.BusinessCaseDocument" ng-click="!model.BusinessCaseDocument.Id || downloadAttachment(model.BusinessCaseDocument.Id)">{{model.BusinessCaseDocument.FileName}}</a>
                             <button ng-if="model.BusinessCaseDocument && section.editing" class="btn btn--primary pull-right" ng-click="changeAttachment('BusinessCaseDocument')">Change</button>
                             <span ng-if="!model.BusinessCaseDocument">None</span>
                             <button ng-if="!model.BusinessCaseDocument && section.editing" class="btn btn--primary pull-right" ng-click="addAttachment('BusinessCaseDocument')">Upload</button>
                             <div class="editable-error-block editable-error" style="display: none;">Business Case is required</div>
+                        </div>
+                    </div>
+                    <div class="form__control" ng-if="!section.editing || (section.editing && !grantFile.EditSummary)">
+                        <div class="control-wrapper" ng-validation="errors.BusinessCaseDocument">
+                            <a class="link" ng-if="model.BusinessCaseDocument" ng-click="!model.BusinessCaseDocument.Id || downloadAttachment(model.BusinessCaseDocument.Id)">{{model.BusinessCaseDocument.FileName}}</a>
+                            <span ng-if="!model.BusinessCaseDocument">None</span>
                         </div>
                     </div>
                 </div>
@@ -152,9 +161,14 @@
                 </div>
                 <div class="form__group">
                     <div class="form__label">Doing Business As<br />(Reported by Program):</div>
-                    <div class="form__control">
+                    <div class="form__control" ng-if="section.editing && grantFile.EditSummary">
                         <div class="control-wrapper input--medium">
                             <input type="text" ng-model="model.DoingBusinessAsMinistry" class="input--medium" maxlength="50" ng-validation ng-editing />
+                        </div>
+                    </div>
+                    <div class="form__control" ng-if="!section.editing || (section.editing && !grantFile.EditSummary)">
+                        <div class="control-wrapper input--medium">
+                            {{model.DoingBusinessAsMinistry}}
                         </div>
                     </div>
                 </div>
@@ -172,9 +186,14 @@
                 </div>
                 <div class="form__group">
                     <div class="form__label">Risk Classification:</div>
-                    <div class="form__control">
+                    <div class="form__control" ng-if="section.editing && grantFile.EditSummary">
                         <div class="control-wrapper selectmenu">
                             <select ng-model="model.RiskClassificationId" ng-options="item.Id as item.Caption for item in riskClassifications" class="input--small" ng-validation ng-editing></select>
+                        </div>
+                    </div>
+                    <div class="form__control" ng-if="!section.editing || (section.editing && !grantFile.EditSummary)">
+                        <div class="control-wrapper selectmenu">
+                            <select ng-model="model.RiskClassificationId" ng-options="item.Id as item.Caption for item in riskClassifications" class="input--small" ng-validation ng-editing="false"></select>
                         </div>
                     </div>
                 </div>

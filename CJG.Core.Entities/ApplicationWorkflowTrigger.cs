@@ -395,6 +395,12 @@ namespace CJG.Core.Entities
 		/// ReturnUnderAssessmentToNew - Whether the application can be sent from Under Assessment to New
 		/// </summary>
 		[Description("Return to New")]
-		ReturnUnderAssessmentToNew = 105
+		ReturnUnderAssessmentToNew = 105,
+
+		/// <summary>
+		/// ReturnUnderAssessmentToNew - Whether the application can be sent from Under Assessment to New
+		/// </summary>
+		[Description("Edit LMDA Eligibility")]
+		EditLMDAEligibility = 110
 	}
 }

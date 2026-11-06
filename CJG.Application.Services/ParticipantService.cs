@@ -263,16 +263,26 @@ namespace CJG.Application.Services
 
 			var trainingStartReportDate = currentDateUtc.AddDays(-1);
 
+			var tariffQuestion = GetTariffGrantStreamQuestion()?.Id ?? 0;
+
 			var participantForms = _dbContext.ParticipantForms
 				.Include(pf => pf.GrantApplication)
+				.Include(pf => pf.GrantApplication.GrantStreamEligibilityAnswers)
 				.Where(pf => pf.EiEligibilityReportedOn == null || pf.EiEligibilityReportedOn > currentDateUtc)
 				.Where(pf => pf.GrantApplication.DateSubmitted >= cutoffDateUtc)
 				.Where(pf => pf.GrantApplication.ApplicationStateInternal != ApplicationStateInternal.Draft)
+				.Where(pf => pf.GrantApplication.GrantStreamEligibilityAnswers.Any(a => a.GrantStreamEligibilityQuestionId == tariffQuestion && a.EligibilityAnswer))
 				.Where(pf => pf.ProgramStartDate <= trainingStartReportDate)
 				.OrderBy(pf => pf.DateAdded)
 				.Take(take);
 
 			return participantForms;
+		}
+
+		public GrantStreamEligibilityQuestion GetTariffGrantStreamQuestion()
+		{
+			var questions = _dbContext.GrantStreamEligibilityQuestions.ToList();
+			return questions.FirstOrDefault(x => x.EligibilityQuestion.Contains("such as tariffs or mass layoffs"));
 		}
 
 		/// <summary>

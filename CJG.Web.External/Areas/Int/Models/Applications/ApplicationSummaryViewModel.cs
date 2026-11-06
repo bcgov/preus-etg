@@ -52,6 +52,7 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 		public bool AllowDirectorUpdate { get; set; }
 		public bool AllowReAssign { get; set; }
 		public bool EditSummary { get; set; }
+		public bool EditLMDAEligibility { get; set; }
 		public bool? HasRequestedAdditionalFunding { get; set; }
 
 		public string DescriptionOfFundingRequested { get; set; }
@@ -143,6 +144,7 @@ namespace CJG.Web.External.Areas.Int.Models.Applications
 			AllowEditDeliveryPartner = grantApplication.GrantOpening.GrantStream.IncludeDeliveryPartner;
 
 			EditSummary = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditApplication);
+			EditLMDAEligibility = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditLMDAEligibility);
 			CanModifyDeliveryDates = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.EditApplication);
 			AllowReAssign = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.ReassignAssessor);
 			AllowDirectorUpdate = user.CanPerformAction(grantApplication, ApplicationWorkflowTrigger.DenyApplication);

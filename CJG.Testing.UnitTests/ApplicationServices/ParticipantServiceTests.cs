@@ -16,6 +16,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 		private User _user;
 		private ServiceHelper _helper;
 		private ParticipantService _service;
+		private GrantStreamEligibilityQuestion _tariffQuestion;
 
 		[TestInitialize]
 		public void Setup()
@@ -23,6 +24,15 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			_user = EntityHelper.CreateExternalUser();
 			_helper = new ServiceHelper(typeof(ParticipantService), _user.CreateIdentity());
 			_service = _helper.Create<ParticipantService>();
+
+			_tariffQuestion = new GrantStreamEligibilityQuestion
+			{
+				EligibilityQuestion = "The B.C. Employer Training Grant supports workers that have been impacted by local economic disruptions, such as tariffs or mass layoffs in forestry or other sectors. Are the worker(s) you intend to train at risk of job loss or in need of training to maintain employment because of local economic disruptions, such as tariffs?",
+				EligibilityPositiveAnswerRequired = false,
+				IsActive = true
+			};
+
+			_helper.MockDbSet(_tariffQuestion);
 		}
 
 		[TestMethod, TestCategory("Participant"), TestCategory("Service")]
@@ -183,6 +193,51 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			grantApplication.StartDate = trainingStartDate;
 			grantApplication.DateSubmitted = trainingStartDate;
 
+			AddTariffQuestionAndAnswer(grantApplication, true);
+
+			grantApplication.TrainingPrograms.Add(new TrainingProgram
+			{
+				StartDate = trainingStartDate
+			});
+
+			var participantForm = new ParticipantForm(grantApplication, Guid.NewGuid())
+			{
+				PreviousEmploymentNoc = new NationalOccupationalClassification("12345", "Test NOC", 5, 0, 0, 0),
+				PreviousEmploymentNaics = new NaIndustryClassificationSystem("12345", "Test NAICS", 5, 0, 0, 0, 2021),
+				EiEligibilityReportedOn = null,
+				DateAdded = trainingStartDate,
+				ProgramStartDate = trainingStartDate
+			};
+
+			grantApplication.ParticipantForms.Add(participantForm);
+
+			_helper.MockDbSet(new[] { participantForm });
+			_helper.MockDbSet(new[] { grantApplication });
+
+			var results = _service.GetParticipantsEnrollmentsForEiCheck(currentDate, 1000, cutoffDate);
+
+			Assert.AreEqual(expectedResults, results.Count());
+		}
+
+		[TestMethod, TestCategory("Participant"), TestCategory("Service")]
+		[DataRow(true, 1)]
+		[DataRow(false, 0)]
+		public void EiCheckParticipantsCheckForTariffQuestion(bool affectedByTariffs, int expectedResults)
+		{
+			// This method shifts the current date back and forth to check if the PIFs that are starting within the required time are being reported on
+			var cutoffDate = new DateTime(2026, 4, 1);
+			var currentDate = AppDateTime.UtcNow;
+			var trainingStartDate = currentDate;
+
+			currentDate = currentDate.AddDays(7);
+
+			var grantApplication = EntityHelper.CreateGrantApplicationWithAgreement(EntityHelper.CreateGrantOpening(), _user, EntityHelper.CreateInternalUser(), ApplicationStateInternal.AgreementAccepted);
+			grantApplication.DateAdded = trainingStartDate;
+			grantApplication.StartDate = trainingStartDate;
+			grantApplication.DateSubmitted = trainingStartDate;
+
+			AddTariffQuestionAndAnswer(grantApplication, affectedByTariffs);
+
 			grantApplication.TrainingPrograms.Add(new TrainingProgram
 			{
 				StartDate = trainingStartDate
@@ -222,10 +277,7 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 			grantApplication.StartDate = trainingStartDate;
 			grantApplication.DateSubmitted = trainingStartDate;
 
-			grantApplication.TrainingPrograms.Add(new TrainingProgram
-			{
-				StartDate = trainingStartDate
-			});
+			AddTariffQuestionAndAnswer(grantApplication, true);
 
 			var participantForm1 = new ParticipantForm(grantApplication, Guid.NewGuid())
 			{
@@ -258,6 +310,22 @@ namespace CJG.Testing.UnitTests.ApplicationServices
 
 			Assert.AreEqual(1, results.Count);
 			Assert.AreEqual(true, results.All(r => r.FirstName == "Fred"));
+		}
+
+		private void AddTariffQuestionAndAnswer(GrantApplication grantApplication, bool answerYes)
+		{
+			if (!grantApplication.GrantOpening.GrantStream.GrantStreamEligibilityQuestions.Any())
+				grantApplication.GrantOpening.GrantStream.GrantStreamEligibilityQuestions = new List<GrantStreamEligibilityQuestion>
+				{
+					_tariffQuestion
+				};
+
+			if (!grantApplication.GrantStreamEligibilityAnswers.Any())
+				grantApplication.GrantStreamEligibilityAnswers.Add(new GrantStreamEligibilityAnswer
+				{
+					GrantStreamEligibilityQuestions = _tariffQuestion,
+					EligibilityAnswer = answerYes
+				});
 		}
 	}
 }
